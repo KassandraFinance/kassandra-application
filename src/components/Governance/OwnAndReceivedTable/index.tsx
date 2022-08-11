@@ -35,13 +35,6 @@ interface IOwnAndReceivedTableProps {
   isDelegationTable: boolean;
 }
 
-const URL_API: { [key: number | string]: string } = {
-  1: 'https://kassandra.finance/api/overview',
-  2: 'https://alpha.kassandra.finance/api/overview',
-  3: 'https://demo.kassandra.finance/api/overview',
-  4: 'http://localhost:3000/api/overview'
-}
-
 // eslint-disable-next-line prettier/prettier
 export const OwnAndReceivedTable = ({
   userAddressUrl,
@@ -52,7 +45,7 @@ export const OwnAndReceivedTable = ({
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
-  const { data } = useSWR(URL_API[process.env.NEXT_PUBLIC_URL_API || 4])
+  const { data } = useSWR('/api/overview')
 
   const isMasterBranch = process.env.NEXT_PUBLIC_MASTER === '1' ? true : false
 

@@ -1,6 +1,6 @@
 import React from 'react'
-import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import Head from 'next/head'
+import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 
@@ -11,13 +11,6 @@ type Props = {
 const Page = ({ id }: Props) => {
   const router = useRouter()
   const fund = id.split('-').pop()
-
-  const URL_API: { [key: number | string]: string } = {
-    1: 'https://kassandra.finance',
-    2: 'https://alpha.kassandra.finance',
-    3: 'https://demo.kassandra.finance',
-    4: 'http://localhost:3000'
-  }
 
   //   React.useEffect(() => {
   //     document
@@ -36,16 +29,9 @@ const Page = ({ id }: Props) => {
         <meta
           property="og:image"
           key="ogImage"
-          content={`${
-            URL_API[process.env.NEXT_PUBLIC_URL_API || 4]
-          }/api/funds/shared?id=${id}`}
+          content={`/api/funds/shared?id=${id}`}
         />
-        <meta
-          property="og:url"
-          content={`${
-            URL_API[process.env.NEXT_PUBLIC_URL_API || 4]
-          }/shared/${id}`}
-        />
+        <meta property="og:url" content={`/shared/${id}`} />
         <meta
           name="twitter:card"
           key="twitterCard"
@@ -54,20 +40,13 @@ const Page = ({ id }: Props) => {
         <meta
           name="twitter:image"
           key="twitterImage"
-          content={`${
-            URL_API[process.env.NEXT_PUBLIC_URL_API || 4]
-          }/api/funds/shared?id=${id}`}
+          content={`/api/funds/shared?id=${id}`}
         />
         <meta property="og:image:width" content="1000" />
         <meta property="og:image:height" content="500" />
       </Head>
       <div>
-        <img
-          src={`${
-            URL_API[process.env.NEXT_PUBLIC_URL_API || 4]
-          }/api/funds/shared?id=${id}`}
-          alt=""
-        />
+        <img src={`/api/funds/shared?id=${id}`} alt="" />
       </div>
     </>
   )

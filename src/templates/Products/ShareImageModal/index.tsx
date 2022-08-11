@@ -19,13 +19,6 @@ interface ShareImageProps {
   productName: string;
 }
 
-const URL_API: { [key: number | string]: string } = {
-  1: 'https://kassandra.finance',
-  2: 'https://alpha.kassandra.finance',
-  3: 'https://demo.kassandra.finance',
-  4: 'http://localhost:3000'
-}
-
 const ShareImageModal = ({
   setOpenModal,
   openModal,
@@ -36,9 +29,7 @@ const ShareImageModal = ({
   const [loading, setLoading] = React.useState(true)
   const printRef = React.useRef<HTMLInputElement>(null)
   const [url, setUrl] = React.useState(
-    `${
-      URL_API[process.env.NEXT_PUBLIC_URL_API || 4]
-    }/shared/${v4()}-${productName.toLowerCase()}`
+    `/shared/${v4()}-${productName.toLowerCase()}`
   )
 
   async function handleDownloadImage() {
@@ -66,11 +57,7 @@ const ShareImageModal = ({
   }
 
   function handleShareClick() {
-    setUrl(
-      `${
-        URL_API[process.env.NEXT_PUBLIC_URL_API || 4]
-      }/shared/${v4()}-${productName.toLowerCase()}`
-    )
+    setUrl(`/shared/${v4()}-${productName.toLowerCase()}`)
     setOpenModal(false)
   }
 
@@ -90,19 +77,14 @@ const ShareImageModal = ({
 
           const file = canvas.toDataURL('image/png')
           const id = url.split('/').pop()
-          fetch(
-            `${
-              URL_API[process.env.NEXT_PUBLIC_URL_API || 4]
-            }/api/funds/shared?id=${poolId}-${productName.toLowerCase()}`,
-            {
-              method: 'POST',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ image: file, id })
-            }
-          ).then(response => response.json())
+          fetch(`/api/funds/shared?id=${poolId}-${productName.toLowerCase()}`, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ image: file, id })
+          }).then(response => response.json())
         }
       })()
     }, 3000)
