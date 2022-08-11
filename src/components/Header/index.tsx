@@ -9,15 +9,17 @@ import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 import Button from '../Button'
 import DropdownInvest from '../Dropdown'
+
+import ModalKacy from '../Modals/ModalKacy'
+import ModalAlert from '../Modals/ModalAlert'
 import ModalLogOut from '../Modals/ModalLogOut'
+import ModalWaitingList from '../Modals/ModalWaitingList'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalSocialMediaMobile from '../Modals/ModalSocialMediaMobile'
-import ModalAlert from '../Modals/ModalAlert'
 
 import options from '../../../public/assets/utilities/options.svg'
 import kacy64 from '../../../public/assets/logos/kacy-64.svg'
 import logoKassandra from '../../../public/assets/logos/kassandra-header.svg'
-import ModalKacy from '../Modals/ModalKacy'
 
 import * as S from './styles'
 
@@ -28,6 +30,8 @@ export type MenuProps = {
 const Header = () => {
   const [isModalWallet, setIsModalWallet] = React.useState<boolean>(false)
   const [isModalLogout, setIsModalLogout] = React.useState<boolean>(false)
+  const [isModalWaitingList, setIsModalWaitingList] =
+    React.useState<boolean>(false)
   // const [isModalLanguages, setIsModalLanguages] = React.useState<boolean>(false)
   const [isModalSocialMedia, setIsModalSocialMedia] =
     React.useState<boolean>(false)
@@ -62,13 +66,13 @@ const Header = () => {
             <S.MenuLink>Invest</S.MenuLink>
           </Link>
           <S.MenuLink
-            onClick={() => alert('Criar o modal Join the waiting list')}
+            onClick={() => {
+              setIsModalWaitingList(true)
+            }}
           >
             Create
           </S.MenuLink>
-          <S.MenuLink
-            onClick={() => alert('Criar o modal Join the waiting list')}
-          >
+          <S.MenuLink onClick={() => setIsModalWaitingList(true)}>
             Manage
           </S.MenuLink>
           <DropdownInvest
@@ -247,6 +251,10 @@ const Header = () => {
         setModalOpen={setIsModalLogout}
         userWalletAddress={userWalletAddress}
       />
+
+      {isModalWaitingList && (
+        <ModalWaitingList setIsModalWaitingList={setIsModalWaitingList} />
+      )}
 
       {isError && <ModalAlert />}
     </>

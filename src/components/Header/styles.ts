@@ -231,6 +231,7 @@ export const MenuBottom = styled.div`
       border-color: ${theme.colors.snow};
       background-color: ${theme.colors.snow};
       color: ${theme.colors.darkPurple};
+      outline-color: ${theme.colors.snow};
     }
   }
 `
