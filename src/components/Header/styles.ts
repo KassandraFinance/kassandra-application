@@ -220,9 +220,17 @@ export const MenuBottom = styled.div`
     padding: 1.2rem;
 
     font-size: ${theme.font.sizes.font12};
+    border: 0.1rem solid ${theme.colors.snow};
+    transition: 300ms;
 
     img {
       width: 1.6rem;
+    }
+    &:hover,
+    &:focus {
+      border-color: ${theme.colors.snow};
+      background-color: ${theme.colors.snow};
+      color: ${theme.colors.darkPurple};
     }
   }
 `
