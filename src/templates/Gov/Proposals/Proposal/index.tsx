@@ -753,7 +753,7 @@ const Proposal = () => {
                 <S.DescriptionTable>
                   <S.DescriptionProposal>
                     <ReactMarkdown skipHtml={true} linkTarget={'_blank'}>
-                      {proposal.description}
+                      {proposal.description.replace('["', '').replace('"]', '')}
                     </ReactMarkdown>
                   </S.DescriptionProposal>
                 </S.DescriptionTable>

@@ -127,7 +127,7 @@ export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
                   <div className="td-container">
                     <S.TextProposal>
                       {proposal.number.toString().padStart(2, '0')}{' '}
-                      {getTitleProposal(proposal.description)}
+                      {getTitleProposal(proposal.description.replace('["', ''))}
                     </S.TextProposal>
 
                     <S.StatusProposal
