@@ -213,14 +213,14 @@ const Proposal = () => {
         startBlock
       )
 
-      setYourVotingPowerInProposal(votingPowerAtMoment)
+      setYourVotingPowerInProposal(new BigNumber(votingPowerAtMoment))
     }
   }
 
   function handleVote(voteType: string) {
     if (
       userVoted.voted ||
-      proposalState[0] !== 'Active' ||
+      proposalState !== 'Active' ||
       !userWalletAddress ||
       yourVotingPowerInProposal.eq(new BigNumber(0))
     ) {
@@ -703,7 +703,7 @@ const Proposal = () => {
                   typeVote="For"
                   percentage={percentageVotes.for}
                   totalVotingPower={BNtoDecimal(proposal.forVotes, 0, 2, 2)}
-                  proposalState={proposalState[0]}
+                  proposalState={proposalState}
                   userVote={userVoted}
                   handleVote={handleVote}
                   onClickLink={() => {
@@ -726,7 +726,7 @@ const Proposal = () => {
                   typeVote="Against"
                   percentage={percentageVotes.against}
                   totalVotingPower={BNtoDecimal(proposal.againstVotes, 0, 2, 2)}
-                  proposalState={proposalState[0]}
+                  proposalState={proposalState}
                   userVote={userVoted}
                   handleVote={handleVote}
                   onClickLink={() => {
@@ -973,7 +973,7 @@ const Proposal = () => {
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
           userVote={userVoted}
-          proposalState={proposalState[0]}
+          proposalState={proposalState}
           handleVote={handleVote}
         />
       )}
