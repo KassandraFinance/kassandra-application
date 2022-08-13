@@ -69,14 +69,6 @@ const ModalSocialMediaMobile = ({
           <Image src={github} alt="Github" />
           <span>Github</span>
         </S.SocialIcon>
-        <S.SocialIcon
-          onClick={() => {
-            setModalOpen(false), router.push('/about')
-          }}
-        >
-          <Image src={kacyWhite} alt="" width={24} height={24} />
-          <span>About</span>
-        </S.SocialIcon>
       </S.ModalContainer>
     </>
   )
