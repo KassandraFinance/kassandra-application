@@ -65,6 +65,9 @@ const Header = () => {
           <Link href="/explore">
             <S.MenuLink>Invest</S.MenuLink>
           </Link>
+          <Link href="/farm">
+            <S.MenuLink>Stake</S.MenuLink>
+          </Link>
           <S.MenuLink
             onClick={() => {
               setIsModalWaitingList(true)
