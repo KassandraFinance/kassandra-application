@@ -65,7 +65,7 @@ const Header = () => {
           <Link href="/explore">
             <S.MenuLink>Invest</S.MenuLink>
           </Link>
-          <Link href="/farm">
+          <Link href="/farm?tab=stake">
             <S.MenuLink>Stake</S.MenuLink>
           </Link>
           <S.MenuLink
