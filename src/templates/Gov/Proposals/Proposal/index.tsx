@@ -207,7 +207,7 @@ const Proposal = () => {
   }
 
   async function getVotingPowerInProposal(startBlock: string) {
-    if (userWalletAddress) {
+    if (userWalletAddress && startBlock) {
       const votingPowerAtMoment = await votingPower.getPriorVotes(
         userWalletAddress,
         startBlock
@@ -327,7 +327,7 @@ const Proposal = () => {
         voted: userAlreadyVoted ? true : false,
         support: userAlreadyVoted ? userAlreadyVoted.support : null,
         userWalletAddress,
-        yourVotingPowerInProposal
+        yourVotingPowerInProposal: new BigNumber(0)
       })
 
       getVotingPowerInProposal(data.proposal[0].startBlock)
@@ -700,6 +700,7 @@ const Proposal = () => {
               </S.IntroMobileScreen>
               <S.VoteCardWrapper>
                 <VoteCard
+                  yourVotingPowerInProposal={yourVotingPowerInProposal}
                   typeVote="For"
                   percentage={percentageVotes.for}
                   totalVotingPower={BNtoDecimal(proposal.forVotes, 0, 2, 2)}
@@ -711,7 +712,7 @@ const Proposal = () => {
                       voteType: 'For',
                       percentage: `${percentageVotes.for}`,
                       // eslint-disable-next-line prettier/prettier
-                  totalVotingPower: `${BNtoDecimal(
+                    totalVotingPower: `${BNtoDecimal(
                         proposal.forVotes,
                         0,
                         2,
@@ -723,6 +724,7 @@ const Proposal = () => {
                   }}
                 />
                 <VoteCard
+                  yourVotingPowerInProposal={yourVotingPowerInProposal}
                   typeVote="Against"
                   percentage={percentageVotes.against}
                   totalVotingPower={BNtoDecimal(proposal.againstVotes, 0, 2, 2)}
@@ -734,7 +736,7 @@ const Proposal = () => {
                       voteType: 'Against',
                       percentage: `${percentageVotes.against}`,
                       // eslint-disable-next-line prettier/prettier
-                  totalVotingPower: `${BNtoDecimal(
+                    totalVotingPower: `${BNtoDecimal(
                         proposal.againstVotes,
                         0,
                         2,

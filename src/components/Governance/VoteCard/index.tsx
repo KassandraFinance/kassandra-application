@@ -1,5 +1,5 @@
 import React from 'react'
-
+import BigNumber from 'bn.js'
 import Button from '../../Button'
 import ExternalLink from '../../ExternalLink'
 
@@ -9,6 +9,7 @@ import { IUserVotedProps } from '../../../templates/Gov/Proposals/Proposal'
 import * as S from './styles'
 
 interface IVoteCardProps {
+  yourVotingPowerInProposal: BigNumber;
   typeVote: string;
   percentage: string;
   totalVotingPower: string;
@@ -19,6 +20,7 @@ interface IVoteCardProps {
 }
 
 const VoteCard = ({
+  yourVotingPowerInProposal,
   typeVote,
   percentage,
   totalVotingPower,
@@ -28,6 +30,7 @@ const VoteCard = ({
   handleVote
 }: IVoteCardProps) => {
   function getTextButton(typeVote: string) {
+    userVote.yourVotingPowerInProposal = yourVotingPowerInProposal
     if (typeVote === 'For') {
       if (userVote.voted && userVote.support) return 'Voted in Favor'
       return 'Vote in Favor'
