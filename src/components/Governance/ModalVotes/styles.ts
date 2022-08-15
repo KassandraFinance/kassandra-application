@@ -241,6 +241,8 @@ export const UserData = styled.tr`
 `
 
 export const UserName = styled.td`
+  position: relative;
+
   display: flex;
   align-items: flex-start;
   gap: 0.8rem;
