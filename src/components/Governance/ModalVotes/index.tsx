@@ -77,6 +77,17 @@ const ModalVotes = ({
     }
   }
 
+  function getTextButton(typeVote: string) {
+    if (typeVote === 'For') {
+      if (userVote.voted && userVote.support) return 'Voted in Favor'
+      return 'Vote in Favor'
+    }
+    if (typeVote !== 'For') {
+      if (userVote.voted && !userVote.support) return 'Voted Against'
+      return 'Vote Against'
+    }
+  }
+
   function handleCloseModal() {
     setIsModalOpen(false)
   }
@@ -93,11 +104,11 @@ const ModalVotes = ({
     setIsLoading(true)
 
     if (data) {
-        const votes = data.proposals[0].votes.map((prop: IModalVotesList) => {
+      const votes = data.proposals[0]?.votes?.map((prop: IModalVotesList) => {
         return {
           support: prop.support,
           voter: {
-            id: prop.voter.id
+            id: prop.voter?.id
           },
           votingPower: prop.votingPower
         }
@@ -176,7 +187,7 @@ const ModalVotes = ({
         </S.TableContainer>
         <S.ButtonWrapper>
           <Button
-            text={voteType === 'For' ? 'Vote in Favor' : 'Vote Against'}
+            text={getTextButton(voteType)}
             backgroundVote={{
               voteState: checkVoteButton(userVote, proposalState, voteType),
               type: voteType
