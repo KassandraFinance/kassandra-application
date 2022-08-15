@@ -80,7 +80,7 @@ const Gov = () => {
             />
             <VotingPowerTable take={take} />
             <ExternalLink
-              hrefNext="/gov/leaderboard"
+              hrefNext="/gov/leaderboard?page=1"
               text="Check leaderboard"
             />
           </>

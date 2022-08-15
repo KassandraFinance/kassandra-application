@@ -92,7 +92,7 @@ const Header = () => {
               },
               {
                 name: 'Leaderboard ',
-                href: '/gov/leaderboard'
+                href: '/gov/leaderboard?page=1'
               },
               {
                 name: 'Forum',
