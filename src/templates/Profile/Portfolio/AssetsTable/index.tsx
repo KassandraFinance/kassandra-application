@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
+
 import { request } from 'graphql-request'
 
 import {
@@ -145,13 +146,7 @@ export const AssetsTable = ({ assets, balanceFunds }: IAssetsTableProps) => {
           </S.NetworkWrapper>
         </S.Td>
         <S.Td>${parseFloat(price[asset.sipAddress]).toFixed(2)}</S.Td>
-        <S.Td>
-          {parseFloat(tvl[asset.sipAddress]).toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            maximumFractionDigits: 2
-          })}
-        </S.Td>
+        <S.Td>${BNtoDecimal(Big(tvl[asset.sipAddress]), 2)}</S.Td>
         <S.Td>
           <S.Change change={parseFloat(changeMonth[asset.sipAddress])}>
             {changeMonth[asset.sipAddress]}%
