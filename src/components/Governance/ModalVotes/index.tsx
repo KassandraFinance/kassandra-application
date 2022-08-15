@@ -15,6 +15,7 @@ import { GET_MODALVOTES } from './graphql'
 
 import Button from '../../Button'
 import ImageProfile from '../ImageProfile'
+import Loading from '../../Loading'
 
 import * as S from './styles'
 
@@ -52,6 +53,7 @@ const ModalVotes = ({
   // eslint-disable-next-line prettier/prettier
   const [modalVotesList, setModalVotesList] = React.useState<IModalVotesList[]>([])
   const [showShadow, setShowShadow] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(true)
 
   const handleApplyShadowList = () => {
     const lastItemList = document
@@ -90,8 +92,8 @@ const ModalVotes = ({
     setIsModalOpen(false)
   }
 
-  const { data } = useSWR(() => isModalOpen && [GET_MODALVOTES],
-    query =>
+  const { data } = useSWR([GET_MODALVOTES, checkAllVoterModal],
+    (query, checkAllVoterModal) =>
       request(SUBGRAPH_URL, query, {
         number: Number(router.query.proposal),
         support: checkAllVoterModal
@@ -99,6 +101,8 @@ const ModalVotes = ({
   )
 
   React.useEffect(() => {
+    setIsLoading(true)
+
     if (data) {
       const votes = data.proposals[0]?.votes?.map((prop: IModalVotesList) => {
         return {
@@ -112,6 +116,7 @@ const ModalVotes = ({
 
       votes.length > 6 ? setShowShadow(true) : setShowShadow(false)
       setModalVotesList(votes)
+      setIsLoading(false)
     }
   }, [data])
 
@@ -143,31 +148,42 @@ const ModalVotes = ({
               <S.Th>Votes</S.Th>
             </S.Tr>
           </S.Thead>
-          <S.Tbody
-            onScroll={() => handleApplyShadowList()}
-            className="tbody-list"
-          >
-            {modalVotesList.map((user, index) => {
-              const lastItem = index === modalVotesList.length - 1
-              return (
-                <S.UserData
-                  key={index + user.voter.id}
-                  className={lastItem ? `last-item` : ``}
-                >
-                  <S.UserName>
-                    <ImageProfile
-                      address={user.voter.id}
-                      diameter={18}
-                      hasAddress={true}
-                      isLink={true}
-                      tab="?tab=governance-data"
-                    />
-                  </S.UserName>
-                  <S.UserVote>{BNtoDecimal(user.votingPower, 0, 2)}</S.UserVote>
-                </S.UserData>
-              )
-            })}
-          </S.Tbody>
+          {isLoading ? (
+            <S.LoadingContainer>
+              <Loading marginTop={0}/>
+            </S.LoadingContainer>
+          ) : modalVotesList.length > 0 ? (
+            <S.Tbody
+              onScroll={() => handleApplyShadowList()}
+              className="tbody-list"
+            >
+              {modalVotesList.map((user, index) => {
+                const lastItem = index === modalVotesList.length - 1
+
+                return (
+                  <S.UserData
+                    key={index + user.voter.id}
+                    className={lastItem ? `last-item` : ``}
+                  >
+                    <S.UserName>
+                      <ImageProfile
+                        address={user.voter.id}
+                        diameter={18}
+                        hasAddress={true}
+                        isLink={true}
+                        tab="?tab=governance-data"
+                      />
+                    </S.UserName>
+                    <S.UserVote>{BNtoDecimal(user.votingPower, 0, 2)}</S.UserVote>
+                  </S.UserData>
+                )
+              })}
+            </S.Tbody>
+          ) : (
+            <S.textContainer>
+              <p>nobody voted on this proposal yet</p>
+            </S.textContainer>
+          )}
         </S.TableContainer>
         <S.ButtonWrapper>
           <Button

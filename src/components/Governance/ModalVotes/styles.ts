@@ -241,6 +241,8 @@ export const UserData = styled.tr`
 `
 
 export const UserName = styled.td`
+  position: relative;
+
   display: flex;
   align-items: flex-start;
   gap: 0.8rem;
@@ -264,4 +266,21 @@ export const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
   padding: 0 0 2.4rem;
+`
+
+export const LoadingContainer = styled.div`
+  padding: 1rem;
+`
+
+export const textContainer = styled.div`
+  width: 100%;
+  padding: 2rem;
+
+  p {
+    font-size: ${theme.font.sizes.font14};
+    font-weight: ${theme.font.weight.normal};
+    letter-spacing: 0.22em;
+    line-height: 1.4rem;
+    text-align: center;
+  }
 `
