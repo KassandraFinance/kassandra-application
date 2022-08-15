@@ -11,9 +11,10 @@ export const checkVoteButton = (
     if (!userVote.support && typeVote === 'Against') return 'against'
     if (userVote.support && typeVote === 'For') return 'favor'
   } else if (
-    proposalState === 'Active' &&
-    userWalletAddress &&
-    yourVotingPowerInProposal.gt(new BigNumber(0))
+    (proposalState === 'Active' &&
+      userWalletAddress &&
+      yourVotingPowerInProposal.gt(new BigNumber(0))) ||
+    (!userWalletAddress && proposalState === 'Active')
   ) {
     return 'vote-open'
   }

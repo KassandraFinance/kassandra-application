@@ -32,16 +32,17 @@ const VotingPower = ({
     React.useState(new BigNumber(0))
   const [yourVotingPower, setYourVotingPower] = React.useState(new BigNumber(0))
 
-  const { data } = useSWR([GET_VOTINGPOWER], query =>
-    request(SUBGRAPH_URL, query, { id: userWalletAddress })
+  const { data } = useSWR(
+    [GET_VOTINGPOWER, userWalletAddress],
+    (query, userWalletAddress) =>
+      request(SUBGRAPH_URL, query, { id: userWalletAddress })
   )
 
   React.useEffect(() => {
     if (data?.user) {
       setTotalVotingPowerGovernance(data.governances[0].totalVotingPower)
-
-      setYourVotingPower(data.user ? data.user.votingPower : 0)
     }
+    setYourVotingPower(data?.user ? data?.user?.votingPower : 0)
   }, [data])
 
   return (

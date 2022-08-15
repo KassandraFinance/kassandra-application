@@ -47,11 +47,15 @@ export const ActionWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+`
+export const VoteButtonContainer = styled.div`
+  width: min(27.3rem, 50%);
 
   ${ButtonStyles.Wrapper} {
-    width: min(27.3rem, 50%);
+    width: 100%;
   }
 `
+
 export const Link = styled.a`
   display: flex;
 
