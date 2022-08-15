@@ -6,6 +6,11 @@ import ExternalLink from '../../ExternalLink'
 import { checkVoteButton } from '../../../utils/checkVoteButton'
 import { IUserVotedProps } from '../../../templates/Gov/Proposals/Proposal'
 
+import ModalWalletConnect from '../../Modals/ModalWalletConnect'
+
+import Tippy from '@tippyjs/react'
+import 'tippy.js/dist/tippy.css'
+
 import * as S from './styles'
 
 interface IVoteCardProps {
@@ -29,8 +34,12 @@ const VoteCard = ({
   onClickLink,
   handleVote
 }: IVoteCardProps) => {
+  userVote.yourVotingPowerInProposal = yourVotingPowerInProposal
+
+  const [isModalWalletConnect, setIsModalWalletConnect] =
+    React.useState<boolean>(false)
+
   function getTextButton(typeVote: string) {
-    userVote.yourVotingPowerInProposal = yourVotingPowerInProposal
     if (typeVote === 'For') {
       if (userVote.voted && userVote.support) return 'Voted in Favor'
       return 'Vote in Favor'
@@ -53,14 +62,31 @@ const VoteCard = ({
           <S.ProgressBar VotingState={typeVote} value={percentage} max="100" />
         </S.VoteBar>
         <S.ActionWrapper>
-          <Button
-            text={getTextButton(typeVote)}
-            backgroundVote={{
-              voteState: checkVoteButton(userVote, proposalState, typeVote),
-              type: typeVote
-            }}
-            onClick={() => handleVote(typeVote)}
-          />
+          <Tippy
+            content="You had no voting power at the time the proposal was created"
+            disabled={
+              userVote.userWalletAddress === '' ||
+              yourVotingPowerInProposal.gt(new BigNumber(0))
+            }
+          >
+            <S.VoteButtonContainer>
+              <Button
+                text={getTextButton(typeVote)}
+                backgroundVote={{
+                  voteState: checkVoteButton(userVote, proposalState, typeVote),
+                  type: typeVote
+                }}
+                onClick={() => {
+                  if (userVote.userWalletAddress === '') {
+                    setIsModalWalletConnect(true)
+                    return
+                  }
+
+                  handleVote(typeVote)
+                }}
+              />
+            </S.VoteButtonContainer>
+          </Tippy>
           <ExternalLink
             text="Check all voters"
             hrefNext="#"
@@ -68,6 +94,9 @@ const VoteCard = ({
           />
         </S.ActionWrapper>
       </S.Container>
+      {isModalWalletConnect && (
+        <ModalWalletConnect setModalOpen={setIsModalWalletConnect} />
+      )}
     </>
   )
 }
