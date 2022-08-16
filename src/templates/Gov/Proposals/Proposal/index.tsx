@@ -932,6 +932,10 @@ const Proposal = () => {
                 <S.Steps>
                   {dataStatus.map((step, index) => (
                     <React.Fragment key={index}>
+                      <S.LineBetweenImages
+                        isBefore={step.title === 'Created'}
+                        isComplete={step.completed === true}
+                      />
                       <S.Step>
                         <S.StepImageContainer>
                           {step.completed === true ? (
@@ -946,18 +950,9 @@ const Proposal = () => {
                             />
                           )}
                         </S.StepImageContainer>
-
                         <S.StepTitle>{step.title}</S.StepTitle>
                         <S.StepDate>{step.date}</S.StepDate>
                       </S.Step>
-                      <S.LineBetweenImages
-                        isAfter={index === dataStatus.length - 1}
-                        isComplete={
-                          step.title === 'Queued' && step.completed === false
-                            ? true
-                            : step.completed === true
-                        }
-                      />
                     </React.Fragment>
                   ))}
                 </S.Steps>

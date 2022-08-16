@@ -369,7 +369,6 @@ export const InfoTable = styled.table`
   height: max-content;
   margin-top: 1.6rem;
   margin-right: auto;
-  margin-bottom: 0;
   margin-left: auto;
   padding: 1.6rem;
 
@@ -382,14 +381,12 @@ export const InfoTable = styled.table`
   @media (width: 768px) {
     margin-top: 3.2rem;
     margin-right: auto;
-    margin-bottom: 0;
     margin-left: auto;
   }
 
   @media (min-width: 1024px) {
     margin-top: 4.8rem;
     margin-right: auto;
-    margin-bottom: 0;
     margin-left: auto;
   }
 
@@ -583,7 +580,7 @@ export const ProposalStatus = styled.div`
   max-width: 114rem;
 `
 interface IImageProps {
-  isAfter: boolean;
+  isBefore: boolean;
   isComplete: boolean;
 }
 // prettier-ignore
@@ -593,18 +590,14 @@ export const LineBetweenImages = styled.div<IImageProps>`
         ? `linear-gradient(0deg, ${theme.colors.amber} -0.02%, ${theme.colors.magenta} 99.99%)`
         : '#45405F'};
     ${props =>
-      !props.isAfter &&
+      !props.isBefore &&
       `
+      display: inline-block;
       width: 100%;
       height: 0.1rem;
       margin-top: 3.95rem;
 
-      display: inline-block;
-
-      @media (max-width: 768px) {
-        margin-top: 2.8rem;
-      }
-      @media (max-width: 480px) {
+      @media (max-width: 760px) {
         width: 0.1rem;
         height: 3.2rem;
         margin-top: 0;
@@ -617,13 +610,11 @@ export const Steps = styled.div`
   justify-content: space-between;
   margin-top: 7.2rem;
 
-  @media (max-width: 480px) {
+  @media (max-width: 760px) {
     flex-direction: column;
     align-items: flex-start;
     margin-top: 3.6rem;
-    padding-top: 0;
     padding-right: 4.8rem;
-    padding-bottom: 0;
     padding-left: 2.6rem;
   }
 `
@@ -631,25 +622,21 @@ export const Steps = styled.div`
 export const Step = styled.div`
   position: relative;
 
-  min-width: 7.9rem;
-
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 7.9rem;
 
-  @media (max-width: 768px) {
-    min-width: ${theme.spacings.space56};
-    min-height: ${theme.spacings.space56};
-  }
+  text-align: center;
 
-  @media (max-width: 480px) {
-    width: 100%;
-    height: 4rem;
-    margin: -0.9rem 0;
-
+  @media (max-width: 760px) {
     display: grid;
     grid-template-columns: auto 2fr 1fr;
     gap: 1.6rem;
+
+    width: 100%;
+    min-height: ${theme.spacings.space56};
+    margin: -0.9rem 0;
 
     img {
       width: 4rem;
@@ -661,7 +648,7 @@ export const StepImageContainer = styled.div`
   width: 7.9rem;
   height: 7.3rem;
 
-  @media (max-width: 480px) {
+  @media (max-width: 760px) {
     width: 4rem;
     height: 4rem;
   }
@@ -670,19 +657,20 @@ export const StepImageContainer = styled.div`
 export const StepTitle = styled.div`
   margin-top: 2.4rem;
   margin-bottom: 0.4rem;
+  width: 12rem;
 
   font-size: ${theme.font.sizes.font18};
   font-weight: ${theme.font.weight.medium};
   text-align: center;
 
-  @media (max-width: 768px) {
-    margin-top: 2.4rem;
-
-    font-size: ${theme.font.sizes.font14};
+  @media (max-width: 760px) {
+    margin-top: 0;
+    font-size: ${theme.font.sizes.font16};
   }
 
-  @media (max-width: 480px) {
-    margin-top: 0;
+  @media (max-width: 400px) {
+    width: 10rem;
+    font-size: ${theme.font.sizes.font14};
   }
 `
 export const StepDate = styled.div`

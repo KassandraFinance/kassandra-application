@@ -168,7 +168,7 @@ const ModalVotes = ({
                     <S.UserName>
                       <ImageProfile
                         address={user.voter.id}
-                        diameter={18}
+                        diameter={27}
                         hasAddress={true}
                         isLink={true}
                         tab="?tab=governance-data"

@@ -426,18 +426,4 @@ export const OtherSiteContainer = styled.div`
 
   margin-top: 2rem;
   padding-bottom: 2rem;
-
-  a {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-
-    color: #fcfcfc;
-    font-family: ${theme.font.family};
-    font-size: ${theme.font.sizes.font14};
-    font-weight: ${theme.font.weight.light};
-
-    cursor: pointer;
-    text-decoration: none;
-  }
 `
