@@ -290,7 +290,7 @@ const ModalCardOperations = ({ modalOpen, setModalOpen, userData, NftUrl }: IOpe
                   </span>
                   {nftDetails.token_id.length > 9 && (
                     <CopyToClipboard text={nftDetails.token_id}>
-                      <button onClick={() => ToastInfo('Copy number NFT id')}>
+                      <button onClick={() => ToastInfo('Copy number NFT')}>
                         <svg
                           width="14"
                           height="15"
