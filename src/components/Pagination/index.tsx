@@ -6,7 +6,7 @@ interface IPaginationProp {
   take: number;
   skip: number;
   totalItems: number;
-  page: number;
+  page?: number;
   handlePageClick: (
     data: {
       selected: number
@@ -19,7 +19,7 @@ const Pagination = ({
   take,
   totalItems,
   handlePageClick,
-  page
+  page = -1
 }: IPaginationProp) => {
   const pageCount = Math.ceil(totalItems / take)
 
@@ -29,24 +29,44 @@ const Pagination = ({
 
   return (
     <S.PaginateContainer totalItems={totalItems < 30}>
-      <ReactPaginate
-        breakLabel="..."
-        nextLabel=">"
-        onPageChange={handleClick}
-        pageRangeDisplayed={1}
-        marginPagesDisplayed={2}
-        pageCount={pageCount}
-        forcePage={page}
-        previousLabel="<"
-        containerClassName={'paginate__container'}
-        pageClassName={'paginate__Page'}
-        pageLinkClassName={'paginate__link'}
-        previousClassName={'paginate__previous'}
-        nextClassName={'paginate__next'}
-        previousLinkClassName={'paginate__link__previous'}
-        nextLinkClassName={'paginate__link__next'}
-        activeLinkClassName={'paginate__active'}
-      />
+      {page >= 0 ? (
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel=">"
+          onPageChange={handleClick}
+          pageRangeDisplayed={1}
+          marginPagesDisplayed={2}
+          pageCount={pageCount}
+          forcePage={page}
+          previousLabel="<"
+          containerClassName={'paginate__container'}
+          pageClassName={'paginate__Page'}
+          pageLinkClassName={'paginate__link'}
+          previousClassName={'paginate__previous'}
+          nextClassName={'paginate__next'}
+          previousLinkClassName={'paginate__link__previous'}
+          nextLinkClassName={'paginate__link__next'}
+          activeLinkClassName={'paginate__active'}
+        />
+      ) : (
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel=">"
+          onPageChange={handleClick}
+          pageRangeDisplayed={1}
+          marginPagesDisplayed={2}
+          pageCount={pageCount}
+          previousLabel="<"
+          containerClassName={'paginate__container'}
+          pageClassName={'paginate__Page'}
+          pageLinkClassName={'paginate__link'}
+          previousClassName={'paginate__previous'}
+          nextClassName={'paginate__next'}
+          previousLinkClassName={'paginate__link__previous'}
+          nextLinkClassName={'paginate__link__next'}
+          activeLinkClassName={'paginate__active'}
+        />
+      )}
     </S.PaginateContainer>
   )
 }
