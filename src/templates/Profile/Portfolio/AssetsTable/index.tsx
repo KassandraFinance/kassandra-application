@@ -146,7 +146,12 @@ export const AssetsTable = ({ assets, balanceFunds }: IAssetsTableProps) => {
           </S.NetworkWrapper>
         </S.Td>
         <S.Td>${parseFloat(price[asset.sipAddress]).toFixed(2)}</S.Td>
-        <S.Td>${BNtoDecimal(Big(tvl[asset.sipAddress]), 2)}</S.Td>
+        <S.Td>
+          $
+          {tvl[asset.sipAddress]
+            ? BNtoDecimal(Big(tvl[asset.sipAddress]), 2)
+            : '0'}
+        </S.Td>
         <S.Td>
           <S.Change change={parseFloat(changeMonth[asset.sipAddress])}>
             {changeMonth[asset.sipAddress]}%
