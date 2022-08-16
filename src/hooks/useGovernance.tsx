@@ -16,7 +16,7 @@ import votingOpen from '../../public/assets/notificationStatus/voting-open.svg'
 
 const valuesStateProposal = [
   ["Active", "Pending", queued, 0],
-  ["Active", "Voting Open", votingOpen, 1],
+  ["Active", "Voting Open", votingOpen, '1'],
   ["Failed", "Canceled", cancelled, 2],
   ["Failed", "Defeated", failed, 3],
   ["Succeeded", "Succeeded", approved, 4],
