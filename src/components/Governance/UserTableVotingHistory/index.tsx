@@ -4,12 +4,13 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-import { GovernorAlpha, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
+import {
+  chains,
+  GovernorAlpha,
+  SUBGRAPH_URL
+} from '../../../constants/tokenAddresses'
 
 import useGovernance from '../../../hooks/useGovernance'
-
-import web3 from '../../../utils/web3'
-import { dateRequestUnstake } from '../../../utils/date'
 
 import AnyCard from '../../AnyCard'
 
@@ -45,6 +46,9 @@ interface IProposalsTableProps {
   description: string;
   timestamp: any;
   state: any[];
+  endBlock: string;
+  created: string;
+  timeToEndProposal: string;
 }
 
 interface IProposalsListProps {
@@ -57,8 +61,6 @@ interface IUserTableProps {
   userWalletAddress: string | string[] | undefined;
 }
 
-const endblockProposal = [0, 1, 3, 4]
-
 // eslint-disable-next-line prettier/prettier
 export const UserTableVotingHistory = ({
   userAddressUrl,
@@ -69,6 +71,10 @@ export const UserTableVotingHistory = ({
     IProposalsTableProps[]
   >([])
 
+  const secondsPerBlock =
+    chains[process.env.NEXT_PUBLIC_MASTER === '1' ? 'avalanche' : 'fuji']
+      .secondsPerBlock
+
   const { data } = useSWR([GET_PROPOSALS], query =>
     request(SUBGRAPH_URL, query, {
       id: userAddressUrl
@@ -77,26 +83,25 @@ export const UserTableVotingHistory = ({
 
   const governance = useGovernance(GovernorAlpha)
 
-  async function handleAddStateOnProposal(votes: IProposalsListProps[]) {
-    const proposals = votes.map((props: IProposalsListProps) => {
-      return governance
-        .stateProposals(props.proposal.number)
-        .then(currentState => {
-          web3.eth
-            .getBlock(
-              endblockProposal.indexOf(currentState[3]) !== -1
-                ? `${Number(props.proposal.startBlock) + 2 + 40320}`
-                : props.proposal.startBlock
-            )
-            .then(res => (props.proposal.timestamp = res.timestamp))
-            .catch(e => console.log(e))
-          props.proposal.state = currentState
-          props.proposal.support = props.support
-          return props.proposal
-        })
-    })
+  async function handleAddStateOnProposal(proposals: IProposalsListProps[]) {
+    const proposal = proposals.map((prop: IProposalsListProps) => {
+      const proposal = { ...prop.proposal, support: prop.support }
+      return governance.stateProposals(proposal.number).then(res => {
+        const createdProposal = new Date(Number(proposal.created) * 1000)
+        const secondsToEndProposal =
+          (Number(proposal.endBlock) - Number(proposal.startBlock)) *
+          secondsPerBlock
+        proposal.timeToEndProposal = new Date(
+          Number(createdProposal) + secondsToEndProposal * 1000
+        )
+          .toLocaleString()
+          .split(', ')[0]
+        proposal.state = res
 
-    const proposalComplete = await Promise.all(proposals)
+        return proposal
+      })
+    })
+    const proposalComplete = await Promise.all(proposal)
 
     setProposalsList(proposalComplete)
   }
@@ -160,7 +165,7 @@ export const UserTableVotingHistory = ({
                           {proposal.support ? 'Voted for' : 'Voted against'}
                         </S.TypeVote>
 
-                        <S.TimeFrame>
+                        {/* <S.TimeFrame>
                           {`${
                             endblockProposal.indexOf(proposal.state[3]) === -1
                               ? `Created in ${dateRequestUnstake(
@@ -170,6 +175,12 @@ export const UserTableVotingHistory = ({
                                   proposal.timestamp * 1000
                                 )}`
                           }`}
+                        </S.TimeFrame> */}
+
+                        <S.TimeFrame>
+                          {proposal.state[1]}{' '}
+                          {proposal.state[3] === '1' ? 'until' : 'in'}{' '}
+                          {proposal.timeToEndProposal}
                         </S.TimeFrame>
 
                         <S.StateMutability
@@ -187,8 +198,6 @@ export const UserTableVotingHistory = ({
                                 src={proposal.state[2]}
                                 alt=""
                                 layout="responsive"
-                                // width={24}
-                                // height={24}
                               />
                             </div>
                           )}

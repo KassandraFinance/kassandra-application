@@ -13,6 +13,8 @@ export const GET_PROPOSALS = gql`
           signatures
           startBlock
           description
+          endBlock
+          created
         }
       }
     }

@@ -54,7 +54,9 @@ interface IProposalTableProps {
 
 export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
   // eslint-disable-next-line prettier/prettier
-  const [proposalsList, setProposalsList] = React.useState<Array<IProposalsListProps>>([])
+  const [proposalsList, setProposalsList] = React.useState<
+    Array<IProposalsListProps>
+  >([])
 
   const secondsPerBlock =
     chains[process.env.NEXT_PUBLIC_MASTER === '1' ? 'avalanche' : 'fuji']
@@ -141,7 +143,9 @@ export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
                     </S.StatusProposal>
 
                     <S.TimeFrame>
-                      {proposal.state[1]} in {proposal.timeToEndProposal}
+                      {proposal.state[1]}{' '}
+                      {proposal.state[3] === '1' ? 'until' : 'in'}{' '}
+                      {proposal.timeToEndProposal}
                     </S.TimeFrame>
 
                     <S.StateMutability
