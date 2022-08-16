@@ -65,7 +65,9 @@ export const UserTableVotingHistory = ({
   userWalletAddress
 }: IUserTableProps) => {
   // eslint-disable-next-line prettier/prettier
-  const [proposalsList, setProposalsList] = React.useState<IProposalsTableProps[]>([])
+  const [proposalsList, setProposalsList] = React.useState<
+    IProposalsTableProps[]
+  >([])
 
   const { data } = useSWR([GET_PROPOSALS], query =>
     request(SUBGRAPH_URL, query, {
@@ -147,7 +149,9 @@ export const UserTableVotingHistory = ({
                       <div className="td-container">
                         <S.TextProposal>
                           {proposal.number.toString().padStart(2, '0')}{' '}
-                          {getTitleProposal(proposal.description)}
+                          {getTitleProposal(
+                            proposal.description.replace('["', '')
+                          )}
                         </S.TextProposal>
 
                         <S.TypeVote

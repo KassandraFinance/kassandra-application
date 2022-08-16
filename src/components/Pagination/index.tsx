@@ -6,6 +6,7 @@ interface IPaginationProp {
   take: number;
   skip: number;
   totalItems: number;
+  page: number;
   handlePageClick: (
     data: {
       selected: number
@@ -14,7 +15,12 @@ interface IPaginationProp {
   ) => void;
 }
 
-const Pagination = ({ take, totalItems, handlePageClick }: IPaginationProp) => {
+const Pagination = ({
+  take,
+  totalItems,
+  handlePageClick,
+  page
+}: IPaginationProp) => {
   const pageCount = Math.ceil(totalItems / take)
 
   function handleClick(data: { selected: number }) {
@@ -30,6 +36,7 @@ const Pagination = ({ take, totalItems, handlePageClick }: IPaginationProp) => {
         pageRangeDisplayed={1}
         marginPagesDisplayed={2}
         pageCount={pageCount}
+        forcePage={page}
         previousLabel="<"
         containerClassName={'paginate__container'}
         pageClassName={'paginate__Page'}

@@ -1,12 +1,9 @@
 import React from 'react'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
+import { useRouter } from 'next/router'
 
 import { useAppSelector } from '../../../store/hooks'
 
-import { chains, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
-
-import { GET_ALL_USERS } from './graphql'
+import { chains } from '../../../constants/tokenAddresses'
 
 import Header from '../../../components/Header'
 import TitleSection from '../../../components/TitleSection'
@@ -21,6 +18,7 @@ import votingPower from '../../../../public/assets/iconGradient/voting-power-ran
 import * as S from './styles'
 
 const Leaderboard = () => {
+  const router = useRouter()
   const [skip, setSkip] = React.useState<number>(0)
 
   const { chainId } = useAppSelector(state => state)
@@ -30,13 +28,18 @@ const Leaderboard = () => {
   const chain =
     process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
 
-  function handlePageClick(data: { selected: number }, take: number) {
-    setSkip(data.selected * take)
+  function handlePageClick(data: { selected: number }) {
+    router.push({
+      pathname: `${router.pathname}`,
+      query: { ...router.query, page: `${data.selected + 1}` }
+    })
   }
 
-  const { data: allUsers } = useSWR([GET_ALL_USERS], query =>
-    request(SUBGRAPH_URL, query)
-  )
+  const page = typeof router.query.page === 'string' ? router.query.page : '0'
+
+  React.useEffect(() => {
+    setSkip((parseInt(page) - 1) * take)
+  }, [page])
 
   return (
     <>
@@ -63,7 +66,7 @@ const Leaderboard = () => {
                 image={votingPower}
                 title="Voting Power Leaderboard"
               />
-              <VotingPowerTable skip={skip} take={take} />
+              {<VotingPowerTable skip={skip} take={take} />}
             </S.VotingPowerLeaderboard>
           </S.VoteContent>
         </>
@@ -71,7 +74,8 @@ const Leaderboard = () => {
       <Pagination
         take={take}
         skip={skip}
-        totalItems={allUsers?.users && allUsers?.users.length}
+        totalItems={500}
+        page={parseInt(page) - 1}
         handlePageClick={handlePageClick}
       />
     </>
