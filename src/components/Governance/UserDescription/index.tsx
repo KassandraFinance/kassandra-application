@@ -5,6 +5,8 @@ import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
+import { linkSnowtrace } from '../../../constants/tokenAddresses'
+
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import substr from '../../../utils/substr'
@@ -49,8 +51,6 @@ interface IUserDescriptionProps {
 }
 
 const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
   const [isOpenModal, setIsOpenModal] = React.useState(false)
   const [isOpenModalNft, setIsOpenModalNft] = React.useState(false)
   const [isStateSeeMore, setIsStateSeeMore] = React.useState(false)
@@ -67,13 +67,15 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
     nft: undefined
   })
 
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+
+  const { trackEventFunction } = useMatomoEcommerce()
+
   const isConnectWallet = userWalletAddress === userWalletUrl
 
   const walletUserString = Array.isArray(userWalletUrl)
     ? userWalletUrl[0]
     : userWalletUrl
-
-  const { trackEventFunction } = useMatomoEcommerce()
 
   React.useEffect(() => {
     if (!walletUserString) return
@@ -202,7 +204,7 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
                 </button>
               </CopyToClipboard>
               <a
-                href={`https://testnet.snowtrace.io/address/${walletUserString}`}
+                href={`${linkSnowtrace}/address/${walletUserString}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >

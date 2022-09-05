@@ -394,9 +394,9 @@ const Proposal = () => {
           return [
             ...baseArray,
             {
-              title: 'Voting Ends',
-              completed: true,
-              date: new Date(Number(created) * 1000)
+              title: 'Voting Close',
+              completed: false,
+              date: new Date(Number(votingClosed) * 1000)
                 .toLocaleString()
                 .split(', ')[0]
             },

@@ -47,6 +47,12 @@ export const ProxyContract = process.env.NEXT_PUBLIC_MASTER === '1' ?
   :
   '0x97e33051B09092C1301A90b964a74cA51C0b068B'
 
+export const linkSnowtrace = process.env.NEXT_PUBLIC_MASTER === '1' ?
+  'https://snowtrace.io'
+  :
+  'https://testnet.snowtrace.io'
+
+
 export interface Networks {
   Ropsten: string;
   Avalanche: string;
