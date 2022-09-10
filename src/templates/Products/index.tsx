@@ -63,7 +63,7 @@ const invertToken: { [key: string]: string } = {
   '0xbF5bFFbf7D94D3B29aBE6eb20089b8a9E3D229f7':
     '0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5', //QI
   '0xd0F41b1C9338eB9d374c83cC76b684ba3BB71557':
-    '0x2b2c81e08f1af8835a78bb2a90ae924ace0ea4be' //SAVAX
+    '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE' //SAVAX
 }
 
 const farmInfoYY: { [key: string]: IfarmInfoYYProps } = {
