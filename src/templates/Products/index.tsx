@@ -59,7 +59,11 @@ const invertToken: { [key: string]: string } = {
   '0xbbcED92AC9B958F88A501725f080c0360007e858':
     '0x50b7545627a5162f82a992c33b87adc75187b218', //WBTC
   '0x19707F26050Dfe7eb3C1b36E49276A088cE98752':
-    '0x60781C2586D68229fde47564546784ab3fACA982' // PNG
+    '0x60781C2586D68229fde47564546784ab3fACA982', // PNG
+  '0xbF5bFFbf7D94D3B29aBE6eb20089b8a9E3D229f7':
+    '0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5', //QI
+  '0xd0F41b1C9338eB9d374c83cC76b684ba3BB71557':
+    '0x2b2c81e08f1af8835a78bb2a90ae924ace0ea4be' //SAVAX
 }
 
 const farmInfoYY: { [key: string]: IfarmInfoYYProps } = {
@@ -79,7 +83,25 @@ const farmInfoYY: { [key: string]: IfarmInfoYYProps } = {
     farmName: 'Aave',
     urlFarmContract:
       'https://yieldyak.com/farms/detail/0xbbcED92AC9B958F88A501725f080c0360007e858'
-  } //WBTC
+  }, //WBTC
+
+  '0x19707F26050Dfe7eb3C1b36E49276A088cE98752': {
+    farmName: 'PNG',
+    urlFarmContract:
+      'https://yieldyak.com/farms/detail/0x19707F26050Dfe7eb3C1b36E49276A088cE98752'
+  }, //PNG
+
+  '0xbF5bFFbf7D94D3B29aBE6eb20089b8a9E3D229f7': {
+    farmName: 'BENQI',
+    urlFarmContract:
+      'https://yieldyak.com/farms/detail/0xbF5bFFbf7D94D3B29aBE6eb20089b8a9E3D229f7'
+  }, //QI
+
+  '0xd0F41b1C9338eB9d374c83cC76b684ba3BB71557': {
+    farmName: 'sAVAX',
+    urlFarmContract:
+      'https://yieldyak.com/farms/detail/0xd0F41b1C9338eB9d374c83cC76b684ba3BB71557'
+  } //sAVAX
 }
 
 export interface IfarmInfoYYProps {
@@ -285,9 +307,7 @@ const Products = ({ product }: Input) => {
   }
 
   React.useEffect(() => {
-    if (product.symbol === 'K3C') {
-      getDataYieldyak()
-    }
+    getDataYieldyak()
   }, [data])
 
   React.useEffect(() => {
@@ -511,7 +531,7 @@ const Products = ({ product }: Input) => {
                 icon={product.fundIcon}
               />
               <PoweredBy partners={product.partners} />
-              {coinGeckoResponse && <Distribution product={product} />}
+              {coinGeckoResponse && <Distribution />}
               <TokenDescription symbol={product.symbol} />
             </S.ProductDetails>
             <PoolOperations

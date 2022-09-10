@@ -67,14 +67,11 @@ export const Table = styled.table`
   }
 `
 
-interface ITableProps {
-  isOpenYield: boolean;
-}
-
 // eslint-disable-next-line prettier/prettier
-export const Tr = styled.tr<ITableProps>`
+export const Tr = styled.tr`
   display: grid;
-  grid-template-columns: repeat(${props => (props.isOpenYield ? 4 : 5)}, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+
   justify-items: center;
   align-items: center;
   height: 3.8rem;
@@ -125,7 +122,7 @@ export const BalanceCoin = styled.span`
   font-size: ${theme.font.sizes.font12};
 `
 
-export const yildyakContent = styled.a`
+export const YieldYakContent = styled.a`
   display: flex;
   gap: 0.4rem;
 
@@ -133,7 +130,7 @@ export const yildyakContent = styled.a`
   font-size: ${theme.font.sizes.font12};
 
   text-decoration: none;
-
+  cursor: pointer;
   p {
     color: ${theme.colors.grayDisabled};
   }
