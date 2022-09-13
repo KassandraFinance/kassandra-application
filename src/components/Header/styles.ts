@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import theme from '../../styles/theme'
 
 export const Wrapper = styled.div`
@@ -76,8 +76,12 @@ export const Menu = styled.nav`
     min-width: 100%;
   }
 `
+interface IMenuLinkProps {
+  active: boolean;
+}
 
-export const MenuLink = styled.a`
+// eslint-disable-next-line prettier/prettier
+export const MenuLink = styled.a<IMenuLinkProps>`
   position: relative;
 
   margin-right: 2.4rem;
@@ -86,39 +90,58 @@ export const MenuLink = styled.a`
 
   color: ${theme.colors.snow};
   font-size: ${theme.font.sizes.font16};
-  font-weight: ${theme.font.weight.light};
+  font-weight: ${props =>
+    props.active ? theme.font.weight.semibold : theme.font.weight.light};
   text-decoration: none;
   text-align: center;
 
-  outline: none;
   cursor: pointer;
 
-  &:hover,
-  &:focus-within {
+  ${props =>
+    props.active &&
+    `
     &::after {
       content: '';
+
       position: absolute;
+      left: 0%;
+      width: 100%;
 
       display: block;
-      height: 0.3rem;
-      margin-top: 1.2rem;
+      height: 0.2rem;
 
       background-color: ${theme.colors.cyan};
       border-radius: 0.3rem;
-
-      animation: hoverAnimation 0.2s forwards;
+      box-shadow: 0 0 0.6rem ${theme.colors.cyan};
     }
+  `}
 
-    @keyframes hoverAnimation {
-      from {
-        width: 0;
-        left: 50%;
-      }
-      to {
-        width: 100%;
-        left: 0;
-      }
-    }
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+
+    left: 50%;
+    width: 0;
+    height: 0.2rem;
+
+    background-color: ${theme.colors.cyan};
+    border-radius: 0.1rem;
+    box-shadow: 0 0 0.6rem ${theme.colors.cyan};
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: width left;
+
+    ${({ active }: IMenuLinkProps) => css`
+      left: ${active ? '0' : '50%'};
+      width: ${active ? '100%' : '0'};
+    `}
+  }
+
+  &:hover::after {
+    left: 0%;
+    width: 100%;
   }
 
   @media (max-width: 540px) {
@@ -208,7 +231,6 @@ export const MenuBottom = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    // width: 100%;
     height: 6.8rem;
     padding: 1.6rem;
 
@@ -216,10 +238,12 @@ export const MenuBottom = styled.div`
   }
 
   .button-mobile {
+    gap: 0.5rem;
     width: fit-content;
-    padding: 1.2rem;
+    padding: 1.2rem 2rem;
 
-    font-size: ${theme.font.sizes.font12};
+    font-size: ${theme.font.sizes.font14};
+    font-weight: ${theme.font.weight.normal};
     border: 0.1rem solid ${theme.colors.snow};
     transition: 300ms;
 
@@ -256,8 +280,15 @@ export const ButtonOptions = styled.button`
   height: 3.2rem;
 
   background-color: rgba(255, 255, 255, 0.1);
-  border: none;
+  border: 0.1rem solid transparent;
   border-radius: 50%;
+
+  transition: all 0.2s;
+  cursor: pointer;
+
+  :hover {
+    border: 0.1rem solid rgba(255, 255, 255, 0.11);
+  }
 `
 
 export const MenuContainer = styled.div`

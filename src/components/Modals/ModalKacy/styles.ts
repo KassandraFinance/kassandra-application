@@ -8,12 +8,11 @@ export const KacyAmount = styled.div`
     gap: 0.5rem;
 
     width: fit-content;
-    padding: 1.2rem;
+    padding: 2rem;
 
     color: ${theme.colors.snow};
     font-weight: ${theme.font.weight.light};
     font-size: ${theme.font.sizes.font12};
-    line-height: 100%;
 
     border: 0.1rem solid ${theme.colors.snow};
     border-radius: ${theme.border.radius};
