@@ -3,12 +3,12 @@ import Link from 'next/link'
 
 import * as S from './styles'
 
-interface IModalSocialMediaMobileProps {
+interface IModalInstitucionalLinksMobileProps {
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // eslint-disable-next-line prettier/prettier
-const ModalSocialMediaMobile = ({ setModalOpen }: IModalSocialMediaMobileProps) => {
+const ModalInstitucionalLinksMobile = ({ setModalOpen }: IModalInstitucionalLinksMobileProps) => {
   return (
     <>
       <S.Backdrop onClick={() => setModalOpen(false)} />
@@ -68,4 +68,4 @@ const ModalSocialMediaMobile = ({ setModalOpen }: IModalSocialMediaMobileProps) 
   )
 }
 
-export default ModalSocialMediaMobile
+export default ModalInstitucionalLinksMobile

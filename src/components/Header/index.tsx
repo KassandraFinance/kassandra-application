@@ -16,7 +16,7 @@ import ModalAlert from '../Modals/ModalAlert'
 import ModalLogOut from '../Modals/ModalLogOut'
 import ModalWaitingList from '../Modals/ModalWaitingList'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
-import ModalSocialMediaMobile from '../Modals/ModalSocialMediaMobile'
+import ModalInstitucionalLinksMobile from '../Modals/ModalInstitucionalLinksMobile'
 
 import options from '../../../public/assets/utilities/options.svg'
 import kacy64 from '../../../public/assets/logos/kacy-64.svg'
@@ -263,7 +263,7 @@ const Header = () => {
         </S.Menu>
       </S.Wrapper>
       {isModalSocialMedia && (
-        <ModalSocialMediaMobile setModalOpen={setIsModalSocialMedia} />
+        <ModalInstitucionalLinksMobile setModalOpen={setIsModalSocialMedia} />
       )}
 
       {isModalWallet && <ModalWalletConnect setModalOpen={setIsModalWallet} />}
