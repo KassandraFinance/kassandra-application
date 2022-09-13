@@ -30,7 +30,6 @@ export default function Explore() {
       <Header />
 
       <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
         <BreadcrumbItem href={`/explore`} isLastPage>
           Explore
         </BreadcrumbItem>
