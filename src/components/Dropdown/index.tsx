@@ -19,11 +19,13 @@ interface IDropdownProps {
   nameOnHeader: string;
   linkPage: Array<ILinkPage>;
   adaptToResponsiveSize?: boolean;
+  isActive?: boolean;
 }
 
 const Dropdown = ({
   nameOnHeader,
   linkPage,
+  isActive,
   adaptToResponsiveSize
 }: IDropdownProps) => {
   const [isDropdown, setIsDropdown] = React.useState<boolean>(false)
@@ -32,6 +34,7 @@ const Dropdown = ({
   return (
     <S.Dropdown>
       <S.DropButton
+        isActive={isActive ? isActive : false}
         onTouchStartCapture={() => setIsDropdown(true)}
         onMouseOver={() => setIsDropdown(true)}
         onMouseOut={(event: any) => {

@@ -1,6 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import substr from '../../utils/substr'
 import { useAppSelector } from '../../store/hooks'
@@ -15,7 +16,7 @@ import ModalAlert from '../Modals/ModalAlert'
 import ModalLogOut from '../Modals/ModalLogOut'
 import ModalWaitingList from '../Modals/ModalWaitingList'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
-import ModalSocialMediaMobile from '../Modals/ModalSocialMediaMobile'
+import ModalInstitucionalLinksMobile from '../Modals/ModalInstitucionalLinksMobile'
 
 import options from '../../../public/assets/utilities/options.svg'
 import kacy64 from '../../../public/assets/logos/kacy-64.svg'
@@ -41,6 +42,8 @@ const Header = () => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
 
+  const router = useRouter()
+
   return (
     <>
       <S.Wrapper id="top">
@@ -62,24 +65,36 @@ const Header = () => {
               <Image src={kacy64} width={64} height={64} alt="Kassandra" />
             </a>
           </Link>
-          <Link href="/explore">
-            <S.MenuLink>Invest</S.MenuLink>
+          <Link href="/explore" passHref>
+            <S.MenuLink
+              active={router.asPath === '/explore' || router.asPath === '/'}
+            >
+              Invest
+            </S.MenuLink>
           </Link>
-          <Link href="/farm?tab=stake">
-            <S.MenuLink>Stake</S.MenuLink>
+          <Link href="/farm?tab=stake" passHref>
+            <S.MenuLink active={router.pathname === '/farm'}>Stake</S.MenuLink>
           </Link>
           <S.MenuLink
+            active={router.asPath === '/create'}
             onClick={() => {
               setIsModalWaitingList(true)
             }}
           >
             Create
           </S.MenuLink>
-          <S.MenuLink onClick={() => setIsModalWaitingList(true)}>
+          <S.MenuLink
+            onClick={() => setIsModalWaitingList(true)}
+            active={router.asPath === '/manage'}
+          >
             Manage
           </S.MenuLink>
           <DropdownInvest
             nameOnHeader="Governance"
+            isActive={
+              router.asPath.substring(0, 4) === '/gov' ||
+              router.asPath.substring(0, 8) === '/profile'
+            }
             adaptToResponsiveSize={true}
             linkPage={[
               {
@@ -105,6 +120,10 @@ const Header = () => {
             <DropdownInvest
               nameOnHeader="Learn"
               linkPage={[
+                {
+                  name: 'Home',
+                  href: 'https://kassandra.finance/'
+                },
                 {
                   name: 'Investors',
                   href: 'https://kassandra.finance/investors'
@@ -207,14 +226,14 @@ const Header = () => {
                   className="button-mobile"
                   icon={
                     <svg
-                      width="12"
-                      height="11"
-                      viewBox="0 0 12 11"
+                      width="11"
+                      height="10"
+                      viewBox="0 0 11 10"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        d="M8.48356 0.550049C10.3804 0.550049 11.5 1.64157 11.5 3.51004H9.17289V3.5291C8.09287 3.5291 7.21733 4.38272 7.21733 5.4357C7.21733 6.48868 8.09287 7.3423 9.17289 7.3423H11.5V7.51389C11.5 9.35852 10.3804 10.45 8.48356 10.45H3.51644C1.61956 10.45 0.5 9.35852 0.5 7.51389V3.48621C0.5 1.64157 1.61956 0.550049 3.51644 0.550049H8.48356ZM11.0893 4.32988C11.3161 4.32988 11.5 4.50913 11.5 4.73026V6.12208C11.4974 6.34213 11.315 6.51989 11.0893 6.52246H9.21689C8.67013 6.52963 8.19202 6.16465 8.068 5.64543C8.00589 5.32311 8.09308 4.99051 8.30619 4.73677C8.5193 4.48303 8.83654 4.33409 9.17289 4.32988H11.0893ZM9.43689 4.97335H9.256C9.14494 4.97208 9.03798 5.0142 8.95899 5.09032C8.88 5.16644 8.83556 5.27022 8.83556 5.3785C8.83554 5.60568 9.02301 5.79058 9.256 5.79319H9.43689C9.66909 5.79319 9.85733 5.60966 9.85733 5.38327C9.85733 5.15688 9.66909 4.97335 9.43689 4.97335ZM6.21022 2.6902H3.10578C2.87547 2.69019 2.68801 2.87083 2.68533 3.09535C2.68533 3.32253 2.87278 3.50743 3.10578 3.51004H6.21022C6.44243 3.51004 6.63067 3.32651 6.63067 3.10012C6.63067 2.87373 6.44243 2.6902 6.21022 2.6902Z"
+                        d="M7.98356 0C9.88044 0 11 1.10255 11 2.98989H8.67289V3.00915C7.59287 3.00915 6.71733 3.87138 6.71733 4.935C6.71733 5.99862 7.59287 6.86086 8.67289 6.86086H11V7.03418C11 8.89745 9.88044 10 7.98356 10H3.01644C1.11956 10 0 8.89745 0 7.03418V2.96582C0 1.10255 1.11956 0 3.01644 0H7.98356ZM10.5893 3.81801C10.8161 3.81801 11 3.99908 11 4.22244V5.62831C10.9974 5.85058 10.815 6.03014 10.5893 6.03274H8.71689C8.17013 6.03998 7.69202 5.67132 7.568 5.14685C7.50589 4.82127 7.59308 4.48531 7.80619 4.22901C8.0193 3.9727 8.33654 3.82226 8.67289 3.81801H10.5893ZM8.93689 4.46798H8.756C8.64494 4.4667 8.53798 4.50924 8.45899 4.58613C8.38 4.66302 8.33556 4.76785 8.33556 4.87723C8.33554 5.1067 8.52301 5.29346 8.756 5.2961H8.93689C9.16909 5.2961 9.35733 5.11072 9.35733 4.88204C9.35733 4.65336 9.16909 4.46798 8.93689 4.46798ZM5.71022 2.16177H2.60578C2.37547 2.16176 2.18801 2.34422 2.18533 2.57102C2.18533 2.80049 2.37278 2.98725 2.60578 2.98989H5.71022C5.94243 2.98989 6.13067 2.80451 6.13067 2.57583C6.13067 2.34715 5.94243 2.16177 5.71022 2.16177Z"
                         fill="white"
                       />
                     </svg>
@@ -244,7 +263,7 @@ const Header = () => {
         </S.Menu>
       </S.Wrapper>
       {isModalSocialMedia && (
-        <ModalSocialMediaMobile setModalOpen={setIsModalSocialMedia} />
+        <ModalInstitucionalLinksMobile setModalOpen={setIsModalSocialMedia} />
       )}
 
       {isModalWallet && <ModalWalletConnect setModalOpen={setIsModalWallet} />}

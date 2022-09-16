@@ -48,6 +48,7 @@ import Distribution from './Distribution'
 import TokenDescription from './TokenDescription'
 import ShareImageModal from './ShareImageModal'
 import SharedImage from './SharedImage'
+import ErrorSubgraph from '../../components/ErrorSubgraph'
 
 import * as S from './styles'
 
@@ -514,6 +515,7 @@ const Products = ({ product }: Input) => {
               </S.IntroCharts>
               <ChartProducts crpPoolAddress={product.sipAddress} />
               <ScrollUpButton />
+              <ErrorSubgraph />
               <Change crpPoolAddress={product.sipAddress} />
               <MyAsset
                 product={product}

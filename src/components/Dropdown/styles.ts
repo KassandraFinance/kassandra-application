@@ -1,5 +1,8 @@
 import styled, { css } from 'styled-components'
 import theme from '../../styles/theme'
+interface IDropdownProps {
+  isActive: boolean;
+}
 
 export const Dropdown = styled.div`
   position: relative;
@@ -11,33 +14,11 @@ export const Dropdown = styled.div`
     img {
       transform: rotate(180deg);
     }
-
-    button::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-
-      height: 0.4rem;
-
-      border-radius: 0.3rem;
-      background-color: ${theme.colors.cyan};
-      animation: hoverAnimation 0.2s forwards;
-    }
-
-    @keyframes hoverAnimation {
-      from {
-        width: 0;
-        left: 50%;
-      }
-      to {
-        width: 100%;
-        left: 0;
-      }
-    }
   }
 `
 
-export const DropButton = styled.button`
+// eslint-disable-next-line prettier/prettier
+export const DropButton = styled.button<IDropdownProps>`
   position: relative;
 
   display: inline-block;
@@ -47,14 +28,32 @@ export const DropButton = styled.button`
 
   font-family: 'Rubik', sans-serif;
   font-size: ${theme.font.sizes.font16};
-  font-weight: ${theme.font.weight.light};
+  font-weight: ${props =>
+    props.isActive ? theme.font.weight.semibold : theme.font.weight.light};
   color: ${theme.colors.snow};
   text-transform: capitalize;
 
   background-color: transparent;
   border: none;
-  outline: none;
   cursor: pointer;
+
+  ${props =>
+    props.isActive &&
+    `
+    :after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+
+      left: 0%;
+      width: 100%;
+      height: 0.2rem;
+
+      background-color: ${theme.colors.cyan};
+      border-radius: 0.1rem;
+      box-shadow: 0 0 0.6rem ${theme.colors.cyan};
+    }
+  `}
 
   img {
     position: absolute;
@@ -93,8 +92,9 @@ interface IDropdownContentProps {
 // prettier-ignore
 export const DropdownContent = styled.div<IDropdownContentProps>`
   position: absolute;
-  left: 0rem;
-  z-index: 1;
+  left: -0.2rem;
+  top: 3.8rem;
+  z-index: 2;
 
   display: ${props => (props.isDropdown ? 'block' : 'none')};
   min-width: fit-content;
