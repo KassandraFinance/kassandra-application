@@ -11,7 +11,7 @@ export const KacyAmount = styled.div`
     padding: 2rem;
 
     color: ${theme.colors.snow};
-    font-weight: ${theme.font.weight.light};
+    font-weight: ${theme.font.weight.normal};
     font-size: ${theme.font.sizes.font12};
 
     border: 0.1rem solid ${theme.colors.snow};

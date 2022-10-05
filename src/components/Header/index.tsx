@@ -67,7 +67,10 @@ const Header = () => {
           </Link>
           <Link href="/explore" passHref>
             <S.MenuLink
-              active={router.asPath === '/explore' || router.asPath === '/'}
+              active={
+                router.asPath.substring(0, 8) === '/explore' ||
+                router.asPath === '/'
+              }
             >
               Invest
             </S.MenuLink>
