@@ -188,7 +188,7 @@ export const CardWrapper = styled.div`
 `
 
 export const DescriptionTable = styled.section`
-  width: 100%;
+  max-width: 100%;
   margin-top: 4rem;
   margin-right: auto;
   margin-bottom: 0;
@@ -202,10 +202,12 @@ export const DescriptionTable = styled.section`
   border-radius: 1.2rem;
 
   @media (min-width: 1024px) {
+    max-width: 64rem;
+
     margin-top: 4.8rem;
-    margin-right: auto;
+    margin-right: 0;
     margin-bottom: 0;
-    margin-left: auto;
+    margin-left: 0;
     padding: 2.4rem;
   }
 
