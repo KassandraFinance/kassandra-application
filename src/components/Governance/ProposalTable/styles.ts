@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
 
 export const ProposalTable = styled.section`
@@ -273,4 +273,10 @@ export const StateMutability = styled.span<IStatusProposalColor>`
       height: 1.4rem;
     }
   }
+`
+
+export const LoadingContainer = styled.tr`
+  ${() => css`
+    height: 52.5rem;
+  `}
 `

@@ -15,6 +15,8 @@ import useGovernance from '../../../hooks/useGovernance'
 import { GET_PROPOSALS } from './graphql'
 
 import * as S from './styles'
+import { Divider } from '../../Footer/styles'
+import Loading from '../../Loading'
 
 const statsSecundaryProposalLibColor: { [key: string]: string } = {
   'voting open': '#E843C4',
@@ -122,56 +124,69 @@ export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
           </tr>
         </S.Th>
         <tbody>
-          {proposalsList?.map(proposal => (
-            <Link key={proposal.id} href={`/gov/proposals/${proposal.number}`}>
-              <tr>
-                <S.Td colSpan={2}>
-                  <div className="td-container">
-                    <S.TextProposal>
-                      {proposal.number.toString().padStart(2, '0')}{' '}
-                      {getTitleProposal(proposal.description.replace('["', ''))}
-                    </S.TextProposal>
+          {proposalsList.length > 0 ? (
+            proposalsList?.map(proposal => (
+              <Link
+                key={proposal.id}
+                href={`/gov/proposals/${proposal.number}`}
+              >
+                <tr>
+                  <S.Td colSpan={2}>
+                    <div className="td-container">
+                      <S.TextProposal>
+                        {proposal.number.toString().padStart(2, '0')}{' '}
+                        {getTitleProposal(
+                          proposal.description.replace('["', '')
+                        )}
+                      </S.TextProposal>
 
-                    <S.StatusProposal
-                      statusColor={
-                        statsPrimaryProposalLibColor[
-                          proposal.state[0].toLowerCase()
-                        ]
-                      }
-                    >
-                      {proposal.state[0]}
-                    </S.StatusProposal>
+                      <S.StatusProposal
+                        statusColor={
+                          statsPrimaryProposalLibColor[
+                            proposal.state[0].toLowerCase()
+                          ]
+                        }
+                      >
+                        {proposal.state[0]}
+                      </S.StatusProposal>
 
-                    <S.TimeFrame>
-                      {proposal.state[1]}{' '}
-                      {proposal.state[3] === '1' ? 'until' : 'in'}{' '}
-                      {proposal.timeToEndProposal}
-                    </S.TimeFrame>
+                      <S.TimeFrame>
+                        {proposal.state[1]}{' '}
+                        {proposal.state[3] === '1' ? 'until' : 'in'}{' '}
+                        {proposal.timeToEndProposal}
+                      </S.TimeFrame>
 
-                    <S.StateMutability
-                      statusColor={
-                        statsSecundaryProposalLibColor[
-                          proposal.state[1].toLowerCase()
-                        ]
-                      }
-                    >
-                      <span>{proposal.state[1]}</span>
-                      {proposal.state[2] && (
-                        <div className="status-icon-container">
-                          <Image
-                            className="status-icon"
-                            src={proposal.state[2]}
-                            alt=""
-                            layout="responsive"
-                          />
-                        </div>
-                      )}
-                    </S.StateMutability>
-                  </div>
-                </S.Td>
-              </tr>
-            </Link>
-          ))}
+                      <S.StateMutability
+                        statusColor={
+                          statsSecundaryProposalLibColor[
+                            proposal.state[1].toLowerCase()
+                          ]
+                        }
+                      >
+                        <span>{proposal.state[1]}</span>
+                        {proposal.state[2] && (
+                          <div className="status-icon-container">
+                            <Image
+                              className="status-icon"
+                              src={proposal.state[2]}
+                              alt=""
+                              layout="responsive"
+                            />
+                          </div>
+                        )}
+                      </S.StateMutability>
+                    </div>
+                  </S.Td>
+                </tr>
+              </Link>
+            ))
+          ) : (
+            <S.LoadingContainer>
+              <td colSpan={2}>
+                <Loading marginTop={0} />
+              </td>
+            </S.LoadingContainer>
+          )}
         </tbody>
       </table>
     </S.ProposalTable>
