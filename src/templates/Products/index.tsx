@@ -185,26 +185,19 @@ const Products = ({ product }: Input) => {
     token: string,
     balance: string
   ): Promise<{ balancePoolYY: Big, decimalsYY: BigNumber }> {
-    const providerMetaMask = await detectEthereumProvider()
-    const connect = localStorage.getItem('walletconnect')
+    const decimals: string = await getDecimals(token)
 
-    if (providerMetaMask || connect) {
-      const decimals: string = await getDecimals(token)
+    const tokensShares = await convertBalanceYRTtoWrap(
+      new BigNumber(Big(balance).mul(Big('10').pow(18)).toFixed(0, 0)),
+      token
+    )
 
-      const tokensShares = await convertBalanceYRTtoWrap(
-        new BigNumber(Big(balance).mul(Big('10').pow(18)).toFixed(0, 0)),
-        token
-      )
-
-      return {
-        balancePoolYY: Big(tokensShares.toString()).div(
-          Big(10).pow(Number(decimals))
-        ),
-        decimalsYY: new BigNumber(decimals)
-      }
+    return {
+      balancePoolYY: Big(tokensShares.toString()).div(
+        Big(10).pow(Number(decimals))
+      ),
+      decimalsYY: new BigNumber(decimals)
     }
-
-    return { balancePoolYY: Big(balance), decimalsYY: new BigNumber(18) }
   }
 
   async function getTokenDetails() {
