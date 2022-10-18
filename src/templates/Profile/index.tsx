@@ -136,7 +136,8 @@ const Profile = () => {
   const { getPriceKacyAndLP } = usePriceLP()
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const profileAddress = router.query.profileAddress
+  // const profileAddress = router.query.profileAddress
+  const profileAddress = userWalletAddress
   const isSelectQueryTab = router.query.tab
   const walletUserString = profileAddress
     ? Array.isArray(profileAddress)
