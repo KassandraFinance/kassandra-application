@@ -10,9 +10,8 @@ import { toChecksumAddress } from 'web3-utils'
 import { ERC20 } from '../../hooks/useERC20Contract'
 import useStakingContract from '../../hooks/useStakingContract'
 import usePriceLP from '../../hooks/usePriceLP'
-import { useAppSelector } from '../../store/hooks'
 import useVotingPower from '../../hooks/useVotingPower'
-import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+// import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 import { GET_PROFILE } from './graphql'
 import {
@@ -100,7 +99,12 @@ interface ImyFundsType {
   [key: string]: string;
 }
 
-const Profile = () => {
+interface IProfileProps {
+  chainId: number,
+  userWalletAddress: string;
+}
+
+const Profile = ({ chainId, userWalletAddress}: IProfileProps) => {
   const [assetsValueInWallet, setAssetsValueInWallet] =
     React.useState<IAssetsValueWalletProps>({ '': new BigNumber(-1) })
   const [cardstakesPool, setCardStakesPool] = React.useState<IKacyLpPool[]>([])
@@ -129,15 +133,13 @@ const Profile = () => {
   })
 
   const router = useRouter()
-  const { chainId, userWalletAddress } = useAppSelector(state => state)
 
   const votingPower = useVotingPower(Staking)
   const { userInfo } = useStakingContract(Staking)
   const { getPriceKacyAndLP } = usePriceLP()
-  const { trackEventFunction } = useMatomoEcommerce()
+  // const { trackEventFunction } = useMatomoEcommerce()
 
   const profileAddress = router.query.profileAddress
-
   const isSelectQueryTab = router.query.tab
   const walletUserString = profileAddress
     ? Array.isArray(profileAddress)
