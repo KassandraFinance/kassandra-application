@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@datapunt/matomo-tracker-react": "^0.5.1",
-    "@metamask/detect-provider": "^1.2.0",
+    "@metamask/detect-provider": "^2.0.0",
     "@prisma/client": "3.13.0",
     "@reduxjs/toolkit": "^1.8.3",
     "@tippyjs/react": "^4.2.6",
