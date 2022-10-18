@@ -50,11 +50,13 @@ const useConnect = () => {
   const getAccounts = React.useCallback(async () => {
     const accounts = await web3.eth.getAccounts()
     handleAccountsChanged(accounts)
+    sessionStorage.setItem('userWalletAddress', JSON.stringify(accounts))
   }, [])
 
   const getChainId = React.useCallback(async () => {
     const id = await web3.eth.getChainId()
     dispatch(setChainId(id))
+    sessionStorage.setItem('chainId', JSON.stringify(id))
   }, [])
 
   const handleDisconnected = React.useCallback(() => {

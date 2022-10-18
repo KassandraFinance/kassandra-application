@@ -99,12 +99,12 @@ interface ImyFundsType {
   [key: string]: string;
 }
 
-interface IProfileProps {
-  chainId: number,
-  userWalletAddress: string;
-}
+// interface IProfileProps {
+//   chainId: number,
+//   userWalletAddress: string;
+// }
 
-const Profile = ({ chainId, userWalletAddress}: IProfileProps) => {
+const Profile = () => {
   const [assetsValueInWallet, setAssetsValueInWallet] =
     React.useState<IAssetsValueWalletProps>({ '': new BigNumber(-1) })
   const [cardstakesPool, setCardStakesPool] = React.useState<IKacyLpPool[]>([])
@@ -139,7 +139,10 @@ const Profile = ({ chainId, userWalletAddress}: IProfileProps) => {
   const { getPriceKacyAndLP } = usePriceLP()
   // const { trackEventFunction } = useMatomoEcommerce()
 
-  const profileAddress = router.query.profileAddress
+  const userWalletAddress = sessionStorage.getItem("userWalletAddress") || '';
+  const chainId = Number(sessionStorage.getItem("chainId")) || 0;
+
+  const profileAddress = router.query.address
   const isSelectQueryTab = router.query.tab
   const walletUserString = profileAddress
     ? Array.isArray(profileAddress)
@@ -408,7 +411,7 @@ const Profile = ({ chainId, userWalletAddress}: IProfileProps) => {
 
       <S.ProfileContainer>
         <UserDescription userWalletUrl={profileAddress} />
-        <p>rota {router.query.profileAddress}</p>
+        <p>rota {router.query.address}</p>
         <p>{userWalletAddress}</p>
         <p>{Number(chainId)} and {chain.chainId}</p>
 
