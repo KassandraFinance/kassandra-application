@@ -138,6 +138,7 @@ const Profile = () => {
 
   // const profileAddress = router.query.profileAddress
   const profileAddress = userWalletAddress
+
   const isSelectQueryTab = router.query.tab
   const walletUserString = profileAddress
     ? Array.isArray(profileAddress)
@@ -406,6 +407,8 @@ const Profile = () => {
 
       <S.ProfileContainer>
         <UserDescription userWalletUrl={profileAddress} />
+        <p><strong>{userWalletAddress}</strong>{userWalletAddress.length === 0}</p>
+        <p><strong>{Number(chainId)} and {chain.chainId}</strong>{Number(chainId) !== chain.chainId}</p>
 
         {userWalletAddress.length === 0 && Number(chainId) !== chain.chainId ? (
           <Web3Disabled
