@@ -163,6 +163,10 @@ const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
 
   return (
     <S.MyAsset>
+      <p>{userWalletAddress}</p>
+      <p>
+        {Number(chainId)} and {chain.chainId}
+      </p>
       <S.TitleWrapper>
         <S.Title>
           <Image src={iconBar} alt="" width={18} height={18} />

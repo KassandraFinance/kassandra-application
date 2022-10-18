@@ -50,6 +50,10 @@ const Gov = () => {
         ) : (
           <>
             <TitleSection image={overview} title="Overview" />
+            <p>{userWalletAddress}</p>
+            <p>
+              {Number(chainId)} and {chain.chainId}
+            </p>
             <Overview />
             <S.OverViewLinks>
               <ExternalLink hrefNext="farm?tab=stake" text="Obtain more" />

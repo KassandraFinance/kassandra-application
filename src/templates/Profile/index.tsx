@@ -136,8 +136,7 @@ const Profile = () => {
   const { getPriceKacyAndLP } = usePriceLP()
   const { trackEventFunction } = useMatomoEcommerce()
 
-  // const profileAddress = router.query.profileAddress
-  const profileAddress = userWalletAddress
+  const profileAddress = router.query.profileAddress
 
   const isSelectQueryTab = router.query.tab
   const walletUserString = profileAddress
@@ -407,8 +406,9 @@ const Profile = () => {
 
       <S.ProfileContainer>
         <UserDescription userWalletUrl={profileAddress} />
-        <p><strong>{userWalletAddress}</strong>{userWalletAddress.length === 0}</p>
-        <p><strong>{Number(chainId)} and {chain.chainId}</strong>{Number(chainId) !== chain.chainId}</p>
+        <p>rota {router.query.profileAddress}</p>
+        <p>{userWalletAddress}</p>
+        <p>{Number(chainId)} and {chain.chainId}</p>
 
         {userWalletAddress.length === 0 && Number(chainId) !== chain.chainId ? (
           <Web3Disabled
