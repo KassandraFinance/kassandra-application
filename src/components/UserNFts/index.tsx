@@ -132,9 +132,9 @@ const UserNFTs = ({
 
   const handleCheckUrl = (image: string) => {
     if (image) {
-      const hashNft = image.match(/(?<=^ipfs:\/\/.*)[a-zA-Z0-9]{46}.*/)
+      const hashNft = image.match(/(^ipfs:\/\/.*)([a-zA-Z0-9]{46}.*)/)
 
-      return hashNft ? `https://ipfs.infura.io/ipfs/${hashNft[0]}` : image
+      return hashNft ? `https://infura-ipfs.io/ipfs/${hashNft[2]}` : image
     }
   }
 

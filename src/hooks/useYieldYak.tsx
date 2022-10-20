@@ -3,9 +3,11 @@
 import React from 'react'
 import { AbiItem } from "web3-utils"
 import BigNumber from 'bn.js'
+import Web3 from 'web3'
 
-import web3 from '../utils/web3'
 import YieldYak from "../constants/abi/YieldYak.json"
+
+const web3 = new Web3('https://api.avax.network/ext/bc/C/rpc')
 
 const useYieldYak = () => {
   return React.useMemo(() => {

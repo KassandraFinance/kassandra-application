@@ -13,6 +13,7 @@ import { GET_INFO_USERS } from './graphql'
 import ImageProfile from '../ImageProfile'
 
 import * as S from './styles'
+import Loading from '../../Loading'
 
 interface IVotingPowerRankProps {
   address: string;
@@ -127,7 +128,7 @@ export const VotingPowerTable = ({ skip = 0, take }: IVotingPowerProps) => {
           </S.Tr>
         </thead>
         <tbody>
-          {votingPowerRank &&
+          {votingPowerRank[0].address ? (
             votingPowerRank.map((item, index) => (
               <Link
                 key={item.address}
@@ -153,7 +154,14 @@ export const VotingPowerTable = ({ skip = 0, take }: IVotingPowerProps) => {
                   <S.Td className="proposals-voted">{item.votes}</S.Td>
                 </S.Tr>
               </Link>
-            ))}
+            ))
+          ) : (
+            <S.LoadingContainer>
+              <td>
+                <Loading marginTop={0} />
+              </td>
+            </S.LoadingContainer>
+          )}
         </tbody>
       </S.Table>
     </S.VotingPowerTable>

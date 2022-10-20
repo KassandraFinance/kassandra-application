@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
 
 export const VotingPowerTable = styled.section`
@@ -353,4 +353,14 @@ export const StateMutability = styled.span`
       font-size: 1rem;
     }
   }
+`
+
+export const LoadingContainer = styled.tr`
+  ${() => css`
+    height: 36.3rem;
+
+    @media (max-width: 540px) {
+      height: 32.3rem;
+    }
+  `}
 `
