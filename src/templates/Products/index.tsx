@@ -36,6 +36,7 @@ import PoolOperations from '../../components/PoolOperations'
 import ScrollUpButton from '../../components/ScrollUpButton'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import PoweredBy from './PoweredBy'
+import ActivityTable from './ActivityTable'
 
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
 
@@ -525,6 +526,7 @@ const Products = ({ product }: Input) => {
               />
               <PoweredBy partners={product.partners} />
               {coinGeckoResponse && <Distribution />}
+              <ActivityTable />
               <TokenDescription symbol={product.symbol} />
             </S.ProductDetails>
             <PoolOperations

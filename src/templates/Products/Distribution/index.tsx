@@ -43,7 +43,7 @@ const Distribution = () => {
               {poolTokensArray.slice(0, -1).map((coin: ITokenDetails) => {
                 return (
                   <S.Tr key={`key_${coin.name}`}>
-                    <S.Td change24h={false}>
+                    <S.Td>
                       <S.Coin width={110}>
                         <img src={coin.image || none.src} alt="" />
                         <span>
@@ -56,10 +56,10 @@ const Distribution = () => {
                         </span>
                       </S.Coin>
                     </S.Td>
-                    <S.Td change24h={false}>
+                    <S.Td>
                       <S.Coin width={60}>{`${coin.allocation || 0}%`}</S.Coin>
                     </S.Td>
-                    <S.Td change24h={false}>
+                    <S.Td>
                       {`$ ${BNtoDecimal(
                         Big(coin.balance_in_pool || 0).times(
                           Big(coin?.price || 0)
