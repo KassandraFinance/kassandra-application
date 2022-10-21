@@ -13,7 +13,7 @@ import { BNtoDecimal } from '../../../utils/numerals'
 import { abbreviateNumber } from '../../../utils/abbreviateNumber'
 
 import Kacy from './Kacy'
-import ModalBuyKacy from '../../../components/Modals/ModalBuyKacy'
+import ModalBuyKacyOnPangolin from '../ModalBuyKacyOnPangolin'
 import Button from '../../Button'
 import ModalWalletConnect from '../ModalWalletConnect'
 
@@ -162,8 +162,12 @@ const ModalKacy = () => {
         />
       )}
 
-      <ModalBuyKacy modalOpen={isOpenModal} setModalOpen={setIsOpenModal} />
-
+      {isOpenModal && (
+        <ModalBuyKacyOnPangolin
+          modalOpen={isOpenModal}
+          setModalOpen={setIsOpenModal}
+        />
+      )}
       {isModalWallet && <ModalWalletConnect setModalOpen={setIsModalWallet} />}
     </>
   )

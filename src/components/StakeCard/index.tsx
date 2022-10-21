@@ -40,6 +40,7 @@ import ModalRequestUnstake from '../Modals/ModalRequestUnstake'
 import ModalCancelUnstake from '../Modals/ModalCancelUnstake'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalStakeAndWithdraw from '../Modals/ModalStakeAndWithdraw'
+import ModalBuyKacyOnPangolin from '../Modals/ModalBuyKacyOnPangolin'
 import Loading from '../Loading'
 
 import Details from './Details'
@@ -105,6 +106,8 @@ const StakeCard = ({
   const [isDetails, setIsDetails] = React.useState<boolean>(false)
   const [isModalStake, setIsModalStake] = React.useState<boolean>(false)
   const [isModalWallet, setIsModaWallet] = React.useState<boolean>(false)
+  const [isOpenModalPangolin, setIsOpenModalPangolin] =
+    React.useState<boolean>(false)
   const [isModalCancelUnstake, setIsModalCancelUnstake] =
     React.useState<boolean>(false)
   const [isModalRequestUnstake, setIsModalRequestUnstake] =
@@ -553,6 +556,7 @@ const StakeCard = ({
                     poolPrice={poolPrice}
                     kacyPrice={kacyPrice}
                     link={properties.link ?? ''}
+                    setIsOpenModal={setIsOpenModalPangolin}
                   />
                 )}
               </S.ButtonContainer>
@@ -596,6 +600,12 @@ const StakeCard = ({
         />
       )}
       {isModalWallet && <ModalWalletConnect setModalOpen={setIsModaWallet} />}
+      {isOpenModalPangolin && (
+        <ModalBuyKacyOnPangolin
+          modalOpen={isOpenModalPangolin}
+          setModalOpen={setIsOpenModalPangolin}
+        />
+      )}
     </>
   )
 }

@@ -34,6 +34,7 @@ interface IDetailsProps {
   poolPrice: Big;
   kacyPrice: Big;
   link: string;
+  setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Details = ({
@@ -45,7 +46,8 @@ const Details = ({
   symbol,
   poolPrice,
   kacyPrice,
-  link
+  link,
+  setIsOpenModal
 }: IDetailsProps) => {
   const [depositedAmount, setDepositedAmount] = React.useState<BigNumber>(
     new BigNumber(-1)
@@ -140,7 +142,13 @@ const Details = ({
           }
           text="See contract"
         />
-        <ExternalLink hrefLink={link} text={`Get ${symbol}`} />
+        {symbol === 'KACY' ? (
+          <S.AddToken onClick={() => setIsOpenModal(true)}>
+            Get {symbol}
+          </S.AddToken>
+        ) : (
+          <ExternalLink hrefLink={link} text={`Get ${symbol}`} />
+        )}
       </S.Info>
       <S.AddToken
         type="button"
