@@ -5,7 +5,7 @@ import BigNumber from 'bn.js'
 
 import { useAppSelector } from '../../../store/hooks'
 import { ERC20 } from '../../../hooks/useERC20Contract'
-import { poolsKacy } from '../../../constants/pools'
+import { poolsKacy, allPools } from '../../../constants/pools'
 import { Staking, chains } from '../../../constants/tokenAddresses'
 import useStakingContract from '../../../hooks/useStakingContract'
 
@@ -111,8 +111,9 @@ const ModalKacy = () => {
 
     const kacyEarned = async () => {
       let count = new BigNumber(0)
-      for (const kacy of poolsKacy) {
+      for (const kacy of allPools) {
         const res = await earnedKacy(kacy.pid)
+
         count = count.add(res)
       }
       setKacyUnclaimed(count)
