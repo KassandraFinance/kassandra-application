@@ -30,9 +30,10 @@ const WalletConnecting = ({
   isConnected,
   handleCloseModal
 }: IWalletConnectingProps) => {
-  const [nickname, setNickname] = React.useState()
+  // const [nickname, setNickname] = React.useState()
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const nickName = useAppSelector(state => state.user.nickName)
 
   const providers: ProviderType = {
     metamask: {
@@ -45,16 +46,16 @@ const WalletConnecting = ({
     }
   }
 
-  React.useEffect(() => {
-    if (!userWalletAddress) return
+  // React.useEffect(() => {
+  //   if (!userWalletAddress) return
 
-    fetch(`/api/profile/${userWalletAddress}`)
-      .then(res => res.json())
-      .then(data => {
-        const { nickname } = data
-        setNickname(nickname)
-      })
-  }, [userWalletAddress])
+  //   fetch(`/api/profile/${userWalletAddress}`)
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       const { nickname } = data
+  //       setNickname(nickname)
+  //     })
+  // }, [userWalletAddress])
 
   return (
     <>
@@ -78,9 +79,9 @@ const WalletConnecting = ({
         </>
       ) : (
         <>
-          {nickname && (
+          {nickName.length > 0 && (
             <S.AddressWrapper>
-              Username: <span>{nickname}</span>
+              Username: <span>{nickName}</span>
             </S.AddressWrapper>
           )}
 
