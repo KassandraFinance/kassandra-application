@@ -1,0 +1,61 @@
+{
+  "swapWidget": {
+    "primary": "#feffff",
+    "secondary": "#C3C4CA",
+    "backgroundColor": "#1F2937",
+    "detailsBackground": "#313A47",
+    "interactiveColor": "#C3C4CA",
+    "interactiveBgColor": "#313A47"
+  },
+
+  "textInput": {
+    "text": "#FCFCFC",
+    "labelText": "#C2C5C9",
+    "placeholderText": "",
+    "backgroundColor": "#313A47"
+  },
+
+  "currencySelect": {
+    "defaultBackgroundColor": "#1F2937",
+    "selectedBackgroundColor": "#1F2937",
+    "defaultText": "",
+    "selectedText": "#FCFCFC"
+  },
+
+  "drawer": {
+    "text": "#ffffff",
+    "backgroundColor": "#1F2937"
+  },
+
+  "toggleButton": {
+    "backgroundColor": "#313A47",
+    "selectedColor": "#FFFFFF",
+    "fontColor": "#1E1322"
+  },
+
+  "numberOptions": {
+    "text": "#8F8F8F",
+    "activeTextColor": "#1E1322",
+    "activeBackgroundColor": "#FFFFFF",
+    "inactiveBackgroundColor": "#1F2937",
+    "borderColor": "rgba(255, 255, 255, 0.3)"
+  },
+
+  "button": {
+    "primary": {
+      "background": "#0C3DDC",
+      "color": "#FCFCFC"
+    },
+    "outline": {
+      "borderColor": "",
+      "color": "#FCFCFC"
+    },
+    "plain": {
+      "color": "#FCFCFC"
+    },
+    "disable": {
+      "background": "#343434",
+      "color": "#8F8F8F"
+    }
+  }
+}
