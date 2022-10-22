@@ -526,7 +526,7 @@ const Products = ({ product }: Input) => {
               />
               <PoweredBy partners={product.partners} />
               {coinGeckoResponse && <Distribution />}
-              <ActivityTable />
+              <ActivityTable product={product.sipAddress} />
               <TokenDescription symbol={product.symbol} />
             </S.ProductDetails>
             <PoolOperations
