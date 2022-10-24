@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import substr from '../../utils/substr'
-import { useAppSelector } from '../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../store/hooks'
+import { setNickName, setProfilePic } from '../../store/reducers/userSlice'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
@@ -37,12 +38,30 @@ const Header = () => {
   const [isModalSocialMedia, setIsModalSocialMedia] =
     React.useState<boolean>(false)
 
+  const dispatch = useAppDispatch()
+  const { nickName, image } = useAppSelector(state => state.user)
+
   const { trackEventFunction } = useMatomoEcommerce()
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
 
   const router = useRouter()
+
+  React.useEffect(() => {
+    if (!userWalletAddress) return
+
+    fetch(`/api/profile/${userWalletAddress}`)
+      .then(res => res.json())
+      .then(data => {
+        const { nickname, image, isNFT } = data
+
+        dispatch(setNickName(nickname || ''))
+        dispatch(
+          setProfilePic({ profilePic: image || '', isNFT: isNFT || false })
+        )
+      })
+  }, [userWalletAddress])
 
   return (
     <>
@@ -217,12 +236,16 @@ const Header = () => {
                         </defs>
                       </svg>
                     }
+                    image={image.profilePic}
+                    isNFT={image.isNFT}
                     as="a"
                     size="medium"
                     onClick={() => {
                       trackEventFunction('open-modal', 'your-wallet', 'header')
                     }}
-                    text={substr(userWalletAddress)}
+                    text={
+                      nickName.length > 0 ? nickName : substr(userWalletAddress)
+                    }
                   />
                 </Link>
               ) : (

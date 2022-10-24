@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ButtonHTMLAttributes, AnchorHTMLAttributes, forwardRef } from 'react'
+import NftImage from '../NftImage'
 import * as S from './styles'
 
 type ButtonTypes =
@@ -12,6 +13,8 @@ export type ButtonProps = {
   backgroundPrimary?: boolean,
   backgroundSecondary?: boolean,
   backgroundBlack?: boolean,
+  image?: string,
+  isNFT?: boolean,
   backgroundVote?: {
     voteState: 'against' | 'favor' | 'vote-open' | 'disable',
     type: string
@@ -37,6 +40,8 @@ const ButtonBase: React.ForwardRefRenderFunction<
     backgroundBlack = false,
     disabledNoEvent = false,
     text,
+    image = '',
+    isNFT = false,
 
     ...props
   },
@@ -54,7 +59,17 @@ const ButtonBase: React.ForwardRefRenderFunction<
     backgroundVote={backgroundVote}
     {...props}
   >
-    {icon}
+    {image.length > 0 ? (
+      <S.ImgWrapper>
+        {!isNFT ? (
+          <img src={image} alt="User image" />
+        ) : (
+          <NftImage NftUrl={image} imageSize="smallest" />
+        )}
+      </S.ImgWrapper>
+    ) : (
+      icon
+    )}
     {text}
   </S.Wrapper>
 )
