@@ -61,8 +61,9 @@ const imageSizes = {
 
     img {
       position: absolute;
-      width: 100%;
-      height: auto;
+
+      width: 1.6rem;
+      height: 1.6rem;
 
       background-color: #c4c4c410;
       clip-path: url(#nftImageSmallest);
@@ -73,11 +74,8 @@ const imageSizes = {
     }
   `
 }
-// eslint-disable-next-line prettier/prettier
-export const NftImageContainer =
-  styled.div <
-  INftImageProps >
-  `
+// prettier-ignore
+export const NftImageContainer = styled.div<INftImageProps>`
  ${({ imageSize }) =>
    css`
      ${!!imageSize && imageSizes[imageSize]};
