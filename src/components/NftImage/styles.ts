@@ -59,12 +59,10 @@ const imageSizes = {
     display: flex;
     flex-direction: column;
 
-    /* height: 1.6rem;
-    width: 1.6rem; */
-
     img {
       position: absolute;
-      object-fit: cover;
+      width: 100%;
+      height: auto;
 
       background-color: #c4c4c410;
       clip-path: url(#nftImageSmallest);
