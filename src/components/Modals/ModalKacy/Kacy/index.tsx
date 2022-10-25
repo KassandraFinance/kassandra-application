@@ -56,7 +56,9 @@ const Kacy = ({
       <S.Backdrop onClick={handleCloseModal}></S.Backdrop>
       <S.Container>
         <S.ModalHeader>
-          <S.HeaderTitle>Your KACY Stats</S.HeaderTitle>
+          <S.HeaderTitle>
+            {!kacyTotal.isZero() && 'YOUR'} KACY Stats
+          </S.HeaderTitle>
 
           <S.CloseBtn type="button" onClick={handleCloseModal}>
             <Image src={closeIcon} alt="Close" width={12} height={12} />
@@ -156,7 +158,7 @@ const Kacy = ({
             </>
           )}
 
-          <S.Ul>
+          <S.Ul isKacyStatsModal={kacyTotal.isZero()}>
             <S.Li>
               Price
               <S.Value>
@@ -179,7 +181,7 @@ const Kacy = ({
 
           {chainId === chain.chainId && userWalletAddress ? (
             <Button
-              text="Get more KACY"
+              text="Buy Kacy"
               backgroundPrimary
               fullWidth
               onClick={() => {

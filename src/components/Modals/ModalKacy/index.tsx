@@ -63,6 +63,8 @@ const ModalKacy = () => {
 
   const { data } = useSWR('/api/overview')
 
+  const isKacyZeroValue = kacyTotal.isZero()
+
   React.useEffect(() => {
     if (data) {
       setKacyMarketData({
@@ -135,13 +137,21 @@ const ModalKacy = () => {
 
   return (
     <>
-      <S.KacyAmount onClick={() => setIsModalKacy(true)}>
+      <S.KacyAmount
+        onClick={() =>
+          isKacyZeroValue && Number(chainId) === chain.chainId
+            ? setIsOpenModal(true)
+            : setIsModalKacy(true)
+        }
+      >
         <Button
           className="kacyAmount"
           text={
             userWalletAddress && Number(chainId) === chain.chainId
-              ? `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
-              : 'KACY'
+              ? isKacyZeroValue
+                ? 'BUY KACY'
+                : `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
+              : 'BUY KACY'
           }
           icon={<Image src={kacyIcon} width={13.86} height={11.86} />}
           backgroundBlack
