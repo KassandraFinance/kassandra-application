@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ButtonHTMLAttributes, AnchorHTMLAttributes, forwardRef } from 'react'
-import NftImage from '../NftImage'
 import * as S from './styles'
 
 type ButtonTypes =
@@ -61,11 +60,7 @@ const ButtonBase: React.ForwardRefRenderFunction<
   >
     {image.length > 0 ? (
       <S.ImgWrapper>
-        {!isNFT ? (
-          <img src={image} alt="User image" />
-        ) : (
-          <NftImage NftUrl={image} imageSize="smallest" />
-        )}
+        <img src={image} alt="User image" />
       </S.ImgWrapper>
     ) : (
       icon

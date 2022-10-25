@@ -202,8 +202,9 @@ export const MenuBottom = styled.div`
     transition: 300ms;
 
     img {
-      width: 1.6rem;
+      width: 1.8rem;
     }
+
     &:hover,
     &:focus {
       border-color: ${theme.colors.snow};
