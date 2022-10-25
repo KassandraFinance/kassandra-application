@@ -20,7 +20,7 @@ import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalInstitucionalLinksMobile from '../Modals/ModalInstitucionalLinksMobile'
 
 import options from '../../../public/assets/utilities/options.svg'
-import kacy64 from '../../../public/assets/logos/kacy-64.svg'
+import kacy96 from '../../../public/assets/logos/kacy-96.svg'
 import logoKassandra from '../../../public/assets/logos/kassandra-header.svg'
 
 import * as S from './styles'
@@ -72,18 +72,14 @@ const Header = () => {
               <Image src={logoKassandra} alt="Kassandra" />
             </a>
           </Link>
+
           <Link href="/" passHref>
             <a className="logo-ipad">
-              <Image src={kacy64} width={64} height={64} alt="Kassandra" />
+              <Image src={kacy96} width={27} height={24} alt="Kassandra" />
             </a>
           </Link>
         </S.LogoWrapper>
         <S.Menu>
-          <Link href="/" passHref>
-            <a className="logo-mobile">
-              <Image src={kacy64} width={64} height={64} alt="Kassandra" />
-            </a>
-          </Link>
           <Link href="/explore" passHref>
             <S.MenuLink
               active={
@@ -112,7 +108,7 @@ const Header = () => {
             Manage
           </S.MenuLink>
           <DropdownInvest
-            nameOnHeader="Governance"
+            nameOnHeader="DAO"
             isActive={
               router.asPath.substring(0, 4) === '/gov' ||
               router.asPath.substring(0, 8) === '/profile'
