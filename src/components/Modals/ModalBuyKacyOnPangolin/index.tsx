@@ -79,7 +79,7 @@ const ModalBuyKacyOnPangolin = ({
       </S.LoadingContainer>
       {userWalletAddress !== '' && (
         <PangolinProvider account={userWalletAddress} chainId={chainId} library={walletProvider.givenProvider} theme={swapTheme}>
-            <S.ModalBuyKacyContainer modalOpen={modalOpen}>
+            <S.ModalBuyKacyContainer>
               <SwapWidget isLimitOrderVisible={false} defaultOutputToken={Kacy} />
             </S.ModalBuyKacyContainer>
         </PangolinProvider>

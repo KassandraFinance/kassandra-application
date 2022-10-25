@@ -88,25 +88,23 @@ export const Spinner = styled.div`
   }
 `
 
-interface IModalBuyKacyProps {
-  modalOpen: boolean;
-}
-
 // prettier-ignore
-export const ModalBuyKacyContainer = styled.div<IModalBuyKacyProps>`
+export const ModalBuyKacyContainer = styled.div`
   position: fixed;
   top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 40rem;
 
-  display: ${props => (props.modalOpen ? 'block' : 'none')};
-
-  background: #1F2937;
-  border: 0.1rem solid rgba(255, 255, 255, 0.25);
   border-radius: 1.2rem;
+  background: #1F2937;
 
   z-index: 21;
+
+  > div {
+    border: 0.1rem solid rgba(255, 255, 255, 0.25);
+    border-radius: 1.2rem;
+  }
 
   #swap-button {
     color: #fcfcfc;
