@@ -144,7 +144,7 @@ const ModalKacy = () => {
               ? `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
               : 'KACY'
           }
-          icon={<Image src={kacyIcon} width={13.86} height={11.86} />}
+          icon={<Image src={kacyIcon} width={18} height={18} />}
           backgroundBlack
         />
       </S.KacyAmount>

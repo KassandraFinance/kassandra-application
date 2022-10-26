@@ -243,8 +243,8 @@ export const ImgWrapper = styled.div`
     justify-content: center;
     align-items: center;
 
-    width: 1.6rem;
-    height: 1.6rem;
+    width: 1.8rem;
+    height: 1.8rem;
 
     border-radius: 50%;
     overflow: hidden;
