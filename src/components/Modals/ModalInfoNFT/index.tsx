@@ -306,7 +306,6 @@ const ModalCardOperations = ({ modalOpen, setModalOpen, userData, NftUrl }: IOpe
                       </button>
                     </CopyToClipboard>
                   )}
-                  {console.log(nftDetails.chain)}
                 </li>
                 <li>
                   <p>Token Standard</p>

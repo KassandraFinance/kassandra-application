@@ -188,3 +188,25 @@ export const TransactionInfo = styled.td`
     font-weight: ${theme.font.weight.light};
   }
 `
+
+export const TokensSymbols = styled.div`
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+
+  z-index: 10;
+
+  span {
+    min-width: 1.8rem;
+    min-height: 1.8rem;
+    margin-left: 0.6rem;
+
+    font-size: 1.1rem;
+    font-weight: ${theme.font.weight.light};
+
+    @media (max-width: 960px) {
+      margin-left: 0;
+    }
+  }
+`
