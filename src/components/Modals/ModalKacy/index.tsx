@@ -5,7 +5,7 @@ import BigNumber from 'bn.js'
 
 import { useAppSelector } from '../../../store/hooks'
 import { ERC20 } from '../../../hooks/useERC20Contract'
-import { poolsKacy } from '../../../constants/pools'
+import { poolsKacy, allPools } from '../../../constants/pools'
 import { Staking, chains } from '../../../constants/tokenAddresses'
 import useStakingContract from '../../../hooks/useStakingContract'
 
@@ -115,8 +115,9 @@ const ModalKacy = () => {
 
     const kacyEarned = async () => {
       let count = new BigNumber(0)
-      for (const kacy of poolsKacy) {
+      for (const kacy of allPools) {
         const res = await earnedKacy(kacy.pid)
+
         count = count.add(res)
       }
       setKacyUnclaimed(count)
@@ -144,7 +145,7 @@ const ModalKacy = () => {
           <Button
             className="kacyAmount"
             text="Buy KACY"
-            icon={<Image src={kacyIcon} width={13.86} height={11.86} />}
+            icon={<Image src={kacyIcon} width={18} height={18} />}
             backgroundBlack
             as="a"
             href="https://app.pangolin.exchange/#/swap?outputCurrency=0xf32398dae246C5f672B52A54e9B413dFFcAe1A44"
@@ -160,7 +161,7 @@ const ModalKacy = () => {
                   : `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
                 : 'Buy KACY'
             }
-            icon={<Image src={kacyIcon} width={13.86} height={11.86} />}
+            icon={<Image src={kacyIcon} width={18} height={18} />}
             backgroundBlack
             onClick={() =>
               isKacyZeroValue && Number(chainId) === chain.chainId
