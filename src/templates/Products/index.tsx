@@ -63,7 +63,9 @@ const invertToken: { [key: string]: string } = {
   '0xbF5bFFbf7D94D3B29aBE6eb20089b8a9E3D229f7':
     '0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5', //QI
   '0xd0F41b1C9338eB9d374c83cC76b684ba3BB71557':
-    '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE' //SAVAX
+    '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE', //SAVAX
+  '0x0C4684086914D5B1525bf16c62a0FF8010AB991A':
+    '0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7' //YAK
 }
 
 const farmInfoYY: { [key: string]: IfarmInfoYYProps } = {
@@ -166,8 +168,7 @@ const Products = ({ product }: Input) => {
   )
 
   const { data: coinGeckoResponse } = useSWR(
-    `/api/image-coingecko?poolinfo=${
-      network2coingeckoID[product.platform]
+    `/api/image-coingecko?poolinfo=${network2coingeckoID[product.platform]
     }&tokenAddress=${product.addresses}`
   )
 
@@ -274,7 +275,7 @@ const Products = ({ product }: Input) => {
             ),
             image:
               coinGeckoResponse.images[
-                invertToken[item.token.id] ?? item.token.id
+              invertToken[item.token.id] ?? item.token.id
               ]
           }
         }
