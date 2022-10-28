@@ -45,11 +45,17 @@ const ModalBuyKacyOnPangolin = ({
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
 
+  const connect = localStorage.getItem('walletconnect')
+
   const walletProvider = new Web3(provider as any);
 
   function handleCloseModal() {
     setModalOpen(false)
   }
+
+  React.useEffect(() => {
+    connect && handleCloseModal()
+  }, [connect])
 
   return (
     <>
