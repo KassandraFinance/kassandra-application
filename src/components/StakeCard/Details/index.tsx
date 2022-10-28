@@ -55,6 +55,8 @@ const Details = ({
   const { trackEventFunction } = useMatomoEcommerce()
   const { poolInfo } = useStakingContract(Staking)
 
+  const connect = localStorage.getItem('walletconnect')
+
   React.useEffect(() => {
     let interval: any
     ;(async () => {
@@ -143,9 +145,16 @@ const Details = ({
           text="See contract"
         />
         {symbol === 'KACY' ? (
-          <S.AddToken onClick={() => setIsOpenModal(true)}>
-            Get {symbol}
-          </S.AddToken>
+          connect ? (
+            <ExternalLink
+              hrefLink="https://app.pangolin.exchange/#/swap?outputCurrency=0xf32398dae246C5f672B52A54e9B413dFFcAe1A44"
+              text={`Buy ${symbol}`}
+            />
+          ) : (
+            <S.AddToken onClick={() => setIsOpenModal(true)}>
+              Buy {symbol}
+            </S.AddToken>
+          )
         ) : (
           <ExternalLink hrefLink={link} text={`Get ${symbol}`} />
         )}
