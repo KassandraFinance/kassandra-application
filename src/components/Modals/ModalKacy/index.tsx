@@ -63,6 +63,8 @@ const ModalKacy = () => {
 
   const { data } = useSWR('/api/overview')
 
+  const connect = process.browser && localStorage.getItem('walletconnect')
+
   const isKacyZeroValue = kacyTotal.isZero()
 
   React.useEffect(() => {
@@ -137,25 +139,36 @@ const ModalKacy = () => {
 
   return (
     <>
-      <S.KacyAmount
-        onClick={() =>
-          isKacyZeroValue && Number(chainId) === chain.chainId
-            ? setIsOpenModal(true)
-            : setIsModalKacy(true)
-        }
-      >
-        <Button
-          className="kacyAmount"
-          text={
-            userWalletAddress && Number(chainId) === chain.chainId
-              ? isKacyZeroValue
-                ? 'BUY KACY'
-                : `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
-              : 'BUY KACY'
-          }
-          icon={<Image src={kacyIcon} width={13.86} height={11.86} />}
-          backgroundBlack
-        />
+      <S.KacyAmount>
+        {connect && isKacyZeroValue ? (
+          <Button
+            className="kacyAmount"
+            text="Buy KACY"
+            icon={<Image src={kacyIcon} width={13.86} height={11.86} />}
+            backgroundBlack
+            as="a"
+            href="https://app.pangolin.exchange/#/swap?outputCurrency=0xf32398dae246C5f672B52A54e9B413dFFcAe1A44"
+            target="_blank"
+          />
+        ) : (
+          <Button
+            className="kacyAmount"
+            text={
+              userWalletAddress && Number(chainId) === chain.chainId
+                ? isKacyZeroValue
+                  ? 'Buy KACY'
+                  : `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
+                : 'Buy KACY'
+            }
+            icon={<Image src={kacyIcon} width={13.86} height={11.86} />}
+            backgroundBlack
+            onClick={() =>
+              isKacyZeroValue && Number(chainId) === chain.chainId
+                ? setIsOpenModal(true)
+                : setIsModalKacy(true)
+            }
+          />
+        )}
       </S.KacyAmount>
 
       {isModalKacy && (
