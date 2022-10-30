@@ -6,6 +6,8 @@ import { request } from 'graphql-request'
 import { chains, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
 import { useAppSelector } from '../../../store/hooks'
 
+import useConnect from '../../../hooks/useConnect'
+
 import { GET_ALL_PROPOSALS } from './graphql'
 
 import Header from '../../../components/Header'
@@ -25,8 +27,8 @@ import externalLink from '../../../../public/assets/utilities/external-link.svg'
 import * as S from './styles'
 
 const Proposals = () => {
-  const { chainId } = useAppSelector(state => state)
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const { chainId, userWalletAddress } = useAppSelector(state => state)
+  const { metamaskInstalled } = useConnect()
 
   const chain =
     process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
@@ -54,7 +56,8 @@ const Proposals = () => {
         </BreadcrumbItem>
       </Breadcrumb>
       <S.VoteContent>
-        {Number(chainId) !== chain.chainId ? (
+        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
+        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
           <Web3Disabled
             textButton={`Connect to ${chain.chainName}`}
             textHeader="Your wallet is set to the wrong network."

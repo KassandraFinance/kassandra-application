@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { chains } from '../../constants/tokenAddresses'
 
 import { useAppSelector } from '../../store/hooks'
+import useConnect from '../../hooks/useConnect'
 
 import Web3Disabled from '../../components/Web3Disabled'
 import VotingPower from '../../components/VotingPower'
@@ -36,13 +37,13 @@ const tabs = [
 ]
 
 const StakeFarm = () => {
-  const router = useRouter()
-
   const [isSelectTab, setIsSelectTab] = React.useState<
-    string | string[] | undefined
+  string | string[] | undefined
   >('farm')
-
+  
   const { userWalletAddress, chainId } = useAppSelector(state => state)
+  const { metamaskInstalled } = useConnect()
+  const router = useRouter()
 
   const chain =
     process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
@@ -64,14 +65,7 @@ const StakeFarm = () => {
           Stake/Farm
         </BreadcrumbItem>
       </Breadcrumb>
-      {userWalletAddress.length === 0 && Number(chainId) !== chain.chainId ? (
-        <Web3Disabled
-          textButton="Connect Wallet"
-          textHeader="Your wallet is not connected"
-          bodyText="Please connect your wallet to access our pools"
-          type="connect"
-        />
-      ) : Number(chainId) !== chain.chainId ? (
+      {metamaskInstalled && Number(chainId) !== chain.chainId || userWalletAddress.length > 0 && Number(chainId) !== chain.chainId ? (
         <Web3Disabled
           textButton={`Connect to ${chain.chainName}`}
           textHeader="Your wallet is set to the wrong network."
