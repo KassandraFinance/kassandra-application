@@ -92,7 +92,7 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
   const { poolTokens: poolTokensArray } = usePoolTokens()
   const { date } = useDate()
 
-  const take = 4
+  const take = 20
 
   const { data } = useSWR<IPoolProps>(
     [GET_ACTIVITY, skip, take, product.sipAddress],
@@ -106,6 +106,22 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
 
   function handlePageClick(data: { selected: number }, take: any) {
     setSkip(data.selected * take)
+  }
+
+  function handleWithdrawAllAsset(amount: string | any[], price: any[]) {
+    let allAssettotal
+    for (let index = 1; index < amount.length; index++) {
+      allAssettotal =  BNtoDecimal(
+        Big(amount[index] || 0).times(
+          Big(price[index] || 0)
+        ),
+        18,
+        5,
+        2
+      )
+    }
+
+    return allAssettotal
   }
 
   React.useEffect(() => {
@@ -187,15 +203,26 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
                       3
                     )}
                   </span>
-                <p>
-                  ${BNtoDecimal(
-                    Big(activity.amount[activity.type === "exit" ? 0 : 1] || 0).times(
-                      Big(activity?.price_usd[activity.type === "exit" ? 0 : 1] || 0)
+                <p>${activity.type === "exit" && activity.symbol.length > 2?
+                  // BNtoDecimal(
+                  //   Big(activity.amount[0] || 0).times(
+                  //     Big(activity?.price_usd[0] || 0)
+                  //   ),
+                  //   18,
+                  //   5,
+                  //   2
+                  // )
+                  handleWithdrawAllAsset(activity.amount, activity.price_usd)
+                  :
+                  BNtoDecimal(
+                    Big(activity.amount[1] || 0).times(
+                      Big(activity?.price_usd[1] || 0)
                     ),
                     18,
                     5,
                     2
-                  )}
+                  )
+                }
                 </p>
                 </S.TransactionOutAndIn>
                 <S.TransactionOutAndIn>
@@ -221,15 +248,15 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
                         return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.image} alt="" />
                     })}
                     {BNtoDecimal(
-                      Big(activity.amount[activity.type === "exit" ? 1 : 0] || '0'),
+                      Big(activity.amount[activity.type === "exit" ? activity.symbol.length > 2 ? 0 : 1 : 0]|| '0'),
                       18,
                       3
                     )}
                   </span>
                   <p>
                     ${BNtoDecimal(
-                      Big(activity.amount[activity.type === "exit" ? 1 : 0] || 0).times(
-                        Big(activity?.price_usd[activity.type === "exit" ? 1 : 0] || 0)
+                      Big(activity.amount[activity.type === "exit" ? activity.symbol.length > 2 ? 0 : 1 : 0] || 0).times(
+                        Big(activity?.price_usd[activity.type === "exit" ? activity.symbol.length > 2 ? 0 : 1 : 0] || 0)
                       ),
                       18,
                       5,
