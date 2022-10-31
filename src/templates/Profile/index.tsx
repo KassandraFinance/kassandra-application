@@ -7,12 +7,15 @@ import request from 'graphql-request'
 import Big from 'big.js'
 import { toChecksumAddress } from 'web3-utils'
 
+import { useAppSelector } from '../../store/hooks'
+
 import { ERC20 } from '../../hooks/useERC20Contract'
 import useStakingContract from '../../hooks/useStakingContract'
+import useConnect from '../../hooks/useConnect'
 import usePriceLP from '../../hooks/usePriceLP'
-import { useAppSelector } from '../../store/hooks'
 import useVotingPower from '../../hooks/useVotingPower'
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+
 
 import { GET_PROFILE } from './graphql'
 import {
@@ -134,6 +137,8 @@ const Profile = () => {
   const votingPower = useVotingPower(Staking)
   const { userInfo } = useStakingContract(Staking)
   const { getPriceKacyAndLP } = usePriceLP()
+  const { metamaskInstalled } = useConnect()
+
   const { trackEventFunction } = useMatomoEcommerce()
 
   const profileAddress = router.query.profileAddress
@@ -329,7 +334,8 @@ const Profile = () => {
   }, [router])
 
   React.useEffect(() => {
-    if (Number(chainId) !== chain.chainId) {
+    if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
+    (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ) {
       return
     }
 
@@ -340,7 +346,8 @@ const Profile = () => {
   }, [profileAddress, chainId])
 
   React.useEffect(() => {
-    if (Number(chainId) !== chain.chainId) {
+    if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
+    (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ) {
       return
     }
 
@@ -372,7 +379,8 @@ const Profile = () => {
   }, [profileAddress, priceToken, assetsValueInWallet, data, chainId])
 
   React.useEffect(() => {
-    if (Number(chainId) !== chain.chainId) {
+    if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
+    (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ) {
       return
     }
 
@@ -406,14 +414,8 @@ const Profile = () => {
       <S.ProfileContainer>
         <UserDescription userWalletUrl={profileAddress} />
 
-        {userWalletAddress.length === 0 && Number(chainId) !== chain.chainId ? (
-          <Web3Disabled
-            textButton="Connect Wallet"
-            textHeader="You need to have a Wallet installed"
-            bodyText="Please install any Wallet to see the users profiles"
-            type="connect"
-          />
-        ) : Number(chainId) !== chain.chainId ? (
+        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
+        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
           <Web3Disabled
             textButton={`Connect to ${chain.chainName}`}
             textHeader="Your wallet is set to the wrong network."

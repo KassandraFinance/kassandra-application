@@ -41,7 +41,7 @@ export default function Index() {
           <Web3Disabled
             textButton="Connect Wallet"
             textHeader="You need to have a Wallet installed"
-            bodyText="Please install any Wallet to see the users profiles"
+            bodyText="Please install any Wallet to see the user's profile"
             type="connect"
           />
         ) : (
