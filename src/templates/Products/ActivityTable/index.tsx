@@ -108,20 +108,13 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
     setSkip(data.selected * take)
   }
 
-  function handleWithdrawAllAsset(amount: string | any[], price: any[]) {
-    let allAssettotal
-    for (let index = 1; index < amount.length; index++) {
-      allAssettotal =  BNtoDecimal(
-        Big(amount[index] || 0).times(
-          Big(price[index] || 0)
-        ),
-        18,
-        5,
-        2
-      )
-    }
+  function handleWithdrawAllAsset(amount: string[], price: string[]) {
+    const allAssetTotal = price.slice(1).reduce((accumulator, current, index) => (
+      Big(amount[index + 1] || 0).times(
+        Big(current || 0)
+      ).add(accumulator)), Big(0))
 
-    return allAssettotal
+      return BNtoDecimal(allAssetTotal, 18, 3)
   }
 
   React.useEffect(() => {
@@ -204,14 +197,6 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
                     )}
                   </span>
                 <p>${activity.type === "exit" && activity.symbol.length > 2?
-                  // BNtoDecimal(
-                  //   Big(activity.amount[0] || 0).times(
-                  //     Big(activity?.price_usd[0] || 0)
-                  //   ),
-                  //   18,
-                  //   5,
-                  //   2
-                  // )
                   handleWithdrawAllAsset(activity.amount, activity.price_usd)
                   :
                   BNtoDecimal(
