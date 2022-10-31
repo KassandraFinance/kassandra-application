@@ -15,7 +15,7 @@ import { useAppSelector } from '../../../store/hooks'
 import useDate from '../../../hooks/useDate'
 
 import { ITokenDetails, usePoolTokens } from '../../../context/PoolTokensContext'
-import { ProductDetails } from '../../../constants/tokenAddresses'
+import { ProductDetails, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
 
 import ExternalLink from '../../../components/ExternalLink'
 import Pagination from '../../../components/Pagination'
@@ -97,7 +97,7 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
   const { data } = useSWR<IPoolProps>(
     [GET_ACTIVITY, skip, take, product.sipAddress],
     (query, skip, take, productAddress) =>
-      request('http://localhost/subgraphs/name/KassandraAvalanche', query, {
+      request(SUBGRAPH_URL, query, {
         skip,
         take,
         id: productAddress
