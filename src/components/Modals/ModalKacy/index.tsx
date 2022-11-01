@@ -13,7 +13,7 @@ import { BNtoDecimal } from '../../../utils/numerals'
 import { abbreviateNumber } from '../../../utils/abbreviateNumber'
 
 import Kacy from './Kacy'
-import ModalBuyKacy from '../../../components/Modals/ModalBuyKacy'
+import ModalBuyKacyOnPangolin from '../ModalBuyKacyOnPangolin'
 import Button from '../../Button'
 import ModalWalletConnect from '../ModalWalletConnect'
 
@@ -62,6 +62,10 @@ const ModalKacy = () => {
   const [kacyTotal, setKacyTotal] = React.useState<BigNumber>(new BigNumber(0))
 
   const { data } = useSWR('/api/overview')
+
+  const connect = process.browser && localStorage.getItem('walletconnect')
+
+  const isKacyZeroValue = kacyTotal.isZero()
 
   React.useEffect(() => {
     if (data) {
@@ -136,17 +140,36 @@ const ModalKacy = () => {
 
   return (
     <>
-      <S.KacyAmount onClick={() => setIsModalKacy(true)}>
-        <Button
-          className="kacyAmount"
-          text={
-            userWalletAddress && Number(chainId) === chain.chainId
-              ? `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
-              : 'KACY'
-          }
-          icon={<Image src={kacyIcon} width={18} height={18} />}
-          backgroundBlack
-        />
+      <S.KacyAmount>
+        {connect && isKacyZeroValue ? (
+          <Button
+            className="kacyAmount"
+            text="Buy KACY"
+            icon={<Image src={kacyIcon} width={18} height={18} />}
+            backgroundBlack
+            as="a"
+            href="https://app.pangolin.exchange/#/swap?outputCurrency=0xf32398dae246C5f672B52A54e9B413dFFcAe1A44"
+            target="_blank"
+          />
+        ) : (
+          <Button
+            className="kacyAmount"
+            text={
+              userWalletAddress && Number(chainId) === chain.chainId
+                ? isKacyZeroValue
+                  ? 'Buy KACY'
+                  : `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
+                : 'Buy KACY'
+            }
+            icon={<Image src={kacyIcon} width={18} height={18} />}
+            backgroundBlack
+            onClick={() =>
+              isKacyZeroValue && Number(chainId) === chain.chainId
+                ? setIsOpenModal(true)
+                : setIsModalKacy(true)
+            }
+          />
+        )}
       </S.KacyAmount>
 
       {isModalKacy && (
@@ -163,8 +186,12 @@ const ModalKacy = () => {
         />
       )}
 
-      <ModalBuyKacy modalOpen={isOpenModal} setModalOpen={setIsOpenModal} />
-
+      {isOpenModal && (
+        <ModalBuyKacyOnPangolin
+          modalOpen={isOpenModal}
+          setModalOpen={setIsOpenModal}
+        />
+      )}
       {isModalWallet && <ModalWalletConnect setModalOpen={setIsModalWallet} />}
     </>
   )

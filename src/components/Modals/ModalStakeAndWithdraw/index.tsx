@@ -21,6 +21,7 @@ import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import Button from '../../Button'
 import InputTokenValue from '../../PoolOperations/InputTokenValue'
+import ModalBuyKacyOnPangolin from '../ModalBuyKacyOnPangolin'
 
 import * as S from './styles'
 
@@ -55,10 +56,12 @@ const ModalStakeAndWithdraw = ({
   const [amountStake, setAmountStake] = React.useState<BigNumber>(
     new BigNumber(0)
   )
+  const [isOpenModalPangolin, setIsOpenModalPangolin] = React.useState(false)
 
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+
   const { trackProductPageView, trackBuying, trackCancelBuying, trackBought } =
     useMatomoEcommerce()
   const { trackEventFunction } = useMatomoEcommerce()
@@ -66,6 +69,8 @@ const ModalStakeAndWithdraw = ({
   const kacyStake = useStakingContract(Staking)
   const kacyToken = useERC20Contract(stakingToken)
   const productSKU = `${Staking}_${pid}`
+
+  const connect = localStorage.getItem('walletconnect')
 
   function handleKacyAmount(percentage: BigNumber) {
     const kacyAmount = percentage.mul(balance).div(new BigNumber(100))
@@ -344,23 +349,61 @@ const ModalStakeAndWithdraw = ({
               Confirm
             </S.ConfirmButton>
 
-            <Link href={link} passHref>
-              <Button
-                as="a"
-                backgroundBlack
-                fullWidth
-                text={`Get ${symbol}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  setModalOpen(false)
-                  setStakeTransaction('')
-                }}
-              />
-            </Link>
+            {symbol === 'KACY' ? (
+              connect ? (
+                <Link
+                  href="https://app.pangolin.exchange/#/swap?outputCurrency=0xf32398dae246C5f672B52A54e9B413dFFcAe1A44"
+                  passHref
+                >
+                  <Button
+                    as="a"
+                    backgroundBlack
+                    fullWidth
+                    text={`Buy ${symbol}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => {
+                      setModalOpen(false)
+                      setStakeTransaction('')
+                    }}
+                  />
+                </Link>
+              ) : (
+                <Button
+                  backgroundBlack
+                  fullWidth
+                  text={`Buy ${symbol}`}
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    setIsOpenModalPangolin(true)
+                  }}
+                />
+              )
+            ) : (
+              <Link href={link} passHref>
+                <Button
+                  as="a"
+                  backgroundBlack
+                  fullWidth
+                  text={`Get ${symbol}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    setModalOpen(false)
+                    setStakeTransaction('')
+                  }}
+                />
+              </Link>
+            )}
           </S.Main>
         </S.BackgroundBlack>
       </S.BorderGradient>
+      {isOpenModalPangolin && (
+        <ModalBuyKacyOnPangolin
+          modalOpen={isOpenModalPangolin}
+          setModalOpen={setIsOpenModalPangolin}
+        />
+      )}
     </>
   )
 }
