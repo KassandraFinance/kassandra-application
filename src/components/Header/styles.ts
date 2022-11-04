@@ -8,38 +8,34 @@ export const Wrapper = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  margin: 0 auto;
   max-width: 114rem;
-  height: 11rem;
+  margin: 0 auto;
+  margin-block: 3.2rem;
 
   z-index: ${theme.layers.menu};
+
   @media (max-width: 1200px) {
-    padding: 0 3rem;
+    padding-inline: 3rem;
   }
 
-  @media (max-width: 540px) {
-    height: 8rem;
-    padding: 0 1.6rem;
+  @media (max-width: 992px) {
+    margin-block: 2.4rem;
+  }
+
+  @media (max-width: 576px) {
+    padding-inline: 1.6rem;
   }
 `
 
 export const LogoWrapper = styled.div`
   .logo-desktop {
-    @media (max-width: 960px) {
+    @media (max-width: 992px) {
       display: none;
     }
   }
 
   .logo-ipad {
-    > img {
-      width: 7rem;
-    }
-
-    @media (min-width: 961px) {
-      display: none;
-    }
-
-    @media (max-width: 539px) {
+    @media (min-width: 991.98px) {
       display: none;
     }
   }
@@ -49,44 +45,22 @@ export const LogoWrapper = styled.div`
 
 export const Menu = styled.nav`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 
-  .logo-mobile {
-    width: 4.6rem;
-    margin-right: -0.8rem;
+  gap: 2.4rem;
 
-    @media (min-width: 541px) {
-      display: none;
-    }
-    @media (max-width: 360px) {
-      width: 4.2rem;
-    }
-  }
-
-  @media (max-width: 960px) {
-    min-width: 58rem;
-  }
-
-  @media (max-width: 768px) {
-    min-width: 42rem;
-  }
-
-  @media (max-width: 540px) {
-    min-width: 100%;
+  @media (max-width: 992px) {
+    gap: 1.6rem;
   }
 `
 interface IMenuLinkProps {
   active: boolean;
 }
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const MenuLink = styled.a<IMenuLinkProps>`
   position: relative;
-
-  margin-right: 2.4rem;
-  padding-top: 1.2rem;
-  padding-bottom: 1.3rem;
 
   color: ${theme.colors.snow};
   font-size: ${theme.font.sizes.font16};
@@ -97,29 +71,10 @@ export const MenuLink = styled.a<IMenuLinkProps>`
 
   cursor: pointer;
 
-  ${props =>
-    props.active &&
-    `
-    &::after {
-      content: '';
-
-      position: absolute;
-      left: 0%;
-      width: 100%;
-
-      display: block;
-      height: 0.2rem;
-
-      background-color: ${theme.colors.cyan};
-      border-radius: 0.3rem;
-      box-shadow: 0 0 0.6rem ${theme.colors.cyan};
-    }
-  `}
-
   &::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -1rem;
 
     left: 50%;
     width: 0;
@@ -144,9 +99,8 @@ export const MenuLink = styled.a<IMenuLinkProps>`
     width: 100%;
   }
 
-  @media (max-width: 540px) {
+  @media (max-width: 576px) {
     font-size: ${theme.font.sizes.font14};
-    margin-right: 0;
   }
 `
 
@@ -248,8 +202,9 @@ export const MenuBottom = styled.div`
     transition: 300ms;
 
     img {
-      width: 1.6rem;
+      width: 1.8rem;
     }
+
     &:hover,
     &:focus {
       border-color: ${theme.colors.snow};
@@ -283,7 +238,7 @@ export const ButtonOptions = styled.button`
   border: 0.1rem solid transparent;
   border-radius: 50%;
 
-  transition: all 0.2s;
+  transition: border 300ms ease-in-out;
   cursor: pointer;
 
   :hover {
@@ -292,7 +247,7 @@ export const ButtonOptions = styled.button`
 `
 
 export const MenuContainer = styled.div`
-  @media (max-width: 768px) {
+  @media (max-width: 840px) {
     display: none;
   }
 `

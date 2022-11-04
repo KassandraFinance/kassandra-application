@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import theme from '../../styles/theme'
+
 interface IDropdownProps {
   isActive: boolean;
 }
@@ -17,14 +18,17 @@ export const Dropdown = styled.div`
   }
 `
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const DropButton = styled.button<IDropdownProps>`
   position: relative;
 
-  display: inline-block;
-  margin-right: 3.8rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  width: fit-content;
   padding-top: 1.2rem;
-  padding-bottom: 1.3rem;
+  padding-bottom: 1.2rem;
 
   font-family: 'Rubik', sans-serif;
   font-size: ${theme.font.sizes.font16};
@@ -56,32 +60,14 @@ export const DropButton = styled.button<IDropdownProps>`
   `}
 
   img {
-    position: absolute;
-    right: -2rem;
-    top: 1.8rem;
-
     transition: transform 300ms ease;
-
-    @media (max-width: 540px) {
-      right: -1.6rem;
-      top: 1.7rem;
-    }
-    @media (max-width: 360px) {
-      top: 1.6rem;
-    }
   }
 
-  @media (max-width: 768px) {
-    margin-right: 3.2rem;
-  }
+
   @media (max-width: 541px) {
     font-size: ${theme.font.sizes.font14};
-    margin-right: 2rem;
   }
-  @media (max-width: 360px) {
-    font-size: ${theme.font.sizes.font12};
-    margin-right: 1.4rem;
-  }
+
 `
 
 interface IDropdownContentProps {
@@ -136,14 +122,6 @@ export const DropdownContent = styled.div<IDropdownContentProps>`
       right: ${adaptToResponsiveSize ? '0' : ''};
     }
   `}
-
-  /* @media (max-width: 490px) {
-    min-width: 13rem;
-  }
-
-  @media (max-width: 380px) {
-    min-width: 11rem;
-  } */
 `
 
 export const MenuLinkDisable = styled.div`

@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import substr from '../../utils/substr'
-import { useAppSelector } from '../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../store/hooks'
+import { setNickName, setProfilePic } from '../../store/reducers/userSlice'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
@@ -19,7 +20,7 @@ import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalInstitucionalLinksMobile from '../Modals/ModalInstitucionalLinksMobile'
 
 import options from '../../../public/assets/utilities/options.svg'
-import kacy64 from '../../../public/assets/logos/kacy-64.svg'
+import kacy96 from '../../../public/assets/logos/kacy-96.svg'
 import logoKassandra from '../../../public/assets/logos/kassandra-header.svg'
 
 import * as S from './styles'
@@ -37,12 +38,30 @@ const Header = () => {
   const [isModalSocialMedia, setIsModalSocialMedia] =
     React.useState<boolean>(false)
 
+  const dispatch = useAppDispatch()
+  const { nickName, image } = useAppSelector(state => state.user)
+
   const { trackEventFunction } = useMatomoEcommerce()
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
 
   const router = useRouter()
+
+  React.useEffect(() => {
+    if (!userWalletAddress) return
+
+    fetch(`/api/profile/${userWalletAddress}`)
+      .then(res => res.json())
+      .then(data => {
+        const { nickname, image, isNFT } = data
+
+        dispatch(setNickName(nickname || ''))
+        dispatch(
+          setProfilePic({ profilePic: image || '', isNFT: isNFT || false })
+        )
+      })
+  }, [userWalletAddress])
 
   return (
     <>
@@ -53,18 +72,14 @@ const Header = () => {
               <Image src={logoKassandra} alt="Kassandra" />
             </a>
           </Link>
+
           <Link href="/" passHref>
             <a className="logo-ipad">
-              <Image src={kacy64} width={64} height={64} alt="Kassandra" />
+              <Image src={kacy96} width={27} height={24} alt="Kassandra" />
             </a>
           </Link>
         </S.LogoWrapper>
         <S.Menu>
-          <Link href="/" passHref>
-            <a className="logo-mobile">
-              <Image src={kacy64} width={64} height={64} alt="Kassandra" />
-            </a>
-          </Link>
           <Link href="/explore" passHref>
             <S.MenuLink
               active={
@@ -93,7 +108,7 @@ const Header = () => {
             Manage
           </S.MenuLink>
           <DropdownInvest
-            nameOnHeader="Governance"
+            nameOnHeader="DAO"
             isActive={
               router.asPath.substring(0, 4) === '/gov' ||
               router.asPath.substring(0, 8) === '/profile'
@@ -217,12 +232,16 @@ const Header = () => {
                         </defs>
                       </svg>
                     }
+                    image={image.profilePic}
+                    isNFT={image.isNFT}
                     as="a"
                     size="medium"
                     onClick={() => {
                       trackEventFunction('open-modal', 'your-wallet', 'header')
                     }}
-                    text={substr(userWalletAddress)}
+                    text={
+                      nickName.length > 0 ? nickName : substr(userWalletAddress)
+                    }
                   />
                 </Link>
               ) : (

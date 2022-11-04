@@ -50,7 +50,8 @@ export const ModalTitle = styled.div`
   height: 6.8rem;
   padding: 2.4rem;
 
-  background: rgba(31, 31, 31, 0.96);
+  /* background: rgba(31, 31, 31, 0.96); */
+  background-color: #1e1e1e;
   border-top-left-radius: 0.6rem;
   border-top-right-radius: 0.6rem;
   border-bottom: 0.1rem solid #ffffff40;
@@ -148,7 +149,8 @@ export const Content = styled.div`
 
   border-bottom-right-radius: 0.6rem;
   border-bottom-left-radius: 0.6rem;
-  background: rgba(31, 41, 55, 0.96);
+  /* background: rgba(31, 41, 55, 0.96); */
+  background-color: #1f2937;
 
   z-index: -2;
 
