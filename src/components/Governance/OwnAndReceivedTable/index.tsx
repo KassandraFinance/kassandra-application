@@ -11,6 +11,7 @@ import AnyCard from '../../AnyCard'
 import ImageProfile from '../ImageProfile'
 
 import avax from '../../../../public/assets/logos/kacy-stake.svg'
+import avaxLogo from '../../../../public/assets/logos/avax.png'
 
 import * as S from './styles'
 
@@ -123,6 +124,7 @@ export const OwnAndReceivedTable = ({
             <thead>
               <S.Tr className="headTable">
                 <S.Th>Pool</S.Th>
+                <S.Th>Network</S.Th>
                 <S.Th className="delegating">
                   {isDelegationTable ? 'Delegating to' : 'Received from'}
                 </S.Th>
@@ -144,6 +146,9 @@ export const OwnAndReceivedTable = ({
                         <p>KACY</p>
                         <span>{handleCheckValuePool(item.pool)}</span>
                       </div>
+                    </S.Td>
+                    <S.Td>
+                      <Image src={avaxLogo.src} width={16} height={16} />
                     </S.Td>
                     <S.Td className="delegating-to">
                       {isDelegationTable ? (

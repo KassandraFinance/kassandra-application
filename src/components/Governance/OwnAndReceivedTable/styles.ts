@@ -42,7 +42,7 @@ export const Table = styled.table`
 
 export const Tr = styled.tr`
   display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr 1.5fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1.5fr;
 
   max-height: 8.1rem;
   margin-left: 3.2rem;
@@ -71,12 +71,9 @@ export const Tr = styled.tr`
     flex-direction: column;
   }
 
-  .delegating {
-    margin-left: 0.4rem;
-  }
-
   .pool {
     flex-direction: row;
+    justify-content: flex-start;
 
     p {
       margin-left: 1.4rem;
@@ -95,13 +92,14 @@ export const Tr = styled.tr`
     flex-direction: row;
 
     span {
-      margin-left: 0.8rem;
       font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.light};
     }
   }
 
   .staked {
+    align-items: flex-end;
+
     p {
       font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.medium};
@@ -115,6 +113,8 @@ export const Tr = styled.tr`
   }
 
   .voting-power-allocated {
+    align-items: flex-end;
+
     p {
       font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.medium};
@@ -136,7 +136,14 @@ export const Th = styled.th`
 
   :first-child {
     justify-content: flex-start;
-    margin-left: 3.2rem;
+  }
+
+  &:last-of-type {
+    justify-content: flex-end;
+  }
+
+  &:nth-last-of-type(2) {
+    justify-content: flex-end;
   }
 
   @media (max-width: 960px) {
