@@ -5,6 +5,7 @@ import Big from 'big.js'
 import Tippy from '@tippyjs/react'
 
 import AnyCard from '../../../../components/AnyCard'
+import TokenWithNetworkImage from '../../../../components/TokenWithNetworkImage'
 
 import { BNtoDecimal } from '../../../../utils/numerals'
 import { useAppSelector } from '../../../../store/hooks'
@@ -63,22 +64,24 @@ const AssetsCard = ({
       {cardstakesPoolNew.length > 0 ? (
         <S.AssetsContainer isThreeCards={cardstakesPoolNew.length > 2}>
           {cardstakesPoolNew.map(stake => {
+            const searchString =
+              stake.properties?.logo.style.width.search('rem')
+            const widthString = stake.properties?.logo.style.width.substring(
+              0,
+              searchString
+            )
+            const NumberWidth = Number(widthString) * 10
+
             return (
               <S.AssetsHeaderContent key={stake.pid + 1 + stake.poolName}>
                 <span>
-                  {stake.symbol === 'KACY' ? (
-                    <Image
-                      src={stake.properties ? stake.properties.logo.src : ''}
-                      width={52}
-                      height={52}
-                    />
-                  ) : (
-                    <Image
-                      src={stake.properties ? stake.properties.logo.src : ''}
-                      width={140}
-                      height={90}
-                    />
-                  )}
+                  <TokenWithNetworkImage
+                    tokenImage={{
+                      url: stake.properties ? stake.properties.logo.src : '',
+                      width: NumberWidth,
+                      withoutBorder: true
+                    }}
+                  />
                 </span>
                 <S.AssetsBodyContent>
                   <S.Balance>

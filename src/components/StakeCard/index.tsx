@@ -40,6 +40,7 @@ import ModalRequestUnstake from '../Modals/ModalRequestUnstake'
 import ModalCancelUnstake from '../Modals/ModalCancelUnstake'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalStakeAndWithdraw from '../Modals/ModalStakeAndWithdraw'
+import TokenWithNetworkImage from '../TokenWithNetworkImage'
 import ModalBuyKacyOnPangolin from '../Modals/ModalBuyKacyOnPangolin'
 import Loading from '../Loading'
 
@@ -160,6 +161,13 @@ const StakeCard = ({
     process.env.NEXT_PUBLIC_MASTER === '1' ? 'Avalanche' : 'Fuji',
     stakeWithVotingPower ? 'VotingStake' : 'OtherStake'
   ]
+
+  const stakeLogoString = properties.logo.style.width.search('rem')
+  const stakeLogoWidthString = properties.logo.style.width.substring(
+    0,
+    stakeLogoString
+  )
+  const stakeLogoWidth = Number(stakeLogoWidthString) * 10
 
   function openStakeAndWithdraw(transaction: 'staking' | 'unstaking') {
     setIsModalStake(true)
@@ -311,10 +319,12 @@ const StakeCard = ({
           )}
           <S.StakeCard style={{ display: `${isLoading ? 'none' : 'block'}` }}>
             <S.InterBackground stakeWithVotingPower={!stakeWithVotingPower}>
-              <img
-                src={properties.logo.src}
-                alt=""
-                style={properties.logo.style}
+              <TokenWithNetworkImage
+                tokenImage={{
+                  url: properties.logo.src,
+                  width: stakeLogoWidth,
+                  withoutBorder: true
+                }}
               />
               <S.IntroStaking>
                 <S.APR>
