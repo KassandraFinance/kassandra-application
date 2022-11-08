@@ -18,7 +18,6 @@ export const GET_ACTIVITY = gql`
       }
       num_activities
       activities(
-        where: { type: "exit" }
         orderBy: timestamp
         orderDirection: desc
         skip: $skip

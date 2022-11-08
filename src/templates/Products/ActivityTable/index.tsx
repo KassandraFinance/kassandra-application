@@ -92,7 +92,7 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
   const { poolTokens: poolTokensArray } = usePoolTokens()
   const { date } = useDate()
 
-  const take = 20
+  const take = 4
 
   const { data } = useSWR<IPoolProps>(
     [GET_ACTIVITY, skip, take, product.sipAddress],
@@ -250,10 +250,11 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
                 </p>
                 </S.TransactionOutAndIn>
                 <S.TransactionInfo>
-                  <p>{substr(activity?.txHash)}</p>
+                  <p>{substr(activity?.address)}</p>
                   <span>
                     {getDateDiff(activity.timestamp * 1000)?.value} {date(getDateDiff(activity.timestamp * 1000))} ago
-                    <ExternalLink hrefLink={`https://snowtrace.io/tx/${activity.txHash}`} text="" />
+                    {/* <ExternalLink hrefLink={`https://snowtrace.io/tx/${activity.txHash}`} text="" /> */}
+                    <ExternalLink hrefNext={`/profile/${activity.address}`} text="" />
                   </span>
                 </S.TransactionInfo>
               </S.Tr>
