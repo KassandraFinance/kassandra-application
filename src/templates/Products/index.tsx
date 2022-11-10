@@ -51,6 +51,7 @@ import ShareImageModal from './ShareImageModal'
 import SharedImage from './SharedImage'
 
 import * as S from './styles'
+import NewPoolOperations from '../../components/NewPoolOperations'
 
 const invertToken: { [key: string]: string } = {
   '0xe28Ad9Fa07fDA82abab2E0C86c64A19D452b160E':
@@ -529,13 +530,14 @@ const Products = ({ product }: Input) => {
               <ActivityTable product={product} />
               <TokenDescription symbol={product.symbol} />
             </S.ProductDetails>
-            <PoolOperations
+            {/* <PoolOperations
               poolChain={product.chain}
               poolSymbol={product.symbol}
               crpPoolAddress={product.sipAddress}
               corePoolAddress={product.coreAddress}
               productCategories={product.categories}
-            />
+            /> */}
+            <NewPoolOperations />
           </S.Product>
         </>
       )}
