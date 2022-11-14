@@ -2,6 +2,7 @@ import Image from 'next/image'
 
 import kassandraFooter from '../../../../public/assets/images/kassandra-footer.svg'
 import SocialLinks from '../SocialLinks'
+
 import * as S from './styles'
 
 const MenuFooter = () => {

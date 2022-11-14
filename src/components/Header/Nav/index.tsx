@@ -2,13 +2,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
+import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
+
 import DropdownInvest from '../../Dropdown'
 import Overlay from '../Overlay'
+import MenuFooter from '../MenuFooter'
 
 import kacyIcon from '../../../../public/assets/logos/kacy-96.svg'
 
 import * as S from './styles'
-import MenuFooter from '../MenuFooter'
 
 interface INavProps {
   isShowMenu: boolean;
@@ -22,6 +24,7 @@ const Nav = ({
   setIsShowMenu
 }: INavProps) => {
   const router = useRouter()
+  const { trackEventFunction } = useMatomoEcommerce()
 
   function handleClickOverlay() {
     setIsShowMenu(false)
@@ -33,30 +36,49 @@ const Nav = ({
 
       <S.Nav isShowMenu={isShowMenu}>
         <Link href="/" passHref>
-          <S.MenuLink active={false}>
+          <S.MenuLink
+            active={false}
+            onClick={() =>
+              trackEventFunction('click-on-link', 'home-page', 'header')
+            }
+          >
             <Image src={kacyIcon} width={27} height={24} />
           </S.MenuLink>
         </Link>
         <Link href="/explore" passHref>
           <S.MenuLink
             active={router.asPath === '/explore' || router.asPath === '/'}
+            onClick={() =>
+              trackEventFunction('click-on-link', 'explore', 'header')
+            }
           >
             Invest
           </S.MenuLink>
         </Link>
         <Link href="/farm?tab=stake" passHref>
-          <S.MenuLink active={router.pathname === '/farm'}>Stake</S.MenuLink>
+          <S.MenuLink
+            active={router.pathname === '/farm'}
+            onClick={() =>
+              trackEventFunction('click-on-link', 'farm', 'header')
+            }
+          >
+            Stake
+          </S.MenuLink>
         </Link>
         <S.MenuLink
           active={router.asPath === '/create'}
           onClick={() => {
             setIsModalWaitingList(true)
+            trackEventFunction('click-on-link', 'create', 'header')
           }}
         >
           Create
         </S.MenuLink>
         <S.MenuLink
-          onClick={() => setIsModalWaitingList(true)}
+          onClick={() => {
+            setIsModalWaitingList(true)
+            trackEventFunction('click-on-link', 'manage', 'header')
+          }}
           active={router.asPath === '/manage'}
         >
           Manage

@@ -1,5 +1,7 @@
 import Image from 'next/image'
 
+import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
+
 import discordIcon from '../../../../public/assets/socialMidia/discord.svg'
 import telegramIcon from '../../../../public/assets/socialMidia/telegram.svg'
 import githubIcon from '../../../../public/assets/socialMidia/github.svg'
@@ -49,6 +51,8 @@ const links = [
 ]
 
 const SocialLinks = () => {
+  const { trackEventFunction } = useMatomoEcommerce()
+
   return (
     <S.SocialLinks>
       {links.map(link => (
@@ -57,6 +61,9 @@ const SocialLinks = () => {
             href={link.link}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() =>
+              trackEventFunction('click-on-link', link.name, 'menu-header')
+            }
           >
             <Image src={link.icon} alt={link.alt} />
           </S.SocialLink>
