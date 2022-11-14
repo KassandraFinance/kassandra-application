@@ -304,7 +304,7 @@ const ModalUserEditInfo = ({
                   </S.ButtonAddNft>
                   <S.UserAddNftImage isDropdownAddNft={isDropdownAddNft}>
                     <UserNFTs
-                      address="0x55bB02dF11C5d8862eb7B924f3876b8BA307bAa7"
+                      address={userWalletAddress}
                       setUserImageModal={setUserImageModal}
                       isDropdownAddNft={isDropdownAddNft}
                       setIsDropdownAddNft={setIsDropdownAddNft}
