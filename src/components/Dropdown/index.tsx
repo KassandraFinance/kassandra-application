@@ -18,15 +18,15 @@ interface ILinkPage {
 interface IDropdownProps {
   nameOnHeader: string;
   linkPage: Array<ILinkPage>;
-  adaptToResponsiveSize?: boolean;
   isActive?: boolean;
+  adaptToResponsiveSize?: boolean;
 }
 
 const Dropdown = ({
   nameOnHeader,
   linkPage,
   isActive,
-  adaptToResponsiveSize
+  adaptToResponsiveSize = false
 }: IDropdownProps) => {
   const [isDropdown, setIsDropdown] = React.useState<boolean>(false)
   const { trackEventFunction } = useMatomoEcommerce()
@@ -35,7 +35,7 @@ const Dropdown = ({
     <S.Dropdown>
       <S.DropButton
         isActive={isActive ? isActive : false}
-        onTouchStartCapture={() => setIsDropdown(true)}
+        onTouchStart={() => setIsDropdown(!isDropdown)}
         onMouseOver={() => setIsDropdown(true)}
         onMouseOut={(event: any) => {
           setIsDropdown(false), event.target.blur()
@@ -47,24 +47,42 @@ const Dropdown = ({
         {nameOnHeader}
         <img src="/assets/utilities/arrow-down-thin.svg" />
       </S.DropButton>
-      <S.DropdownContent
+
+      <S.MenuWrapper
         onMouseOver={() => setIsDropdown(true)}
         onMouseOut={() => setIsDropdown(false)}
         isDropdown={isDropdown}
         adaptToResponsiveSize={adaptToResponsiveSize}
       >
-        {linkPage.map((item, index) => (
-          <div key={index}>
-            {item.disabled ? (
-              <S.MenuLinkDisable>
-                {item.name}
-                <div>
-                  <Image src={pickaxe} />
-                </div>
-              </S.MenuLinkDisable>
-            ) : !item.newTab ? (
-              <Link href={item.href} passHref>
-                <a
+        <S.DropdownContent>
+          {linkPage.map((item, index) => (
+            <div key={index}>
+              {item.disabled ? (
+                <S.MenuLinkDisable>
+                  {item.name}
+                  <div>
+                    <Image src={pickaxe} />
+                  </div>
+                </S.MenuLinkDisable>
+              ) : !item.newTab ? (
+                <Link href={item.href} passHref>
+                  <S.DropDownLink
+                    onClick={() =>
+                      trackEventFunction(
+                        'click-on-link',
+                        `${item.name}`,
+                        `header-${nameOnHeader}`
+                      )
+                    }
+                  >
+                    {item.name}
+                  </S.DropDownLink>
+                </Link>
+              ) : (
+                <S.DropDownLink
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() =>
                     trackEventFunction(
                       'click-on-link',
@@ -74,27 +92,12 @@ const Dropdown = ({
                   }
                 >
                   {item.name}
-                </a>
-              </Link>
-            ) : (
-              <a
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  trackEventFunction(
-                    'click-on-link',
-                    `${item.name}`,
-                    `header-${nameOnHeader}`
-                  )
-                }
-              >
-                {item.name}
-              </a>
-            )}
-          </div>
-        ))}
-      </S.DropdownContent>
+                </S.DropDownLink>
+              )}
+            </div>
+          ))}
+        </S.DropdownContent>
+      </S.MenuWrapper>
     </S.Dropdown>
   )
 }

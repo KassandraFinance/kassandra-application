@@ -1,29 +1,21 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
-import substr from '../../utils/substr'
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
-import { setNickName, setProfilePic } from '../../store/reducers/userSlice'
 
-import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
-
-import Button from '../Button'
-import DropdownInvest from '../Dropdown'
-
-import ModalKacy from '../Modals/ModalKacy'
+import Nav from './Nav'
 import ModalAlert from '../Modals/ModalAlert'
 import ModalLogOut from '../Modals/ModalLogOut'
 import ModalWaitingList from '../Modals/ModalWaitingList'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalInstitucionalLinksMobile from '../Modals/ModalInstitucionalLinksMobile'
 
-import options from '../../../public/assets/utilities/options.svg'
 import kacy96 from '../../../public/assets/logos/kacy-96.svg'
 import logoKassandra from '../../../public/assets/logos/kassandra-header.svg'
 
 import * as S from './styles'
+import HeaderButtons from './HeaderButtons'
 
 export type MenuProps = {
   username?: string
@@ -38,30 +30,10 @@ const Header = () => {
   const [isModalSocialMedia, setIsModalSocialMedia] =
     React.useState<boolean>(false)
 
-  const dispatch = useAppDispatch()
-  const { nickName, image } = useAppSelector(state => state.user)
-
-  const { trackEventFunction } = useMatomoEcommerce()
+  const [isShowMenu, setIsShowMenu] = React.useState(false)
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
-
-  const router = useRouter()
-
-  React.useEffect(() => {
-    if (!userWalletAddress) return
-
-    fetch(`/api/profile/${userWalletAddress}`)
-      .then(res => res.json())
-      .then(data => {
-        const { nickname, image, isNFT } = data
-
-        dispatch(setNickName(nickname || ''))
-        dispatch(
-          setProfilePic({ profilePic: image || '', isNFT: isNFT || false })
-        )
-      })
-  }, [userWalletAddress])
 
   return (
     <>
@@ -79,95 +51,28 @@ const Header = () => {
             </a>
           </Link>
         </S.LogoWrapper>
-        <S.Menu>
-          <Link href="/explore" passHref>
-            <S.MenuLink
-              active={
-                router.asPath.substring(0, 8) === '/explore' ||
-                router.asPath === '/'
-              }
-            >
-              Invest
-            </S.MenuLink>
-          </Link>
-          <Link href="/farm?tab=stake" passHref>
-            <S.MenuLink active={router.pathname === '/farm'}>Stake</S.MenuLink>
-          </Link>
-          <S.MenuLink
-            active={router.asPath === '/create'}
+
+        <S.MenuWrapper>
+          <S.HamburgerButton
             onClick={() => {
-              setIsModalWaitingList(true)
+              setIsShowMenu(!isShowMenu)
             }}
           >
-            Create
-          </S.MenuLink>
-          <S.MenuLink
-            onClick={() => setIsModalWaitingList(true)}
-            active={router.asPath === '/manage'}
-          >
-            Manage
-          </S.MenuLink>
-          <DropdownInvest
-            nameOnHeader="DAO"
-            isActive={
-              router.asPath.substring(0, 4) === '/gov' ||
-              router.asPath.substring(0, 8) === '/profile'
-            }
-            adaptToResponsiveSize={true}
-            linkPage={[
-              {
-                name: 'Overview',
-                href: '/gov'
-              },
-              {
-                name: 'Proposals',
-                href: '/gov/proposals'
-              },
-              {
-                name: 'Leaderboard ',
-                href: '/gov/leaderboard?page=1'
-              },
-              {
-                name: 'Forum',
-                href: 'https://gov.kassandra.finance/',
-                newTab: true
-              }
-            ]}
-          />
-          <S.MenuContainer>
-            <DropdownInvest
-              nameOnHeader="Learn"
-              linkPage={[
-                {
-                  name: 'Home',
-                  href: 'https://kassandra.finance/'
-                },
-                {
-                  name: 'Investors',
-                  href: 'https://kassandra.finance/investors'
-                },
-                {
-                  name: 'Managers',
-                  href: 'https://kassandra.finance/managers'
-                },
-                {
-                  name: 'DAO',
-                  href: 'https://kassandra.finance/dao'
-                },
-                {
-                  name: 'Foundation',
-                  href: 'https://kassandra.finance/foundation'
-                },
-                {
-                  name: 'Blog',
-                  href: `https://kassandrafoundation.medium.com/`,
-                  newTab: true
-                }
-              ]}
-            />
-          </S.MenuContainer>
+            <S.HamburgerMenu isShowMenu={isShowMenu}>
+              <div></div>
+              <div></div>
+              <div></div>
+            </S.HamburgerMenu>
+          </S.HamburgerButton>
 
-          <S.MenuBottom>
+          <Nav
+            isShowMenu={isShowMenu}
+            setIsModalWaitingList={setIsModalWaitingList}
+            setIsShowMenu={setIsShowMenu}
+          />
+
+          <HeaderButtons setIsModalWallet={setIsModalWallet} />
+          {/* <S.MenuBottom>
             <S.ButtonsWrapper>
               <ModalKacy />
               {userWalletAddress ? (
@@ -282,8 +187,8 @@ const Header = () => {
                 <Image src={options} alt="options" />
               </S.ButtonOptions>
             </S.OptionsContainer>
-          </S.MenuBottom>
-        </S.Menu>
+          </S.MenuBottom> */}
+        </S.MenuWrapper>
       </S.Wrapper>
       {isModalSocialMedia && (
         <ModalInstitucionalLinksMobile setModalOpen={setIsModalSocialMedia} />
