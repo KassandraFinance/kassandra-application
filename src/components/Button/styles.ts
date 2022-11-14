@@ -243,10 +243,9 @@ export const ImgWrapper = styled.div`
     justify-content: center;
     align-items: center;
 
-    width: 1.8rem;
-    height: 1.8rem;
-
-    border-radius: 50%;
-    overflow: hidden;
+    img {
+      object-fit: cover;
+      border-radius: 50%;
+    }
   `}
 `
