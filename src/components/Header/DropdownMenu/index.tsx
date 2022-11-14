@@ -2,9 +2,9 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
-import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
-import pickaxe from '../../../public/assets/icons/pickaxe.svg'
+import pickaxe from '../../../../public/assets/icons/pickaxe.svg'
 
 import * as S from './styles'
 
@@ -22,7 +22,7 @@ interface IDropdownProps {
   adaptToResponsiveSize?: boolean;
 }
 
-const Dropdown = ({
+const DropdownMenu = ({
   nameOnHeader,
   linkPage,
   isActive,
@@ -32,14 +32,16 @@ const Dropdown = ({
   const { trackEventFunction } = useMatomoEcommerce()
 
   return (
-    <S.Dropdown>
+    <S.DropdownMenu>
+      {isDropdown && <S.Overlay onClick={() => setIsDropdown(false)} />}
       <S.DropButton
         isActive={isActive ? isActive : false}
-        onTouchStart={() => setIsDropdown(!isDropdown)}
-        onMouseOver={() => setIsDropdown(true)}
-        onMouseOut={(event: any) => {
-          setIsDropdown(false), event.target.blur()
-        }}
+        // onTouchStart={() => setIsDropdown(!isDropdown)}
+        // onMouseOver={() => setIsDropdown(true)}
+        // onMouseOut={(event: any) => {
+        //   setIsDropdown(false), event.target.blur()
+        // }}
+        onClick={() => setIsDropdown(!isDropdown)}
         onKeyPress={event =>
           event.key === 'Enter' && setIsDropdown(!isDropdown)
         }
@@ -49,8 +51,8 @@ const Dropdown = ({
       </S.DropButton>
 
       <S.MenuWrapper
-        onMouseOver={() => setIsDropdown(true)}
-        onMouseOut={() => setIsDropdown(false)}
+        // onMouseOver={() => setIsDropdown(true)}
+        // onMouseOut={() => setIsDropdown(false)}
         isDropdown={isDropdown}
         adaptToResponsiveSize={adaptToResponsiveSize}
       >
@@ -98,8 +100,8 @@ const Dropdown = ({
           ))}
         </S.DropdownContent>
       </S.MenuWrapper>
-    </S.Dropdown>
+    </S.DropdownMenu>
   )
 }
 
-export default Dropdown
+export default DropdownMenu

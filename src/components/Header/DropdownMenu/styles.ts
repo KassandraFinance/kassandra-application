@@ -4,7 +4,7 @@ interface IDropdownProps {
   isActive: boolean;
 }
 
-export const Dropdown = styled.div`
+export const DropdownMenu = styled.div`
   position: relative;
 
   display: inline-block;
@@ -262,6 +262,23 @@ export const MenuLinkDisable = styled.div`
 
     @media (max-width: 380px) {
       font-size: ${theme.font.sizes.font12};
+    }
+  `}
+`
+
+export const Overlay = styled.div`
+  ${() => css`
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    background-color: transparent;
+    z-index: 1;
+
+    @media (max-width: 576px) {
+      display: none;
     }
   `}
 `

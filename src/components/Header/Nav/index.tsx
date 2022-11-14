@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
-import DropdownInvest from '../../Dropdown'
+import DropdownMenu from '../DropdownMenu'
 import Overlay from '../Overlay'
 import MenuFooter from '../MenuFooter'
 
@@ -83,7 +83,7 @@ const Nav = ({
         >
           Manage
         </S.MenuLink>
-        <DropdownInvest
+        <DropdownMenu
           nameOnHeader="DAO"
           isActive={
             router.asPath.substring(0, 4) === '/gov' ||
@@ -110,7 +110,7 @@ const Nav = ({
             }
           ]}
         />
-        <DropdownInvest
+        <DropdownMenu
           nameOnHeader="Learn"
           linkPage={[
             {
