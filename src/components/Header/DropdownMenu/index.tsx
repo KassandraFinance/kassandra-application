@@ -33,15 +33,13 @@ const DropdownMenu = ({
 
   return (
     <S.DropdownMenu>
-      {isDropdown && <S.Overlay onClick={() => setIsDropdown(false)} />}
       <S.DropButton
         isActive={isActive ? isActive : false}
-        // onTouchStart={() => setIsDropdown(!isDropdown)}
-        // onMouseOver={() => setIsDropdown(true)}
-        // onMouseOut={(event: any) => {
-        //   setIsDropdown(false), event.target.blur()
-        // }}
-        onClick={() => setIsDropdown(!isDropdown)}
+        onTouchStart={() => setIsDropdown(!isDropdown)}
+        onMouseOver={() => setIsDropdown(true)}
+        onMouseOut={(event: any) => {
+          setIsDropdown(false), event.target.blur()
+        }}
         onKeyPress={event =>
           event.key === 'Enter' && setIsDropdown(!isDropdown)
         }
@@ -51,8 +49,8 @@ const DropdownMenu = ({
       </S.DropButton>
 
       <S.MenuWrapper
-        // onMouseOver={() => setIsDropdown(true)}
-        // onMouseOut={() => setIsDropdown(false)}
+        onMouseOver={() => setIsDropdown(true)}
+        onMouseOut={() => setIsDropdown(false)}
         isDropdown={isDropdown}
         adaptToResponsiveSize={adaptToResponsiveSize}
       >

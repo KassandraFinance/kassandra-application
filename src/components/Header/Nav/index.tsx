@@ -1,3 +1,5 @@
+import React from 'react'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -14,14 +16,18 @@ import * as S from './styles'
 
 interface INavProps {
   isShowMenu: boolean;
+  showOverlay: boolean;
   setIsModalWaitingList: React.Dispatch<React.SetStateAction<boolean>>;
   setIsShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Nav = ({
   isShowMenu,
+  showOverlay,
   setIsModalWaitingList,
-  setIsShowMenu
+  setIsShowMenu,
+  setShowOverlay
 }: INavProps) => {
   const router = useRouter()
   const { trackEventFunction } = useMatomoEcommerce()
@@ -30,9 +36,19 @@ const Nav = ({
     setIsShowMenu(false)
   }
 
+  function animationClose() {
+    setShowOverlay(false)
+  }
+
   return (
     <>
-      {isShowMenu && <Overlay onClick={handleClickOverlay} />}
+      {showOverlay && (
+        <Overlay
+          isShowMenu={isShowMenu}
+          onClick={handleClickOverlay}
+          onAnimationEnd={animationClose}
+        />
+      )}
 
       <S.Nav isShowMenu={isShowMenu}>
         <Link href="/" passHref>

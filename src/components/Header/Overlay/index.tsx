@@ -1,11 +1,23 @@
 import * as S from './styles'
 
 interface IOverlayProps {
+  isShowMenu: boolean;
   onClick: () => void;
+  onAnimationEnd: () => void;
 }
 
-const Overlay = ({ onClick }: IOverlayProps) => {
-  return <S.Overlay onClick={onClick} />
+const Overlay = ({ onClick, isShowMenu, onAnimationEnd }: IOverlayProps) => {
+  return (
+    <S.Overlay
+      isShowMenu={isShowMenu}
+      onClick={onClick}
+      onAnimationEnd={() => {
+        if (!isShowMenu) {
+          onAnimationEnd
+        }
+      }}
+    />
+  )
 }
 
 export default Overlay

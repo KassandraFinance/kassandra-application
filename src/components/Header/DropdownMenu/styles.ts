@@ -265,20 +265,3 @@ export const MenuLinkDisable = styled.div`
     }
   `}
 `
-
-export const Overlay = styled.div`
-  ${() => css`
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-
-    background-color: transparent;
-    z-index: 1;
-
-    @media (max-width: 576px) {
-      display: none;
-    }
-  `}
-`
