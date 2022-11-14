@@ -239,12 +239,10 @@ const ModalUserEditInfo = ({
                     height={123}
                   />
                 ) : userImageModal.isNFTPreviewModal ? (
-                  <S.UserImage>
-                    <NftImage
-                      NftUrl={`${userImageModal.image_preview}`}
-                      imageSize="large"
-                    />
-                  </S.UserImage>
+                  <NftImage
+                    NftUrl={`${userImageModal.image_preview}`}
+                    imageSize="large"
+                  />
                 ) : userImageModal.image_preview !== '' &&
                   userImageModal.image_preview !== undefined ? (
                   <img

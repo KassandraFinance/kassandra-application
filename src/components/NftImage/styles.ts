@@ -29,13 +29,14 @@ const imageSizes = {
     display: flex;
     flex-direction: column;
 
-    max-height: 13rem;
-    max-width: 13rem;
-
     img {
       object-fit: cover;
       background-color: #c4c4c410;
       clip-path: url(#nftImageLarge);
+    }
+
+    svg {
+      position: absolute;
     }
   `,
 
