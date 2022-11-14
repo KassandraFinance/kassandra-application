@@ -60,7 +60,7 @@ const ButtonBase: React.ForwardRefRenderFunction<
   >
     {image.length > 0 ? (
       <S.ImgWrapper>
-        <img src={image} alt="User image" />
+        <img src={image} alt="User image" width={18} height={18} />
       </S.ImgWrapper>
     ) : (
       icon

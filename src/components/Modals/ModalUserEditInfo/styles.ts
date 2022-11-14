@@ -139,16 +139,13 @@ export const NicknameTilte = styled.p`
 `
 export const UserNameContent = styled.div``
 
-export const UserImage = styled.div`
-  img {
-    margin-top: 1rem;
-    object-fit: cover;
-  }
-`
-
 export const UserImageContent = styled.div`
   display: flex;
   justify-content: space-between;
+
+  > img {
+    object-fit: cover;
+  }
 
   > span {
     position: relative;
