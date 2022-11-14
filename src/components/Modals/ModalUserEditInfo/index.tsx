@@ -239,12 +239,10 @@ const ModalUserEditInfo = ({
                     height={123}
                   />
                 ) : userImageModal.isNFTPreviewModal ? (
-                  <S.UserImage>
-                    <NftImage
-                      NftUrl={`${userImageModal.image_preview}`}
-                      imageSize="large"
-                    />
-                  </S.UserImage>
+                  <NftImage
+                    NftUrl={`${userImageModal.image_preview}`}
+                    imageSize="large"
+                  />
                 ) : userImageModal.image_preview !== '' &&
                   userImageModal.image_preview !== undefined ? (
                   <img
@@ -306,7 +304,7 @@ const ModalUserEditInfo = ({
                   </S.ButtonAddNft>
                   <S.UserAddNftImage isDropdownAddNft={isDropdownAddNft}>
                     <UserNFTs
-                      address={userWalletAddress}
+                      address="0x55bB02dF11C5d8862eb7B924f3876b8BA307bAa7"
                       setUserImageModal={setUserImageModal}
                       isDropdownAddNft={isDropdownAddNft}
                       setIsDropdownAddNft={setIsDropdownAddNft}
