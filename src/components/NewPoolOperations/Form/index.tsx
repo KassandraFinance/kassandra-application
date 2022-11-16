@@ -2,8 +2,13 @@ import React from 'react'
 
 import { ChainDetails } from '../../../utils/changeChain'
 
+import Invest from './Invest';
+import Withdraw from './Withdraw';
+
+
 import * as S from './styles'
 
+// eslint-disable-next-line prettier/prettier
 export type Titles = keyof typeof messages;
 
 const messages = {
@@ -14,7 +19,7 @@ const messages = {
 
 interface IFormProps {
   typeAction: string;
-  title: Titles;
+  // title: Titles;
   typeWithdrawChecked: string;
   poolChain: ChainDetails;
   poolSymbol: string;
@@ -31,13 +36,14 @@ const Form = ({
   corePoolAddress,
   productCategories,
   typeAction,
-  title,
+  // title,
   typeWithdrawChecked,
   setIsModaWallet
 }: IFormProps) => {
   return (
     <S.Form>
-      <span>form</span>
+      {typeAction === "Invest" && <Invest />}
+      {typeAction === "Withdraw" && <Withdraw />}
     </S.Form>
   )
 }

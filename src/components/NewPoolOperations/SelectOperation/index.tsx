@@ -4,20 +4,23 @@ import { ChainDetails } from '../../../utils/changeChain'
 
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce';
 
+import { Titles } from '../'
+
 import Form from '../Form';
 
 import * as S from './styles'
 
-export type Titles = keyof typeof messages;
+// export type Titles = keyof typeof messages;
 
-const messages = {
-  Invest: 'Pay with',
-  Withdraw: 'Send',
-  Swap: 'Swap from'
-}
+// const messages = {
+//   Invest: 'Pay with',
+//   Withdraw: 'Send',
+//   Swap: 'Swap from'
+// }
 
-interface ISelectOperatorProps {
-  inputChecked: Titles;
+interface ISelectOperationProps {
+  // inputChecked: Titles;
+  inputChecked: string;
   handleSetInputChecked: (title: Titles) => void;
   typeWithdrawChecked: string;
   setTypeWithdrawChecked: React.Dispatch<React.SetStateAction<string>>;
@@ -42,7 +45,7 @@ const SelectOperation = ({
   crpPoolAddress,
   corePoolAddress,
   productCategories
-}: ISelectOperatorProps) => {
+}: ISelectOperationProps) => {
   const { trackEventFunction } = useMatomoEcommerce()
 
   return (
@@ -64,6 +67,7 @@ const SelectOperation = ({
         >
           Invest
         </S.Label>
+
         <S.Input
           type="radio"
           name="operator"
@@ -80,23 +84,6 @@ const SelectOperation = ({
           htmlFor="Withdraw"
           >
           Withdraw
-        </S.Label>
-
-        <S.Input
-          type="radio"
-          name="operator"
-          id="Swap"
-          onChange={() => {
-            handleSetInputChecked('Swap')
-            trackEventFunction('click-on-tab', 'swap', 'operations-invest')
-          }}
-          checked={inputChecked === 'Swap'}
-        />
-        <S.Label
-          selected={inputChecked === 'Swap'}
-          htmlFor="Swap"
-        >
-          Swap
         </S.Label>
       </S.SelectOperation>
       {inputChecked === 'Withdraw' &&
@@ -145,9 +132,9 @@ const SelectOperation = ({
         crpPoolAddress={crpPoolAddress}
         corePoolAddress={corePoolAddress}
         productCategories={productCategories}
-        title={inputChecked}
+        // title={inputChecked}
         typeWithdrawChecked={typeWithdrawChecked}
-        typeAction={messages[inputChecked]}
+        typeAction={inputChecked}
         setIsModaWallet={setIsModaWallet}
       />
     </>

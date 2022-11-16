@@ -23,6 +23,7 @@ interface IOperationsProps {
   productCategories: string[];
 }
 
+// eslint-disable-next-line prettier/prettier
 export type Titles = keyof typeof messages;
 
 const messages = {
@@ -73,7 +74,7 @@ const NewPoolOperations = ({
         />
         :
         <SelectOperation
-          inputChecked={"Invest"}
+          inputChecked={inputChecked}
           handleSetInputChecked={handleSetInputChecked}
           typeWithdrawChecked={typeWithdrawChecked}
           setTypeWithdrawChecked={setTypeWithdrawChecked}

@@ -25,7 +25,7 @@ export const PoolOperationsContainer = styled.div`
 
 export const SelectOperation = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   width: 100%;
 
   background: rgba(31, 31, 31, 0.72);
