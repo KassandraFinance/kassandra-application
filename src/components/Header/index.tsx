@@ -34,7 +34,7 @@ const Header = () => {
   const [isShowMenu, setIsShowMenu] = React.useState(false)
   const [showOverlay, setShowOverlay] = React.useState(false)
 
-  const [isChooseNetwork, setIsChooseNetwork] = React.useState(true)
+  const [isChooseNetwork, setIsChooseNetwork] = React.useState(false)
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
@@ -78,7 +78,10 @@ const Header = () => {
             setShowOverlay={setShowOverlay}
           />
 
-          <HeaderButtons setIsModalWallet={setIsModalWallet} />
+          <HeaderButtons
+            setIsModalWallet={setIsModalWallet}
+            setIsChooseNetwork={setIsChooseNetwork}
+          />
         </S.MenuWrapper>
       </S.Wrapper>
       {isModalSocialMedia && (

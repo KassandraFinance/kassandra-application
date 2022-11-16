@@ -1,7 +1,12 @@
 import styled, { css } from 'styled-components'
 
-export const HeaderButtons = styled.div`
-  ${({ theme }) => css`
+interface IHeaderButtonsProps {
+  networkColor: string;
+}
+
+// prettier-ignore
+export const HeaderButtons = styled.div<IHeaderButtonsProps>`
+  ${({ theme, networkColor }) => css`
     display: flex;
     gap: 1rem;
 
@@ -19,6 +24,10 @@ export const HeaderButtons = styled.div`
       background-color: ${theme.colors.darkPurple};
 
       z-index: ${theme.layers.menu};
+    }
+
+    @media (max-width: 576px) {
+      padding: 1.6rem 1rem;
     }
 
     .button-wallet {
@@ -41,6 +50,29 @@ export const HeaderButtons = styled.div`
         background-color: ${theme.colors.snow};
         color: ${theme.colors.darkPurple};
         outline-color: ${theme.colors.snow};
+      }
+
+      @media (max-width: 576px) {
+        font-weight: ${theme.font.weight.light};
+        font-size: ${theme.font.sizes.font12};
+        line-height: ${theme.font.sizes.font12};
+      }
+    }
+
+    .button-network {
+      padding: 1.2rem 1.6rem;
+
+      border: 0.07rem solid ${networkColor};
+      border-radius: 0.4rem;
+      outline: ${networkColor};
+
+      &:hover, &:focus {
+        background-color: ${networkColor};
+      }
+
+      &:focus {
+        outline: 0.2rem solid ${networkColor};
+        outline-offset: 0.2rem;
       }
     }
   `}

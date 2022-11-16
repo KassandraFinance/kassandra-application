@@ -1,6 +1,6 @@
 import React from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
-import Button from '../../Button'
 
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setNickName, setProfilePic } from '../../../store/reducers/userSlice'
@@ -8,14 +8,21 @@ import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import substr from '../../../utils/substr'
 
 import ModalKacy from '../../Modals/ModalKacy'
+import Button from '../../Button'
+
+import avalanche from '../../../../public/assets/logos/avalanche.svg'
 
 import * as S from './styles'
 
 interface IHeaderButtonsProps {
   setIsModalWallet: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const HeaderButtons = ({ setIsModalWallet }: IHeaderButtonsProps) => {
+const HeaderButtons = ({
+  setIsModalWallet,
+  setIsChooseNetwork
+}: IHeaderButtonsProps) => {
   const dispatch = useAppDispatch()
   const { trackEventFunction } = useMatomoEcommerce()
 
@@ -38,7 +45,14 @@ const HeaderButtons = ({ setIsModalWallet }: IHeaderButtonsProps) => {
   }, [userWalletAddress])
 
   return (
-    <S.HeaderButtons>
+    <S.HeaderButtons networkColor="#E84142">
+      <Button
+        className="button-network"
+        backgroundBlack
+        icon={<Image src={avalanche} width={12} height={12} />}
+        onClick={() => setIsChooseNetwork(true)}
+      />
+
       <ModalKacy />
       {userWalletAddress ? (
         <Link href={`/profile/${userWalletAddress}`} passHref>
