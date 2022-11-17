@@ -10,7 +10,7 @@ import ModalLogOut from '../Modals/ModalLogOut'
 import ModalWaitingList from '../Modals/ModalWaitingList'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalInstitucionalLinksMobile from '../Modals/ModalInstitucionalLinksMobile'
-import ChooseNetwork from '../Modals/ChooseNetwork'
+import ModalChooseNetwork from '../Modals/ModalChooseNetwork'
 
 import kacy96 from '../../../public/assets/logos/kacy-96.svg'
 import logoKassandra from '../../../public/assets/logos/kassandra-header.svg'
@@ -103,7 +103,7 @@ const Header = () => {
       {isError && <ModalAlert />}
 
       {isChooseNetwork && (
-        <ChooseNetwork setIsChooseNetwork={setIsChooseNetwork} />
+        <ModalChooseNetwork setIsChooseNetwork={setIsChooseNetwork} />
       )}
     </>
   )

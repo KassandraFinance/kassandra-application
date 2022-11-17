@@ -1,5 +1,8 @@
 import Image from 'next/image'
 
+import changeChain from '../../../utils/changeChain'
+import { chains } from '../../../constants/tokenAddresses'
+
 import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
 import avalanche from '../../../../public/assets/logos/avalanche.svg'
 import polygon from '../../../../public/assets/logos/polygon.svg'
@@ -10,7 +13,7 @@ interface IChooseNetworkProps {
   setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ChooseNetwork = ({ setIsChooseNetwork }: IChooseNetworkProps) => {
+const ModalChooseNetwork = ({ setIsChooseNetwork }: IChooseNetworkProps) => {
   function handleCloseModal() {
     setIsChooseNetwork(false)
   }
@@ -29,7 +32,9 @@ const ChooseNetwork = ({ setIsChooseNetwork }: IChooseNetworkProps) => {
         </S.ModalHeader>
 
         <S.ModalBody>
-          <S.WrapperIconsBackGround>
+          <S.WrapperIconsBackGround
+            onClick={() => changeChain(chains.avalanche)}
+          >
             <S.WrapperIcons>
               <Image src={avalanche} width={24} height={24} />
 
@@ -37,7 +42,10 @@ const ChooseNetwork = ({ setIsChooseNetwork }: IChooseNetworkProps) => {
             </S.WrapperIcons>
           </S.WrapperIconsBackGround>
 
-          <S.WrapperIconsBackGround disabled>
+          <S.WrapperIconsBackGround
+            onClick={() => changeChain(chains.polygon)}
+            disabled
+          >
             <S.WrapperIcons>
               <Image src={polygon} width={24} height={24} />
 
@@ -52,4 +60,4 @@ const ChooseNetwork = ({ setIsChooseNetwork }: IChooseNetworkProps) => {
   )
 }
 
-export default ChooseNetwork
+export default ModalChooseNetwork

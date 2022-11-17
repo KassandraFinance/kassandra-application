@@ -107,15 +107,17 @@ export const WrapperIconsBackGround = styled.button`
 
       &:disabled {
         > div {
-          > span {
+          span {
             color: rgba(255, 255, 255, 0.3);
-            font-weight: ${theme.font.weight.light};
+            font-family: 'Rubik';
+            font-style: normal;
+            font-weight: 300;
             font-size: ${theme.font.sizes.font16};
             line-height: 100%;
             letter-spacing: 0.05em;
           }
 
-          > span:nth-of-type(3) {
+          span:nth-of-type(3) {
             margin-left: auto;
           }
         }
