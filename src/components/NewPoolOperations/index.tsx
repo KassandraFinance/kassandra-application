@@ -12,6 +12,7 @@ import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import SelectOperation from './SelectOperation'
 import ModalCardOperations from './ModalPoolOperations'
 import SelectOperationOnMobile, { TitlesMobile } from './SelectOperationOnMobile'
+import TokenSelection from './Form/TokenSelection'
 
 import * as S from './styles'
 
@@ -46,7 +47,7 @@ const NewPoolOperations = ({
   const [typeWithdrawChecked, setTypeWithdrawChecked] = React.useState<string>('Best_value')
   const [inputCheckedBarMobile, setInputCheckedBarMobile] = React.useState<TitlesMobile>('Disable')
 
-  const { chainId } = useAppSelector(state => state)
+  const { chainId, tokenSelected } = useAppSelector(state => state)
 
   const chain =
     process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
@@ -58,6 +59,9 @@ const NewPoolOperations = ({
   return (
     <S.NewPoolOperations>
       {isModalPoolOperations ?
+        tokenSelected ?
+          <TokenSelection />
+        :
         <ModalCardOperations
           setInputChecked={setInputChecked}
           inputCheckedBarMobile={inputCheckedBarMobile}
@@ -72,6 +76,9 @@ const NewPoolOperations = ({
           corePoolAddress={corePoolAddress}
           productCategories={productCategories}
         />
+        :
+        tokenSelected ?
+          <TokenSelection />
         :
         <SelectOperation
           inputChecked={inputChecked}

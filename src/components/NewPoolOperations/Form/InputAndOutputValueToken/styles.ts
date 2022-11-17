@@ -82,3 +82,71 @@ export const Span = styled.span<ISpanProps>`
     font-size: 1.07rem;
   }
 `
+
+export const Input = styled.input`
+  ${({ theme }) => css`
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    font-size: ${theme.font.sizes.font20};
+
+    text-align: right;
+    width: 100%;
+    margin: 0.8rem 0;
+
+    outline: none;
+
+    @media (max-width: 380px) {
+      font-size: 22px;
+    }
+    @media (max-width: 350px) {
+      font-size: ${theme.font.sizes.font20};
+    }
+  `}
+
+  &::placeholder {
+    color: #fff;
+  }
+
+  &[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  &[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+`
+
+interface IButtonMax {
+  isMax?: boolean;
+  maxActive?: boolean;
+}
+
+// eslint-disable-next-line prettier/prettier
+export const ButtonMax = styled.button<IButtonMax>`
+  ${({ theme, maxActive }) => css`
+    width: 4rem;
+    height: 2rem;
+    padding: 0.3rem 0.8rem;
+
+    color: ${maxActive ? '#000' : '#fff'};
+    font-size: ${theme.font.sizes.font12};
+    line-height: 1.2rem;
+    font-weight: 300;
+    letter-spacing: 0.07rem;
+
+    background-color: ${maxActive ? '#fff' : 'transparent'};
+    border: 0.1rem solid ${theme.colors.gray};
+    border-radius: 0.3rem;
+
+    cursor: pointer;
+    transition: 100ms;
+
+    &:hover {
+      color: #000;
+
+      background: ${theme.colors.snow};
+      border: 0.1rem solid ${theme.colors.snow};
+    }
+  `}
+`
