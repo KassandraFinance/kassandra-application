@@ -22,7 +22,7 @@ export const ChooseNetwork = styled.div`
     left: 50%;
     transform: translate(-50%, -50%);
 
-    width: 35.5rem;
+    width: 44rem;
     height: auto;
 
     border: 0.1rem solid rgba(255, 255, 255, 0.25);
