@@ -12,8 +12,8 @@ const Overlay = ({ onClick, isShowMenu, onAnimationEnd }: IOverlayProps) => {
       isShowMenu={isShowMenu}
       onClick={onClick}
       onAnimationEnd={() => {
-        if (!isShowMenu) {
-          onAnimationEnd
+        if (isShowMenu === false) {
+          onAnimationEnd()
         }
       }}
     />

@@ -10,6 +10,7 @@ import ModalLogOut from '../Modals/ModalLogOut'
 import ModalWaitingList from '../Modals/ModalWaitingList'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalInstitucionalLinksMobile from '../Modals/ModalInstitucionalLinksMobile'
+import ModalChooseNetwork from '../Modals/ModalChooseNetwork'
 
 import kacy96 from '../../../public/assets/logos/kacy-96.svg'
 import logoKassandra from '../../../public/assets/logos/kassandra-header.svg'
@@ -32,6 +33,8 @@ const Header = () => {
 
   const [isShowMenu, setIsShowMenu] = React.useState(false)
   const [showOverlay, setShowOverlay] = React.useState(false)
+
+  const [isChooseNetwork, setIsChooseNetwork] = React.useState(false)
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
@@ -75,7 +78,10 @@ const Header = () => {
             setShowOverlay={setShowOverlay}
           />
 
-          <HeaderButtons setIsModalWallet={setIsModalWallet} />
+          <HeaderButtons
+            setIsModalWallet={setIsModalWallet}
+            setIsChooseNetwork={setIsChooseNetwork}
+          />
         </S.MenuWrapper>
       </S.Wrapper>
       {isModalSocialMedia && (
@@ -95,6 +101,10 @@ const Header = () => {
       )}
 
       {isError && <ModalAlert />}
+
+      {isChooseNetwork && (
+        <ModalChooseNetwork setIsChooseNetwork={setIsChooseNetwork} />
+      )}
     </>
   )
 }

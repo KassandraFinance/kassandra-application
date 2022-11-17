@@ -27,5 +27,13 @@ export const KacyAmount = styled.div`
     &:focus {
       border-color: ${theme.colors.amber};
     }
+
+    @media (max-width: 576px) {
+      padding: 1.2rem;
+
+      font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font12};
+      line-height: ${theme.font.sizes.font12};
+    }
   }
 `

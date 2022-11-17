@@ -113,6 +113,20 @@ export const chains: { [key: string]: ChainDetails } = {
     blockExplorerUrls: ['https://testnet.snowtrace.io/'],
     secondsPerBlock: 2,
     wrapped: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c',
+  },
+  polygon: {
+    chainId: 137,
+    chainIdHex: '0x89',
+    chainName: 'Polygon',
+    nativeCurrency: {
+      name: 'Polygon',
+      symbol: 'MATIC',
+      decimals: 18
+    },
+    rpcUrls: ["https://polygon-rpc.com"],
+    blockExplorerUrls: ["https://polygonscan.com"],
+    secondsPerBlock: 2,
+    wrapped: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270"
   }
 }
 

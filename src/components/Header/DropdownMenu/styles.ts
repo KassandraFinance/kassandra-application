@@ -102,7 +102,7 @@ export const MenuWrapper = styled.div<IMenuWrapperProps>`
     left: -0.2rem;
     top: 2rem;
     z-index: 2;
-    display: block;
+    visibility: ${isDropdown ? 'visible' : 'hidden'};
 
     max-height: ${isDropdown ? '500px' : '0'};
     padding-top: 1.7rem;
