@@ -5,6 +5,7 @@ interface IwithoutBorderProps {
   withoutBorder?: boolean;
 }
 
+// prettier-ignore
 export const TokenWithNetworkImage = styled.div<IwithoutBorderProps>`
   ${({ withoutBorder }) => css`
     position: relative;
@@ -19,11 +20,12 @@ export const TokenWithNetworkImage = styled.div<IwithoutBorderProps>`
   `}
 `
 
+// prettier-ignore
 export const networkImageContainer = styled.span<IwithoutBorderProps>`
   ${({ withoutBorder }) => css`
     position: absolute;
     bottom: ${!withoutBorder ? '-0.5rem' : '-0.1rem'};
-    right: ${!withoutBorder ? '-0.5rem' : '0.3rem'};
+    right: ${!withoutBorder ? '-0.2rem' : '0.3rem'};
 
     display: flex;
     align-items: center;

@@ -403,8 +403,7 @@ const Products = ({ product }: Input) => {
               networkImage={{
                 url: avax.src,
                 height: 24,
-                width: 24,
-                withoutBorder: true
+                width: 24
               }}
             />
             <S.NameIndex>
@@ -444,8 +443,7 @@ const Products = ({ product }: Input) => {
                   networkImage={{
                     url: avax.src,
                     height: 24,
-                    width: 24,
-                    withoutBorder: true
+                    width: 24
                   }}
                 />
                 <S.NameIndex>
