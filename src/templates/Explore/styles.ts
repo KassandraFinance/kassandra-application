@@ -46,10 +46,14 @@ export const CardContainer = styled.div<ICardContainerProps>`
     gap: 5.4rem;
   }
 
-  @media (max-width: 750px) {
-    flex-direction: column;
+  @media (max-width: 768px) {
+    justify-content: space-between;
     align-items: center;
     gap: 3.2rem;
+  }
+
+  @media (max-width: 736px) {
+    flex-direction: column;
   }
 `
 
