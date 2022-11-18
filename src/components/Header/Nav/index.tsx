@@ -82,15 +82,6 @@ const Nav = ({
           </S.MenuLink>
         </Link>
         <S.MenuLink
-          active={router.asPath === '/create'}
-          onClick={() => {
-            setIsModalWaitingList(true)
-            trackEventFunction('click-on-link', 'create', 'header')
-          }}
-        >
-          Create
-        </S.MenuLink>
-        <S.MenuLink
           onClick={() => {
             setIsModalWaitingList(true)
             trackEventFunction('click-on-link', 'manage', 'header')

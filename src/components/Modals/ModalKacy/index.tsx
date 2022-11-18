@@ -35,11 +35,6 @@ interface IKacyMarketDataProps {
 }
 
 const ModalKacy = () => {
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const ERC20Contract = ERC20(poolsKacy[0].address)
-  const { userInfo, earned } = useStakingContract(Staking)
-  const chainId = useAppSelector(state => state.chainId)
-
   const [isModalKacy, setIsModalKacy] = React.useState(false)
   const [isOpenModal, setIsOpenModal] = React.useState<boolean>(false)
   const [isModalWallet, setIsModalWallet] = React.useState<boolean>(false)
@@ -62,6 +57,11 @@ const ModalKacy = () => {
   const [kacyTotal, setKacyTotal] = React.useState<BigNumber>(new BigNumber(0))
 
   const { data } = useSWR('/api/overview')
+
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const ERC20Contract = ERC20(poolsKacy[0].address)
+  const { userInfo, earned } = useStakingContract(Staking)
+  const chainId = useAppSelector(state => state.chainId)
 
   const connect = process.browser && localStorage.getItem('walletconnect')
 
