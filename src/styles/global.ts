@@ -95,7 +95,7 @@ const GlobalStyles: GlobalStyleComponent<
 
   html, body, #root {
     min-height: 100%;
-    overflow: hidden;
+    overflow-x: hidden;
   }
 
   ${({ selectBackground }) => css`
