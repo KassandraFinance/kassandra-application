@@ -33,7 +33,7 @@ export const Nav = styled.nav<IMenuProps>`
       background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
 
       isolation: isolate;
-      z-index: 100;
+      z-index: 1050;
 
       overflow-y: auto;
     }

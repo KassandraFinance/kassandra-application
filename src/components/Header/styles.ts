@@ -143,7 +143,7 @@ export const HamburgerButton = styled.button`
       border-radius: 50%;
 
       cursor: pointer;
-      z-index: 40;
+      z-index: 1050;
     }
   `}
 `

@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import DropdownMenu from '../DropdownMenu'
-import Overlay from '../Overlay'
+import Overlay from '../../Overlay'
 import MenuFooter from '../MenuFooter'
 
 import kacyIcon from '../../../../public/assets/logos/kacy-96.svg'
@@ -44,7 +44,7 @@ const Nav = ({
     <>
       {showOverlay && (
         <Overlay
-          isShowMenu={isShowMenu}
+          isOpen={isShowMenu}
           onClick={handleClickOverlay}
           onAnimationEnd={animationClose}
         />
