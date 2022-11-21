@@ -11,6 +11,7 @@ import 'tippy.js/dist/tippy.css'
 
 import WalletConnecting from './WalletConnecting'
 import ModalConnectError from './ModalConnectError'
+import Overlay from '../../Overlay'
 
 import * as S from './styles'
 
@@ -70,7 +71,8 @@ const ModalWalletConnect = ({ setModalOpen }: IModalWalletConnect) => {
 
   return (
     <>
-      <S.Backdrop onClick={handleCloseModal} />
+      <Overlay onClick={handleCloseModal} />
+
       <S.Container>
         <S.BackgroundBlack>
           <S.ModalTitle>

@@ -2,32 +2,11 @@
 import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
-export const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100vw;
-  height: 100vh;
-
-  background-color: rgba(0, 0, 0, 0.7);
-
-  z-index: 20;
-
-  animation: OpenModalEditInfo 500ms ease;
-  @keyframes OpenModalEditInfo {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`
 interface IModalUserEditInfoProps {
   modalOpen: boolean;
 }
 
+// prettier-ignore
 export const ModalEditInfo = styled.form<IModalUserEditInfoProps>`
   position: fixed;
   top: 50%;
@@ -39,7 +18,7 @@ export const ModalEditInfo = styled.form<IModalUserEditInfoProps>`
   background: #1F2937;
   border-radius: 1.2rem;
 
-  z-index: 21;
+  z-index: 1050;
 
   animation: OpenModalEditInfo 500ms ease;
   @keyframes OpenModalEditInfo {
@@ -61,7 +40,7 @@ export const HeaderModalEditInfo = styled.div`
 
   background-color: rgba(31, 31, 31, 0.72);
 
-  border-bottom: 1px solid #C4C4C4;
+  border-bottom: 1px solid #c4c4c4;
   border-top-left-radius: 1.2rem;
   border-top-right-radius: 1.2rem;
 
@@ -116,11 +95,11 @@ export const UserProfileInfo = styled.div`
     width: 32rem;
     padding: 1.6rem;
 
-    color: #C4C4C4;
+    color: #c4c4c4;
     font-size: 1.6rem;
     font-weight: ${theme.font.weight.light};
 
-    background: #1B1D22;
+    background: #1b1d22;
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 0.8rem;
   }
@@ -133,7 +112,7 @@ export const UserProfileInfo = styled.div`
 export const NicknameTilte = styled.p`
   margin-bottom: 1.2rem;
 
-  color: #C4C4C4;
+  color: #c4c4c4;
   font-size: 1.4rem;
   font-weight: ${theme.font.weight.medium};
 `
@@ -161,7 +140,7 @@ export const UserImageContent = styled.div`
       border: 1px solid transparent;
       border-radius: 0.4rem;
 
-      color: #FCFCFC;
+      color: #fcfcfc;
       font-size: 1.6rem;
       font-weight: ${theme.font.weight.light};
 
@@ -176,9 +155,10 @@ export const UserImageContent = styled.div`
   }
 `
 interface isDropdownAddNftProps {
-  isDropdownAddNft: boolean
+  isDropdownAddNft: boolean;
 }
 
+// prettier-ignore
 export const ButtonAddNft = styled.button<isDropdownAddNftProps>`
   display: flex;
   flex-direction: row;
@@ -209,14 +189,17 @@ export const ButtonAddNft = styled.button<isDropdownAddNftProps>`
   img {
     transition: transform 400ms ease;
     ${props =>
-      props.isDropdownAddNft ? `transform: rotate(180deg)` : `transform: rotate(0)`}
+      props.isDropdownAddNft
+        ? `transform: rotate(180deg)`
+        : `transform: rotate(0)`}
   }
 `
 
 interface isDropdownAddNftProps {
-  isDropdownAddNft: boolean
+  isDropdownAddNft: boolean;
 }
 
+// prettier-ignore
 export const UserAddNftImage = styled.div<isDropdownAddNftProps>`
   position: absolute;
   top: 12.5rem;
@@ -237,6 +220,7 @@ interface IUserSocialMidiaProps {
   isStateSocialMidia: boolean;
 }
 
+// prettier-ignore
 export const UserSocialMidia = styled.div<IUserSocialMidiaProps>`
   display: ${props => (props.isStateSocialMidia ? 'flex' : 'none')};
   justify-content: flex-start;
@@ -302,11 +286,11 @@ export const SocialIcon = styled.li`
     padding-bottom: 1.2rem;
     padding-left: 1.6rem;
 
-    color: #C4C4C4;
+    color: #c4c4c4;
     font-size: 1.6rem;
     font-weight: ${theme.font.weight.light};
 
-    background: #1B1D22;
+    background: #1b1d22;
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 0.8rem;
   }
@@ -316,6 +300,7 @@ interface IModalManagerInfoProps {
   isStateManagerInfo: boolean;
 }
 
+// prettier-ignore
 export const ModalManagerInfo = styled.div<IModalManagerInfoProps>`
   display: ${props => (props.isStateManagerInfo ? 'flex' : 'none')};
   flex-direction: column;
@@ -400,6 +385,7 @@ interface IUserSocialAndInfoButtonProps {
   isStateSocialMidia: boolean;
 }
 
+// prettier-ignore
 export const UserSocialAndInfoButton = styled.button<IUserSocialAndInfoButtonProps>`
   display: none;
 
@@ -409,7 +395,7 @@ export const UserSocialAndInfoButton = styled.button<IUserSocialAndInfoButtonPro
 
     width: 13rem;
     margin-top: 2rem;
-    margin-bottom: ${props => props.isStateSocialMidia ? `1.2rem` : ``};
+    margin-bottom: ${props => (props.isStateSocialMidia ? `1.2rem` : ``)};
 
     color: #C4C4C4;
     font-size: 1.4rem;
@@ -428,8 +414,9 @@ export const UserSocialAndInfoButton = styled.button<IUserSocialAndInfoButtonPro
 
     img {
       ${props =>
-        props.isStateSocialMidia ? `transform: rotate(180deg)` : `transform: rotate(0)`}
+        props.isStateSocialMidia
+          ? `transform: rotate(180deg)`
+          : `transform: rotate(0)`}
     }
-
   }
 `

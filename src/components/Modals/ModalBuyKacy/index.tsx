@@ -2,6 +2,8 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import Overlay from '../../Overlay'
+
 import * as S from './styles'
 
 interface IModalBuyKacyProps {
@@ -16,10 +18,8 @@ const ModalBuyKacy = ({ modalOpen, setModalOpen }: IModalBuyKacyProps) => {
 
   return (
     <>
-      <S.Backdrop
-        style={{ display: modalOpen ? 'block' : 'none' }}
-        onClick={handleCloseModal}
-      />
+      <Overlay onClick={handleCloseModal} />
+
       <S.ModalBuyKacyContainer modalOpen={modalOpen}>
         <S.HeaderModalBuyKacy>
           <strong>Choose the exchange</strong>

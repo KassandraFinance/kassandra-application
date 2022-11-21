@@ -2,19 +2,6 @@
 import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
 
-export const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100vw;
-  height: 100vh;
-
-  background-color: rgba(0, 0, 0, 0.7);
-
-  z-index: 20;
-`
-
 interface IBorderGradientProps {
   modalOpen: boolean;
 }
@@ -32,7 +19,7 @@ export const BorderGradient = styled.div<IBorderGradientProps>`
   background: linear-gradient(0deg, #FFBF00 -0.02%, #E843C4 99.99%) ;
   border-radius: ${theme.border.radius};
 
-  z-index: 21;
+  z-index: 1050;
 
   @media(max-width: 440px) {
     width: 38rem;

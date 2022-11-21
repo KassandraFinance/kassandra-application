@@ -8,6 +8,7 @@ import useConnect from '../../../hooks/useConnect'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import Button from '../../Button'
+import Overlay from '../../Overlay'
 
 import close from '../../../../public/assets/utilities/close-icon.svg'
 
@@ -40,10 +41,8 @@ const ModalLogOut = ({
 
   return (
     <>
-      <S.Backdrop
-        style={{ display: modalOpen ? 'block' : 'none' }}
-        onClick={() => setModalOpen(false)}
-      />
+      {modalOpen && <Overlay onClick={() => setModalOpen(false)} />}
+
       <S.ModalContainer modalOpen={modalOpen}>
         <S.Top>
           <p>Your wallet</p>

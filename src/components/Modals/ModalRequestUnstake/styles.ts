@@ -3,19 +3,6 @@ import theme from '../../../styles/theme'
 
 import * as ButtonStyles from '../../Button/styles'
 
-export const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100vw;
-  height: 100vh;
-
-  background-color: rgba(0, 0, 0, 0.7);
-
-  z-index: 20;
-`
-
 export const ModalContainer = styled.div`
   position: fixed;
   top: 50%;
@@ -28,7 +15,7 @@ export const ModalContainer = styled.div`
   border: 0.15rem solid #ffffff40;
   border-radius: 10px;
 
-  z-index: 21;
+  z-index: 1050;
 
   @media (max-width: 768px) {
     width: 32.8rem;

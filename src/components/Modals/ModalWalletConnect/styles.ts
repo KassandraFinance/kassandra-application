@@ -1,18 +1,6 @@
 import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
-export const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 20;
-
-  width: 100vw;
-  height: 100vh;
-
-  background-color: rgba(0, 0, 0, 0.6);
-`
-
 export const Container = styled.div`
   position: fixed;
   top: 50%;
@@ -25,7 +13,7 @@ export const Container = styled.div`
   border: 0.2rem solid #ffffff40;
   border-radius: 1rem;
 
-  z-index: 21;
+  z-index: 1050;
 
   @media (max-width: 480px) {
     width: 90%;

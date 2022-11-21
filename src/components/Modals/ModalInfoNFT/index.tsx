@@ -7,6 +7,7 @@ import { ToastInfo } from '../../Toastify/toast'
 import NftImage from '../../NftImage'
 import { UserProps } from '../../Governance/UserDescription'
 import ExternalLink from '../../ExternalLink'
+import Overlay from '../../Overlay'
 
 import substr from '../../../utils/substr'
 
@@ -51,7 +52,12 @@ const ChainName: { [key: string]: string } = {
 }
 
 // eslint-disable-next-line prettier/prettier
-const ModalCardOperations = ({ modalOpen, setModalOpen, userData, NftUrl }: IOperationsProps) => {
+const ModalCardOperations = ({
+  modalOpen,
+  setModalOpen,
+  userData,
+  NftUrl
+}: IOperationsProps) => {
   const [isOpenDetails, setIsOpenDetails] = React.useState(false)
   const [nftDetails, setNftDetails] = React.useState<INftDataProps>({
     token_address: '',
@@ -110,10 +116,9 @@ const ModalCardOperations = ({ modalOpen, setModalOpen, userData, NftUrl }: IOpe
             height={12}
           />
         </S.CloseModalContainer>
-        <S.Backdrop
-          style={{ display: modalOpen ? 'block' : 'none' }}
-          onClick={handleCloseModalInfoNFT}
-        />
+
+        <Overlay onClick={handleCloseModalInfoNFT} />
+
         <S.ImageContainerNft>
           <S.NftImage
             isOpenDetails={isOpenDetails}

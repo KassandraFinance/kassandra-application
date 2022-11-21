@@ -2,6 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 
 import Button from '../../Button'
+import Overlay from '../../Overlay'
 
 import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
 
@@ -16,7 +17,8 @@ const ModalWaitingList = ({
 }: IModalWaitingListProps) => {
   return (
     <>
-      <S.Backdrop onClick={() => setIsModalWaitingList(false)}></S.Backdrop>
+      <Overlay onClick={() => setIsModalWaitingList(false)} />
+
       <S.Container>
         <S.ModalHeader>
           <S.TitleWrapper>This feature isn’t avalable yet</S.TitleWrapper>

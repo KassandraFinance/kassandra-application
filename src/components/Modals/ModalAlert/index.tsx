@@ -5,6 +5,7 @@ import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { removeModalAlertText } from '../../../store/reducers/modalAlertText'
 
 import Button from '../../Button'
+import Overlay from '../../Overlay'
 
 import errorIcon from '../../../../public/assets/notificationStatus/error.svg'
 import kacyError from '../../../../public/assets/images/kassandra-error2.svg'
@@ -25,7 +26,8 @@ const ModalAlert = () => {
 
   return (
     <>
-      <S.Backdrop onClick={handleCloseModal}></S.Backdrop>
+      <Overlay onClick={handleCloseModal} />
+
       <S.Container>
         <S.ModalHeader>
           <S.TitleWrapper>

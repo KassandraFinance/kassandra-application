@@ -13,6 +13,7 @@ import { Kacy } from '../../../constants/tokenAddresses'
 
 import Button from '../../Button'
 import ModalWalletConnect from '../ModalWalletConnect'
+import Overlay from '../../Overlay';
 
 import { provider } from '../../../utils/web3';
 
@@ -20,6 +21,7 @@ import spinerIcon from '../../../../public/assets/iconGradient/spinner.png'
 
 import swapTheme from './swapTheme.json'
 import * as S from './styles'
+
 
 //eslint-disable-next-line prettier/prettier
 const SwapWidget = dynamic(() => import('@pangolindex/components').then((module) => module.SwapWidget) as any, {
@@ -37,7 +39,6 @@ interface IModalBuyKacyOnPangolinProps {
 }
 
 const ModalBuyKacyOnPangolin = ({
-  modalOpen,
   setModalOpen
 }: IModalBuyKacyOnPangolinProps) => {
   const [isModalWallet, setIsModaWallet] = React.useState<boolean>(false)
@@ -59,10 +60,8 @@ const ModalBuyKacyOnPangolin = ({
 
   return (
     <>
-      <S.Backdrop
-        style={{ display: modalOpen ? 'block' : 'none' }}
-        onClick={handleCloseModal}
-      />
+      <Overlay onClick={handleCloseModal}/>
+
       <S.LoadingContainer>
         <S.LoadingContent>
           <S.textContainer>

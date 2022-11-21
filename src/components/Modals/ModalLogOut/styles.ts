@@ -3,18 +3,6 @@ import theme from '../../../styles/theme'
 
 import * as ButtonStyle from '../../Button/styles'
 
-export const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 20;
-
-  width: 100vw;
-  height: 100vh;
-
-  background-color: rgba(0, 0, 0, 0.7);
-`
-
 interface IModalContainerProps {
   modalOpen: boolean;
 }
@@ -33,7 +21,7 @@ export const ModalContainer = styled.div<IModalContainerProps>`
   border: 0.15rem solid #FFFFFF40;
   border-radius: 1rem;
 
-  z-index: 20;
+  z-index: 1050;
 `
 
 export const Top = styled.div`

@@ -17,6 +17,7 @@ import { setModalAlertText } from '../../../store/reducers/modalAlertText'
 import { Staking } from '../../../constants/tokenAddresses'
 
 import Button from '../../Button'
+import Overlay from '../../Overlay'
 
 import * as S from './styles'
 
@@ -97,7 +98,8 @@ const ModalRequestUnstake = ({
 
   return (
     <>
-      <S.Backdrop onClick={() => setModalOpen(false)} />
+      <Overlay onClick={() => setModalOpen(false)} />
+
       <S.ModalContainer>
         <S.Top>
           <S.Attention>

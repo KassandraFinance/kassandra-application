@@ -1,18 +1,6 @@
 import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
-export const Backdrop = styled.div`
-  background-color: transparent;
-
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100vw;
-  height: 100vh;
-  z-index: 20;
-`
-
 interface IModalContainerProps {
   modalOpen: boolean;
 }
@@ -25,12 +13,12 @@ export const ModalContainer = styled.div<IModalContainerProps>`
   border: 0.1rem solid rgba(255, 255, 255, 0.08);
   border-radius: 0.4rem;
 
-
   position: fixed;
   bottom: 7.6rem;
   right: 1.6rem;
 
-  z-index: 20;
+  z-index: 1050;
+
   button {
     background-color: transparent;
     border: none;
@@ -44,6 +32,7 @@ export const ModalContainer = styled.div<IModalContainerProps>`
     justify-content: space-around;
     padding: 0.8rem;
     outline: none;
+    
     img {
       margin-right: 0.4rem !important;
       width: 1.8rem;

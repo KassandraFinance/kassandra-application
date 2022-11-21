@@ -14,6 +14,7 @@ import Button from '../../Button'
 import UserNFTs, { INftDetailsListProps } from '../../UserNFts'
 import NftImage from '../../NftImage'
 import { NftDetailsProps } from '../../Governance/UserDescription'
+import Overlay from '../../Overlay'
 
 import * as S from './styles'
 
@@ -207,10 +208,8 @@ const ModalUserEditInfo = ({
 
   return (
     <>
-      <S.Backdrop
-        style={{ display: modalOpen ? 'block' : 'none' }}
-        onClick={handleCloseModal}
-      />
+      <Overlay onClick={handleCloseModal} />
+
       <S.ModalEditInfo
         modalOpen={modalOpen}
         onSubmit={handleFormChangeEditInfo}
