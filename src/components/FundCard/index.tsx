@@ -44,6 +44,8 @@ const network2coingeckoID: Networks = {
 const addressChanger: { [key: string]: string } = {
   '0xd00ae08403B9bbb9124bB305C09058E32C39A48c':
     '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7', // WAVAX
+  '0xd0F41b1C9338eB9d374c83cC76b684ba3BB71557':
+    '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE', //SAVAX
   '0xe401e9Ce0E354Ad9092a63eE1dFA3168bB83F3DA':
     '0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5', // QI
   '0xf22f05168508749fa42eDBddE10CB323D87c201d':
@@ -155,12 +157,15 @@ const FundCard = ({ product }: IFundCardProps) => {
       .slice(0, poolInfo.length >= 3 ? 3 : poolInfo.length)
       .map(asset => addressChanger[asset.token.id] || asset.token.id)
 
+    console.log(arrayAddressPool)
+
     const getCoingecko = async () => {
       const URL = `/api/image-coingecko?poolinfo=${
         network2coingeckoID[product.platform]
       }&tokenAddress=${arrayAddressPool}`
       const res = await fetch(URL)
       const data = await res.json()
+      console.log(data)
       setTokenImages(data.images)
     }
 
