@@ -3,35 +3,33 @@ import Image from 'next/image'
 import changeChain from '../../../utils/changeChain'
 import { chains } from '../../../constants/tokenAddresses'
 
-import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
+import Modal from '../Modal'
+import Overlay from '../../Overlay'
+
 import avalanche from '../../../../public/assets/logos/avalanche.svg'
 import polygon from '../../../../public/assets/logos/polygon.svg'
 
 import * as S from './styles'
 
 interface IChooseNetworkProps {
+  isOpen: boolean;
   setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ModalChooseNetwork = ({ setIsChooseNetwork }: IChooseNetworkProps) => {
+const ModalChooseNetwork = ({
+  isOpen,
+  setIsChooseNetwork
+}: IChooseNetworkProps) => {
   function handleCloseModal() {
     setIsChooseNetwork(false)
   }
 
   return (
-    <>
-      <S.Overlay onClick={handleCloseModal}></S.Overlay>
+    <S.ChooseNetwork>
+      <Overlay onClick={handleCloseModal} isOpen={isOpen} />
 
-      <S.ChooseNetwork>
-        <S.ModalHeader>
-          <S.TitleWrapper>Choose Network</S.TitleWrapper>
-
-          <S.CloseButton onClick={handleCloseModal}>
-            <Image src={closeIcon} alt="Close" width={12} height={12} />
-          </S.CloseButton>
-        </S.ModalHeader>
-
-        <S.ModalBody>
+      <Modal title="Choose Network" onCloseModal={handleCloseModal}>
+        <S.ModalContent>
           <S.WrapperIconsBackGround
             onClick={() => changeChain(chains.avalanche)}
           >
@@ -54,9 +52,9 @@ const ModalChooseNetwork = ({ setIsChooseNetwork }: IChooseNetworkProps) => {
               <span>Coming soon...</span>
             </S.WrapperIcons>
           </S.WrapperIconsBackGround>
-        </S.ModalBody>
-      </S.ChooseNetwork>
-    </>
+        </S.ModalContent>
+      </Modal>
+    </S.ChooseNetwork>
   )
 }
 
