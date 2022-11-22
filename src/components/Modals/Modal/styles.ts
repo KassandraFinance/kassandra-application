@@ -36,6 +36,10 @@ export const ModalHeader = styled.div`
 
 export const Title = styled.span`
   ${({ theme }) => css`
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+
     color: ${theme.colors.snow};
     font-family: 'Rubik';
     font-style: normal;
@@ -62,7 +66,7 @@ export const CloseButton = styled.button`
   `}
 `
 
-export const Body = styled.div`
+export const ModalBody = styled.div`
   ${() => css`
     padding: 2.4rem;
 

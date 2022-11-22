@@ -84,6 +84,7 @@ const Header = () => {
           />
         </S.MenuWrapper>
       </S.Wrapper>
+
       {isModalSocialMedia && (
         <ModalInstitucionalLinksMobile setModalOpen={setIsModalSocialMedia} />
       )}
