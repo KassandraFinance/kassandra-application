@@ -3,65 +3,13 @@ import theme from '../../../styles/theme'
 
 import * as ButtonStyle from '../../Button/styles'
 
-interface IModalContainerProps {
-  modalOpen: boolean;
-}
+export const ModalLogOut = styled.div``
 
-// prettier-ignore
-export const ModalContainer = styled.div<IModalContainerProps>`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  display: ${props => (props.modalOpen ? 'block' : 'none')};
-  max-width: 100%;
-
-  background-color: #1F2937;
-  border: 0.15rem solid #FFFFFF40;
-  border-radius: 1rem;
-
-  z-index: 1050;
-`
-
-export const Top = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2.4rem;
-
-  background-color: #1f1f1fc8;
-  border-bottom: 0.1rem solid #ffffff40;
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
-
-  p {
-    font-weight: ${theme.font.weight.bold};
-    font-size: ${theme.font.sizes.font18};
-
-    @media (max-width: 430px) {
-      font-size: ${theme.font.sizes.font16};
-    }
-  }
-`
-
-export const Close = styled.button`
-  padding: 0.2rem;
-
-  color: #fff;
-  font-size: ${theme.font.sizes.font20};
-
-  background-color: transparent;
-  border: none;
-
-  cursor: pointer;
-`
-
-export const Content = styled.div`
+export const ModalContent = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 2.4rem;
+  align-items: center;
 
   p {
     margin-bottom: 1.6rem;
@@ -94,6 +42,8 @@ export const Content = styled.div`
 export const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
+
+  width: 100%;
 
   button,
   a {

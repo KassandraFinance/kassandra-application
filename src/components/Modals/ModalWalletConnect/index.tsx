@@ -12,6 +12,7 @@ import 'tippy.js/dist/tippy.css'
 import WalletConnecting from './WalletConnecting'
 import ModalConnectError from './ModalConnectError'
 import Overlay from '../../Overlay'
+import Modal from '../Modal'
 
 import * as S from './styles'
 
@@ -70,102 +71,96 @@ const ModalWalletConnect = ({ setModalOpen }: IModalWalletConnect) => {
   }, [])
 
   return (
-    <>
+    <S.ModalWalletConnect>
       <Overlay onClick={handleCloseModal} />
 
-      <S.Container>
-        <S.BackgroundBlack>
-          <S.ModalTitle>
-            <span>Wallet connection is required</span>
-            <button type="button" onClick={handleCloseModal}>
-              <img src="/assets/utilities/close-icon.svg" alt="Close" />{' '}
-            </button>
-          </S.ModalTitle>
-
-          {!loading ? (
-            <S.Content>
-              <Tippy
-                content={
-                  <S.Tooltip>
-                    <a
-                      href="https://metamask.io/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Metamask
-                      <img src="/assets/utilities/external-link.svg" alt="" />
-                    </a>
-                    is not installed on this browser
-                  </S.Tooltip>
-                }
-                disabled={hasEthereumProvider}
-                hideOnClick={false}
-                interactive
-              >
-                <S.WrapperIconsBackGround
-                  className={hasEthereumProvider ? '' : 'disabled'}
-                  type="button"
-                  onClick={() => {
-                    if (hasEthereumProvider) {
-                      trackEventFunction(
-                        'click-on-button',
-                        'metamask',
-                        'header-modal-connect'
-                      )
-                      setProvider('metamask')
-                      setLoading(true)
-                      connect()
-                    }
-                  }}
-                >
-                  <S.WrapperIcons>
-                    <img src="/assets/logos/metamask.svg" alt="" />
-                    <span>Metamask</span>
-                  </S.WrapperIcons>
-                </S.WrapperIconsBackGround>
-              </Tippy>
-
+      <Modal
+        title="Wallet connection is required"
+        onCloseModal={handleCloseModal}
+      >
+        {!loading ? (
+          <S.Content>
+            <Tippy
+              content={
+                <S.Tooltip>
+                  <a
+                    href="https://metamask.io/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Metamask
+                    <img src="/assets/utilities/external-link.svg" alt="" />
+                  </a>
+                  is not installed on this browser
+                </S.Tooltip>
+              }
+              disabled={hasEthereumProvider}
+              hideOnClick={false}
+              interactive
+            >
               <S.WrapperIconsBackGround
+                className={hasEthereumProvider ? '' : 'disabled'}
                 type="button"
                 onClick={() => {
-                  trackEventFunction(
-                    'click-on-button',
-                    'wallet-connect',
-                    'header-modal-connect'
-                  )
-                  setProvider('walletConnect')
-                  setLoading(true)
-                  connectToWalletConnect()
+                  if (hasEthereumProvider) {
+                    trackEventFunction(
+                      'click-on-button',
+                      'metamask',
+                      'header-modal-connect'
+                    )
+                    setProvider('metamask')
+                    setLoading(true)
+                    connect()
+                  }
                 }}
               >
                 <S.WrapperIcons>
-                  <img src="/assets/logos/connect-wallet.svg" alt="" />
-                  <span>WalletConnect</span>
+                  <img src="/assets/logos/metamask.svg" alt="" />
+                  <span>Metamask</span>
                 </S.WrapperIcons>
               </S.WrapperIconsBackGround>
-            </S.Content>
-          ) : (
-            <S.Content>
-              {!metaMaskError ? (
-                <WalletConnecting
-                  provider={provider}
-                  isConnected={isConnected}
-                  handleCloseModal={handleCloseModal}
-                />
-              ) : (
-                <ModalConnectError
-                  provider={provider}
-                  metaMaskError={metaMaskError}
-                  handleCloseModal={handleCloseModal}
-                  handleConnect={handleConnect}
-                  cleanError={cleanError}
-                />
-              )}
-            </S.Content>
-          )}
-        </S.BackgroundBlack>
-      </S.Container>
-    </>
+            </Tippy>
+
+            <S.WrapperIconsBackGround
+              type="button"
+              onClick={() => {
+                trackEventFunction(
+                  'click-on-button',
+                  'wallet-connect',
+                  'header-modal-connect'
+                )
+                setProvider('walletConnect')
+                setLoading(true)
+                connectToWalletConnect()
+              }}
+            >
+              <S.WrapperIcons>
+                <img src="/assets/logos/connect-wallet.svg" alt="" />
+                <span>WalletConnect</span>
+              </S.WrapperIcons>
+            </S.WrapperIconsBackGround>
+          </S.Content>
+        ) : (
+          <S.Content>
+            {!metaMaskError ? (
+              <WalletConnecting
+                provider={provider}
+                isConnected={isConnected}
+                handleCloseModal={handleCloseModal}
+              />
+            ) : (
+              <ModalConnectError
+                provider={provider}
+                metaMaskError={metaMaskError}
+                handleCloseModal={handleCloseModal}
+                handleConnect={handleConnect}
+                cleanError={cleanError}
+              />
+            )}
+          </S.Content>
+        )}
+      </Modal>
+    </S.ModalWalletConnect>
   )
 }
 

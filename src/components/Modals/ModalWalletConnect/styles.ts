@@ -1,78 +1,7 @@
 import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
-export const Container = styled.div`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  width: 44.8rem;
-  height: auto;
-
-  border: 0.2rem solid #ffffff40;
-  border-radius: 1rem;
-
-  z-index: 1050;
-
-  @media (max-width: 480px) {
-    width: 90%;
-  }
-`
-
-export const BackgroundBlack = styled.div`
-  width: 100%;
-  height: 100%;
-
-  color: white;
-
-  /* background: #000; */
-  border-radius: 1rem;
-`
-
-export const ModalTitle = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  height: 6.8rem;
-  padding: 2.4rem;
-
-  /* background: rgba(31, 31, 31, 0.96); */
-  background-color: #1e1e1e;
-  border-top-left-radius: 0.6rem;
-  border-top-right-radius: 0.6rem;
-  border-bottom: 0.1rem solid #ffffff40;
-
-  @media (max-width: 520px) {
-    padding: 1.2rem;
-  }
-
-  button {
-    width: 2.4rem;
-    margin-top: -0.2rem;
-
-    background-color: transparent;
-    border: none;
-
-    cursor: pointer;
-
-    img {
-      width: 1.2rem;
-      height: 1.2rem;
-    }
-  }
-
-  span {
-    font-size: ${theme.font.sizes.font18};
-    font-weight: ${theme.font.weight.bold};
-    letter-spacing: 0.08rem;
-
-    @media (max-width: 520px) {
-      font-size: ${theme.font.sizes.font14};
-    }
-  }
-`
+export const ModalWalletConnect = styled.div``
 
 export const WrapperIconsBackGround = styled.button`
   display: flex;
@@ -102,7 +31,7 @@ export const WrapperIcons = styled.div`
 
   display: flex;
   align-items: center;
-  width: 40rem;
+  width: 100%;
   height: 7rem;
   padding: 1.8rem 2.4rem;
 
@@ -132,20 +61,11 @@ export const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
-  max-width: 100%;
-  padding: ${theme.spacings.space24};
+  width: 40rem;
 
-  border-bottom-right-radius: 0.6rem;
-  border-bottom-left-radius: 0.6rem;
-  /* background: rgba(31, 41, 55, 0.96); */
-  background-color: #1f2937;
-
-  z-index: -2;
-
-  @media (max-width: 520px) {
+  @media (max-width: 576px) {
     width: 100%;
     height: 100%;
-    padding: 1.2rem;
     margin: 0;
   }
 `

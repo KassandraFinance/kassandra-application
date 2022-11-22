@@ -15,6 +15,7 @@ import UserNFTs, { INftDetailsListProps } from '../../UserNFts'
 import NftImage from '../../NftImage'
 import { NftDetailsProps } from '../../Governance/UserDescription'
 import Overlay from '../../Overlay'
+import Modal from '../Modal'
 
 import * as S from './styles'
 
@@ -207,25 +208,11 @@ const ModalUserEditInfo = ({
   }, [modalOpen])
 
   return (
-    <>
+    <S.ModalUserEditInfo>
       <Overlay onClick={handleCloseModal} />
 
-      <S.ModalEditInfo
-        modalOpen={modalOpen}
-        onSubmit={handleFormChangeEditInfo}
-      >
-        <S.HeaderModalEditInfo>
-          <p>Edit Your Profile</p>
-          <button type="button" onClick={() => setModalOpen(false)}>
-            <Image
-              src="/assets/utilities/close-icon.svg"
-              alt="Close"
-              width={12}
-              height={12}
-            />
-          </button>
-        </S.HeaderModalEditInfo>
-        <S.BodyModalEditInfo>
+      <Modal title="Edit Your Profile" onCloseModal={() => setModalOpen(false)}>
+        <S.BodyModalEditInfo onSubmit={handleFormChangeEditInfo}>
           <S.UserProfileInfoContent>
             <S.UserProfileInfo>
               <S.UserImageContent>
@@ -488,8 +475,8 @@ const ModalUserEditInfo = ({
             />
           </S.UserEditInfoButtons>
         </S.BodyModalEditInfo>
-      </S.ModalEditInfo>
-    </>
+      </Modal>
+    </S.ModalUserEditInfo>
   )
 }
 

@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import theme from '../../../../styles/theme'
 
-export const Container = styled.div``
+export const Kacy = styled.div``
 
 export const ModalContent = styled.div`
   width: 40rem;

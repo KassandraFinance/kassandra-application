@@ -55,7 +55,7 @@ const Kacy = ({
     setIsModalKacy(false)
   }
   return (
-    <>
+    <S.Kacy>
       <Overlay onClick={handleCloseModal} />
 
       <Modal title="Your KACY Stats" onCloseModal={handleCloseModal}>
@@ -217,7 +217,7 @@ const Kacy = ({
           )}
         </S.ModalContent>
       </Modal>
-    </>
+    </S.Kacy>
   )
 }
 

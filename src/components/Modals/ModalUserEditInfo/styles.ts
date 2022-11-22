@@ -2,69 +2,24 @@
 import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
-interface IModalUserEditInfoProps {
-  modalOpen: boolean;
-}
+export const ModalUserEditInfo = styled.div``
 
-// prettier-ignore
-export const ModalEditInfo = styled.form<IModalUserEditInfoProps>`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  display: ${props => (props.modalOpen ? 'block' : 'none')};
-
-  background: #1F2937;
-  border-radius: 1.2rem;
-
-  z-index: 1050;
-
-  animation: OpenModalEditInfo 500ms ease;
-  @keyframes OpenModalEditInfo {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`
-export const HeaderModalEditInfo = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  width: 100%;
-  padding: 2.4rem;
-
-  background-color: rgba(31, 31, 31, 0.72);
-
-  border-bottom: 1px solid #c4c4c4;
-  border-top-left-radius: 1.2rem;
-  border-top-right-radius: 1.2rem;
-
-  @media (max-width: 768px) {
-    padding: 1.8rem;
-  }
-
-  p {
-    font-size: 1.8rem;
-    font-weight: ${theme.font.weight.medium};
-  }
-
-  button {
-    border: 0;
-    background-color: transparent;
-    cursor: pointer;
-  }
-`
-export const BodyModalEditInfo = styled.div`
+export const BodyModalEditInfo = styled.form`
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  padding: 2.4rem;
+
+  width: 63rem;
+
+  @media (max-width: 768px) {
+    width: 48.4rem;
+  }
+
+  @media (max-width: 576px) {
+    width: 100%;
+  }
 `
+
 export const UserProfileInfoContent = styled.div`
   display: flex;
 
@@ -116,7 +71,11 @@ export const NicknameTilte = styled.p`
   font-size: 1.4rem;
   font-weight: ${theme.font.weight.medium};
 `
-export const UserNameContent = styled.div``
+export const UserNameContent = styled.div`
+  > input {
+    width: 100%;
+  }
+`
 
 export const UserImageContent = styled.div`
   display: flex;
@@ -279,7 +238,7 @@ export const SocialIcon = styled.li`
   }
 
   input {
-    width: 23.6rem;
+    width: 100%;
     height: 4rem;
 
     padding-top: 1.2rem;
