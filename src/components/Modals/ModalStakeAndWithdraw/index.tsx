@@ -22,6 +22,7 @@ import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import Button from '../../Button'
 import InputTokenValue from '../../PoolOperations/InputTokenValue'
 import ModalBuyKacyOnPangolin from '../ModalBuyKacyOnPangolin'
+import Overlay from '../../Overlay'
 
 import * as S from './styles'
 
@@ -237,12 +238,13 @@ const ModalStakeAndWithdraw = ({
 
   return (
     <>
-      <S.Backdrop
+      <Overlay
         onClick={() => {
           setModalOpen(false)
           setStakeTransaction('')
         }}
       />
+
       <S.BorderGradient
         stakeInKacy={symbol === 'KACY'}
         unstaking={stakeTransaction}

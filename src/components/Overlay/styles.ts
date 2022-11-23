@@ -20,7 +20,7 @@ export const Overlay = styled.div<IOverlayProps>`
 
     animation: ${fadeInAnimation} 750ms forwards;
 
-    z-index: 30;
+    z-index: 1040;
   `}
 
   ${({ isShowMenu }) => isShowMenu === false && css`

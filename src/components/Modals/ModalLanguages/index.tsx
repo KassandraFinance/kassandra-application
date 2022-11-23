@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 
 import usa from '../../../public/assets/flags/usa.svg'
+import Overlay from '../../Overlay'
 
 import * as S from './styles'
 
@@ -13,10 +14,8 @@ interface IModalLanguagesProps {
 const ModalLanguages = ({ modalOpen, setModalOpen }: IModalLanguagesProps) => {
   return (
     <>
-      <S.Backdrop
-        style={{ display: modalOpen ? 'block' : 'none' }}
-        onClick={() => setModalOpen(false)}
-      />
+      <Overlay onClick={() => setModalOpen(false)} />
+
       <S.ModalContainer modalOpen={modalOpen}>
         <button onClick={() => setModalOpen(false)}>
           <Image src={usa} alt="USA" />

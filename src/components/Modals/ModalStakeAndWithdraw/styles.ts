@@ -1,19 +1,6 @@
 import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
-export const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100vw;
-  height: 100vh;
-
-  background-color: rgba(0, 0, 0, 0.6);
-
-  z-index: 9;
-`
-
 interface IBorderGradientProps {
   stakeInKacy: boolean;
   unstaking: string;
@@ -38,7 +25,7 @@ export const BorderGradient = styled.div<IBorderGradientProps>`
       : `linear-gradient(-45deg, ${theme.colors.blue} 0%, ${theme.colors.cyan} 100%)`};
   border-radius: ${theme.border.radius};
 
-  z-index: 20;
+  z-index: 1050;
 `
 
 export const BackgroundBlack = styled.div`

@@ -1,7 +1,8 @@
 import React from 'react'
 
+import Overlay from '../../Overlay'
+
 import {
-  Backdrop,
   BorderGradient,
   BackgroundBlack,
   Content,
@@ -22,10 +23,8 @@ const ModalSocial = ({ modalOpen, setModalOpen }: IModalSocialProps) => {
 
   return (
     <>
-      <Backdrop
-        style={{ display: modalOpen ? 'block' : 'none' }}
-        onClick={handleCloseModal}
-      />
+      <Overlay onClick={handleCloseModal} />
+
       <BorderGradient modalOpen={modalOpen}>
         <BackgroundBlack>
           <InterBackground>

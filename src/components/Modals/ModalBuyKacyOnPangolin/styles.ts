@@ -1,29 +1,6 @@
 import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
-export const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100vw;
-  height: 100vh;
-
-  background-color: rgba(0, 0, 0, 0.7);
-
-  z-index: 20;
-
-  animation: OpenModalBuyKacy 500ms ease;
-  @keyframes OpenModalBuyKacy {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`
-
 export const LoadingContainer = styled.div`
   position: fixed;
   top: 45%;
@@ -40,7 +17,7 @@ export const LoadingContainer = styled.div`
   border: 0.1rem solid rgba(255, 255, 255, 0.25);
   border-radius: 1.2rem;
 
-  z-index: 20;
+  z-index: 1050;
 
   animation: OpenModalBuyKacy 500ms ease;
   @keyframes OpenModalBuyKacy {
@@ -99,7 +76,7 @@ export const ModalBuyKacyContainer = styled.div`
   border-radius: 1.2rem;
   background: #1F2937;
 
-  z-index: 21;
+  z-index: 1050;
 
   > div {
     border: 0.1rem solid rgba(255, 255, 255, 0.25);

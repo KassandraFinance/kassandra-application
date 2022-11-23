@@ -1,19 +1,6 @@
 import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
-export const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100vw;
-  height: 100vh;
-
-  background-color: rgba(0, 0, 0, 0.8);
-
-  z-index: 23;
-`
-
 export const ModalNftContainer = styled.div`
   position: fixed;
   top: 0;
@@ -25,7 +12,7 @@ export const ModalNftContainer = styled.div`
   height: 100vh;
   width: 100%;
 
-  z-index: 23;
+  z-index: 1050;
 
   @media (max-width: 900px) {
     flex-direction: column;
@@ -44,7 +31,7 @@ interface INftImageProps {
   isOpenDetails: boolean;
 }
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const NftImage = styled.img<INftImageProps>`
   width: 40rem;
   height: 40rem;
@@ -52,7 +39,7 @@ export const NftImage = styled.img<INftImageProps>`
   margin-bottom: 1rem;
 
   border-radius: 1.2rem;
-  z-index: 25;
+  z-index: 1050;
 
   @media (max-width: 900px) {
     width: ${props => (props.isOpenDetails ? '20rem' : '50rem')};
@@ -64,7 +51,7 @@ export const NftImage = styled.img<INftImageProps>`
     height: ${props => (props.isOpenDetails ? '10rem' : '35rem')};
   }
 
-  animation: OpenImage 2.5s ease;
+  animation: OpenImage 750ms ease;
   @keyframes OpenImage {
     from {
       opacity: 0;
@@ -78,7 +65,7 @@ interface IButtonViewProps {
   isOpenDetails: boolean;
 }
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const ButtonViewNftContainer = styled.div<IButtonViewProps>`
   display: flex;
   align-items: center;
@@ -112,7 +99,7 @@ export const ButtonViewNftContainer = styled.div<IButtonViewProps>`
 
     cursor: pointer;
     transition: 0.3s;
-    z-index: 25;
+    z-index: 1050;
 
     @media (max-width: 650px) {
       min-width: ${props => (props.isOpenDetails ? `10rem` : `35rem`)};
@@ -134,7 +121,7 @@ export const ButtonViewNftContainer = styled.div<IButtonViewProps>`
 `
 
 export const ButtonViewNftDetails = styled.div`
-  z-index: 25;
+  z-index: 1050;
 
   h1 {
     color: #fcfcfc;
@@ -163,7 +150,7 @@ interface IModalInfoNftContainerProps {
 // prettier-ignore
 export const ModalInfoNftContainer = styled.div<IModalInfoNftContainerProps>`
   display: ${props => (props.modalOpen ? 'block' : 'none')};
-  z-index: 25;
+  z-index: 1050;
 
   background-color: #232734;
 
@@ -177,15 +164,15 @@ export const ModalInfoNftContainer = styled.div<IModalInfoNftContainerProps>`
     border-top-left-radius: 1.2rem;
     border-top-right-radius: 1.2rem;
 
-    animation: OpenModalNftMobile 1s ease;
+    animation: OpenModalNftMobile 750ms ease;
     animation-fill-mode: both;
   }
 
-  animation: OpenModalNft 1.5s ease;
+  animation: OpenModalNft 750ms ease;
   animation-fill-mode: both;
   @keyframes OpenModalNft {
     from {
-      transform: translateX(80%)
+      transform: translateX(100%)
     }
     to {
       transform: translateX(0)
@@ -194,7 +181,7 @@ export const ModalInfoNftContainer = styled.div<IModalInfoNftContainerProps>`
 
   @keyframes OpenModalNftMobile {
     from {
-      transform: translateY(50%)
+      transform: translateY(100%)
     }
     to {
       transform: translateY(0)
@@ -206,7 +193,7 @@ export const CloseModalContainer = styled.div`
   position: absolute;
   top: 2rem;
   left: 4rem;
-  z-index: 25;
+  z-index: 1050;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -226,7 +213,7 @@ export const ModalInfoNftContent = styled.div`
 
   background-color: #232734;
 
-  z-index: 22;
+  z-index: 1050;
 
   @media (max-width: 900px) {
     max-width: 100%;
@@ -299,7 +286,7 @@ interface ISocialIconProps {
   isActiveSocial?: boolean;
 }
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const SocialIcon = styled.a<ISocialIconProps>`
   display: flex;
   align-items: center;

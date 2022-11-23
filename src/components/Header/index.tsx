@@ -11,12 +11,12 @@ import ModalWaitingList from '../Modals/ModalWaitingList'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalInstitucionalLinksMobile from '../Modals/ModalInstitucionalLinksMobile'
 import ModalChooseNetwork from '../Modals/ModalChooseNetwork'
+import HeaderButtons from './HeaderButtons'
 
 import kacy96 from '../../../public/assets/logos/kacy-96.svg'
 import logoKassandra from '../../../public/assets/logos/kassandra-header.svg'
 
 import * as S from './styles'
-import HeaderButtons from './HeaderButtons'
 
 export type MenuProps = {
   username?: string
@@ -84,6 +84,7 @@ const Header = () => {
           />
         </S.MenuWrapper>
       </S.Wrapper>
+
       {isModalSocialMedia && (
         <ModalInstitucionalLinksMobile setModalOpen={setIsModalSocialMedia} />
       )}
@@ -103,7 +104,10 @@ const Header = () => {
       {isError && <ModalAlert />}
 
       {isChooseNetwork && (
-        <ModalChooseNetwork setIsChooseNetwork={setIsChooseNetwork} />
+        <ModalChooseNetwork
+          setIsChooseNetwork={setIsChooseNetwork}
+          isOpen={isChooseNetwork}
+        />
       )}
     </>
   )
