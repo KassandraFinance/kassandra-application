@@ -33,13 +33,7 @@ const messages = {
   Swap: 'Swap from'
 }
 
-const NewPoolOperations = ({
-  poolChain,
-  poolSymbol,
-  crpPoolAddress,
-  corePoolAddress,
-  productCategories
-}: IOperationsProps) => {
+const NewPoolOperations = () => {
   const [isModalWallet, setIsModaWallet] = React.useState<boolean>(false)
   const [isModalPoolOperations, setIsModalPoolOperations] = React.useState<boolean>(false)
   
