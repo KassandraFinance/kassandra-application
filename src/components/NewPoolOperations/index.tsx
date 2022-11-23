@@ -3,7 +3,7 @@ import React from 'react'
 
 import { useAppSelector } from '../../store/hooks'
 
-import { chains } from '../../constants/tokenAddresses'
+import { chains, URL_1INCH } from '../../constants/tokenAddresses'
 
 import { ChainDetails } from '../../utils/changeChain'
 
@@ -22,6 +22,14 @@ interface IOperationsProps {
   crpPoolAddress: string;
   corePoolAddress: string;
   productCategories: string[];
+}
+
+export interface ITokenList1InchProps {
+  symbol: string,
+  name: string,
+  address: string,
+  decimals: number,
+  logoURI: string
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -46,6 +54,7 @@ const NewPoolOperations = ({
   const [inputChecked, setInputChecked] = React.useState<Titles>('Invest')
   const [typeWithdrawChecked, setTypeWithdrawChecked] = React.useState<string>('Best_value')
   const [inputCheckedBarMobile, setInputCheckedBarMobile] = React.useState<TitlesMobile>('Disable')
+  const [tokenList1Inch, setTokenList1Inch] = React.useState<ITokenList1InchProps[]>([])
 
   const { chainId, tokenSelected } = useAppSelector(state => state)
 
@@ -56,11 +65,22 @@ const NewPoolOperations = ({
     if (chain.chainId === chainId) setInputChecked(title)
   }
 
+  async function getTokenList1Inch() {
+    const res = await fetch(`${URL_1INCH}43114/tokens`)
+    const json = await res.json()
+
+    setTokenList1Inch(Object.values(json.tokens))
+  }
+
+  React.useEffect(() => {
+    getTokenList1Inch()
+  }, [])
+
   return (
     <S.NewPoolOperations>
       {isModalPoolOperations ?
         tokenSelected ?
-          <TokenSelection />
+          <TokenSelection tokenList1Inch={tokenList1Inch} />
         :
         <ModalCardOperations
           setInputChecked={setInputChecked}
@@ -78,7 +98,7 @@ const NewPoolOperations = ({
         />
         :
         tokenSelected ?
-          <TokenSelection />
+          <TokenSelection tokenList1Inch={tokenList1Inch} />
         :
         <SelectOperation
           inputChecked={inputChecked}
