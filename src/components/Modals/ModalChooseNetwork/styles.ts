@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const ChooseNetwork = styled.div`
+export const ModalChooseNetwork = styled.div`
   ${() => css``}
 `
 

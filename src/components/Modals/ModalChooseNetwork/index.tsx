@@ -25,7 +25,7 @@ const ModalChooseNetwork = ({
   }
 
   return (
-    <S.ChooseNetwork>
+    <S.ModalChooseNetwork>
       <Overlay onClick={handleCloseModal} isOpen={isOpen} />
 
       <Modal title="Choose Network" onCloseModal={handleCloseModal}>
@@ -54,7 +54,7 @@ const ModalChooseNetwork = ({
           </S.WrapperIconsBackGround>
         </S.ModalContent>
       </Modal>
-    </S.ChooseNetwork>
+    </S.ModalChooseNetwork>
   )
 }
 
