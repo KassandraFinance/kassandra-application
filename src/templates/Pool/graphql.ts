@@ -4,10 +4,7 @@ export const GET_INFO_POOL = gql`
   query ($id: ID!, $day: Int!) {
     pool(id: $id) {
       # information aHYPE
-      id
-      name
       decimals
-      symbol
       price_usd
       fee_exit
       fee_swap

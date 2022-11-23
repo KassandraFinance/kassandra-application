@@ -1,7 +1,6 @@
 import React from 'react'
 import useSWR from 'swr'
 import Image from 'next/image'
-import detectEthereumProvider from '@metamask/detect-provider'
 import { request } from 'graphql-request'
 
 import Big from 'big.js'
@@ -10,16 +9,10 @@ import BigNumber from 'bn.js'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import {
-  SUBGRAPH_URL,
-  ProductDetails,
-  Networks
-} from '../../constants/tokenAddresses'
-
 import { BNtoDecimal } from '../../utils/numerals'
 
 import { ITokenDetails } from '../../context/PoolTokensContext'
-import { useAppDispatch } from '../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setFees } from '../../store/reducers/fees'
 import { setPoolImages } from '../../store/reducers/poolImages'
 import { setTokenAddress2Index } from '../../store/reducers/tokenAddress2Index'
@@ -51,6 +44,7 @@ import ShareImageModal from './ShareImageModal'
 import SharedImage from './SharedImage'
 
 import * as S from './styles'
+
 import NewPoolOperations from '../../components/NewPoolOperations'
 
 const invertToken: { [key: string]: string } = {
@@ -120,10 +114,6 @@ interface InfoPool {
   decimals: number;
 }
 
-interface Input {
-  product: ProductDetails;
-}
-
 export interface IPriceAndChangeTokens {
   [key: string]: {
     change: number,
@@ -132,13 +122,13 @@ export interface IPriceAndChangeTokens {
   };
 }
 
-const network2coingeckoID: Networks = {
-  Ropsten: 'ethereum',
-  Avalanche: 'avalanche',
-  Fuji: 'avalanche'
+const network2coingeckoID: any = {
+  1: 'ethereum',
+  43114: 'avalanche',
+  43113: 'avalanche'
 }
 
-const Products = ({ product }: Input) => {
+const Pool = () => {
   const [openModal, setOpenModal] = React.useState(false)
   const [loading, setLoading] = React.useState<boolean>(true)
   const [infoDataYY, setinfoDataYY] = React.useState<{
@@ -153,24 +143,24 @@ const Products = ({ product }: Input) => {
     decimals: 18
   })
 
+  const { trackProductPageView, trackEventFunction } = useMatomoEcommerce()
+  const { convertBalanceYRTtoWrap, getDecimals } = useYieldYak()
   const { setPoolTokens } = usePoolTokens()
 
-  const { trackProductPageView, trackEventFunction } = useMatomoEcommerce()
+  const pool = useAppSelector(state => state.pool)
   const dispatch = useAppDispatch()
 
-  const { convertBalanceYRTtoWrap, getDecimals } = useYieldYak()
-
   const { data } = useSWR([GET_INFO_POOL], query =>
-    request(SUBGRAPH_URL, query, {
-      id: product.sipAddress,
+    request('https://backend.kassandra.finance', query, {
+      id: pool.id,
       day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
     })
   )
 
   const { data: coinGeckoResponse } = useSWR(
     `/api/image-coingecko?poolinfo=${
-      network2coingeckoID[product.platform]
-    }&tokenAddress=${product.addresses}`
+      network2coingeckoID[pool.chainId]
+    }&tokenAddress=${pool.underlying_assets_addresses}`
   )
 
   async function getDataYieldyak() {
@@ -203,14 +193,14 @@ const Products = ({ product }: Input) => {
   }
 
   async function getTokenDetails() {
-    const pool: ITokenDetails = {
+    const poolInfo: ITokenDetails = {
       balance_in_pool: '',
       address: data.pool.id,
       allocation: 0,
       allocation_goal: 0,
       decimals: new BigNumber(data.pool.decimals),
       price: Number(data.pool.price_usd),
-      name: data.pool.name,
+      name: pool.name,
       symbol: data.pool.symbol
     }
 
@@ -283,7 +273,7 @@ const Products = ({ product }: Input) => {
       )
     )
 
-    tokenDetails.push(pool)
+    tokenDetails.push(poolInfo)
 
     dispatch(
       setTokenAddress2Index(
@@ -312,14 +302,10 @@ const Products = ({ product }: Input) => {
   }, [])
 
   React.useEffect(() => {
-    if (product) {
-      trackProductPageView(
-        product.sipAddress,
-        product.symbol,
-        product.categories
-      )
+    if (pool) {
+      trackProductPageView(pool.id, pool.symbol, pool.name)
     }
-  }, [product])
+  }, [pool])
 
   React.useEffect(() => {
     if (data && coinGeckoResponse) {
@@ -361,27 +347,27 @@ const Products = ({ product }: Input) => {
     <>
       <Header />
       <ShareImageModal
-        poolId={product.sipAddress}
+        poolId={pool.id}
         setOpenModal={setOpenModal}
         openModal={openModal}
-        productName={product.symbol}
+        productName={pool.symbol}
       >
         <SharedImage
-          crpPoolAddress={product.sipAddress}
+          crpPoolAddress={pool.id}
           totalValueLocked={infoPool.tvl}
-          socialIndex={product.symbol}
-          productName={product.name}
-          fundImage={product.fundIcon}
+          socialIndex={pool.symbol}
+          productName={pool.name}
+          fundImage={pool.logo}
         />
       </ShareImageModal>
       <Breadcrumb>
         <BreadcrumbItem href="/">Home</BreadcrumbItem>
         <BreadcrumbItem href={`/explore`}>Explore</BreadcrumbItem>
         <BreadcrumbItem
-          href={`/explore/${product.symbol.toLowerCase()}`}
+          href={`/explore/${pool.symbol.toLowerCase()}`}
           isLastPage
         >
-          ${product.symbol}
+          ${pool.symbol}
         </BreadcrumbItem>
       </Breadcrumb>
       {loading ? (
@@ -389,40 +375,14 @@ const Products = ({ product }: Input) => {
           <Loading marginTop={0} />
         </S.LoadingContent>
       ) : (
-        <>
-          <S.Intro introMobile={true} introDesktop={false}>
-            <Image src={product.fundIcon} alt="" width={75} height={75} />
-            <S.NameIndex>
-              <S.NameAndSymbol introMobile={true}>
-                <h1>{product.name}</h1>
-                <button
-                  onClick={() => {
-                    setOpenModal(true)
-                    trackEventFunction(
-                      'click-on-button',
-                      'share-fund',
-                      'product-headline'
-                    )
-                  }}
-                  className="circle"
-                >
-                  <Image src="/assets/icons/share.svg" width={22} height={22} />
-                </button>
-              </S.NameAndSymbol>
-              <S.SymbolAndMade>
-                <h3>${product.symbol}</h3>
-                <p>by {product.fundBy}</p>
-              </S.SymbolAndMade>
-            </S.NameIndex>
-            <S.Line />
-          </S.Intro>
+        <S.Container>
           <S.Product>
             <S.ProductDetails>
               <S.Intro introMobile={false} introDesktop={true}>
-                <Image src={product.fundIcon} alt="" width={75} height={75} />
+                <img src={pool.logo} alt="" />
                 <S.NameIndex>
                   <S.NameAndSymbol>
-                    <h1>{product.name}</h1>
+                    <h1>{pool.name}</h1>
                     <button
                       onClick={() => setOpenModal(true)}
                       className="circle"
@@ -435,8 +395,8 @@ const Products = ({ product }: Input) => {
                     </button>
                   </S.NameAndSymbol>
                   <S.SymbolAndMade>
-                    <h3>${product.symbol}</h3>
-                    <p>by {product.fundBy}</p>
+                    <h3>${pool.symbol}</h3>
+                    <p>by {pool.manager}</p>
                   </S.SymbolAndMade>
                 </S.NameIndex>
               </S.Intro>
@@ -507,28 +467,28 @@ const Products = ({ product }: Input) => {
                   <h2>${infoPool.withdrawFees}</h2>
                 </S.IndexData>
               </S.IntroCharts>
-              <ChartProducts crpPoolAddress={product.sipAddress} />
+              <ChartProducts crpPoolAddress={pool.id} />
               <ScrollUpButton />
-              <Change crpPoolAddress={product.sipAddress} />
-              <MyAsset
-                product={product}
+              <Change crpPoolAddress={pool.id} />
+              {/* <MyAsset
+                product={pool}
                 price={infoPool.price}
-                pid={typeof product.pid === 'undefined' ? -1 : product.pid}
+                pid={typeof pool.poolId === 'undefined' ? -1 : pool.poolId}
                 decimals={infoPool.decimals}
-              />
-              <Summary
+              /> */}
+              {/* <Summary
                 strategy={data?.pool.strategy || 'Coming soon...'}
-                poolContract={product.coreAddress}
-                poolController={product.sipAddress}
-                summary={product.fundSummary}
-                symbol={product.symbol}
-                link={product.fundLink}
-                icon={product.fundIcon}
-              />
-              <PoweredBy partners={product.partners} />
+                poolContract={pool.core_address}
+                poolController={pool.id}
+                summary={pool.summary}
+                symbol={pool.symbol}
+                link={pool.url}
+                icon={pool.logo}
+              /> */}
+              {/* <PoweredBy partners={pool.partners} /> */}
               {coinGeckoResponse && <Distribution />}
-              <ActivityTable product={product} />
-              <TokenDescription symbol={product.symbol} />
+              {/* <ActivityTable product={pool} /> */}
+              <TokenDescription symbol={pool.symbol} />
             </S.ProductDetails>
             {/* <PoolOperations
               poolChain={product.chain}
@@ -539,10 +499,10 @@ const Products = ({ product }: Input) => {
             /> */}
             <NewPoolOperations />
           </S.Product>
-        </>
+        </S.Container>
       )}
     </>
   )
 }
 
-export default Products
+export default Pool
