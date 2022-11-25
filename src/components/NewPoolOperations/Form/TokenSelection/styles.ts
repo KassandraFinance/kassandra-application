@@ -11,7 +11,6 @@ export const TokenSelectionHeader = styled.div`
   ${({ theme }) => css`
     display: flex;
     align-items: center;
-    justify-content: space-between;
     height: 6.5rem;
     padding-inline: 3.2rem;
 
@@ -20,9 +19,12 @@ export const TokenSelectionHeader = styled.div`
     border-bottom: 0.2rem solid #26dbdb;
 
     > p {
+      width: 100%;
+
       color: ${theme.colors.snow};
       font-size: ${theme.font.sizes.font18};
       font-weight: ${theme.font.weight.medium};
+      text-align: center;
     }
 
     > span {
@@ -32,7 +34,7 @@ export const TokenSelectionHeader = styled.div`
 `
 
 export const BodyToken = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     flex-direction: column;
     padding: 2.3rem 3.2rem;
@@ -45,7 +47,7 @@ export const BodyToken = styled.div`
   `}
 `
 export const InputContent = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     position: relative;
 
     display: flex;
@@ -74,7 +76,7 @@ export const SearchListInput = styled.input`
 `
 
 export const tokenPinContainer = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     gap: 0.8rem;
     flex-wrap: wrap;
@@ -97,6 +99,8 @@ export const tokenPin = styled.div`
 
     border: 0.1rem solid transparent;
 
+    cursor: pointer;
+
     :hover {
       border: 0.1rem solid rgba(255, 255, 255, 0.3);
     }
@@ -104,7 +108,7 @@ export const tokenPin = styled.div`
 `
 
 export const TokenListContainer = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     flex-direction: column;
     padding: 0.8rem 0;
@@ -117,7 +121,7 @@ export const TokenListContainer = styled.div`
 `
 
 export const Token = styled.li`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -132,7 +136,7 @@ export const Token = styled.li`
 `
 
 export const TokenNameContent = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     align-items: center;
     gap: 0.8rem;
@@ -160,7 +164,7 @@ export const TokenName = styled.div`
 `
 
 export const TokenValueInWalletContainer = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     align-items: center;
     gap: 1rem;

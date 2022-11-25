@@ -20,7 +20,7 @@ interface ISelectInputProps {
 }
 
 const TokenSelected = () => {
-  const { poolImages } = useAppSelector(state => state)
+  const { poolImages, tokenSelect } = useAppSelector(state => state)
   const dispatch = useAppDispatch()
 
   return (
@@ -36,14 +36,14 @@ const TokenSelected = () => {
         <div className="img">
           <Image
             // src={poolImages[tokenDetails?.address] || none}
-            src={avax || none}
+            src={tokenSelect.logoURI || none}
             alt=""
             width={22}
             height={22}
           />
         </div>
         {/* {tokenDetails?.symbol} */}
-        AVAX
+        {tokenSelect.symbol}
         <div id="arrow-down">
           <Image src={arrow} alt="" />
         </div>

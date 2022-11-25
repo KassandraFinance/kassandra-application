@@ -1,10 +1,13 @@
 import React from 'react'
 import { FixedSizeList as List } from 'react-window'
+import { stringSimilarity } from 'string-similarity-js'
 
 import { ITokenList1InchProps } from '../..'
 
 import { useAppDispatch } from '../../../../store/hooks'
 import { setTokenSelected } from '../../../../store/reducers/tokenSelected'
+
+import { setTokenSelect } from '../../../../store/reducers/tokenSelect'
 
 import * as S from './styles'
 
@@ -22,6 +25,32 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
 
   const dispatch = useAppDispatch()
 
+  function handleFiltered(tokenList1Inch: ITokenList1InchProps[]) {
+    const tokenFiltered = tokenList1Inch
+      .filter(
+        token =>
+          token.symbol.toLocaleLowerCase().includes(searchToken) ||
+          token.name.toLocaleLowerCase().includes(searchToken)
+      )
+      .map(token => {
+        const score = stringSimilarity(token.symbol + token.name, searchToken)
+        return {
+          ...token,
+          tokenScore: score
+        }
+      })
+      .sort((a, b) => {
+        if (a.tokenScore > b.tokenScore) return -1
+        if (a.tokenScore < b.tokenScore) return 1
+        return 0
+      })
+
+    return tokenFiltered
+  }
+
+  const filteredToken =
+    searchToken.length > 1 ? handleFiltered(tokenList1Inch) : tokenList1Inch
+
   function handleSearchToken(text: string) {
     setSearchToken(text.toLocaleLowerCase())
   }
@@ -32,17 +61,26 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
       style
     }: ICurrencyRowProps) {
       return (
-        <S.Token key={tokenList1Inch[index].address} style={style}>
+        <S.Token key={filteredToken[index]?.address} style={style} onClick={() => {
+          dispatch(setTokenSelect(filteredToken[index]))
+          dispatch(setTokenSelected(false))
+        }}>
           <S.TokenNameContent>
             <img
-              src={tokenList1Inch[index].logoURI}
+              src={filteredToken[index]?.logoURI}
               alt=""
               width={24}
               height={24}
+              onError={(e) => {
+                // eslint-disable-next-line prettier/prettier
+                const target = e.target as HTMLImageElement
+                target.onerror = null
+                target.src = `/assets/icons/coming-soon.svg`  
+              }}
             />
             <S.TokenName>
-              <span>{tokenList1Inch[index].name}</span>
-              <p>{tokenList1Inch[index].symbol}</p>
+              <span>{filteredToken[index]?.name}</span>
+              <p>{filteredToken[index]?.symbol}</p>
             </S.TokenName>
           </S.TokenNameContent>
           <S.TokenValueInWalletContainer>
@@ -74,7 +112,6 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
           />
         </span>
         <p>Select Token</p>
-        <span />
       </S.TokenSelectionHeader>
       <S.BodyToken>
         <S.InputContent>
@@ -116,10 +153,10 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
           </S.tokenPin>
         </S.tokenPinContainer>
         <S.TokenListContainer>
-          {tokenList1Inch.length > 0 ? (
+          {filteredToken.length > 0 ? (
             <List
               innerElementType="ul"
-              itemCount={tokenList1Inch.length}
+              itemCount={filteredToken.length}
               itemSize={58}
               height={3000}
               width={380}
