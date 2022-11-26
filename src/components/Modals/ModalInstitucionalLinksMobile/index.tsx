@@ -1,6 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
 
+import Overlay from '../../Overlay'
+
 import * as S from './styles'
 
 interface IModalInstitucionalLinksMobileProps {
@@ -8,10 +10,13 @@ interface IModalInstitucionalLinksMobileProps {
 }
 
 // eslint-disable-next-line prettier/prettier
-const ModalInstitucionalLinksMobile = ({ setModalOpen }: IModalInstitucionalLinksMobileProps) => {
+const ModalInstitucionalLinksMobile = ({
+  setModalOpen
+}: IModalInstitucionalLinksMobileProps) => {
   return (
     <>
-      <S.Backdrop onClick={() => setModalOpen(false)} />
+      <Overlay onClick={() => setModalOpen(false)} />
+
       <S.ModalContainer>
         <Link href="https://kassandra.finance/" passHref>
           <S.SocialIcon

@@ -35,10 +35,12 @@ import ChartProducts from '../../components/ChartProducts'
 import PoolOperations from '../../components/PoolOperations'
 import ScrollUpButton from '../../components/ScrollUpButton'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
+import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 import PoweredBy from './PoweredBy'
 import ActivityTable from './ActivityTable'
 
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
+import avax from '../../../public/assets/logos/avax.png'
 
 import { GET_INFO_POOL } from './graphql'
 
@@ -64,7 +66,9 @@ const invertToken: { [key: string]: string } = {
   '0xbF5bFFbf7D94D3B29aBE6eb20089b8a9E3D229f7':
     '0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5', //QI
   '0xd0F41b1C9338eB9d374c83cC76b684ba3BB71557':
-    '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE' //SAVAX
+    '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE', //SAVAX
+  '0x0C4684086914D5B1525bf16c62a0FF8010AB991A':
+    '0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7' //YAK
 }
 
 const farmInfoYY: { [key: string]: IfarmInfoYYProps } = {
@@ -390,7 +394,19 @@ const Products = ({ product }: Input) => {
       ) : (
         <>
           <S.Intro introMobile={true} introDesktop={false}>
-            <Image src={product.fundIcon} alt="" width={75} height={75} />
+            <TokenWithNetworkImage
+              tokenImage={{
+                url: product.fundIcon.src,
+                height: 75,
+                width: 75,
+                withoutBorder: true
+              }}
+              networkImage={{
+                url: avax.src,
+                height: 24,
+                width: 24
+              }}
+            />
             <S.NameIndex>
               <S.NameAndSymbol introMobile={true}>
                 <h1>{product.name}</h1>
@@ -418,7 +434,19 @@ const Products = ({ product }: Input) => {
           <S.Product>
             <S.ProductDetails>
               <S.Intro introMobile={false} introDesktop={true}>
-                <Image src={product.fundIcon} alt="" width={75} height={75} />
+                <TokenWithNetworkImage
+                  tokenImage={{
+                    url: product.fundIcon.src,
+                    height: 75,
+                    width: 75,
+                    withoutBorder: true
+                  }}
+                  networkImage={{
+                    url: avax.src,
+                    height: 24,
+                    width: 24
+                  }}
+                />
                 <S.NameIndex>
                   <S.NameAndSymbol>
                     <h1>{product.name}</h1>

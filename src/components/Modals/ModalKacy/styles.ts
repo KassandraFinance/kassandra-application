@@ -11,8 +11,8 @@ export const KacyAmount = styled.div`
     padding: 2rem;
 
     color: ${theme.colors.snow};
+    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.normal};
-    font-size: ${theme.font.sizes.font12};
 
     border: 0.1rem solid ${theme.colors.snow};
     border-radius: ${theme.border.radius};
@@ -26,6 +26,14 @@ export const KacyAmount = styled.div`
     &:hover,
     &:focus {
       border-color: ${theme.colors.amber};
+    }
+
+    @media (max-width: 576px) {
+      padding: 1.2rem;
+
+      font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font12};
+      line-height: ${theme.font.sizes.font12};
     }
   }
 `

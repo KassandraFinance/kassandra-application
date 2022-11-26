@@ -236,3 +236,16 @@ export const Wrapper = styled.button<WrapperProps>`
     wrapperModifiers.backgroundVote(theme, backgroundVote)};
   `}
 `
+
+export const ImgWrapper = styled.div`
+  ${() => css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  `}
+`

@@ -4,13 +4,12 @@ import { MatomoProvider, createInstance } from '@datapunt/matomo-tracker-react'
 import Head from 'next/head'
 import { ThemeProvider } from 'styled-components'
 import { useRouter } from 'next/router'
-import { Provider } from 'react-redux'
 import { SWRConfig } from 'swr'
 
 import GlobalStyles from '../styles/global'
 import theme from '../styles/theme'
 
-import { store } from '../store'
+import { ReduxProvider } from '../store/reduxContext'
 
 import Footer from '../components/Footer'
 import Toastify from '../components/Toastify'
@@ -35,7 +34,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const pathName = router.pathname
 
   return (
-    <Provider store={store}>
+    <ReduxProvider>
       <MatomoProvider value={instance}>
         <ThemeProvider theme={theme}>
           <Head>
@@ -98,7 +97,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
           {router.pathname !== '/404' && <Footer />}
         </ThemeProvider>
       </MatomoProvider>
-    </Provider>
+    </ReduxProvider>
   )
 }
 

@@ -60,13 +60,13 @@ export const Intro = styled.div<IIntroProps>`
       font-size: 1.8rem;
     }
 
-    img {
+    > img {
       width: 4rem;
     }
 
     @media (max-width: 960px) {
       display: grid;
-      grid-template-columns: 4rem auto;
+      grid-template-columns: 10rem auto;
       gap: 1.6rem;
 
       padding: 0 3rem;

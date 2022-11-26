@@ -29,6 +29,7 @@ export const AssetsHeaderContent = styled.div`
   > span {
     display: flex;
     justify-content: center;
+    align-items: center;
     height: 10rem;
     width: 29rem;
 

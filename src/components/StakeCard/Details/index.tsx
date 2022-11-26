@@ -34,6 +34,7 @@ interface IDetailsProps {
   poolPrice: Big;
   kacyPrice: Big;
   link: string;
+  setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Details = ({
@@ -45,13 +46,16 @@ const Details = ({
   symbol,
   poolPrice,
   kacyPrice,
-  link
+  link,
+  setIsOpenModal
 }: IDetailsProps) => {
   const [depositedAmount, setDepositedAmount] = React.useState<BigNumber>(
     new BigNumber(-1)
   )
   const { trackEventFunction } = useMatomoEcommerce()
   const { poolInfo } = useStakingContract(Staking)
+
+  const connect = localStorage.getItem('walletconnect')
 
   React.useEffect(() => {
     let interval: any
@@ -140,7 +144,20 @@ const Details = ({
           }
           text="See contract"
         />
-        <ExternalLink hrefLink={link} text={`Get ${symbol}`} />
+        {symbol === 'KACY' ? (
+          connect ? (
+            <ExternalLink
+              hrefLink="https://app.pangolin.exchange/#/swap?outputCurrency=0xf32398dae246C5f672B52A54e9B413dFFcAe1A44"
+              text={`Buy ${symbol}`}
+            />
+          ) : (
+            <S.AddToken onClick={() => setIsOpenModal(true)}>
+              Buy {symbol}
+            </S.AddToken>
+          )
+        ) : (
+          <ExternalLink hrefLink={link} text={`Get ${symbol}`} />
+        )}
       </S.Info>
       <S.AddToken
         type="button"

@@ -113,6 +113,20 @@ export const chains: { [key: string]: ChainDetails } = {
     blockExplorerUrls: ['https://testnet.snowtrace.io/'],
     secondsPerBlock: 2,
     wrapped: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c',
+  },
+  polygon: {
+    chainId: 137,
+    chainIdHex: '0x89',
+    chainName: 'Polygon',
+    nativeCurrency: {
+      name: 'Polygon',
+      symbol: 'MATIC',
+      decimals: 18
+    },
+    rpcUrls: ["https://polygon-rpc.com"],
+    blockExplorerUrls: ["https://polygonscan.com"],
+    secondsPerBlock: 2,
+    wrapped: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270"
   }
 }
 
@@ -146,7 +160,8 @@ const ahype: ProductDetails  = process.env.NEXT_PUBLIC_MASTER === '1' ?
       '0x60781C2586D68229fde47564546784ab3fACA982',
       '0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4',
       '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE',
-      '0x22d4002028f537599bE9f666d1c4Fa138522f9c8'
+      '0x22d4002028f537599bE9f666d1c4Fa138522f9c8',
+      '0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7'
     ]
   }
  :

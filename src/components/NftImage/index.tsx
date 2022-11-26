@@ -4,11 +4,36 @@ import * as S from './styles'
 
 interface INftImageProps {
   NftUrl: string;
-  imageSize: 'medium' | 'large' | 'small';
+  imageSize: 'medium' | 'large' | 'small' | 'smallest';
   openModalNFT?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const NftImage = ({ NftUrl, imageSize, openModalNFT }: INftImageProps) => {
+  if (imageSize === 'smallest') {
+    return (
+      <S.NftImageContainer imageSize={imageSize}>
+        <>
+          <img src={NftUrl} alt="User NFT image" height="32" width="32" />
+
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <clipPath id="nftImageSmallest">
+              <path
+                d="M15.7979 7.65C15.923 7.86658 15.923 8.13342 15.7979 8.35L12.2021 14.5782C12.077 14.7948 11.8459 14.9282 11.5959 14.9282L4.40415 14.9282C4.15406 14.9282 3.92297 14.7948 3.79793 14.5782L0.202073 8.35C0.0770303 8.13342 0.0770303 7.86658 0.202073 7.65L3.79793 1.4218C3.92297 1.20522 4.15406 1.0718 4.40415 1.0718L11.5959 1.0718C11.8459 1.0718 12.077 1.20522 12.2021 1.4218L15.7979 7.65Z"
+                fill="#D9D9D9"
+              />
+            </clipPath>
+          </svg>
+        </>
+      </S.NftImageContainer>
+    )
+  }
+
   if (imageSize === 'small') {
     return (
       <S.NftImageContainer imageSize={imageSize}>

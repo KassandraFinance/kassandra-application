@@ -9,9 +9,10 @@ import { BNtoDecimal } from '../../../../utils/numerals'
 import changeChain from '../../../../utils/changeChain'
 import { chains } from '../../../../constants/tokenAddresses'
 
+import Overlay from '../../../Overlay'
+import Modal from '../../Modal'
 import Button from '../../../Button'
 
-import closeIcon from '../../../../../public/assets/utilities/close-icon.svg'
 import kacyIcon from '../../../../../public/assets/logos/kacy-96.svg'
 import avalancheIcon from '../../../../../public/assets/logos/avalanche.svg'
 
@@ -43,6 +44,8 @@ const Kacy = ({
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
 
+  const connect = process.browser && localStorage.getItem('walletconnect')
+
   const chain =
     process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
 
@@ -52,18 +55,11 @@ const Kacy = ({
     setIsModalKacy(false)
   }
   return (
-    <>
-      <S.Backdrop onClick={handleCloseModal}></S.Backdrop>
-      <S.Container>
-        <S.ModalHeader>
-          <S.HeaderTitle>Your KACY Stats</S.HeaderTitle>
+    <S.Kacy>
+      <Overlay onClick={handleCloseModal} />
 
-          <S.CloseBtn type="button" onClick={handleCloseModal}>
-            <Image src={closeIcon} alt="Close" width={12} height={12} />
-          </S.CloseBtn>
-        </S.ModalHeader>
-
-        <S.ModalBody>
+      <Modal title="Your KACY Stats" onCloseModal={handleCloseModal}>
+        <S.ModalContent>
           {userWalletAddress && chainId === chain.chainId && (
             <>
               <S.KacyTotalContainer>
@@ -156,11 +152,11 @@ const Kacy = ({
             </>
           )}
 
-          <S.Ul>
+          <S.Ul isKacyStatsModal={kacyTotal.isZero()}>
             <S.Li>
               Price
               <S.Value>
-                {price.toLocaleString('en-US', {
+                {price?.toLocaleString('en-US', {
                   style: 'currency',
                   currency: 'USD',
                   minimumFractionDigits: 3
@@ -169,7 +165,7 @@ const Kacy = ({
             </S.Li>
             <S.Li>
               Circulant Supply
-              <S.Value>{supply.toLocaleString('en-US')}</S.Value>
+              <S.Value>{supply?.toLocaleString('en-US')}</S.Value>
             </S.Li>
             <S.Li>
               Total Supply
@@ -178,15 +174,26 @@ const Kacy = ({
           </S.Ul>
 
           {chainId === chain.chainId && userWalletAddress ? (
-            <Button
-              text="Get more KACY"
-              backgroundPrimary
-              fullWidth
-              onClick={() => {
-                setIsOpenModal(true)
-                setIsModalKacy(false)
-              }}
-            />
+            connect ? (
+              <Button
+                text="Buy KACY"
+                backgroundPrimary
+                fullWidth
+                as="a"
+                href="https://app.pangolin.exchange/#/swap?outputCurrency=0xf32398dae246C5f672B52A54e9B413dFFcAe1A44"
+                target="_blank"
+              />
+            ) : (
+              <Button
+                text="Buy KACY"
+                backgroundPrimary
+                fullWidth
+                onClick={() => {
+                  setIsOpenModal(true)
+                  setIsModalKacy(false)
+                }}
+              />
+            )
           ) : chainId !== chain.chainId ? (
             <Button
               text={`Change to ${chain.chainName}`}
@@ -208,9 +215,9 @@ const Kacy = ({
               }}
             />
           )}
-        </S.ModalBody>
-      </S.Container>
-    </>
+        </S.ModalContent>
+      </Modal>
+    </S.Kacy>
   )
 }
 
