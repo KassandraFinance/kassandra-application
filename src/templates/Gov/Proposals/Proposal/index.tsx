@@ -1,6 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Big from 'big.js'
@@ -23,6 +24,7 @@ import waitTransaction, {
 } from '../../../../utils/txWait'
 import { BNtoDecimal } from '../../../../utils/numerals'
 
+import useConnect from '../../../../hooks/useConnect'
 import useGovernance from '../../../../hooks/useGovernance'
 import useVotingPower from '../../../../hooks/useVotingPower'
 
@@ -186,8 +188,8 @@ const Proposal = () => {
   const governance = useGovernance(GovernorAlpha)
   const votingPower = useVotingPower(Staking)
 
-  const { userWalletAddress } = useAppSelector(state => state)
-  const { chainId } = useAppSelector(state => state)
+  const { chainId, userWalletAddress } = useAppSelector(state => state)
+  const { metamaskInstalled } = useConnect()
 
   const chain =
     process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
@@ -263,7 +265,7 @@ const Proposal = () => {
   }, [])
 
   React.useEffect(() => {
-    if (data && Number(chainId) === chain.chainId) {
+    if (data) {
       const secondsPerBlock =
         chains[process.env.NEXT_PUBLIC_MASTER === '1' ? 'avalanche' : 'fuji']
           .secondsPerBlock
@@ -337,7 +339,7 @@ const Proposal = () => {
   }, [data, userWalletAddress])
 
   React.useEffect(() => {
-    if (data && Number(chainId) === chain.chainId) {
+    if (data) {
       const { endBlock, startBlock, created, canceled, executed, queued, eta } =
         data.proposal[0]
       const defeated =
@@ -635,7 +637,8 @@ const Proposal = () => {
             Proposal {router.query.proposal}
           </BreadcrumbItem>
         </Breadcrumb>
-        {Number(chainId) !== chain.chainId ? (
+        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
+        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
           <Web3Disabled
             textButton={`Connect to ${chain.chainName}`}
             textHeader="Your wallet is set to the wrong network."

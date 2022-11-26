@@ -37,6 +37,7 @@ import ScrollUpButton from '../../components/ScrollUpButton'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 import PoweredBy from './PoweredBy'
+import ActivityTable from './ActivityTable'
 
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
 import avax from '../../../public/assets/logos/avax.png'
@@ -553,6 +554,7 @@ const Products = ({ product }: Input) => {
               />
               <PoweredBy partners={product.partners} />
               {coinGeckoResponse && <Distribution />}
+              <ActivityTable product={product} />
               <TokenDescription symbol={product.symbol} />
             </S.ProductDetails>
             <PoolOperations

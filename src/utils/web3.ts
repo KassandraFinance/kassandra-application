@@ -10,7 +10,9 @@ export const provider = new WalletConnectProvider({
   }
 })
 
-const web3 = new Web3(Web3.givenProvider)
+const web3 = new Web3(
+  Web3.givenProvider ?? 'https://api.avax.network/ext/bc/C/rpc'
+)
 
 type SubscribeOptions = {
   filter?: {

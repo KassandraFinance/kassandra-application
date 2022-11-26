@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
-export const Distribution = styled.div`
+export const ActivityTable = styled.div`
   margin: ${theme.spacings.space48} 0;
 `
 
@@ -57,7 +57,7 @@ export const Table = styled.table`
 
   tbody {
     background-color: rgba(255, 255, 255, 0.04);
-    max-height: 100%;
+    /* max-height: 100%; */
   }
 
   @media (max-width: 1100px) {
@@ -76,29 +76,32 @@ export const Table = styled.table`
   }
 `
 
-// eslint-disable-next-line prettier/prettier
 export const Tr = styled.tr`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   justify-items: center;
   align-items: center;
 
   height: 3.8rem;
   margin: 1.6rem 1.5rem;
 
-  @media (max-width: 1100px) {
-    min-width: 60rem;
+  @media (max-width: 1200px) {
+    min-width: 50rem;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 960px) {
     min-width: 69rem;
 
     height: 2.8rem;
     gap: 1.6rem;
   }
 
+  @media (max-width: 768px) {
+    min-width: 69rem;
+  }
+
   @media (max-width: 576px) {
-    min-width: 58rem;
+    min-width: 50rem;
   }
 `
 
@@ -111,8 +114,7 @@ export const Th = styled.th`
   }
 `
 
-// eslint-disable-next-line prettier/prettier
-export const Td = styled.td`
+export const TitleTransaction = styled.td`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -121,69 +123,90 @@ export const Td = styled.td`
 
   font-weight: ${theme.font.weight.light};
   letter-spacing: 0.5px;
-`
 
-export const BalanceCoin = styled.span`
-  color: ${theme.colors.grayDisabled};
-  font-size: ${theme.font.sizes.font12};
-`
+  span {
+    display: flex;
 
-export const YieldYakContent = styled.a`
-  display: flex;
-  gap: 0.4rem;
+    color: #fcfcfc;
+    font-weight: ${theme.font.weight.medium};
+  }
 
-  color: ${theme.colors.grayDisabled};
-  font-size: ${theme.font.sizes.font12};
+  a {
+    margin-left: 0.8rem;
+  }
 
-  text-decoration: none;
-  cursor: pointer;
   p {
-    color: ${theme.colors.grayDisabled};
+    color: #c4c4c4;
+    font-size: ${theme.font.sizes.font12};
+    font-weight: ${theme.font.weight.normal};
   }
 `
 
-export const isThereNoYieldyak = styled.p`
-  color: ${theme.colors.grayDisabled};
-  font-size: ${theme.font.sizes.font12};
-  font-weight: 400;
-`
-
-interface ICoinProps {
-  width?: number;
-  change24h?: boolean;
-  negative?: boolean;
-}
-
-// eslint-disable-next-line prettier/prettier
-export const Coin = styled.span<ICoinProps>`
+export const TransactionOutAndIn = styled.td`
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   text-align: center;
-  width: ${props => props.width}px;
 
-  ${props =>
-    props.change24h && {
-      color: `${props.negative ? '#EB5757' : '#6FCF97'}`
-    }};
+  font-weight: ${theme.font.weight.light};
+  letter-spacing: 0.5px;
 
-  img {
-    max-width: 2.4rem;
-    margin-right: 1.6rem;
-    margin-left: 0.8rem;
+  span {
+    display: flex;
+    gap: 0.4rem;
 
-    border-radius: 50%;
+    font-weight: ${theme.font.weight.medium};
+  }
+
+  p {
+    color: #c4c4c4;
+    font-size: ${theme.font.sizes.font12};
+    font-weight: ${theme.font.weight.light};
+  }
+`
+
+export const TransactionInfo = styled.td`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  font-weight: ${theme.font.weight.light};
+  letter-spacing: 0.5px;
+
+  p {
+    color: #ffffff;
+    font-weight: ${theme.font.weight.medium};
   }
 
   span {
-    font-weight: 400;
-  }
-
-  p {
     display: flex;
-    align-items: flex-start;
 
-    color: #969696;
-    font-size: 1.2rem;
-    font-weight: 400;
+    color: #fcfcfc;
+    font-weight: ${theme.font.weight.light};
+  }
+`
+
+export const TokensSymbols = styled.div`
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+
+  z-index: 10;
+
+  span {
+    min-width: 1.8rem;
+    min-height: 1.8rem;
+    margin-left: 0.6rem;
+
+    font-size: 1.1rem;
+    font-weight: ${theme.font.weight.light};
+
+    @media (max-width: 960px) {
+      margin-left: 0;
+    }
   }
 `

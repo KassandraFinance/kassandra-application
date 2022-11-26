@@ -1,9 +1,10 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { useAppSelector } from '../../store/hooks'
-
 import { chains } from '../../constants/tokenAddresses'
+
+import { useAppSelector } from '../../store/hooks'
+import useConnect from '../../hooks/useConnect'
 
 import Header from '../../components/Header'
 import TitleSection from '../../components/TitleSection'
@@ -24,6 +25,7 @@ import * as S from './styles'
 
 const Gov = () => {
   const { chainId, userWalletAddress } = useAppSelector(state => state)
+  const { metamaskInstalled } = useConnect()
 
   const chain =
     process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
@@ -40,7 +42,8 @@ const Gov = () => {
         </BreadcrumbItem>
       </Breadcrumb>
       <S.VoteContent>
-        {Number(chainId) !== chain.chainId ? (
+        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
+        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
           <Web3Disabled
             textButton={`Connect to ${chain.chainName}`}
             textHeader="Your wallet is set to the wrong network."
