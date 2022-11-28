@@ -20,10 +20,45 @@ interface ICurrencyRowProps {
   style: React.CSSProperties;
 }
 
+export type IListbalanceTokenprops = {
+  [key: string]: {
+    balance: number
+  }
+}
+
+export type IListTokenPricesprops = {
+  [key: string]: {
+    usd: number
+  }
+}
+
+const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
+const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
+
 const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
   const [searchToken, setSearchToken] = React.useState('')
+  const [balanceToken, setBalanceToken] = React.useState<IListbalanceTokenprops>({['']: {
+    balance: 0
+  }})
+  const [listTokenPrices, setlistTokenPrices] = React.useState<IListTokenPricesprops>({['']: {
+    usd: 0
+  }})
 
   const dispatch = useAppDispatch()
+
+  async function handleFetchTokenPrice() {
+    const tokenPrice = tokenList1Inch.reduce((addressAccumulator, tokenCurrent) => addressAccumulator + (tokenCurrent.address + ','), '')
+
+    const response = await fetch(`${URL_COINGECKO}/simple/token_price/avalanche?contract_addresses=${tokenPrice}&vs_currencies=usd`)
+    const listTokenPrices = await response.json()
+    setlistTokenPrices(listTokenPrices)
+  }
+
+  async function handleFetchBalance() {
+    const response = await fetch(`${URL_1INCH_BALANCE}/43114/allowancesAndBalances/0x1111111254eeb25477b68fb85ed929f73a960582/0xFdFeC1cbc5A10FC8F69C08af8D91Ea3B5190b5e6?tokensFetchType=listedTokens`)
+    const listTokenBalanceInWallet = await response.json()
+    setBalanceToken(listTokenBalanceInWallet)
+  }
 
   function handleFiltered(tokenList1Inch: ITokenList1InchProps[]) {
     const tokenFiltered = tokenList1Inch
@@ -54,6 +89,11 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
   function handleSearchToken(text: string) {
     setSearchToken(text.toLocaleLowerCase())
   }
+
+  React.useEffect(() => {
+    handleFetchBalance()
+    handleFetchTokenPrice()
+  }, [])
 
   const CurrencyRow = React.useMemo(() => {
     return React.memo(function CurrencyRow({
@@ -98,7 +138,7 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
         </S.Token>
       )
     })
-  }, [searchToken])
+  }, [searchToken, balanceToken, listTokenPrices])
 
   return (
     <S.TokenSelection>
