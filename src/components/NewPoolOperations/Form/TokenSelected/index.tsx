@@ -30,7 +30,7 @@ const TokenSelected = () => {
         }}
       >
         <div className="img">
-          <Image
+          <img
             src={tokenSelect.logoURI || none}
             alt=""
             width={22}
