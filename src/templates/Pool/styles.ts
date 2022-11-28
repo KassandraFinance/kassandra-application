@@ -1,6 +1,8 @@
 import styled from 'styled-components'
 import theme from '../../styles/theme'
 
+export const Container = styled.div``
+
 export const Product = styled.section`
   display: grid;
   grid-template-columns: minmax(30rem, 58.4rem) 44.8rem;
@@ -24,7 +26,7 @@ export const Product = styled.section`
     flex-direction: column-reverse;
   }
 
-  @media (max-width: 400px) {
+  @media (max-width: 540px) {
     padding: 0 1.6rem;
   }
 `
@@ -47,44 +49,26 @@ interface IIntroProps {
 // prettier-ignore
 export const Intro = styled.div<IIntroProps>`
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 7.5rem auto;
   align-items: center;
   gap: 2rem;
 
   max-width: 44rem;
 
-  ${props => props.introMobile && `
-    display: none;
-
-    h1 {
-      font-size: 1.8rem;
-    }
-
-    img {
-      width: 4rem;
-    }
-
-    @media (max-width: 960px) {
-      display: grid;
-      grid-template-columns: 4rem auto;
-      gap: 1.6rem;
-
-      padding: 0 3rem;
-      max-width: 100%;
-      margin: 3.2rem 0;
-    }
-
-    @media (max-width: 400px) {
-      padding: 0 1.6rem;
-    }
-    `
+  h1 {
+    font-size: 1.8rem;
   }
 
-  ${props => props.introDesktop && `
-    @media (max-width: 960px) {
-      display: none;
-    }
-    `
+  img {
+    max-width: 100%;
+  }
+
+  @media (max-width: 960px) {
+    display: grid;
+    grid-template-columns: 4rem auto;
+
+    max-width: 100%;
+    margin: 3.2rem 0;
   }
 `
 

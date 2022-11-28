@@ -207,7 +207,7 @@ const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
           <S.Tr>
             <S.Td>
               <S.TdWrapper>
-                <Image src={fundIcon} alt="" width={20} height={20} />
+                {/* <Image src={fundIcon} alt="" width={20} height={20} /> */}
                 <span>{symbol}</span>
               </S.TdWrapper>
             </S.Td>
