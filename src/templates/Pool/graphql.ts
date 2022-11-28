@@ -23,21 +23,30 @@ export const GET_INFO_POOL = gql`
           decimals
           symbol
           price_usd
+          logo
+          is_wrap_token
+          wraps {
+            id
+            name
+            decimals
+            symbol
+            price_usd
+            logo
+          }
         }
       }
-    }
-    withdraw: fees(
-      where: { pool: $id, period: 3600, timestamp_gt: $day, type: "exit" }
-    ) {
-      volume_usd
-    }
-    swap: fees(
-      where: { pool: $id, period: 3600, timestamp_gt: $day, type: "swap" }
-    ) {
-      volume_usd
-    }
-    volumes(where: { pool: $id, period: 3600, timestamp_gt: $day }) {
-      volume_usd
+
+      withdraw: fees(
+        where: { period: 3600, timestamp_gt: $day, type: "exit" }
+      ) {
+        volume_usd
+      }
+      swap: fees(where: { period: 3600, timestamp_gt: $day, type: "swap" }) {
+        volume_usd
+      }
+      volumes(where: { period: 3600, timestamp_gt: $day }) {
+        volume_usd
+      }
     }
   }
 `

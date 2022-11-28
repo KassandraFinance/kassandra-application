@@ -1,26 +1,80 @@
 import React from 'react'
 import Tippy from '@tippyjs/react'
+import Big from 'big.js'
+
+import { BNtoDecimal } from '../../../../utils/numerals'
+import web3 from '../../../../utils/web3'
+
+import { useAppSelector } from '../../../../store/hooks'
+
+import { ERC20 } from '../../../../hooks/useERC20Contract'
 
 import TokenSelected from '../TokenSelected'
 
 import * as S from './styles'
 
 const InputAndOutputValueToken = () => {
+  const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
+    new Big(-1)
+  )
+  const [selectedTokenIn, setSelectedTokenIn] = React.useState('')
+
+  const { pool, chainId, userWalletAddress } = useAppSelector(state => state)
+
+  // get balance of swap in token
+  React.useEffect(() => {
+    if (
+      selectedTokenIn.length === 0 ||
+      userWalletAddress.length === 0 ||
+      chainId.toString().length === 0 ||
+      chainId !== pool.chainId
+    ) {
+      return
+    }
+
+    // setSwapInBalance(new BigNumber(-1))
+    if (selectedTokenIn === pool.chain.addressWrapped) {
+      web3.eth
+        .getBalance(userWalletAddress)
+        .then(newBalance =>
+          setSelectedTokenInBalance(new Big(newBalance.toString()))
+        )
+
+      return
+    }
+
+    const token = ERC20(selectedTokenIn)
+
+    token
+      .balance(userWalletAddress)
+      .then(newBalance =>
+        setSelectedTokenInBalance(new Big(newBalance.toString()))
+      )
+  }, [
+    chainId,
+    // newTitle,
+    selectedTokenIn,
+    userWalletAddress,
+    pool.underlying_assets_addresses
+    // swapOutAddress
+  ])
+
+  // decimals={poolTokensArray[tokenInIndex] ? poolTokensArray[tokenInIndex].decimals : new BigNumber(18)}
+
   return (
     <S.InputAndOutputValueToken>
       <S.FlexContainer>
         <S.Top>
           <S.Info>
-            <S.Span>Pay with</S.Span>
-            {/* {tokensList} */}
+            <S.Title>Pay with</S.Title>
             {/* <TokenSelected tokenDetails={tokenDetails} setSwapAddress={setSwapAddress} /> */}
             <TokenSelected />
             <S.Span spanlight={true}>
-              {/* Balance:{' '}
-              {swapBalance > new BigNumber(-1)
-                ? BNtoDecimal(swapBalance, decimals.toNumber())
-                : '...'} */}
-              Balance ...
+              Balance:{' '}
+              {selectedTokenInBalance > new Big(-1)
+                ? // ? BNtoDecimal(selectedTokenInBalance, decimals.toNumber())
+                  BNtoDecimal(selectedTokenInBalance, 18)
+                : '...'}
             </S.Span>
           </S.Info>
           <S.Amount>
@@ -102,7 +156,7 @@ const InputAndOutputValueToken = () => {
             2,
             2
           )} */}
-              asdasd
+              USD: 0.00
             </span>
           </S.Amount>
         </S.Top>

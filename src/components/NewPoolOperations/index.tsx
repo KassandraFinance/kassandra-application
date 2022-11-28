@@ -56,20 +56,21 @@ const NewPoolOperations = () => {
         tokenSelected ?
           <TokenSelection />
         :
-        <ModalCardOperations
-          setInputChecked={setInputChecked}
-          inputCheckedBarMobile={inputCheckedBarMobile}
-          setInputCheckedBarMobile={setInputCheckedBarMobile}
-          modalOpen={isModalPoolOperations}
-          setModalOpen={setIsModalPoolOperations}
-          setIsModaWallet={setIsModaWallet}
+        // <ModalCardOperations
+        //   setInputChecked={setInputChecked}
+        //   inputCheckedBarMobile={inputCheckedBarMobile}
+        //   setInputCheckedBarMobile={setInputCheckedBarMobile}
+        //   modalOpen={isModalPoolOperations}
+        //   setModalOpen={setIsModalPoolOperations}
+        //   setIsModaWallet={setIsModaWallet}
 
-          poolChain={poolChain}
-          poolSymbol={poolSymbol}
-          crpPoolAddress={crpPoolAddress}
-          corePoolAddress={corePoolAddress}
-          productCategories={productCategories}
-        />
+        //   poolChain={poolChain}
+        //   poolSymbol={poolSymbol}
+        //   crpPoolAddress={crpPoolAddress}
+        //   corePoolAddress={corePoolAddress}
+        //   productCategories={productCategories}
+        <p>modal card operation</p>
+        // />
         :
         tokenSelected ?
           <TokenSelection />
@@ -80,11 +81,6 @@ const NewPoolOperations = () => {
           typeWithdrawChecked={typeWithdrawChecked}
           setTypeWithdrawChecked={setTypeWithdrawChecked}
           setIsModaWallet={setIsModaWallet}
-          poolChain={poolChain}
-          poolSymbol={poolSymbol}
-          crpPoolAddress={crpPoolAddress}
-          corePoolAddress={corePoolAddress}
-          productCategories={productCategories}
         />
       }
 

@@ -307,41 +307,41 @@ const Pool = () => {
     }
   }, [pool])
 
-  React.useEffect(() => {
-    if (data && coinGeckoResponse) {
-      getTokenDetails()
+  // React.useEffect(() => {
+  //   if (data && coinGeckoResponse) {
+  //     getTokenDetails()
 
-      const swapFees = data.swap.reduce(
-        (acc: Big, current: { volume_usd: string }) => {
-          return Big(current.volume_usd).add(acc)
-        },
-        0
-      )
+  //     const swapFees = data.swap.reduce(
+  //       (acc: Big, current: { volume_usd: string }) => {
+  //         return Big(current.volume_usd).add(acc)
+  //       },
+  //       0
+  //     )
 
-      const withdrawFees = data.withdraw.reduce(
-        (acc: Big, current: { volume_usd: string }) => {
-          return Big(current.volume_usd).add(acc)
-        },
-        0
-      )
+  //     const withdrawFees = data.withdraw.reduce(
+  //       (acc: Big, current: { volume_usd: string }) => {
+  //         return Big(current.volume_usd).add(acc)
+  //       },
+  //       0
+  //     )
 
-      const volume = data.volumes.reduce(
-        (acc: Big, current: { volume_usd: string }) => {
-          return Big(current.volume_usd).add(acc)
-        },
-        0
-      )
+  //     const volume = data.volumes.reduce(
+  //       (acc: Big, current: { volume_usd: string }) => {
+  //         return Big(current.volume_usd).add(acc)
+  //       },
+  //       0
+  //     )
 
-      setInfoPool({
-        tvl: BNtoDecimal(Big(data.pool.total_value_locked_usd), 2, 2, 2),
-        swapFees: BNtoDecimal(Big(swapFees), 2, 2, 2),
-        withdrawFees: BNtoDecimal(Big(withdrawFees), 2, 2, 2),
-        volume: BNtoDecimal(Big(volume), 2, 2, 2),
-        price: data.pool.price_usd,
-        decimals: data.pool.decimals
-      })
-    }
-  }, [data, coinGeckoResponse])
+  //     setInfoPool({
+  //       tvl: BNtoDecimal(Big(data.pool.total_value_locked_usd), 2, 2, 2),
+  //       swapFees: BNtoDecimal(Big(swapFees), 2, 2, 2),
+  //       withdrawFees: BNtoDecimal(Big(withdrawFees), 2, 2, 2),
+  //       volume: BNtoDecimal(Big(volume), 2, 2, 2),
+  //       price: data.pool.price_usd,
+  //       decimals: data.pool.decimals
+  //     })
+  //   }
+  // }, [data, coinGeckoResponse])
 
   return (
     <>
