@@ -73,9 +73,6 @@ const NewPoolOperations = () => {
   return (
     <S.NewPoolOperations>
       {isModalPoolOperations ?
-        tokenSelected ?
-          <TokenSelection tokenList1Inch={tokenList1Inch} />
-        :
         // <ModalCardOperations
         //   setInputChecked={setInputChecked}
         //   inputCheckedBarMobile={inputCheckedBarMobile}

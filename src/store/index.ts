@@ -25,7 +25,7 @@ export const store = configureStore({
     periodSelected: periodSelectedReducer,
     modalAlertText: modalAlertTextReducer,
     tokenSelected: tokenSelectedReducer,
-    tokenSelect: tokenSelect
+    tokenSelect: tokenSelect,
     pool: poolReducer
   }
 })
