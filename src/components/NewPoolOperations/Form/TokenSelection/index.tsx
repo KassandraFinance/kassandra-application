@@ -170,11 +170,11 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
               alt=""
               width={24}
               height={24}
-              onError={(e) => {
+              onError={(event) => {
                 // eslint-disable-next-line prettier/prettier
-                const target = e.target as HTMLImageElement
+                const target = event.target as HTMLImageElement
                 target.onerror = null
-                target.src = `/assets/icons/coming-soon.svg`  
+                target.src = `/assets/icons/coming-soon.svg`
               }}
             />
             <S.TokenName>
@@ -220,6 +220,9 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
             value={searchToken}
             onChange={event => handleSearchToken(event.target.value)}
           />
+          <S.deleteSearch isShowIcon={searchToken.length > 0} onClick={() => setSearchToken('')}>
+            <img src="/assets/utilities/close.svg" alt="" />
+          </S.deleteSearch>
         </S.InputContent>
         <S.tokenPinContainer>
           <S.tokenPin>
@@ -253,15 +256,18 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
         </S.tokenPinContainer>
         <S.TokenListContainer>
           {filteredToken.length > 0 ? (
-            <List
-              innerElementType="ul"
-              itemCount={filteredToken.length}
-              itemSize={58}
-              height={3000}
-              width={380}
-            >
-              {CurrencyRow}
-            </List>
+            <>
+              <List
+                innerElementType="ul"
+                itemCount={filteredToken.length}
+                itemSize={58}
+                height={3000}
+                width={385}
+              >
+                {CurrencyRow}
+              </List>
+              <S.shadow />
+            </>
           ) : (
             <S.NotFoundTokenContent>
               <img
