@@ -41,13 +41,7 @@ const messages = {
   Swap: 'Swap from'
 }
 
-const NewPoolOperations = ({
-  poolChain,
-  poolSymbol,
-  crpPoolAddress,
-  corePoolAddress,
-  productCategories
-}: IOperationsProps) => {
+const NewPoolOperations = () => {
   const [isModalWallet, setIsModaWallet] = React.useState<boolean>(false)
   const [isModalPoolOperations, setIsModalPoolOperations] = React.useState<boolean>(false)
   
@@ -82,20 +76,21 @@ const NewPoolOperations = ({
         tokenSelected ?
           <TokenSelection tokenList1Inch={tokenList1Inch} />
         :
-        <ModalCardOperations
-          setInputChecked={setInputChecked}
-          inputCheckedBarMobile={inputCheckedBarMobile}
-          setInputCheckedBarMobile={setInputCheckedBarMobile}
-          modalOpen={isModalPoolOperations}
-          setModalOpen={setIsModalPoolOperations}
-          setIsModaWallet={setIsModaWallet}
+        // <ModalCardOperations
+        //   setInputChecked={setInputChecked}
+        //   inputCheckedBarMobile={inputCheckedBarMobile}
+        //   setInputCheckedBarMobile={setInputCheckedBarMobile}
+        //   modalOpen={isModalPoolOperations}
+        //   setModalOpen={setIsModalPoolOperations}
+        //   setIsModaWallet={setIsModaWallet}
 
-          poolChain={poolChain}
-          poolSymbol={poolSymbol}
-          crpPoolAddress={crpPoolAddress}
-          corePoolAddress={corePoolAddress}
-          productCategories={productCategories}
-        />
+        //   poolChain={poolChain}
+        //   poolSymbol={poolSymbol}
+        //   crpPoolAddress={crpPoolAddress}
+        //   corePoolAddress={corePoolAddress}
+        //   productCategories={productCategories}
+        <p>modal card operation</p>
+        // />
         :
         tokenSelected ?
           <TokenSelection tokenList1Inch={tokenList1Inch} />
@@ -106,11 +101,6 @@ const NewPoolOperations = ({
           typeWithdrawChecked={typeWithdrawChecked}
           setTypeWithdrawChecked={setTypeWithdrawChecked}
           setIsModaWallet={setIsModaWallet}
-          poolChain={poolChain}
-          poolSymbol={poolSymbol}
-          crpPoolAddress={crpPoolAddress}
-          corePoolAddress={corePoolAddress}
-          productCategories={productCategories}
         />
       }
 

@@ -32,7 +32,6 @@ const instance = createInstance({
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
-  const pathName = router.pathname
 
   return (
     <Provider store={store}>

@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { IIndexProps } from '../../pages'
+
 import Header from '../../components/Header'
 import Breadcrumb from '../../components/Breadcrumb'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
@@ -12,11 +14,9 @@ import sectionTitleEye from '../../../public/assets/iconGradient/section-title-e
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
 import communityFunds from '../../../public/assets/iconGradient/community.svg'
 
-import { products } from '../../constants/tokenAddresses'
-
 import * as S from './styles'
 
-export default function Explore() {
+export default function Explore({ pools }: IIndexProps) {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
@@ -30,7 +30,7 @@ export default function Explore() {
       <Header />
 
       <Breadcrumb>
-        <BreadcrumbItem href={`/explore`} isLastPage>
+        <BreadcrumbItem href={`/pool`} isLastPage>
           Explore
         </BreadcrumbItem>
       </Breadcrumb>
@@ -54,9 +54,9 @@ export default function Explore() {
           )}
 
           <S.CardContainer loading={loading}>
-            {products.map((product, index: number) => {
-              return <FundCard key={index} product={product} />
-            })}
+            {pools.map(pool => (
+              <FundCard key={pool.id} poolAddress={pool.id} />
+            ))}
           </S.CardContainer>
 
           <S.ComunitFundsContainer>

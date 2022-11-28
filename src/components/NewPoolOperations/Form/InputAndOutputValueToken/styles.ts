@@ -83,6 +83,18 @@ export const Span = styled.span<ISpanProps>`
   }
 `
 
+export const Title = styled.span`
+  ${({ theme }) => css`
+    color: ${theme.colors.snow};
+    font-size: ${theme.font.sizes.font12};
+  `}
+
+  @media (max-width: 360px) {
+    padding-left: 1.2rem;
+    font-size: 1.07rem;
+  }
+`
+
 export const Input = styled.input`
   ${({ theme }) => css`
     background-color: transparent;

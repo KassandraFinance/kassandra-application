@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ChainDetails } from '../../../utils/changeChain'
+// import { ChainDetails } from '../../../utils/changeChain'
 
 import Invest from './Invest';
 import Withdraw from './Withdraw';
@@ -17,29 +17,29 @@ const messages = {
   Swap: 'Swap from'
 }
 
+// interface IFormProps {
+//   typeAction: string;
+//   title: Titles;
+//   typeWithdrawChecked: string;
+//   poolChain: ChainDetails;
+//   poolSymbol: string;
+//   crpPoolAddress: string;
+//   corePoolAddress: string;
+//   productCategories: string[];
+//   setIsModaWallet: React.Dispatch<React.SetStateAction<boolean>>
+// }
+
 interface IFormProps {
   typeAction: string;
-  // title: Titles;
-  typeWithdrawChecked: string;
-  poolChain: ChainDetails;
-  poolSymbol: string;
-  crpPoolAddress: string;
-  corePoolAddress: string;
-  productCategories: string[];
-  setIsModaWallet: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const Form = ({
-  poolChain,
-  poolSymbol,
-  crpPoolAddress,
-  corePoolAddress,
-  productCategories,
-  typeAction,
-  // title,
-  typeWithdrawChecked,
-  setIsModaWallet
+  typeAction
 }: IFormProps) => {
+
+  //chamar os dados da pool pelo Redux
+
+
   return (
     <S.Form>
       {typeAction === "Invest" && <Invest />}
