@@ -1,16 +1,23 @@
 import React from 'react'
 import { FixedSizeList as List } from 'react-window'
 import { stringSimilarity } from 'string-similarity-js'
+import { isAddress } from 'web3-utils'
+import BigNumber from 'bn.js'
 
 import { ITokenList1InchProps } from '../..'
 
-import { useAppDispatch } from '../../../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
 import { setTokenSelected } from '../../../../store/reducers/tokenSelected'
-
 import { setTokenSelect } from '../../../../store/reducers/tokenSelect'
+
+import { BNtoDecimal } from '../../../../utils/numerals'
 
 import * as S from './styles'
 
+export interface IUserTokenProps extends ITokenList1InchProps {
+  balanceInDollar: string;
+  balance: string;
+}
 interface ITokenSelectionProps {
   tokenList1Inch: ITokenList1InchProps[];
 }
@@ -45,6 +52,7 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
   }})
 
   const dispatch = useAppDispatch()
+  const { userWalletAddress } = useAppSelector(state => state)
 
   async function handleFetchTokenPrice() {
     const tokenPrice = tokenList1Inch.reduce((addressAccumulator, tokenCurrent) => addressAccumulator + (tokenCurrent.address + ','), '')
@@ -61,7 +69,26 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
   }
 
   function handleFiltered(tokenList1Inch: ITokenList1InchProps[]) {
-    const tokenFiltered = tokenList1Inch
+    if (isAddress(searchToken)) {
+      const token1inchFilteredByAddress = tokenList1Inch.filter(token => token.address === searchToken)
+
+      const token1inchWithBalance: IUserTokenProps[] = token1inchFilteredByAddress.map(token => {
+        const tokenBalance = balanceToken[token.address]?.balance || 0
+        const tokenPriceInDollar = listTokenPrices[token.address]?.usd || 0
+        const balanceTokenFormated = BNtoDecimal((new BigNumber(tokenBalance || 0)), token.decimals, 5, 2)
+
+        return {
+          ...token,
+          tokenScore: 0,
+          balance: balanceTokenFormated,
+          balanceInDollar: (Number(balanceTokenFormated) * tokenPriceInDollar).toLocaleString('en-US')
+        }
+      })
+
+    return token1inchWithBalance
+    }
+
+    const tokenFiltered: IUserTokenProps[] = tokenList1Inch
       .filter(
         token =>
           token.symbol.toLocaleLowerCase().includes(searchToken) ||
@@ -69,10 +96,17 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
       )
       .map(token => {
         const score = stringSimilarity(token.symbol + token.name, searchToken)
+        const tokenBalance = balanceToken[token.address]?.balance || 0
+        const tokenPriceInDollar = listTokenPrices[token.address]?.usd || 0
+        const balanceTokenFormated = BNtoDecimal((new BigNumber(tokenBalance || 0)), token.decimals, 5, 2)
+
         return {
           ...token,
-          tokenScore: score
+          tokenScore: score,
+          balance: balanceTokenFormated,
+          balanceInDollar: (Number(balanceTokenFormated) * tokenPriceInDollar).toLocaleString('en-US')
         }
+
       })
       .sort((a, b) => {
         if (a.tokenScore > b.tokenScore) return -1
@@ -80,14 +114,39 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
         return 0
       })
 
-    return tokenFiltered
+    return userWalletAddress ? tokenFiltered.sort((a, b) => {
+      if (a.balanceInDollar > b.balanceInDollar) return -1
+      if (a.balanceInDollar < b.balanceInDollar) return 1
+      return 0
+    }) : tokenFiltered
+  }
+
+  function FilteredBalance(tokenArray: ITokenList1InchProps[]) {
+    const tokenArrayFormated: IUserTokenProps[] = tokenArray.map(token => {
+      const tokenBalance = balanceToken[token.address]?.balance || 0
+      const tokenPriceInDollar = listTokenPrices[token.address]?.usd || 0
+      const balanceTokenFormated = BNtoDecimal((new BigNumber(tokenBalance || 0)), token.decimals, 5, 2)
+
+      return {
+        ...token,
+        balance: balanceTokenFormated,
+        balanceInDollar: (Number(balanceTokenFormated) * tokenPriceInDollar).toLocaleString('en-US')
+      }
+    })
+
+    return tokenArrayFormated.sort((a, b) => {
+      if (a.balanceInDollar > b.balanceInDollar) return -1
+      if (a.balanceInDollar < b.balanceInDollar) return 1
+      return 0
+    })
   }
 
   const filteredToken =
-    searchToken.length > 1 ? handleFiltered(tokenList1Inch) : tokenList1Inch
+    searchToken.length > 1 ? handleFiltered(tokenList1Inch) : FilteredBalance(tokenList1Inch)
+
 
   function handleSearchToken(text: string) {
-    setSearchToken(text.toLocaleLowerCase())
+    setSearchToken(text.trim().toLocaleLowerCase())
   }
 
   React.useEffect(() => {
@@ -125,8 +184,8 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
           </S.TokenNameContent>
           <S.TokenValueInWalletContainer>
             <S.TokenValueInWallet>
-              <span>$5.600.49</span>
-              <p>4</p>
+              <span>${filteredToken[index]?.balanceInDollar || 0}</span>
+              <p>{filteredToken[index]?.balance || 0}</p>
             </S.TokenValueInWallet>
             <img
               src="/assets/utilities/pin.svg"
