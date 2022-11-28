@@ -8,7 +8,8 @@ import { ITokenList1InchProps } from '../..'
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
 import { setTokenSelected } from '../../../../store/reducers/tokenSelected'
 
-import TokenList from './Token1inchList'
+import InputSearch from './InputSearch'
+import Token1inchList from './Token1inchList'
 
 import { BNtoDecimal } from '../../../../utils/numerals'
 
@@ -39,6 +40,7 @@ const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 
 const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
   const [searchToken, setSearchToken] = React.useState('')
+
   const [balanceToken, setBalanceToken] =
     React.useState<IListbalanceTokenprops>({
       ['']: {
@@ -180,10 +182,6 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
       ? handleFiltered(tokenList1Inch)
       : FilteredBalance(tokenList1Inch)
 
-  function handleSearchToken(text: string) {
-    setSearchToken(text.trim().toLocaleLowerCase())
-  }
-
   React.useEffect(() => {
     handleFetchBalance()
     handleFetchTokenPrice()
@@ -203,20 +201,11 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
         <p>Select Token</p>
       </S.TokenSelectionHeader>
       <S.BodyToken>
-        <S.InputContent>
-          <img src="/assets/utilities/search.svg" alt="" />
-          <S.SearchListInput
-            placeholder="Search by name or paste address"
-            value={searchToken}
-            onChange={event => handleSearchToken(event.target.value)}
-          />
-          <S.deleteSearch
-            isShowIcon={searchToken.length > 0}
-            onClick={() => setSearchToken('')}
-          >
-            <img src="/assets/utilities/close.svg" alt="" />
-          </S.deleteSearch>
-        </S.InputContent>
+        <InputSearch
+          searchToken={searchToken}
+          setSearchToken={setSearchToken}
+        />
+
         <S.tokenPinContainer>
           <S.tokenPin>
             <img
@@ -248,7 +237,7 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
           </S.tokenPin>
         </S.tokenPinContainer>
 
-        <TokenList
+        <Token1inchList
           searchToken={searchToken}
           listBalanceToken={balanceToken}
           filteredToken={filteredToken}

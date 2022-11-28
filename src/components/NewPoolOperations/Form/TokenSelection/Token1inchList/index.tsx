@@ -9,7 +9,7 @@ import { setTokenSelect } from '../../../../../store/reducers/tokenSelect'
 
 import * as S from './styles'
 
-interface ITokenSelectionProps {
+interface IToken1inchListProps {
   filteredToken: IUserTokenProps[];
   searchToken: string;
   listBalanceToken: IListbalanceTokenprops;
@@ -21,7 +21,7 @@ interface ICurrencyRowProps {
   style: React.CSSProperties;
 }
 
-const TokenSelection = ({ filteredToken, searchToken, listBalanceToken, listTokenPrices}: ITokenSelectionProps) => {
+const Token1inchList = ({ filteredToken, searchToken, listBalanceToken, listTokenPrices}: IToken1inchListProps) => {
   const dispatch = useAppDispatch()
 
   const CurrencyRow = React.useMemo(() => {
@@ -99,4 +99,4 @@ const TokenSelection = ({ filteredToken, searchToken, listBalanceToken, listToke
   )
 }
 
-export default TokenSelection
+export default Token1inchList
