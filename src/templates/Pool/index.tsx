@@ -182,7 +182,14 @@ const Pool = () => {
                   <S.NameAndSymbol>
                     <h1>{pool.name}</h1>
                     <button
-                      onClick={() => setOpenModal(true)}
+                      onClick={() => {
+                        setOpenModal(true)
+                        trackEventFunction(
+                          'click',
+                          `social-share-${pool.name}`,
+                          'pool'
+                        )
+                      }}
                       className="circle"
                     >
                       <Image
