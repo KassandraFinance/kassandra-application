@@ -25,10 +25,6 @@ type CoinGeckoResponseType = {
 }
 
 const Distribution = () => {
-  const { convertBalanceYRTtoWrap, getDecimals } = useYieldYak()
-  const chain = useAppSelector(state => state.pool.chain)
-  const tokens = useAppSelector(state => state.pool.underlying_assets)
-
   const [coinGecko, setCoinGecko] = React.useState<CoinGeckoResponseType>({
     addreass: {
       usd: 0,
@@ -45,7 +41,11 @@ const Distribution = () => {
     { address: string, platform: string }[]
   >([])
 
+  const { convertBalanceYRTtoWrap } = useYieldYak()
   const { trackEventFunction } = useMatomoEcommerce()
+
+  const chain = useAppSelector(state => state.pool.chain)
+  const tokens = useAppSelector(state => state.pool.underlying_assets)
 
   const tokenAddresses = tokens.map(token => {
     if (token.token.is_wrap_token === 0) {
@@ -81,10 +81,9 @@ const Distribution = () => {
 
   async function getHoldings(
     token: string,
-    balance: string
-  ): Promise<{ balancePoolYY: Big, decimalsYY: BigNumber }> {
-    const decimals: string = await getDecimals(token)
-
+    balance: string,
+    decimals: string
+  ): Promise<{ balancePoolYY: Big }> {
     const tokensShares = await convertBalanceYRTtoWrap(
       new BigNumber(Big(balance).mul(Big('10').pow(18)).toFixed(0, 0)),
       token
@@ -93,8 +92,7 @@ const Distribution = () => {
     return {
       balancePoolYY: Big(tokensShares.toString()).div(
         Big(10).pow(Number(decimals))
-      ),
-      decimalsYY: new BigNumber(decimals)
+      )
     }
   }
 
@@ -105,7 +103,8 @@ const Distribution = () => {
         if (token.token.is_wrap_token === 1) {
           const { balancePoolYY } = await getHoldings(
             token.token.id,
-            token.balance
+            token.balance,
+            token.token.wraps.decimals.toString()
           )
 
           balance = { ...balance, [token.token.id]: balancePoolYY }
