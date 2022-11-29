@@ -311,21 +311,21 @@ const Pool = () => {
     if (data && coinGeckoResponse) {
       getTokenDetails()
 
-      const swapFees = data.swap.reduce(
+      const swapFees = data.pool.swap.reduce(
         (acc: Big, current: { volume_usd: string }) => {
           return Big(current.volume_usd).add(acc)
         },
         0
       )
 
-      const withdrawFees = data.withdraw.reduce(
+      const withdrawFees = data.pool.withdraw.reduce(
         (acc: Big, current: { volume_usd: string }) => {
           return Big(current.volume_usd).add(acc)
         },
         0
       )
 
-      const volume = data.volumes.reduce(
+      const volume = data.pool.volumes.reduce(
         (acc: Big, current: { volume_usd: string }) => {
           return Big(current.volume_usd).add(acc)
         },
@@ -497,7 +497,7 @@ const Pool = () => {
               corePoolAddress={product.coreAddress}
               productCategories={product.categories}
             /> */}
-            <NewPoolOperations />
+            {/* <NewPoolOperations /> */}
           </S.Product>
         </S.Container>
       )}

@@ -60,6 +60,9 @@ const queryPool = `{
   partners
   underlying_assets_addresses
   underlying_assets {
+    balance
+    weight_normalized
+    weight_goal_normalized
     token {
       id
       name
@@ -70,6 +73,8 @@ const queryPool = `{
       is_wrap_token
       wraps {
         id
+        decimals
+        price_usd
         symbol
         name
         logo

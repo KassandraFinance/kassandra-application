@@ -7,10 +7,13 @@ export interface TokenInfo {
   decimals: number;
   is_wrap_token: number;
   logo?: string;
+  price_usd: string;
   wraps: {
     id: string,
     symbol: string,
     name: string,
+    decimals: number,
+    price_usd: string,
     logo?: string
   };
 }
@@ -43,7 +46,12 @@ export interface IPoolSlice {
   addresses: string[];
   partners?: string[];
   underlying_assets_addresses: string[];
-  token: TokenInfo[];
+  underlying_assets: {
+    balance: string,
+    weight_goal_normalized: string,
+    weight_normalized: string,
+    token: TokenInfo
+  }[];
 }
 
 const initialState: IPoolSlice = {
@@ -72,19 +80,27 @@ const initialState: IPoolSlice = {
   addresses: [],
   partners: [],
   underlying_assets_addresses: [],
-  token: [
+  underlying_assets: [
     {
-      id: '',
-      name: '',
-      symbol: '',
-      decimals: 0,
-      is_wrap_token: 0,
-      logo: '',
-      wraps: {
+      balance: '',
+      weight_normalized: '',
+      weight_goal_normalized: '',
+      token: {
         id: '',
-        symbol: '',
         name: '',
-        logo: ''
+        symbol: '',
+        decimals: 0,
+        is_wrap_token: 0,
+        price_usd: '',
+        logo: '',
+        wraps: {
+          id: '',
+          symbol: '',
+          name: '',
+          logo: '',
+          decimals: 0,
+          price_usd: ''
+        }
       }
     }
   ]
