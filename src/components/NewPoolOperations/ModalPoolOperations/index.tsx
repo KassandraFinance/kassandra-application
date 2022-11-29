@@ -112,12 +112,6 @@ const ModalCardOperations = ({
           handleSetInputChecked={handleSetInputChecked}
           typeWithdrawChecked={typeWithdrawCheckedMobile}
           setTypeWithdrawChecked={setTypeWithdrawCheckedMobile}
-
-          poolChain={poolChain}
-          poolSymbol={poolSymbol}
-          crpPoolAddress={crpPoolAddress}
-          corePoolAddress={corePoolAddress}
-          productCategories={productCategories}
           setIsModaWallet={setIsModaWallet}
         />
       </CardOperationsContainerModal>
