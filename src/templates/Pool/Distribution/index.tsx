@@ -1,18 +1,19 @@
 import React from 'react'
 import Image from 'next/image'
-import Big from 'big.js'
 import useSWR from 'swr'
-
+import Big from 'big.js'
 import BigNumber from 'bn.js'
+
 import { BNtoDecimal } from '../../../utils/numerals'
 
 import { useAppSelector } from '../../../store/hooks'
+import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
+import useYieldYak from '../../../hooks/useYieldYak'
+
+import { YIELDYAK_API, COINGECKO_API } from '../../../constants/tokenAddresses'
 
 import none from '../../../../public/assets/icons/coming-soon.svg'
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
-
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
-import useYieldYak from '../../../hooks/useYieldYak'
 
 import * as S from './styles'
 
@@ -55,12 +56,12 @@ const Distribution = () => {
   })
 
   const { data: coinGeckoResponse } = useSWR<CoinGeckoResponseType>(
-    `https://api.coingecko.com/api/v3/simple/token_price/${chain.nativeTokenName.toLocaleLowerCase()}?contract_addresses=${tokenAddresses.toString()}&vs_currencies=usd&include_24hr_change=true`
+    `${COINGECKO_API}/simple/token_price/${chain.nativeTokenName.toLocaleLowerCase()}?contract_addresses=${tokenAddresses.toString()}&vs_currencies=usd&include_24hr_change=true`
   )
 
   async function getDataYieldyak() {
     try {
-      const response = await fetch('https://staging-api.yieldyak.com/apys')
+      const response = await fetch(`${YIELDYAK_API}/apys`)
       const dataYY = await response.json()
       setinfoDataYY(dataYY)
     } catch (error) {
@@ -70,7 +71,7 @@ const Distribution = () => {
 
   async function getYieldyakFarm() {
     try {
-      const response = await fetch('https://staging-api.yieldyak.com/farms')
+      const response = await fetch(`${YIELDYAK_API}/farms`)
       const dataYY = await response.json()
       setYieldYakFarm(dataYY)
     } catch (error) {
