@@ -2,11 +2,11 @@
 import React from 'react'
 import { ChainDetails } from '../../../utils/changeChain'
 
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce';
+import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import { Titles } from '../'
 
-import Form from '../Form';
+import Form from '../Form'
 
 import * as S from './styles'
 
@@ -25,11 +25,11 @@ interface ISelectOperationProps {
   typeWithdrawChecked: string;
   setTypeWithdrawChecked: React.Dispatch<React.SetStateAction<string>>;
 
-  poolChain: ChainDetails;
-  poolSymbol: string;
-  crpPoolAddress: string;
-  corePoolAddress: string;
-  productCategories: string[];
+  // poolChain: ChainDetails;
+  // poolSymbol: string;
+  // crpPoolAddress: string;
+  // corePoolAddress: string;
+  // productCategories: string[];
   setIsModaWallet: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -38,16 +38,10 @@ const SelectOperation = ({
   handleSetInputChecked,
   typeWithdrawChecked,
   setTypeWithdrawChecked,
-  setIsModaWallet,
-
-  poolChain,
-  poolSymbol,
-  crpPoolAddress,
-  corePoolAddress,
-  productCategories
+  setIsModaWallet
 }: ISelectOperationProps) => {
   const { trackEventFunction } = useMatomoEcommerce()
-
+  setIsModaWallet(false)
   return (
     <>
       <S.SelectOperation>
@@ -61,10 +55,7 @@ const SelectOperation = ({
           }}
           checked={inputChecked === 'Invest'}
         />
-        <S.Label
-          selected={inputChecked === 'Invest'}
-          htmlFor="Invest"
-        >
+        <S.Label selected={inputChecked === 'Invest'} htmlFor="Invest">
           Invest
         </S.Label>
 
@@ -79,27 +70,25 @@ const SelectOperation = ({
           checked={inputChecked === 'Withdraw'}
         />
 
-        <S.Label
-          selected={inputChecked === 'Withdraw'}
-          htmlFor="Withdraw"
-          >
+        <S.Label selected={inputChecked === 'Withdraw'} htmlFor="Withdraw">
           Withdraw
         </S.Label>
       </S.SelectOperation>
-      {inputChecked === 'Withdraw' &&
+      {inputChecked === 'Withdraw' && (
         <S.TypeWithdraw>
           <S.TypeRadio>
-            <label
-              className="radio"
-              htmlFor='Single_asset'
-            >
+            <label className="radio" htmlFor="Single_asset">
               <S.InputWithdraw
                 type="radio"
                 name="typeWithdraw"
-                id='Single_asset'
+                id="Single_asset"
                 onChange={() => {
                   setTypeWithdrawChecked('Single_asset')
-                  trackEventFunction('click-on-check', 'single-asset', 'operations-invest')
+                  trackEventFunction(
+                    'click-on-check',
+                    'single-asset',
+                    'operations-invest'
+                  )
                 }}
                 checked={typeWithdrawChecked === 'Single_asset'}
               />
@@ -107,17 +96,18 @@ const SelectOperation = ({
             </label>
           </S.TypeRadio>
           <S.TypeRadio>
-            <label
-              className="radio"
-              htmlFor={'Best_value'}
-            >
+            <label className="radio" htmlFor={'Best_value'}>
               <S.InputWithdraw
                 type="radio"
                 name="typeWithdraw"
                 id={'Best_value'}
                 onChange={() => {
                   setTypeWithdrawChecked('Best_value')
-                  trackEventFunction('click-on-check', 'best-value', 'operations-invest')
+                  trackEventFunction(
+                    'click-on-check',
+                    'best-value',
+                    'operations-invest'
+                  )
                 }}
                 checked={typeWithdrawChecked === 'Best_value'}
               />
@@ -125,18 +115,8 @@ const SelectOperation = ({
             </label>
           </S.TypeRadio>
         </S.TypeWithdraw>
-      }
-      <Form
-        poolChain={poolChain}
-        poolSymbol={poolSymbol}
-        crpPoolAddress={crpPoolAddress}
-        corePoolAddress={corePoolAddress}
-        productCategories={productCategories}
-        // title={inputChecked}
-        typeWithdrawChecked={typeWithdrawChecked}
-        typeAction={inputChecked}
-        setIsModaWallet={setIsModaWallet}
-      />
+      )}
+      <Form typeAction={inputChecked} />
     </>
   )
 }
