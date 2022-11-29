@@ -49,15 +49,39 @@ const IntroGovernance = ({
   const { userInfo } = useStakingContract(Staking)
 
   const callUserInfo = async () => {
-    const [userInfoOne, userInfoTwo, userInfoThree] = await Promise.all([
-      userInfo(process.env.NEXT_PUBLIC_MASTER === '1' ? 2 : 0, address),
-      userInfo(process.env.NEXT_PUBLIC_MASTER === '1' ? 3 : 1, address),
-      userInfo(process.env.NEXT_PUBLIC_MASTER === '1' ? 4 : 2, address)
-    ])
+    let totalStaked = new BigNumber(0)
 
-    const totalStaked = new BigNumber(userInfoOne.amount)
-      .add(new BigNumber(userInfoTwo.amount))
-      .add(new BigNumber(userInfoThree.amount))
+    if (process.env.NEXT_PUBLIC_MASTER === '1') {
+      const [
+        investorOne,
+        investorTwo,
+        userInfoOne,
+        userInfoTwo,
+        userInfoThree
+      ] = await Promise.all([
+        userInfo(0, address),
+        userInfo(1, address),
+        userInfo(2, address),
+        userInfo(3, address),
+        userInfo(4, address)
+      ])
+
+      totalStaked = new BigNumber(userInfoOne.amount)
+        .add(new BigNumber(userInfoTwo.amount))
+        .add(new BigNumber(userInfoThree.amount))
+        .add(new BigNumber(investorOne.amount))
+        .add(new BigNumber(investorTwo.amount))
+    } else {
+      const [userInfoOne, userInfoTwo, userInfoThree] = await Promise.all([
+        userInfo(0, address),
+        userInfo(1, address),
+        userInfo(2, address)
+      ])
+
+      totalStaked = new BigNumber(userInfoOne.amount)
+        .add(new BigNumber(userInfoTwo.amount))
+        .add(new BigNumber(userInfoThree.amount))
+    }
 
     setTotalKacyStaked(totalStaked)
   }
