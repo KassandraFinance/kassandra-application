@@ -59,7 +59,7 @@ const queryPool = `{
   summary
   partners
   underlying_assets_addresses
-  underlying_assets {
+  underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
     balance
     weight_normalized
     weight_goal_normalized
