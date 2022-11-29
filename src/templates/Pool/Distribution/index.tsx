@@ -40,6 +40,9 @@ const Distribution = () => {
   const [balanceYY, setBalanceYY] = React.useState<{
     [key: string]: Big
   }>()
+  const [yieldYakFarm, setYieldYakFarm] = React.useState<
+    { address: string, platform: string }[]
+  >([])
 
   const { trackEventFunction } = useMatomoEcommerce()
 
@@ -60,6 +63,16 @@ const Distribution = () => {
       const response = await fetch('https://staging-api.yieldyak.com/apys')
       const dataYY = await response.json()
       setinfoDataYY(dataYY)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function getYieldyakFarm() {
+    try {
+      const response = await fetch('https://staging-api.yieldyak.com/farms')
+      const dataYY = await response.json()
+      setYieldYakFarm(dataYY)
     } catch (error) {
       console.log(error)
     }
@@ -98,8 +111,6 @@ const Distribution = () => {
         }
       }
 
-      console.log(balance)
-
       setBalanceYY(balance)
     }
 
@@ -112,8 +123,12 @@ const Distribution = () => {
     }
 
     setCoinGecko(coinGeckoResponse)
-    getDataYieldyak()
   }, [coinGeckoResponse])
+
+  React.useEffect(() => {
+    getDataYieldyak()
+    getYieldyakFarm()
+  }, [])
 
   return (
     <S.Distribution>
@@ -139,7 +154,7 @@ const Distribution = () => {
                 <S.Tr key={`key_${coin.token.name}`}>
                   <S.Td>
                     <S.Coin width={110}>
-                      <img src={coin.token.logo || none} alt="" />
+                      <img src={coin.token.logo || none.src} alt="" />
                       <span>{coin.token.symbol}</span>
                     </S.Coin>
                   </S.Td>
@@ -203,11 +218,15 @@ const Distribution = () => {
               <S.Tr key={`key_${coin.token.name}`}>
                 <S.Td>
                   <S.Coin width={110}>
-                    <img src={coin.token.wraps.logo} alt="" />
+                    <img src={coin.token.wraps.logo || none.src} alt="" />
                     <span>
                       {coin.token.wraps.symbol}
                       <p>
-                        {coin.dataInfoYY ? coin.dataInfoYY.item?.farmName : ''}
+                        {yieldYakFarm.find(item => {
+                          if (item.address === coin.token.id) {
+                            return item.platform
+                          }
+                        })?.platform || ''}
                       </p>
                     </span>
                   </S.Coin>
@@ -270,7 +289,7 @@ const Distribution = () => {
                   <>
                     <p>{infoDataYY?.[coin.token.id]?.apy || '0.0'}% APY</p>
                     <S.YieldYakContent
-                      href={coin.dataInfoYY?.item?.urlFarmContract}
+                      href={`https://yieldyak.com/farms/detail/${coin.token.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() =>
