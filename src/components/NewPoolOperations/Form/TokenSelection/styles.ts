@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 
 export const TokenSelection = styled.div`
   ${({ theme }) => css`
-    font-size ${theme.font.sizes.font16};
+    font-size: ${theme.font.sizes.font16};
     width: 100%;
   `}
 `
@@ -20,6 +20,7 @@ export const TokenSelectionHeader = styled.div`
 
     > p {
       width: 100%;
+      margin-right: 1rem;
 
       color: ${theme.colors.snow};
       font-size: ${theme.font.sizes.font18};

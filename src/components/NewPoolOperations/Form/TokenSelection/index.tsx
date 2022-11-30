@@ -29,6 +29,7 @@ export type IListTokenPricesprops = {
 }
 
 export interface IUserTokenProps extends ITokenList1InchProps {
+  tokenScore: number;
   balanceInDollar: string;
   balance: string;
 }
@@ -60,12 +61,99 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
   const dispatch = useAppDispatch()
   const { userWalletAddress } = useAppSelector(state => state)
 
-  async function handleFetchTokenPrice() {
-    const tokenPrice = tokenList1Inch.reduce(
-      (addressAccumulator, tokenCurrent) =>
-        addressAccumulator + (tokenCurrent.address + ','),
-      ''
+  // eslint-disable-next-line prettier/prettier
+  function handleUserTokensBalance(tokenList1Inch: ITokenList1InchProps[], isWithScore = false) {
+    const userTokensBalance = tokenList1Inch.map(token => {
+      // eslint-disable-next-line prettier/prettier
+      const score = isWithScore ? stringSimilarity(token.symbol + token.name, searchToken) : 0
+
+      const tokenBalance = balanceToken[token.address]?.balance || 0
+      const tokenPriceInDollar = listTokenPrices[token.address]?.usd || 0
+      const balanceTokenFormated = BNtoDecimal(
+        new BigNumber(tokenBalance || 0),
+        token.decimals,
+        5,
+        2
+      )
+
+      return {
+        ...token,
+        tokenScore: score,
+        balance: balanceTokenFormated,
+        balanceInDollar: (
+          Number(balanceTokenFormated) * tokenPriceInDollar
+        ).toLocaleString('en-US')
+      }
+    })
+
+    return userTokensBalance
+  }
+
+  function handleTokenListFiltering(tokenList1Inch: ITokenList1InchProps[]) {
+    if (isAddress(searchToken)) {
+      const token1inchFilteredByAddress = tokenList1Inch.filter(
+        token => token.address === searchToken
+      )
+      const token1inchWithBalance: IUserTokenProps[] = handleUserTokensBalance(
+        token1inchFilteredByAddress
+      )
+
+      return token1inchWithBalance
+    }
+
+    const tokenFiltered = tokenList1Inch.filter(
+      token =>
+        token.symbol.toLocaleLowerCase().includes(searchToken) ||
+        token.name.toLocaleLowerCase().includes(searchToken)
     )
+
+    const userTokensBalance: IUserTokenProps[] = handleUserTokensBalance(
+      tokenFiltered,
+      true
+    )
+    const userTokensBalanceFilteredByScore = userTokensBalance.sort((a, b) => {
+      if (a.tokenScore > b.tokenScore) return -1
+      if (a.tokenScore < b.tokenScore) return 1
+      return 0
+    })
+    const filteredbyTokenPin = userTokensBalanceFilteredByScore.sort((a, b) => {
+      if (tokenPinList.some(tokenPin => tokenPin.address === a.address))
+        return -1
+      if (tokenPinList.some(tokenPin => tokenPin.address === b.address))
+        return 1
+      return 0
+    })
+    const userTokensBalanceFiltered = userWalletAddress
+      ? filteredbyTokenPin.sort((a, b) => {
+          if (a.balanceInDollar > b.balanceInDollar) return -1
+          if (a.balanceInDollar < b.balanceInDollar) return 1
+          return 0
+        })
+      : userTokensBalanceFilteredByScore
+
+    return userTokensBalanceFiltered
+  }
+
+  // eslint-disable-next-line prettier/prettier
+  function handleTokenListFilteringBybalance(tokenArray: ITokenList1InchProps[]) {
+    // eslint-disable-next-line prettier/prettier
+    const tokenArrayFormated: IUserTokenProps[] = handleUserTokensBalance(tokenArray)
+
+    return tokenArrayFormated.sort((a, b) => {
+      if (a.balanceInDollar > b.balanceInDollar) return -1
+      if (a.balanceInDollar < b.balanceInDollar) return 1
+      return 0
+    })
+  }
+
+  // eslint-disable-next-line prettier/prettier
+  const filteredToken = searchToken.length > 1
+      ? handleTokenListFiltering(tokenList1Inch)
+      : handleTokenListFilteringBybalance(tokenList1Inch)
+
+  async function handleFetchTokenPrice() {
+    // eslint-disable-next-line prettier/prettier
+    const tokenPrice = tokenList1Inch.reduce((addressAccumulator, tokenCurrent) => addressAccumulator + (tokenCurrent.address + ','), '')
 
     const response = await fetch(
       `${URL_COINGECKO}/simple/token_price/avalanche?contract_addresses=${tokenPrice}&vs_currencies=usd`
@@ -82,111 +170,10 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
     setBalanceToken(listTokenBalanceInWallet)
   }
 
-  function handleFiltered(tokenList1Inch: ITokenList1InchProps[]) {
-    if (isAddress(searchToken)) {
-      const token1inchFilteredByAddress = tokenList1Inch.filter(
-        token => token.address === searchToken
-      )
-
-      const token1inchWithBalance: IUserTokenProps[] =
-        token1inchFilteredByAddress.map(token => {
-          const tokenBalance = balanceToken[token.address]?.balance || 0
-          const tokenPriceInDollar = listTokenPrices[token.address]?.usd || 0
-          const balanceTokenFormated = BNtoDecimal(
-            new BigNumber(tokenBalance || 0),
-            token.decimals,
-            5,
-            2
-          )
-
-          return {
-            ...token,
-            tokenScore: 0,
-            balance: balanceTokenFormated,
-            balanceInDollar: (
-              Number(balanceTokenFormated) * tokenPriceInDollar
-            ).toLocaleString('en-US')
-          }
-        })
-
-      return token1inchWithBalance
-    }
-
-    const tokenFiltered: IUserTokenProps[] = tokenList1Inch
-      .filter(
-        token =>
-          token.symbol.toLocaleLowerCase().includes(searchToken) ||
-          token.name.toLocaleLowerCase().includes(searchToken)
-      )
-      .map(token => {
-        const score = stringSimilarity(token.symbol + token.name, searchToken)
-        const tokenBalance = balanceToken[token.address]?.balance || 0
-        const tokenPriceInDollar = listTokenPrices[token.address]?.usd || 0
-        const balanceTokenFormated = BNtoDecimal(
-          new BigNumber(tokenBalance || 0),
-          token.decimals,
-          5,
-          2
-        )
-
-        return {
-          ...token,
-          tokenScore: score,
-          balance: balanceTokenFormated,
-          balanceInDollar: (
-            Number(balanceTokenFormated) * tokenPriceInDollar
-          ).toLocaleString('en-US')
-        }
-      })
-      .sort((a, b) => {
-        if (a.tokenScore > b.tokenScore) return -1
-        if (a.tokenScore < b.tokenScore) return 1
-        return 0
-      })
-
-    return userWalletAddress
-      ? tokenFiltered.sort((a, b) => {
-          if (a.balanceInDollar > b.balanceInDollar) return -1
-          if (a.balanceInDollar < b.balanceInDollar) return 1
-          return 0
-        })
-      : tokenFiltered
-  }
-
-  function FilteredBalance(tokenArray: ITokenList1InchProps[]) {
-    const tokenArrayFormated: IUserTokenProps[] = tokenArray.map(token => {
-      const tokenBalance = balanceToken[token.address]?.balance || 0
-      const tokenPriceInDollar = listTokenPrices[token.address]?.usd || 0
-      const balanceTokenFormated = BNtoDecimal(
-        new BigNumber(tokenBalance || 0),
-        token.decimals,
-        5,
-        2
-      )
-
-      return {
-        ...token,
-        balance: balanceTokenFormated,
-        balanceInDollar: (
-          Number(balanceTokenFormated) * tokenPriceInDollar
-        ).toLocaleString('en-US')
-      }
-    })
-
-    return tokenArrayFormated.sort((a, b) => {
-      if (a.balanceInDollar > b.balanceInDollar) return -1
-      if (a.balanceInDollar < b.balanceInDollar) return 1
-      return 0
-    })
-  }
-
-  const filteredToken =
-    searchToken.length > 1
-      ? handleFiltered(tokenList1Inch)
-      : FilteredBalance(tokenList1Inch)
-
   React.useEffect(() => {
-    handleFetchBalance()
+    if (userWalletAddress) {
+      handleFetchBalance()
+    }
     handleFetchTokenPrice()
   }, [])
 
@@ -213,13 +200,15 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
           tokenPinList={tokenPinList}
           setTokenPinList={setTokenPinList}
           tokenList1Inch={tokenList1Inch}
-            />
+        />
 
         <Token1inchList
           searchToken={searchToken}
           listBalanceToken={balanceToken}
           filteredToken={filteredToken}
           listTokenPrices={listTokenPrices}
+          tokenPinList={tokenPinList}
+          setTokenPinList={setTokenPinList}
         />
       </S.BodyToken>
     </S.TokenSelection>
