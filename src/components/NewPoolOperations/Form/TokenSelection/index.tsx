@@ -8,6 +8,7 @@ import { ITokenList1InchProps } from '../..'
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
 import { setTokenSelected } from '../../../../store/reducers/tokenSelected'
 
+import TokenPin from './TokenPin'
 import InputSearch from './InputSearch'
 import Token1inchList from './Token1inchList'
 
@@ -40,7 +41,9 @@ const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 
 const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
   const [searchToken, setSearchToken] = React.useState('')
-
+  const [tokenPinList, setTokenPinList] = React.useState<
+    ITokenList1InchProps[]
+  >([])
   const [balanceToken, setBalanceToken] =
     React.useState<IListbalanceTokenprops>({
       ['']: {
@@ -206,36 +209,11 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
           setSearchToken={setSearchToken}
         />
 
-        <S.tokenPinContainer>
-          <S.tokenPin>
-            <img
-              src="/assets/utilities/edit-icon.svg"
-              alt=""
-              width={16}
-              height={16}
+        <TokenPin
+          tokenPinList={tokenPinList}
+          setTokenPinList={setTokenPinList}
+          tokenList1Inch={tokenList1Inch}
             />
-          </S.tokenPin>
-          <S.tokenPin>
-            <img src="/assets/logos/avax.png" alt="" width={16} height={16} />
-            <p>WETH.E</p>
-          </S.tokenPin>
-          <S.tokenPin>
-            <img src="/assets/logos/avax.png" alt="" width={16} height={16} />
-            <p>WETH.E</p>
-          </S.tokenPin>
-          <S.tokenPin>
-            <img src="/assets/logos/avax.png" alt="" width={16} height={16} />
-            <p>WETH.E</p>
-          </S.tokenPin>
-          <S.tokenPin>
-            <img src="/assets/logos/avax.png" alt="" width={16} height={16} />
-            <p>AVAX</p>
-          </S.tokenPin>
-          <S.tokenPin>
-            <img src="/assets/logos/avax.png" alt="" width={16} height={16} />
-            <p>WETH.E</p>
-          </S.tokenPin>
-        </S.tokenPinContainer>
 
         <Token1inchList
           searchToken={searchToken}
