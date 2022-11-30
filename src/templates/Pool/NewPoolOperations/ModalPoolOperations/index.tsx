@@ -28,12 +28,6 @@ interface IOperationsProps {
   modalOpen: boolean;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsModaWallet: React.Dispatch<React.SetStateAction<boolean>>;
-
-  poolChain: ChainDetails;
-  poolSymbol:string;
-  crpPoolAddress: string;
-  corePoolAddress: string;
-  productCategories: string[];
 }
 
 
@@ -44,25 +38,19 @@ const ModalCardOperations = ({
 
   setIsModaWallet,
   modalOpen,
-  setModalOpen,
-
-  poolChain,
-  poolSymbol,
-  crpPoolAddress,
-  corePoolAddress,
-  productCategories,
+  setModalOpen
 }: IOperationsProps) => {
   const [inputCheckedMobile, setInputCheckedMobile] = React.useState<Titles>('Invest')
   const [typeWithdrawCheckedMobile, setTypeWithdrawCheckedMobile] = React.useState<string>('Best_value')
 
-  const { chainId } = useAppSelector(state => state)
+  // const { chainId } = useAppSelector(state => state)
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
+  // const chain =
+  //   process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
 
-  function handleSetInputChecked(title: Titles) {
-    if (chain.chainId === chainId) setInputCheckedMobile(title)
-  }
+  // function handleSetInputChecked(title: Titles) {
+  //   if (chain.chainId === chainId) setInputCheckedMobile(title)
+  // }
 
   const handleCloseModalPoolOperations = () => {
     setInputChecked('Invest')
@@ -109,7 +97,8 @@ const ModalCardOperations = ({
       >
         <SelectOperation
           inputChecked={inputCheckedMobile}
-          handleSetInputChecked={handleSetInputChecked}
+          setInputChecked={setInputCheckedMobile}
+          // handleSetInputChecked={handleSetInputChecked}
           typeWithdrawChecked={typeWithdrawCheckedMobile}
           setTypeWithdrawChecked={setTypeWithdrawCheckedMobile}
           setIsModaWallet={setIsModaWallet}
