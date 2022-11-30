@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import useSWR from 'swr'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 
@@ -9,28 +8,16 @@ import { BNtoDecimal } from '../../../utils/numerals'
 import { useAppSelector } from '../../../store/hooks'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import useYieldYak from '../../../hooks/useYieldYak'
+import useCoingecko from '../../../hooks/useCoingecko'
 
-import { YIELDYAK_API, COINGECKO_API } from '../../../constants/tokenAddresses'
+import { YIELDYAK_API } from '../../../constants/tokenAddresses'
 
 import none from '../../../../public/assets/icons/coming-soon.svg'
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 
 import * as S from './styles'
 
-type CoinGeckoResponseType = {
-  [key: string]: {
-    usd: number,
-    usd_24h_change: number
-  }
-}
-
 const Distribution = () => {
-  const [coinGecko, setCoinGecko] = React.useState<CoinGeckoResponseType>({
-    address: {
-      usd: 0,
-      usd_24h_change: 0
-    }
-  })
   const [infoDataYY, setinfoDataYY] = React.useState<{
     [key: string]: { apy: number }
   }>()
@@ -44,10 +31,9 @@ const Distribution = () => {
   const { convertBalanceYRTtoWrap } = useYieldYak()
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const chain = useAppSelector(state => state.pool.chain)
-  const tokens = useAppSelector(state => state.pool.underlying_assets)
+  const pool = useAppSelector(state => state.pool)
 
-  const tokenAddresses = tokens.map(token => {
+  const tokenAddresses = pool.underlying_assets.map(token => {
     if (token.token.is_wrap_token === 0) {
       return token.token.id
     } else {
@@ -55,8 +41,9 @@ const Distribution = () => {
     }
   })
 
-  const { data: coinGeckoResponse } = useSWR<CoinGeckoResponseType>(
-    `${COINGECKO_API}/simple/token_price/${chain.nativeTokenName.toLocaleLowerCase()}?contract_addresses=${tokenAddresses.toString()}&vs_currencies=usd&include_24hr_change=true`
+  const { coinGecko } = useCoingecko(
+    pool.chain.nativeTokenName.toLowerCase(),
+    tokenAddresses.toString()
   )
 
   async function getDataYieldyak() {
@@ -99,7 +86,7 @@ const Distribution = () => {
   React.useEffect(() => {
     const getBalanceYY = async () => {
       let balance = {}
-      for (const token of tokens) {
+      for (const token of pool.underlying_assets) {
         if (token.token.is_wrap_token === 1) {
           const { balancePoolYY } = await getHoldings(
             token.token.id,
@@ -116,14 +103,6 @@ const Distribution = () => {
 
     getBalanceYY()
   }, [])
-
-  React.useEffect(() => {
-    if (!coinGeckoResponse) {
-      return
-    }
-
-    setCoinGecko(coinGeckoResponse)
-  }, [coinGeckoResponse])
 
   React.useEffect(() => {
     getDataYieldyak()
@@ -148,7 +127,7 @@ const Distribution = () => {
           </S.Tr>
         </thead>
         <tbody>
-          {tokens.map(coin => {
+          {pool.underlying_assets.map(coin => {
             if (coin.token.is_wrap_token === 0) {
               return (
                 <S.Tr key={`key_${coin.token.name}`}>
