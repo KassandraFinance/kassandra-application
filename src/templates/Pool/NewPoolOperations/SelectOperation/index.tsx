@@ -21,7 +21,9 @@ import * as S from './styles'
 interface ISelectOperationProps {
   // inputChecked: Titles;
   inputChecked: string;
-  handleSetInputChecked: (title: Titles) => void;
+  setInputChecked: React.Dispatch<React.SetStateAction<"Withdraw" | "Invest" | "Swap">>
+  // setInputChecked: React.Dispatch<React.SetStateAction<string>>;
+  // handleSetInputChecked: (title: Titles) => void;
   typeWithdrawChecked: string;
   setTypeWithdrawChecked: React.Dispatch<React.SetStateAction<string>>;
 
@@ -35,7 +37,8 @@ interface ISelectOperationProps {
 
 const SelectOperation = ({
   inputChecked,
-  handleSetInputChecked,
+  setInputChecked,
+  // handleSetInputChecked,
   typeWithdrawChecked,
   setTypeWithdrawChecked,
   setIsModaWallet
@@ -50,7 +53,8 @@ const SelectOperation = ({
           name="operator"
           id="Invest"
           onChange={() => {
-            handleSetInputChecked('Invest')
+            setInputChecked('Invest')
+            // handleSetInputChecked('Invest')
             trackEventFunction('click-on-tab', 'invest', 'operations-invest')
           }}
           checked={inputChecked === 'Invest'}
@@ -64,7 +68,8 @@ const SelectOperation = ({
           name="operator"
           id="Withdraw"
           onChange={() => {
-            handleSetInputChecked('Withdraw')
+            setInputChecked('Withdraw')
+            // handleSetInputChecked('Withdraw')
             trackEventFunction('click-on-tab', 'withdraw', 'operations-invest')
           }}
           checked={inputChecked === 'Withdraw'}

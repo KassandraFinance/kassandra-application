@@ -40,6 +40,8 @@ import SharedImage from './SharedImage'
 import * as S from './styles'
 
 import NewPoolOperations from './NewPoolOperations'
+import { URL_1INCH } from '../../constants/tokenAddresses'
+import { setTokenList1Inch } from '../../store/reducers/tokenList1Inch'
 
 export interface IfarmInfoYYProps {
   urlFarmContract: string;
@@ -87,6 +89,13 @@ const Pool = () => {
     })
   )
 
+  async function getTokenList1Inch() {
+    const res = await fetch(`${URL_1INCH}${pool.chainId}/tokens`)
+    const json = await res.json()
+
+    dispatch(setTokenList1Inch(Object.values(json.tokens)))
+  }
+
   React.useEffect(() => {
     setTimeout(() => {
       setLoading(false)
@@ -95,6 +104,7 @@ const Pool = () => {
 
   React.useEffect(() => {
     if (pool) {
+      getTokenList1Inch()
       trackProductPageView(pool.id, pool.symbol, pool.name)
     }
   }, [pool])

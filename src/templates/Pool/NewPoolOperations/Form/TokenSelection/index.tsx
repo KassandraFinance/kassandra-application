@@ -2,27 +2,22 @@ import React from 'react'
 import { FixedSizeList as List } from 'react-window'
 import { stringSimilarity } from 'string-similarity-js'
 
-import { ITokenList1InchProps } from '../..'
-
-import { useAppDispatch } from '../../../../../store/hooks'
+import { ITokenList1InchProps } from '../../../../../store/reducers/tokenList1Inch'
+import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
 import { setTokenSelected } from '../../../../../store/reducers/tokenSelected'
-
 import { setTokenSelect } from '../../../../../store/reducers/tokenSelect'
 
 import * as S from './styles'
-
-interface ITokenSelectionProps {
-  tokenList1Inch: ITokenList1InchProps[];
-}
 
 interface ICurrencyRowProps {
   index: number;
   style: React.CSSProperties;
 }
 
-const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
+const TokenSelection = () => {
   const [searchToken, setSearchToken] = React.useState('')
 
+  const tokenList1Inch = useAppSelector(state => state.tokenList1Inch)
   const dispatch = useAppDispatch()
 
   function handleFiltered(tokenList1Inch: ITokenList1InchProps[]) {
