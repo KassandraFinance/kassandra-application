@@ -6,15 +6,11 @@ export const TokenListContainer = styled.div`
 
     display: flex;
     flex-direction: column;
-    /* padding: 0.8rem 0; */
-    max-height: 32rem;
-    /* overflow-y: scroll; */
-
-    background: rgba(31, 31, 31, 0.72);
-    border-radius: 1rem;
+    height: 32rem;
 
     > div {
-      width: 100%;
+      border-radius: 1rem;
+      background: rgba(31, 31, 31, 0.72);
     }
   `}
 `
@@ -27,15 +23,6 @@ export const Token = styled.li`
     padding: 1.2rem 1.6rem;
 
     cursor: pointer;
-
-    :first-child {
-      border-top-left-radius: 1rem;
-      border-top-right-radius: 1rem;
-    }
-    :last-child {
-      border-bottom-left-radius: 1rem;
-      border-bottom-right-radius: 1rem;
-    }
 
     :hover {
       background: rgba(255, 255, 255, 0.08);
@@ -102,12 +89,32 @@ export const TokenValueInWallet = styled.div`
   `}
 `
 
+export const PinContainer = styled.span`
+  ${() => css`
+    svg {
+      path {
+        opacity: 0.3;
+        transition: opacity 0.3s;
+      }
+    }
+
+    :hover {
+      svg {
+        path {
+          opacity: 1;
+        }
+      }
+    }
+  `}
+`
+
 export const NotFoundTokenContent = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 4.4rem;
+    justify-content: center;
+    height: 100%;
 
     > p {
       margin-top: 2.6rem;
@@ -119,10 +126,17 @@ export const NotFoundTokenContent = styled.div`
   `}
 `
 
-export const shadow = styled.div`
-  position: absolute;
-  bottom: 0;
-  background: linear-gradient(180deg, rgba(31, 31, 31, 0) 0%, #1f1f1f 100%);
-  border-radius: 0 0 0.8rem 0.8rem;
-  height: 5.5rem;
+export const shadow = styled.span`
+  ${() => css`
+    position: absolute;
+    bottom: 0;
+
+    height: 5.5rem;
+    width: 100%;
+
+    background: linear-gradient(180deg, rgba(31, 31, 31, 0) 0%, #1f1f1f 100%);
+    border-radius: 0 0 0.8rem 0.8rem;
+
+    z-index: 50;
+  `}
 `
