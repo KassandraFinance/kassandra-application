@@ -9,6 +9,7 @@ import TokenAssetOut from '../TokenAssetOut'
 import * as S from './styles'
 
 const Invest = () => {
+  const [maxActive, setMaxActive] = React.useState<boolean>(false)
   const [amountTokenIn, setAmountTokenIn] = React.useState<Big>(Big(0))
   // const { pool } = useAppSelector(state => state)
 
@@ -23,6 +24,9 @@ const Invest = () => {
       <InputAndOutputValueToken
         amountTokenIn={amountTokenIn}
         setAmountTokenIn={setAmountTokenIn}
+        maxActive={maxActive}
+        setMaxActive={setMaxActive}
+        inputAmountTokenRef={inputAmountTokenRef}
       />
       <img
         src="/assets/icons/arrow-down.svg"

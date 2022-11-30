@@ -1,9 +1,6 @@
 import React from 'react'
-import useSWR from 'swr'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
-
-import { COINGECKO_API } from '../../../../../constants/tokenAddresses'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import web3 from '../../../../../utils/web3'
@@ -11,49 +8,44 @@ import web3 from '../../../../../utils/web3'
 import { useAppSelector } from '../../../../../store/hooks'
 
 import { ERC20 } from '../../../../../hooks/useERC20Contract'
+import useCoingecko from '../../../../../hooks/useCoingecko'
+import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
 
 import TokenSelected from '../TokenSelected'
 
 import * as S from './styles'
 
-type CoinGeckoResponseType = {
-  [key: string]: {
-    usd: number,
-    usd_24h_change: number
-  }
-}
 interface IInputAndOutputValueTokenProps {
   amountTokenIn: Big;
   setAmountTokenIn: React.Dispatch<React.SetStateAction<Big>>;
+  maxActive: boolean;
+  setMaxActive: React.Dispatch<React.SetStateAction<boolean>>;
+  inputAmountTokenRef: React.RefObject<HTMLInputElement>;
 }
 
-const InputAndOutputValueToken = ({ amountTokenIn, setAmountTokenIn }: IInputAndOutputValueTokenProps) => {
+const InputAndOutputValueToken = ({ 
+  amountTokenIn, 
+  setAmountTokenIn, 
+  maxActive, 
+  setMaxActive, 
+  inputAmountTokenRef 
+}: IInputAndOutputValueTokenProps) => {
   const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
     new Big(-1)
   )
 
-  const [coinGecko, setCoinGecko] = React.useState<CoinGeckoResponseType>({
-    address: {
-      usd: 0,
-      usd_24h_change: 0
-    }
-  })
   // const [selectedTokenIn, setSelectedTokenIn] = React.useState('')
 
-  const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
+  const { pool, chainId, tokenSelect, tokenList1Inch, userWalletAddress } = useAppSelector(
     state => state
   )
 
-  const tokenAddresses = pool.underlying_assets.map(token => {
-    if (token.token.is_wrap_token === 0) {
-      return token.token.id
-    } else {
-      return token.token.wraps.id
-    }
-  })
+  const tokenAddresses = tokenList1Inch.map(token => token.address)
 
-  const { data: coinGeckoResponse } = useSWR<CoinGeckoResponseType>(
-    `${COINGECKO_API}/simple/token_price/${pool.chain.nativeTokenName.toLowerCase()}?contract_addresses=${tokenAddresses.toString()}&vs_currencies=usd&include_24hr_change=true`
+  const { trackEventFunction } = useMatomoEcommerce()
+  const { coinGecko } = useCoingecko(
+    pool.chain.nativeTokenName.toLowerCase(),
+    tokenAddresses.toString()
   )
 
   function handleOnWheel() {
@@ -63,13 +55,29 @@ const InputAndOutputValueToken = ({ amountTokenIn, setAmountTokenIn }: IInputAnd
     }
   }
 
-    React.useEffect(() => {
-    if (!coinGeckoResponse) {
+  function wei2String(input: Big) {
+    return BNtoDecimal(input.div(Big(10).pow(Number(tokenSelect.decimals))), tokenSelect.decimals).replace(/\u00A0/g, '')
+  }
+
+  function handleMaxUserBalance() {
+    if (!inputAmountTokenRef || !amountTokenIn) {
       return
     }
-    console.log(coinGeckoResponse)
-    setCoinGecko(coinGeckoResponse)
-  }, [coinGeckoResponse])
+
+    if (inputAmountTokenRef.current !== null) {
+      inputAmountTokenRef.current.focus()
+      if (maxActive) {
+        inputAmountTokenRef.current.value = ''
+        setAmountTokenIn(new Big(0))
+        setMaxActive(false)
+        return
+      }
+
+      inputAmountTokenRef.current.value = wei2String(selectedTokenInBalance)
+      setAmountTokenIn(selectedTokenInBalance)
+      setMaxActive(true)
+    }
+  }
 
   // get balance of swap in token
   React.useEffect(() => {
@@ -87,7 +95,7 @@ const InputAndOutputValueToken = ({ amountTokenIn, setAmountTokenIn }: IInputAnd
       web3.eth
         .getBalance(userWalletAddress)
         .then(newBalance =>
-          setSelectedTokenInBalance(new Big(newBalance.toString()))
+          setSelectedTokenInBalance(Big(newBalance.toString()))
         )
 
       return
@@ -98,7 +106,7 @@ const InputAndOutputValueToken = ({ amountTokenIn, setAmountTokenIn }: IInputAnd
     token
       .balance(userWalletAddress)
       .then(newBalance =>
-        setSelectedTokenInBalance(new Big(newBalance.toString()))
+        setSelectedTokenInBalance(Big(newBalance.toString()))
       )
   }, [
     chainId,
@@ -108,14 +116,6 @@ const InputAndOutputValueToken = ({ amountTokenIn, setAmountTokenIn }: IInputAnd
     pool.underlying_assets_addresses
     // swapOutAddress
   ])
-
-  //   disabled={
-  //   userWalletAddress.length === 0
-  //     ? "Please connect your wallet by clicking the button below"
-  //     : chainId !== poolChain.chainId
-  //       ? `Please change to the ${poolChain.chainName} by clicking the button below`
-  //       : ""
-  // }
 
   return (
     <S.InputAndOutputValueToken>
@@ -141,22 +141,28 @@ const InputAndOutputValueToken = ({ amountTokenIn, setAmountTokenIn }: IInputAnd
             <S.ButtonMax
               type="button"
               maxActive={false}
-              // onClick={() => {
-              //   setMax()
-              //   trackEventFunction(
-              //     'click-on-maxBtn',
-              //     `input-in-${title}`,
-              //     'operations-invest'
-              //   )
-              // }}
+              onClick={() => {
+                handleMaxUserBalance()
+                trackEventFunction(
+                  'click-on-maxBtn',
+                  'input-in-Invest',
+                  'operations-invest'
+                )
+              }}
             >
               Max
             </S.ButtonMax>
-            {/* <Tippy content={disabled} disabled={disabled.length === 0}> */}
+            <Tippy content={
+              userWalletAddress.length === 0
+              ? "Please connect your wallet by clicking the button below"
+              : chainId !== pool.chainId
+                ? `Please change to the ${pool.chain.chainName} by clicking the button below`
+                : ""
+            } disabled={userWalletAddress.length !== 0 && chainId === pool.chainId}>
             <S.Input
               className="noscroll"
-              // readOnly={disabled.length > 0}
-              // ref={inputRef}
+              readOnly={false}
+              ref={inputAmountTokenRef}
               // value={inputRef?.current?.value}
               type="number"
               placeholder="0"
@@ -198,13 +204,12 @@ const InputAndOutputValueToken = ({ amountTokenIn, setAmountTokenIn }: IInputAnd
                   const values = value.split('.')
                   const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)
                     }`
-                  // setMaxActive && setMaxActive(false)
-                  // setAmountTokenIn && setAmountTokenIn(new BigNumber(paddedRight))
-                  setAmountTokenIn && setAmountTokenIn(Big(paddedRight))
+                  setMaxActive(false)
+                  setAmountTokenIn(Big(paddedRight))
                 }
               }
             />
-            {/* </Tippy> */}
+            </Tippy>
             <span className="price-dolar">
               {tokenSelect.address &&
                 amountTokenIn &&
@@ -212,17 +217,14 @@ const InputAndOutputValueToken = ({ amountTokenIn, setAmountTokenIn }: IInputAnd
                   BNtoDecimal(
                     Big(amountTokenIn.toString())
                       .mul(
-                        // Big(priceDollar(tokenSelect.address, poolTokensArray))
                         Big(coinGecko?.[tokenSelect.address.toLowerCase()]?.usd || 0)
 
                       )
-                      .div(Big(10).pow(Number(18))),
-                    // .div(Big(10).pow(Number(decimals))),
+                      .div(Big(10).pow(Number(tokenSelect.decimals))),
                     18,
                     2,
                     2
                   )}
-              {/* USD: 0.00 */}
             </span>
           </S.Amount>
         </S.Top>
