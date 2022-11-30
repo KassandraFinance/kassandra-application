@@ -6,7 +6,7 @@ import { SUBGRAPH_URL } from '../../constants/tokenAddresses'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
-import { useAppDispatch } from '../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setChartSelected } from '../../store/reducers/chartSelected'
 import { setPerformanceValues } from '../../store/reducers/performanceValues'
 import { setPeriodSelected as reduxSetPeriodSelected } from '../../store/reducers/periodSelected'
@@ -23,11 +23,7 @@ import * as S from './styles'
 
 const arrPeriod: string[] = ['1W', '1M', '3M', '1Y']
 
-interface IChartProductsProps {
-  crpPoolAddress: string;
-}
-
-const ChartProducts = ({ crpPoolAddress }: IChartProductsProps) => {
+const ChartProducts = () => {
   const dispatch = useAppDispatch()
 
   const [inputChecked, setInputChecked] = React.useState<string>('Price')
@@ -39,8 +35,10 @@ const ChartProducts = ({ crpPoolAddress }: IChartProductsProps) => {
   const [periodSelected, setPeriodSelected] = React.useState<string>('1W')
   const dateNow = new Date()
 
+  const pool = useAppSelector(state => state.pool)
+
   const [params, setParams] = React.useState({
-    id: crpPoolAddress,
+    id: pool.id,
     price_period: 3600,
     period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 7)
   })
@@ -146,7 +144,7 @@ const ChartProducts = ({ crpPoolAddress }: IChartProductsProps) => {
 
   React.useEffect(() => {
     if (data) {
-      const newTVL = data?.pool.total_value_locked.map(
+      const newTVL = data?.pool?.total_value_locked.map(
         (item: { timestamp: number, value: string }) => {
           return {
             timestamp: item.timestamp,
@@ -155,7 +153,7 @@ const ChartProducts = ({ crpPoolAddress }: IChartProductsProps) => {
         }
       )
 
-      const newPrice = data?.pool.price_candles.map(
+      const newPrice = data?.pool?.price_candles.map(
         (item: { timestamp: number, close: string }) => {
           return {
             timestamp: item.timestamp,
@@ -166,7 +164,7 @@ const ChartProducts = ({ crpPoolAddress }: IChartProductsProps) => {
 
       setTvl(newTVL)
       setPrice(newPrice)
-      setAllocation(data?.pool.weights)
+      setAllocation(data?.pool?.weights)
     }
   }, [data])
 

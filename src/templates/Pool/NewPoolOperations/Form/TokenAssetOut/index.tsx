@@ -5,7 +5,7 @@ import Tippy from '@tippyjs/react'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 
-import ahype from '../../../../../public/assets/logos/ahype.svg'
+import ahype from '../../../../../../public/assets/logos/ahype.svg'
 
 import * as S from './styles'
 

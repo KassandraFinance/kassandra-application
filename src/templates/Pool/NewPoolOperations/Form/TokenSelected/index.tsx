@@ -2,12 +2,12 @@ import React from 'react'
 import Image from 'next/image'
 
 // import { ITokenDetails } from '../../../../context/PoolTokensContext'
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 
-import { setTokenSelected } from '../../../../store/reducers/tokenSelected'
+import { setTokenSelected } from '../../../../../store/reducers/tokenSelected'
 
-import arrow from '../../../../../public/assets/utilities/arrow-select-down.svg'
-import none from '../../../../../public/assets/icons/coming-soon.svg'
+import arrow from '../../../../../../public/assets/utilities/arrow-select-down.svg'
+import none from '../../../../../../public/assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 

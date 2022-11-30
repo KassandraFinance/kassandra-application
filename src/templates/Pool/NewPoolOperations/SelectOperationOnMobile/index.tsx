@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React from 'react'
 
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce';
+import useMatomoEcommerce from '../../../../hooks/useMatomoEcommerce';
 
 import * as S from './styles'
 

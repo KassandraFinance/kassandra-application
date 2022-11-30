@@ -40,7 +40,7 @@ const Change = ({ crpPoolAddress }: IChangeProps) => {
   React.useEffect(() => {
     const arrChangePrice = []
 
-    if (data?.now[0].close) {
+    if (data?.now[0]?.close) {
       const changeDay = calcChange(data.now[0].close, data.day[0]?.close)
       const changeWeek = calcChange(data.now[0].close, data.week[0]?.close)
       const changeMonth = calcChange(data.now[0].close, data.month[0]?.close)

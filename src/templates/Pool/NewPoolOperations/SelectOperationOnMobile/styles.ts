@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import theme from '../../../styles/theme'
+import theme from '../../../../styles/theme'
 
 export const PoolOperationsContainerMobile = styled.div`
   background-color: #151117;

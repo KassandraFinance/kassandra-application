@@ -1,14 +1,14 @@
 /* eslint-disable prettier/prettier */
 import React from 'react'
 
-import { chains } from '../../../constants/tokenAddresses';
+import { chains } from '../../../../constants/tokenAddresses';
 
-import { useAppSelector } from '../../../store/hooks';
+import { useAppSelector } from '../../../../store/hooks';
 
-import SelectOperation from '../../NewPoolOperations/SelectOperation';
-import { TitlesMobile } from '../../PoolOperations/SelectOperatorMobile';
+import SelectOperation from '../SelectOperation';
+import { TitlesMobile } from '../../../../components/PoolOperations/SelectOperatorMobile';
 
-import { ChainDetails } from '../../../utils/changeChain'
+import { ChainDetails } from '../../../../utils/changeChain'
 
 import { Backdrop, CardOperationsContainerModal } from './styles'
 

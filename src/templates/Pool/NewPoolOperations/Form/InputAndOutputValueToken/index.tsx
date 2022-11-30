@@ -1,28 +1,59 @@
 import React from 'react'
+import useSWR from 'swr'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
 
-import { BNtoDecimal } from '../../../../utils/numerals'
-import web3 from '../../../../utils/web3'
+import { COINGECKO_API } from '../../../../../constants/tokenAddresses'
 
-import { useAppSelector } from '../../../../store/hooks'
+import { BNtoDecimal } from '../../../../../utils/numerals'
+import web3 from '../../../../../utils/web3'
 
-import { ERC20 } from '../../../../hooks/useERC20Contract'
+import { useAppSelector } from '../../../../../store/hooks'
+
+import { ERC20 } from '../../../../../hooks/useERC20Contract'
 
 import TokenSelected from '../TokenSelected'
 
 import * as S from './styles'
 
-//   setSwapAddress: React.Dispatch<React.SetStateAction<string>>;
+type CoinGeckoResponseType = {
+  [key: string]: {
+    usd: number,
+    usd_24h_change: number
+  }
+}
+interface IInputAndOutputValueTokenProps {
+  amountTokenIn: Big;
+  setAmountTokenIn: React.Dispatch<React.SetStateAction<Big>>;
+}
 
-const InputAndOutputValueToken = () => {
+const InputAndOutputValueToken = ({ amountTokenIn, setAmountTokenIn }: IInputAndOutputValueTokenProps) => {
   const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
     new Big(-1)
   )
+
+  const [coinGecko, setCoinGecko] = React.useState<CoinGeckoResponseType>({
+    address: {
+      usd: 0,
+      usd_24h_change: 0
+    }
+  })
   // const [selectedTokenIn, setSelectedTokenIn] = React.useState('')
 
   const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
     state => state
+  )
+
+  const tokenAddresses = pool.underlying_assets.map(token => {
+    if (token.token.is_wrap_token === 0) {
+      return token.token.id
+    } else {
+      return token.token.wraps.id
+    }
+  })
+
+  const { data: coinGeckoResponse } = useSWR<CoinGeckoResponseType>(
+    `${COINGECKO_API}/simple/token_price/${pool.chain.nativeTokenName.toLowerCase()}?contract_addresses=${tokenAddresses.toString()}&vs_currencies=usd&include_24hr_change=true`
   )
 
   function handleOnWheel() {
@@ -31,6 +62,14 @@ const InputAndOutputValueToken = () => {
       (document.activeElement as HTMLElement).blur()
     }
   }
+
+    React.useEffect(() => {
+    if (!coinGeckoResponse) {
+      return
+    }
+    console.log(coinGeckoResponse)
+    setCoinGecko(coinGeckoResponse)
+  }, [coinGeckoResponse])
 
   // get balance of swap in token
   React.useEffect(() => {
@@ -140,47 +179,50 @@ const InputAndOutputValueToken = () => {
                   target.dataset.lastvalue = '0'
                 }
               }}
-              // onChange={
-              //   (e: React.ChangeEvent<HTMLInputElement>) => {
-              //     let { value } = e.target
+              onChange={
+                (e: React.ChangeEvent<HTMLInputElement>) => {
+                  let { value } = e.target
 
-              //     if (value.length === 0) {
-              //       value = e.target.dataset.lastvalue as string
-              //     }
-              //     else if (value[0] === '0') {
-              //       e.target.value = value.replace(/^0+/, '')
-              //     }
+                  if (value.length === 0) {
+                    value = e.target.dataset.lastvalue as string
+                  }
+                  else if (value[0] === '0') {
+                    e.target.value = value.replace(/^0+/, '')
+                  }
 
-              //     if (e.target.value[0] === '.') {
-              //       e.target.value = `0${e.target.value}`
-              //     }
+                  if (e.target.value[0] === '.') {
+                    e.target.value = `0${e.target.value}`
+                  }
 
-              //     const decimalsNum = decimals.toNumber()
-              //     const values = value.split('.')
-              //     const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)
-              //       }`
-              //     // setMaxActive && setMaxActive(false)
-              //     setInputValue && setInputValue(new BigNumber(paddedRight))
-              //   }
-              // }
+                  const decimalsNum = tokenSelect.decimals
+                  const values = value.split('.')
+                  const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)
+                    }`
+                  // setMaxActive && setMaxActive(false)
+                  // setAmountTokenIn && setAmountTokenIn(new BigNumber(paddedRight))
+                  setAmountTokenIn && setAmountTokenIn(Big(paddedRight))
+                }
+              }
             />
             {/* </Tippy> */}
             <span className="price-dolar">
-              {/* {tokenSelect.address &&
-                amount &&
+              {tokenSelect.address &&
+                amountTokenIn &&
                 'USD: ' +
                   BNtoDecimal(
-                    Big(amount.toString())
+                    Big(amountTokenIn.toString())
                       .mul(
-                        Big(priceDollar(tokenSelect.address, poolTokensArray))
+                        // Big(priceDollar(tokenSelect.address, poolTokensArray))
+                        Big(coinGecko?.[tokenSelect.address.toLowerCase()]?.usd || 0)
+
                       )
                       .div(Big(10).pow(Number(18))),
                     // .div(Big(10).pow(Number(decimals))),
                     18,
                     2,
                     2
-                  )} */}
-              USD: 0.00
+                  )}
+              {/* USD: 0.00 */}
             </span>
           </S.Amount>
         </S.Top>

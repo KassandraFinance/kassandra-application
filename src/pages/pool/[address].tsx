@@ -1,6 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { SWRConfig } from 'swr'
 import { ParsedUrlQuery } from 'querystring'
+import { toChecksumAddress } from 'web3-utils'
 
 import { useAppDispatch } from '../../store/hooks'
 import { IPoolSlice, setPool } from '../../store/reducers/pool'
@@ -97,7 +98,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths = pools.map(pool => ({
     params: { address: pool.id }
   }))
-  return { paths, fallback: false }
+  return { paths, fallback: 'blocking' }
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
@@ -113,7 +114,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       body: JSON.stringify({
         query: `query ($id: ID!) { pool (id: $id) ${queryPool}}`,
         variables: {
-          id: address
+          id: toChecksumAddress(address)
         }
       })
     })

@@ -26,7 +26,7 @@ type CoinGeckoResponseType = {
 
 const Distribution = () => {
   const [coinGecko, setCoinGecko] = React.useState<CoinGeckoResponseType>({
-    addreass: {
+    address: {
       usd: 0,
       usd_24h_change: 0
     }

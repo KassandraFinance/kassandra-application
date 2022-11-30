@@ -39,7 +39,7 @@ import SharedImage from './SharedImage'
 
 import * as S from './styles'
 
-import NewPoolOperations from '../../components/NewPoolOperations'
+import NewPoolOperations from './NewPoolOperations'
 
 export interface IfarmInfoYYProps {
   urlFarmContract: string;
@@ -272,7 +272,7 @@ const Pool = () => {
                   <h2>${infoPool.withdrawFees}</h2>
                 </S.IndexData>
               </S.IntroCharts>
-              <ChartProducts crpPoolAddress={pool.id} />
+              <ChartProducts />
               <ScrollUpButton />
               <Change crpPoolAddress={pool.id} />
               {/* <MyAsset
@@ -302,7 +302,7 @@ const Pool = () => {
               corePoolAddress={product.coreAddress}
               productCategories={product.categories}
             /> */}
-            {/* <NewPoolOperations /> */}
+            <NewPoolOperations />
           </S.Product>
         </S.Container>
       )}

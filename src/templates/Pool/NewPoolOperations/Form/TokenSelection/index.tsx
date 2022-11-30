@@ -4,10 +4,10 @@ import { stringSimilarity } from 'string-similarity-js'
 
 import { ITokenList1InchProps } from '../..'
 
-import { useAppDispatch } from '../../../../store/hooks'
-import { setTokenSelected } from '../../../../store/reducers/tokenSelected'
+import { useAppDispatch } from '../../../../../store/hooks'
+import { setTokenSelected } from '../../../../../store/reducers/tokenSelected'
 
-import { setTokenSelect } from '../../../../store/reducers/tokenSelect'
+import { setTokenSelect } from '../../../../../store/reducers/tokenSelect'
 
 import * as S from './styles'
 

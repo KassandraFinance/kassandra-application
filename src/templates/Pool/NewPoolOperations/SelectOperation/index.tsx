@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
 import React from 'react'
-import { ChainDetails } from '../../../utils/changeChain'
+import { ChainDetails } from '../../../../utils/changeChain'
 
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
+import useMatomoEcommerce from '../../../../hooks/useMatomoEcommerce'
 
-import { Titles } from '../'
+import { Titles } from '..'
 
 import Form from '../Form'
 

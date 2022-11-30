@@ -1,4 +1,6 @@
 import React from 'react'
+import Big from 'big.js'
+
 import InputAndOutputValueToken from '../InputAndOutputValueToken'
 import TokenAssetOut from '../TokenAssetOut'
 
@@ -7,20 +9,30 @@ import TokenAssetOut from '../TokenAssetOut'
 import * as S from './styles'
 
 const Invest = () => {
+  const [amountTokenIn, setAmountTokenIn] = React.useState<Big>(Big(0))
   // const { pool } = useAppSelector(state => state)
 
   // function handleSubmit() {
 
   // }
+
+  const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
+
   return (
     <S.Invest>
-      <InputAndOutputValueToken />
+      <InputAndOutputValueToken
+        amountTokenIn={amountTokenIn}
+        setAmountTokenIn={setAmountTokenIn}
+      />
       <img
         src="/assets/icons/arrow-down.svg"
         alt=""
         style={{ margin: '12px 0' }}
       />
-      <TokenAssetOut />
+      <TokenAssetOut
+      // amountTokenIn={amountTokenIn}
+      // setAmountTokenIn={setAmountTokenIn}
+      />
     </S.Invest>
   )
 }
