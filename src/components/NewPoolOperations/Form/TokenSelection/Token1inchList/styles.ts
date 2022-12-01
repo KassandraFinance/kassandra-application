@@ -125,11 +125,17 @@ export const NotFoundTokenContent = styled.div`
     }
   `}
 `
+interface IShowShadowProps {
+  isShowShadow: boolean;
+}
 
-export const shadow = styled.span`
-  ${() => css`
+// eslint-disable-next-line prettier/prettier
+export const shadow = styled.span<IShowShadowProps>`
+  ${({ isShowShadow }) => css`
     position: absolute;
     bottom: 0;
+
+    display: ${isShowShadow ? 'flex' : 'none'};
 
     height: 5.5rem;
     width: 100%;

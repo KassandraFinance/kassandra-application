@@ -1,5 +1,5 @@
 import React from 'react'
-import { FixedSizeList as List } from 'react-window'
+import { FixedSizeList as List, ListOnScrollProps } from 'react-window'
 
 import { ITokenList1InchProps } from '../../..'
 import { IListbalanceTokenprops, IListTokenPricesprops, IUserTokenProps } from '..'
@@ -25,7 +25,25 @@ interface ICurrencyRowProps {
 }
 
 const Token1inchList = ({ filteredToken, searchToken, listBalanceToken, listTokenPrices, tokenPinList, setTokenPinList }: IToken1inchListProps) => {
+  const [isShowShadow, setisShowShadow] = React.useState(true)
+
   const dispatch = useAppDispatch()
+
+  const ref = React.useRef<HTMLDivElement>(null)
+
+  function handleOnScroll(event: ListOnScrollProps) {
+    const scrollValue = event.scrollOffset
+    const clientHeight = ref.current?.clientHeight || 320
+    const scrollHeight  = (filteredToken.length * 58) - clientHeight
+
+
+    if (scrollValue !== scrollHeight && isShowShadow === false) {
+      setisShowShadow(true)
+    }
+    if (scrollValue === scrollHeight) {
+      setisShowShadow(false)
+    }
+  }
 
   function handleClickAddPin(token: IUserTokenProps) {
     const hasStorage = localStorage.getItem('TokenSelection')
@@ -96,7 +114,7 @@ const Token1inchList = ({ filteredToken, searchToken, listBalanceToken, listToke
   }, [searchToken, listBalanceToken, listTokenPrices, tokenPinList])
 
   return (
-    <S.TokenListContainer>
+    <S.TokenListContainer ref={ref}>
       {filteredToken.length > 0 ? (
         <>
           <List
@@ -105,10 +123,11 @@ const Token1inchList = ({ filteredToken, searchToken, listBalanceToken, listToke
             itemSize={58}
             height={3000}
             width={384}
+            onScroll={(event) => handleOnScroll(event)}
           >
             {CurrencyRow}
           </List>
-          <S.shadow />
+          <S.shadow isShowShadow={isShowShadow && filteredToken.length > 6} />
         </>
       ) : (
         <S.NotFoundTokenContent>
