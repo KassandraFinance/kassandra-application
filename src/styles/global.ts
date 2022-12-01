@@ -111,10 +111,20 @@ const GlobalStyles: GlobalStyleComponent<
       overflow-x: hidden;
 
       ${selectBackground
-        ? `background-image: url('/assets/images/background-products.png');
-        background-repeat: repeat-y;
-        background-size: cover;
-        background-position-x: center;`
+        ? `background-image: url('/assets/images/background-768.png');
+           background-repeat: repeat-y;
+           background-size: cover;
+           background-position-x: center;
+
+
+           @media (min-width: 768px) {
+             background-image: url('/assets/images/background-992.png');
+           }
+
+           @media (min-width: 992px) {
+             background-image: url('/assets/images/background-1440.png');
+           }
+        `
         : ''}
     }
   `}
