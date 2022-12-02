@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const tokenPinContainer = styled.div`
+export const TokenPinContainer = styled.div`
   ${() => css`
     display: flex;
     align-items: center;
@@ -28,7 +28,7 @@ export const DeletePin = styled.span`
   `}
 `
 
-export const tokenPinMobile = styled.div`
+export const TokenPinMobile = styled.div`
   display: none;
   justify-content: center;
   padding: 0.9rem 1.1rem;
@@ -45,38 +45,15 @@ export const tokenPinMobile = styled.div`
     display: flex;
   }
 `
+
 interface ITokenPinProps {
   isActive: boolean;
 }
 
 // eslint-disable-next-line prettier/prettier
-export const tokenPin = styled.div<ITokenPinProps>`
-  ${({ theme, isActive }) => css`
+export const TokenPin = styled.div<ITokenPinProps>`
+  ${({ isActive }) => css`
     position: relative;
-
-    div {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      padding: 0.9rem 1.1rem;
-
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 0.4rem;
-
-      color: ${theme.colors.snow};
-      font-size: ${theme.font.sizes.font12};
-      font-weight: ${theme.font.weight.normal};
-
-      border: 0.1rem solid transparent;
-
-      cursor: pointer;
-
-      transition: border 0.2s;
-
-      :hover {
-        border: 0.1rem solid rgba(255, 255, 255, 0.3);
-      }
-    }
 
     ${isActive
       ? `
@@ -103,6 +80,32 @@ export const tokenPin = styled.div<ITokenPinProps>`
       100% {
         opacity: 1;
       }
+    }
+  `}
+`
+
+export const TokenPinNameContent = styled.div`
+  ${({ theme }) => css`
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.9rem 1.1rem;
+
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 0.4rem;
+
+    color: ${theme.colors.snow};
+    font-size: ${theme.font.sizes.font12};
+    font-weight: ${theme.font.weight.normal};
+
+    border: 0.1rem solid transparent;
+
+    cursor: pointer;
+
+    transition: border 0.2s;
+
+    :hover {
+      border: 0.1rem solid rgba(255, 255, 255, 0.3);
     }
   `}
 `

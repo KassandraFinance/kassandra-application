@@ -52,19 +52,19 @@ const TokenPin = ({ tokenPinList, setTokenPinList, tokenList1Inch }: ITokenPinPr
   }, [])
 
   return (
-    <S.tokenPinContainer>
-      <S.tokenPinMobile onClick={() => setactiveDeletePin(!activeDeletePin)}>
+    <S.TokenPinContainer>
+      <S.TokenPinMobile onClick={() => setactiveDeletePin(!activeDeletePin)}>
         <img
           src="/assets/utilities/edit-icon.svg"
           alt=""
           width={16}
           height={16}
         />
-      </S.tokenPinMobile>
+      </S.TokenPinMobile>
       {tokenPinList.map(token => {
         return (
-          <S.tokenPin key={token.symbol} isActive={activeDeletePin}>
-            <div
+          <S.TokenPin key={token.symbol} isActive={activeDeletePin}>
+            <S.TokenPinNameContent
               onClick={() => {
                 dispatch(setTokenSelect(token))
                 dispatch(setTokenSelected(false))
@@ -83,7 +83,7 @@ const TokenPin = ({ tokenPinList, setTokenPinList, tokenList1Inch }: ITokenPinPr
               }}
               />
               <p>{token.symbol}</p>
-            </div>
+            </S.TokenPinNameContent>
             <S.DeletePin onClick={() => handleDeletePinToken(token.address)}>
               <img
                 src="/assets/utilities/close-icon.svg"
@@ -91,10 +91,10 @@ const TokenPin = ({ tokenPinList, setTokenPinList, tokenList1Inch }: ITokenPinPr
                 height={7}
               />
             </S.DeletePin>
-          </S.tokenPin>
+          </S.TokenPin>
         )
       })}
-    </S.tokenPinContainer>
+    </S.TokenPinContainer>
   )
 }
 

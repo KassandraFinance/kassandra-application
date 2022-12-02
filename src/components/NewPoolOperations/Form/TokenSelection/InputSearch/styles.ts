@@ -19,7 +19,7 @@ interface IDeleteSearchProps {
 }
 
 // eslint-disable-next-line prettier/prettier
-export const deleteSearch = styled.span<IDeleteSearchProps>`
+export const DeleteSearch = styled.span<IDeleteSearchProps>`
   ${({ isShowIcon }) => css`
     position: absolute;
     right: 1rem;

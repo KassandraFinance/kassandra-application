@@ -22,12 +22,12 @@ const InputSearch = ({ searchToken, setSearchToken  }: IInputSearchProps) => {
         value={searchToken}
         onChange={event => handleSearchToken(event.target.value)}
       />
-      <S.deleteSearch
+      <S.DeleteSearch
         isShowIcon={searchToken.length > 0}
         onClick={() => setSearchToken('')}
       >
         <img src="/assets/utilities/close.svg" alt="" />
-      </S.deleteSearch>
+      </S.DeleteSearch>
     </S.InputContent>
   )
 }
