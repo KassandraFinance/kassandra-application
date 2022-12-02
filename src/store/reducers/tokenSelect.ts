@@ -9,12 +9,11 @@ interface ITokenSelectProps {
 }
 
 const initialState = {
-  address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-  decimals: 18,
-  logoURI:
-    'https://tokens.1inch.io/0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7.png',
-  name: 'Avalanche',
-  symbol: 'AVAX'
+  address: '',
+  decimals: 0,
+  logoURI: '',
+  name: '',
+  symbol: ''
 }
 
 export const tokenSelect = createSlice({
