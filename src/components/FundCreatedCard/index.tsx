@@ -1,5 +1,4 @@
 import React from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 
 import Button from '../Button'
@@ -12,7 +11,7 @@ const FundCreatedCard = () => {
   return (
     <S.FundCreatedCardContainer>
       <S.fundCreateCard>
-        <Image src={createFundSucess} alt="" width={80} height={80} />
+        <img src={createFundSucess.src} alt="" width={80} height={80} />
         <S.FundCreatedTitle>Your Pool has been created!</S.FundCreatedTitle>
         <S.FundCreatedParagraph>
           Your smart contracts have been deploysed in the following transacion:

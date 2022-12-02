@@ -21,14 +21,25 @@ export const fundCreateCard = styled.div`
     border-radius: 0.8rem;
 
     .viewTransaction {
-      margin-top: 2.2rem;
+      margin-top: 2.4rem;
       padding: 1.6rem 3.2rem;
       text-align: center;
     }
     .checkYourFund {
-      margin-top: 4.6rem;
+      margin-top: 4.8rem;
       height: 5.4rem;
       text-align: center;
+    }
+
+    @media (max-width: 360px) {
+      padding: 2.4rem;
+    }
+
+    @media (max-width: 360px) {
+      img {
+        width: 6.4rem;
+        height: 6.4rem;
+      }
     }
   `}
 `
@@ -42,6 +53,13 @@ export const FundCreatedTitle = styled.h1`
     font-weight: ${theme.font.weight.bold};
     line-height: 104%;
     text-align: center;
+
+    @media (max-width: 360px) {
+      margin-top: 2.4rem;
+      padding-inline: 1.6rem;
+
+      font-size: ${theme.font.sizes.font24};
+    }
   `}
 `
 
@@ -54,5 +72,9 @@ export const FundCreatedParagraph = styled.p`
     font-weight: ${theme.font.weight.light};
     line-height: 135%;
     text-align: center;
+
+    @media (max-width: 360px) {
+      margin-top: 1.6rem;
+    }
   `}
 `
