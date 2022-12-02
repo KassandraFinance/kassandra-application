@@ -33,7 +33,7 @@ const Token1inchList = ({ filteredToken, searchToken, listBalanceToken, listToke
   const dispatch = useAppDispatch()
   const { pool, userWalletAddress } = useAppSelector(state => state)
 
-  const ref = React.useRef<HTMLDivElement>(null)
+  const TokenListContainerRef = React.useRef<HTMLDivElement>(null)
 
   const tokenListPin: ITokenPinprops =
     tokenPinList.reduce((addressAccumulator, tokenCurrent) =>
@@ -41,7 +41,7 @@ const Token1inchList = ({ filteredToken, searchToken, listBalanceToken, listToke
 
   function handleOnScroll(event: ListOnScrollProps) {
     const scrollValue = event.scrollOffset
-    const clientHeight = ref.current?.clientHeight || 320
+    const clientHeight = TokenListContainerRef.current?.clientHeight || 320
     const scrollHeight  = (filteredToken.length * 58) - clientHeight
 
 
@@ -130,7 +130,7 @@ const Token1inchList = ({ filteredToken, searchToken, listBalanceToken, listToke
   }, [searchToken, listBalanceToken, listTokenPrices, tokenPinList, userWalletAddress])
 
   return (
-    <S.TokenListContainer ref={ref}>
+    <S.TokenListContainer ref={TokenListContainerRef}>
       {filteredToken.length > 0 ? (
         <>
           <List
