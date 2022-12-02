@@ -1,8 +1,7 @@
 import React from 'react'
 import { FixedSizeList as List, ListOnScrollProps } from 'react-window'
 
-import { ITokenList1InchProps } from '../../..'
-import { IListbalanceTokenprops, IListTokenPricesprops, IUserTokenProps } from '..'
+import { IListbalanceTokenprops, IListTokenPricesprops, IUserTokenProps, ITokenList1InchProps } from '..'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setTokenSelected } from '../../../../../store/reducers/tokenSelected'
@@ -32,7 +31,7 @@ const Token1inchList = ({ filteredToken, searchToken, listBalanceToken, listToke
   const [isShowShadow, setisShowShadow] = React.useState(true)
 
   const dispatch = useAppDispatch()
-  const { pool } = useAppSelector(state => state)
+  const { pool, userWalletAddress } = useAppSelector(state => state)
 
   const ref = React.useRef<HTMLDivElement>(null)
 
@@ -128,7 +127,7 @@ const Token1inchList = ({ filteredToken, searchToken, listBalanceToken, listToke
         </S.Token>
       )
     })
-  }, [searchToken, listBalanceToken, listTokenPrices, tokenPinList])
+  }, [searchToken, listBalanceToken, listTokenPrices, tokenPinList, userWalletAddress])
 
   return (
     <S.TokenListContainer ref={ref}>

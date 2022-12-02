@@ -6,7 +6,6 @@ import { stringSimilarity } from 'string-similarity-js'
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
 import { setTokenSelected } from '../../../../store/reducers/tokenSelected'
 
-import { ITokenList1InchProps } from '../..'
 import {
   URL_1INCH_BALANCE,
   URL_COINGECKO
@@ -32,16 +31,21 @@ export type IListTokenPricesprops = {
   }
 }
 
+export interface ITokenList1InchProps {
+  symbol: string;
+  name: string;
+  address: string;
+  decimals: number;
+  logoURI: string;
+}
+
 export interface IUserTokenProps extends ITokenList1InchProps {
   tokenScore: number;
   balanceInDollar: number;
   balance: string;
 }
-interface ITokenSelectionProps {
-  tokenList1Inch: ITokenList1InchProps[];
-}
 
-const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
+const TokenSelection = () => {
   const [searchToken, setSearchToken] = React.useState('')
   const [tokenPinList, setTokenPinList] = React.useState<
     ITokenList1InchProps[]
@@ -60,7 +64,9 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
     })
 
   const dispatch = useAppDispatch()
-  const { userWalletAddress, pool } = useAppSelector(state => state)
+  const { userWalletAddress, tokenList1Inch, pool } = useAppSelector(
+    state => state
+  )
 
   // eslint-disable-next-line prettier/prettier
   function handleUserTokensBalance(newTokenList1inch: ITokenList1InchProps[], isWithScore = false) {
@@ -174,7 +180,7 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
   async function handleFetchBalance() {
     try {
       const response = await fetch(
-        `${URL_1INCH_BALANCE}/${pool.chainId}/allowancesAndBalances/0x1111111254eeb25477b68fb85ed929f73a960582/0xFdFeC1cbc5A10FC8F69C08af8D91Ea3B5190b5e6?tokensFetchType=listedTokens`
+        `${URL_1INCH_BALANCE}/${pool.chainId}/allowancesAndBalances/0x1111111254eeb25477b68fb85ed929f73a960582/${userWalletAddress}?tokensFetchType=listedTokens`
       )
       const listTokenBalanceInWallet = await response.json()
       setBalanceToken(listTokenBalanceInWallet)
@@ -188,7 +194,7 @@ const TokenSelection = ({ tokenList1Inch }: ITokenSelectionProps) => {
       handleFetchBalance()
     }
     handleFetchTokenPrice()
-  }, [])
+  }, [userWalletAddress])
 
   return (
     <S.TokenSelection>

@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setTokenSelect } from '../../../../../store/reducers/tokenSelect'
 import { setTokenSelected } from '../../../../../store/reducers/tokenSelected'
 
-import { ITokenList1InchProps } from '../../..'
+import { ITokenList1InchProps } from '..'
 
 import * as S from './styles'
 

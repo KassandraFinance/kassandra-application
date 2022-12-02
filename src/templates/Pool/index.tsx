@@ -33,6 +33,9 @@ import ActivityTable from './ActivityTable'
 
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
 
+import { URL_1INCH } from '../../constants/tokenAddresses'
+
+import { setTokenList1Inch } from '../../store/reducers/tokenList1Inch'
 import { GET_INFO_POOL } from './graphql'
 
 import Change from './Change'
@@ -156,6 +159,13 @@ const Pool = () => {
       day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
     })
   )
+
+  async function getTokenList1Inch() {
+    const res = await fetch(`${URL_1INCH}${pool.chainId}/tokens`)
+    const json = await res.json()
+
+    dispatch(setTokenList1Inch(Object.values(json.tokens)))
+  }
 
   const { data: coinGeckoResponse } = useSWR(
     `/api/image-coingecko?poolinfo=${
@@ -303,6 +313,7 @@ const Pool = () => {
 
   React.useEffect(() => {
     if (pool) {
+      getTokenList1Inch()
       trackProductPageView(pool.id, pool.symbol, pool.name)
     }
   }, [pool])
