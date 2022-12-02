@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useAppDispatch } from '../../../../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setTokenSelect } from '../../../../../store/reducers/tokenSelect'
 import { setTokenSelected } from '../../../../../store/reducers/tokenSelected'
 
@@ -19,19 +19,23 @@ const TokenPin = ({ tokenPinList, setTokenPinList, tokenList1Inch }: ITokenPinPr
   const [activeDeletePin, setactiveDeletePin] = React.useState<boolean>(false)
 
   const dispatch = useAppDispatch()
+  const { pool } = useAppSelector(state => state)
 
   function handleDeletePinToken(tokenAddress: string) {
     const tokenPinListFiltered = tokenPinList.filter(
       tokenPin => tokenPin.address !== tokenAddress
     )
-    localStorage.setItem('TokenSelection', JSON.stringify(tokenPinListFiltered))
+    localStorage.setItem(
+      `tokenSelection-${pool.chainId}`,
+      JSON.stringify(tokenPinListFiltered)
+    )
     setTokenPinList(tokenPinListFiltered)
   }
 
   React.useEffect(() => {
     if (!process.browser) return
 
-    const hasStorage = localStorage.getItem(`TokenSelection`)
+    const hasStorage = localStorage.getItem(`tokenSelection-${pool.chainId}`)
     const hasStorages: ITokenList1InchProps[] =
       hasStorage && JSON.parse(hasStorage)
 
@@ -39,7 +43,10 @@ const TokenPin = ({ tokenPinList, setTokenPinList, tokenList1Inch }: ITokenPinPr
       setTokenPinList(hasStorages)
     } else {
       const tokenSearch = tokenList1Inch.slice(0, 6)
-      localStorage.setItem('TokenSelection', JSON.stringify(tokenSearch))
+      localStorage.setItem(
+        `tokenSelection-${pool.chainId}`,
+        JSON.stringify(tokenSearch)
+      )
       setTokenPinList(tokenSearch)
     }
   }, [])
@@ -56,14 +63,25 @@ const TokenPin = ({ tokenPinList, setTokenPinList, tokenList1Inch }: ITokenPinPr
       </S.tokenPinMobile>
       {tokenPinList.map(token => {
         return (
-          <S.tokenPin key={token.address} isActive={activeDeletePin}>
+          <S.tokenPin key={token.symbol} isActive={activeDeletePin}>
             <div
               onClick={() => {
                 dispatch(setTokenSelect(token))
                 dispatch(setTokenSelected(false))
               }}
             >
-              <img src={token.logoURI} alt="" width={16} height={16} />
+              <img
+                src={token.logoURI}
+                alt=""
+                width={16}
+                height={16}
+                onError={(event) => {
+                // eslint-disable-next-line prettier/prettier
+                const target = event.target as HTMLImageElement
+                target.onerror = null
+                target.src = `/assets/icons/coming-soon.svg`
+              }}
+              />
               <p>{token.symbol}</p>
             </div>
             <S.DeletePin onClick={() => handleDeletePinToken(token.address)}>
