@@ -11,9 +11,5 @@ export const Steps = styled.div`
       @media (min-width: 768px) {
         gap: 1.6rem;
       }
-
-      /* @media (min-width: 992px) {
-        gap: 3.2rem;
-      } */
     `}
 `
