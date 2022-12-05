@@ -1,4 +1,3 @@
-import Header from '../../components/Header'
 import Button from '../../components/Button'
 
 import * as S from './styles'
@@ -10,7 +9,6 @@ interface INotFoundProps {
 
 const NotFound = ({ text, contact }: INotFoundProps) => (
   <>
-    <Header />
     <S.Wrapper>
       {contact ? (
         <>

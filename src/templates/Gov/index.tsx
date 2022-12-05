@@ -6,7 +6,6 @@ import { chains } from '../../constants/tokenAddresses'
 import { useAppSelector } from '../../store/hooks'
 import useConnect from '../../hooks/useConnect'
 
-import Header from '../../components/Header'
 import TitleSection from '../../components/TitleSection'
 import Overview from '../../components/Governance/Overview'
 import ProposalTable from '../../components/Governance/ProposalTable'
@@ -34,7 +33,6 @@ const Gov = () => {
 
   return (
     <>
-      <Header />
       <Breadcrumb>
         <BreadcrumbItem href="/">Home</BreadcrumbItem>
         <BreadcrumbItem href="/gov" isLastPage>

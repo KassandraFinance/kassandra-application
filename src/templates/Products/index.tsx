@@ -28,7 +28,6 @@ import { usePoolTokens } from '../../context/PoolTokensContext'
 import useYieldYak from '../../hooks/useYieldYak'
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
-import Header from '../../components/Header'
 import Breadcrumb from '../../components/Breadcrumb'
 import Loading from '../../components/Loading'
 import ChartProducts from '../../components/ChartProducts'
@@ -362,7 +361,6 @@ const Products = ({ product }: Input) => {
 
   return (
     <>
-      <Header />
       <ShareImageModal
         poolId={product.sipAddress}
         setOpenModal={setOpenModal}

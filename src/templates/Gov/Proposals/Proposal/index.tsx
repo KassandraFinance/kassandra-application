@@ -33,7 +33,6 @@ import { setModalAlertText } from '../../../../store/reducers/modalAlertText'
 
 import { GET_PROPOSAL } from './graphql'
 
-import Header from '../../../../components/Header'
 import ModalVotes from '../../../../components/Governance/ModalVotes'
 import TitleSection from '../../../../components/TitleSection'
 import VoteCard from '../../../../components/Governance/VoteCard'
@@ -183,7 +182,8 @@ const Proposal = () => {
     yourVotingPowerInProposal: new BigNumber(0)
   })
   // eslint-disable-next-line prettier/prettier
-  const [yourVotingPowerInProposal, setYourVotingPowerInProposal] = React.useState(new BigNumber(0))
+  const [yourVotingPowerInProposal, setYourVotingPowerInProposal] =
+    React.useState(new BigNumber(0))
   const router = useRouter()
   const governance = useGovernance(GovernorAlpha)
   const votingPower = useVotingPower(Staking)
@@ -629,7 +629,6 @@ const Proposal = () => {
   return (
     <>
       <>
-        <Header />
         <Breadcrumb>
           <BreadcrumbItem href="/">Home</BreadcrumbItem>
           <BreadcrumbItem href="/gov">Governance</BreadcrumbItem>
@@ -715,7 +714,7 @@ const Proposal = () => {
                       voteType: 'For',
                       percentage: `${percentageVotes.for}`,
                       // eslint-disable-next-line prettier/prettier
-                    totalVotingPower: `${BNtoDecimal(
+                      totalVotingPower: `${BNtoDecimal(
                         proposal.forVotes,
                         0,
                         2,
@@ -739,7 +738,7 @@ const Proposal = () => {
                       voteType: 'Against',
                       percentage: `${percentageVotes.against}`,
                       // eslint-disable-next-line prettier/prettier
-                    totalVotingPower: `${BNtoDecimal(
+                      totalVotingPower: `${BNtoDecimal(
                         proposal.againstVotes,
                         0,
                         2,
