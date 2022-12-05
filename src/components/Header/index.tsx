@@ -17,8 +17,6 @@ import kacy96 from '../../../public/assets/logos/kacy-96.svg'
 import logoKassandra from '../../../public/assets/logos/kassandra-header.svg'
 
 import * as S from './styles'
-import ModalFullWindow from '../Modals/ModalFullWindow'
-import Steps from '../Steps'
 
 export type MenuProps = {
   username?: string
@@ -111,38 +109,6 @@ const Header = () => {
           isOpen={isChooseNetwork}
         />
       )}
-
-      <ModalFullWindow>
-        <Steps
-          steps={[
-            {
-              stepNumber: 1,
-              stepeTitle: 'set details',
-              state: 'PREVIOUS'
-            },
-            {
-              stepNumber: 2,
-              stepeTitle: 'select assets',
-              state: 'CURRENT'
-            },
-            {
-              stepNumber: 3,
-              stepeTitle: 'Add Liquidity',
-              state: 'NEXT'
-            },
-            {
-              stepNumber: 4,
-              stepeTitle: 'Configure Fee',
-              state: 'NEXT'
-            },
-            {
-              stepNumber: 5,
-              stepeTitle: 'Review',
-              state: 'NEXT'
-            }
-          ]}
-        />
-      </ModalFullWindow>
     </>
   )
 }
