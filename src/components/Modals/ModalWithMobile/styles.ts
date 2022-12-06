@@ -21,7 +21,8 @@ export const Modal = styled.div`
     @media (max-width: 576px) {
       position: fixed;
       top: auto;
-      left: auto;
+      right: 0;
+      left: 0;
       bottom: 0;
       transform: translate(0, 0);
 

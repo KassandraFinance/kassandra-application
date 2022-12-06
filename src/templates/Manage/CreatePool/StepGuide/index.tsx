@@ -1,8 +1,10 @@
+import React from 'react'
 import Image from 'next/image'
 
 import StepCard from './StepCard'
 import ExternalLink from '../../../../components/ExternalLink'
 import CreatePoolHeader from '../CreatePoolHeader'
+import ModalAvailableAssets from '../../../../components/Modals/ModalAvailableAssets'
 
 import infoIcon from '../../../../../public/assets/iconGradient/info-solid-gradient.svg'
 import assetsIcon from '../../../../../public/assets/iconGradient/assets-distribution.svg'
@@ -43,6 +45,8 @@ const stepGuide = [
 ]
 
 const StepGuide = () => {
+  const [isAvailableAssets, setIsAvailableAssets] = React.useState(false)
+
   return (
     <S.StepGuide>
       {/* Network icon comes from api */}
@@ -86,11 +90,22 @@ const StepGuide = () => {
             </S.ButtonNetwork>
 
             <S.LinkWrapper>
-              <ExternalLink text="Available assets" />
+              <ExternalLink
+                text="Available assets"
+                onClick={() => setIsAvailableAssets(true)}
+              />
             </S.LinkWrapper>
           </S.ButtonWrapper>
         </S.ButtonsContainer>
       </S.SelectNetwork>
+      {isAvailableAssets && (
+        <ModalAvailableAssets
+          chainIcon={<Image src={polygonIcon} />}
+          chainName={'Polygon'}
+          chainId={0}
+          setModalOpen={setIsAvailableAssets}
+        />
+      )}
     </S.StepGuide>
   )
 }
