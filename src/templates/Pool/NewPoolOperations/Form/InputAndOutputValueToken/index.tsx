@@ -90,14 +90,12 @@ const InputAndOutputValueToken = ({
       return
     }
 
-    // setSwapInBalance(new BigNumber(-1))
-    if (tokenSelect.address === pool.chain.addressWrapped) {
+    if (tokenSelect.address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
       web3.eth
         .getBalance(userWalletAddress)
         .then(newBalance =>
           setSelectedTokenInBalance(Big(newBalance.toString()))
         )
-
       return
     }
 
@@ -111,9 +109,9 @@ const InputAndOutputValueToken = ({
   }, [
     chainId,
     // newTitle,
-    tokenSelect.address,
+    tokenSelect,
     userWalletAddress,
-    pool.underlying_assets_addresses
+    pool
     // swapOutAddress
   ])
 

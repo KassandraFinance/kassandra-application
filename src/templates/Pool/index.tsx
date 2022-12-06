@@ -26,6 +26,7 @@ import PoweredBy from './PoweredBy'
 import ActivityTable from './ActivityTable'
 
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
+import ahype from '../../../public/assets/logos/ahype.svg'
 
 import { GET_INFO_POOL } from './graphql'
 
@@ -291,15 +292,15 @@ const Pool = () => {
                 pid={typeof pool.poolId === 'undefined' ? -1 : pool.poolId}
                 decimals={infoPool.decimals}
               /> */}
-              {/* <Summary
+              <Summary
                 strategy={data?.pool.strategy || 'Coming soon...'}
-                poolContract={pool.core_address}
+                poolContract={pool.core_pool}
                 poolController={pool.id}
                 summary={pool.summary}
                 symbol={pool.symbol}
                 link={pool.url}
-                icon={pool.logo}
-              /> */}
+                icon={ahype}
+              />
               {/* <PoweredBy partners={pool.partners} /> */}
               <Distribution />
               {/* <ActivityTable product={pool} /> */}

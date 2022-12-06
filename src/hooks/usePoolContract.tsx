@@ -9,6 +9,8 @@ import Pool from "../constants/abi/Pool.json"
 
 import { TransactionCallback } from '../utils/txWait'
 
+import { useAppSelector } from '../store/hooks'
+
 interface Events {
   NewSwapFee: EventSubscribe;
   WeightChanged: EventSubscribe;
@@ -20,6 +22,8 @@ interface Events {
 
 const usePoolContract = (address: string) => {
   const [contract, setContract] = React.useState(new web3.eth.Contract((Pool as unknown) as AbiItem, address))
+
+    const { pool } = useAppSelector(state => state)
 
   React.useEffect(() => {
     setContract(new web3.eth.Contract((Pool as unknown) as AbiItem, address))
@@ -212,6 +216,58 @@ const usePoolContract = (address: string) => {
       return new BigNumber(value)
     }
 
+    const checkTokenWithHigherLiquidityPool = async () => {
+      const tokens = pool.underlying_assets_addresses
+
+      const tokensNormalized = Promise.all(
+        tokens.map(async (token) => {
+          const normalizedWeightToken = await normalizedWeight(token);
+
+          return {
+            address: token,
+            normalizedWeight: normalizedWeightToken 
+          }
+        })
+      )
+
+      const tokensNormalizedWithSort = (await tokensNormalized).sort(function (a, b) {
+        if (a.normalizedWeight > b.normalizedWeight) {
+          return -1;
+        }
+        if (a.normalizedWeight < b.normalizedWeight) {
+          return 1;
+        }
+        return 0;
+      });
+
+      return tokensNormalizedWithSort[0] || {}
+    }
+
+    const checkTokenInThePool = async (address: string) => {
+      const tokens = pool.underlying_assets
+
+      const tokensChecked = tokens.map(item => {
+        if (item.token.is_wrap_token === 1) {
+          return {
+            address: item.token.wraps.id.toLowerCase(),
+            is_wraps: 1,
+            yrt: item.token.id
+          }
+        }
+        return {
+          address: item.token.id.toLowerCase(),
+          is_wraps: 0,
+          yrt: ""
+        }
+      })
+
+      return tokensChecked.find(token => {
+        if (token.address === address.toLowerCase()) {
+          return token
+        }
+      })
+    }
+
     return {
       events,
 
@@ -231,6 +287,8 @@ const usePoolContract = (address: string) => {
       swapFee,
       exitFee,
       totalDenormalizedWeight,
+      checkTokenWithHigherLiquidityPool,
+      checkTokenInThePool
     }
   }, [contract])
 }

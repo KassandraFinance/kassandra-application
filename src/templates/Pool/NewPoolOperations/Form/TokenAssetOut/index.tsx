@@ -1,37 +1,58 @@
 import React from 'react'
 import Image from 'next/image'
 import Tippy from '@tippyjs/react'
-
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 
-import ahype from '../../../../../../public/assets/logos/ahype.svg'
+import web3 from '../../../../../utils/web3'
+import { BNtoDecimal } from '../../../../../utils/numerals'
+
+import { useAppSelector } from '../../../../../store/hooks'
+import { ERC20 } from '../../../../../hooks/useERC20Contract'
 
 import * as S from './styles'
 
 interface ITokenAssetOutProps {
-  decimals?: BigNumber | Big;
-  swapAmount?: BigNumber | Big;
-  disabled?: string;
-  operation?: string;
-  swapOutAddress?: string;
-  poolTokensArray?: any[];
-  calculateAmountIn?: (amoutOut: BigNumber) => Promise<void>;
-  setSwapOutAmount?: React.Dispatch<React.SetStateAction<BigNumber[]>>;
-  setMaxActive?: React.Dispatch<React.SetStateAction<boolean>>;
+  amountTokenIn?: Big;
+  setAmountTokenIn?: React.Dispatch<React.SetStateAction<Big>>;
+  amountTokenOut?: Big;
+  setAmountTokenOut?: React.Dispatch<React.SetStateAction<Big>>;
 }
 
 const TokenAssetOut = ({
-  decimals,
-  swapAmount,
-  disabled,
-  operation,
-  swapOutAddress,
-  poolTokensArray,
-  calculateAmountIn,
-  setSwapOutAmount,
-  setMaxActive
+  amountTokenIn,
+  setAmountTokenIn,
+  amountTokenOut,
+  setAmountTokenOut
 }: ITokenAssetOutProps) => {
+  const [outAssetBalance, setOutAssetBalance] = React.useState(new Big(-1))
+
+  const { pool, chainId, userWalletAddress } = useAppSelector(state => state)
+
+  React.useEffect(() => {
+    if (
+      pool.id.length === 0 ||
+      userWalletAddress.length === 0 ||
+      pool.chainId.toString().length === 0
+      // chainId !== pool.chainId
+    ) {
+      return
+    }
+
+    const token = ERC20(pool.id)
+
+    token
+      .balance(userWalletAddress)
+      .then(newBalance => setOutAssetBalance(Big(newBalance.toString())))
+  }, [
+    chainId,
+    // newTitle,
+    pool.id,
+    userWalletAddress,
+    pool.underlying_assets_addresses
+    // swapOutAddress
+  ])
+
   return (
     <S.TokenAssetOut>
       <S.FlexContainer>
@@ -39,36 +60,38 @@ const TokenAssetOut = ({
           <S.Title>Swap to</S.Title>
           <S.Token>
             <div className="img">
-              <Image
-                // src={poolTokens[0]?.symbol === 'aHYPE' ? ahype : tricrypto}
-                src={ahype}
-                alt=""
-                width={22}
-                height={22}
-              />
+              <img src={pool.logo} alt="" width={22} height={22} />
             </div>
-            <S.Symbol>aHYPE</S.Symbol>
+            <S.Symbol>{pool.symbol}</S.Symbol>
           </S.Token>
           <S.Balance>
-            {/* Balance:{' '}
-        {swapBalance > new BigNumber(-1)
-          ? BNtoDecimal(swapBalance, decimals.toNumber())
-          : '...'} */}
-            Balance: ...
+            Balance:{' '}
+            {outAssetBalance > new Big(-1)
+              ? BNtoDecimal(outAssetBalance, pool.chain.nativeTokenDecimals)
+              : '...'}
           </S.Balance>
         </S.TokenContainer>
         <S.InputContainer>
-          <Tippy content={disabled} disabled={true}>
-            <S.Input
-            // readOnly={disabled.length > 0 || operation === 'Withdraw'}
-            // type="number"
-            // placeholder="0"
+          {/* <Tippy content={disabled} disabled={true}> */}
+          <S.Input
+            readOnly={true}
+            type="number"
+            placeholder="0"
+            value={Number(
+              BNtoDecimal(
+                amountTokenOut?.div(Big(10).pow(18)) || new BigNumber(0),
+                18,
+                6
+              ).replace(/\s/g, '')
+            )}
             // value={
-            //   decimals.gt(new BigNumber(-1))
-            //     ? Number(BNtoDecimal(
-            //       swapAmount || new BigNumber(0),
-            //       decimals.toNumber()
-            //     ).replace(/\s/g, ''))
+            //   pool.chain.nativeTokenDecimals > 0
+            //     ? Number(
+            //         BNtoDecimal(
+            //           swapAmount || new BigNumber(0),
+            //           pool.chain.nativeTokenDecimals
+            //         ).replace(/\s/g, '')
+            //       )
             //     : '0'
             // }
             // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,8 +118,8 @@ const TokenAssetOut = ({
             //   }
             //   setMaxActive && setMaxActive(false)
             // }}
-            />
-          </Tippy>
+          />
+          {/* </Tippy> */}
           <S.PriceDolar>
             {/* {poolTokensArray &&
           'USD: ' +
