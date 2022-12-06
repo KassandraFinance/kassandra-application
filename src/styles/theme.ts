@@ -41,7 +41,9 @@ export default {
     snow: '#FCFCFC',
     red: '#EA3224',
     green: '#5EE56B',
-    white: '#ffffff'
+    white: '#ffffff',
+    redAvalanche: '#E84142',
+    purplePolygon: '#8247E5',
   },
   spacings: {
     space8: '0.8rem',
