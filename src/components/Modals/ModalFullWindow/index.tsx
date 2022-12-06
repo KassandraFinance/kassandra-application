@@ -1,10 +1,11 @@
 import Image from 'next/image'
 
 import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
+
 import * as S from './styles'
 
 interface IModalFullWindowProps {
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
   handleCloseModal: () => void;
 }
 

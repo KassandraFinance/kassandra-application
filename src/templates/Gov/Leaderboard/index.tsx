@@ -5,7 +5,6 @@ import { chains } from '../../../constants/tokenAddresses'
 import { useAppSelector } from '../../../store/hooks'
 import useConnect from '../../../hooks/useConnect'
 
-import Header from '../../../components/Header'
 import TitleSection from '../../../components/TitleSection'
 import Breadcrumb from '../../../components/Breadcrumb'
 import BreadcrumbItem from '../../../components/Breadcrumb/BreadcrumbItem'
@@ -44,7 +43,6 @@ const Leaderboard = () => {
 
   return (
     <>
-      <Header />
       <Breadcrumb>
         <BreadcrumbItem href="/">Home</BreadcrumbItem>
         <BreadcrumbItem href="/gov">Governance</BreadcrumbItem>

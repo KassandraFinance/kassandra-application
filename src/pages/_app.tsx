@@ -11,6 +11,7 @@ import theme from '../styles/theme'
 
 import { ReduxProvider } from '../store/reduxContext'
 
+import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Toastify from '../components/Toastify'
 
@@ -92,6 +93,8 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               fetcher: url => fetch(url).then(res => res.json())
             }}
           >
+            <Header />
+
             <Component {...pageProps} />
           </SWRConfig>
           {router.pathname !== '/404' && <Footer />}

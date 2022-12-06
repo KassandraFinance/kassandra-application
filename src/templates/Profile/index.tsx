@@ -27,7 +27,6 @@ import {
 } from '../../constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG, LP_KACY_AVAX_JOE, allPools } from '../../constants/pools'
 
-import Header from '../../components/Header'
 import Breadcrumb from '../../components/Breadcrumb'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import UserDescription from '../../components/Governance/UserDescription'
@@ -395,7 +394,6 @@ const Profile = () => {
 
   return (
     <>
-      <Header />
       <Breadcrumb>
         <BreadcrumbItem href="/">Home</BreadcrumbItem>
         <BreadcrumbItem

@@ -15,6 +15,8 @@ export const ModalFullWindow = styled.div`
     background-size: cover;
     background-position-x: center;
 
+    overflow-y: auto;
+
     z-index: 1050;
 
     @media (min-width: 768px) {
@@ -34,11 +36,9 @@ export const Container = styled.div`
     width: 100%;
 
     margin-top: 8rem;
-    margin-bottom: 17.2rem;
     padding-inline: 1.6rem;
 
     @media (min-width: 768px) {
-      margin-bottom: 19.3rem;
       padding-inline: 2.4rem;
     }
 
@@ -47,7 +47,6 @@ export const Container = styled.div`
 
       margin-inline: auto;
       margin-top: 9.8rem;
-      margin-bottom: 17.9rem;
       padding-inline: 3.2rem;
     }
   `}
