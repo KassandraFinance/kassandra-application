@@ -12,6 +12,8 @@ export const ContainerButton = styled.div`
 
     background-color: #1f2226;
 
+    z-index: 1030;
+
     @media (min-width: 768px) {
       height: 9.6rem;
       padding: 2.4rem;
