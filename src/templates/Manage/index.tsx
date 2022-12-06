@@ -1,5 +1,5 @@
 import React from 'react'
-import ModalModalAvailableAssets from '../../components/Modals/ModalModalAvailableAssets'
+import ModalAvailableAssets from '../../components/Modals/ModalAvailableAssets'
 import * as S from './styles'
 
 const Manage = () => {
@@ -10,8 +10,7 @@ const Manage = () => {
       <h1>Ready to create your first pool?</h1>
 
       <button onClick={() => setModalOpen(true)}>click me</button>
-
-      {modalOpen && <ModalModalAvailableAssets setModalOpen={setModalOpen} />}
+      {modalOpen && <ModalAvailableAssets setModalOpen={setModalOpen} />}
     </S.Manage>
   )
 }
