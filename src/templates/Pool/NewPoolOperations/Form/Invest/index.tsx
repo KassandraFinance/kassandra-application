@@ -10,11 +10,12 @@ import {
 import { useAppSelector } from '../../../../../store/hooks'
 
 import useProxy from '../../../../../hooks/useProxy'
-import useERC20Contract, { ERC20 } from '../../../../../hooks/useERC20Contract'
+import useERC20Contract from '../../../../../hooks/useERC20Contract'
 import usePoolContract from '../../../../../hooks/usePoolContract'
 import useYieldYak from '../../../../../hooks/useYieldYak'
 // import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
 
+import { ToastWarning } from '../../../../../components/Toastify/toast'
 
 import InputAndOutputValueToken from '../InputAndOutputValueToken'
 import TokenAssetOut from '../TokenAssetOut'
@@ -27,13 +28,17 @@ interface IInvestProps {
 
 const Invest = ({ typeAction }: IInvestProps) => {
   const [maxActive, setMaxActive] = React.useState<boolean>(false)
-  const [amountTokenIn, setAmountTokenIn] = React.useState<Big>(Big(0))
+  const [amountTokenIn, setAmountTokenIn] = React.useState<Big | string>(Big(0))
   const [amountTokenOut, setAmountTokenOut] = React.useState<Big>(Big(0))
+  const [errorMsg, setErrorMsg] = React.useState('')
   // const [gasFee, setGasFee] = React.useState({
   //   error: false,
   //   feeNumber: 0,
   //   feeString: ''
   // })
+  const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
+    new Big(-1)
+  )
 
   const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
     state => state
@@ -46,18 +51,11 @@ const Invest = ({ typeAction }: IInvestProps) => {
   const corePool = usePoolContract(pool.core_pool)
   const yieldYak = useYieldYak()
 
+  const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
   // function handleSubmit() {
 
   // }
 
-  //https://api.1inch.io/v5.0/43114/swap?fromTokenAddress=0xd586e7f844cea2f87f50152665bcbc2c279d8d70&toTokenAddress=0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7&amount=10000000000000000&fromAddress=0xFdFeC1cbc5A10FC8F69C08af8D91Ea3B5190b5e6&slippage=1&disableEstimate=true
-  // console.log(tokenSelect.address)
-
-  // async function tokens() {
-  //   const tokens = await corePool.checkTokenWithHigherLiquidityPool()
-  //   console.log(aa)
-  // }
-  // tokens()
   // calculate investment
   React.useEffect(() => {
     if (
@@ -70,7 +68,6 @@ const Invest = ({ typeAction }: IInvestProps) => {
     }
 
     if (chainId !== pool.chainId) {
-      // setAmountTokenOut([new BigNumber(0)])
       setAmountTokenOut(Big(0))
       return
     }
@@ -105,9 +102,8 @@ const Invest = ({ typeAction }: IInvestProps) => {
         }&slippage=1&disableEstimate=true`
       )
 
-      // verificar o amountTokenIn
       const data = await response.json()
-      return data.toTokenAmount
+      return data.toTokenAmount || 0
     }
 
     const calc = async () => {
@@ -155,11 +151,9 @@ const Invest = ({ typeAction }: IInvestProps) => {
             userWalletAddress
           )
 
-          // swapInAddress
           // await generateEstimatedGas()
 
-          // setSwapOutAmount([newSwapOutAmount])
-          console.log(newSwapOutAmount)
+          setAmountTokenOut(Big(newSwapOutAmount))
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           let investAmoutInCalc: BigNumber = new BigNumber(
@@ -179,99 +173,72 @@ const Invest = ({ typeAction }: IInvestProps) => {
             investAmoutInCalc,
             poolSwapFee
           )
-          // let investAmoutOutNormalized: BigNumber = newSwapOutPrice
-          // if (tokensChecked?.is_wraps) {
-          //   investAmoutOutNormalized = await yieldYak.convertBalanceYRTtoWrap(
-          //     newSwapOutPrice,
-          //     invertToken[swapOutAddress]
-          //   )
-          // }
 
           setAmountTokenOut(Big(newSwapOutPrice.toString()))
-          // setSwapOutAmount([investAmoutOutNormalized])
-          // if (userWalletAddress.length > 0) {
-          //   const errorStr = error.toString()
-          //   if (errorStr.search(/ERR_(BPOW_BASE_TOO_|MATH_APPROX)/) > -1) {
-          //     setErrorMsg('This amount is too low for the pool!')
-          //     return
-          //   }
-          //   if (errorStr.search('ERR_MAX_IN_RATIO') > -1) {
-          //     setErrorMsg(
-          //       "The amount can't be more than half of what's in the pool!"
-          //     )
-          //     return
-          //   }
-          //   if (
-          //     swapInAmount.gt(swapInBalance) &&
-          //     Number(swapInAmount.toString()) > 0
-          //   ) {
-          //     setErrorMsg('This amount exceeds your balance!')
-          //     return
-          //   }
-          // }
+
+          if (userWalletAddress.length > 0) {
+            const errorStr = error.toString()
+            if (errorStr.search(/ERR_(BPOW_BASE_TOO_|MATH_APPROX)/) > -1) {
+              setErrorMsg('This amount is too low for the pool!')
+              return
+            }
+            if (errorStr.search('ERR_MAX_IN_RATIO') > -1) {
+              setErrorMsg(
+                "The amount can't be more than half of what's in the pool!"
+              )
+              return
+            }
+            if (
+              Big(newAmountTokenIn).gt(selectedTokenInBalance) &&
+              Number(newAmountTokenIn.toString()) > 0
+            ) {
+              setErrorMsg('This amount exceeds your balance!')
+              return
+            }
+          }
         }
 
-        // let newSwapOutPrice
-        // let pow = new BigNumber(0)
-
-        // while (!newSwapOutPrice) {
-        //   try {
-        //     const multiplier = new BigNumber(10).pow(pow)
-        //     newSwapOutPrice = await corePool.calcPoolOutGivenSingleIn(
-        //       swapInTotalPoolBalance,
-        //       swapInDenormalizedWeight,
-        //       poolSupply,
-        //       poolTotalDenormalizedWeight,
-        //       wei.div(multiplier),
-        //       poolSwapFee
-        //     )
-        //     newSwapOutPrice = newSwapOutPrice.mul(multiplier)
-        //   } catch (e) {
-        //     pow = pow.add(new BigNumber(1))
-        //   }
-        // }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        // const errorStr = error.toString()
-        // if (userWalletAddress.length > 0) {
-        //   if (errorStr.search('ERR_BPOW_BASE_TOO_HIGH') > -1) {
-        //     ToastWarning(
-        //       "The amount can't be more than half of what's in the pool!"
-        //     )
-        //     return
-        //   }
-        //   ToastWarning(
-        //     'Could not connect with the blockchain to calculate prices.'
-        //   )
-        // }
+        const errorStr = error.toString()
+        if (userWalletAddress.length > 0) {
+          if (errorStr.search('ERR_BPOW_BASE_TOO_HIGH') > -1) {
+            ToastWarning(
+              "The amount can't be more than half of what's in the pool!"
+            )
+            return
+          }
+          ToastWarning(
+            'Could not connect with the blockchain to calculate prices.'
+          )
+        }
       }
     }
 
+    setErrorMsg('')
+    setAmountTokenOut(Big(0))
     calc()
-    // setErrorMsg('')
-    // setSwapOutAmount([new BigNumber(0)])
-  }, [pool.chainId, amountTokenIn, tokenSelect.address])
+  }, [pool, tokenSelect, amountTokenIn])
 
   return (
     <S.Invest>
       <InputAndOutputValueToken
+        typeAction={typeAction}
         amountTokenIn={amountTokenIn}
         setAmountTokenIn={setAmountTokenIn}
+        selectedTokenInBalance={selectedTokenInBalance}
+        setSelectedTokenInBalance={setSelectedTokenInBalance}
         maxActive={maxActive}
         setMaxActive={setMaxActive}
         inputAmountTokenRef={inputAmountTokenRef}
+        errorMsg={errorMsg}
       />
       <img
         src="/assets/icons/arrow-down.svg"
         alt=""
         style={{ margin: '12px 0' }}
       />
-      <TokenAssetOut
-        amountTokenIn={amountTokenIn}
-        setAmountTokenIn={setAmountTokenIn}
-        amountTokenOut={amountTokenOut}
-        setAmountTokenOut={setAmountTokenOut}
-      />
+      <TokenAssetOut typeAction={typeAction} amountTokenOut={amountTokenOut} />
     </S.Invest>
   )
 }

@@ -12,24 +12,25 @@ import { BNtoDecimal } from '../../../../../utils/numerals'
 import { useAppSelector } from '../../../../../store/hooks'
 import { ERC20 } from '../../../../../hooks/useERC20Contract'
 
+import { GET_INFO_POOL } from '../graphql'
+
 import * as S from './styles'
 
 interface ITokenAssetOutProps {
-  amountTokenIn?: Big;
-  setAmountTokenIn?: React.Dispatch<React.SetStateAction<Big>>;
+  typeAction: string;
   amountTokenOut?: Big;
-  setAmountTokenOut?: React.Dispatch<React.SetStateAction<Big>>;
 }
 
-const TokenAssetOut = ({
-  amountTokenIn,
-  setAmountTokenIn,
-  amountTokenOut,
-  setAmountTokenOut
-}: ITokenAssetOutProps) => {
+const TokenAssetOut = ({ typeAction, amountTokenOut }: ITokenAssetOutProps) => {
   const [outAssetBalance, setOutAssetBalance] = React.useState(new Big(-1))
 
   const { pool, chainId, userWalletAddress } = useAppSelector(state => state)
+
+  const { data } = useSWR([GET_INFO_POOL], query =>
+    request('https://backend.kassandra.finance', query, {
+      id: pool.id
+    })
+  )
 
   React.useEffect(() => {
     if (
@@ -46,14 +47,7 @@ const TokenAssetOut = ({
     token
       .balance(userWalletAddress)
       .then(newBalance => setOutAssetBalance(Big(newBalance.toString())))
-  }, [
-    chainId,
-    // newTitle,
-    pool.id,
-    userWalletAddress,
-    pool.underlying_assets_addresses
-    // swapOutAddress
-  ])
+  }, [chainId, typeAction, userWalletAddress, pool])
 
   return (
     <S.TokenAssetOut>
@@ -86,54 +80,20 @@ const TokenAssetOut = ({
                 6
               ).replace(/\s/g, '')
             )}
-            // value={
-            //   pool.chain.nativeTokenDecimals > 0
-            //     ? Number(
-            //         BNtoDecimal(
-            //           swapAmount || new BigNumber(0),
-            //           pool.chain.nativeTokenDecimals
-            //         ).replace(/\s/g, '')
-            //       )
-            //     : '0'
-            // }
-            // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            //   let { value } = e.target
-
-            //   if (value.length === 0) {
-            //     // eslint-disable-next-line prettier/prettier
-            //     value = e.target.dataset.lastvalue as string
-            //   }
-            //   else if (value[0] === '0') {
-            //     e.target.value = value.replace(/^0+/, '')
-            //   }
-
-            //   if (e.target.value[0] === '.') {
-            //     e.target.value = `0${e.target.value}`
-            //   }
-            //   const decimalsNum = decimals.toNumber()
-            //   const values = e.target.value.split('.')
-            //   const paddedRight = `${values[0]}${`${values[1] || 0
-            //     }${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)}`
-            //   setSwapOutAmount && setSwapOutAmount([new BigNumber(paddedRight)])
-            //   if (calculateAmountIn) {
-            //     calculateAmountIn(new BigNumber(paddedRight))
-            //   }
-            //   setMaxActive && setMaxActive(false)
-            // }}
           />
           {/* </Tippy> */}
           <S.PriceDolar>
-            {/* {poolTokensArray &&
-          'USD: ' +
-          BNtoDecimal(
-            Big(swapAmount.toString())
-              .mul(Big(priceDollar(swapOutAddress, poolTokensArray)))
-              .div(Big(10).pow(Number(decimals))),
-            18,
-            2,
-            2
-          )} */}
-            USD: 0.00
+            {amountTokenOut &&
+              data?.pool &&
+              'USD: ' +
+                BNtoDecimal(
+                  Big(amountTokenOut.toString())
+                    .mul(Big(data?.pool?.price_usd || 0))
+                    .div(Big(10).pow(data?.pool?.decimals)),
+                  18,
+                  2,
+                  2
+                )}
           </S.PriceDolar>
         </S.InputContainer>
       </S.FlexContainer>

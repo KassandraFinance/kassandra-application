@@ -162,3 +162,14 @@ export const ButtonMax = styled.button<IButtonMax>`
     }
   `}
 `
+
+export const ErrorMSG = styled.span`
+  ${({ theme }) => css`
+    /* position: absolute;
+    bottom: 1rem;
+    left: 1.8rem; */
+
+    color: ${theme.colors.red};
+    pointer-events: none;
+  `}
+`

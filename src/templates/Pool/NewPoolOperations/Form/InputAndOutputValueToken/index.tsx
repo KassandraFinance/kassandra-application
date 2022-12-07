@@ -16,26 +16,28 @@ import TokenSelected from '../TokenSelected'
 import * as S from './styles'
 
 interface IInputAndOutputValueTokenProps {
-  amountTokenIn: Big;
-  setAmountTokenIn: React.Dispatch<React.SetStateAction<Big>>;
+  typeAction: string;
+  amountTokenIn: Big | string;
+  setAmountTokenIn: React.Dispatch<React.SetStateAction<Big | string>>;
+  selectedTokenInBalance: Big;
+  setSelectedTokenInBalance: React.Dispatch<React.SetStateAction<Big>>;
   maxActive: boolean;
   setMaxActive: React.Dispatch<React.SetStateAction<boolean>>;
   inputAmountTokenRef: React.RefObject<HTMLInputElement>;
+  errorMsg: string;
 }
 
-const InputAndOutputValueToken = ({ 
+const InputAndOutputValueToken = ({
+  typeAction,
   amountTokenIn, 
-  setAmountTokenIn, 
+  setAmountTokenIn,
+  selectedTokenInBalance,
+  setSelectedTokenInBalance,
   maxActive, 
   setMaxActive, 
-  inputAmountTokenRef 
+  inputAmountTokenRef,
+  errorMsg = ''
 }: IInputAndOutputValueTokenProps) => {
-  const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
-    new Big(-1)
-  )
-
-  // const [selectedTokenIn, setSelectedTokenIn] = React.useState('')
-
   const { pool, chainId, tokenSelect, tokenList1Inch, userWalletAddress } = useAppSelector(
     state => state
   )
@@ -108,11 +110,10 @@ const InputAndOutputValueToken = ({
       )
   }, [
     chainId,
-    // newTitle,
+    typeAction,
     tokenSelect,
     userWalletAddress,
     pool
-    // swapOutAddress
   ])
 
   return (
@@ -129,8 +130,7 @@ const InputAndOutputValueToken = ({
                     selectedTokenInBalance.div(
                       Big(10).pow(tokenSelect.decimals)
                     ),
-                    tokenSelect.decimals,
-                    6
+                    tokenSelect.decimals
                   )
                 : '...'}
             </S.Span>
@@ -138,7 +138,7 @@ const InputAndOutputValueToken = ({
           <S.Amount>
             <S.ButtonMax
               type="button"
-              maxActive={false}
+              maxActive={maxActive}
               onClick={() => {
                 handleMaxUserBalance()
                 trackEventFunction(
@@ -203,7 +203,7 @@ const InputAndOutputValueToken = ({
                   const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)
                     }`
                   setMaxActive(false)
-                  setAmountTokenIn(Big(paddedRight))
+                  setAmountTokenIn(paddedRight)
                 }
               }
             />
@@ -226,6 +226,19 @@ const InputAndOutputValueToken = ({
             </span>
           </S.Amount>
         </S.Top>
+        {errorMsg !== '' ? (
+          <S.ErrorMSG color="red">{errorMsg}</S.ErrorMSG>
+          ) : (
+          <>
+            {/* {gasFee && gasFee?.error && (
+              <S.Span color="amber">
+                Don’t forget the gas fees! Leave at least{' '}
+                {gasFee.feeString.slice(0, 8)} AVAX on your wallet to ensure a
+                smooth transaction
+              </S.Span>
+            )} */}
+          </>
+        )}
       </S.FlexContainer>
     </S.InputAndOutputValueToken>
   )
