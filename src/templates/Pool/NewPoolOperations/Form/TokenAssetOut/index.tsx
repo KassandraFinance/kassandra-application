@@ -1,10 +1,12 @@
 import React from 'react'
-import Image from 'next/image'
-import Tippy from '@tippyjs/react'
+// import Image from 'next/image'
+// import Tippy from '@tippyjs/react'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
+import useSWR from 'swr'
+import { request } from 'graphql-request'
 
-import web3 from '../../../../../utils/web3'
+// import web3 from '../../../../../utils/web3'
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import { useAppSelector } from '../../../../../store/hooks'

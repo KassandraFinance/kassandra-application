@@ -13,7 +13,8 @@ import useProxy from '../../../../../hooks/useProxy'
 import useERC20Contract, { ERC20 } from '../../../../../hooks/useERC20Contract'
 import usePoolContract from '../../../../../hooks/usePoolContract'
 import useYieldYak from '../../../../../hooks/useYieldYak'
-import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
+// import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
+
 
 import InputAndOutputValueToken from '../InputAndOutputValueToken'
 import TokenAssetOut from '../TokenAssetOut'
@@ -28,19 +29,17 @@ const Invest = ({ typeAction }: IInvestProps) => {
   const [maxActive, setMaxActive] = React.useState<boolean>(false)
   const [amountTokenIn, setAmountTokenIn] = React.useState<Big>(Big(0))
   const [amountTokenOut, setAmountTokenOut] = React.useState<Big>(Big(0))
-  const [gasFee, setGasFee] = React.useState({
-    error: false,
-    feeNumber: 0,
-    feeString: ''
-  })
-
-  const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
+  // const [gasFee, setGasFee] = React.useState({
+  //   error: false,
+  //   feeNumber: 0,
+  //   feeString: ''
+  // })
 
   const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
     state => state
   )
 
-  const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
+  // const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
 
   const proxy = useProxy(ProxyContract, pool.id, pool.core_pool)
   const crpPoolToken = useERC20Contract(pool.id)
