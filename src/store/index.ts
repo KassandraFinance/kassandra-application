@@ -9,7 +9,7 @@ import poolImagesReducer from './reducers/poolImages'
 import tokenAddress2IndexReducer from './reducers/tokenAddress2Index'
 import performanceValuesReducer from './reducers/performanceValues'
 import modalAlertTextReducer from './reducers/modalAlertText'
-import tokenSelectedReducer from './reducers/tokenSelected'
+import tokenSelectionActiveReducer from './reducers/tokenSelectionActive'
 import tokenSelect from './reducers/tokenSelect'
 import poolReducer from './reducers/pool'
 import tokenList1InchReducer from './reducers/tokenList1Inch'
@@ -25,7 +25,7 @@ export const store = configureStore({
     performanceValues: performanceValuesReducer,
     periodSelected: periodSelectedReducer,
     modalAlertText: modalAlertTextReducer,
-    tokenSelected: tokenSelectedReducer,
+    tokenSelectionActive: tokenSelectionActiveReducer,
     tokenSelect: tokenSelect,
     pool: poolReducer,
     tokenList1Inch: tokenList1InchReducer

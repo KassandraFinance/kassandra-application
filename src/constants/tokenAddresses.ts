@@ -88,6 +88,9 @@ export const SUBGRAPH_URL = `https://graph.kassandra.finance/subgraphs/name/${pr
   'KassandraFuji'}`
 
 export const URL_1INCH = 'https://api.1inch.io/v5.0/'
+export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
+export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
+
 
 export const chains: { [key: string]: ChainDetails } = {
   avalanche: {

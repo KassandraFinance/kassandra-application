@@ -4,7 +4,7 @@ import Image from 'next/image'
 // import { ITokenDetails } from '../../../../context/PoolTokensContext'
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 
-import { setTokenSelected } from '../../../../../store/reducers/tokenSelected'
+import { setTokenSelectionActive } from '../../../../../store/reducers/tokenSelectionActive'
 
 import arrow from '../../../../../../public/assets/utilities/arrow-select-down.svg'
 import none from '../../../../../../public/assets/icons/coming-soon.svg'
@@ -26,7 +26,7 @@ const TokenSelected = () => {
       <S.Selected
         openOptions={true}
         onClick={() => {
-          dispatch(setTokenSelected(true))
+          dispatch(setTokenSelectionActive(true))
         }}
       >
         <div className="img">
