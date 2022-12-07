@@ -33,7 +33,7 @@ export interface ChainInfo {
 
 export interface IPoolSlice {
   id: string;
-  core_address: string;
+  core_pool: string;
   chainId: number;
   chain: ChainInfo;
   name: string;
@@ -56,7 +56,7 @@ export interface IPoolSlice {
 
 const initialState: IPoolSlice = {
   id: '',
-  core_address: '',
+  core_pool: '',
   chainId: 0,
   chain: {
     id: 0,
