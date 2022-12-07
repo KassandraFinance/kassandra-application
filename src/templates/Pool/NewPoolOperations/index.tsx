@@ -1,7 +1,8 @@
 // https://api.1inch.io/v4.0/43114/swap?fromTokenAddress=0x8729438eb15e2c8b576fcc6aecda6a148776c0f5&toTokenAddress=0xc7198437980c041c805a1edcba50c1ce5db95118&amount=10000000000000000&fromAddress=0x38918142779e2CD1189cBd9e932723C968363D1E&slippage=1&disableEstimate=true
 import React from 'react'
 
-import { useAppSelector } from '../../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../../store/hooks'
+import { setTokenSelect } from '../../../store/reducers/tokenSelect'
 
 // import { chains } from '../../../constants/tokenAddresses'
 
@@ -41,11 +42,21 @@ const NewPoolOperations = () => {
   const [typeWithdrawChecked, setTypeWithdrawChecked] = React.useState<string>('Best_value')
   const [inputCheckedBarMobile, setInputCheckedBarMobile] = React.useState<TitlesMobile>('Disable')
 
-  const { tokenSelected } = useAppSelector(state => state)
+  const { tokenSelectionActive } = useAppSelector(state => state)
 
   // function handleSetInputChecked(title: Titles) {
   //   if (chain.chainId === chainId) setInputChecked(title)
   // }
+
+
+  const dispatch = useAppDispatch()
+  const { tokenList1Inch } = useAppSelector(state => state)
+
+  React.useEffect(() => {
+    dispatch(setTokenSelect(tokenList1Inch[0]))
+  }, [])
+
+
 
   return (
     <S.NewPoolOperations>
@@ -66,7 +77,7 @@ const NewPoolOperations = () => {
         <p>modal card operation</p>
         // />
         :
-        tokenSelected ?
+        tokenSelectionActive ?
           <TokenSelection />
         :
         <SelectOperation
