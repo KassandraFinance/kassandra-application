@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const Text = styled.div`
+export const InputText = styled.div`
   ${() => css``}
 `
 
@@ -59,7 +59,7 @@ export const Input = styled.input`
   `}
 `
 
-export const InputTextWrapper = styled.span`
+export const PlaceholderWrapper = styled.span`
   ${() => css`
     position: absolute;
     top: 0;
@@ -85,7 +85,7 @@ export const InputTextWrapper = styled.span`
   `}
 `
 
-export const InputText = styled.span`
+export const Placeholder = styled.span`
   ${({ theme }) => css`
     display: inline-block;
 

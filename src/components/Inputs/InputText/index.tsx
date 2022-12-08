@@ -1,6 +1,6 @@
 import * as S from './styles'
 
-interface ITextProps {
+interface IInputTextProps {
   name: string;
   type: string;
   value: string;
@@ -13,7 +13,7 @@ interface ITextProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Text = ({
+const InputText = ({
   name,
   type,
   value,
@@ -24,9 +24,9 @@ const Text = ({
   lable,
   error,
   onChange
-}: ITextProps) => {
+}: IInputTextProps) => {
   return (
-    <S.Text>
+    <S.InputText>
       <S.Label htmlFor={name}>{lable}</S.Label>
 
       <S.InputContainer>
@@ -41,14 +41,14 @@ const Text = ({
           maxLength={maxLength}
         />
 
-        <S.InputTextWrapper>
-          <S.InputText>{placeholder}</S.InputText>
-        </S.InputTextWrapper>
+        <S.PlaceholderWrapper>
+          <S.Placeholder>{placeholder}</S.Placeholder>
+        </S.PlaceholderWrapper>
 
         <S.Error>{error}</S.Error>
       </S.InputContainer>
-    </S.Text>
+    </S.InputText>
   )
 }
 
-export default Text
+export default InputText

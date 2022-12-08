@@ -1,10 +1,10 @@
 import React from 'react'
 
-import Text from '../../../../../components/Inputs/Text'
+import InputText from '../../../../../components/Inputs/InputText'
 import PoolText from './PoolText'
+import MarkdownEditor from './MarkdownEditor'
 
 import * as S from './styles'
-import MarkdownEditor from './MarkdownEditor'
 
 interface IPoolDetailsProps {}
 
@@ -28,7 +28,7 @@ const PoolDetails = ({}: IPoolDetailsProps) => {
           text="Define name, symbol and initial price of your pool"
         />
 
-        <Text
+        <InputText
           name="poolName"
           type="text"
           placeholder="Write Pool name"
@@ -41,7 +41,7 @@ const PoolDetails = ({}: IPoolDetailsProps) => {
           onChange={handleInput}
         />
 
-        <Text
+        <InputText
           name="poolSymbol"
           type="text"
           placeholder="e.g.: ETH, BTC, AVAX, etc."

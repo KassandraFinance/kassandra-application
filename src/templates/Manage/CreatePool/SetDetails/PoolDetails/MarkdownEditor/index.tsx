@@ -1,7 +1,7 @@
-import dynamic from 'next/dynamic'
 import React from 'react'
-import 'react-markdown-editor-lite/lib/index.css'
+import dynamic from 'next/dynamic'
 import ReactMarkdown from 'react-markdown'
+import 'react-markdown-editor-lite/lib/index.css'
 
 const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
   ssr: false
