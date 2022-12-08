@@ -44,6 +44,8 @@ export default {
     white: '#ffffff',
     redAvalanche: '#E84142',
     purplePolygon: '#8247E5',
+    error: '#E8372C',
+    success: '#2CE878',
   },
   spacings: {
     space8: '0.8rem',

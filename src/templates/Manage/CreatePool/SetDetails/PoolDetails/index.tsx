@@ -1,9 +1,70 @@
+import React from 'react'
+
+import Text from '../../../../../components/Inputs/Text'
+import PoolText from './PoolText'
+
 import * as S from './styles'
+import MarkdownEditor from './MarkdownEditor'
 
 interface IPoolDetailsProps {}
 
 const PoolDetails = ({}: IPoolDetailsProps) => {
-  return <S.PoolDetails>PoolDetails</S.PoolDetails>
+  const [value, setValue] = React.useState('')
+
+  function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
+    console.log(e.target.name)
+    setValue(e.target.value)
+  }
+
+  function handleEditorChange({ text }: { text: string }) {
+    console.log(text)
+  }
+
+  return (
+    <S.PoolDetails>
+      <S.Details>
+        <PoolText
+          title="Pool details"
+          text="Define name, symbol and initial price of your pool"
+        />
+
+        <Text
+          name="poolName"
+          type="text"
+          placeholder="Write Pool name"
+          required
+          value={value}
+          minLength={3}
+          maxLength={32}
+          lable="managed pool name"
+          error="Invalid fund name. Fund names must be 32 characters or less"
+          onChange={handleInput}
+        />
+
+        <Text
+          name="poolSymbol"
+          type="text"
+          placeholder="e.g.: ETH, BTC, AVAX, etc."
+          required
+          value={value}
+          minLength={3}
+          maxLength={5}
+          lable="managed pool symbol"
+          error="Invalid symbol. Symbols should have 3 to 5 characters."
+          onChange={handleInput}
+        />
+      </S.Details>
+
+      <S.Strategy>
+        <PoolText
+          title="Investment Strategy"
+          text="Let your investors know what you are planning. Write the strategy you will follow managing the pool."
+        />
+
+        <MarkdownEditor handleEditorChange={handleEditorChange} />
+      </S.Strategy>
+    </S.PoolDetails>
+  )
 }
 
 export default PoolDetails
