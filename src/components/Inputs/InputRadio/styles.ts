@@ -5,11 +5,6 @@ export const InputRadioContainer = styled.span`
     display: flex;
     align-items: center;
     gap: 1.2rem;
-
-    input:checked + label::before {
-      opacity: 1;
-      transform: scale(1, 1);
-    }
   `}
 `
 
@@ -63,12 +58,12 @@ export const Label = styled.label`
 
       opacity: 0;
       transform: scale(0, 0);
-      transition: all 0.2s cubic-bezier(0.64, 0.57, 0.67, 1.53);
+      transition: all 0.3s cubic-bezier(0.64, 0.57, 0.67, 1.53);
     }
 
-    /* ${InputRadio}:checked + ::before {
+    ${InputRadio}:checked + &::before {
       opacity: 1;
       transform: scale(1, 1);
-    } */
+    }
   `}
 `
