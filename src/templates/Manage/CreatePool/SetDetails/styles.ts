@@ -1,7 +1,9 @@
 import styled, { css } from 'styled-components'
 
 export const SetDetails = styled.div`
-  ${() => css``}
+  ${() => css`
+    overflow-y: auto;
+  `}
 `
 
 export const PoolContainer = styled.div`
