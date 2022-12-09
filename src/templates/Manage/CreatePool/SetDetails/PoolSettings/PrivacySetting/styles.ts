@@ -13,7 +13,7 @@ export const PrivacySetting = styled.div`
     background: rgba(255, 255, 255, 0.05);
     border-radius: 0.8rem;
 
-    @media (min-width: 360px) and (max-width: 768px) {
+    @media (min-width: 576px) and (max-width: 992px) {
       margin-top: 0;
     }
   `}
@@ -200,7 +200,7 @@ export const PrivateAddress = styled.li`
 
     span {
       display: flex;
-      padding: 0.3rem;
+      width: 1rem;
 
       border-radius: 0.8rem;
       transition: background-color 0.2s ease;

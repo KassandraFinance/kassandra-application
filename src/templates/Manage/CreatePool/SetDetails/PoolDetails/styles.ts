@@ -1,7 +1,9 @@
 import styled, { css } from 'styled-components'
 
 export const PoolDetails = styled.div`
-  ${() => css``}
+  ${() => css`
+    width: 100%;
+  `}
 `
 
 export const Details = styled.div`

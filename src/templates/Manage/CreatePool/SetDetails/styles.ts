@@ -9,6 +9,11 @@ export const SetDetails = styled.div`
 export const PoolContainer = styled.form`
   ${() => css`
     display: grid;
-    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 36rem;
+    gap: 2.4rem;
+
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr;
+    }
   `}
 `
