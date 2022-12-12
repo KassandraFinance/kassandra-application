@@ -55,8 +55,11 @@ const SelectAssets = ({}: ISelectAssetsProps) => {
           }
         ]}
       />
+      <S.PoolContainer>
+        <div></div>
 
-      <FundSummary coins={mockData} creation />
+        <FundSummary coins={mockData} creation />
+      </S.PoolContainer>
     </S.SelectAssets>
   )
 }
