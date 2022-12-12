@@ -47,20 +47,84 @@ export const Body = styled.div`
   `}
 `
 
+export const CoinsContainer = styled.div`
+  ${() =>
+    css`
+      display: flex;
+      flex-direction: column;
+      gap: 2.4rem;
+
+      margin-bottom: 2.4rem;
+    `}
+`
+
 export const CoinContainer = styled.div`
-  ${() => css``}
+  ${() => css`
+    display: grid;
+    grid-template-columns: auto 13.5rem;
+    gap: 1.2rem;
+
+    ${ProgressBar} {
+      grid-column: span 2;
+    }
+  `}
 `
 
-export const Coin = styled.div`
-  ${() => css``}
+export const AllocationContainer = styled.div`
+  ${() =>
+    css`
+      display: grid;
+      grid-template-columns: 3.2rem auto 1rem;
+      align-items: center;
+      gap: 1.2rem;
+    `}
 `
 
-export const CoinData = styled.div`
-  ${() => css``}
+interface ILockButtonProps {
+  active: boolean;
+}
+
+// prettier-ignore
+export const LockButton = styled.button<ILockButtonProps>`
+  ${() => css`
+    width: 3.2rem;
+    height: 3.2rem;
+
+    background: rgba(255, 255, 255, 0);
+    border: 0.1rem solid rgba(255, 255, 255, 0);
+    border-radius: 50%;
+
+    cursor: pointer;
+
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: background-color border;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+  `}
+  ${({ active }) => active && css`
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 0.1rem solid rgba(255, 255, 255, 0.1) ;
+  `}
+`
+
+export const RemoveButton = styled.button`
+  ${() => css`
+    width: 1rem;
+    height: 1rem;
+
+    background-color: transparent;
+    border: none;
+
+    cursor: pointer;
+  `}
 `
 
 export const ProgressBar = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     width: 100%;
     height: 0.4rem;
 
@@ -70,16 +134,20 @@ export const ProgressBar = styled.div`
   `}
 `
 
-export const ProgressValue = styled.div`
-  ${({ theme }) => css`
+interface IProgressValueProps {
+  value: number;
+}
+
+// prettier-ignore
+export const ProgressValue = styled.div<IProgressValueProps>`
+  ${({ theme, value }) => css`
     position: relative;
-    width: 32%;
+    width: ${value}%;
     height: 0.4rem;
 
     border-radius: 0.2rem;
 
-    background-color: ${theme.colors.amber};
-    background-image: linear-gradient(90deg, #ffbf00 -10.71%, #e843c4 110.71%);
+    background-color: ${theme.colors.magenta};
 
     &::before {
       content: '';
@@ -94,5 +162,56 @@ export const ProgressValue = styled.div`
       filter: blur(5px);
       z-index: -1;
     }
+  `}
+  ${({theme, value}) => value > 100 && css`
+    background-color: ${theme.colors.error};
+    background-image: none;
+  `}
+`
+
+export const TotalContainer = styled.div`
+  ${() => css`
+    display: grid;
+    grid-template-columns: auto 13.5rem;
+    gap: 1.6rem;
+
+    ${ProgressBar} {
+      grid-column: span 2;
+    }
+
+    ${ProgressValue} {
+      background-image: linear-gradient(
+        90deg,
+        #ffbf00 -10.71%,
+        #e843c4 110.71%
+      );
+    }
+  `}
+`
+
+export const Text = styled.span`
+  ${({ theme }) => css`
+    color: ${theme.colors.snow};
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font16};
+    line-height: 100%;
+
+    &:last-of-type {
+      text-align: end;
+    }
+  `}
+`
+
+export const Error = styled.span`
+  ${({ theme }) => css`
+    grid-column: span 2;
+    display: block;
+
+    margin-top: 0.8rem;
+
+    color: ${theme.colors.error};
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
+    line-height: 100%;
   `}
 `
