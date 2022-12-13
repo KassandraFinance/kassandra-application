@@ -11,6 +11,7 @@ interface ICoinSummaryProps {
   coinImage: string;
   price: number | null;
   url?: string | null;
+  table?: boolean;
 }
 
 const CoinSummary = ({
@@ -18,7 +19,8 @@ const CoinSummary = ({
   coinName,
   coinSymbol,
   price,
-  url = null
+  url = null,
+  table = false
 }: ICoinSummaryProps) => {
   return (
     <S.CoinSummary>
@@ -31,14 +33,14 @@ const CoinSummary = ({
           {coinName}
           {url && (
             <Link href={url} passHref>
-              <a>
-                <Image src={link} />
-              </a>
+              <S.ALink>
+                <Image src={link} width={14} height={14} />
+              </S.ALink>
             </Link>
           )}
         </S.Name>
 
-        <S.Symbol>
+        <S.Symbol table={table}>
           {coinSymbol} <span>| ${price}</span>
         </S.Symbol>
       </S.TextWrapper>

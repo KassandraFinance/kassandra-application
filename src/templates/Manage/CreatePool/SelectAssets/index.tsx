@@ -8,17 +8,53 @@ import matic from '../../../../../public/assets/logos/matic.svg'
 import * as S from './styles'
 
 import { CoinType } from './FundSummary'
+import AssetsTable from '../AssetsTable'
 
 interface ISelectAssetsProps {}
 
-const mockData: CoinType[] = [
+export const mockData: CoinType[] = [
   {
     coinName: 'Aave',
     coinSymbol: 'aave',
     coinImage: aave.src,
-    price: 0.051
+    price: 0.05,
+    url: 'www.google.com'
   },
-  { coinName: 'matic', coinSymbol: 'matic', coinImage: matic.src, price: 0.73 }
+  {
+    coinName: 'matic',
+    coinSymbol: 'matic',
+    coinImage: matic.src,
+    price: 0.73,
+    url: 'www.google.com'
+  },
+  {
+    coinName: 'Aave',
+    coinSymbol: 'aave',
+    coinImage: aave.src,
+    price: 0.05,
+    url: 'www.google.com'
+  },
+  {
+    coinName: 'matic',
+    coinSymbol: 'matic',
+    coinImage: matic.src,
+    price: 0.73,
+    url: 'www.google.com'
+  },
+  {
+    coinName: 'Aave',
+    coinSymbol: 'aave',
+    coinImage: aave.src,
+    price: 0.05,
+    url: 'www.google.com'
+  },
+  {
+    coinName: 'matic',
+    coinSymbol: 'matic',
+    coinImage: matic.src,
+    price: 0.73,
+    url: 'www.google.com'
+  }
 ]
 
 const SelectAssets = ({}: ISelectAssetsProps) => {
@@ -56,7 +92,7 @@ const SelectAssets = ({}: ISelectAssetsProps) => {
         ]}
       />
       <S.PoolContainer>
-        <div></div>
+        <AssetsTable />
 
         <FundSummary coins={mockData} creation />
       </S.PoolContainer>

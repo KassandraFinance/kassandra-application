@@ -8,10 +8,10 @@ export const PoolContainer = styled.div`
   ${() => css`
     display: grid;
     grid-template-columns: 1fr;
+    gap: 2.4rem;
 
     @media (min-width: 992px) {
       grid-template-columns: auto 36.2rem;
-      gap: 2.4rem;
     }
   `}
 `

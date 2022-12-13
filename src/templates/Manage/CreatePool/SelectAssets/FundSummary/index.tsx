@@ -47,7 +47,6 @@ const FundSummary = ({ coins, creation = false }: IFundSummaryProps) => {
                 coinName={coin.coinName}
                 coinSymbol={coin.coinSymbol}
                 price={coin.price}
-                url={coin.url}
               />
 
               {creation ? (
