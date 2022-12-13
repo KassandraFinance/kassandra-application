@@ -40,6 +40,8 @@ import ModalRequestUnstake from '../Modals/ModalRequestUnstake'
 import ModalCancelUnstake from '../Modals/ModalCancelUnstake'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalStakeAndWithdraw from '../Modals/ModalStakeAndWithdraw'
+import TokenWithNetworkImage from '../TokenWithNetworkImage'
+import ModalBuyKacyOnPangolin from '../Modals/ModalBuyKacyOnPangolin'
 import Loading from '../Loading'
 
 import Details from './Details'
@@ -105,6 +107,8 @@ const StakeCard = ({
   const [isDetails, setIsDetails] = React.useState<boolean>(false)
   const [isModalStake, setIsModalStake] = React.useState<boolean>(false)
   const [isModalWallet, setIsModaWallet] = React.useState<boolean>(false)
+  const [isOpenModalPangolin, setIsOpenModalPangolin] =
+    React.useState<boolean>(false)
   const [isModalCancelUnstake, setIsModalCancelUnstake] =
     React.useState<boolean>(false)
   const [isModalRequestUnstake, setIsModalRequestUnstake] =
@@ -157,6 +161,13 @@ const StakeCard = ({
     process.env.NEXT_PUBLIC_MASTER === '1' ? 'Avalanche' : 'Fuji',
     stakeWithVotingPower ? 'VotingStake' : 'OtherStake'
   ]
+
+  const stakeLogoString = properties.logo.style.width.search('rem')
+  const stakeLogoWidthString = properties.logo.style.width.substring(
+    0,
+    stakeLogoString
+  )
+  const stakeLogoWidth = Number(stakeLogoWidthString) * 10
 
   function openStakeAndWithdraw(transaction: 'staking' | 'unstaking') {
     setIsModalStake(true)
@@ -308,10 +319,12 @@ const StakeCard = ({
           )}
           <S.StakeCard style={{ display: `${isLoading ? 'none' : 'block'}` }}>
             <S.InterBackground stakeWithVotingPower={!stakeWithVotingPower}>
-              <img
-                src={properties.logo.src}
-                alt=""
-                style={properties.logo.style}
+              <TokenWithNetworkImage
+                tokenImage={{
+                  url: properties.logo.src,
+                  width: stakeLogoWidth,
+                  withoutBorder: true
+                }}
               />
               <S.IntroStaking>
                 <S.APR>
@@ -553,6 +566,7 @@ const StakeCard = ({
                     poolPrice={poolPrice}
                     kacyPrice={kacyPrice}
                     link={properties.link ?? ''}
+                    setIsOpenModal={setIsOpenModalPangolin}
                   />
                 )}
               </S.ButtonContainer>
@@ -596,6 +610,12 @@ const StakeCard = ({
         />
       )}
       {isModalWallet && <ModalWalletConnect setModalOpen={setIsModaWallet} />}
+      {isOpenModalPangolin && (
+        <ModalBuyKacyOnPangolin
+          modalOpen={isOpenModalPangolin}
+          setModalOpen={setIsOpenModalPangolin}
+        />
+      )}
     </>
   )
 }

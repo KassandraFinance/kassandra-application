@@ -66,3 +66,44 @@ export function dateRequestUnstake(withdrawDelay: number) {
 
   return `${day} / ${allMonth[month]} / ${year}`
 }
+
+export function getDateDiff(timestamp: string | number | Date) {
+  const now = new Date().getTime()
+
+  const distance = now - Number(timestamp)
+
+  const years = Math.floor(distance / (1000 * 60 * 60 * 24 * 31 * 12))
+  const months = Math.floor(distance / (1000 * 60 * 60 * 24 * 31))
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24))
+  const hours = Math.floor(
+    (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  )
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+
+  if (years > 0) {
+    return {
+      value: years,
+      string: `${years > 1 ? 'years' : 'year'}`
+    }
+  } else if (months > 0) {
+    return {
+      value: months,
+      string: `${months > 1 ? 'months' : 'month'}`
+    }
+  } else if (days > 0) {
+    return {
+      value: days,
+      string: `${days > 1 ? 'days' : 'day'}`
+    }
+  } else if (hours > 0) {
+    return {
+      value: hours,
+      string: `${hours > 1 ? 'hours' : 'hour'}`
+    }
+  } else if (minutes > 0) {
+    return {
+      value: minutes,
+      string: 'min'
+    }
+  }
+}

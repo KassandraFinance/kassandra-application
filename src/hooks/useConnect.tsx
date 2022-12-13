@@ -29,6 +29,7 @@ const useConnect = () => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const [isConnected, setIsConnected] = React.useState(false)
   const [metaMaskError, setMetaMaskError] = React.useState<string | null>(null)
+  const [metamaskInstalled, setMetamaskInstalled] = React.useState(false)
 
   const handleAccountsChanged = React.useCallback(accounts => {
     try {
@@ -119,6 +120,7 @@ const useConnect = () => {
 
     if (providerMetaMask) {
       startApp(providerMetaMask)
+      setMetamaskInstalled(true)
     }
   }, [])
 
@@ -126,6 +128,7 @@ const useConnect = () => {
     const providerMetaMask = await detectEthereumProvider()
     if (providerMetaMask) {
       hasEthereumProvider()
+      setMetamaskInstalled(true)
     }
   }
 
@@ -153,7 +156,8 @@ const useConnect = () => {
     handleDisconnected,
     isConnected,
     metaMaskError,
-    cleanError
+    cleanError,
+    metamaskInstalled
   }
 }
 

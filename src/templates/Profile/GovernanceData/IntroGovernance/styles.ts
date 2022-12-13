@@ -162,8 +162,6 @@ export const Tooltip = styled.div`
   margin-left: 0.8rem;
   padding: 0.01rem;
   height: 1.75rem;
-
-  z-index: 20;
 `
 
 export const ReceivedAndOwnedVotingPower = styled.div`

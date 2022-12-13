@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface INftImageProps {
-  imageSize: 'medium' | 'large' | 'small';
+  imageSize: 'medium' | 'large' | 'small' | 'smallest';
 }
 
 const imageSizes = {
@@ -29,13 +29,14 @@ const imageSizes = {
     display: flex;
     flex-direction: column;
 
-    max-height: 13rem;
-    max-width: 13rem;
-
     img {
       object-fit: cover;
       background-color: #c4c4c410;
       clip-path: url(#nftImageLarge);
+    }
+
+    svg {
+      position: absolute;
     }
   `,
 
@@ -54,9 +55,27 @@ const imageSizes = {
     svg {
       position: relative;
     }
+  `,
+  smallest: () => css`
+    display: flex;
+    flex-direction: column;
+
+    img {
+      position: absolute;
+
+      width: 1.6rem;
+      height: 1.6rem;
+
+      background-color: #c4c4c410;
+      clip-path: url(#nftImageSmallest);
+    }
+
+    svg {
+      position: relative;
+    }
   `
 }
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const NftImageContainer = styled.div<INftImageProps>`
  ${({ imageSize }) =>
    css`

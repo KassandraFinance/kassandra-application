@@ -5,6 +5,8 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Link from 'next/link'
 
+import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+
 import { SUBGRAPH_URL, ProductDetails } from '../../constants/tokenAddresses'
 
 import { BNtoDecimal } from '../../utils/numerals'
@@ -12,14 +14,15 @@ import { BNtoDecimal } from '../../utils/numerals'
 import FundAreaChart from './FundAreaChart'
 import FundBarChart from './FundBarChart'
 import FundTokenIcons from './FundTokenIcons'
+import TokenWithNetworkImage from '../TokenWithNetworkImage'
 
 import arrowAscend from '../../../public/assets/notificationStatus/arrow-ascend.svg'
 import arrowDescend from '../../../public/assets/notificationStatus/arrow-descend.svg'
+import avax from '../../../public/assets/logos/avax.png'
 
 import { GET_CHART } from './graphql'
 
 import * as S from './styles'
-import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 interface InfoPool {
   tvl: string;
@@ -182,7 +185,18 @@ const FundCard = ({ product }: IFundCardProps) => {
           <>
             <S.CardHeader>
               <S.ImageContainer>
-                <Image src={product.fundIcon} width={36} height={36} />
+                <TokenWithNetworkImage
+                  tokenImage={{
+                    url: product.fundIcon.src,
+                    width: 36,
+                    height: 36
+                  }}
+                  networkImage={{
+                    url: avax.src,
+                    width: 17,
+                    height: 17
+                  }}
+                />
               </S.ImageContainer>
 
               <S.FundPrice>

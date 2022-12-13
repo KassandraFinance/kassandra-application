@@ -28,19 +28,28 @@ export const Title = styled.div`
 export const Table = styled.table`
   width: 100%;
 
-  font-size: ${theme.font.sizes.font14};
-
   border-radius: 2rem;
   border-spacing: 0;
   border-collapse: collapse;
+
+  font-size: ${theme.font.sizes.font14};
+
+  overflow: hidden;
+  text-indent: initial;
 
   -webkit-border-radius: 2rem;
   -moz-border-radius: 2rem;
   -webkit-border-horizontal-spacing: 0;
   -webkit-border-vertical-spacing: 0;
 
-  overflow: hidden;
-  text-indent: initial;
+  ::-webkit-scrollbar {
+    height: 0.5rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+  }
 
   thead {
     background-color: rgba(0, 0, 0, 0.25);
@@ -71,9 +80,9 @@ export const Table = styled.table`
 export const Tr = styled.tr`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-
   justify-items: center;
   align-items: center;
+
   height: 3.8rem;
   margin: 1.6rem 1.5rem;
 
@@ -88,25 +97,22 @@ export const Tr = styled.tr`
     gap: 1.6rem;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 576px) {
     min-width: 58rem;
   }
 `
 
 export const Th = styled.th`
-  font-weight: 400;
+  font-weight: ${theme.font.weight.normal};
   letter-spacing: 0.5px;
 
   @media (max-width: 660px) {
     font-size: 1.5rem;
   }
 `
-interface ITdProps {
-  change24h?: boolean;
-}
 
 // eslint-disable-next-line prettier/prettier
-export const Td = styled.td<ITdProps>`
+export const Td = styled.td`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -114,7 +120,7 @@ export const Td = styled.td<ITdProps>`
   text-align: center;
 
   font-weight: ${theme.font.weight.light};
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
 `
 
 export const BalanceCoin = styled.span`

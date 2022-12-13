@@ -35,9 +35,12 @@ import ChartProducts from '../../components/ChartProducts'
 import PoolOperations from '../../components/PoolOperations'
 import ScrollUpButton from '../../components/ScrollUpButton'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
+import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 import PoweredBy from './PoweredBy'
+import ActivityTable from './ActivityTable'
 
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
+import avax from '../../../public/assets/logos/avax.png'
 
 import { GET_INFO_POOL } from './graphql'
 
@@ -168,7 +171,8 @@ const Products = ({ product }: Input) => {
   )
 
   const { data: coinGeckoResponse } = useSWR(
-    `/api/image-coingecko?poolinfo=${network2coingeckoID[product.platform]
+    `/api/image-coingecko?poolinfo=${
+      network2coingeckoID[product.platform]
     }&tokenAddress=${product.addresses}`
   )
 
@@ -275,7 +279,7 @@ const Products = ({ product }: Input) => {
             ),
             image:
               coinGeckoResponse.images[
-              invertToken[item.token.id] ?? item.token.id
+                invertToken[item.token.id] ?? item.token.id
               ]
           }
         }
@@ -390,7 +394,19 @@ const Products = ({ product }: Input) => {
       ) : (
         <>
           <S.Intro introMobile={true} introDesktop={false}>
-            <Image src={product.fundIcon} alt="" width={75} height={75} />
+            <TokenWithNetworkImage
+              tokenImage={{
+                url: product.fundIcon.src,
+                height: 75,
+                width: 75,
+                withoutBorder: true
+              }}
+              networkImage={{
+                url: avax.src,
+                height: 24,
+                width: 24
+              }}
+            />
             <S.NameIndex>
               <S.NameAndSymbol introMobile={true}>
                 <h1>{product.name}</h1>
@@ -418,7 +434,19 @@ const Products = ({ product }: Input) => {
           <S.Product>
             <S.ProductDetails>
               <S.Intro introMobile={false} introDesktop={true}>
-                <Image src={product.fundIcon} alt="" width={75} height={75} />
+                <TokenWithNetworkImage
+                  tokenImage={{
+                    url: product.fundIcon.src,
+                    height: 75,
+                    width: 75,
+                    withoutBorder: true
+                  }}
+                  networkImage={{
+                    url: avax.src,
+                    height: 24,
+                    width: 24
+                  }}
+                />
                 <S.NameIndex>
                   <S.NameAndSymbol>
                     <h1>{product.name}</h1>
@@ -526,6 +554,7 @@ const Products = ({ product }: Input) => {
               />
               <PoweredBy partners={product.partners} />
               {coinGeckoResponse && <Distribution />}
+              <ActivityTable product={product} />
               <TokenDescription symbol={product.symbol} />
             </S.ProductDetails>
             <PoolOperations

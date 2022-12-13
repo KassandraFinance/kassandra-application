@@ -124,7 +124,7 @@ const Portfolio = ({
       <S.paddingWrapper>
         <PortfolioHeading
           image={AssetsIcon}
-          title="Assets"
+          title="Indexes"
           usd={BNtoDecimal(priceInDolar.tokenizedFunds, 6, 2, 2)}
           tippy="The amount in US Dollars that this address holds in tokenized funds."
         />
@@ -152,7 +152,7 @@ const Portfolio = ({
       <S.paddingWrapper>
         <PortfolioHeading
           image={StakedPoolsIcon}
-          title="Staking and Farming"
+          title="Assets"
           usd={BNtoDecimal(priceInDolar.assetsToken, 6, 2, 2)}
           tippy="The amount in US Dollars that this address holds in KACY and liquidity tokens."
         />

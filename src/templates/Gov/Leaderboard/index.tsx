@@ -1,9 +1,9 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import { chains } from '../../../constants/tokenAddresses'
 
 import { useAppSelector } from '../../../store/hooks'
-
-import { chains } from '../../../constants/tokenAddresses'
+import useConnect from '../../../hooks/useConnect'
 
 import Header from '../../../components/Header'
 import TitleSection from '../../../components/TitleSection'
@@ -18,10 +18,11 @@ import votingPower from '../../../../public/assets/iconGradient/voting-power-ran
 import * as S from './styles'
 
 const Leaderboard = () => {
-  const router = useRouter()
   const [skip, setSkip] = React.useState<number>(0)
 
-  const { chainId } = useAppSelector(state => state)
+  const { chainId, userWalletAddress } = useAppSelector(state => state)
+  const { metamaskInstalled } = useConnect()
+  const router = useRouter()
 
   const take = 10
 
@@ -51,7 +52,8 @@ const Leaderboard = () => {
           Voting Power Leaderboard
         </BreadcrumbItem>
       </Breadcrumb>
-      {Number(chainId) !== chain.chainId ? (
+      {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
+      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
         <Web3Disabled
           textButton={`Connect to ${chain.chainName}`}
           textHeader="Your wallet is set to the wrong network."

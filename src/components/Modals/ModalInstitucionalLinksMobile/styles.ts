@@ -1,19 +1,6 @@
 import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
-export const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100vw;
-  height: 100vh;
-
-  background-color: transparent;
-
-  z-index: 20;
-`
-
 export const ModalContainer = styled.div`
   position: fixed;
   bottom: 7.6rem;
@@ -23,7 +10,7 @@ export const ModalContainer = styled.div`
   border: 0.1rem solid rgba(255, 255, 255, 0.08);
   border-radius: 0.4rem;
 
-  z-index: 20;
+  z-index: 1050;
 
   animation: OpenModalSocialMedia 500ms ease;
   @keyframes OpenModalSocialMedia {
