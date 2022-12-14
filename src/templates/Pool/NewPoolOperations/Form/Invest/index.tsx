@@ -3,6 +3,7 @@ import Big from 'big.js'
 import BigNumber from 'bn.js'
 
 import {
+  addressNativeToken1Inch,
   ProxyContract,
   URL_1INCH
 } from '../../../../../constants/tokenAddresses'
@@ -16,7 +17,7 @@ import useProxy from '../../../../../hooks/useProxy'
 import useERC20Contract, { ERC20 } from '../../../../../hooks/useERC20Contract'
 import usePoolContract from '../../../../../hooks/usePoolContract'
 import useYieldYak from '../../../../../hooks/useYieldYak'
-// import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
+import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
 import useCoingecko from '../../../../../hooks/useCoingecko'
 
 import waitTransaction, {
@@ -88,7 +89,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
   )
   const dispatch = useAppDispatch()
 
-  // const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
+  const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
 
   const proxy = useProxy(ProxyContract, pool.id, pool.core_pool)
   const crpPoolToken = useERC20Contract(pool.id)
@@ -101,8 +102,9 @@ const Invest = ({ typeAction }: IInvestProps) => {
   // }
   const tokenAddresses = tokenList1Inch.map(token => token.address)
 
-  const { coinGecko } = useCoingecko(
+  const { priceToken } = useCoingecko(
     pool.chain.nativeTokenName.toLowerCase(),
+    pool.chain.addressWrapped.toLowerCase(),
     tokenAddresses.toString()
   )
 
@@ -116,7 +118,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
       }&toTokenAddress=${
         tokenWithHigherLiquidityPool.address
       }&amount=${amountTokenIn}&fromAddress=${
-        userWalletAddress || '0x84f154A845784Ca37Ae962504250a618EB4859dc'
+        ProxyContract || '0x84f154A845784Ca37Ae962504250a618EB4859dc'
       }&slippage=1&disableEstimate=true`
     )
 
@@ -150,93 +152,94 @@ const Invest = ({ typeAction }: IInvestProps) => {
     return { tokenInAddress, newAmountTokenIn, isWrap: tokensChecked?.is_wraps  }
   }
 
-  // const approvalCallback = React.useCallback(
-  //   (
-  //     tokenSymbol: string,
-  //     tokenAddress: string,
-  //     tabTitle: Titles
-  //   ): TransactionCallback => {
-  //     return async (error: MetamaskError, txHash: string) => {
-  //       if (error) {
-  //         if (error.code === 4001) {
-  //           dispatch(
-  //             setModalAlertText({
-  //               errorText: `Approval of ${tokenSymbol} cancelled`
-  //             })
-  //           )
-  //           return
-  //         }
+  const approvalCallback = React.useCallback(
+    (
+      tokenSymbol: string,
+      tokenAddress: string,
+      tabTitle: Titles
+    ): TransactionCallback => {
+      console.log('entrou callback')
+      return async (error: MetamaskError, txHash: string) => {
+        if (error) {
+          if (error.code === 4001) {
+            dispatch(
+              setModalAlertText({
+                errorText: `Approval of ${tokenSymbol} cancelled`
+              })
+            )
+            return
+          }
 
-  //         dispatch(
-  //           setModalAlertText({
-  //             errorText: `Failed to approve ${tokenSymbol}. Please try again later.`
-  //           })
-  //         )
-  //         return
-  //       }
+          dispatch(
+            setModalAlertText({
+              errorText: `Failed to approve ${tokenSymbol}. Please try again later.`
+            })
+          )
+          return
+        }
 
-  //       setApprovals((old: { [x: string]: Iterable<unknown> | ArrayLike<unknown> }) => {
-  //         const approvals = Array.from(old[tabTitle])
-  //         approvals[tokenAddress2Index[tokenAddress]] =
-  //           Approval.WaitingTransaction
+        // setApprovals((old: { [x: string]: Iterable<unknown> | ArrayLike<unknown> }) => {
+        //   const approvals = Array.from(old[tabTitle])
+        //   approvals[tokenAddress2Index[tokenAddress]] =
+        //     Approval.WaitingTransaction
 
-  //         return {
-  //           ...old,
-  //           [tabTitle]: approvals
-  //         }
-  //       })
-  //       ToastWarning(`Waiting approval of ${tokenSymbol}...`)
-  //       const txReceipt = await waitTransaction(txHash)
-  //       setApprovals(old => {
-  //         const approvals = Array.from(old[tabTitle])
-  //         approvals[tokenAddress2Index[tokenAddress]] = Approval.Syncing
+        //   return {
+        //     ...old,
+        //     [tabTitle]: approvals
+        //   }
+        // })
+        ToastWarning(`Waiting approval of ${tokenSymbol}...`)
+        const txReceipt = await waitTransaction(txHash)
+        // setApprovals(old => {
+        //   const approvals = Array.from(old[tabTitle])
+        //   approvals[tokenAddress2Index[tokenAddress]] = Approval.Syncing
 
-  //         return {
-  //           ...old,
-  //           [tabTitle]: approvals
-  //         }
-  //       })
+        //   return {
+        //     ...old,
+        //     [tabTitle]: approvals
+        //   }
+        // })
 
-  //       if (txReceipt.status) {
-  //         ToastSuccess(
-  //           `Approval of ${tokenSymbol} confirmed, wait while we sync with the latest block of the blockchain.`
-  //         )
-  //         let approved = false
+        if (txReceipt.status) {
+          ToastSuccess(
+            `Approval of ${tokenSymbol} confirmed, wait while we sync with the latest block of the blockchain.`
+          )
+          let approved = false
 
-  //         while (!approved) {
-  //           approved = await ERC20(tokenAddress).allowance(
-  //             ProxyContract,
-  //             userWalletAddress
-  //           )
-  //           await new Promise(r => setTimeout(r, 200)) // sleep
-  //         }
+          while (!approved) {
+            approved = await ERC20(tokenAddress).allowance(
+              ProxyContract,
+              userWalletAddress
+            )
+            await new Promise(r => setTimeout(r, 200)) // sleep
+          }
 
-  //         setApprovals(old => {
-  //           const approvals = Array.from(old[tabTitle])
-  //           approvals[tokenAddress2Index[tokenAddress]] = Approval.Approved
+          // setApprovals(old => {
+          //   const approvals = Array.from(old[tabTitle])
+          //   approvals[tokenAddress2Index[tokenAddress]] = Approval.Approved
 
-  //           return {
-  //             ...old,
-  //             [tabTitle]: approvals
-  //           }
-  //         })
+          //   return {
+          //     ...old,
+          //     [tabTitle]: approvals
+          //   }
+          // })
 
-  //         return
-  //       }
+          return
+        }
 
-  //       setApprovals(old => {
-  //         const approvals = Array.from(old[tabTitle])
-  //         approvals[tokenAddress2Index[tokenAddress]] = Approval.Denied
+        // setApprovals(old => {
+        //   const approvals = Array.from(old[tabTitle])
+        //   approvals[tokenAddress2Index[tokenAddress]] = Approval.Denied
 
-  //         return {
-  //           ...old,
-  //           [tabTitle]: approvals
-  //         }
-  //       })
-  //     }
-  //   },
-  //   [approvals, setApprovals]
-  // )
+        //   return {
+        //     ...old,
+        //     [tabTitle]: approvals
+        //   }
+        // })
+      }
+    },
+    [approvals, setApprovals]
+  )
 
   // const investCallback = React.useCallback(
   //   (tokenSymbol: string, amountInUSD: number): TransactionCallback => {
@@ -298,68 +301,69 @@ const Invest = ({ typeAction }: IInvestProps) => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
 
-      const {
-        approved,
-        category,
-        swapInAmountInput,
-        swapOutAmountInput,
-        swapInAddressInput,
-        swapOutAddressInput,
-        swapInSymbol,
-        swapOutSymbol,
-        walletAddress,
-        amountUSD,
-        slippageInput,
-        tabTitleInput
-        // eslint-disable-next-line prettier/prettier
-      } = e.target as HTMLFormElement & {
-        approved: HTMLInputElement;
-        category: HTMLInputElement;
-        swapInAmountInput: HTMLInputElement;
-        swapOutAmountInput: HTMLInputElement;
-        swapInAddressInput: HTMLInputElement;
-        swapOutAddressInput: HTMLInputElement;
-        swapInSymbol: HTMLInputElement;
-        swapOutSymbol: HTMLInputElement;
-        walletAddress: HTMLInputElement;
-        amountUSD: HTMLInputElement;
-        slippageInput: HTMLInputElement;
-        tabTitleInput: HTMLInputElement;
-      }
-      console.log('asdasdsadwe')
-      const tabTitle = tabTitleInput.value as Titles
-      const amountInUSD = parseFloat(amountUSD.value)
-      const swapInAmountVal = new BigNumber(swapInAmountInput.value)
-      const swapOutAmountVal = swapOutAmountInput.value.split(',').map(
-        item => new BigNumber(item)
-      )
-      const swapInAddressVal = swapInAddressInput.value
-      const swapOutAddressVal = swapOutAddressInput.value
-      const slippageVal = slippageInput.value
+      // const {
+      //   approved,
+      //   category,
+      //   swapInAmountInput,
+      //   swapOutAmountInput,
+      //   swapInAddressInput,
+      //   swapOutAddressInput,
+      //   swapInSymbol,
+      //   swapOutSymbol,
+      //   walletAddress,
+      //   amountUSD,
+      //   slippageInput,
+      //   tabTitleInput
+      //   // eslint-disable-next-line prettier/prettier
+      // } = e.target as HTMLFormElement & {
+      //   approved: HTMLInputElement;
+      //   category: HTMLInputElement;
+      //   swapInAmountInput: HTMLInputElement;
+      //   swapOutAmountInput: HTMLInputElement;
+      //   swapInAddressInput: HTMLInputElement;
+      //   swapOutAddressInput: HTMLInputElement;
+      //   swapInSymbol: HTMLInputElement;
+      //   swapOutSymbol: HTMLInputElement;
+      //   walletAddress: HTMLInputElement;
+      //   amountUSD: HTMLInputElement;
+      //   slippageInput: HTMLInputElement;
+      //   tabTitleInput: HTMLInputElement;
+      // }
+      // console.log('asdasdsadwe')
+      // const tabTitle = tabTitleInput.value as Titles
+      // const amountInUSD = parseFloat(amountUSD.value)
+      // const swapInAmountVal = new BigNumber(swapInAmountInput.value)
+      // const swapOutAmountVal = swapOutAmountInput.value.split(',').map(
+      //   item => new BigNumber(item)
+      // )
+      // const swapInAddressVal = swapInAddressInput.value
+      // const swapOutAddressVal = swapOutAddressInput.value
+      // const slippageVal = slippageInput.value
 
-      const slippageExp = new BigNumber(10).pow(new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0)))
-      const slippageBase = slippageExp.sub(new BigNumber(slippageVal.replace('.', '')))
+      // const slippageExp = new BigNumber(10).pow(new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0)))
+      // const slippageBase = slippageExp.sub(new BigNumber(slippageVal.replace('.', '')))
 
       try {
-        switch (category.value) {
-          // case 'Invest':
-          //   if (approved.value === '0' && swapInAddressVal !== WAVAX) {
-          //     ERC20(swapInAddressVal).approve(
-          //       ProxyContract,
-          //       walletAddress.value,
-          //       approvalCallback(swapInSymbol.value, swapInAddressVal, tabTitle)
-          //     )
-          //     return
-          //   }
-          //   trackBuying(crpPoolAddress, poolSymbol, amountInUSD, productCategories)
-          //   proxy.joinswapExternAmountIn(
-          //     swapInAddressVal,
-          //     swapInAmountVal,
-          //     swapOutAmountVal[0].mul(slippageBase).div(slippageExp),
-          //     walletAddress.value,
-          //     investCallback(swapOutSymbol.value, amountInUSD)
-          //   )
-          //   return
+        switch (typeAction) {
+          case 'Invest':
+            if (approvals[typeAction][0] === Approval.Approved  && tokenSelect.address !== addressNativeToken1Inch) {
+              ERC20(tokenSelect.address).approve(
+                ProxyContract,
+                userWalletAddress,
+                approvalCallback(tokenSelect.symbol, tokenSelect.address, typeAction)
+              )
+              return
+            }
+            trackBuying(crpPoolAddress, poolSymbol, amountInUSD, productCategories)
+            proxy.joinswapExternAmountIn(
+              swapInAddressVal,
+              swapInAmountVal,
+              swapOutAmountVal[0].mul(slippageBase).div(slippageExp),
+              walletAddress.value,
+              investCallback(swapOutSymbol.value, amountInUSD)
+            )
+            console.log("aprovado")
+            return
 
           // case 'Withdraw':
           //   trackBuying(crpPoolAddress, poolSymbol, -1 * amountInUSD, productCategories)
@@ -427,8 +431,8 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
       if (newApprovals.includes(tokenSelect.address)) return
 
-      if (tokenSelect.address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
-        newApprovals.push("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+      if (tokenSelect.address === addressNativeToken1Inch) {
+        newApprovals.push(addressNativeToken1Inch)
       } else {
         const isAllowance = await ERC20(tokenSelect.address).allowance(
             ProxyContract,
