@@ -2,6 +2,8 @@ import React from 'react'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
 
+import { addressNativeToken1Inch } from '../../../../../constants/tokenAddresses'
+
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import web3 from '../../../../../utils/web3'
 
@@ -43,10 +45,10 @@ const InputAndOutputValueToken = ({
   )
 
   const tokenAddresses = tokenList1Inch.map(token => token.address)
-
   const { trackEventFunction } = useMatomoEcommerce()
-  const { coinGecko } = useCoingecko(
+  const { priceToken } = useCoingecko(
     pool.chain.nativeTokenName.toLowerCase(),
+    pool.chain.addressWrapped.toLowerCase(),
     tokenAddresses.toString()
   )
 
@@ -100,7 +102,7 @@ const InputAndOutputValueToken = ({
       return
     }
 
-    if (tokenSelect.address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
+    if (tokenSelect.address === addressNativeToken1Inch) {
       web3.eth
         .getBalance(userWalletAddress)
         .then(newBalance =>
@@ -217,8 +219,7 @@ const InputAndOutputValueToken = ({
                   BNtoDecimal(
                     Big(amountTokenIn.toString())
                       .mul(
-                        Big(coinGecko?.[tokenSelect.address.toLowerCase()]?.usd || 0)
-
+                        Big(priceToken(tokenSelect.address) || 0)
                       )
                       .div(Big(10).pow(Number(tokenSelect.decimals))),
                     18,

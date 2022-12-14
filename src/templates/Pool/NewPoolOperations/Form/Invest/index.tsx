@@ -702,7 +702,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
                       BNtoDecimal(
                         Big(amountTokenIn.toString())
                           .mul(
-                            Big(coinGecko?.[tokenSelect.address.toLowerCase()]?.usd || 0)
+                            Big(priceToken(tokenSelect.address) || 0)
 
                           )
                           .div(Big(10).pow(Number(tokenSelect.decimals))),

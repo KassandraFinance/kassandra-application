@@ -9,6 +9,7 @@ import { setTokenSelectionActive } from '../../../../../store/reducers/tokenSele
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import {
+  addressNativeToken1Inch,
   URL_1INCH_BALANCE,
   URL_COINGECKO
 } from '../../../../../constants/tokenAddresses'
@@ -78,7 +79,7 @@ const TokenSelection = () => {
         ? stringSimilarity(token.symbol + token.name, searchToken)
         : 0
       const checkToken =
-        token.address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+        token.address === addressNativeToken1Inch
           ? pool.chain.addressWrapped.toLocaleLowerCase()
           : token.address
 
