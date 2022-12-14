@@ -67,11 +67,10 @@ const Header = () => {
               <Image src={kacy64} width={64} height={64} alt="Kassandra" />
             </a>
           </Link>
-          <Link href="/explore" passHref>
+          <Link href="/" passHref>
             <S.MenuLink
               active={
-                router.asPath.substring(0, 8) === '/explore' ||
-                router.asPath === '/'
+                router.asPath.substring(0, 8) === '/' || router.asPath === '/'
               }
             >
               Invest

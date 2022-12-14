@@ -311,7 +311,7 @@ const Pool = () => {
                 icon={ahype}
               />
               {/* <PoweredBy partners={pool.partners} /> */}
-              <Distribution />
+              {/* <Distribution /> */}
               {/* <ActivityTable product={pool} /> */}
               <TokenDescription symbol={pool.symbol} />
             </S.ProductDetails>

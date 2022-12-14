@@ -77,7 +77,7 @@ const ModalKacy = () => {
       return
     }
 
-    if (Number(chainId) !== chain.chainId) {
+    if (Number(chainId) !== chain.id) {
       return
     }
 
@@ -137,7 +137,7 @@ const ModalKacy = () => {
         <Button
           className="kacyAmount"
           text={
-            userWalletAddress && Number(chainId) === chain.chainId
+            userWalletAddress && Number(chainId) === chain.id
               ? `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
               : 'KACY'
           }

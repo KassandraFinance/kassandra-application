@@ -41,7 +41,7 @@ const NewPoolOperations = () => {
   const { tokenSelectionActive } = useAppSelector(state => state)
 
   // function handleSetInputChecked(title: Titles) {
-  //   if (chain.chainId === chainId) setInputChecked(title)
+  //   if (chain.id === chainId) setInputChecked(title)
   // }
 
 

@@ -65,7 +65,7 @@ const Kacy = ({
         </S.ModalHeader>
 
         <S.ModalBody>
-          {userWalletAddress && chainId === chain.chainId && (
+          {userWalletAddress && chainId === chain.id && (
             <>
               <S.KacyTotalContainer>
                 <S.ImgContainer>
@@ -178,7 +178,7 @@ const Kacy = ({
             </S.Li>
           </S.Ul>
 
-          {chainId === chain.chainId && userWalletAddress ? (
+          {chainId === chain.id && userWalletAddress ? (
             <Button
               text="Get more KACY"
               backgroundPrimary
@@ -188,13 +188,13 @@ const Kacy = ({
                 setIsModalKacy(false)
               }}
             />
-          ) : chainId !== chain.chainId ? (
+          ) : chainId !== chain.id ? (
             <Button
               text={`Change to ${chain.chainName}`}
               backgroundPrimary
               fullWidth
               onClick={() => {
-                changeChain(chain)
+                // changeChain(chain)
                 setIsModalKacy(false)
               }}
             />

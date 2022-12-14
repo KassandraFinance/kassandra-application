@@ -183,7 +183,8 @@ const Proposal = () => {
     yourVotingPowerInProposal: new BigNumber(0)
   })
   // eslint-disable-next-line prettier/prettier
-  const [yourVotingPowerInProposal, setYourVotingPowerInProposal] = React.useState(new BigNumber(0))
+  const [yourVotingPowerInProposal, setYourVotingPowerInProposal] =
+    React.useState(new BigNumber(0))
   const router = useRouter()
   const governance = useGovernance(GovernorAlpha)
   const votingPower = useVotingPower(Staking)
@@ -637,8 +638,8 @@ const Proposal = () => {
             Proposal {router.query.proposal}
           </BreadcrumbItem>
         </Breadcrumb>
-        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
-        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
+        {(metamaskInstalled && Number(chainId) !== chain.id) ||
+        (userWalletAddress.length > 0 && Number(chainId) !== chain.id) ? (
           <Web3Disabled
             textButton={`Connect to ${chain.chainName}`}
             textHeader="Your wallet is set to the wrong network."
@@ -715,7 +716,7 @@ const Proposal = () => {
                       voteType: 'For',
                       percentage: `${percentageVotes.for}`,
                       // eslint-disable-next-line prettier/prettier
-                    totalVotingPower: `${BNtoDecimal(
+                      totalVotingPower: `${BNtoDecimal(
                         proposal.forVotes,
                         0,
                         2,
@@ -739,7 +740,7 @@ const Proposal = () => {
                       voteType: 'Against',
                       percentage: `${percentageVotes.against}`,
                       // eslint-disable-next-line prettier/prettier
-                    totalVotingPower: `${BNtoDecimal(
+                      totalVotingPower: `${BNtoDecimal(
                         proposal.againstVotes,
                         0,
                         2,

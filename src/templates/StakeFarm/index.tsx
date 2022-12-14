@@ -38,9 +38,9 @@ const tabs = [
 
 const StakeFarm = () => {
   const [isSelectTab, setIsSelectTab] = React.useState<
-  string | string[] | undefined
+    string | string[] | undefined
   >('farm')
-  
+
   const { userWalletAddress, chainId } = useAppSelector(state => state)
   const { metamaskInstalled } = useConnect()
   const router = useRouter()
@@ -65,7 +65,8 @@ const StakeFarm = () => {
           Stake/Farm
         </BreadcrumbItem>
       </Breadcrumb>
-      {metamaskInstalled && Number(chainId) !== chain.chainId || userWalletAddress.length > 0 && Number(chainId) !== chain.chainId ? (
+      {(metamaskInstalled && Number(chainId) !== chain.id) ||
+      (userWalletAddress.length > 0 && Number(chainId) !== chain.id) ? (
         <Web3Disabled
           textButton={`Connect to ${chain.chainName}`}
           textHeader="Your wallet is set to the wrong network."

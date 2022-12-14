@@ -253,7 +253,7 @@ const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
         </S.TBody>
       </S.Table>
       <S.ButtonWrapper>
-        {chain.chainId === chainId ? (
+        {chain.id === chainId ? (
           <Button
             backgroundSecondary
             text={

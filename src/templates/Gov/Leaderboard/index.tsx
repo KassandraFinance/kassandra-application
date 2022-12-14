@@ -52,8 +52,8 @@ const Leaderboard = () => {
           Voting Power Leaderboard
         </BreadcrumbItem>
       </Breadcrumb>
-      {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
-      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
+      {(metamaskInstalled && Number(chainId) !== chain.id) ||
+      (userWalletAddress.length > 0 && Number(chainId) !== chain.id) ? (
         <Web3Disabled
           textButton={`Connect to ${chain.chainName}`}
           textHeader="Your wallet is set to the wrong network."

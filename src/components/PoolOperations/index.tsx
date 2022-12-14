@@ -50,7 +50,7 @@ const PoolOperations = ({
     process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
 
   function handleSetInputChecked(title: Titles) {
-    if (chain.chainId === chainId) setInputChecked(title)
+    if (chain.id === chainId) setInputChecked(title)
   }
 
   return (

@@ -20,7 +20,7 @@ export interface TokenInfo {
 
 export interface ChainInfo {
   id: number;
-  logo: string;
+  logo?: string;
   chainName: string;
   nativeTokenName: string;
   nativeTokenSymbol: string;
