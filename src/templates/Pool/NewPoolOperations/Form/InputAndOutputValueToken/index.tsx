@@ -50,6 +50,14 @@ const InputAndOutputValueToken = ({
     tokenAddresses.toString()
   )
 
+  const disabled = userWalletAddress.length === 0 ?
+    "Please connect your wallet by clicking the button below"
+    :
+    chainId !== pool.chainId ?
+      `Please change to the ${pool.chain.chainName} by clicking the button below`
+      :
+      ""
+
   function handleOnWheel() {
     if (document.activeElement?.classList.contains("noscroll")) {
       // eslint-disable-next-line prettier/prettier
@@ -150,16 +158,10 @@ const InputAndOutputValueToken = ({
             >
               Max
             </S.ButtonMax>
-            <Tippy content={
-              userWalletAddress.length === 0
-              ? "Please connect your wallet by clicking the button below"
-              : chainId !== pool.chainId
-                ? `Please change to the ${pool.chain.chainName} by clicking the button below`
-                : ""
-            } disabled={userWalletAddress.length !== 0 && chainId === pool.chainId}>
+            <Tippy content={disabled} disabled={disabled.length === 0}>
             <S.Input
               className="noscroll"
-              readOnly={false}
+              readOnly={disabled.length > 0}
               ref={inputAmountTokenRef}
               // value={inputRef?.current?.value}
               type="number"
@@ -200,8 +202,8 @@ const InputAndOutputValueToken = ({
 
                   const decimalsNum = tokenSelect.decimals
                   const values = value.split('.')
-                  const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)
-                    }`
+                  const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)}`
+
                   setMaxActive(false)
                   setAmountTokenIn(paddedRight)
                 }

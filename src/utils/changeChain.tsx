@@ -1,3 +1,5 @@
+import { ChainInfo } from "../store/reducers/pool";
+
 interface CurrencyDetails {
   name: string;
   symbol: string;
@@ -23,11 +25,13 @@ declare let window: {
   }
 }
 
-export default async (chain: ChainDetails) => {
+export default async (chain: ChainInfo) => {
+  const hexString = Number(chain.id).toString(16);
+
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: chain.chainIdHex }]
+      params: [{ chainId: `0x${hexString}` }]
     })
   } catch (error: any) {
     // This error code indicates that the chain has not been added to MetaMask.

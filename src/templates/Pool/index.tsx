@@ -41,7 +41,7 @@ import SharedImage from './SharedImage'
 import * as S from './styles'
 
 import NewPoolOperations from './NewPoolOperations'
-import { URL_1INCH } from '../../constants/tokenAddresses'
+import { URL_1INCH, products } from '../../constants/tokenAddresses'
 import { setTokenList1Inch } from '../../store/reducers/tokenList1Inch'
 
 export interface IfarmInfoYYProps {
@@ -132,6 +132,15 @@ const Pool = () => {
         },
         0
       )
+
+      // dispatch(
+      //   setTokenAddress2Index(
+      //     tokenDetails.reduce(
+      //       (acc, cur, i) => ({ [cur.address]: i, ...acc }),
+      //       {}
+      //     )
+      //   )
+      // )
 
       // dispatch(
       //   setFees({
@@ -307,11 +316,11 @@ const Pool = () => {
               <TokenDescription symbol={pool.symbol} />
             </S.ProductDetails>
             {/* <PoolOperations
-              poolChain={product.chain}
-              poolSymbol={product.symbol}
-              crpPoolAddress={product.sipAddress}
-              corePoolAddress={product.coreAddress}
-              productCategories={product.categories}
+              poolChain={products[0].chain}
+              poolSymbol={products[0].symbol}
+              crpPoolAddress={products[0].sipAddress}
+              corePoolAddress={products[0].coreAddress}
+              productCategories={products[0].categories}
             /> */}
             <NewPoolOperations />
           </S.Product>

@@ -1,10 +1,12 @@
-/* eslint-disable prettier/prettier */
 import React from 'react'
-import { ChainDetails } from '../../../../utils/changeChain'
+// import { ChainDetails } from '../../../../utils/changeChain'
+
+// import { useAppDispatch } from '../../../../store/hooks'
+// import { setModalWalletActive } from '../../../../store/reducers/modalWalletActive'
 
 import useMatomoEcommerce from '../../../../hooks/useMatomoEcommerce'
 
-import { Titles } from '..'
+// import { Titles } from '..'
 
 import Form from '../Form'
 
@@ -24,6 +26,7 @@ interface ISelectOperationProps {
   setInputChecked: React.Dispatch<React.SetStateAction<"Withdraw" | "Invest" | "Swap">>
   // setInputChecked: React.Dispatch<React.SetStateAction<string>>;
   // handleSetInputChecked: (title: Titles) => void;
+  // eslint-disable-next-line prettier/prettier
   typeWithdrawChecked: string;
   setTypeWithdrawChecked: React.Dispatch<React.SetStateAction<string>>;
 
@@ -32,7 +35,6 @@ interface ISelectOperationProps {
   // crpPoolAddress: string;
   // corePoolAddress: string;
   // productCategories: string[];
-  setIsModaWallet: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SelectOperation = ({
@@ -40,11 +42,12 @@ const SelectOperation = ({
   setInputChecked,
   // handleSetInputChecked,
   typeWithdrawChecked,
-  setTypeWithdrawChecked,
-  setIsModaWallet
+  setTypeWithdrawChecked
 }: ISelectOperationProps) => {
+  // const dispatch = useAppDispatch()
+
   const { trackEventFunction } = useMatomoEcommerce()
-  setIsModaWallet(false)
+  // dispatch(setModalWalletActive(false))
   return (
     <>
       <S.SelectOperation>
