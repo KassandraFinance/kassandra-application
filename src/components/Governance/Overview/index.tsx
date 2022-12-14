@@ -11,10 +11,10 @@ import { SUBGRAPH_URL } from '../../../constants/tokenAddresses'
 
 import { BNtoDecimal } from '../../../utils/numerals'
 
-import { useAppSelector } from '../../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../../store/hooks'
+import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 
 import Button from '../../../components/Button'
-import ModalWalletConnect from '../../Modals/ModalWalletConnect'
 
 import tooltip from '../../../../public/assets/utilities/tooltip.svg'
 
@@ -29,7 +29,6 @@ interface IGovernancesProps {
 
 export const Overview = () => {
   // eslint-disable-next-line prettier/prettier
-  const [isModalWalletConnect, setIsModalWalletConnect] = React.useState<boolean>(false)
   const [yourVotingPower, setYourVotingPower] = React.useState(new BigNumber(0))
   const [governances, setGovernances] = React.useState<IGovernancesProps>({
     totalVotingPower: new BigNumber(0),
@@ -37,6 +36,7 @@ export const Overview = () => {
   })
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const dispatch = useAppDispatch()
 
   const { data } = useSWR(
     [GET_GOVERNANCES, userWalletAddress],
@@ -76,7 +76,7 @@ export const Overview = () => {
               </S.ValueVoting>
             ) : (
               <Button
-                onClick={() => setIsModalWalletConnect(true)}
+                onClick={() => dispatch(setModalWalletActive(true))}
                 size="large"
                 text="Connect Wallet"
                 backgroundSecondary
@@ -119,9 +119,6 @@ export const Overview = () => {
           </S.VotingDataCard>
         </S.VotginCards>
       </S.Overview>
-      {isModalWalletConnect && (
-        <ModalWalletConnect setModalOpen={setIsModalWalletConnect} />
-      )}
     </>
   )
 }

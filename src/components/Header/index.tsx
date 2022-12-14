@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import substr from '../../utils/substr'
-import { useAppSelector } from '../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
+import { setModalWalletActive } from '../../store/reducers/modalWalletActive'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
@@ -29,7 +30,6 @@ export type MenuProps = {
 }
 
 const Header = () => {
-  const [isModalWallet, setIsModalWallet] = React.useState<boolean>(false)
   const [isModalLogout, setIsModalLogout] = React.useState<boolean>(false)
   const [isModalWaitingList, setIsModalWaitingList] =
     React.useState<boolean>(false)
@@ -39,9 +39,11 @@ const Header = () => {
 
   const { trackEventFunction } = useMatomoEcommerce()
 
+  const modalWalletActive = useAppSelector(state => state.modalWalletActive)
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
 
+  const dispatch = useAppDispatch()
   const router = useRouter()
 
   return (
@@ -251,7 +253,7 @@ const Header = () => {
                       'connect-wallet',
                       'header'
                     )
-                    setIsModalWallet(true)
+                    dispatch(setModalWalletActive(true))
                   }}
                   text="Connect Wallet"
                 />
@@ -270,7 +272,7 @@ const Header = () => {
         <ModalInstitucionalLinksMobile setModalOpen={setIsModalSocialMedia} />
       )}
 
-      {isModalWallet && <ModalWalletConnect setModalOpen={setIsModalWallet} />}
+      {modalWalletActive && <ModalWalletConnect />}
 
       <ModalLogOut
         modalOpen={isModalLogout}

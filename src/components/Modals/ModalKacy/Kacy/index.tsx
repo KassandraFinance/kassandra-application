@@ -3,7 +3,8 @@ import Image from 'next/image'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
+import { setModalWalletActive } from '../../../../store/reducers/modalWalletActive'
 
 import { BNtoDecimal } from '../../../../utils/numerals'
 import changeChain from '../../../../utils/changeChain'
@@ -26,7 +27,6 @@ interface IKacyProps {
   kacyTotal: BigNumber;
   setIsModalKacy: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsModalWallet: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Kacy = ({
@@ -37,11 +37,12 @@ const Kacy = ({
   kacyWallet,
   kacyTotal,
   setIsModalKacy,
-  setIsOpenModal,
-  setIsModalWallet
+  setIsOpenModal
 }: IKacyProps) => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
+
+  const dispatch = useAppDispatch()
 
   const chain =
     process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
@@ -203,7 +204,7 @@ const Kacy = ({
               backgroundPrimary
               fullWidth
               onClick={() => {
-                setIsModalWallet(true)
+                dispatch(setModalWalletActive(true))
                 setIsModalKacy(false)
               }}
             />

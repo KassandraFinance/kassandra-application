@@ -15,7 +15,6 @@ import { abbreviateNumber } from '../../../utils/abbreviateNumber'
 import Kacy from './Kacy'
 import ModalBuyKacy from '../../../components/Modals/ModalBuyKacy'
 import Button from '../../Button'
-import ModalWalletConnect from '../ModalWalletConnect'
 
 import kacyIcon from '../../../../public/assets/logos/kacy-96.svg'
 
@@ -42,7 +41,6 @@ const ModalKacy = () => {
 
   const [isModalKacy, setIsModalKacy] = React.useState(false)
   const [isOpenModal, setIsOpenModal] = React.useState<boolean>(false)
-  const [isModalWallet, setIsModalWallet] = React.useState<boolean>(false)
   const [kacyMarketData, setKacyMarketData] =
     React.useState<IKacyMarketDataProps>({
       price: 0,
@@ -158,13 +156,10 @@ const ModalKacy = () => {
           kacyTotal={kacyTotal}
           setIsModalKacy={setIsModalKacy}
           setIsOpenModal={setIsOpenModal}
-          setIsModalWallet={setIsModalWallet}
         />
       )}
 
       <ModalBuyKacy modalOpen={isOpenModal} setModalOpen={setIsOpenModal} />
-
-      {isModalWallet && <ModalWalletConnect setModalOpen={setIsModalWallet} />}
     </>
   )
 }

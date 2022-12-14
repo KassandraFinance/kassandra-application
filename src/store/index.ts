@@ -13,6 +13,7 @@ import tokenSelectionActiveReducer from './reducers/tokenSelectionActive'
 import tokenSelect from './reducers/tokenSelect'
 import poolReducer from './reducers/pool'
 import tokenList1InchReducer from './reducers/tokenList1Inch'
+import modalWalletActiveReducer from './reducers/modalWalletActive'
 
 export const store = configureStore({
   reducer: {
@@ -28,7 +29,8 @@ export const store = configureStore({
     tokenSelectionActive: tokenSelectionActiveReducer,
     tokenSelect: tokenSelect,
     pool: poolReducer,
-    tokenList1Inch: tokenList1InchReducer
+    tokenList1Inch: tokenList1InchReducer,
+    modalWalletActive: modalWalletActiveReducer
   }
 })
 

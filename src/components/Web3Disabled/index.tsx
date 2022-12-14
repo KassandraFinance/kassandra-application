@@ -4,10 +4,12 @@ import React from 'react'
 
 import { chains } from '../../constants/tokenAddresses'
 
+import { useAppDispatch } from '../../store/hooks'
+import { setModalWalletActive } from '../../store/reducers/modalWalletActive'
+
 import changeChain from '../../utils/changeChain'
 
 import Button from '../Button'
-import ModalWalletConnect from '../Modals/ModalWalletConnect'
 
 import * as S from './styles'
 
@@ -24,12 +26,11 @@ const Web3Disabled = ({
   bodyText,
   type
 }: IWeb3DisabledProps) => {
-  const [openWallet, setOpenWallet] = React.useState(false)
-
+  const dispatch = useAppDispatch()
   function getFunction(type: string) {
     switch (type) {
       case 'connect':
-        setOpenWallet(true)
+        dispatch(setModalWalletActive(true))
         break
       case 'changeChain':
         changeChain(
@@ -64,11 +65,6 @@ const Web3Disabled = ({
           </S.Body>
         </div>
       </S.Web3Disabled>
-      {openWallet && (
-        <ModalWalletConnect
-          setModalOpen={setOpenWallet}
-        />
-      )}
     </>
   )
 }

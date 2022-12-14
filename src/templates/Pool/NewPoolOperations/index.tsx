@@ -7,8 +7,6 @@ import { setTokenSelect } from '../../../store/reducers/tokenSelect'
 
 // import { ChainDetails } from '../../../utils/changeChain'
 
-import ModalWalletConnect from '../../../components/Modals/ModalWalletConnect'
-
 import SelectOperation from './SelectOperation'
 // import ModalCardOperations from './ModalPoolOperations'
 import SelectOperationOnMobile, { TitlesMobile } from './SelectOperationOnMobile'
@@ -34,7 +32,6 @@ const messages = {
 }
 
 const NewPoolOperations = () => {
-  const [isModalWallet, setIsModaWallet] = React.useState<boolean>(false)
   const [isModalPoolOperations, setIsModalPoolOperations] = React.useState<boolean>(false)
   
   const [inputChecked, setInputChecked] = React.useState<Titles>('Invest')
@@ -85,7 +82,6 @@ const NewPoolOperations = () => {
           // handleSetInputChecked={handleSetInputChecked}
           typeWithdrawChecked={typeWithdrawChecked}
           setTypeWithdrawChecked={setTypeWithdrawChecked}
-          setIsModaWallet={setIsModaWallet}
         />
       }
 
@@ -94,12 +90,6 @@ const NewPoolOperations = () => {
         setInputCheckedBarMobile={setInputCheckedBarMobile}
         setModalOpen={setIsModalPoolOperations}
       />
-
-      {isModalWallet &&
-        (<ModalWalletConnect
-          setModalOpen={setIsModaWallet}
-      />)}
-
     </S.NewPoolOperations>
   )
 }

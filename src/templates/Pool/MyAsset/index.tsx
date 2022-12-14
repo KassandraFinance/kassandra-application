@@ -11,6 +11,9 @@ import {
 } from '../../../constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG } from '../../../constants/pools'
 
+import { useAppDispatch } from '../../../store/hooks'
+import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
+
 import usePriceLP from '../../../hooks/usePriceLP'
 import useERC20Contract from '../../../hooks/useERC20Contract'
 import useStakingContract from '../../../hooks/useStakingContract'
@@ -25,7 +28,6 @@ import changeChain from '../../../utils/changeChain'
 import { useAppSelector } from '../../../store/hooks'
 
 import Button from '../../../components/Button'
-import ModalWalletConnect from '../../../components/Modals/ModalWalletConnect'
 
 import * as S from './styles'
 
@@ -42,19 +44,7 @@ export interface IPriceLPToken {
 }
 
 const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
-  const { chain, sipAddress, symbol, fundIcon } = product
-
-  const router = useRouter()
-  const { trackEventFunction } = useMatomoEcommerce()
-
-  const { getPriceKacyAndLP } = usePriceLP()
-  const tokenWallet = useERC20Contract(sipAddress)
-  const stakingContract = useStakingContract(Staking)
-
-  const { chainId, userWalletAddress } = useAppSelector(state => state)
-
   const [walletConnect, setWalletConnect] = React.useState<string | null>(null)
-  const [isModalWallet, setIsModaWallet] = React.useState<boolean>(false)
   const [stakedToken, setStakedToken] = React.useState<BigNumber>(
     new BigNumber(0)
   )
@@ -64,6 +54,18 @@ const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
     fund: Big(-1)
   })
   const [apr, setApr] = React.useState<BigNumber>(new BigNumber(0))
+
+  const { chain, sipAddress, symbol, fundIcon } = product
+
+  const stakingContract = useStakingContract(Staking)
+  const tokenWallet = useERC20Contract(sipAddress)
+  const { trackEventFunction } = useMatomoEcommerce()
+  const { getPriceKacyAndLP } = usePriceLP()
+
+  const { chainId, userWalletAddress } = useAppSelector(state => state)
+
+  const dispatch = useAppDispatch()
+  const router = useRouter()
 
   async function getStakedToken() {
     const staked = await stakingContract.userInfo(pid, userWalletAddress)
@@ -267,7 +269,7 @@ const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
                     trackEventFunction('click-on-button', 'stake', 'my-asset')
                     router.push('/farm')
                   }
-                : () => setIsModaWallet(true)
+                : () => dispatch(setModalWalletActive(true))
             }
           />
         ) : (
@@ -287,7 +289,6 @@ const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
           />
         )}
       </S.ButtonWrapper>
-      {isModalWallet && <ModalWalletConnect setModalOpen={setIsModaWallet} />}
     </S.MyAsset>
   )
 }
