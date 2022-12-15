@@ -41,8 +41,16 @@ export const AssetsTable = styled.div`
     }
 
     .add {
+      align-items: center;
+
       min-width: 2.8rem;
     }
+  `}
+`
+
+export const SearchWrapper = styled.div`
+  ${() => css`
+    margin-bottom: 2.4rem;
   `}
 `
 

@@ -63,6 +63,10 @@ export const Input = styled.input`
     &:invalid:not([value='']) {
       border: 0.1rem solid ${theme.colors.error};
     }
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: border;
   `}
 `
 

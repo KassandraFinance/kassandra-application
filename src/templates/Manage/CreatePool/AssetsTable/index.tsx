@@ -1,7 +1,10 @@
+import React from 'react'
 import Image from 'next/image'
 
-import CoinSummary from '../SelectAssets/CoinSummary'
+import InputSearch from '../../../../components/Inputs/InputSearch'
 
+import CoinSummary from '../SelectAssets/CoinSummary'
+import Checkbox from '../../../../components/Inputs/Checkbox'
 import arrowDownIcon from '../../../../../public/assets/utilities/arrow-down-thin.svg'
 
 import * as S from './styles'
@@ -11,8 +14,28 @@ import { mockData } from '../SelectAssets'
 interface IAssetsTableProps {}
 
 const AssetsTable = ({}: IAssetsTableProps) => {
+  const [value, setValue] = React.useState('')
+
+  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
+    setValue(e.target.value)
+    console.log(e)
+  }
+
+  function handleCheckbox(e: React.ChangeEvent<HTMLInputElement>) {
+    console.log(e)
+  }
+
   return (
     <S.AssetsTable>
+      <S.SearchWrapper>
+        <InputSearch
+          placeholder="Search for assets to add"
+          name="search"
+          value={value}
+          onChange={handleSearch}
+        />
+      </S.SearchWrapper>
+
       <S.Table>
         <S.THead>
           <S.Tr>
@@ -53,7 +76,13 @@ const AssetsTable = ({}: IAssetsTableProps) => {
                 1000 {coin.coinSymbol}
                 <S.SecondaryText>~$2940.00</S.SecondaryText>
               </S.Td>
-              <S.Td className="add">a</S.Td>
+              <S.Td className="add">
+                <Checkbox
+                  name={coin.coinName}
+                  checked={false}
+                  onChange={handleCheckbox}
+                />
+              </S.Td>
             </S.Tr>
           ))}
         </S.TBody>
