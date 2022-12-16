@@ -3,13 +3,16 @@ import styled, { css } from 'styled-components'
 export const CoinSummary = styled.div`
   ${() => css`
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 1.2rem;
   `}
 `
 
 export const ImageWrapper = styled.div`
-  ${() => css``}
+  ${() => css`
+    width: 2.4rem;
+    height: 2.4rem;
+  `}
 `
 
 export const TextWrapper = styled.div`
@@ -60,4 +63,20 @@ export const Symbol = styled.span<ISymbolProps>`
 
 export const ALink = styled.a`
   ${() => css``}
+`
+
+export const BalanceWrapper = styled.div`
+  ${({ theme }) => css`
+    display: flex;
+    gap: 0.2rem;
+
+    color: ${theme.colors.white};
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font12};
+    line-height: 104%;
+
+    @media (min-width: 576px) {
+      display: none;
+    }
+  `}
 `

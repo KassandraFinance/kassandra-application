@@ -98,7 +98,7 @@ export const Tr = styled.div`
     padding-block: 2.4rem;
 
     &:not(:first-of-type) {
-      border-top: 1px solid rgba(255, 255, 255, 0.3);
+      border-top: 0.1rem solid rgba(255, 255, 255, 0.3);
     }
 
     @media (min-width: 576px) {

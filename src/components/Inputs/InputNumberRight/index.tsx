@@ -10,6 +10,9 @@ interface IInputNumberRightProps {
   max: number;
   lable: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  button?: boolean;
+  buttonText?: string;
+  onClick?: () => void;
 }
 
 const InputNumberRight = ({
@@ -21,7 +24,10 @@ const InputNumberRight = ({
   min,
   max,
   lable,
-  onChange
+  onChange,
+  button = false,
+  buttonText = '',
+  onClick
 }: IInputNumberRightProps) => {
   return (
     <S.InputNumberRight>
@@ -37,11 +43,19 @@ const InputNumberRight = ({
           min={min}
           max={max}
           onChange={onChange}
+          button={button}
         />
 
         <S.PlaceholderWrapper>
           <S.Placeholder>{placeholder}</S.Placeholder>
         </S.PlaceholderWrapper>
+
+        {button && (
+          <>
+            <S.Line />
+            <S.InputButton onClick={onClick}>{buttonText}</S.InputButton>
+          </>
+        )}
       </S.InputContainer>
     </S.InputNumberRight>
   )

@@ -3,6 +3,7 @@ import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
 import StepGuide from './StepGuide'
 import SetDetails from './SetDetails'
 import SelectAssets from './SelectAssets'
+import AddLiquidity from './AddLiquidity'
 
 import * as S from './styles'
 
@@ -16,7 +17,9 @@ const CreatePool = () => {
 
         {/* <SetDetails network="Polygon" /> */}
 
-        <SelectAssets />
+        {/* <SelectAssets /> */}
+
+        <AddLiquidity />
 
         <ContainerButton
           onBack={() => console.log('Function not implemented.')}

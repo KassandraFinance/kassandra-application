@@ -23,7 +23,9 @@ interface IFundSummaryProps {
 }
 
 const FundSummary = ({ coins, creation = false }: IFundSummaryProps) => {
-  const [value, setValue] = React.useState('')
+  const [value, setValue] = React.useState('20')
+
+  const total = 100
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
     console.log(e.target.name)
@@ -92,14 +94,14 @@ const FundSummary = ({ coins, creation = false }: IFundSummaryProps) => {
         <S.TotalContainer>
           <S.Text>Total Allocated</S.Text>
 
-          <S.Text>101%</S.Text>
+          <S.Text>100%</S.Text>
 
           <S.ProgressBar>
             <S.ProgressValue value={67}></S.ProgressValue>
           </S.ProgressBar>
         </S.TotalContainer>
 
-        <S.Error>The total can’t be over 100%</S.Error>
+        {total > 100 && <S.Error>The total can’t be over 100%</S.Error>}
       </S.Body>
     </S.FundSummary>
   )

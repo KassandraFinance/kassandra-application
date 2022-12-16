@@ -22,10 +22,18 @@ export const Label = styled.label`
 export const InputContainer = styled.div`
   ${() => css`
     position: relative;
+
+    display: flex;
+    align-items: center;
   `}
 `
 
-export const Input = styled.input`
+interface IInputProps {
+  button: boolean;
+}
+
+// prettier-ignore
+export const Input = styled.input<IInputProps>`
   ${({ theme }) => css`
     width: 100%;
     height: 3.2rem;
@@ -67,6 +75,18 @@ export const Input = styled.input`
     transition-duration: 300ms;
     transition-timing-function: ease-in-out;
     transition-property: border;
+  `}
+  ${({ button }) => button && css`
+    border-right: none;
+    border-top-right-radius: 0rem;
+    border-bottom-right-radius: 0rem;
+
+    &:valid {
+      border-right: none;
+    }
+    &:invalid:not([value='']) {
+      border-right: none;
+    }
   `}
 `
 
@@ -110,5 +130,44 @@ export const Placeholder = styled.span`
     font-size: ${theme.font.sizes.font16};
     line-height: 100%;
     text-align: right;
+  `}
+`
+
+export const Line = styled.span`
+  ${() =>
+    css`
+      display: inline-block;
+
+      width: 0.1rem;
+      height: 1.4rem;
+
+      background-color: rgba(255, 255, 255, 0.15);
+    `}
+`
+
+export const InputButton = styled.button`
+  ${({ theme }) => css`
+    height: 3.2rem;
+    padding-inline: 0.8rem;
+
+    background: rgba(255, 255, 255, 0.08);
+    border: 0.1rem solid rgba(255, 255, 255, 0);
+    border-top-right-radius: 0.4rem;
+    border-bottom-right-radius: 0.4rem;
+
+    color: ${theme.colors.snow};
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font12};
+    line-height: 100%;
+
+    ${Input}:valid ~ & {
+      border: 0.1rem solid ${theme.colors.success};
+      border-left: none;
+    }
+    ${Input}:invalid:not([value='']) ~ & {
+      border: 0.1rem solid ${theme.colors.error};
+      border-left: none;
+    }
+    cursor: pointer;
   `}
 `
