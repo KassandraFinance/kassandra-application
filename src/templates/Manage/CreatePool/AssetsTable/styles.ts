@@ -2,6 +2,8 @@ import styled, { css } from 'styled-components'
 
 export const AssetsTable = styled.div`
   ${() => css`
+    position: relative;
+
     min-width: 100%;
 
     .asset {
@@ -171,5 +173,41 @@ export const HeaderButton = styled.button`
     border: none;
 
     cursor: pointer;
+  `}
+`
+
+interface IShadowProps {
+  inView: boolean;
+}
+
+// prettier-ignore
+export const Shadow = styled.div<IShadowProps>`
+  ${() => css`
+    position: absolute;
+    bottom: 0;
+
+    width: 100%;
+    height: 10.9rem;
+
+    background: linear-gradient(180deg, rgba(31, 31, 31, 0) 0%, #1f1f1f 100%);
+    border-radius: 0px 0px 8px 8px;
+
+    opacity: 1;
+    visibility: visible;
+    pointer-events: none;
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: opacity visibility;
+  `}
+  ${({ inView }) => inView && css`
+    opacity: 0;
+    visibility: hidden;
+  `}
+`
+
+export const TrsWrapper = styled.div`
+  ${() => css`
+    height: fit-content;
   `}
 `

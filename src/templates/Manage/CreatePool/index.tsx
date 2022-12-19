@@ -17,9 +17,9 @@ const CreatePool = () => {
 
         {/* <SetDetails network="Polygon" /> */}
 
-        {/* <SelectAssets /> */}
+        <SelectAssets />
 
-        <AddLiquidity />
+        {/* <AddLiquidity /> */}
 
         <ContainerButton
           onBack={() => console.log('Function not implemented.')}

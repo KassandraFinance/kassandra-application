@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import { useInView } from 'react-intersection-observer'
 
 import InputSearch from '../../../../components/Inputs/InputSearch'
 
@@ -24,6 +25,11 @@ const AssetsTable = ({}: IAssetsTableProps) => {
   function handleCheckbox(e: React.ChangeEvent<HTMLInputElement>) {
     console.log(e)
   }
+
+  const { ref, inView } = useInView({
+    /* Optional options */
+    threshold: 0.5
+  })
 
   return (
     <S.AssetsTable>
@@ -58,33 +64,42 @@ const AssetsTable = ({}: IAssetsTableProps) => {
         </S.THead>
 
         <S.TBody>
-          {mockData.map(coin => (
-            <S.Tr key={coin.coinName}>
-              <S.Td className="asset">
-                <CoinSummary
-                  coinImage={coin.coinImage}
-                  coinName={coin.coinName}
-                  coinSymbol={coin.coinSymbol}
-                  price={coin.price}
-                  url={coin.url}
-                  table
-                />
-              </S.Td>
-              <S.Td className="price">{coin.price}</S.Td>
-              <S.Td className="marketCap">$7,366,870,000</S.Td>
-              <S.Td className="balance">
-                1000 {coin.coinSymbol}
-                <S.SecondaryText>~$2940.00</S.SecondaryText>
-              </S.Td>
-              <S.Td className="add">
-                <Checkbox
-                  name={coin.coinName}
-                  checked={false}
-                  onChange={handleCheckbox}
-                />
-              </S.Td>
-            </S.Tr>
-          ))}
+          <S.TrsWrapper>
+            {mockData.map((coin, i) => (
+              <S.Tr
+                key={coin.coinName}
+                ref={i === mockData.length - 1 ? ref : null}
+              >
+                <S.Td className="asset">
+                  <CoinSummary
+                    coinImage={coin.coinImage}
+                    coinName={coin.coinName}
+                    coinSymbol={coin.coinSymbol}
+                    price={coin.price}
+                    url={coin.url}
+                    table
+                  />
+                </S.Td>
+                <S.Td className="price">{coin.price}</S.Td>
+                <S.Td className="marketCap">$7,366,870,000</S.Td>
+                <S.Td className="balance">
+                  1000 {coin.coinSymbol}
+                  <S.SecondaryText>~$2940.00</S.SecondaryText>
+                </S.Td>
+                <S.Td className="add">
+                  <Checkbox
+                    name={coin.coinName}
+                    label={coin.coinSymbol}
+                    checked={false}
+                    showLabel={false}
+                    onChange={handleCheckbox}
+                  />
+                </S.Td>
+              </S.Tr>
+            ))}
+          </S.TrsWrapper>
+
+          <S.Shadow inView={inView}></S.Shadow>
         </S.TBody>
       </S.Table>
     </S.AssetsTable>
