@@ -2,6 +2,14 @@ import styled, { css } from 'styled-components'
 
 export const Checkbox = styled.div`
   ${() => css`
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  `}
+`
+
+export const InputWrapper = styled.div`
+  ${() => css`
     display: block;
     position: relative;
 
@@ -67,5 +75,14 @@ export const Checkmark = styled.span`
         background-color: ${theme.colors.snow};
       }
     }
+  `}
+`
+
+export const Label = styled.label`
+  ${({ theme }) => css`
+    color: ${theme.colors.snow};
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font16};
+    line-height: ${theme.font.sizes.font16};
   `}
 `
