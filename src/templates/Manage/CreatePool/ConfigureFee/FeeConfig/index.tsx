@@ -140,8 +140,6 @@ const FeeConfig = ({
     }
   }
 
-  console.log(isAddress(managementFee.address))
-
   return (
     <S.FeeConfig>
       <S.CardWrapper>
