@@ -30,7 +30,7 @@ const useProxy = (address: string, sipAddress: string, coreAddress: string) => {
 
       const avaxValue = tokenIn === wrapped ? tokenAmountIn : new BigNumber(0)
       const res = await contract.methods
-        .joinswapExternAmountIn(sipAddress, tokenIn, tokenAmountIn, minPoolAmountOut)
+        .joinswapExternAmountIn(sipAddress, tokenIn, tokenAmountIn, minPoolAmountOut, "0x000000000000000000000000000000000000000000")
         .send({ from: walletAddress, value: avaxValue }, callback)
 
       return res
