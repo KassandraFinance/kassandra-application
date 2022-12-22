@@ -1,6 +1,8 @@
 import React from 'react'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
+import useSWR from 'swr'
+import { request } from 'graphql-request'
 
 import {
   addressNativeToken1Inch,
@@ -34,6 +36,8 @@ import Button from '../../../../../components/Button'
 
 import InputAndOutputValueToken from '../InputAndOutputValueToken'
 import TokenAssetOut from '../TokenAssetOut'
+import TransactionSettings from '../TransactionSettings'
+import { GET_INFO_POOL } from '../graphql'
 
 import * as S from './styles'
 import { BNtoDecimal } from '../../../../../utils/numerals'
@@ -70,6 +74,11 @@ const Invest = ({ typeAction }: IInvestProps) => {
   // const [priceImpact, setPriceImpact] = React.useState<Big>(Big(0))
   const [walletConnect, setWalletConnect] = React.useState<string | null>(null)
   const [errorMsg, setErrorMsg] = React.useState('')
+    const [slippage, setSlippage] = React.useState({
+    value: '0.5',
+    custom: '2.0',
+    isCustom: false
+  })
   const [approvals, setApprovals] = React.useState<Approvals>({
     Withdraw: [],
     Invest: []
@@ -95,6 +104,12 @@ const Invest = ({ typeAction }: IInvestProps) => {
   const crpPoolToken = useERC20Contract(pool.id)
   const corePool = usePoolContract(pool.core_pool)
   const yieldYak = useYieldYak()
+
+  const { data } = useSWR([GET_INFO_POOL], query =>
+    request('https://backend.kassandra.finance', query, {
+      id: pool.id
+    })
+  )
 
   const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
   // function handleSubmit() {
@@ -158,7 +173,6 @@ const Invest = ({ typeAction }: IInvestProps) => {
       tokenAddress: string,
       tabTitle: Titles
     ): TransactionCallback => {
-      console.log('entrou callback')
       return async (error: MetamaskError, txHash: string) => {
         if (error) {
           if (error.code === 4001) {
@@ -241,33 +255,33 @@ const Invest = ({ typeAction }: IInvestProps) => {
     [approvals, setApprovals]
   )
 
-  // const investCallback = React.useCallback(
-  //   (tokenSymbol: string, amountInUSD: number): TransactionCallback => {
-  //     return async (error: MetamaskError, txHash: string) => {
-  //       if (error) {
-  //         trackCancelBuying()
+  const investCallback = React.useCallback(
+    (tokenSymbol: string, amountInUSD: number): TransactionCallback => {
+      return async (error: MetamaskError, txHash: string) => {
+        if (error) {
+          trackCancelBuying()
 
-  //         if (error.code === 4001) {
-  //           dispatch(setModalAlertText({ errorText: `Investment in ${tokenSymbol} cancelled` }))
-  //           return
-  //         }
+          if (error.code === 4001) {
+            dispatch(setModalAlertText({ errorText: `Investment in ${tokenSymbol} cancelled` }))
+            return
+          }
 
-  //         dispatch(setModalAlertText({ errorText: `Failed to invest in ${tokenSymbol}. Please try again later.` }))
-  //         return
-  //       }
+          dispatch(setModalAlertText({ errorText: `Failed to invest in ${tokenSymbol}. Please try again later.` }))
+          return
+        }
 
-  //       trackBought(txHash, amountInUSD, 0)
-  //       ToastWarning(`Confirming investment in ${tokenSymbol}...`)
-  //       const txReceipt = await waitTransaction(txHash)
+        trackBought(txHash, amountInUSD, 0)
+        ToastWarning(`Confirming investment in ${tokenSymbol}...`)
+        const txReceipt = await waitTransaction(txHash)
 
-  //       if (txReceipt.status) {
-  //         ToastSuccess(`Investment in ${tokenSymbol} confirmed`)
-  //         return
-  //       }
-  //     }
-  //   },
-  //   [poolTokensArray]
-  // )
+        if (txReceipt.status) {
+          ToastSuccess(`Investment in ${tokenSymbol} confirmed`)
+          return
+        }
+      }
+    },
+    []
+  )
 
   // const withdrawCallback = React.useCallback(
   //   (tokenSymbol: string, amountInUSD: number): TransactionCallback => {
@@ -338,15 +352,15 @@ const Invest = ({ typeAction }: IInvestProps) => {
       // )
       // const swapInAddressVal = swapInAddressInput.value
       // const swapOutAddressVal = swapOutAddressInput.value
-      // const slippageVal = slippageInput.value
+      const slippageVal = slippage.value
 
-      // const slippageExp = new BigNumber(10).pow(new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0)))
-      // const slippageBase = slippageExp.sub(new BigNumber(slippageVal.replace('.', '')))
+      const slippageExp = new BigNumber(10).pow(new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0)))
+      const slippageBase = slippageExp.sub(new BigNumber(slippageVal.replace('.', '')))
 
       try {
         switch (typeAction) {
           case 'Invest':
-            if (approvals[typeAction][0] === Approval.Approved  && tokenSelect.address !== addressNativeToken1Inch) {
+            if (approvals[typeAction][0] === 0 && tokenSelect.address !== addressNativeToken1Inch) {
               ERC20(tokenSelect.address).approve(
                 ProxyContract,
                 userWalletAddress,
@@ -354,15 +368,31 @@ const Invest = ({ typeAction }: IInvestProps) => {
               )
               return
             }
-            trackBuying(crpPoolAddress, poolSymbol, amountInUSD, productCategories)
+
+            // trackBuying(crpPoolAddress, poolSymbol, amountInUSD, productCategories)
+
+            // verificar se o token tem na pool
+            // joinswapExternAmountIn -> token que tem dentro da pool
+            // joinswapExternAmountInWithSwap -> token que não tem dentro da pool
+
             proxy.joinswapExternAmountIn(
-              swapInAddressVal,
-              swapInAmountVal,
-              swapOutAmountVal[0].mul(slippageBase).div(slippageExp),
-              walletAddress.value,
-              investCallback(swapOutSymbol.value, amountInUSD)
+              tokenSelect.address,
+              new BigNumber(amountTokenIn.toString()),
+              new BigNumber(amountTokenOut.toString()).mul(slippageBase).div(slippageExp),
+              userWalletAddress,
+              investCallback(
+                pool.symbol,
+                Number(BNtoDecimal(
+                  Big(amountTokenOut.toString())
+                    .mul(Big(data?.pool?.price_usd || 0))
+                    .div(Big(10).pow(data?.pool?.decimals)),
+                  18,
+                  2,
+                  2
+                ))
+              )
             )
-            console.log("aprovado")
+
             return
 
           // case 'Withdraw':
@@ -442,15 +472,14 @@ const Invest = ({ typeAction }: IInvestProps) => {
         if (isAllowance) {
           newApprovals.push(tokenSelect.address)
         }
-
       }
 
       setApprovals((old: any) => ({
           ...old,
-        [typeAction]: newApprovals.map((item) => item ? Approval.Approved : Approval.Denied)
+        [typeAction]: newApprovals.length > 0 ? [1] : [0]
+        // [typeAction]: newApprovals.map((item) => item ? Approval.Approved : Approval.Denied)
       }))
     }
-
     handleTokensApproved()
     // setIsReload(!isReload)
   }, [typeAction, tokenSelect.address, userWalletAddress])
@@ -671,7 +700,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         <S.SpanLight>{fees[title]}%</S.SpanLight> */}
       </S.ExchangeRate>
       <S.TransactionSettingsOptions>
-        {/* <TransactionSettings slippage={slippage} setSlippage={setSlippage} /> */}
+        <TransactionSettings slippage={slippage} setSlippage={setSlippage} />
       </S.TransactionSettingsOptions>
       {userWalletAddress.length === 0 && walletConnect === null ? (
         <Button
