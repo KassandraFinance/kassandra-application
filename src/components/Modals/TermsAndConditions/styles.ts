@@ -8,15 +8,14 @@ interface IModalBuyKacyProps {
 // prettier-ignore
 export const TermsAndConditions = styled.div<IModalBuyKacyProps>`
   position: fixed;
-  top: 45%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 
   display: ${props => (props.modalOpen ? 'block' : 'none')};
-  padding-inline: 5.6rem;
+  padding-inline: 2.4rem;
   padding-top: 2.4rem;
-  /* width: 70rem;  */
-  height: 78rem;
+  width: 70rem;
 
   background: #1F2937;
   border-radius: 1.2rem;
@@ -31,6 +30,14 @@ export const TermsAndConditions = styled.div<IModalBuyKacyProps>`
     to {
       opacity: 1;
     }
+  }
+
+  @media (max-width: 998px) {
+    width: 55rem;
+  }
+  @media (max-width: 576px) {
+    width: 35rem;
+    padding-inline: 1.6rem;
   }
 `
 
@@ -72,10 +79,12 @@ export const TermsAndConditionsBody = styled.div`
   ${() => css`
     position: relative;
 
-    margin-top: 1.6rem;
     max-height: 70rem;
-    width: 64rem;
-    padding-right: 1.6rem;
+    margin-top: 1.6rem;
+    margin-inline: 1.2rem;
+    padding-inline: 1rem;
+    padding-bottom: 2.4rem;
+
     overflow: auto;
 
     p {
@@ -98,20 +107,37 @@ export const TermsAndConditionsBody = styled.div`
       margin-block: 0.8rem;
       border-top: 0.1rem solid rgba(255, 255, 255, 0.5);
     }
+
+    @media (max-width: 576px) {
+      margin-inline: 0;
+      max-height: 50rem;
+    }
+
+    @media (max-height: 720px) {
+      height: 50rem;
+    }
   `}
 `
 
-export const shadow = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+interface IShadowProps {
+  inView: boolean;
+}
 
-  height: 15rem;
+// eslint-disable-next-line prettier/prettier
+export const shadow = styled.div<IShadowProps>`
+  ${({ inView }) => css`
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
 
-  background: linear-gradient(180deg, #1f1f1f20 0%, #1f1f1f 100%);
-  border-radius: 0 0 8px 8px;
+    display: ${inView ? 'none' : 'block'};
+    height: 15rem;
 
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+    background: linear-gradient(180deg, #1f1f1f20 0%, #1f1f1f 100%);
+    border-radius: 0 0 8px 8px;
+
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  `}
 `

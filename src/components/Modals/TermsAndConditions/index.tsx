@@ -1,9 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
+import { useInView } from 'react-intersection-observer'
 
 import Overlay from '../../Overlay'
+
+import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
 
 import * as S from './styles'
 
@@ -19,6 +21,10 @@ const TermsAndConditions = ({
   function handleCloseModal() {
     setModalOpen(false)
   }
+
+  const { ref, inView } = useInView({
+    threshold: 0.1
+  })
 
   return (
     <>
@@ -93,7 +99,7 @@ const TermsAndConditions = ({
           </p>
           <h2>Neque pulvinar semper</h2>
           <hr />
-          <p>
+          <p ref={ref}>
             In eleifend sed phasellus et hendrerit neque egestas. Ut nisi
             ultricies egestas enim. Vitae ipsum ullamcorper quam arcu. Habitant
             luctus facilisis pellentesque commodo purus erat sit non amet.
@@ -107,7 +113,7 @@ const TermsAndConditions = ({
             vitae neque aliquam.
           </p>
         </S.TermsAndConditionsBody>
-        <S.shadow />
+        <S.shadow inView={inView} />
       </S.TermsAndConditions>
     </>
   )
