@@ -1,7 +1,12 @@
 import styled, { css } from 'styled-components'
 import theme from '../../styles/theme'
 
-export const Wrapper = styled.div`
+interface IWrapperProps {
+  dashBoard: boolean;
+}
+
+// prettier-ignore
+export const Wrapper = styled.div<IWrapperProps>`
   position: relative;
 
   display: flex;
@@ -9,7 +14,7 @@ export const Wrapper = styled.div`
   align-items: center;
 
   max-width: 114rem;
-  margin: 0 auto;
+  margin-inline: auto;
   margin-block: 3.2rem;
 
   z-index: ${theme.layers.menu};
@@ -25,9 +30,24 @@ export const Wrapper = styled.div`
   @media (max-width: 576px) {
     padding-inline: 1.6rem;
   }
+
+  ${({ dashBoard }) => dashBoard && css`
+    justify-content: flex-end;
+
+    margin-inline: auto 2.4rem;
+
+    @media (max-width: 1200px) {
+      padding-inline: 0rem;
+    }
+  `}
 `
 
-export const LogoWrapper = styled.div`
+interface ILogoWrapper {
+  dashBoard: boolean;
+}
+
+// prettier-ignore
+export const LogoWrapper = styled.div<ILogoWrapper>`
   .logo-desktop {
     @media (max-width: 992px) {
       display: none;
@@ -41,6 +61,10 @@ export const LogoWrapper = styled.div`
   }
 
   cursor: pointer;
+
+  ${({ dashBoard }) => dashBoard && css`
+      display: none;
+    `}
 `
 
 export const MenuWrapper = styled.div`

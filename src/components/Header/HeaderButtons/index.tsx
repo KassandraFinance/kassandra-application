@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setNickName, setProfilePic } from '../../../store/reducers/userSlice'
@@ -25,6 +26,7 @@ const HeaderButtons = ({
 }: IHeaderButtonsProps) => {
   const dispatch = useAppDispatch()
   const { trackEventFunction } = useMatomoEcommerce()
+  const router = useRouter()
 
   const chainId = useAppSelector(state => state.chainId)
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
@@ -100,6 +102,7 @@ const HeaderButtons = ({
     <S.HeaderButtons
       networkColor={network?.color}
       fillColor={network.fillColor}
+      dashBoard={router.pathname === '/manage'}
     >
       <Button
         className="button-network"
