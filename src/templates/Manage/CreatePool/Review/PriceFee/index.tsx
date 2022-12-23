@@ -1,4 +1,5 @@
 import React from 'react'
+import Checkbox from '../../../../../components/Inputs/Checkbox'
 
 import TermsAndConditions from '../../../../../components/Modals/TermsAndConditions'
 
@@ -7,6 +8,7 @@ import * as S from './styles'
 const PriceFee = () => {
   const [isOpenTermsAndConditions, setOpenTermsAndConditions] =
     React.useState(false)
+  const [isCheckbox, setIsCheckbox] = React.useState(false)
 
   return (
     <>
@@ -17,21 +19,28 @@ const PriceFee = () => {
           do not charge fees to create Funds, these costs are Avalanche Network
           Fees.
         </S.PriceFeeParagraph>
-        <S.NetworkFeesContainer>
-          <p>network fees</p>
-          <S.WrapperPrice>
-            <span>0.30 AVAX</span>
-            <p>1.35 USD</p>
-          </S.WrapperPrice>
-        </S.NetworkFeesContainer>
-        <hr />
-        <S.WrapperInput>
-          <input type="checkbox" />
-          <label>I agree with</label>
-          <span onClick={() => setOpenTermsAndConditions(true)}>
-            terms and conditions.
-          </span>
-        </S.WrapperInput>
+        <S.PriceFeeBody>
+          <S.NetworkFeesContainer>
+            <p>network fees</p>
+            <S.WrapperPrice>
+              <span>0.30 AVAX</span>
+              <p>1.35 USD</p>
+            </S.WrapperPrice>
+          </S.NetworkFeesContainer>
+          <hr />
+          <S.WrapperInput>
+            <Checkbox
+              checked={isCheckbox}
+              name="inputChekbox"
+              onChange={() => setIsCheckbox(!isCheckbox)}
+              label="I agree with"
+              showLabel={true}
+            />
+            <span onClick={() => setOpenTermsAndConditions(true)}>
+              terms and conditions.
+            </span>
+          </S.WrapperInput>
+        </S.PriceFeeBody>
       </S.PriceFee>
 
       {isOpenTermsAndConditions && (

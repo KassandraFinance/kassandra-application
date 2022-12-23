@@ -1,3 +1,4 @@
+import React from 'react'
 import Link from 'next/link'
 import CopyToClipboard from 'react-copy-to-clipboard'
 
@@ -5,16 +6,75 @@ import substr from '../../../../../utils/substr'
 
 import { ToastInfo } from '../../../../../components/Toastify/toast'
 import FeeBreakdown from '../../ConfigureFee/FeeBreakdown'
+import ModalViewCoinMobile from '../../../../../components/Modals/ModalViewCoinMobile'
 
 import * as S from './styles'
 
+type ITokenProps = {
+  image: string,
+  name: string,
+  allocation: string,
+  amount: string,
+  amountUSD: string
+}
+
+export type ITokenModalProps = {
+  image: string,
+  name: string,
+  tokenData: {
+    name: string,
+    value: string
+  }[]
+}
+
 const PoolReview = () => {
+  const [viewColumnInTable, setViewColumnInTable] = React.useState(1)
+  const [isOpenModal, setisOpenModal] = React.useState(false)
+  const [tokenForModal, setTokenForModal] = React.useState<ITokenModalProps>()
+
+  function handleCurrentViewTable(method: string, value: number) {
+    if (method === 'next') {
+      setViewColumnInTable(value === 3 ? 1 : viewColumnInTable + 1)
+    } else {
+      setViewColumnInTable(value === 1 ? 3 : viewColumnInTable - 1)
+    }
+  }
+
+  function handleClickViewCoin(item: ITokenProps) {
+    const { allocation, amount, amountUSD, image, name } = item
+
+    setisOpenModal(true)
+    setTokenForModal({
+      name,
+      image,
+      tokenData: [
+        {
+          name: 'Allocation',
+          value: allocation
+        },
+        {
+          name: 'Amount',
+          value: amount
+        },
+        {
+          name: 'Amount (USD)',
+          value: amountUSD
+        }
+      ]
+    })
+  }
+
   return (
     <S.PoolReview>
       <S.PoolReviewContainer>
         <S.PoolReviewHeader>
           <S.PoolNameContainer>
-            <img src="" alt="" width={64} height={64} />
+            <img
+              src="/assets/icons/coming-soon.svg"
+              alt=""
+              width={64}
+              height={64}
+            />
             <S.PoolNameContent>
               <p>Fund Name</p>
               <span>
@@ -46,21 +106,67 @@ const PoolReview = () => {
         <S.ReviewTable>
           <S.ReviewThead>
             <S.ReviewTh>Assets</S.ReviewTh>
-            <S.ReviewTh>Allocation</S.ReviewTh>
-            <S.ReviewTh>Amount</S.ReviewTh>
-            <S.ReviewTh>Amount (USD)</S.ReviewTh>
+            <S.ReviewTh isView={viewColumnInTable === 1}>Allocation</S.ReviewTh>
+            <S.ReviewTh isView={viewColumnInTable === 2}>Amount</S.ReviewTh>
+            <S.ReviewTh isView={viewColumnInTable === 3}>
+              Amount (USD)
+            </S.ReviewTh>
+            <S.ReviewThImg>
+              <span
+                onClick={() =>
+                  handleCurrentViewTable('back', viewColumnInTable)
+                }
+              >
+                <img
+                  src="/assets/utilities/arrow-left.svg"
+                  alt=""
+                  width={7}
+                  height={12}
+                />
+              </span>
+              <span
+                onClick={() =>
+                  handleCurrentViewTable('next', viewColumnInTable)
+                }
+              >
+                <img
+                  src="/assets/utilities/arrow-left.svg"
+                  alt=""
+                  width={7}
+                  height={12}
+                  id="arrow-right"
+                />
+              </span>
+            </S.ReviewThImg>
           </S.ReviewThead>
           <S.ReviewTbody>
             {ListToken.map((token, index) => {
               return (
                 <S.ReviewTr key={token.allocation + index}>
-                  <S.ReviewTd id="imgContent">
+                  <S.ReviewTd>
                     <img src={token.image} alt="" width={18} height={18} />
                     {token.name}
                   </S.ReviewTd>
-                  <S.ReviewTd>{token.allocation}</S.ReviewTd>
-                  <S.ReviewTd>{token.amount}</S.ReviewTd>
-                  <S.ReviewTd>{token.amountUSD}</S.ReviewTd>
+                  <S.ReviewTd isView={viewColumnInTable === 1}>
+                    {token.allocation}
+                  </S.ReviewTd>
+                  <S.ReviewTd isView={viewColumnInTable === 2}>
+                    {token.amount}
+                  </S.ReviewTd>
+                  <S.ReviewTd isView={viewColumnInTable === 3}>
+                    {token.amountUSD}
+                  </S.ReviewTd>
+                  <S.ReviewTd
+                    id="eyeIcon"
+                    onClick={() => handleClickViewCoin(token)}
+                  >
+                    <img
+                      src="/assets/utilities/eye-show.svg"
+                      alt=""
+                      width={20}
+                      height={20}
+                    />
+                  </S.ReviewTd>
                 </S.ReviewTr>
               )
             })}
@@ -81,11 +187,12 @@ const PoolReview = () => {
           <p>$20,000.000</p>
         </S.TvlContainer>
       </S.PoolReviewContainer>
+
       <S.WrapperPoolPrivacy>
         <S.PoolPrivacyLine>
           <p>Privacy</p>
           <span>
-            Public || Private{' '}
+            Public{' '}
             <img
               src="/assets/utilities/edit-icon.svg"
               alt=""
@@ -141,6 +248,7 @@ const PoolReview = () => {
           </S.PrivateAddressList>
         </S.WrapperPoolPrivate>
       </S.WrapperPoolPrivacy>
+
       <FeeBreakdown
         depositFee={{ address: '', rate: 0 }}
         isActiveToggles={{
@@ -151,6 +259,14 @@ const PoolReview = () => {
         managementFee={{ address: '', rate: 0 }}
         refferalCommission={{ broker: 0, share: 1 }}
       />
+
+      {isOpenModal && (
+        <ModalViewCoinMobile
+          modalOpen={isOpenModal}
+          setModalOpen={setisOpenModal}
+          tokenForModal={tokenForModal}
+        />
+      )}
     </S.PoolReview>
   )
 }
