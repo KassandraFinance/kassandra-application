@@ -39,6 +39,9 @@ const InputText = ({
           onChange={onChange}
           minLength={minLength}
           maxLength={maxLength}
+          min={minLength}
+          max={maxLength}
+          step={0.1}
         />
 
         <S.PlaceholderWrapper>

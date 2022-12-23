@@ -56,6 +56,12 @@ export const Input = styled.input`
     transition-duration: 300ms;
     transition-timing-function: ease-in-out;
     transition-property: border;
+
+    ::-webkit-inner-spin-button,
+    ::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   `}
 `
 
