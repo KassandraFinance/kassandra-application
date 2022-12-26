@@ -52,8 +52,6 @@ const NewPoolOperations = () => {
     dispatch(setTokenSelect(tokenList1Inch[0]))
   }, [])
 
-
-
   return (
     <S.NewPoolOperations>
       {isModalPoolOperations ?

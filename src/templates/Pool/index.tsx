@@ -93,8 +93,37 @@ const Pool = () => {
   async function getTokenList1Inch() {
     const res = await fetch(`${URL_1INCH}${pool.chainId}/tokens`)
     const json = await res.json()
+    const listToken1Linch = json.tokens
+    const listTokenPool = {}
 
-    dispatch(setTokenList1Inch(Object.values(json.tokens)))
+    pool.underlying_assets.forEach(item => {
+      if (item.token.is_wrap_token) {
+        Object.assign(listTokenPool, {
+          [item.token.wraps.id.toLowerCase()]: {
+            address: item.token.wraps.id.toLowerCase(),
+            decimals: item.token.wraps.decimals,
+            logoURI: item.token.wraps.logo,
+            name: item.token.wraps.name,
+            symbol: item.token.wraps.symbol
+          }
+        })
+        return
+      }
+      Object.assign(listTokenPool, {
+        [item.token.id.toLowerCase()]: {
+          address: item.token.id.toLowerCase(),
+          decimals: item.token.decimals,
+          logoURI: item.token.logo,
+          name: item.token.name,
+          symbol: item.token.symbol
+        }
+      })
+      return
+    })
+
+    const listToken = { ...listToken1Linch, ...listTokenPool }
+
+    dispatch(setTokenList1Inch(Object.values(listToken)))
   }
 
   React.useEffect(() => {

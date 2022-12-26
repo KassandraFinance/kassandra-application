@@ -11,7 +11,6 @@ import {
 } from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
-
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
 import { setModalWalletActive } from '../../../../../store/reducers/modalWalletActive'
 
@@ -27,6 +26,7 @@ import waitTransaction, {
   TransactionCallback
 } from '../../../../../utils/txWait'
 import changeChain from '../../../../../utils/changeChain'
+import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import {
   ToastSuccess,
@@ -37,10 +37,10 @@ import Button from '../../../../../components/Button'
 import InputAndOutputValueToken from '../InputAndOutputValueToken'
 import TokenAssetOut from '../TokenAssetOut'
 import TransactionSettings from '../TransactionSettings'
+
 import { GET_INFO_POOL } from '../graphql'
 
 import * as S from './styles'
-import { BNtoDecimal } from '../../../../../utils/numerals'
 
 // eslint-disable-next-line prettier/prettier
 export type Titles = keyof typeof messages;
@@ -73,6 +73,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
   const [amountTokenOut, setAmountTokenOut] = React.useState<Big>(Big(0))
   // const [priceImpact, setPriceImpact] = React.useState<Big>(Big(0))
   const [walletConnect, setWalletConnect] = React.useState<string | null>(null)
+  const [trasactionData, setTrasactionData] = React.useState<any>()
   const [errorMsg, setErrorMsg] = React.useState('')
     const [slippage, setSlippage] = React.useState({
     value: '0.5',
@@ -138,6 +139,8 @@ const Invest = ({ typeAction }: IInvestProps) => {
     )
 
     const data = await response.json()
+
+    setTrasactionData(data.tx.data)
     return data.toTokenAmount || 0
   }
 
@@ -252,7 +255,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         // })
       }
     },
-    [approvals, setApprovals]
+    [approvals]
   )
 
   const investCallback = React.useCallback(
@@ -311,7 +314,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
   //   [crpPoolAddress, ProxyContract]
   // )
 
-  const submitAction = React.useCallback(
+  const submitAction =
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
 
@@ -358,95 +361,87 @@ const Invest = ({ typeAction }: IInvestProps) => {
       const slippageBase = slippageExp.sub(new BigNumber(slippageVal.replace('.', '')))
 
       try {
-        switch (typeAction) {
-          case 'Invest':
-            if (approvals[typeAction][0] === 0 && tokenSelect.address !== addressNativeToken1Inch) {
-              ERC20(tokenSelect.address).approve(
-                ProxyContract,
-                userWalletAddress,
-                approvalCallback(tokenSelect.symbol, tokenSelect.address, typeAction)
-              )
-              return
-            }
-
-            // trackBuying(crpPoolAddress, poolSymbol, amountInUSD, productCategories)
-
-            // verificar se o token tem na pool
-            // joinswapExternAmountIn -> token que tem dentro da pool
-            // joinswapExternAmountInWithSwap -> token que não tem dentro da pool
-
-            proxy.joinswapExternAmountIn(
-              tokenSelect.address,
-              new BigNumber(amountTokenIn.toString()),
-              new BigNumber(amountTokenOut.toString()).mul(slippageBase).div(slippageExp),
-              userWalletAddress,
-              investCallback(
-                pool.symbol,
-                Number(BNtoDecimal(
-                  Big(amountTokenOut.toString())
-                    .mul(Big(data?.pool?.price_usd || 0))
-                    .div(Big(10).pow(data?.pool?.decimals)),
-                  18,
-                  2,
-                  2
-                ))
-              )
-            )
-
-            return
-
-          // case 'Withdraw':
-          //   trackBuying(crpPoolAddress, poolSymbol, -1 * amountInUSD, productCategories)
-          //   if (approved.value === '0') {
-          //     ERC20(crpPoolAddress).approve(
-          //       ProxyContract,
-          //       walletAddress.value,
-          //       approvalCallback(swapInSymbol.value, swapInAddressVal, tabTitle)
-          //     )
-          //     return
-          //   }
-          //   if (swapOutAddressVal !== '') {
-          //     proxy.exitswapPoolAmountIn(
-          //       swapOutAddressVal,
-          //       swapInAmountVal,
-          //       swapOutAmountVal[0].mul(slippageBase).div(slippageExp),
-          //       walletAddress.value,
-          //       withdrawCallback(swapInSymbol.value, -1 * amountInUSD)
-          //     )
-          //     return
-          //   }
-
-          //   corePool.currentTokens()
-          //     .then(async tokens => {
-          //       const swapOutAmounts = []
-
-          //       for (let i = 0; i < tokens.length; i++) {
-          //         swapOutAmounts.push(
-          //           swapOutAmountVal[tokenAddress2Index[invertToken[tokens[i]] ?? tokens[i]]]
-          //             .mul(slippageBase)
-          //             .div(slippageExp)
-          //         )
-          //       }
-
-          //       const tokensInPool = await corePool.currentTokens()
-          //       const tokensWithdraw = tokensInPool.map(token => invertToken[token] ?? token)
-          //       proxy.exitPool(
-          //         swapInAmountVal,
-          //         tokensWithdraw,
-          //         swapOutAmounts,
-          //         walletAddress.value,
-          //         withdrawCallback(swapInSymbol.value, -1 * amountInUSD)
-          //       )
-          //     })
-
-          //   return
-
-          default:
+        if (approvals[typeAction][0] === 0 && tokenSelect.address !== addressNativeToken1Inch) {
+          ERC20(tokenSelect.address).approve(
+            ProxyContract,
+            userWalletAddress,
+            approvalCallback(tokenSelect.symbol, tokenSelect.address, typeAction)
+          )
+          return
         }
+
+        // trackBuying(crpPoolAddress, poolSymbol, amountInUSD, productCategories)
+        proxy.joinswapExternAmountIn(
+          tokenSelect.address,
+          new BigNumber(amountTokenIn.toString()),
+          new BigNumber(amountTokenOut.toString()).mul(slippageBase).div(slippageExp),
+          userWalletAddress,
+          trasactionData,
+          investCallback(
+            pool.symbol,
+            Number(BNtoDecimal(
+              Big(amountTokenOut.toString())
+                .mul(Big(data?.pool?.price_usd || 0))
+                .div(Big(10).pow(data?.pool?.decimals)),
+              18,
+              2,
+              2
+            ))
+          )
+        )
+
+        return
+
+      // case 'Withdraw':
+      //   trackBuying(crpPoolAddress, poolSymbol, -1 * amountInUSD, productCategories)
+      //   if (approved.value === '0') {
+      //     ERC20(crpPoolAddress).approve(
+      //       ProxyContract,
+      //       walletAddress.value,
+      //       approvalCallback(swapInSymbol.value, swapInAddressVal, tabTitle)
+      //     )
+      //     return
+      //   }
+      //   if (swapOutAddressVal !== '') {
+      //     proxy.exitswapPoolAmountIn(
+      //       swapOutAddressVal,
+      //       swapInAmountVal,
+      //       swapOutAmountVal[0].mul(slippageBase).div(slippageExp),
+      //       walletAddress.value,
+      //       withdrawCallback(swapInSymbol.value, -1 * amountInUSD)
+      //     )
+      //     return
+      //   }
+
+      //   corePool.currentTokens()
+      //     .then(async tokens => {
+      //       const swapOutAmounts = []
+
+      //       for (let i = 0; i < tokens.length; i++) {
+      //         swapOutAmounts.push(
+      //           swapOutAmountVal[tokenAddress2Index[invertToken[tokens[i]] ?? tokens[i]]]
+      //             .mul(slippageBase)
+      //             .div(slippageExp)
+      //         )
+      //       }
+
+      //       const tokensInPool = await corePool.currentTokens()
+      //       const tokensWithdraw = tokensInPool.map(token => invertToken[token] ?? token)
+      //       proxy.exitPool(
+      //         swapInAmountVal,
+      //         tokensWithdraw,
+      //         swapOutAmounts,
+      //         walletAddress.value,
+      //         withdrawCallback(swapInSymbol.value, -1 * amountInUSD)
+      //       )
+      //     })
+
+      //   return
       } catch (error) {
         dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
       }
-    }, [])
+    }
+    // }, [tokenSelect])
 
   // get contract approval of tokens
   
@@ -459,7 +454,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     const handleTokensApproved = async () => {
       const newApprovals: string[] = []
 
-      if (newApprovals.includes(tokenSelect.address)) return
+      // if (newApprovals.includes(tokenSelect.address)) return
 
       if (tokenSelect.address === addressNativeToken1Inch) {
         newApprovals.push(addressNativeToken1Inch)
@@ -595,8 +590,8 @@ const Invest = ({ typeAction }: IInvestProps) => {
               return
             }
             if (
-              Big(newAmountTokenIn).gt(selectedTokenInBalance) &&
-              Number(newAmountTokenIn.toString()) > 0
+              Big(amountTokenIn).gt(selectedTokenInBalance) &&
+              Number(amountTokenIn.toString()) > 0
             ) {
               setErrorMsg('This amount exceeds your balance!')
               return

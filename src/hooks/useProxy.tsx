@@ -2,16 +2,49 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react'
 import BigNumber from 'bn.js'
-
 import { AbiItem } from "web3-utils"
 
-import web3 from '../utils/web3'
 import HermesProxy from "../constants/abi/HermesProxy.json"
+import { addressNativeToken1Inch } from "../constants/tokenAddresses"
 
+import web3 from '../utils/web3'
 import { TransactionCallback } from '../utils/txWait'
 
-const useProxy = (address: string, sipAddress: string, coreAddress: string) => {
+import { useAppSelector } from '../store/hooks'
+import usePoolContract from '../hooks/usePoolContract'
+
+// const referral = "0x000000000000000000000000000000000000000000"
+
+const useProxy = (address: string, crpPool: string, coreAddress: string) => {
   const [contract, setContract] = React.useState(new web3.eth.Contract((HermesProxy as unknown) as AbiItem, address))
+  
+  const { pool } = useAppSelector(state => state)
+  const corePool = usePoolContract(pool.core_pool)
+
+  const checkTokenInThePool = async (address: string) => {
+    const tokens = pool.underlying_assets
+
+    const tokensChecked = tokens.map(item => {
+      if (item.token.is_wrap_token === 1) {
+        return {
+          address: item.token.wraps.id.toLowerCase(),
+          is_wraps: 1,
+          yrt: item.token.id
+        }
+      }
+      return {
+        address: item.token.id.toLowerCase(),
+        is_wraps: 0,
+        yrt: ""
+      }
+    })
+
+    return tokensChecked.find(token => {
+      if (token.address === address.toLowerCase()) {
+        return token
+      }
+    })
+  }
 
   React.useEffect(() => {
     setContract(new web3.eth.Contract((HermesProxy as unknown) as AbiItem, address))
@@ -24,13 +57,45 @@ const useProxy = (address: string, sipAddress: string, coreAddress: string) => {
       tokenAmountIn: BigNumber,
       minPoolAmountOut: BigNumber,
       walletAddress: string,
+      data: any,
       callback: TransactionCallback
     ) => {
-      const wrapped = await contract.methods.wNativeToken().call()
 
-      const avaxValue = tokenIn === wrapped ? tokenAmountIn : new BigNumber(0)
+      const tokensChecked = await checkTokenInThePool(tokenIn)
+      
+      // const wrapped = await contract.methods.wNativeToken().call()
+
+      const avaxValue = tokenIn === addressNativeToken1Inch ? tokenAmountIn : new BigNumber(0)
+      
+      if (tokensChecked) {
+        const res = await contract.methods
+          .joinswapExternAmountIn(
+            crpPool, 
+            tokenIn, 
+            tokenAmountIn, 
+            minPoolAmountOut, 
+            walletAddress
+          )
+          .send({ from: walletAddress, value: avaxValue }, callback)
+  
+        return res
+      }
+
+      const { address: tokenExchange } = await corePool.checkTokenWithHigherLiquidityPool()
+
+      console.log(tokenExchange)
+      console.log(tokenIn)
+
       const res = await contract.methods
-        .joinswapExternAmountIn(sipAddress, tokenIn, tokenAmountIn, minPoolAmountOut, "0x000000000000000000000000000000000000000000")
+        .joinswapExternAmountInWithSwap(
+          crpPool, 
+          tokenIn, 
+          tokenAmountIn, 
+          tokenExchange, 
+          minPoolAmountOut, 
+          walletAddress,
+          data
+        )
         .send({ from: walletAddress, value: avaxValue }, callback)
 
       return res
@@ -45,7 +110,7 @@ const useProxy = (address: string, sipAddress: string, coreAddress: string) => {
     ) => {
 
       const res = await contract.methods
-        .exitswapPoolAmountIn(sipAddress, tokenOut, tokenAmountIn, minPoolAmountOut)
+        .exitswapPoolAmountIn(crpPool, tokenOut, tokenAmountIn, minPoolAmountOut)
         .send({ from: walletAddress }, callback)
 
         return res
@@ -59,7 +124,7 @@ const useProxy = (address: string, sipAddress: string, coreAddress: string) => {
       callback: TransactionCallback
     ) => {
       const res = await contract.methods
-        .exitPool(sipAddress, poolAmountIn, tokensOut, minAmountsOut)
+        .exitPool(crpPool, poolAmountIn, tokensOut, minAmountsOut)
         .send({ from: walletAddress }, callback)
 
       return res
@@ -114,7 +179,7 @@ const useProxy = (address: string, sipAddress: string, coreAddress: string) => {
       const avaxValue = tokenIn === wrapped ? tokenAmountIn : new BigNumber(0)
 
       const res = await contract.methods
-        .joinswapExternAmountIn(sipAddress, tokenIn, tokenAmountIn, minPoolAmountOut)
+        .joinswapExternAmountIn(crpPool, tokenIn, tokenAmountIn, minPoolAmountOut)
         .call({ from: walletAddress, value: avaxValue })
 
       return res
@@ -131,7 +196,7 @@ const useProxy = (address: string, sipAddress: string, coreAddress: string) => {
       const avaxValue = tokenIn === wrapped ? tokenAmountOut : new BigNumber(0)
 
       const res = await contract.methods
-        .joinswapPoolAmountOut(sipAddress, tokenIn, tokenAmountOut, maxAmountIn)
+        .joinswapPoolAmountOut(crpPool, tokenIn, tokenAmountOut, maxAmountIn)
         .call({ from: walletAddress, value: avaxValue })
 
       return res
@@ -145,7 +210,7 @@ const useProxy = (address: string, sipAddress: string, coreAddress: string) => {
     ) => {
 
       const res = contract.methods
-        .exitswapPoolAmountIn(sipAddress, tokenOut, poolAmountIn, minAmountOut)
+        .exitswapPoolAmountIn(crpPool, tokenOut, poolAmountIn, minAmountOut)
         .call({ from: walletAddress })
 
       return res
@@ -158,7 +223,7 @@ const useProxy = (address: string, sipAddress: string, coreAddress: string) => {
       walletAddress: string,
     ) => {
       const res = await contract.methods
-        .exitPool(sipAddress, poolAmountIn, tokensOut, minAmountsOut)
+        .exitPool(crpPool, poolAmountIn, tokensOut, minAmountsOut)
         .call({ from: walletAddress })
 
       return res
@@ -190,7 +255,7 @@ const useProxy = (address: string, sipAddress: string, coreAddress: string) => {
     const estimatedGas = async (userWalletAddress: string, tokenIn: string, minPoolAmountOut: BigNumber) => {
       const estimateGas = await web3.eth.estimateGas({
         // "value": '0x0', // Only tokens
-        "data": contract.methods.joinswapExternAmountIn(sipAddress, tokenIn, new BigNumber(0), minPoolAmountOut).encodeABI(),
+        "data": contract.methods.joinswapExternAmountIn(crpPool, tokenIn, new BigNumber(0), minPoolAmountOut).encodeABI(),
         "from": userWalletAddress,
         "to": address
       });

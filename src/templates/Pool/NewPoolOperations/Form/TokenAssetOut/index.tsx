@@ -63,7 +63,10 @@ const TokenAssetOut = ({ typeAction, amountTokenOut }: ITokenAssetOutProps) => {
           <S.Balance>
             Balance:{' '}
             {outAssetBalance > new Big(-1)
-              ? BNtoDecimal(outAssetBalance, pool.chain.nativeTokenDecimals)
+              ? BNtoDecimal(
+                  Big(outAssetBalance).div(Big(10).pow(18)),
+                  pool.chain.nativeTokenDecimals
+                )
               : '...'}
           </S.Balance>
         </S.TokenContainer>

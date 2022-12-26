@@ -43,7 +43,7 @@ export const GovernorAlpha = process.env.NEXT_PUBLIC_MASTER === '1' ?
   '0x2B6C46b9552B6Fa36DD097b6527ba20fdDB3FfD5'
 
 export const ProxyContract = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  '0x50cc28de8f771e8e509b932679ce4c54bd466b2e'
+  '0x50cC28dE8F771E8e509B932679Ce4C54bD466b2E'
   :
   '0x97e33051B09092C1301A90b964a74cA51C0b068B'
 
@@ -89,7 +89,7 @@ export const SUBGRAPH_URL = `https://graph.kassandra.finance/subgraphs/name/${pr
   :
   'KassandraFuji'}`
 
-export const URL_1INCH = 'https://api.1inch.io/v5.0/'
+export const URL_1INCH = 'https://api.1inch.io/v4.0/'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 
