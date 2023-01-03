@@ -4,7 +4,7 @@ export const Form = styled.div`
   /* ${({ theme }) => css`
     background-color: ${theme.colors.darkGray};
   `} */
-  /* 
+  /*
   display: flex;
   flex-direction: column;
   align-items: center; */
@@ -17,7 +17,9 @@ export const Form = styled.div`
   max-width: 44.8rem;
 
   background-color: rgba(255, 255, 255, 0.04);
-  border-radius: 1.2rem;
+  /* border-radius: 1.2rem; */
+  border-bottom-left-radius: 1.2rem;
+  border-bottom-right-radius: 1.2rem;
 
   @media (max-width: 1200px) {
     display: block;

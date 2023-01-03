@@ -31,10 +31,12 @@ const messages = {
 
 interface IFormProps {
   typeAction: string;
+  typeWithdraw: string;
 }
 
 const Form = ({
-  typeAction
+  typeAction,
+  typeWithdraw
 }: IFormProps) => {
 
   //chamar os dados da pool pelo Redux
@@ -43,7 +45,7 @@ const Form = ({
   return (
     <S.Form>
       {typeAction === "Invest" && <Invest typeAction="Invest" />}
-      {typeAction === "Withdraw" && <Withdraw />}
+      {typeAction === "Withdraw" && <Withdraw typeWithdraw={typeWithdraw} />}
     </S.Form>
   )
 }

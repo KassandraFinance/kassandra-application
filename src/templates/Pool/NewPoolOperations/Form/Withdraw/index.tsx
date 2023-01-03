@@ -5,7 +5,11 @@ import { TokenAssetIn } from '../TokenAssetIn/styles'
 
 import * as S from './styles'
 
-const Withdraw = () => {
+interface IWithdrawProps {
+  typeWithdraw: string;
+}
+
+const Withdraw = ({ typeWithdraw }: IWithdrawProps) => {
   return (
     <S.Withdraw>
       <TokenAssetIn />

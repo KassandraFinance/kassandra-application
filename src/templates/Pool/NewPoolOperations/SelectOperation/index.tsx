@@ -124,7 +124,7 @@ const SelectOperation = ({
           </S.TypeRadio>
         </S.TypeWithdraw>
       )}
-      <Form typeAction={inputChecked} />
+      <Form typeAction={inputChecked} typeWithdraw={typeWithdrawChecked} />
     </>
   )
 }
