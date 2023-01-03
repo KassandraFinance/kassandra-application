@@ -13,6 +13,7 @@ import { ERC20 } from '../../../../../hooks/useERC20Contract'
 import useCoingecko from '../../../../../hooks/useCoingecko'
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
 
+import TokenSelect from '../TokenSelect'
 import TokenSelected from '../TokenSelected'
 
 import * as S from './styles'
@@ -31,12 +32,12 @@ interface IInputAndOutputValueTokenProps {
 
 const InputAndOutputValueToken = ({
   typeAction,
-  amountTokenIn, 
+  amountTokenIn,
   setAmountTokenIn,
   selectedTokenInBalance,
   setSelectedTokenInBalance,
-  maxActive, 
-  setMaxActive, 
+  maxActive,
+  setMaxActive,
   inputAmountTokenRef,
   errorMsg = ''
 }: IInputAndOutputValueTokenProps) => {
@@ -59,6 +60,8 @@ const InputAndOutputValueToken = ({
       `Please change to the ${pool.chain.chainName} by clicking the button below`
       :
       ""
+
+  const isInvestType = typeAction === 'Invest' ? true : false
 
   function handleOnWheel() {
     if (document.activeElement?.classList.contains("noscroll")) {
@@ -131,8 +134,8 @@ const InputAndOutputValueToken = ({
       <S.FlexContainer>
         <S.Top>
           <S.Info>
-            <S.Title>Pay with</S.Title>
-            <TokenSelected />
+            <S.Title>{isInvestType ? 'Pay with' : 'Swap to'}</S.Title>
+            {isInvestType ? <TokenSelected/> : <TokenSelect />}
             <S.Span spanlight={true}>
               Balance:{' '}
               {selectedTokenInBalance > new Big(-1)

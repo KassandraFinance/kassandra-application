@@ -33,7 +33,7 @@ const messages = {
 
 const NewPoolOperations = () => {
   const [isModalPoolOperations, setIsModalPoolOperations] = React.useState<boolean>(false)
-  
+
   const [inputChecked, setInputChecked] = React.useState<Titles>('Invest')
   const [typeWithdrawChecked, setTypeWithdrawChecked] = React.useState<string>('Best_value')
   const [inputCheckedBarMobile, setInputCheckedBarMobile] = React.useState<TitlesMobile>('Disable')
@@ -49,8 +49,10 @@ const NewPoolOperations = () => {
   const { tokenList1Inch } = useAppSelector(state => state)
 
   React.useEffect(() => {
+    if (inputChecked === 'Withdraw') return
+
     dispatch(setTokenSelect(tokenList1Inch[0]))
-  }, [])
+  }, [inputChecked])
 
   return (
     <S.NewPoolOperations>
