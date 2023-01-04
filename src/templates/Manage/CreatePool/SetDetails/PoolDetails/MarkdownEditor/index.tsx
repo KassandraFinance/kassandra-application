@@ -13,10 +13,10 @@ interface IMarkdownEditorProps {
   // eslint-disable-next-line prettier/prettier
   handleEditorChange: ({ text }: {
     text: string;
-}) => void
+  }) => void
 }
 
-const MarkdownEditor = ({handleEditorChange}: IMarkdownEditorProps) => {
+const MarkdownEditor = ({ handleEditorChange }: IMarkdownEditorProps) => {
   return (
     <S.MarkdownEditor>
       <MdEditor

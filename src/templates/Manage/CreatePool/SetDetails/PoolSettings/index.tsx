@@ -43,8 +43,6 @@ const PoolSettings = () => {
       <FundImage
         uploadPoolImage={uploadPoolImage}
         setuploadPoolImage={setuploadPoolImage}
-        poolName="Fund name"
-        poolSymbol="SYMBOL"
       />
 
       <PrivacySetting

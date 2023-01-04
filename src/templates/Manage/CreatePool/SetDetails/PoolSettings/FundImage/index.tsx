@@ -1,6 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
 
+import { useAppSelector } from '../../../../../../store/hooks'
+
 import { IPoolImageProps } from '..'
 
 import defaultImage from '../../../../../../../public/assets/images/image-default.svg'
@@ -10,19 +12,17 @@ import * as S from './styles'
 interface IFoundImageProps {
   uploadPoolImage: IPoolImageProps;
   setuploadPoolImage: React.Dispatch<React.SetStateAction<IPoolImageProps>>;
-  poolName: string;
-  poolSymbol: string;
   poolImage?: string;
 }
 
 const FundImage = ({
   uploadPoolImage,
   setuploadPoolImage,
-  poolName,
-  poolSymbol,
   poolImage
 }: IFoundImageProps) => {
-  // eslint-disable-next-line prettier/prettier
+  const details = useAppSelector(
+    state => state.poolCreation.createPoolData.Details
+  )
   const [errorMessage, setErrorMessage] = React.useState<string>('')
 
   const hasPoolImage = poolImage ? poolImage : defaultImage
@@ -84,8 +84,8 @@ const FundImage = ({
           }}
         />
         <S.PoolSettingsName>
-          <p>{poolName}</p>
-          <strong>{poolSymbol}</strong>
+          <p>{details.poolName}</p>
+          <strong>{details.poolSymbol}</strong>
         </S.PoolSettingsName>
       </S.UploadImage>
       <S.ErrorParagraph>{errorMessage}</S.ErrorParagraph>

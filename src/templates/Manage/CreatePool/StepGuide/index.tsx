@@ -1,6 +1,12 @@
 import React from 'react'
 import Image from 'next/image'
 
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
+import {
+  setTutorial,
+  setIsValid
+} from '../../../../store/reducers/poolCreationSlice'
+
 import StepCard from './StepCard'
 import ExternalLink from '../../../../components/ExternalLink'
 import CreatePoolHeader from '../CreatePoolHeader'
@@ -45,7 +51,17 @@ const stepGuide = [
 ]
 
 const StepGuide = () => {
+  const dispatch = useAppDispatch()
+  const network = useAppSelector(
+    state => state.poolCreation.createPoolData.tutorial.network
+  )
+
   const [isAvailableAssets, setIsAvailableAssets] = React.useState(false)
+
+  function handleSelectNetwork(network: string) {
+    dispatch(setTutorial({ network: network }))
+    dispatch(setIsValid(true))
+  }
 
   return (
     <S.StepGuide>
@@ -85,7 +101,11 @@ const StepGuide = () => {
           </S.ButtonWrapper>
 
           <S.ButtonWrapper>
-            <S.ButtonNetwork borderColor="polygon" selected={false}>
+            <S.ButtonNetwork
+              borderColor="polygon"
+              selected={network === 'polygon'}
+              onClick={() => handleSelectNetwork('polygon')}
+            >
               <Image src={polygonIcon} width={24} height={24} /> Polygon
             </S.ButtonNetwork>
 

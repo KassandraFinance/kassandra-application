@@ -1,3 +1,5 @@
+import { useAppSelector } from '../../../../store/hooks'
+
 import Steps from '../../../../components/Steps'
 import CreatePoolHeader from '../CreatePoolHeader'
 import PoolDetails from './PoolDetails'
@@ -5,11 +7,10 @@ import PoolSettings from './PoolSettings'
 
 import * as S from './styles'
 
-interface ISetDetailsProps {
-  network: string;
-}
-
-const SetDetails = ({ network }: ISetDetailsProps) => {
+const SetDetails = () => {
+  const network = useAppSelector(
+    state => state.poolCreation.createPoolData.tutorial.network
+  )
   return (
     <S.SetDetails>
       <CreatePoolHeader title={`Create pool on ${network}`} />

@@ -1,23 +1,31 @@
 import React from 'react'
 
+import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
+import { setDetails } from '../../../../../store/reducers/poolCreationSlice'
+
 import InputText from '../../../../../components/Inputs/InputText'
 import PoolText from './PoolText'
 import MarkdownEditor from './MarkdownEditor'
 
 import * as S from './styles'
 
-interface IPoolDetailsProps {}
+const PoolDetails = () => {
+  const dispatch = useAppDispatch()
 
-const PoolDetails = ({}: IPoolDetailsProps) => {
-  const [value, setValue] = React.useState('')
+  const details = useAppSelector(
+    state => state.poolCreation.createPoolData.Details
+  )
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log(e.target.name)
-    setValue(e.target.value)
+    dispatch(
+      setDetails({
+        [e.target.name]: e.target.value
+      })
+    )
   }
 
   function handleEditorChange({ text }: { text: string }) {
-    console.log(text)
+    dispatch(setDetails({ strategy: text }))
   }
 
   return (
@@ -33,7 +41,7 @@ const PoolDetails = ({}: IPoolDetailsProps) => {
           type="text"
           placeholder="Write Pool name"
           required
-          value={value}
+          value={details.poolName ?? ''}
           minLength={3}
           maxLength={32}
           lable="managed pool name"
@@ -46,7 +54,7 @@ const PoolDetails = ({}: IPoolDetailsProps) => {
           type="text"
           placeholder="e.g.: ETH, BTC, AVAX, etc."
           required
-          value={value}
+          value={details.poolSymbol ?? ''}
           minLength={3}
           maxLength={5}
           lable="managed pool symbol"
