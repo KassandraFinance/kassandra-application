@@ -24,8 +24,8 @@ interface IInputAndOutputValueTokenProps {
   setAmountTokenIn: React.Dispatch<React.SetStateAction<Big | string>>;
   selectedTokenInBalance: Big;
   setSelectedTokenInBalance: React.Dispatch<React.SetStateAction<Big>>;
-  maxActive: boolean;
-  setMaxActive: React.Dispatch<React.SetStateAction<boolean>>;
+  maxActive?: boolean;
+  setMaxActive?: React.Dispatch<React.SetStateAction<boolean>>;
   inputAmountTokenRef: React.RefObject<HTMLInputElement>;
   errorMsg: string;
 }
@@ -79,7 +79,7 @@ const InputAndOutputValueToken = ({
       return
     }
 
-    if (inputAmountTokenRef.current !== null) {
+    if (setMaxActive && inputAmountTokenRef.current !== null) {
       inputAmountTokenRef.current.focus()
       if (maxActive) {
         inputAmountTokenRef.current.value = ''
@@ -166,9 +166,9 @@ const InputAndOutputValueToken = ({
             <Tippy content={disabled} disabled={disabled.length === 0}>
             <S.Input
               className="noscroll"
-              readOnly={disabled.length > 0}
+              readOnly={!isInvestType || disabled.length > 0 }
               ref={inputAmountTokenRef}
-              // value={inputRef?.current?.value}
+              value={inputAmountTokenRef?.current?.value}
               type="number"
               placeholder="0"
               step="any"
@@ -209,7 +209,7 @@ const InputAndOutputValueToken = ({
                   const values = value.split('.')
                   const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)}`
 
-                  setMaxActive(false)
+                  setMaxActive && setMaxActive(false)
                   setAmountTokenIn(paddedRight)
                 }
               }
