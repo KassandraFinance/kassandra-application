@@ -5,6 +5,7 @@ export const Withdraw = styled.form`
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 2rem;
 
     max-height: 100%;
     padding-top: 2rem;
@@ -17,7 +18,7 @@ export const Withdraw = styled.form`
     }
 
     > img {
-      margin-block: 1.2rem;
+      /* margin-block: 1.2rem; */
     }
   `}
 `

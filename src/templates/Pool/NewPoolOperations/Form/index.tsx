@@ -45,7 +45,7 @@ const Form = ({
   return (
     <S.Form>
       {typeAction === "Invest" && <Invest typeAction="Invest" />}
-      {typeAction === "Withdraw" && <Withdraw typeWithdraw={typeWithdraw} />}
+      {typeAction === "Withdraw" && <Withdraw typeWithdraw={typeWithdraw} typeAction="Withdraw" />}
     </S.Form>
   )
 }
