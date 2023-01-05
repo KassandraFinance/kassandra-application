@@ -2,6 +2,12 @@ import React from 'react'
 import Image from 'next/image'
 import { useInView } from 'react-intersection-observer'
 
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
+import {
+  setPoolData,
+  setTokens
+} from '../../../../store/reducers/poolCreationSlice'
+
 import InputSearch from '../../../../components/Inputs/InputSearch'
 
 import CoinSummary from '../SelectAssets/CoinSummary'
@@ -15,7 +21,23 @@ import { mockData } from '../SelectAssets'
 interface IAssetsTableProps {}
 
 const AssetsTable = ({}: IAssetsTableProps) => {
+  const dispatch = useAppDispatch()
   const [value, setValue] = React.useState('')
+  const assetsList = useAppSelector(
+    state => state.poolCreation.createPoolData.tokens
+  )
+
+  function handleChecked(symbol: string): boolean {
+    const assetsArr = assetsList ? assetsList : []
+    let result = false
+    assetsArr.forEach(asset => {
+      if (asset.symbol === symbol) {
+        result = true
+      }
+    })
+    console.log(result)
+    return result
+  }
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setValue(e.target.value)
@@ -23,6 +45,17 @@ const AssetsTable = ({}: IAssetsTableProps) => {
   }
 
   function handleCheckbox(e: React.ChangeEvent<HTMLInputElement>) {
+    if (handleChecked(e.target.name)) {
+      dispatch(
+        setTokens({
+          icon: '',
+          symbol: '',
+          address: '',
+          allocation: '',
+          amount: ''
+        })
+      )
+    }
     console.log(e)
   }
 
@@ -88,9 +121,9 @@ const AssetsTable = ({}: IAssetsTableProps) => {
                 </S.Td>
                 <S.Td className="add">
                   <Checkbox
-                    name={coin.coinName}
+                    name={coin.coinSymbol}
                     label={coin.coinSymbol}
-                    checked={false}
+                    checked={handleChecked(coin.coinSymbol)}
                     showLabel={false}
                     onChange={handleCheckbox}
                   />

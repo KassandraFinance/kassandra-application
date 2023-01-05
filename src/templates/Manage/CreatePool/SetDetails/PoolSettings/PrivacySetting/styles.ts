@@ -83,13 +83,23 @@ export const PrivateAddressContainer = styled.div`
   `}
 `
 
-export const InputAddressContainer = styled.div`
+interface IInputAddressContainerProps {
+  hasValue: boolean;
+  isValid: boolean;
+}
+
+// prettier-ignore
+export const InputAddressContainer = styled.div<IInputAddressContainerProps>`
   ${({ theme }) => css`
     position: relative;
 
     background: #1b1d22;
     border: 0.1rem solid rgba(255, 255, 255, 0.15);
     border-radius: 0.8rem;
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: border;
 
     input {
       width: 100%;
@@ -103,6 +113,11 @@ export const InputAddressContainer = styled.div`
       border: none;
       outline: none;
     }
+  `}
+  ${({ theme, hasValue, isValid }) =>
+    hasValue && css`
+      border: 0.1rem solid
+        ${isValid ? theme.colors.success : theme.colors.error};
   `}
 `
 
@@ -232,6 +247,28 @@ export const ClosePrivateAddress = styled.div`
         color: #ffffff;
       }
     }
+  `}
+`
+
+interface IErrorProps {
+  isValid: boolean;
+}
+
+// prettier-ignore
+export const Error = styled.p<IErrorProps>`
+  ${({ theme, isValid }) => css`
+    display: ${isValid ? 'none' : 'block'};
+
+    margin-top: 0.8rem;
+
+    color: ${theme.colors.error}! important;
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
+    line-height: 100%;
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: opacity;
   `}
 `
 

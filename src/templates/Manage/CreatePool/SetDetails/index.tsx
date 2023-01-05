@@ -9,7 +9,7 @@ import * as S from './styles'
 
 const SetDetails = () => {
   const network = useAppSelector(
-    state => state.poolCreation.createPoolData.tutorial.network
+    state => state.poolCreation.createPoolData.network
   )
   return (
     <S.SetDetails>

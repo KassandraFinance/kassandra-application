@@ -2,10 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import {
-  setTutorial,
-  setIsValid
-} from '../../../../store/reducers/poolCreationSlice'
+import { setPoolData } from '../../../../store/reducers/poolCreationSlice'
 
 import StepCard from './StepCard'
 import ExternalLink from '../../../../components/ExternalLink'
@@ -53,14 +50,13 @@ const stepGuide = [
 const StepGuide = () => {
   const dispatch = useAppDispatch()
   const network = useAppSelector(
-    state => state.poolCreation.createPoolData.tutorial.network
+    state => state.poolCreation.createPoolData.network
   )
 
   const [isAvailableAssets, setIsAvailableAssets] = React.useState(false)
 
   function handleSelectNetwork(network: string) {
-    dispatch(setTutorial({ network: network }))
-    dispatch(setIsValid(true))
+    dispatch(setPoolData({ network: network }))
   }
 
   return (
