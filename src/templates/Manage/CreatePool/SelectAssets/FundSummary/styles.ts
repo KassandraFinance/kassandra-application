@@ -149,6 +149,10 @@ export const ProgressValue = styled.div<IProgressValueProps>`
 
     background-color: ${theme.colors.magenta};
 
+    transition-duration: 300ms;
+    transition-timing-function: ease;
+    transition-property: width;
+
     &::before {
       content: '';
       position: absolute;
