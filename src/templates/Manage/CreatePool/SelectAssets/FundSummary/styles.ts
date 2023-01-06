@@ -168,6 +168,8 @@ export const ProgressValue = styled.div<IProgressValueProps>`
     }
   `}
   ${({theme, value}) => value > 100 && css`
+    width: 100%;
+
     background-color: ${theme.colors.error};
     background-image: none;
   `}
