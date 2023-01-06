@@ -1,5 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+export type TokenType = {
+  icon: string,
+  name: string,
+  symbol: string,
+  address: string,
+  allocation: number,
+  amount: number,
+  isLocked: boolean
+}
+
 type PoolData = {
   network?: string,
   poolName?: string,
@@ -10,15 +20,7 @@ type PoolData = {
   },
   strategy?: string,
   privacy?: string,
-  tokens?: [
-    {
-      icon: string,
-      symbol: string,
-      address: string,
-      allocation: string,
-      amount: string
-    }
-  ],
+  tokens?: TokenType[],
   privateAddressList?: {
     address: string
   }[]
@@ -28,6 +30,65 @@ interface IPoolCreationDataState {
   stepNumber: number;
   isValid: boolean;
   createPoolData: PoolData;
+}
+
+function handleAllocation(
+  tokensList: TokenType[],
+  tokenAllocation?: { token: string, allocation: number }
+) {
+  const maxAllocation = 100
+  let allocationAmount = 0
+  let unlokedTokensAmount = 0
+
+  for (const token of tokensList) {
+    if (token.symbol !== tokenAllocation?.token) {
+      if (token.isLocked === false) {
+        unlokedTokensAmount = unlokedTokensAmount + 1
+      }
+
+      if (token.isLocked === true) {
+        allocationAmount = allocationAmount + token.allocation
+      }
+    } else {
+      allocationAmount = allocationAmount + tokenAllocation.allocation
+    }
+  }
+
+  const allocationValue =
+    (maxAllocation - allocationAmount) / unlokedTokensAmount
+  const fixedAllocationValue = Number(allocationValue.toFixed(2))
+  const teste =
+    maxAllocation -
+    (fixedAllocationValue * unlokedTokensAmount + allocationAmount)
+
+  let isFirstUnlocked = true
+  const newTokensList = tokensList.map(token => {
+    if (token.symbol !== tokenAllocation?.token) {
+      if (token.isLocked === true) {
+        return token
+      }
+
+      if (isFirstUnlocked) {
+        isFirstUnlocked = false
+        return {
+          ...token,
+          allocation: fixedAllocationValue + teste
+        }
+      }
+
+      return {
+        ...token,
+        allocation: fixedAllocationValue
+      }
+    } else {
+      return {
+        ...token,
+        allocation: tokenAllocation.allocation
+      }
+    }
+  })
+
+  return newTokensList
 }
 
 const initialState: IPoolCreationDataState = {
@@ -43,15 +104,7 @@ const initialState: IPoolCreationDataState = {
     },
     strategy: '',
     privacy: 'public',
-    tokens: [
-      {
-        icon: '',
-        symbol: '',
-        address: '',
-        allocation: '',
-        amount: ''
-      }
-    ],
+    tokens: [],
     privateAddressList: []
   }
 }
@@ -93,17 +146,48 @@ export const poolCreationSlice = createSlice({
           wallett => wallett.address !== action.payload
         )
     },
-    setTokens: (
+    setTokens: (state, action: PayloadAction<TokenType>) => {
+      if (
+        state.createPoolData.tokens?.some(
+          token => token.symbol === action.payload.symbol
+        )
+      ) {
+        const tokensList = state.createPoolData.tokens?.filter(
+          token => token.symbol !== action.payload.symbol
+        )
+        state.createPoolData.tokens = handleAllocation(tokensList)
+      } else {
+        const tokensArr = state.createPoolData.tokens
+          ? state.createPoolData.tokens
+          : []
+        const tokensList: TokenType[] = [...tokensArr, action.payload]
+        state.createPoolData.tokens = handleAllocation(tokensList)
+      }
+    },
+    setTokenLock: (state, action: PayloadAction<string>) => {
+      const tokensArr = state.createPoolData.tokens
+        ? state.createPoolData.tokens
+        : []
+      const tokensLinst = tokensArr.map(token => {
+        if (token.symbol === action.payload) {
+          return {
+            ...token,
+            isLocked: !token.isLocked
+          }
+        }
+        return token
+      })
+
+      state.createPoolData.tokens = handleAllocation(tokensLinst)
+    },
+    setAllocation: (
       state,
-      action: PayloadAction<{
-        icon: string,
-        symbol: string,
-        address: string,
-        allocation: string,
-        amount: string
-      }>
+      action: PayloadAction<{ token: string, allocation: number }>
     ) => {
-      state.createPoolData.tokens?.push(action.payload)
+      const tokensArr = state.createPoolData.tokens
+        ? state.createPoolData.tokens
+        : []
+      state.createPoolData.tokens = handleAllocation(tokensArr, action.payload)
     }
   }
 })
@@ -115,7 +199,9 @@ export const {
   setPoolData,
   setPrivateAddress,
   removePrivateAddress,
-  setTokens
+  setTokens,
+  setTokenLock,
+  setAllocation
 } = poolCreationSlice.actions
 
 export default poolCreationSlice.reducer

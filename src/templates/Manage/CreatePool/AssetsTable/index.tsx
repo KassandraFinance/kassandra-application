@@ -4,8 +4,8 @@ import { useInView } from 'react-intersection-observer'
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import {
-  setPoolData,
-  setTokens
+  setTokens,
+  TokenType
 } from '../../../../store/reducers/poolCreationSlice'
 
 import InputSearch from '../../../../components/Inputs/InputSearch'
@@ -18,9 +18,7 @@ import * as S from './styles'
 
 import { mockData } from '../SelectAssets'
 
-interface IAssetsTableProps {}
-
-const AssetsTable = ({}: IAssetsTableProps) => {
+const AssetsTable = () => {
   const dispatch = useAppDispatch()
   const [value, setValue] = React.useState('')
   const assetsList = useAppSelector(
@@ -29,13 +27,7 @@ const AssetsTable = ({}: IAssetsTableProps) => {
 
   function handleChecked(symbol: string): boolean {
     const assetsArr = assetsList ? assetsList : []
-    let result = false
-    assetsArr.forEach(asset => {
-      if (asset.symbol === symbol) {
-        result = true
-      }
-    })
-    console.log(result)
+    const result = assetsArr.some(asset => asset.symbol === symbol)
     return result
   }
 
@@ -44,19 +36,8 @@ const AssetsTable = ({}: IAssetsTableProps) => {
     console.log(e)
   }
 
-  function handleCheckbox(e: React.ChangeEvent<HTMLInputElement>) {
-    if (handleChecked(e.target.name)) {
-      dispatch(
-        setTokens({
-          icon: '',
-          symbol: '',
-          address: '',
-          allocation: '',
-          amount: ''
-        })
-      )
-    }
-    console.log(e)
+  function handleCheckbox(token: TokenType) {
+    dispatch(setTokens(token))
   }
 
   const { ref, inView } = useInView({
@@ -125,7 +106,17 @@ const AssetsTable = ({}: IAssetsTableProps) => {
                     label={coin.coinSymbol}
                     checked={handleChecked(coin.coinSymbol)}
                     showLabel={false}
-                    onChange={handleCheckbox}
+                    onChange={() =>
+                      handleCheckbox({
+                        address: '0xaksjdfklas',
+                        name: coin.coinName,
+                        icon: coin.coinImage,
+                        symbol: coin.coinSymbol,
+                        allocation: 100,
+                        amount: 0,
+                        isLocked: false
+                      })
+                    }
                   />
                 </S.Td>
               </S.Tr>

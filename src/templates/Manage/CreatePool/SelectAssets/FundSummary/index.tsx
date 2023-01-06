@@ -1,6 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
 
+import { TokenType } from '../../../../../store/reducers/poolCreationSlice'
+
 import CoinSummary from '../CoinSummary'
 import InputNumberRight from '../../../../../components/Inputs/InputNumberRight'
 
@@ -18,20 +20,28 @@ export type CoinType = {
 }
 
 interface IFundSummaryProps {
-  coins: CoinType[];
   creation?: boolean;
+  coinsList: TokenType[];
+  totalAllocation: number;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemoveToken?: (token: TokenType) => void;
+  onLockToken?: (id: string) => void;
 }
 
-const FundSummary = ({ coins, creation = false }: IFundSummaryProps) => {
-  const [value, setValue] = React.useState('20')
-
-  const total = 100
-
-  function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log(e.target.name)
-    setValue(e.target.value)
+const FundSummary = ({
+  coinsList,
+  totalAllocation,
+  creation = false,
+  onChange = () => {
+    return
+  },
+  onRemoveToken = () => {
+    return
+  },
+  onLockToken = () => {
+    return
   }
-
+}: IFundSummaryProps) => {
   return (
     <S.FundSummary>
       <S.Header>
@@ -42,50 +52,51 @@ const FundSummary = ({ coins, creation = false }: IFundSummaryProps) => {
 
       <S.Body>
         <S.CoinsContainer>
-          {coins.map(coin => (
-            <S.CoinContainer key={coin.coinName}>
+          {coinsList.map(coin => (
+            <S.CoinContainer key={coin.name}>
               <CoinSummary
-                coinImage={coin.coinImage}
-                coinName={coin.coinName}
-                coinSymbol={coin.coinSymbol}
-                price={coin.price}
+                coinImage={coin.icon}
+                coinName={coin.name}
+                coinSymbol={coin.symbol}
+                price={5}
               />
 
               {creation ? (
                 <>
                   <S.AllocationContainer>
                     <S.LockButton
-                      onClick={() => console.log('lock')}
-                      active={false}
+                      onClick={() => onLockToken(coin.symbol)}
+                      active={coin.isLocked}
                     >
                       <Image src={unlockIcon} />
                     </S.LockButton>
 
                     <InputNumberRight
-                      name="aaveAllocation"
+                      name={coin.symbol}
                       type="number"
                       placeholder="100%"
-                      lable="aave allocation"
+                      lable={`${coin.name} allocation`}
                       required
                       min={1}
                       max={100}
-                      value={value}
-                      onChange={handleInput}
+                      value={coin.allocation.toString()}
+                      onChange={onChange}
                     />
 
-                    <S.RemoveButton onClick={() => console.log('remove item')}>
+                    <S.RemoveButton onClick={() => onRemoveToken(coin)}>
                       <Image src={closeIcon} />
                     </S.RemoveButton>
                   </S.AllocationContainer>
-
-                  <S.Error>Allocation must be above 1%</S.Error>
+                  {coin.allocation < 1 && (
+                    <S.Error>Allocation must be above 1%</S.Error>
+                  )}
                 </>
               ) : (
-                <S.Text>{value}%</S.Text>
+                <S.Text>{coin.allocation}%</S.Text>
               )}
 
               <S.ProgressBar>
-                <S.ProgressValue value={50}></S.ProgressValue>
+                <S.ProgressValue value={coin.allocation}></S.ProgressValue>
               </S.ProgressBar>
             </S.CoinContainer>
           ))}
@@ -94,14 +105,16 @@ const FundSummary = ({ coins, creation = false }: IFundSummaryProps) => {
         <S.TotalContainer>
           <S.Text>Total Allocated</S.Text>
 
-          <S.Text>100%</S.Text>
+          <S.Text>{totalAllocation}%</S.Text>
 
           <S.ProgressBar>
-            <S.ProgressValue value={67}></S.ProgressValue>
+            <S.ProgressValue value={totalAllocation}></S.ProgressValue>
           </S.ProgressBar>
         </S.TotalContainer>
 
-        {total > 100 && <S.Error>The total can’t be over 100%</S.Error>}
+        {totalAllocation > 100 && (
+          <S.Error>The total can’t be over 100%</S.Error>
+        )}
       </S.Body>
     </S.FundSummary>
   )
