@@ -42,6 +42,7 @@ const InputNumberRight = ({
           required={required}
           min={min}
           max={max}
+          step="any"
           onChange={onChange}
           button={button}
         />
