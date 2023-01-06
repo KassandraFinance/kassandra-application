@@ -33,7 +33,8 @@ const CreatePool = () => {
   ]
 
   function handleNextButton(stepNumber: number) {
-    if (stepNumber === 0) {
+    const firstStepNumber = 0
+    if (stepNumber === firstStepNumber) {
       const network = poolData.network ? poolData.network : ''
       if (network.length > 0) {
         dispatch(setNextStepNumber())
@@ -47,7 +48,8 @@ const CreatePool = () => {
       }
     }
 
-    if (stepNumber === 1) {
+    const secondStepNumber = 1
+    if (stepNumber === secondStepNumber) {
       const name = poolData.poolName ? poolData.poolName : ''
       const symbol = poolData.poolSymbol ? poolData.poolSymbol : ''
       const icon = poolData.icon?.image_preview
@@ -62,6 +64,46 @@ const CreatePool = () => {
           setModalAlertText({
             errorText: 'Incomplete data',
             solutionText: 'You need to add a pool name, symbol and icon'
+          })
+        )
+      }
+    }
+
+    const thirdStepNumber = 2
+    if (stepNumber === thirdStepNumber) {
+      const maxAllocation = 100
+      let totalAllocation = 0
+      let hasValue = true
+      const tokensArr = poolData.tokens ? poolData.tokens : []
+
+      for (const token of tokensArr) {
+        totalAllocation = totalAllocation + token.allocation
+        if (token.allocation < 1) {
+          hasValue = false
+        }
+      }
+
+      if (totalAllocation === maxAllocation && hasValue) {
+        dispatch(setNextStepNumber())
+      } else if (totalAllocation > maxAllocation) {
+        dispatch(
+          setModalAlertText({
+            errorText: 'Allocation is bigger than 100%',
+            solutionText: 'Allocation must be equal to 100%'
+          })
+        )
+      } else if (totalAllocation < maxAllocation) {
+        dispatch(
+          setModalAlertText({
+            errorText: 'Allocation is smaller than 100%',
+            solutionText: 'Allocation must be equal to 100%'
+          })
+        )
+      } else {
+        dispatch(
+          setModalAlertText({
+            errorText: 'Token allocation is smaller than 1%',
+            solutionText: 'Add at least 1% of allocation on token'
           })
         )
       }
