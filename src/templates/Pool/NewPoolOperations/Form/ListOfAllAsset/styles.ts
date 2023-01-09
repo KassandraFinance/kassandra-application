@@ -151,7 +151,7 @@ export const AllInput = styled.div`
 export const InputBestValueGrid = styled.div`
   ${() => css`
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
     justify-content: space-between;
     align-items: flex-start;
   `}
