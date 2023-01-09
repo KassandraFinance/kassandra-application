@@ -1,19 +1,31 @@
 import Big from 'big.js'
 import React from 'react'
+import BigNumber from 'bn.js'
+import web3 from '../../../../../utils/web3'
 
-import { ProxyContract } from '../../../../../constants/tokenAddresses'
-import { ERC20 } from '../../../../../hooks/useERC20Contract'
-import useProxy from '../../../../../hooks/useProxy'
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
+import { setModalWalletActive } from '../../../../../store/reducers/modalWalletActive'
+
+import useERC20Contract, { ERC20 } from '../../../../../hooks/useERC20Contract'
+import useProxy from '../../../../../hooks/useProxy'
+import useCoingecko from '../../../../../hooks/useCoingecko'
+import useYieldYak from '../../../../../hooks/useYieldYak'
+import usePoolContract from '../../../../../hooks/usePoolContract'
 
 import waitTransaction, { MetamaskError, TransactionCallback } from '../../../../../utils/txWait'
+import changeChain from '../../../../../utils/changeChain'
+import { BNtoDecimal } from '../../../../../utils/numerals'
+
 
 import { ToastSuccess, ToastWarning } from '../../../../../components/Toastify/toast'
 import Button from '../../../../../components/Button'
 import InputAndOutputValueToken from '../InputAndOutputValueToken'
 import ListOfAllAsset from '../ListOfAllAsset'
 import TokenAssetIn from '../TokenAssetIn'
+import TransactionSettings from '../TransactionSettings'
+
+import { ProxyContract, URL_1INCH } from '../../../../../constants/tokenAddresses'
 
 import * as S from './styles'
 
@@ -53,18 +65,38 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   )
   const [errorMsg, setErrorMsg] = React.useState('')
   const [maxActive, setMaxActive] = React.useState<boolean>(false)
-  const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
-  const inputAmountInTokenRef = React.useRef<HTMLInputElement>(null)
+  const [amountAllTokenOut, setamountAllTokenOut] = React.useState<any>([])
+  const [balanceAllTokenOut, setbalanceAllTokenOut] = React.useState<any>([])
+  const [trasactionData, setTrasactionData] = React.useState<any>()
+  const [walletConnect, setWalletConnect] = React.useState<string | null>(null)
   const [approvals, setApprovals] = React.useState<Approvals>({
     Withdraw: [],
     Invest: []
   })
+  const [slippage, setSlippage] = React.useState({
+    value: '0.5',
+    custom: '2.0',
+    isCustom: false
+  })
+
+  const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
+  const inputAmountInTokenRef = React.useRef<HTMLInputElement>(null)
+
 
   const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
     state => state
   )
 
   const proxy = useProxy(ProxyContract, pool.id, pool.core_pool)
+  const crpPoolToken = useERC20Contract(pool.id)
+  const corePool = usePoolContract(pool.core_pool)
+  const yieldYak = useYieldYak()
+
+  const { priceToken } = useCoingecko(
+    pool.chain.nativeTokenName.toLowerCase(),
+    pool.chain.addressWrapped.toLowerCase(),
+    pool.underlying_assets_addresses.toString()
+  )
 
   const dispatch = useAppDispatch()
 
@@ -156,50 +188,44 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     [approvals]
   )
 
+  const withdrawCallback = React.useCallback(
+    (tokenSymbol: string, amountInUSD: number): TransactionCallback => {
+      return async (error: MetamaskError, txHash: string) => {
+        if (error) {
+          // trackCancelBuying()
+
+          if (error.code === 4001) {
+            dispatch(setModalAlertText({ errorText: `Withdrawal of ${tokenSymbol} cancelled` }))
+            return
+          }
+
+          dispatch(setModalAlertText({ errorText: `Failed to withdraw ${tokenSymbol}. Please try again later.` }))
+          return
+        }
+
+        // trackBought(txHash, amountInUSD, 0)
+        ToastWarning(`Confirming withdrawal of ${tokenSymbol}...`)
+        const txReceipt = await waitTransaction(txHash)
+
+        if (txReceipt.status) {
+          ToastSuccess(`Withdrawal of ${tokenSymbol} confirmed`)
+          return
+        }
+      }
+    },
+    [ProxyContract]
+  )
+
+  // console.log(BNtoDecimal(new BigNumber(amountTokenIn.toString()), 2, 2, 18))
+  // console.log(tokenSelect.address)
+  // console.log(pool)
+
   const submitAction = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // const {
-    //   approved,
-    //   category,
-    //   swapInAmountInput,
-    //   swapOutAmountInput,
-    //   swapInAddressInput,
-    //   swapOutAddressInput,
-    //   swapInSymbol,
-    //   swapOutSymbol,
-    //   walletAddress,
-    //   amountUSD,
-    //   slippageInput,
-    //   tabTitleInput
-    //   // eslint-disable-next-line prettier/prettier
-    // } = e.target as HTMLFormElement & {
-    //   approved: HTMLInputElement;
-    //   category: HTMLInputElement;
-    //   swapInAmountInput: HTMLInputElement;
-    //   swapOutAmountInput: HTMLInputElement;
-    //   swapInAddressInput: HTMLInputElement;
-    //   swapOutAddressInput: HTMLInputElement;
-    //   swapInSymbol: HTMLInputElement;
-    //   swapOutSymbol: HTMLInputElement;
-    //   walletAddress: HTMLInputElement;
-    //   amountUSD: HTMLInputElement;
-    //   slippageInput: HTMLInputElement;
-    //   tabTitleInput: HTMLInputElement;
-    // }
-    // console.log('asdasdsadwe')
-    // const tabTitle = tabTitleInput.value as Titles
-    // const amountInUSD = parseFloat(amountUSD.value)
-    // const swapInAmountVal = new BigNumber(swapInAmountInput.value)
-    // const swapOutAmountVal = swapOutAmountInput.value.split(',').map(
-    //   item => new BigNumber(item)
-    // )
-    // const swapInAddressVal = swapInAddressInput.value
-    // const swapOutAddressVal = swapOutAddressInput.value
 
-    // const slippageVal = slippage.value
-
-    // const slippageExp = new BigNumber(10).pow(new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0)))
-    // const slippageBase = slippageExp.sub(new BigNumber(slippageVal.replace('.', '')))
+    const slippageVal = slippage.value
+    const slippageExp = new BigNumber(10).pow(new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0)))
+    const slippageBase = slippageExp.sub(new BigNumber(slippageVal.replace('.', '')))
 
     try {
       // trackBuying(crpPoolAddress, poolSymbol, -1 * amountInUSD, productCategories)
@@ -212,16 +238,17 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         )
         return
       }
-      // if (swapOutAddressVal !== '') {
-      //   proxy.exitswapPoolAmountIn(
-      //     swapOutAddressVal,
-      //     swapInAmountVal,
-      //     swapOutAmountVal[0].mul(slippageBase).div(slippageExp),
-      //     walletAddress.value,
-      //     withdrawCallback(swapInSymbol.value, -1 * amountInUSD)
-      //   )
-      //   return
-      // }
+      if (tokenSelect.address !== '') {
+        proxy.exitswapPoolAmountIn(
+          tokenSelect.address,
+          new BigNumber(amountTokenIn.toString()),
+          // new BigNumber(amountTokenOut.toString()),
+          new BigNumber(amountTokenOut.toString()).mul(slippageBase).div(slippageExp),
+          userWalletAddress,
+          withdrawCallback(pool.symbol, -1 * 0)
+        )
+        return
+      }
 
       // corePool.currentTokens()
       //   .then(async tokens => {
@@ -229,20 +256,28 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
       //     for (let i = 0; i < tokens.length; i++) {
       //       swapOutAmounts.push(
-      //         swapOutAmountVal[tokenAddress2Index[invertToken[tokens[i]] ?? tokens[i]]]
+      //         // swapOutAmountVal[tokenAddress2Index[invertToken[tokens[i]] ?? tokens[i]]]
+      //         amountAllTokenOut[i]
       //           .mul(slippageBase)
       //           .div(slippageExp)
       //       )
       //     }
 
-      //     const tokensInPool = await corePool.currentTokens()
-      //     const tokensWithdraw = tokensInPool.map(token => invertToken[token] ?? token)
+      //     // const tokensInPool = await corePool.currentTokens()
+      //     // const tokensWithdraw = tokensInPool.map(token => invertToken[token] ?? token)
+      //     const tokensWithdraw = pool.underlying_assets.map(token =>
+      //       token.token.wraps ?
+      //       token.token.wraps.id :
+      //       token.token.id
+      //     )
+
       //     proxy.exitPool(
-      //       swapInAmountVal,
+      //       new BigNumber(amountTokenIn.toString()),
       //       tokensWithdraw,
       //       swapOutAmounts,
-      //       walletAddress.value,
-      //       withdrawCallback(swapInSymbol.value, -1 * amountInUSD)
+      //       userWalletAddress,
+      //       withdrawCallback(pool.symbol, -1 * 0)
+      //       // withdrawCallback(pool.symbol, -1 * amountInUSD)
       //     )
       //   })
 
@@ -252,6 +287,259 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       // dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
     }
   }
+
+
+  React.useEffect(() => {
+    if (typeAction !== 'Withdraw' || tokenSelect.address === pool.id) {
+      return
+    }
+
+    if (chainId !== pool.chainId) {
+      if (tokenSelect.address === '') {
+        setAmountTokenOut(new Big(0))
+        return
+      }
+
+      setAmountTokenOut(new Big(0))
+      return
+    }
+
+    // const getWithdrawAmount = (
+    //   supplyPoolToken: BigNumber,
+    //   amountPoolToken: BigNumber,
+    //   balanceOut: BigNumber,
+    //   exitFee: BigNumber
+    // ): BigNumber => {
+    //   if (supplyPoolToken.toString(10) === '0') {
+    //     return new BigNumber(0)
+    //   }
+
+    //   // 10^18
+    //   const one = new BigNumber('1')
+    //   const two = new BigNumber('2')
+    //   const bigOne = new BigNumber('10').pow(new BigNumber('18'))
+    //   const halfBigOne = bigOne.div(two)
+    //   // calculated fee (bmul)
+    //   const fee = amountPoolToken
+    //     .mul(exitFee)
+    //     .add(halfBigOne)
+    //     .div(bigOne);
+    //   const pAiAfterExitFee = amountPoolToken.sub(fee);
+    //   const supply = supplyPoolToken.add(one)
+    //   // ratio of the token (bdiv)
+    //   const ratio = pAiAfterExitFee
+    //     .mul(bigOne)
+    //     .add(supply.div(two))
+    //     .div(supply);
+    //   // amount of tokens (bmul)
+    //   const tokenAmountOut = ratio
+    //     .mul(balanceOut.sub(one))
+    //     .add(halfBigOne)
+    //     .div(bigOne);
+
+    //   return tokenAmountOut
+    // }
+
+    const calc = async () => {
+      const [poolSupply, poolExitFee] = await Promise.all([
+        crpPoolToken.totalSupply(),
+        corePool.exitFee()
+      ])
+
+      const tokenAddress = pool.underlying_assets.filter(item =>
+        (item.token.wraps ? item.token.wraps.id : item.token.id) === tokenSelect.address
+      )
+
+      // if (tokenSelect.address) {
+      //   const newSwapOutAmount = await Promise.all(
+      //     pool.underlying_assets.map(async (item) => {
+      //       const swapOutTotalPoolBalance = await corePool.balance(item.token.id)
+
+      //       const withdrawAmout = getWithdrawAmount(
+      //         poolSupply,
+      //         new BigNumber(amountTokenIn.toString()),
+      //         swapOutTotalPoolBalance,
+      //         poolExitFee
+      //       )
+      //       if (item.token.wraps) {
+      //         return await yieldYak.convertBalanceYRTtoWrap(withdrawAmout, item.token.id)
+      //       }
+      //       return withdrawAmout
+      //     })
+      //   )
+      //   setamountAllTokenOut(newSwapOutAmount)
+      //   // setSwapOutAmount(newSwapOutAmount)
+      //   try {
+      //     if (userWalletAddress.length > 0 && new BigNumber(amountTokenIn.toString()).gt(new BigNumber('0'))) {
+      //       const tokensInPool = pool.underlying_assets.map(item => item.token.id)
+      //       // const tokensWithdraw = tokensInPool.map(token => invertToken[token] ?? token)
+
+      //       await proxy.tryExitPool(
+      //         new BigNumber(amountTokenIn.toString()),
+      //         tokensInPool,
+      //         Array(newSwapOutAmount.length).fill(new BigNumber('0')),
+      //         userWalletAddress
+      //       )
+      //     }
+      //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      //   } catch (error: any) {
+      //     const errorStr = error.toString()
+
+      //     if (errorStr.search(/ERR_(BPOW_BASE_TOO_|MATH_APPROX)/) > -1) {
+      //       setErrorMsg('This amount is too low for the pool!')
+      //       return
+      //     }
+
+      //     if (errorStr.search('below minimum') > -1) {
+      //       setErrorMsg("This amount is below minimum withdraw!")
+      //       return
+      //     }
+
+      //     if (new BigNumber(amountTokenIn.toString()).gt(new BigNumber(selectedTokenInBalance.toString()))) {
+      //       setErrorMsg('This amount exceeds your balance!')
+      //       return;
+      //     }
+      //   }
+      //   return
+      // }
+
+      try {
+        const [
+          swapOutTotalPoolBalance,
+          swapOutDenormalizedWeight,
+          poolTotalDenormalizedWeight,
+          poolSwapFee
+        ] = await Promise.all([
+          corePool.balance(tokenAddress[0].token.id),
+          corePool.denormalizedWeight(tokenAddress[0].token.id),
+          corePool.totalDenormalizedWeight(),
+          corePool.swapFee()
+        ])
+
+        const [SingleSwapOutAmount] = await Promise.all([
+          corePool.calcSingleOutGivenPoolIn(
+            swapOutTotalPoolBalance,
+            swapOutDenormalizedWeight,
+            poolSupply,
+            poolTotalDenormalizedWeight,
+            new BigNumber(amountTokenIn.toString()),
+            poolSwapFee,
+            poolExitFee
+          ),
+        ])
+
+        let withdrawAmoutOut: BigNumber = SingleSwapOutAmount
+        if (tokenAddress[0]?.token.wraps) {
+          withdrawAmoutOut = await yieldYak.convertBalanceYRTtoWrap(withdrawAmoutOut, tokenAddress[0].token.id)
+        }
+          setAmountTokenOut(new Big(withdrawAmoutOut.toString()))
+      }
+      catch (e) {
+        if (userWalletAddress.length > 0) {
+          ToastWarning('Could not connect with the blockchain to calculate prices.')
+        }
+      }
+
+      try {
+        if (userWalletAddress.length > 0 && Big(amountTokenIn).gt(Big('0'))) {
+          await proxy.tryExitswapPoolAmountIn(
+            tokenSelect.address,
+            new BigNumber(amountTokenIn.toString()),
+            new BigNumber('0'),
+            userWalletAddress
+          )
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        const errorStr = error.toString()
+
+        if (errorStr.search(/ERR_(BPOW_BASE_TOO_|MATH_APPROX)/) > -1) {
+          setErrorMsg('This amount is too low for the pool!')
+          return
+        }
+
+        if (errorStr.search('ERR_MAX_OUT_RATIO') > -1) {
+          setErrorMsg("The amount you are trying to obtain can't be more than a third of what's in the pool!")
+          return
+        }
+
+        if (errorStr.search('below minimum') > -1) {
+          setErrorMsg("This amount is below minimum withdraw!")
+          return
+        }
+
+        if (Big(amountTokenIn).gt(selectedTokenInBalance)) {
+          setErrorMsg('This amount exceeds your balance!')
+          return;
+        }
+      }
+    }
+
+    calc()
+    // setErrorMsg('')
+    setAmountTokenOut(new Big(0))
+  }, [chainId, amountTokenIn, tokenSelect])
+  console.log(errorMsg)
+
+  React.useEffect(() => {
+    const handleWallectConnect = () => {
+      const connect = localStorage.getItem('walletconnect')
+
+      if (connect) {
+        setWalletConnect(connect)
+      } else {
+        setWalletConnect(null)
+      }
+    }
+
+    handleWallectConnect()
+  }, [])
+  React.useEffect(() => {
+    if (userWalletAddress.length === 0 ||
+      chainId.toString().length === 0 ||
+      chainId !== pool.chainId ||
+      typeWithdraw === 'Best_Value'
+    ) {
+      return
+    }
+    setbalanceAllTokenOut([new BigNumber(-1)])
+
+      const getUserBalanceAllToken = async () => {
+        const newSwapOutBalance = await Promise.all(
+          pool.underlying_assets.map(async (item) => {
+            // if (item.token === poolChain.wrapped) {
+            // if (item.token) {
+            //   const balance = await web3.eth.getBalance(userWalletAddress)
+            //   return new BigNumber(balance)
+            // }
+            const token = ERC20(item.token.id)
+            return token.balance(userWalletAddress)
+          })
+        )
+
+        setbalanceAllTokenOut(newSwapOutBalance)
+      }
+
+      getUserBalanceAllToken()
+      return
+    // }
+
+    // if (swapOutAddress.length === 0) {
+    //   return
+    // }
+
+    // const token = ERC20(swapOutAddress)
+
+    // if (swapOutAddress === poolChain.wrapped) {
+    //   web3.eth.getBalance(userWalletAddress)
+    //     .then(newBalance => setSwapOutBalance([new BigNumber(newBalance)]))
+    //   return
+    // }
+
+    // token
+    //   .balance(userWalletAddress)
+    //   .then(newBalance => setSwapOutBalance([newBalance]))
+  }, [chainId, userWalletAddress, amountTokenIn])
 
   React.useEffect(() => {
     if (chainId !== pool.chainId) {
@@ -297,7 +585,10 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       <img src="/assets/icons/arrow-down.svg" alt="" width={20} height={20} />
 
       {typeWithdraw === 'Best_value' ? (
-        <ListOfAllAsset />
+        <ListOfAllAsset
+          amountAllTokenOut={amountAllTokenOut}
+          balanceAllTokenOut={balanceAllTokenOut}
+        />
       ) : (
         <InputAndOutputValueToken
           typeAction={typeWithdraw}
@@ -310,16 +601,73 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         />
       )}
 
-      <Button
-        className="btn-submit"
-        backgroundPrimary
-        fullWidth
-        type="submit"
-        // onClick={() => changeChain(pool.chain)}
-        // disabled={walletConnect ? true : false}
-        // text={walletConnect ? `Change manually to ${pool.chain.chainName}` : `Change to ${pool.chain.chainName}`}
-        text="withdraw"
-      />
+      <S.TransactionSettingsOptions>
+        <TransactionSettings slippage={slippage} setSlippage={setSlippage} />
+      </S.TransactionSettingsOptions>
+
+      {userWalletAddress.length === 0 && walletConnect === null ? (
+        <Button
+          className="btn-submit"
+          backgroundPrimary
+          fullWidth
+          type="button"
+          onClick={() => dispatch(setModalWalletActive(true))}
+          text="Connect Wallet"
+        />
+      ) : chainId === pool.chainId ? (
+        <Button
+          className="btn-submit"
+          backgroundPrimary
+          // disabledNoEvent={
+          //  (approvals[typeAction].length === 0) ||
+          //   (approvals[typeAction][0] > Approval.Approved) ||
+          //   (approvals[typeAction][0] === Approval.Approved &&
+          //     (amountTokenIn.toString() === '0' ||
+          //       amountTokenOut.toString() === '0' ||
+          //       amountAllTokenOut.lemght > 0 ||
+          //       errorMsg.length > 0))
+          // }
+          fullWidth
+          type="submit"
+          text={
+            approvals[typeAction][0] === Approval.Approved
+              ? amountTokenIn.toString() !== '0' ||
+                inputAmountTokenRef?.current?.value !== null
+                ?
+                  typeWithdraw === "Best_value" ?
+                  'withdraw'
+                  // `${typeAction} ${'$' + priceInDollarOnWithdraw}`
+                  :
+                  `${typeAction} ${'$' +
+                  BNtoDecimal(
+                    (Big((amountTokenOut).toString()))
+                      .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
+                      .div(Big(10).pow(Number(tokenSelect.decimals || 18))),
+                    18,
+                    2,
+                    2
+                  )
+                  }`
+                : `${typeAction}`
+              : approvals[typeAction][0] === Approval.WaitingTransaction
+              ? 'Approving...'
+              : approvals[typeAction][0] === undefined ||
+                approvals[typeAction][0] === Approval.Syncing
+              ? 'Syncing with Blockchain...'
+              : 'Approve'
+          }
+        />
+      ) : (
+        <Button
+          className="btn-submit"
+          backgroundPrimary
+          fullWidth
+          type="button"
+          onClick={() => changeChain(pool.chain)}
+          disabled={walletConnect ? true : false}
+          text={walletConnect ? `Change manually to ${pool.chain.chainName}` : `Change to ${pool.chain.chainName}`}
+        />
+      )}
     </S.Withdraw>
   )
 }

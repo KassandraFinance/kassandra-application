@@ -1,6 +1,7 @@
 import React from 'react'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
+import BigNumber from 'bn.js'
 
 import { addressNativeToken1Inch } from '../../../../../constants/tokenAddresses'
 
@@ -149,26 +150,34 @@ const InputAndOutputValueToken = ({
             </S.Span>
           </S.Info>
           <S.Amount>
-            <S.ButtonMax
-              type="button"
-              maxActive={maxActive}
-              onClick={() => {
-                handleMaxUserBalance()
-                trackEventFunction(
-                  'click-on-maxBtn',
-                  'input-in-Invest',
-                  'operations-invest'
-                )
-              }}
-            >
-              Max
-            </S.ButtonMax>
+            {isInvestType && (
+              <S.ButtonMax
+                type="button"
+                maxActive={maxActive}
+                onClick={() => {
+                  handleMaxUserBalance()
+                  trackEventFunction(
+                    'click-on-maxBtn',
+                    'input-in-Invest',
+                    'operations-invest'
+                  )
+                }}
+              >
+                Max
+              </S.ButtonMax>
+            )}
             <Tippy content={disabled} disabled={disabled.length === 0}>
             <S.Input
               className="noscroll"
               readOnly={!isInvestType || disabled.length > 0 }
               ref={inputAmountTokenRef}
-              value={inputAmountTokenRef?.current?.value}
+              value={isInvestType ? inputAmountTokenRef.current?.value : Number(
+                BNtoDecimal(
+                  new Big(amountTokenIn)?.div(Big(10).pow(18)) || new BigNumber(0),
+                  18,
+                  6
+                ).replace(/\s/g, '')
+              )}
               type="number"
               placeholder="0"
               step="any"
@@ -222,7 +231,7 @@ const InputAndOutputValueToken = ({
                   BNtoDecimal(
                     Big(amountTokenIn.toString())
                       .mul(
-                        Big(priceToken(tokenSelect.address) || 0)
+                        Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0)
                       )
                       .div(Big(10).pow(Number(tokenSelect.decimals))),
                     18,

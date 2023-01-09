@@ -22,3 +22,11 @@ export const Withdraw = styled.form`
     }
   `}
 `
+
+export const TransactionSettingsOptions = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  width: 100%;
+  margin-top: 0.6rem;
+`

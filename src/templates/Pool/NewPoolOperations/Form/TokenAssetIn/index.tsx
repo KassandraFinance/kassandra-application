@@ -43,8 +43,6 @@ const TokenAssetIn = ({
     request(SUBGRAPH_URL, query, { id: pool.id })
   )
 
-  console.log(data)
-
   const messageError = false
 
 
@@ -97,8 +95,6 @@ const TokenAssetIn = ({
         setSelectedTokenInBalance(Big(newBalance.toString()))
       )
   }, [userWalletAddress, pool])
-
-  console.log(data?.pool?.price_usd || 0)
 
   return (
     <S.TokenAssetIn>
