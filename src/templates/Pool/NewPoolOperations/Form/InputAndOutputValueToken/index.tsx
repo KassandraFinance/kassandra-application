@@ -106,7 +106,9 @@ const InputAndOutputValueToken = ({
       return
     }
 
-    if (tokenSelect.address === addressNativeToken1Inch) {
+    if (tokenSelect.address === addressNativeToken1Inch ||
+      tokenSelect.address === pool.chain.addressWrapped
+    ) {
       web3.eth
         .getBalance(userWalletAddress)
         .then(newBalance =>
