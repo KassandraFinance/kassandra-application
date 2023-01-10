@@ -2,6 +2,8 @@ import Big from 'big.js'
 import React from 'react'
 import BigNumber from 'bn.js'
 import web3 from '../../../../../utils/web3'
+import useSWR from 'swr';
+import { request } from 'graphql-request';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -25,7 +27,8 @@ import ListOfAllAsset from '../ListOfAllAsset'
 import TokenAssetIn from '../TokenAssetIn'
 import TransactionSettings from '../TransactionSettings'
 
-import { ProxyContract, URL_1INCH } from '../../../../../constants/tokenAddresses'
+import { GET_POOL } from './graphql'
+import { ProxyContract, SUBGRAPH_URL } from '../../../../../constants/tokenAddresses'
 
 import * as S from './styles'
 
@@ -60,15 +63,16 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
     new Big(-1)
   )
-  const [selectedTokenInBalanceTest, setSelectedTokenInBalanceTest] = React.useState(
+  const [selectedTokenOutBalance, setSelectedTokenOutBalance] = React.useState(
     new Big(-1)
   )
   const [errorMsg, setErrorMsg] = React.useState('')
   const [maxActive, setMaxActive] = React.useState<boolean>(false)
-  const [amountAllTokenOut, setamountAllTokenOut] = React.useState<any>([])
-  const [balanceAllTokenOut, setbalanceAllTokenOut] = React.useState<any>([])
-  const [trasactionData, setTrasactionData] = React.useState<any>()
+  const [amountAllTokenOut, setamountAllTokenOut] = React.useState<BigNumber[]>([])
+  const [balanceAllTokenOut, setbalanceAllTokenOut] = React.useState<BigNumber[]>([])
   const [walletConnect, setWalletConnect] = React.useState<string | null>(null)
+  const [priceImpact, setPriceImpact] = React.useState<Big>(Big(0))
+  const [priceInDollarOnWithdraw, setPriceInDollarOnWithdraw] = React.useState<string>('')
   const [approvals, setApprovals] = React.useState<Approvals>({
     Withdraw: [],
     Invest: []
@@ -79,10 +83,11 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     isCustom: false
   })
 
-  const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
   const inputAmountInTokenRef = React.useRef<HTMLInputElement>(null)
+  const inputAmountOutTokenRef = React.useRef<HTMLInputElement>(null)
 
 
+  const dispatch = useAppDispatch()
   const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
     state => state
   )
@@ -92,13 +97,16 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   const corePool = usePoolContract(pool.core_pool)
   const yieldYak = useYieldYak()
 
+  const tokenAddresses = pool.underlying_assets.map(item => item.token.wraps ? item.token.wraps.id : item.token.id)
   const { priceToken } = useCoingecko(
     pool.chain.nativeTokenName.toLowerCase(),
     pool.chain.addressWrapped.toLowerCase(),
-    pool.underlying_assets_addresses.toString()
+    tokenAddresses.toString()
   )
 
-  const dispatch = useAppDispatch()
+  const { data } = useSWR([GET_POOL], query =>
+    request(SUBGRAPH_URL, query, { id: pool.id })
+  )
 
   const approvalCallback = React.useCallback(
     (
@@ -332,42 +340,6 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       return
     }
 
-    // const getWithdrawAmount = (
-    //   supplyPoolToken: BigNumber,
-    //   amountPoolToken: BigNumber,
-    //   balanceOut: BigNumber,
-    //   exitFee: BigNumber
-    // ): BigNumber => {
-    //   if (supplyPoolToken.toString(10) === '0') {
-    //     return new BigNumber(0)
-    //   }
-
-    //   // 10^18
-    //   const one = new BigNumber('1')
-    //   const two = new BigNumber('2')
-    //   const bigOne = new BigNumber('10').pow(new BigNumber('18'))
-    //   const halfBigOne = bigOne.div(two)
-    //   // calculated fee (bmul)
-    //   const fee = amountPoolToken
-    //     .mul(exitFee)
-    //     .add(halfBigOne)
-    //     .div(bigOne);
-    //   const pAiAfterExitFee = amountPoolToken.sub(fee);
-    //   const supply = supplyPoolToken.add(one)
-    //   // ratio of the token (bdiv)
-    //   const ratio = pAiAfterExitFee
-    //     .mul(bigOne)
-    //     .add(supply.div(two))
-    //     .div(supply);
-    //   // amount of tokens (bmul)
-    //   const tokenAmountOut = ratio
-    //     .mul(balanceOut.sub(one))
-    //     .add(halfBigOne)
-    //     .div(bigOne);
-
-    //   return tokenAmountOut
-    // }
-
     const calc = async () => {
       const [poolSupply, poolExitFee] = await Promise.all([
         crpPoolToken.totalSupply(),
@@ -502,10 +474,9 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     }
 
     calc()
-    // setErrorMsg('')
+    setErrorMsg('')
     setAmountTokenOut(new Big(0))
-  }, [chainId, amountTokenIn, tokenSelect])
-  console.log(errorMsg)
+  }, [typeAction, chainId, amountTokenIn, tokenSelect])
 
   React.useEffect(() => {
     const handleWallectConnect = () => {
@@ -545,41 +516,25 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       return
     }
 
-      const getUserBalanceAllToken = async () => {
-        const newSwapOutBalance = await Promise.all(
-          pool.underlying_assets.map(async (item) => {
+    const getUserBalanceAllToken = async () => {
+      const newSwapOutBalance = await Promise.all(
+        pool.underlying_assets.map(async (item) => {
 
           if (item.token.id === pool.chain.addressWrapped) {
             const balance = await web3.eth.getBalance(userWalletAddress)
             return new BigNumber(balance)
           }
-            const token = ERC20(item.token.id)
-            return token.balance(userWalletAddress)
-          })
-        )
+          const token = ERC20(item.token.id)
+          return token.balance(userWalletAddress)
+        })
+      )
 
-        setbalanceAllTokenOut(newSwapOutBalance)
-      }
+      setbalanceAllTokenOut(newSwapOutBalance)
+    }
 
-      getUserBalanceAllToken()
-      return
-    // }
+    getUserBalanceAllToken()
+    return
 
-    // if (swapOutAddress.length === 0) {
-    //   return
-    // }
-
-    // const token = ERC20(swapOutAddress)
-
-    // if (swapOutAddress === poolChain.wrapped) {
-    //   web3.eth.getBalance(userWalletAddress)
-    //     .then(newBalance => setSwapOutBalance([new BigNumber(newBalance)]))
-    //   return
-    // }
-
-    // token
-    //   .balance(userWalletAddress)
-    //   .then(newBalance => setSwapOutBalance([newBalance]))
   }, [chainId, userWalletAddress, amountTokenIn])
 
   React.useEffect(() => {
@@ -603,13 +558,38 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
       setApprovals((old: any) => ({
         ...old,
-        [typeAction]: newApprovals.length > 0 ? [1] : [0]
-        // [typeAction]: newApprovals.map((item) => item ? Approval.Approved : Approval.Denied)
+        [typeAction]: newApprovals.length > 0 ? [Approval.Approved] : [Approval.Denied]
       }))
     }
     handleTokensApproved()
-    // setIsReload(!isReload)
   }, [typeAction, userWalletAddress])
+
+  React.useEffect(() => {
+    if (!inputAmountInTokenRef?.current?.value) {
+      setPriceImpact(Big(0))
+      return
+    }
+
+    if (Big(amountTokenIn).gt(0) && parseFloat(amountTokenOut.toString()) > 0) {
+      const usdAmountIn = Big(amountTokenIn)
+        .mul(Big(data?.pool?.price_usd))
+        .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
+
+      const usdAmountOut = Big(amountTokenOut)
+        .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase())  || 0))
+        .div(Big(10).pow(Number(tokenSelect.decimals || 18)))
+
+
+      const subValue = usdAmountIn.sub(usdAmountOut)
+
+      if (usdAmountIn.gt(0)) {
+        const valuePriceImpact = subValue.div(usdAmountIn).mul(100)
+        valuePriceImpact.gt(0) ? setPriceImpact(valuePriceImpact) : setPriceImpact(Big(0))
+      }
+    } else {
+      setPriceImpact(Big(0))
+    }
+  }, [tokenSelect, amountTokenOut])
 
   return (
     <S.Withdraw onSubmit={submitAction}>
@@ -619,9 +599,17 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         selectedTokenInBalance={selectedTokenInBalance}
         setSelectedTokenInBalance={setSelectedTokenInBalance}
         inputAmountTokenRef={inputAmountInTokenRef}
-        errorMsg=""
+        errorMsg={errorMsg}
         maxActive={maxActive}
         setMaxActive={setMaxActive}
+        poolPriceUSD={data?.pool}
+        disabled={
+          userWalletAddress.length === 0
+            ? "Please connect your wallet by clicking the button below"
+            : chainId !== pool.chainId
+              ? `Please change to the ${pool.chain.chainName} by clicking the button below`
+              : ""
+        }
       />
       <img src="/assets/icons/arrow-down.svg" alt="" width={20} height={20} />
 
@@ -635,16 +623,42 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           typeAction={typeWithdraw}
           amountTokenIn={amountTokenOut}
           setAmountTokenIn={setAmountTokenOut}
-          selectedTokenInBalance={selectedTokenInBalanceTest}
-          setSelectedTokenInBalance={setSelectedTokenInBalanceTest}
-          inputAmountTokenRef={inputAmountTokenRef}
-          errorMsg={errorMsg}
+          selectedTokenInBalance={selectedTokenOutBalance}
+          setSelectedTokenInBalance={setSelectedTokenOutBalance}
+          inputAmountTokenRef={inputAmountOutTokenRef}
+          errorMsg=''
         />
       )}
 
-      <S.TransactionSettingsOptions>
-        <TransactionSettings slippage={slippage} setSlippage={setSlippage} />
-      </S.TransactionSettingsOptions>
+      <S.TransactionSettingsContainer>
+        {typeWithdraw === 'Single_asset' && (
+          <S.ExchangeRate>
+            <S.SpanLight>Price Impact:</S.SpanLight>
+            <S.PriceImpactWrapper price={BNtoDecimal(
+              priceImpact,
+              18,
+              2,
+              2
+            )}>
+              {BNtoDecimal(
+                priceImpact,
+                18,
+                2,
+                2
+              )}%
+            </S.PriceImpactWrapper>
+          </S.ExchangeRate>
+        )}
+
+        <S.ExchangeRate>
+          <S.SpanLight>Withdraw fee:</S.SpanLight>
+          <S.SpanLight>3.00%</S.SpanLight>
+        </S.ExchangeRate>
+
+        <S.TransactionSettingsOptions>
+          <TransactionSettings slippage={slippage} setSlippage={setSlippage} />
+        </S.TransactionSettingsOptions>
+      </S.TransactionSettingsContainer>
 
       {userWalletAddress.length === 0 && walletConnect === null ? (
         <Button
@@ -659,15 +673,15 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         <Button
           className="btn-submit"
           backgroundPrimary
-          // disabledNoEvent={
-          //  (approvals[typeAction].length === 0) ||
-          //   (approvals[typeAction][0] > Approval.Approved) ||
-          //   (approvals[typeAction][0] === Approval.Approved &&
-          //     (amountTokenIn.toString() === '0' ||
-          //       amountTokenOut.toString() === '0' ||
-          //       amountAllTokenOut.lemght > 0 ||
-          //       errorMsg.length > 0))
-          // }
+          disabledNoEvent={
+           (approvals[typeAction].length === 0) ||
+            (approvals[typeAction][0] > Approval.Approved) ||
+            (approvals[typeAction][0] === Approval.Approved &&
+              (amountTokenIn.toString() === '0' ||
+                amountTokenOut.toString() === '0' ||
+                amountAllTokenOut.length > 0 ||
+                errorMsg.length > 0))
+          }
           fullWidth
           type="submit"
           text={
