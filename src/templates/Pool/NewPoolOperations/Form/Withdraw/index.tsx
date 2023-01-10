@@ -216,12 +216,8 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     [ProxyContract]
   )
 
-  // console.log(BNtoDecimal(new BigNumber(amountTokenIn.toString()), 2, 2, 18))
-  // console.log(tokenSelect.address)
-  // console.log(pool)
-
-  const submitAction = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const submitAction = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
 
     const slippageVal = slippage.value
     const slippageExp = new BigNumber(10).pow(new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0)))
@@ -238,11 +234,10 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         )
         return
       }
-      if (tokenSelect.address !== '') {
+      if (typeWithdraw === 'Single_asset') {
         proxy.exitswapPoolAmountIn(
           tokenSelect.address,
           new BigNumber(amountTokenIn.toString()),
-          // new BigNumber(amountTokenOut.toString()),
           new BigNumber(amountTokenOut.toString()).mul(slippageBase).div(slippageExp),
           userWalletAddress,
           withdrawCallback(pool.symbol, -1 * 0)
@@ -250,42 +245,75 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         return
       }
 
-      // corePool.currentTokens()
-      //   .then(async tokens => {
-      //     const swapOutAmounts = []
+      corePool.currentTokens()
+        .then(async tokens => {
+          const swapOutAmounts = []
 
-      //     for (let i = 0; i < tokens.length; i++) {
-      //       swapOutAmounts.push(
-      //         // swapOutAmountVal[tokenAddress2Index[invertToken[tokens[i]] ?? tokens[i]]]
-      //         amountAllTokenOut[i]
-      //           .mul(slippageBase)
-      //           .div(slippageExp)
-      //       )
-      //     }
+          for (let i = 0; i < tokens.length; i++) {
+            swapOutAmounts.push(
+              amountAllTokenOut[i]
+                .mul(slippageBase)
+                .div(slippageExp)
+            )
+          }
 
-      //     // const tokensInPool = await corePool.currentTokens()
-      //     // const tokensWithdraw = tokensInPool.map(token => invertToken[token] ?? token)
-      //     const tokensWithdraw = pool.underlying_assets.map(token =>
-      //       token.token.wraps ?
-      //       token.token.wraps.id :
-      //       token.token.id
-      //     )
+          const tokensWithdraw = pool.underlying_assets.map(token =>
+            token.token.wraps ?
+            token.token.wraps.id :
+            token.token.id
+          )
 
-      //     proxy.exitPool(
-      //       new BigNumber(amountTokenIn.toString()),
-      //       tokensWithdraw,
-      //       swapOutAmounts,
-      //       userWalletAddress,
-      //       withdrawCallback(pool.symbol, -1 * 0)
-      //       // withdrawCallback(pool.symbol, -1 * amountInUSD)
-      //     )
-      //   })
+          proxy.exitPool(
+            new BigNumber(amountTokenIn.toString()),
+            tokensWithdraw,
+            swapOutAmounts,
+            userWalletAddress,
+            withdrawCallback(pool.symbol, -1 * 0)
+            // withdrawCallback(pool.symbol, -1 * amountInUSD)
+          )
+        })
 
       // return
     } catch (error) {
-      console.log(error)
-      // dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
+      // console.log(error)
+      dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
     }
+  }
+
+  const getWithdrawAmount = (
+    supplyPoolToken: BigNumber,
+    amountPoolToken: BigNumber,
+    balanceOut: BigNumber,
+    exitFee: BigNumber
+  ): BigNumber => {
+    if (supplyPoolToken.toString(10) === '0') {
+      return new BigNumber(0)
+    }
+
+    // 10^18
+    const one = new BigNumber('1')
+    const two = new BigNumber('2')
+    const bigOne = new BigNumber('10').pow(new BigNumber('18'))
+    const halfBigOne = bigOne.div(two)
+    // calculated fee (bmul)
+    const fee = amountPoolToken
+      .mul(exitFee)
+      .add(halfBigOne)
+      .div(bigOne);
+    const pAiAfterExitFee = amountPoolToken.sub(fee);
+    const supply = supplyPoolToken.add(one)
+    // ratio of the token (bdiv)
+    const ratio = pAiAfterExitFee
+      .mul(bigOne)
+      .add(supply.div(two))
+      .div(supply);
+    // amount of tokens (bmul)
+    const tokenAmountOut = ratio
+      .mul(balanceOut.sub(one))
+      .add(halfBigOne)
+      .div(bigOne);
+
+    return tokenAmountOut
   }
 
 
@@ -350,58 +378,56 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         (item.token.wraps ? item.token.wraps.id : item.token.id) === tokenSelect.address
       )
 
-      // if (tokenSelect.address) {
-      //   const newSwapOutAmount = await Promise.all(
-      //     pool.underlying_assets.map(async (item) => {
-      //       const swapOutTotalPoolBalance = await corePool.balance(item.token.id)
+      if (typeWithdraw === 'Best_value') {
+        const newSwapOutAmount = await Promise.all(
+          pool.underlying_assets.map(async (item) => {
+            const swapOutTotalPoolBalance = await corePool.balance(item.token.id)
 
-      //       const withdrawAmout = getWithdrawAmount(
-      //         poolSupply,
-      //         new BigNumber(amountTokenIn.toString()),
-      //         swapOutTotalPoolBalance,
-      //         poolExitFee
-      //       )
-      //       if (item.token.wraps) {
-      //         return await yieldYak.convertBalanceYRTtoWrap(withdrawAmout, item.token.id)
-      //       }
-      //       return withdrawAmout
-      //     })
-      //   )
-      //   setamountAllTokenOut(newSwapOutAmount)
-      //   // setSwapOutAmount(newSwapOutAmount)
-      //   try {
-      //     if (userWalletAddress.length > 0 && new BigNumber(amountTokenIn.toString()).gt(new BigNumber('0'))) {
-      //       const tokensInPool = pool.underlying_assets.map(item => item.token.id)
-      //       // const tokensWithdraw = tokensInPool.map(token => invertToken[token] ?? token)
+            const withdrawAmout = getWithdrawAmount(
+              poolSupply,
+              new BigNumber(amountTokenIn.toString()),
+              swapOutTotalPoolBalance,
+              poolExitFee
+            )
+            if (item.token.wraps) {
+              return await yieldYak.convertBalanceYRTtoWrap(withdrawAmout, item.token.id)
+            }
+            return withdrawAmout
+          })
+        )
+        setamountAllTokenOut(newSwapOutAmount)
+        try {
+          if (userWalletAddress.length > 0 && new BigNumber(amountTokenIn.toString()).gt(new BigNumber('0'))) {
+            const tokensInPool = pool.underlying_assets.map(item => item.token.id)
 
-      //       await proxy.tryExitPool(
-      //         new BigNumber(amountTokenIn.toString()),
-      //         tokensInPool,
-      //         Array(newSwapOutAmount.length).fill(new BigNumber('0')),
-      //         userWalletAddress
-      //       )
-      //     }
-      //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      //   } catch (error: any) {
-      //     const errorStr = error.toString()
+            await proxy.tryExitPool(
+              new BigNumber(amountTokenIn.toString()),
+              tokensInPool,
+              Array(newSwapOutAmount.length).fill(new BigNumber('0')),
+              userWalletAddress
+            )
+          }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          const errorStr = error.toString()
 
-      //     if (errorStr.search(/ERR_(BPOW_BASE_TOO_|MATH_APPROX)/) > -1) {
-      //       setErrorMsg('This amount is too low for the pool!')
-      //       return
-      //     }
+          if (errorStr.search(/ERR_(BPOW_BASE_TOO_|MATH_APPROX)/) > -1) {
+            setErrorMsg('This amount is too low for the pool!')
+            return
+          }
 
-      //     if (errorStr.search('below minimum') > -1) {
-      //       setErrorMsg("This amount is below minimum withdraw!")
-      //       return
-      //     }
+          if (errorStr.search('below minimum') > -1) {
+            setErrorMsg("This amount is below minimum withdraw!")
+            return
+          }
 
-      //     if (new BigNumber(amountTokenIn.toString()).gt(new BigNumber(selectedTokenInBalance.toString()))) {
-      //       setErrorMsg('This amount exceeds your balance!')
-      //       return;
-      //     }
-      //   }
-      //   return
-      // }
+          if (new BigNumber(amountTokenIn.toString()).gt(new BigNumber(selectedTokenInBalance.toString()))) {
+            setErrorMsg('This amount exceeds your balance!')
+            return;
+          }
+        }
+        return
+      }
 
       try {
         const [
@@ -494,6 +520,22 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
     handleWallectConnect()
   }, [])
+
+  React.useEffect(() => {
+    const res: Big = pool.underlying_assets.reduce((accumulator, current, index) => {
+      const priceUSD = priceToken(current.token.wraps ?
+        current.token.wraps.id.toLocaleLowerCase() :
+        current.token.id.toLocaleLowerCase())
+
+      return Big((amountAllTokenOut[index] || 0).toString())
+        .mul(Big( priceUSD || 0))
+        .div(Big(10).pow(Number(current.token.decimals)))
+        .add(accumulator)
+    }, Big(0))
+
+    setPriceInDollarOnWithdraw(BNtoDecimal(res, 18, 2, 2))
+  }, [amountAllTokenOut])
+
   React.useEffect(() => {
     if (userWalletAddress.length === 0 ||
       chainId.toString().length === 0 ||
@@ -502,16 +544,15 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     ) {
       return
     }
-    setbalanceAllTokenOut([new BigNumber(-1)])
 
       const getUserBalanceAllToken = async () => {
         const newSwapOutBalance = await Promise.all(
           pool.underlying_assets.map(async (item) => {
-            // if (item.token === poolChain.wrapped) {
-            // if (item.token) {
-            //   const balance = await web3.eth.getBalance(userWalletAddress)
-            //   return new BigNumber(balance)
-            // }
+
+          if (item.token.id === pool.chain.addressWrapped) {
+            const balance = await web3.eth.getBalance(userWalletAddress)
+            return new BigNumber(balance)
+          }
             const token = ERC20(item.token.id)
             return token.balance(userWalletAddress)
           })
@@ -632,11 +673,10 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           text={
             approvals[typeAction][0] === Approval.Approved
               ? amountTokenIn.toString() !== '0' ||
-                inputAmountTokenRef?.current?.value !== null
+                inputAmountInTokenRef?.current?.value !== null
                 ?
                   typeWithdraw === "Best_value" ?
-                  'withdraw'
-                  // `${typeAction} ${'$' + priceInDollarOnWithdraw}`
+                  `${typeAction} ${'$' + priceInDollarOnWithdraw}`
                   :
                   `${typeAction} ${'$' +
                   BNtoDecimal(
