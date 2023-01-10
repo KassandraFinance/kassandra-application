@@ -181,6 +181,7 @@ export const ButtonMax = styled.button<IButtonMax>`
 export const ErrorMSG = styled.span`
   ${({ theme }) => css`
     color: ${theme.colors.red};
+    font-size: ${theme.font.sizes.font12};
     pointer-events: none;
   `}
 `

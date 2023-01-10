@@ -1,57 +1,51 @@
 import React from 'react'
 import Tippy from '@tippyjs/react'
-import useSWR from 'swr';
 import Big from 'big.js';
-import { request } from 'graphql-request';
 
 import { useAppSelector } from '../../../../../store/hooks'
 import { ERC20 } from '../../../../../hooks/useERC20Contract';
-
-import { GET_POOL } from './graphql';
-
-import { SUBGRAPH_URL } from '../../../../../constants/tokenAddresses';
 
 import { BNtoDecimal } from '../../../../../utils/numerals';
 
 import * as S from './styles'
 
-
+type IPoolPriceUSDProps = {
+  price_usd: string,
+  decimals: number
+}
 interface ITokenAssetInProps {
   amountTokenIn: string | Big;
   setamountTokenIn: React.Dispatch<React.SetStateAction<string | Big>>;
+  poolPriceUSD: IPoolPriceUSDProps;
   maxActive: boolean;
   setMaxActive: React.Dispatch<React.SetStateAction<boolean>>;
   selectedTokenInBalance: Big;
   setSelectedTokenInBalance: React.Dispatch<React.SetStateAction<Big>>;
   inputAmountTokenRef: React.RefObject<HTMLInputElement>;
   errorMsg: string;
+  disabled: string;
 }
 
 const TokenAssetIn = ({
   amountTokenIn,
   setamountTokenIn,
+  poolPriceUSD,
   maxActive,
   setMaxActive,
   selectedTokenInBalance,
   setSelectedTokenInBalance,
   inputAmountTokenRef,
-  errorMsg
+  errorMsg,
+  disabled
  }: ITokenAssetInProps) => {
   const { pool, userWalletAddress, chainId } = useAppSelector(state => state)
-
-  const { data } = useSWR([GET_POOL], query =>
-    request(SUBGRAPH_URL, query, { id: pool.id })
-  )
-
-  const messageError = false
-
 
   function wei2String(input: Big) {
     return BNtoDecimal(input.div(Big(10).pow(Number(18))), 18).replace(/\u00A0/g, '')
   }
 
   function handleMaxUserBalance() {
-    if (!inputAmountTokenRef || !amountTokenIn) {
+    if (!inputAmountTokenRef || !amountTokenIn || userWalletAddress.length === 0) {
       return
     }
 
@@ -80,14 +74,7 @@ const TokenAssetIn = ({
     ) {
       return
     }
-    // if (tokenSelect.address === addressNativeToken1Inch) {
-    //   web3.eth
-    //     .getBalance(userWalletAddress)
-    //     .then(newBalance =>
-    //       setSelectedTokenInBalance(Big(newBalance.toString()))
-    //     )
-    //   return
-    // }
+
     const token = ERC20(pool.id)
     token
       .balance(userWalletAddress)
@@ -134,70 +121,69 @@ const TokenAssetIn = ({
           >
             Max
           </S.ButtonMax>
-          {/* <Tippy content="{disabled}" disabled={"disabled".length === 0}> */}
-          <S.Input
-            className="noscroll"
-            // readOnly={disabled.length > 0}
-            ref={inputAmountTokenRef}
-            // value={inputAmountTokenRef?.current?.value}
-            type="number"
-            placeholder="0"
-            step="any"
-            // onWheel={() => handleOnWheel()}
-            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-              // eslint-disable-next-line prettier/prettier
-              const target = e.target as HTMLInputElement
-              // don't allow negative numbers
-              if (e.key === '-') {
-                e.preventDefault()
-              }
-              // Blink bug makes the value come empty if pressing the decimal symbol that is not that of the current locale
-              else if (e.key === '.' || e.key === ',') {
-                // first time value will be ok, if pressing twice it zeroes, we ignore those
-                if (target.value.length > 0 && target.value.search(/[,.]/) === -1) {
-                  target.dataset.lastvalue = target.value
+          <Tippy content={disabled} disabled={disabled.length === 0}>
+            <S.Input
+              className="noscroll"
+              readOnly={userWalletAddress.length === 0}
+              ref={inputAmountTokenRef}
+              // value={inputAmountTokenRef?.current?.value}
+              type="number"
+              placeholder="0"
+              step="any"
+              // onWheel={() => handleOnWheel()}
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                // eslint-disable-next-line prettier/prettier
+                const target = e.target as HTMLInputElement
+                // don't allow negative numbers
+                if (e.key === '-') {
+                  e.preventDefault()
+                }
+                // Blink bug makes the value come empty if pressing the decimal symbol that is not that of the current locale
+                else if (e.key === '.' || e.key === ',') {
+                  // first time value will be ok, if pressing twice it zeroes, we ignore those
+                  if (target.value.length > 0 && target.value.search(/[,.]/) === -1) {
+                    target.dataset.lastvalue = target.value
+                  }
+                }
+                else if (e.key === 'Backspace' || e.key === 'Delete') {
+                  target.dataset.lastvalue = '0'
+                }
+              }}
+              onChange={
+                (e: React.ChangeEvent<HTMLInputElement>) => {
+                  let { value } = e.target
+
+                  if (value.length === 0) {
+                    value = e.target.dataset.lastvalue as string
+                  }
+                  else if (value[0] === '0') {
+                    e.target.value = value.replace(/^0+/, '')
+                  }
+
+                  if (e.target.value[0] === '.') {
+                    e.target.value = `0${e.target.value}`
+                  }
+
+                  const decimalsNum = 18
+                  const values = value.split('.')
+                  const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)}`
+
+                  setMaxActive(false)
+                  setamountTokenIn(paddedRight)
                 }
               }
-              else if (e.key === 'Backspace' || e.key === 'Delete') {
-                target.dataset.lastvalue = '0'
-              }
-            }}
-            onChange={
-              (e: React.ChangeEvent<HTMLInputElement>) => {
-                let { value } = e.target
-
-                if (value.length === 0) {
-                  value = e.target.dataset.lastvalue as string
-                }
-                else if (value[0] === '0') {
-                  e.target.value = value.replace(/^0+/, '')
-                }
-
-                if (e.target.value[0] === '.') {
-                  e.target.value = `0${e.target.value}`
-                }
-
-                const decimalsNum = 18
-                const values = value.split('.')
-                const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)}`
-
-                setMaxActive(false)
-                setamountTokenIn(paddedRight)
-              }
-            }
-          />
-          {/* </Tippy> */}
+            />
+          </Tippy>
           <span className="price-dolar">
-          {/* USD: 0,00 */}
             {pool.id &&
               amountTokenIn &&
               'USD: ' +
                 BNtoDecimal(
                   Big(amountTokenIn.toString())
                     .mul(
-                      Big(data?.pool?.price_usd || 0)
+                      Big(poolPriceUSD?.price_usd || 0)
                     )
-                    .div(Big(10).pow(Number(data?.pool?.decimals || 18))),
+                    .div(Big(10).pow(Number(poolPriceUSD?.decimals || 18))),
                   18,
                   2,
                   2
@@ -205,8 +191,8 @@ const TokenAssetIn = ({
           </span>
         </S.AmountContainer>
       </S.Body>
-      {messageError ? (
-        <S.ErrorMSG>errorMsg</S.ErrorMSG>
+      {errorMsg !== '' ? (
+          <S.ErrorMSG>{errorMsg}</S.ErrorMSG>
         ) : (
         <>
           {/* {gasFee && gasFee?.error && (
