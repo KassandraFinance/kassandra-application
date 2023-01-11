@@ -370,7 +370,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
           return
         }
 
-        // trackBuying(crpPoolAddress, poolSymbol, amountInUSD, productCategories)
+        trackBuying(pool.id, pool.symbol, data?.pool?.price_usd, pool.chain.chainName)
         proxy.joinswapExternAmountIn(
           tokenSelect.address,
           new BigNumber(amountTokenIn.toString()),

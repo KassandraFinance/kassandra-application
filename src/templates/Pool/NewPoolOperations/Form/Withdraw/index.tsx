@@ -14,6 +14,7 @@ import useProxy from '../../../../../hooks/useProxy'
 import useCoingecko from '../../../../../hooks/useCoingecko'
 import useYieldYak from '../../../../../hooks/useYieldYak'
 import usePoolContract from '../../../../../hooks/usePoolContract'
+import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
 
 import waitTransaction, { MetamaskError, TransactionCallback } from '../../../../../utils/txWait'
 import changeChain from '../../../../../utils/changeChain'
@@ -86,6 +87,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   const inputAmountInTokenRef = React.useRef<HTMLInputElement>(null)
   const inputAmountOutTokenRef = React.useRef<HTMLInputElement>(null)
 
+  const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
 
   const dispatch = useAppDispatch()
   const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
@@ -200,7 +202,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     (tokenSymbol: string, amountInUSD: number): TransactionCallback => {
       return async (error: MetamaskError, txHash: string) => {
         if (error) {
-          // trackCancelBuying()
+          trackCancelBuying()
 
           if (error.code === 4001) {
             dispatch(setModalAlertText({ errorText: `Withdrawal of ${tokenSymbol} cancelled` }))
@@ -211,7 +213,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           return
         }
 
-        // trackBought(txHash, amountInUSD, 0)
+        trackBought(txHash, amountInUSD, 0)
         ToastWarning(`Confirming withdrawal of ${tokenSymbol}...`)
         const txReceipt = await waitTransaction(txHash)
 
@@ -232,7 +234,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     const slippageBase = slippageExp.sub(new BigNumber(slippageVal.replace('.', '')))
 
     try {
-      // trackBuying(crpPoolAddress, poolSymbol, -1 * amountInUSD, productCategories)
+      trackBuying(pool.id, pool.symbol, -1 * data?.pool?.price_usd, pool.chain.chainName)
 
       if (approvals[typeAction][0] === 0) {
         ERC20(pool.id).approve(
@@ -277,7 +279,6 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
             swapOutAmounts,
             userWalletAddress,
             withdrawCallback(pool.symbol, -1 * 0)
-            // withdrawCallback(pool.symbol, -1 * amountInUSD)
           )
         })
 
