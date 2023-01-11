@@ -160,8 +160,8 @@ const Invest = ({ typeAction }: IInvestProps) => {
       tokensChecked && tokenAddressOrYRT
         ? tokenAddressOrYRT
         : tokenWithHigherLiquidityPool?.address
-    
-        
+
+
     let newAmountTokenIn = amountTokenIn
     if (!tokensChecked) {
       newAmountTokenIn = await handle1Inch()
@@ -195,27 +195,22 @@ const Invest = ({ typeAction }: IInvestProps) => {
           return
         }
 
-        // setApprovals((old: { [x: string]: Iterable<unknown> | ArrayLike<unknown> }) => {
-        //   const approvals = Array.from(old[tabTitle])
-        //   approvals[tokenAddress2Index[tokenAddress]] =
-        //     Approval.WaitingTransaction
+        setApprovals(old => {
+          return {
+            ...old,
+            [tabTitle]: [Approval.WaitingTransaction]
+          }
+        })
 
-        //   return {
-        //     ...old,
-        //     [tabTitle]: approvals
-        //   }
-        // })
         ToastWarning(`Waiting approval of ${tokenSymbol}...`)
         const txReceipt = await waitTransaction(txHash)
-        // setApprovals(old => {
-        //   const approvals = Array.from(old[tabTitle])
-        //   approvals[tokenAddress2Index[tokenAddress]] = Approval.Syncing
 
-        //   return {
-        //     ...old,
-        //     [tabTitle]: approvals
-        //   }
-        // })
+        setApprovals(old => {
+          return {
+            ...old,
+            [tabTitle]: [Approval.Syncing]
+          }
+        })
 
         if (txReceipt.status) {
           ToastSuccess(
@@ -231,28 +226,22 @@ const Invest = ({ typeAction }: IInvestProps) => {
             await new Promise(r => setTimeout(r, 200)) // sleep
           }
 
-          // setApprovals(old => {
-          //   const approvals = Array.from(old[tabTitle])
-          //   approvals[tokenAddress2Index[tokenAddress]] = Approval.Approved
-
-          //   return {
-          //     ...old,
-          //     [tabTitle]: approvals
-          //   }
-          // })
+          setApprovals(old => {
+            return {
+              ...old,
+              [tabTitle]: [Approval.Approved]
+            }
+          })
 
           return
         }
 
-        // setApprovals(old => {
-        //   const approvals = Array.from(old[tabTitle])
-        //   approvals[tokenAddress2Index[tokenAddress]] = Approval.Denied
-
-        //   return {
-        //     ...old,
-        //     [tabTitle]: approvals
-        //   }
-        // })
+        setApprovals(old => {
+          return {
+            ...old,
+            [tabTitle]: [Approval.Denied]
+          }
+        })
       }
     },
     [approvals]
@@ -286,75 +275,10 @@ const Invest = ({ typeAction }: IInvestProps) => {
     []
   )
 
-  // const withdrawCallback = React.useCallback(
-  //   (tokenSymbol: string, amountInUSD: number): TransactionCallback => {
-  //     return async (error: MetamaskError, txHash: string) => {
-  //       if (error) {
-  //         trackCancelBuying()
-
-  //         if (error.code === 4001) {
-  //           dispatch(setModalAlertText({ errorText: `Withdrawal of ${tokenSymbol} cancelled` }))
-  //           return
-  //         }
-
-  //         dispatch(setModalAlertText({ errorText: `Failed to withdraw ${tokenSymbol}. Please try again later.` }))
-  //         return
-  //       }
-
-  //       trackBought(txHash, amountInUSD, 0)
-  //       ToastWarning(`Confirming withdrawal of ${tokenSymbol}...`)
-  //       const txReceipt = await waitTransaction(txHash)
-
-  //       if (txReceipt.status) {
-  //         ToastSuccess(`Withdrawal of ${tokenSymbol} confirmed`)
-  //         return
-  //       }
-  //     }
-  //   },
-  //   [crpPoolAddress, ProxyContract]
-  // )
-
   const submitAction =
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
 
-      // const {
-      //   approved,
-      //   category,
-      //   swapInAmountInput,
-      //   swapOutAmountInput,
-      //   swapInAddressInput,
-      //   swapOutAddressInput,
-      //   swapInSymbol,
-      //   swapOutSymbol,
-      //   walletAddress,
-      //   amountUSD,
-      //   slippageInput,
-      //   tabTitleInput
-      //   // eslint-disable-next-line prettier/prettier
-      // } = e.target as HTMLFormElement & {
-      //   approved: HTMLInputElement;
-      //   category: HTMLInputElement;
-      //   swapInAmountInput: HTMLInputElement;
-      //   swapOutAmountInput: HTMLInputElement;
-      //   swapInAddressInput: HTMLInputElement;
-      //   swapOutAddressInput: HTMLInputElement;
-      //   swapInSymbol: HTMLInputElement;
-      //   swapOutSymbol: HTMLInputElement;
-      //   walletAddress: HTMLInputElement;
-      //   amountUSD: HTMLInputElement;
-      //   slippageInput: HTMLInputElement;
-      //   tabTitleInput: HTMLInputElement;
-      // }
-      // console.log('asdasdsadwe')
-      // const tabTitle = tabTitleInput.value as Titles
-      // const amountInUSD = parseFloat(amountUSD.value)
-      // const swapInAmountVal = new BigNumber(swapInAmountInput.value)
-      // const swapOutAmountVal = swapOutAmountInput.value.split(',').map(
-      //   item => new BigNumber(item)
-      // )
-      // const swapInAddressVal = swapInAddressInput.value
-      // const swapOutAddressVal = swapOutAddressInput.value
       const slippageVal = slippage.value
 
       const slippageExp = new BigNumber(10).pow(new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0)))
@@ -392,59 +316,12 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
         return
 
-      // case 'Withdraw':
-      //   trackBuying(crpPoolAddress, poolSymbol, -1 * amountInUSD, productCategories)
-      //   if (approved.value === '0') {
-      //     ERC20(crpPoolAddress).approve(
-      //       ProxyContract,
-      //       walletAddress.value,
-      //       approvalCallback(swapInSymbol.value, swapInAddressVal, tabTitle)
-      //     )
-      //     return
-      //   }
-      //   if (swapOutAddressVal !== '') {
-      //     proxy.exitswapPoolAmountIn(
-      //       swapOutAddressVal,
-      //       swapInAmountVal,
-      //       swapOutAmountVal[0].mul(slippageBase).div(slippageExp),
-      //       walletAddress.value,
-      //       withdrawCallback(swapInSymbol.value, -1 * amountInUSD)
-      //     )
-      //     return
-      //   }
-
-      //   corePool.currentTokens()
-      //     .then(async tokens => {
-      //       const swapOutAmounts = []
-
-      //       for (let i = 0; i < tokens.length; i++) {
-      //         swapOutAmounts.push(
-      //           swapOutAmountVal[tokenAddress2Index[invertToken[tokens[i]] ?? tokens[i]]]
-      //             .mul(slippageBase)
-      //             .div(slippageExp)
-      //         )
-      //       }
-
-      //       const tokensInPool = await corePool.currentTokens()
-      //       const tokensWithdraw = tokensInPool.map(token => invertToken[token] ?? token)
-      //       proxy.exitPool(
-      //         swapInAmountVal,
-      //         tokensWithdraw,
-      //         swapOutAmounts,
-      //         walletAddress.value,
-      //         withdrawCallback(swapInSymbol.value, -1 * amountInUSD)
-      //       )
-      //     })
-
-      //   return
       } catch (error) {
         dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
       }
     }
-    // }, [tokenSelect])
-
   // get contract approval of tokens
-  
+
   // verificar se o token está aprovado
   React.useEffect(() => {
     if (chainId !== pool.chainId) {
@@ -469,9 +346,11 @@ const Invest = ({ typeAction }: IInvestProps) => {
         }
       }
 
-      setApprovals((old: any) => ({
+      setApprovals(old => ({
           ...old,
-        [typeAction]: newApprovals.length > 0 ? [1] : [0]
+        [typeAction]: newApprovals.length > 0 ?
+          [Approval.Approved] :
+          [Approval.Denied]
         // [typeAction]: newApprovals.map((item) => item ? Approval.Approved : Approval.Denied)
       }))
     }
@@ -542,7 +421,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
           corePool.totalDenormalizedWeight(),
           corePool.swapFee()
         ])
-        
+
         try {
           const newSwapOutAmount = await proxy.tryJoinswapExternAmountIn(
             tokenInAddress,
