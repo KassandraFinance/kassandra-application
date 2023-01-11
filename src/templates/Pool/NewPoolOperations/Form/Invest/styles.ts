@@ -143,3 +143,22 @@ export const PriceImpactWrapper = styled.span<IPriceImpactWrapperProps>`
     }
   `}
 `
+
+export const SpanLight = styled.span`
+  ${({ theme }) => css`
+    height: 1.7rem;
+
+    color: ${theme.colors.grayDisabled};
+    font-size: ${theme.font.sizes.font14};
+    font-weight: ${theme.font.weight.light};
+    letter-spacing: 0.03rem;
+
+    @media (max-width: 380px) {
+      font-size: 1.3rem;
+    }
+
+    @media (max-width: 360px) {
+      font-size: 1.07rem;
+    }
+  `}
+`
