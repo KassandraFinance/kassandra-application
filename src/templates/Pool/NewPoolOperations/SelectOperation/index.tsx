@@ -81,6 +81,7 @@ const SelectOperation = ({
         <S.Label selected={inputChecked === 'Withdraw'} htmlFor="Withdraw">
           Withdraw
         </S.Label>
+        <S.LineBottom activeLine={inputChecked === 'Withdraw'} />
       </S.SelectOperation>
       {inputChecked === 'Withdraw' && (
         <S.TypeWithdraw>

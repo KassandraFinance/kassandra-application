@@ -1,4 +1,5 @@
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
+import theme from '../../../../styles/theme'
 
 // eslint-disable-next-line prettier/prettier
 export const PoolOperationsContainer = styled.div`
@@ -6,7 +7,7 @@ export const PoolOperationsContainer = styled.div`
   position: sticky;
   top: 0.8rem;
 
-  max-width: 44.8rem;
+  min-width: 44.8rem;
 
   background-color: rgba(255, 255, 255, 0.04);
   border-radius: 1.2rem;
@@ -24,13 +25,37 @@ export const PoolOperationsContainer = styled.div`
 `
 
 export const SelectOperation = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 100%;
+  ${() => css`
+    position: relative;
 
-  background: rgba(31, 31, 31, 0.72);
-  border-top-left-radius: 1.2rem;
-  border-top-right-radius: 1.2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+
+    background: rgba(31, 31, 31, 0.72);
+    border-top-left-radius: 1.2rem;
+    border-top-right-radius: 1.2rem;
+  `};
+`
+
+interface ILineProps {
+  activeLine: boolean;
+}
+
+// eslint-disable-next-line prettier/prettier
+export const LineBottom = styled.div<ILineProps>`
+  ${({ activeLine }) => css`
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    background-color: ${theme.colors.cyan};
+    width: 50%;
+    height: 2px;
+
+    transition: transform 0.3s ease;
+    transform: ${activeLine ? 'translateX(100%)' : 'translateX(0)'};
+  `};
 `
 
 export const Input = styled.input`
@@ -56,8 +81,7 @@ export const Label = styled.label<ILabelProps>`
     text-align: center;
     text-transform: capitalize;
 
-    border-bottom: 0.2rem solid
-      ${selected ? theme.colors.cyan : 'rgba(255, 255, 255, 0.15)'};
+    border-bottom: 0.2rem solid rgba(255, 255, 255, 0.15);
 
     cursor: pointer;
 
