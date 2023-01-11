@@ -135,27 +135,22 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           return
         }
 
-        // setApprovals((old: { [x: string]: Iterable<unknown> | ArrayLike<unknown> }) => {
-        //   const approvals = Array.from(old[tabTitle])
-        //   approvals[tokenAddress2Index[tokenAddress]] =
-        //     Approval.WaitingTransaction
+        setApprovals(old => {
+          return {
+            ...old,
+            [tabTitle]: [Approval.WaitingTransaction]
+          }
+        })
 
-        //   return {
-        //     ...old,
-        //     [tabTitle]: approvals
-        //   }
-        // })
         ToastWarning(`Waiting approval of ${tokenSymbol}...`)
         const txReceipt = await waitTransaction(txHash)
-        // setApprovals(old => {
-        //   const approvals = Array.from(old[tabTitle])
-        //   approvals[tokenAddress2Index[tokenAddress]] = Approval.Syncing
 
-        //   return {
-        //     ...old,
-        //     [tabTitle]: approvals
-        //   }
-        // })
+        setApprovals(old => {
+          return {
+            ...old,
+            [tabTitle]: [Approval.Syncing]
+          }
+        })
 
         if (txReceipt.status) {
           ToastSuccess(
@@ -171,28 +166,22 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
             await new Promise(r => setTimeout(r, 200)) // sleep
           }
 
-          // setApprovals(old => {
-          //   const approvals = Array.from(old[tabTitle])
-          //   approvals[tokenAddress2Index[tokenAddress]] = Approval.Approved
-
-          //   return {
-          //     ...old,
-          //     [tabTitle]: approvals
-          //   }
-          // })
+          setApprovals(old => {
+            return {
+              ...old,
+              [tabTitle]: [Approval.Approved]
+            }
+          })
 
           return
         }
 
-        // setApprovals(old => {
-        //   const approvals = Array.from(old[tabTitle])
-        //   approvals[tokenAddress2Index[tokenAddress]] = Approval.Denied
-
-        //   return {
-        //     ...old,
-        //     [tabTitle]: approvals
-        //   }
-        // })
+        setApprovals(old => {
+          return {
+            ...old,
+            [tabTitle]: [Approval.Denied]
+          }
+        })
       }
     },
     [approvals]
