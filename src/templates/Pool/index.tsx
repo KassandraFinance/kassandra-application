@@ -121,7 +121,7 @@ const Pool = () => {
       return
     })
 
-    const listToken = { ...listToken1Linch, ...listTokenPool }
+    const listToken = { ...listTokenPool, ...listToken1Linch }
 
     dispatch(setTokenList1Inch(Object.values(listToken)))
   }
