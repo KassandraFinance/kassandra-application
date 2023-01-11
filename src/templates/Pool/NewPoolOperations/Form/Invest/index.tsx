@@ -71,7 +71,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
   // const [isReload, setIsReload] = React.useState<boolean>(false)
   const [amountTokenIn, setAmountTokenIn] = React.useState<Big | string>(Big(0))
   const [amountTokenOut, setAmountTokenOut] = React.useState<Big>(Big(0))
-  // const [priceImpact, setPriceImpact] = React.useState<Big>(Big(0))
+  const [priceImpact, setPriceImpact] = React.useState<Big>(Big(0))
   const [walletConnect, setWalletConnect] = React.useState<string | null>(null)
   const [trasactionData, setTrasactionData] = React.useState<any>()
   const [errorMsg, setErrorMsg] = React.useState('')
@@ -622,46 +622,32 @@ const Invest = ({ typeAction }: IInvestProps) => {
     setAmountTokenOut(Big(0))
   }, [pool, tokenSelect, amountTokenIn])
 
-  // Calc Price Impact
-  // React.useEffect(() => {
-  //   if (!inputTokenRef?.current?.value) {
-  //     setPriceImpact(Big(0))
-  //     return
-  //   }
-  //   const amountInput = Big(Number(inputTokenRef.current.value)).mul(
-  //     Big(10).pow(
-  //       poolTokensArray[tokenInIndex]
-  //         ? poolTokensArray[tokenInIndex]?.decimals.toNumber()
-  //         : 18
-  //     )
-  //   )
-  //   if (amountInput.gt(0) && parseFloat(swapOutAmount[0].toString()) > 0) {
-  //     const usdAmountIn = amountInput
-  //       .mul(Big(priceDollar(swapInAddress, poolTokensArray)))
-  //       .div(Big(10).pow(Number(poolTokensArray[tokenInIndex]?.decimals || 18)))
-  //     const usdAmountOut = Big(swapOutAmount[0].toString())
-  //       .mul(Big(priceDollar(swapOutAddress, poolTokensArray)))
-  //       .div(
-  //         Big(10).pow(
-  //           Number(
-  //             poolTokensArray[tokenAddress2Index[swapOutAddress]]?.decimals ||
-  //               18
-  //           )
-  //         )
-  //       )
+  React.useEffect(() => {
+    if (!inputAmountTokenRef?.current?.value) {
+      setPriceImpact(Big(0))
+      return
+    }
 
-  //     const subValue = usdAmountIn.sub(usdAmountOut)
-  //     if (usdAmountIn.gt(0)) {
-  //       const valuePriceImpact = subValue.div(usdAmountIn).mul(100)
+    if (Big(amountTokenIn).gt(0) && parseFloat(amountTokenOut.toString()) > 0) {
+      const usdAmountIn = Big(amountTokenIn)
+      .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase())  || 0))
+      .div(Big(10).pow(Number(tokenSelect.decimals || 18)))
 
-  //       valuePriceImpact.gt(0)
-  //         ? setPriceImpact(valuePriceImpact)
-  //         : setPriceImpact(Big(0))
-  //     }
-  //   } else {
-  //     setPriceImpact(Big(0))
-  //   }
-  // }, [inputTokenRef.current?.value, swapInAmount, swapOutAmount])
+      const usdAmountOut = Big(amountTokenOut)
+      .mul(Big(data?.pool?.price_usd))
+      .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
+
+
+      const subValue = usdAmountIn.sub(usdAmountOut)
+
+      if (usdAmountIn.gt(0)) {
+        const valuePriceImpact = subValue.div(usdAmountIn).mul(100)
+        valuePriceImpact.gt(0) ? setPriceImpact(valuePriceImpact) : setPriceImpact(Big(0))
+      }
+    } else {
+      setPriceImpact(Big(0))
+    }
+  }, [tokenSelect, amountTokenOut])
 
   return (
     <S.Invest onSubmit={submitAction}>
@@ -683,11 +669,19 @@ const Invest = ({ typeAction }: IInvestProps) => {
       />
       <TokenAssetOut typeAction={typeAction} amountTokenOut={amountTokenOut} />
       <S.ExchangeRate>
-        <span>Price Impact:</span>
-        <S.PriceImpactWrapper price={123}>
-          {/* <S.PriceImpactWrapper price={BNtoDecimal(priceImpact, 18, 2, 2)}> */}
-          {/* {BNtoDecimal(priceImpact, 18, 2, 2)}% */}
-          1%
+        <S.SpanLight>Price Impact:</S.SpanLight>
+        <S.PriceImpactWrapper price={BNtoDecimal(
+          priceImpact,
+          18,
+          2,
+          2
+        )}>
+          {BNtoDecimal(
+            priceImpact,
+            18,
+            2,
+            2
+          )}%
         </S.PriceImpactWrapper>
       </S.ExchangeRate>
       <S.ExchangeRate>
