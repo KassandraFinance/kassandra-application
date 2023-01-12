@@ -336,7 +336,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         corePool.exitFee()
       ])
 
-      const tokenAddress = pool.underlying_assets.filter(item =>
+      const tokenAddress = pool.underlying_assets.find(item =>
         (item.token.wraps ? item.token.wraps.id : item.token.id) === tokenSelect.address
       )
 
@@ -358,6 +358,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           })
         )
         setamountAllTokenOut(newSwapOutAmount)
+
         try {
           if (userWalletAddress.length > 0 && new BigNumber(amountTokenIn.toString()).gt(new BigNumber('0'))) {
             const tokensInPool = pool.underlying_assets.map(item => item.token.id)
@@ -392,14 +393,16 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       }
 
       try {
+        if (!tokenAddress) return
+
         const [
           swapOutTotalPoolBalance,
           swapOutDenormalizedWeight,
           poolTotalDenormalizedWeight,
           poolSwapFee
         ] = await Promise.all([
-          corePool.balance(tokenAddress[0].token.id),
-          corePool.denormalizedWeight(tokenAddress[0].token.id),
+          corePool.balance(tokenAddress.token.id),
+          corePool.denormalizedWeight(tokenAddress.token.id),
           corePool.totalDenormalizedWeight(),
           corePool.swapFee()
         ])
@@ -417,10 +420,10 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         ])
 
         let withdrawAmoutOut: BigNumber = SingleSwapOutAmount
-        if (tokenAddress[0]?.token.wraps) {
-          withdrawAmoutOut = await yieldYak.convertBalanceYRTtoWrap(withdrawAmoutOut, tokenAddress[0].token.id)
+        if (tokenAddress?.token.wraps) {
+          withdrawAmoutOut = await yieldYak.convertBalanceYRTtoWrap(withdrawAmoutOut, tokenAddress.token.id)
         }
-          setAmountTokenOut(new Big(withdrawAmoutOut.toString()))
+        setAmountTokenOut(new Big(withdrawAmoutOut.toString()))
       }
       catch (e) {
         if (userWalletAddress.length > 0) {
