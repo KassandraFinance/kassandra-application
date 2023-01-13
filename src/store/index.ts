@@ -1,7 +1,9 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
+import Big from 'big.js'
+import { IPoolCreationDataState } from './reducers/poolCreationSlice'
 
 import storage from 'redux-persist/lib/storage'
-import { persistReducer, persistStore } from 'redux-persist'
+import { persistReducer, persistStore, createTransform } from 'redux-persist'
 import thunk from 'redux-thunk'
 
 import userWalletAddressReducer from './reducers/userWalletAddress'
@@ -16,13 +18,27 @@ import modalAlertTextReducer from './reducers/modalAlertText'
 import userReducer from './reducers/userSlice'
 import poolCreationReducer from './reducers/poolCreationSlice'
 
+const SetTransform = createTransform(
+  inboundState => {
+    return inboundState
+  },
+  (outboundState: IPoolCreationDataState) => {
+    outboundState.createPoolData.tokens?.forEach(element => {
+      element.amount = Big(element.amount)
+    })
+    return outboundState
+  },
+  { whitelist: ['poolCreation'] }
+)
+
 const persistConfig = {
   key: 'root',
   storage,
+  transforms: [SetTransform],
   whitelist: ['poolCreation']
 }
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   userWalletAddress: userWalletAddressReducer,
   chainId: chainIdReducer,
   fees: feesReducer,
@@ -36,13 +52,18 @@ const rootReducer = combineReducers({
   poolCreation: poolCreationReducer
 })
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+export type RootReducer = ReturnType<typeof rootReducer>
+
+const persistedReducer = persistReducer<RootReducer>(persistConfig, rootReducer)
 
 export const store = configureStore({
   reducer: persistedReducer,
-  middleware: [thunk]
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false
+    })
 })
 
+export const persistor = persistStore(store)
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
-export const persistor = persistStore(store)

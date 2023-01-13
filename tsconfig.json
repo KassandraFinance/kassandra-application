@@ -19,6 +19,11 @@
     "jsx": "preserve",
     "incremental": true
   },
+  "plugins": [
+    {
+      "name": "@styled/typescript-styled-plugin"
+    }
+  ],
   "include": [
     "next-env.d.ts",
     "**/*.ts",
