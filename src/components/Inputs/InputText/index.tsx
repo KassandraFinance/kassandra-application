@@ -10,6 +10,7 @@ interface IInputTextProps {
   maxLength: number;
   lable: string;
   error: string;
+  readonly?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -23,6 +24,7 @@ const InputText = ({
   maxLength,
   lable,
   error,
+  readonly = false,
   onChange
 }: IInputTextProps) => {
   return (
@@ -42,6 +44,7 @@ const InputText = ({
           min={minLength}
           max={maxLength}
           step={0.1}
+          readOnly={readonly}
         />
 
         <S.PlaceholderWrapper>

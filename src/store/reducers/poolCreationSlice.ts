@@ -1,16 +1,22 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import Big from 'big.js'
+import BigNumber from 'bn.js'
+
+import { CoinGeckoResponseType } from '../../templates/Manage/CreatePool/AddLiquidity'
 
 export type TokenType = {
   icon: string,
   name: string,
   symbol: string,
+  url: string,
   address: string,
+  decimals: number,
   allocation: number,
-  amount: number,
+  amount: Big,
   isLocked: boolean
 }
 
-type PoolData = {
+export type PoolData = {
   network?: string,
   poolName?: string,
   poolSymbol?: string,
@@ -23,10 +29,21 @@ type PoolData = {
   tokens?: TokenType[],
   privateAddressList?: {
     address: string
-  }[]
+  }[],
+  tokensBalance?: {
+    [key: string]: BigNumber
+  },
+  fees?: {
+    [key: string]: {
+      isChecked: boolean,
+      feeRate?: number,
+      brokerCommision?: number,
+      managerShare?: number
+    }
+  }
 }
 
-interface IPoolCreationDataState {
+export interface IPoolCreationDataState {
   stepNumber: number;
   isValid: boolean;
   createPoolData: PoolData;
@@ -91,6 +108,46 @@ function handleAllocation(
   return newTokensList
 }
 
+function handleLiquidity(
+  tokenInputLiquidity: Big,
+  inputToken: string,
+  tokensArr: TokenType[],
+  tokenPriceList: CoinGeckoResponseType
+) {
+  let inputAddress = ''
+  let tokenInputAllocation = 0
+  for (const token of tokensArr) {
+    if (token.symbol === inputToken) {
+      inputAddress = token.address
+      tokenInputAllocation = token.allocation
+    }
+  }
+
+  const tokenInputDolar = tokenInputLiquidity.mul(
+    Big(tokenPriceList[inputAddress].usd)
+  )
+
+  const newArr = tokensArr.map(token => {
+    if (token.symbol === inputToken) {
+      return {
+        ...token,
+        amount: tokenInputLiquidity
+      }
+    }
+
+    const tokenRealocatedLiquidity = tokenInputDolar
+      .mul(token.allocation)
+      .div(tokenInputAllocation)
+
+    const liquidityInToken = tokenRealocatedLiquidity.div(
+      tokenPriceList[token.address].usd
+    )
+    return { ...token, amount: liquidityInToken }
+  })
+
+  return newArr
+}
+
 const initialState: IPoolCreationDataState = {
   stepNumber: 0,
   isValid: false,
@@ -105,7 +162,23 @@ const initialState: IPoolCreationDataState = {
     strategy: '',
     privacy: 'public',
     tokens: [],
-    privateAddressList: []
+    privateAddressList: [],
+    tokensBalance: {},
+    fees: {
+      depositFee: {
+        isChecked: false,
+        feeRate: 0
+      },
+      refferalFee: {
+        isChecked: false,
+        brokerCommision: 0,
+        managerShare: 0
+      },
+      managementFee: {
+        isChecked: false,
+        feeRate: 0
+      }
+    }
   }
 }
 
@@ -188,6 +261,146 @@ export const poolCreationSlice = createSlice({
         ? state.createPoolData.tokens
         : []
       state.createPoolData.tokens = handleAllocation(tokensArr, action.payload)
+    },
+    setLiquidity: (
+      state,
+      action: PayloadAction<{
+        token: string,
+        liquidity: Big,
+        tokenPriceList: CoinGeckoResponseType
+      }>
+    ) => {
+      const tokensArr = state.createPoolData.tokens
+        ? state.createPoolData.tokens
+        : []
+
+      const newLiquidity = handleLiquidity(
+        action.payload.liquidity,
+        action.payload.token,
+        tokensArr,
+        action.payload.tokenPriceList
+      )
+      state.createPoolData.tokens = newLiquidity
+    },
+    setToggle: (state, action: PayloadAction<string>) => {
+      const fessList = state.createPoolData.fees
+        ? state.createPoolData.fees
+        : {}
+
+      if (
+        action.payload === 'depositFee' &&
+        fessList[action.payload].isChecked
+      ) {
+        state.createPoolData.fees = {
+          ...fessList,
+          [action.payload]: {
+            feeRate: 0,
+            isChecked: false
+          },
+          refferalFee: {
+            isChecked: false,
+            brokerCommision: 0,
+            managerShare: 0
+          }
+        }
+      } else if (
+        action.payload === 'refferalFee' &&
+        fessList[action.payload].isChecked
+      ) {
+        state.createPoolData.fees = {
+          ...fessList,
+          refferalFee: {
+            isChecked: false,
+            brokerCommision: 0,
+            managerShare: 0
+          }
+        }
+      } else if (
+        action.payload === 'managementFee' &&
+        fessList[action.payload].isChecked
+      ) {
+        state.createPoolData.fees = {
+          ...fessList,
+          managementFee: {
+            isChecked: false,
+            feeRate: 0
+          }
+        }
+      } else {
+        state.createPoolData.fees = {
+          ...fessList,
+          [action.payload]: {
+            ...fessList[action.payload],
+            isChecked: !fessList[action.payload].isChecked
+          }
+        }
+      }
+    },
+    setFee: (
+      state,
+      action: PayloadAction<{ inputName: string, inputValue: number }>
+    ) => {
+      const fessList = state.createPoolData.fees
+        ? state.createPoolData.fees
+        : {}
+
+      if (
+        action.payload.inputName === 'depositFee' &&
+        fessList.refferalFee.isChecked
+      ) {
+        state.createPoolData.fees = {
+          ...fessList,
+          [action.payload.inputName]: {
+            ...fessList[action.payload.inputName],
+            feeRate: action.payload.inputValue
+          },
+          refferalFee: {
+            ...fessList.refferalFee,
+            brokerCommision: action.payload.inputValue / 2,
+            managerShare: action.payload.inputValue / 2
+          }
+        }
+      } else {
+        state.createPoolData.fees = {
+          ...fessList,
+          [action.payload.inputName]: {
+            ...fessList[action.payload.inputName],
+            feeRate: action.payload.inputValue
+          }
+        }
+      }
+    },
+    setRefferalFee: (
+      state,
+      action: PayloadAction<{ inputName: string, inputValue: number }>
+    ) => {
+      const fessList = state.createPoolData.fees
+        ? state.createPoolData.fees
+        : {}
+
+      const depositFee = fessList.depositFee.feeRate
+        ? fessList.depositFee.feeRate
+        : 0
+
+      if (action.payload.inputName === 'brokerCommision') {
+        state.createPoolData.fees = {
+          ...fessList,
+          refferalFee: {
+            ...fessList.refferalFee,
+            [action.payload.inputName]: action.payload.inputValue,
+            managerShare: depositFee - action.payload.inputValue
+          }
+        }
+      } else {
+        state.createPoolData.fees = {
+          ...fessList,
+          refferalFee: {
+            ...fessList.refferalFee,
+            [action.payload.inputName]: action.payload.inputValue,
+            brokerCommision: depositFee - action.payload.inputValue
+          }
+        }
+      }
     }
   }
 })
@@ -201,7 +414,11 @@ export const {
   removePrivateAddress,
   setTokens,
   setTokenLock,
-  setAllocation
+  setAllocation,
+  setLiquidity,
+  setToggle,
+  setFee,
+  setRefferalFee
 } = poolCreationSlice.actions
 
 export default poolCreationSlice.reducer

@@ -17,27 +17,27 @@ const Review = () => {
           {
             stepNumber: 1,
             stepeTitle: 'set details',
-            state: 'CURRENT'
+            state: 'PREVIOUS'
           },
           {
             stepNumber: 2,
             stepeTitle: 'select assets',
-            state: 'CURRENT'
+            state: 'PREVIOUS'
           },
           {
             stepNumber: 3,
             stepeTitle: 'Add Liquidity',
-            state: 'CURRENT'
+            state: 'PREVIOUS'
           },
           {
             stepNumber: 4,
             stepeTitle: 'Configure Fee',
-            state: 'CURRENT'
+            state: 'PREVIOUS'
           },
           {
             stepNumber: 5,
             stepeTitle: 'Review',
-            state: 'NEXT'
+            state: 'CURRENT'
           }
         ]}
       />

@@ -1,6 +1,10 @@
 import React from 'react'
 import Image from 'next/image'
 import { useInView } from 'react-intersection-observer'
+import Big from 'big.js'
+import BigNumber from 'bn.js'
+
+import { BNtoDecimal } from '../../../../utils/numerals'
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import {
@@ -16,9 +20,14 @@ import arrowDownIcon from '../../../../../public/assets/utilities/arrow-down-thi
 
 import * as S from './styles'
 
-import { mockData } from '../SelectAssets'
+import { mockData, CoinGeckoAssetsResponseType } from '../SelectAssets'
 
-const AssetsTable = () => {
+interface IAssetsTable {
+  tokenBalance: { [key: string]: BigNumber };
+  priceList: CoinGeckoAssetsResponseType | undefined;
+}
+
+const AssetsTable = ({ priceList, tokenBalance }: IAssetsTable) => {
   const dispatch = useAppDispatch()
   const [value, setValue] = React.useState('')
   const assetsList = useAppSelector(
@@ -89,16 +98,46 @@ const AssetsTable = () => {
                     coinImage={coin.coinImage}
                     coinName={coin.coinName}
                     coinSymbol={coin.coinSymbol}
-                    price={coin.price}
+                    price={priceList ? priceList[coin.address].usd : 0}
                     url={coin.url}
                     table
                   />
                 </S.Td>
-                <S.Td className="price">{coin.price}</S.Td>
-                <S.Td className="marketCap">$7,366,870,000</S.Td>
+                <S.Td className="price">
+                  ${priceList ? priceList[coin.address].usd : 0}
+                </S.Td>
+                <S.Td className="marketCap">
+                  $
+                  {priceList
+                    ? BNtoDecimal(
+                        Big(priceList[coin.address].usd_market_cap),
+                        2
+                      )
+                    : 0}
+                </S.Td>
                 <S.Td className="balance">
-                  1000 {coin.coinSymbol}
-                  <S.SecondaryText>~$2940.00</S.SecondaryText>
+                  {tokenBalance[coin.address]
+                    ? Number(
+                        BNtoDecimal(
+                          Big(tokenBalance[coin.address].toString()).div(
+                            Big(10).pow(coin.decimals)
+                          ),
+                          2
+                        )
+                      )
+                    : 0}{' '}
+                  {coin.coinSymbol}
+                  <S.SecondaryText>
+                    ~$
+                    {tokenBalance[coin.address] && priceList
+                      ? BNtoDecimal(
+                          Big(tokenBalance[coin.address].toString())
+                            .div(Big(10).pow(coin.decimals))
+                            .mul(Big(priceList[coin.address].usd)),
+                          2
+                        )
+                      : 0}
+                  </S.SecondaryText>
                 </S.Td>
                 <S.Td className="add">
                   <Checkbox
@@ -108,12 +147,14 @@ const AssetsTable = () => {
                     showLabel={false}
                     onChange={() =>
                       handleCheckbox({
-                        address: '0xaksjdfklas',
+                        address: coin.address,
                         name: coin.coinName,
                         icon: coin.coinImage,
                         symbol: coin.coinSymbol,
+                        decimals: coin.decimals,
+                        url: coin.url ? coin.url : '',
                         allocation: 100,
-                        amount: 0,
+                        amount: Big(0),
                         isLocked: false
                       })
                     }

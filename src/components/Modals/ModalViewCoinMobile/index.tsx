@@ -33,7 +33,7 @@ const ModalViewCoinMobile = ({
       >
         <S.ModalCoinHeader>
           <S.Coin>
-            <img src={tokenForModal?.image} alt="" width={18} height={18} />
+            <img src={tokenForModal?.icon} alt="" width={18} height={18} />
             <p>{tokenForModal?.name}</p>
           </S.Coin>
           <span onClick={() => handleCloseModal()}>

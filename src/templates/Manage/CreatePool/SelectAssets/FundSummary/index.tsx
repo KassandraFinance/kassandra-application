@@ -9,6 +9,8 @@ import InputNumberRight from '../../../../../components/Inputs/InputNumberRight'
 import closeIcon from '../../../../../../public/assets/utilities/close-icon.svg'
 import unlockIcon from '../../../../../../public/assets/utilities/unlock.svg'
 
+import { CoinGeckoResponseType } from '../../AddLiquidity'
+
 import * as S from './styles'
 
 export type CoinType = {
@@ -16,7 +18,9 @@ export type CoinType = {
   coinSymbol: string,
   coinImage: string,
   price: number | null,
-  url?: string | null
+  url?: string | null,
+  address: string,
+  decimals: number
 }
 
 interface IFundSummaryProps {
@@ -26,11 +30,13 @@ interface IFundSummaryProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveToken?: (token: TokenType) => void;
   onLockToken?: (id: string) => void;
+  priceList: CoinGeckoResponseType | undefined;
 }
 
 const FundSummary = ({
   coinsList,
   totalAllocation,
+  priceList,
   creation = false,
   onChange = () => {
     return
@@ -58,7 +64,7 @@ const FundSummary = ({
                 coinImage={coin.icon}
                 coinName={coin.name}
                 coinSymbol={coin.symbol}
-                price={5}
+                price={priceList ? priceList[coin.address].usd : 0}
               />
 
               {creation ? (
@@ -102,7 +108,7 @@ const FundSummary = ({
           ))}
         </S.CoinsContainer>
 
-        <S.TotalContainer>
+        <S.TotalContainer value={totalAllocation}>
           <S.Text>Total Allocated</S.Text>
 
           <S.Text>{totalAllocation}%</S.Text>

@@ -175,7 +175,12 @@ export const ProgressValue = styled.div<IProgressValueProps>`
   `}
 `
 
-export const TotalContainer = styled.div`
+interface ITotalContainerProps {
+  value: number;
+}
+
+// prettier-ignore
+export const TotalContainer = styled.div<ITotalContainerProps>`
   ${() => css`
     display: grid;
     grid-template-columns: auto 13.5rem;
@@ -191,6 +196,14 @@ export const TotalContainer = styled.div`
         #ffbf00 -10.71%,
         #e843c4 110.71%
       );
+    }
+  `}
+  ${({ theme, value }) => value > 100 && css`
+    ${ProgressValue} {
+      width: 100%;
+
+      background-color: ${theme.colors.error};
+      background-image: none;
     }
   `}
 `

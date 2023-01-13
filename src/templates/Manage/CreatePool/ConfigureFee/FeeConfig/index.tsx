@@ -2,11 +2,12 @@ import Tippy from '@tippyjs/react'
 import React from 'react'
 import { isAddress } from 'web3-utils'
 
+import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
 import {
-  IDepositAndManagementFeesProps,
-  IIsActiveTogglesProps,
-  IRefferalCommissionProps
-} from '..'
+  setToggle,
+  setFee,
+  setRefferalFee
+} from '../../../../../store/reducers/poolCreationSlice'
 
 import InputRange from '../../../../../components/Inputs/InputRange'
 import InputText from '../../../../../components/Inputs/InputText'
@@ -14,130 +15,38 @@ import InputToggle from '../../../../../components/Inputs/InputToggle'
 
 import * as S from './styles'
 
-type IFeeConfigProps = {
-  isActiveToggles: IIsActiveTogglesProps,
-  setisActiveToggles: React.Dispatch<
-    React.SetStateAction<IIsActiveTogglesProps>
-  >,
-  depositFee: IDepositAndManagementFeesProps,
-  setDepositFee: React.Dispatch<
-    React.SetStateAction<IDepositAndManagementFeesProps>
-  >,
-  refferalCommission: IRefferalCommissionProps,
-  setRefferalCommission: React.Dispatch<
-    React.SetStateAction<IRefferalCommissionProps>
-  >,
-  managementFee: IDepositAndManagementFeesProps,
-  setManagementFee: React.Dispatch<
-    React.SetStateAction<IDepositAndManagementFeesProps>
-  >
-}
-const FeeConfig = ({
-  isActiveToggles,
-  setisActiveToggles,
-  depositFee,
-  setDepositFee,
-  managementFee,
-  setManagementFee,
-  refferalCommission,
-  setRefferalCommission
-}: IFeeConfigProps) => {
-  function handleDepositFee(event: React.ChangeEvent<HTMLInputElement>) {
+const FeeConfig = () => {
+  const dispatch = useAppDispatch()
+  const feesData = useAppSelector(
+    state => state.poolCreation.createPoolData.fees
+  )
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+
+  function handleFeeChange(event: React.ChangeEvent<HTMLInputElement>) {
     const inputName = event.target.name
     const inputValue = event.target.value
-    const { address, rate } = depositFee
 
-    if (inputName === 'rate') {
-      setDepositFee({
-        address,
-        rate: Number(inputValue)
-      })
-
-      isActiveToggles.refferalCommission &&
-        setRefferalCommission({
-          broker: Number(inputValue) / 2,
-          share: Number(inputValue) / 2
-        })
-    } else {
-      setDepositFee({
-        address: inputValue,
-        rate
-      })
-    }
+    dispatch(setFee({ inputName: inputName, inputValue: Number(inputValue) }))
   }
 
-  function handleManagementFee(event: React.ChangeEvent<HTMLInputElement>) {
-    const { address, rate } = managementFee
+  function handlerefferalCommission(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
     const name = event.target.name
-    const value = event.target.value
+    const value = parseFloat(event.target.value)
 
-    let _managementFee = managementFee
-    if (name === 'rate') {
-      _managementFee = {
-        address,
-        rate: Number(value)
-      }
-    } else {
-      _managementFee = {
-        address: value,
-        rate
-      }
-    }
-
-    setManagementFee(_managementFee)
-  }
-
-  // eslint-disable-next-line prettier/prettier
-  function handlerefferalCommission(event: React.ChangeEvent<HTMLInputElement>) {
-    const name = event.target.name
-    const value = Number(event.target.value)
-    const { rate } = depositFee
-
-    let _refferalCommission = refferalCommission
-    if (name === 'broker') {
-      _refferalCommission = {
-        broker: value,
-        share: rate - value
-      }
-    } else {
-      _refferalCommission = {
-        broker: rate - value,
-        share: value
-      }
-    }
-
-    setRefferalCommission(_refferalCommission)
+    dispatch(
+      setRefferalFee({
+        inputName: name,
+        inputValue: value
+      })
+    )
   }
 
   function handleClickToggle(event: React.ChangeEvent<HTMLInputElement>) {
     const inputName = event.target.name
-    const { depositFee, managementFee, refferalCommission } = isActiveToggles
 
-    switch (inputName) {
-      case 'depositFee':
-        setisActiveToggles({
-          depositFee: !depositFee,
-          refferalCommission: refferalCommission && false,
-          managementFee
-        })
-        break
-      case 'refferalCommission':
-        setisActiveToggles({
-          depositFee,
-          managementFee,
-          refferalCommission: !refferalCommission
-        })
-        break
-      case 'ManagementFee':
-        setisActiveToggles({
-          depositFee,
-          managementFee: !managementFee,
-          refferalCommission
-        })
-        break
-      default:
-        break
-    }
+    dispatch(setToggle(inputName))
   }
 
   return (
@@ -147,6 +56,7 @@ const FeeConfig = ({
           <h3>Deposit fee</h3>
           <InputToggle
             toggleName="depositFee"
+            isChecked={feesData?.depositFee?.isChecked ?? false}
             handleToggleChange={handleClickToggle}
           />
         </S.DepositFeeHeader>
@@ -154,39 +64,53 @@ const FeeConfig = ({
           Receive a percentage of each new deposit in the pool at the selected
           address.
         </S.CardWrapperParagraph>
-        {isActiveToggles.depositFee && (
+        {feesData?.depositFee?.isChecked && (
           <>
-            <S.WrapperInputFee isAddress={isAddress(depositFee.address)}>
+            <S.WrapperInputFee
+              className="depositFee"
+              isAddress={isAddress(userWalletAddress)}
+              value={
+                feesData.depositFee.feeRate ? feesData.depositFee.feeRate : 0
+              }
+            >
               <InputText
-                name="rate"
+                name="depositFee"
                 type="number"
                 placeholder=""
                 required
-                value={String(depositFee.rate)}
+                value={
+                  feesData.depositFee.feeRate
+                    ? feesData.depositFee.feeRate.toString()
+                    : '0'
+                }
                 minLength={0}
-                maxLength={50}
+                maxLength={95}
                 lable="Deposit fee rate (%)"
                 error="50% is higher than average and may prevent potential investors. Consider setting a lower fee."
-                onChange={event => handleDepositFee(event)}
+                onChange={event => handleFeeChange(event)}
               />
               <InputText
                 name="address"
                 type="text"
-                placeholder=""
+                placeholder={userWalletAddress}
                 required
-                value={depositFee.address}
+                value={userWalletAddress}
                 minLength={0}
                 maxLength={42}
                 lable="recipient address"
                 error="Invalid address"
-                onChange={event => handleDepositFee(event)}
+                readonly
+                onChange={() => {
+                  return
+                }}
               />
             </S.WrapperInputFee>
             <hr />
             <S.RefferalCommissionWrapper>
               <S.CardWrapperTitle>Refferal commission</S.CardWrapperTitle>
               <InputToggle
-                toggleName="refferalCommission"
+                toggleName="refferalFee"
+                isChecked={feesData.refferalFee.isChecked}
                 handleToggleChange={handleClickToggle}
               />
             </S.RefferalCommissionWrapper>
@@ -197,29 +121,37 @@ const FeeConfig = ({
             </S.CardWrapperParagraph>
           </>
         )}
-        {isActiveToggles.refferalCommission && (
+        {feesData?.refferalFee?.isChecked && (
           <>
             <S.RefferalCommissionContainer>
               <S.WrapperInputRange>
                 <S.InputRangeContent>
                   <p>Broker Commission</p>
                   <InputRange
-                    name="broker"
-                    InputRangeValue={refferalCommission.broker}
+                    name="brokerCommision"
+                    InputRangeValue={
+                      feesData.refferalFee.brokerCommision
+                        ? feesData.refferalFee.brokerCommision
+                        : 0
+                    }
                     handleInputRate={handlerefferalCommission}
                     min={0}
-                    max={depositFee.rate}
+                    max={feesData ? feesData.depositFee.feeRate : 0}
                     step={0.01}
                   />
                 </S.InputRangeContent>
                 <S.InputRangeContent>
                   <p>Manager Share</p>
                   <InputRange
-                    name="manager"
-                    InputRangeValue={refferalCommission.share}
+                    name="managerShare"
+                    InputRangeValue={
+                      feesData.refferalFee.managerShare
+                        ? feesData.refferalFee.managerShare
+                        : 0
+                    }
                     handleInputRate={handlerefferalCommission}
                     min={0}
-                    max={depositFee.rate}
+                    max={feesData ? feesData.depositFee.feeRate : 0}
                     step={0.01}
                   />
                 </S.InputRangeContent>
@@ -229,7 +161,7 @@ const FeeConfig = ({
             <S.TotalDepositFeeContainer>
               <S.TotalDepositFeeTitle>Total Deposit Fee</S.TotalDepositFeeTitle>
               <S.TotalDepositFeePercentage>
-                {String(depositFee.rate)}%
+                {feesData.depositFee.feeRate}%
               </S.TotalDepositFeePercentage>
               <S.BrokerAndManagerTitle>
                 Broker commission
@@ -242,7 +174,7 @@ const FeeConfig = ({
                 </Tippy>
               </S.BrokerAndManagerTitle>
               <S.BrokerAndManagerPercentage>
-                {refferalCommission.broker.toFixed(2)}%
+                {feesData.refferalFee.brokerCommision?.toFixed(2)}%
               </S.BrokerAndManagerPercentage>
               <S.BrokerAndManagerTitle>
                 Manager share
@@ -255,7 +187,7 @@ const FeeConfig = ({
                 </Tippy>
               </S.BrokerAndManagerTitle>
               <S.BrokerAndManagerPercentage>
-                {refferalCommission.share.toFixed(2)}%
+                {feesData.refferalFee.managerShare?.toFixed(2)}%
               </S.BrokerAndManagerPercentage>
             </S.TotalDepositFeeContainer>
           </>
@@ -266,7 +198,8 @@ const FeeConfig = ({
         <S.ManagementHeader>
           <S.CardWrapperTitle>Management fee</S.CardWrapperTitle>
           <InputToggle
-            toggleName="ManagementFee"
+            toggleName="managementFee"
+            isChecked={feesData?.managementFee?.isChecked ?? false}
             handleToggleChange={handleClickToggle}
           />
         </S.ManagementHeader>
@@ -274,32 +207,44 @@ const FeeConfig = ({
           Receive a flat fee measured as an annual percent of total assets under
           management. The management fee accrues continuously.
         </S.CardWrapperParagraph>
-        {isActiveToggles.managementFee && (
+        {feesData?.managementFee?.isChecked && (
           <>
-            <S.WrapperInput isAddress={isAddress(managementFee.address)}>
+            <S.WrapperInput
+              isAddress={isAddress(userWalletAddress)}
+              value={
+                feesData.depositFee.feeRate ? feesData.depositFee.feeRate : 0
+              }
+            >
               <InputText
-                name="rate"
+                name="managementFee"
                 type="number"
                 placeholder=""
                 required
-                value={String(managementFee.rate)}
+                value={
+                  feesData.managementFee.feeRate
+                    ? feesData.managementFee.feeRate.toString()
+                    : '0'
+                }
                 minLength={0}
                 maxLength={95}
                 lable="recipient address"
                 error="The rate must be less than 95%"
-                onChange={event => handleManagementFee(event)}
+                onChange={event => handleFeeChange(event)}
               />
               <InputText
                 name="address"
                 type="text"
                 placeholder=""
                 required
-                value={managementFee.address}
+                value={userWalletAddress}
                 minLength={42}
                 maxLength={42}
                 lable="recipient address"
                 error="Invalid address"
-                onChange={event => handleManagementFee(event)}
+                readonly
+                onChange={() => {
+                  return
+                }}
               />
             </S.WrapperInput>
           </>

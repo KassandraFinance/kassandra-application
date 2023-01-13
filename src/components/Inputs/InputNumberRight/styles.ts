@@ -169,5 +169,9 @@ export const InputButton = styled.button`
       border-left: none;
     }
     cursor: pointer;
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: border;
   `}
 `
