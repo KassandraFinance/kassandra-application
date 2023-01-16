@@ -3,7 +3,9 @@ import Tippy from '@tippyjs/react'
 import Big from 'big.js';
 
 import { useAppSelector } from '../../../../../store/hooks'
+
 import { ERC20 } from '../../../../../hooks/useERC20Contract';
+import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
 
 import { BNtoDecimal } from '../../../../../utils/numerals';
 
@@ -39,6 +41,8 @@ const TokenAssetIn = ({
   disabled
  }: ITokenAssetInProps) => {
   const { pool, userWalletAddress, chainId } = useAppSelector(state => state)
+
+  const { trackEventFunction } = useMatomoEcommerce()
 
   function wei2String(input: Big) {
     return BNtoDecimal(input.div(Big(10).pow(Number(18))), 18).replace(/\u00A0/g, '')
@@ -112,11 +116,11 @@ const TokenAssetIn = ({
             maxActive={maxActive}
             onClick={() => {
               handleMaxUserBalance()
-              // trackEventFunction(
-              //   'click-on-maxBtn',
-              //   'input-in-Invest',
-              //   'operations-invest'
-              // )
+              trackEventFunction(
+                'click-on-maxBtn',
+                'input-in-Invest',
+                'operations-invest'
+              )
             }}
           >
             Max
@@ -191,18 +195,8 @@ const TokenAssetIn = ({
           </span>
         </S.AmountContainer>
       </S.Body>
-      {errorMsg !== '' ? (
-          <S.ErrorMSG>{errorMsg}</S.ErrorMSG>
-        ) : (
-        <>
-          {/* {gasFee && gasFee?.error && (
-            <S.GasFeeError>
-              Don’t forget the gas fees! Leave at least{' '}
-               AVAX on your wallet to ensure a
-              smooth transaction
-            </S.GasFeeError>
-          )} */}
-        </>
+      {errorMsg && errorMsg !== '' && (
+        <S.ErrorMSG>{errorMsg}</S.ErrorMSG>
       )}
   </S.TokenAssetIn>)
 }
