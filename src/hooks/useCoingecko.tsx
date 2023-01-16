@@ -18,12 +18,6 @@ const useCoingecko = (
   nativeTokenAddress: string,
   tokenAddresses: string
 ) => {
-  const [coinGecko, setCoinGecko] = React.useState<CoinGeckoResponseType>({
-    address: {
-      usd: 0,
-      usd_24h_change: 0
-    }
-  })
   const nativeAddress = nativeTokenAddress
 
   const { data } = useSWR<CoinGeckoResponseType>(
@@ -35,18 +29,10 @@ const useCoingecko = (
     if (address === addressNativeToken1Inch) {
       _address = nativeAddress
     }
-    return coinGecko?.[_address]?.usd
+    return data?.[_address]?.usd
   }
 
-  React.useEffect(() => {
-    if (!data) {
-      return
-    }
-
-    setCoinGecko(data)
-  }, [data])
-
-  return { coinGecko, priceToken }
+  return { data, priceToken }
 }
 
 export default useCoingecko
