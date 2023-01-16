@@ -141,7 +141,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     const data = await response.json()
 
     setTrasactionData(data.tx.data)
-    return data.toTokenAmount || 0
+    return { amountTokenIn: data.toTokenAmount || 0, transactionDataTx: data.tx.data }
   }
 
   async function handleTokenSelected() {
@@ -162,12 +162,17 @@ const Invest = ({ typeAction }: IInvestProps) => {
         : tokenWithHigherLiquidityPool?.address
 
 
-    let newAmountTokenIn = amountTokenIn
+    let data1Inch = { amountTokenIn, transactionDataTx: ''}
     if (!tokensChecked) {
-      newAmountTokenIn = await handle1Inch()
+      data1Inch = await handle1Inch()
     }
 
-    return { tokenInAddress, newAmountTokenIn, isWrap: tokensChecked?.is_wraps  }
+    return {
+      tokenInAddress,
+      newAmountTokenIn: data1Inch.amountTokenIn,
+      transactionDataTx: data1Inch.transactionDataTx,
+      isWrap: tokensChecked?.is_wraps
+    }
   }
 
   const approvalCallback = React.useCallback(
@@ -388,25 +393,27 @@ const Invest = ({ typeAction }: IInvestProps) => {
       return
     }
 
-    // async function generateEstimatedGas() {
-    //   const response = await proxy.estimatedGas(
-    //     userWalletAddress,
-    //     tokenSelect.address,
-    //     new BigNumber('0')
-    //   )
+    async function generateEstimatedGas(transactionDataTx: any) {
+      const response = await proxy.estimatedGas(
+        userWalletAddress,
+        tokenSelect.address,
+        new BigNumber('0'),
+        new BigNumber(amountTokenIn.toString() || 0),
+        transactionDataTx
+      )
 
-    //   if (response) {
-    //     setGasFee(prevState => ({
-    //       ...prevState,
-    //       feeString: response.feeString,
-    //       feeNumber: response.feeNumber
-    //     }))
-    //   }
-    // }
+      if (response) {
+        setGasFee(prevState => ({
+          ...prevState,
+          feeString: response.feeString,
+          feeNumber: response.feeNumber
+        }))
+      }
+    }
 
     const calc = async () => {
       try {
-        const { tokenInAddress, newAmountTokenIn, isWrap } = await handleTokenSelected()
+        const { tokenInAddress, newAmountTokenIn, transactionDataTx, isWrap } = await handleTokenSelected()
 
         const [
           tokenInTotalPoolBalance,
@@ -423,6 +430,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         ])
 
         try {
+          await generateEstimatedGas(transactionDataTx)
           const newSwapOutAmount = await proxy.tryJoinswapExternAmountIn(
             tokenInAddress,
             new BigNumber(newAmountTokenIn.toString()),
@@ -430,11 +438,9 @@ const Invest = ({ typeAction }: IInvestProps) => {
             userWalletAddress
           )
 
-          // await generateEstimatedGas()
           setAmountTokenOut(Big(newSwapOutAmount))
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-
           let investAmoutInCalc: BigNumber = new BigNumber(
             newAmountTokenIn.toString()
           )
@@ -528,6 +534,27 @@ const Invest = ({ typeAction }: IInvestProps) => {
     }
   }, [tokenSelect, amountTokenOut])
 
+  React.useEffect(() => {
+    if (typeAction === 'Withdraw') return
+
+    const amountInBalanceBN = new BigNumber(selectedTokenInBalance.toString() || 0)
+    const amountTokenInBN = new BigNumber(amountTokenIn.toString() || 0)
+    const gasFeeBN = new BigNumber(String(gasFee?.feeNumber) || '0')
+
+    const balanceMinusFee = amountInBalanceBN.sub(gasFeeBN)
+
+    if (tokenSelect.symbol === "AVAX" &&
+      amountTokenInBN.gt(new BigNumber(0)) &&
+      amountTokenInBN.lte(amountInBalanceBN) &&
+      amountTokenInBN.gte(balanceMinusFee)
+    ){
+      setGasFee({ ...gasFee, error: true })
+      return
+    }
+
+    setGasFee({ ...gasFee, error: false })
+  }, [tokenSelect, amountTokenOut])
+
   return (
     <S.Invest onSubmit={submitAction}>
       <InputAndOutputValueToken
@@ -567,6 +594,8 @@ const Invest = ({ typeAction }: IInvestProps) => {
       <S.ExchangeRate>
         {/* <S.SpanLight>{title} fee:</S.SpanLight>
         <S.SpanLight>{fees[title]}%</S.SpanLight> */}
+        <S.SpanLight>Invest fee:</S.SpanLight>
+        <S.SpanLight>0%</S.SpanLight>
       </S.ExchangeRate>
       <S.TransactionSettingsOptions>
         <TransactionSettings slippage={slippage} setSlippage={setSlippage} />
