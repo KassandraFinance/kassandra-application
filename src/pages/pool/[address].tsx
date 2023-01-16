@@ -34,7 +34,7 @@ const Index = ({ pool }: IPoolProps) => {
   return (
     <SWRConfig
       value={{
-        refreshInterval: 10000,
+        refreshInterval: 30000,
         fetcher: url => fetch(url).then(res => res.json())
       }}
     >
