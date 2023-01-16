@@ -13,7 +13,7 @@ import { TransactionCallback } from '../utils/txWait'
 import { useAppSelector } from '../store/hooks'
 import usePoolContract from '../hooks/usePoolContract'
 
-// const referral = "0x000000000000000000000000000000000000000000"
+const referral = "0x0000000000000000000000000000000000000000"
 
 const useProxy = (address: string, crpPool: string, coreAddress: string) => {
   const [contract, setContract] = React.useState(new web3.eth.Contract((HermesProxy as unknown) as AbiItem, address))
@@ -252,12 +252,19 @@ const useProxy = (address: string, crpPool: string, coreAddress: string) => {
       return res
     }
 
-    const estimatedGas = async (userWalletAddress: string, tokenIn: string, minPoolAmountOut: BigNumber) => {
+    const estimatedGas = async (userWalletAddress: string, tokenIn: string, minPoolAmountOut: BigNumber, amountTokenIn: BigNumber, data: any) => {
+      const tokensChecked = await checkTokenInThePool(tokenIn)
+      const avaxValue = tokenIn === addressNativeToken1Inch ? amountTokenIn : new BigNumber(0)
+      const { address: tokenExchange } = await corePool.checkTokenWithHigherLiquidityPool()
+
       const estimateGas = await web3.eth.estimateGas({
         // "value": '0x0', // Only tokens
-        "data": contract.methods.joinswapExternAmountIn(crpPool, tokenIn, new BigNumber(0), minPoolAmountOut).encodeABI(),
+        "data": tokensChecked ?
+          contract.methods.joinswapExternAmountIn(crpPool, tokenIn, amountTokenIn, minPoolAmountOut, referral).encodeABI() :
+          contract.methods.joinswapExternAmountInWithSwap(crpPool, tokenIn, amountTokenIn, tokenExchange, minPoolAmountOut, referral, data).encodeABI(),
         "from": userWalletAddress,
-        "to": address
+        "to": address,
+        "value": avaxValue
       });
       const gasPrice = await web3.eth.getGasPrice()
 
