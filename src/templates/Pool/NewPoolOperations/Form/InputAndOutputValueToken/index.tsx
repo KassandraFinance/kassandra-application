@@ -19,6 +19,12 @@ import TokenSelected from '../TokenSelected'
 
 import * as S from './styles'
 
+interface IGasFeeProps {
+  error: boolean;
+  feeNumber: number;
+  feeString: string;
+}
+
 interface IInputAndOutputValueTokenProps {
   typeAction: string;
   amountTokenIn: Big | string;
@@ -29,6 +35,7 @@ interface IInputAndOutputValueTokenProps {
   setMaxActive?: React.Dispatch<React.SetStateAction<boolean>>;
   inputAmountTokenRef: React.RefObject<HTMLInputElement>;
   errorMsg: string;
+  gasFee?: IGasFeeProps;
 }
 
 const InputAndOutputValueToken = ({
@@ -40,6 +47,7 @@ const InputAndOutputValueToken = ({
   maxActive,
   setMaxActive,
   inputAmountTokenRef,
+  gasFee,
   errorMsg = ''
 }: IInputAndOutputValueTokenProps) => {
   const { pool, chainId, tokenSelect, tokenList1Inch, userWalletAddress } = useAppSelector(
@@ -244,16 +252,16 @@ const InputAndOutputValueToken = ({
           </S.Amount>
         </S.Top>
         {errorMsg !== '' ? (
-          <S.ErrorMSG color="red">{errorMsg}</S.ErrorMSG>
+          <S.ErrorMSG>{errorMsg}</S.ErrorMSG>
           ) : (
           <>
-            {/* {gasFee && gasFee?.error && (
-              <S.Span color="amber">
+            {gasFee && gasFee?.error && (
+              <S.GasFeeError>
                 Don’t forget the gas fees! Leave at least{' '}
                 {gasFee.feeString.slice(0, 8)} AVAX on your wallet to ensure a
                 smooth transaction
-              </S.Span>
-            )} */}
+              </S.GasFeeError>
+            )}
           </>
         )}
       </S.FlexContainer>

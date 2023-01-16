@@ -173,3 +173,19 @@ export const ErrorMSG = styled.span`
     pointer-events: none;
   `}
 `
+
+export const GasFeeError = styled.span`
+  ${({ theme }) => css`
+    color: #ffbf00;
+    font-size: ${theme.font.sizes.font12};
+
+    @media (max-width: 380px) {
+      font-size: 1.3rem;
+    }
+
+    @media (max-width: 360px) {
+      padding-left: 1.2rem;
+      font-size: 1.07rem;
+    }
+  `}
+`

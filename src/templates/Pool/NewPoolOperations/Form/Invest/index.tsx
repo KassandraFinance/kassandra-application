@@ -85,11 +85,11 @@ const Invest = ({ typeAction }: IInvestProps) => {
     Invest: []
   })
 
-  // const [gasFee, setGasFee] = React.useState({
-  //   error: false,
-  //   feeNumber: 0,
-  //   feeString: ''
-  // })
+  const [gasFee, setGasFee] = React.useState({
+    error: false,
+    feeNumber: 0,
+    feeString: ''
+  })
   const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
     new Big(-1)
   )
@@ -540,6 +540,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         setMaxActive={setMaxActive}
         inputAmountTokenRef={inputAmountTokenRef}
         errorMsg={errorMsg}
+        gasFee={gasFee}
       />
       <img
         src="/assets/icons/arrow-down.svg"
