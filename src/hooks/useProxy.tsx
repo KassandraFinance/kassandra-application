@@ -17,7 +17,7 @@ const referral = "0x0000000000000000000000000000000000000000"
 
 const useProxy = (address: string, crpPool: string, coreAddress: string) => {
   const [contract, setContract] = React.useState(new web3.eth.Contract((HermesProxy as unknown) as AbiItem, address))
-  
+
   const { pool } = useAppSelector(state => state)
   const corePool = usePoolContract(pool.core_pool)
 
@@ -60,40 +60,34 @@ const useProxy = (address: string, crpPool: string, coreAddress: string) => {
       data: any,
       callback: TransactionCallback
     ) => {
-
       const tokensChecked = await checkTokenInThePool(tokenIn)
-      
       // const wrapped = await contract.methods.wNativeToken().call()
-
       const avaxValue = tokenIn === addressNativeToken1Inch ? tokenAmountIn : new BigNumber(0)
-      
+
       if (tokensChecked) {
         const res = await contract.methods
           .joinswapExternAmountIn(
-            crpPool, 
-            tokenIn, 
-            tokenAmountIn, 
-            minPoolAmountOut, 
-            walletAddress
+            crpPool,
+            tokenIn,
+            tokenAmountIn,
+            minPoolAmountOut,
+            referral
           )
           .send({ from: walletAddress, value: avaxValue }, callback)
-  
+
         return res
       }
 
       const { address: tokenExchange } = await corePool.checkTokenWithHigherLiquidityPool()
 
-      console.log(tokenExchange)
-      console.log(tokenIn)
-
       const res = await contract.methods
         .joinswapExternAmountInWithSwap(
-          crpPool, 
-          tokenIn, 
-          tokenAmountIn, 
-          tokenExchange, 
-          minPoolAmountOut, 
-          walletAddress,
+          crpPool,
+          tokenIn,
+          tokenAmountIn,
+          tokenExchange,
+          minPoolAmountOut,
+          referral,
           data
         )
         .send({ from: walletAddress, value: avaxValue }, callback)
@@ -173,14 +167,13 @@ const useProxy = (address: string, crpPool: string, coreAddress: string) => {
       tokenAmountIn: BigNumber,
       minPoolAmountOut: BigNumber,
       walletAddress: string
-    ) => {
-      const wrapped = await contract.methods.wNativeToken().call()
+      ) => {
+        // const wrapped = await contract.methods.wNativeToken().call()
+        // const avaxValue = tokenIn !== wrapped ? tokenAmountIn : new BigNumber(0)
 
-      const avaxValue = tokenIn === wrapped ? tokenAmountIn : new BigNumber(0)
-
-      const res = await contract.methods
-        .joinswapExternAmountIn(crpPool, tokenIn, tokenAmountIn, minPoolAmountOut)
-        .call({ from: walletAddress, value: avaxValue })
+        const res = await contract.methods
+        .joinswapExternAmountIn(crpPool, tokenIn, tokenAmountIn, minPoolAmountOut, referral)
+        .call({ from: walletAddress, value: new BigNumber(0) })
 
       return res
     }
@@ -271,8 +264,8 @@ const useProxy = (address: string, crpPool: string, coreAddress: string) => {
       const fee = (Number(gasPrice) * estimateGas)  * 1.3
       const finalGasInEther = web3.utils.fromWei(fee.toString(), 'ether');
 
-      return { 
-        feeNumber: fee, 
+      return {
+        feeNumber: fee,
         feeString: finalGasInEther
       }
     }
