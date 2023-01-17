@@ -17,13 +17,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "@styled/typescript-styled-plugin"
+      }
+    ]
   },
-  "plugins": [
-    {
-      "name": "@styled/typescript-styled-plugin"
-    }
-  ],
   "include": [
     "next-env.d.ts",
     "**/*.ts",
