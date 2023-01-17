@@ -34,49 +34,6 @@ const usePoolContract = (address: string) => {
 
     const events: Events = contract.events
 
-    /* SEND */
-
-    const swapExactAmountIn = async (
-      tokenIn: string,
-      tokenAmountIn: BigNumber,
-      tokenOut: string,
-      minAmountOut: BigNumber,
-      walletAddress: string,
-      callback: TransactionCallback
-    ) => {
-      await contract
-        .methods.swapExactAmountIn(
-          tokenIn,
-          tokenAmountIn,
-          tokenOut,
-          minAmountOut,
-          web3.utils.toTwosComplement(-1)
-        )
-        .send(
-          { from: walletAddress },
-          callback
-        )
-    }
-
-    const trySwapExactAmountIn = async (
-      tokenIn: string,
-      tokenAmountIn: BigNumber,
-      tokenOut: string,
-      walletAddress: string,
-    ) => {
-      await contract
-        .methods.swapExactAmountIn(
-          tokenIn,
-          tokenAmountIn,
-          tokenOut,
-          0,
-          web3.utils.toTwosComplement(-1)
-        )
-        .call(
-          { from: walletAddress }
-        )
-    }
-
     /* VIEWS */
 
     const currentTokens = async (): Promise<string[]> => {
@@ -201,11 +158,6 @@ const usePoolContract = (address: string) => {
       return new BigNumber(value)
     }
 
-    const spotPrice = async (tokenOut: string, tokenIn: string) => {
-      const value = await contract.methods.getSpotPrice(tokenOut, tokenIn).call()
-      return new BigNumber(value)
-    }
-
     const normalizedWeight = async (address: string) => {
       const value = await contract.methods.getNormalizedWeight(address).call()
       return Number(new BigNumber(value).div(new BigNumber(10).pow(new BigNumber(14))))/100
@@ -271,9 +223,6 @@ const usePoolContract = (address: string) => {
     return {
       events,
 
-      swapExactAmountIn,
-      trySwapExactAmountIn,
-
       balance,
       calcOutGivenIn,
       calcInGivenOut,
@@ -283,7 +232,6 @@ const usePoolContract = (address: string) => {
       currentTokens,
       denormalizedWeight,
       normalizedWeight,
-      spotPrice,
       swapFee,
       exitFee,
       totalDenormalizedWeight,
