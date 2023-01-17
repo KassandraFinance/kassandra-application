@@ -41,8 +41,9 @@ const Distribution = () => {
     }
   })
 
-  const { coinGecko } = useCoingecko(
+  const { data: coinGecko } = useCoingecko(
     pool.chain.nativeTokenName.toLowerCase(),
+    pool.chain.addressWrapped,
     tokenAddresses.toString()
   )
 

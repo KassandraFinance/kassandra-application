@@ -25,7 +25,7 @@ const descriptions: DescriptionType = {
 }
 
 const TokenDescription = ({ symbol }: Input) => {
-  const description = descriptions[symbol.toLowerCase()]
+  const description = descriptions[symbol.toLowerCase()] || <></>
 
   return (
     <>
