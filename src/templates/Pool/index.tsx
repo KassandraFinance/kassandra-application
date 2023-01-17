@@ -91,7 +91,7 @@ const Pool = () => {
   )
 
   async function getTokenList1Inch() {
-    const res = await fetch(`${URL_1INCH}${pool.chainId}/tokens`)
+    const res = await fetch(`${URL_1INCH}${pool.chain_id}/tokens`)
     const json = await res.json()
     const listToken1Linch = json.tokens
     const listTokenPool = {}
@@ -324,24 +324,18 @@ const Pool = () => {
               <ChartProducts />
               <ScrollUpButton />
               <Change crpPoolAddress={pool.id} />
-              {/* <MyAsset
-                product={pool}
-                price={infoPool.price}
-                pid={typeof pool.poolId === 'undefined' ? -1 : pool.poolId}
-                decimals={infoPool.decimals}
-              /> */}
-              <Summary
-                strategy={data?.pool.strategy || 'Coming soon...'}
-                poolContract={pool.core_pool}
-                poolController={pool.id}
-                summary={pool.summary}
+              <MyAsset
+                chain={pool.chain}
+                poolToken={pool.address}
                 symbol={pool.symbol}
-                link={pool.url}
-                icon={ahype}
+                price={infoPool.price}
+                pid={pool.poolId}
+                decimals={infoPool.decimals}
               />
-              {/* <PoweredBy partners={pool.partners} /> */}
-              {/* <Distribution /> */}
-              {/* <ActivityTable product={pool} /> */}
+              <Summary strategy={data?.pool.strategy || 'Coming soon...'} />
+              {/* {pool.partners ?? <PoweredBy partners={pool.partners} />} */}
+              <Distribution />
+              {/* <ActivityTable /> */}
               <TokenDescription symbol={pool.symbol} />
             </S.ProductDetails>
             {/* <PoolOperations

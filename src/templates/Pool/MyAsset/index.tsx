@@ -30,11 +30,14 @@ import { useAppSelector } from '../../../store/hooks'
 import Button from '../../../components/Button'
 
 import * as S from './styles'
+import { ChainInfo } from '../../../store/reducers/pool'
 
 interface IMyAssetProps {
-  product: ProductDetails;
+  chain: ChainInfo;
+  poolToken: string;
+  symbol: string;
   price: string;
-  pid: number;
+  pid?: number;
   decimals: number;
 }
 
@@ -43,7 +46,14 @@ export interface IPriceLPToken {
   fund: Big;
 }
 
-const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
+const MyAsset = ({
+  chain,
+  poolToken,
+  symbol,
+  price,
+  pid,
+  decimals
+}: IMyAssetProps) => {
   const [walletConnect, setWalletConnect] = React.useState<string | null>(null)
   const [stakedToken, setStakedToken] = React.useState<BigNumber>(
     new BigNumber(0)
@@ -55,10 +65,8 @@ const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
   })
   const [apr, setApr] = React.useState<BigNumber>(new BigNumber(0))
 
-  const { chain, sipAddress, symbol, fundIcon } = product
-
   const stakingContract = useStakingContract(Staking)
-  const tokenWallet = useERC20Contract(sipAddress)
+  const tokenWallet = useERC20Contract(poolToken)
   const { trackEventFunction } = useMatomoEcommerce()
   const { getPriceKacyAndLP } = usePriceLP()
 
@@ -68,6 +76,8 @@ const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
   const router = useRouter()
 
   async function getStakedToken() {
+    if (typeof pid !== 'number') return
+
     const staked = await stakingContract.userInfo(pid, userWalletAddress)
     setStakedToken(staked.amount)
   }
@@ -97,7 +107,10 @@ const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
   }
 
   async function getApr() {
+    if (typeof pid !== 'number') return
+
     const poolInfoResponse = await stakingContract.poolInfo(pid)
+
     if (!poolInfoResponse.withdrawDelay) {
       return
     }
@@ -152,7 +165,7 @@ const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
   }, [userWalletAddress])
 
   React.useEffect(() => {
-    if (userWalletAddress !== '') {
+    if (userWalletAddress !== '' && typeof pid === 'number') {
       getLiquidityPoolPriceInDollar()
     }
   }, [price, userWalletAddress])
@@ -175,7 +188,7 @@ const MyAsset = ({ product, price, pid, decimals }: IMyAssetProps) => {
           type="button"
           onClick={() => {
             registerToken(
-              sipAddress,
+              poolToken,
               symbol.toLocaleUpperCase(),
               Number(decimals)
             )
