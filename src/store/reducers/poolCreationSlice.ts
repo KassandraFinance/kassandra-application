@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 
 import { CoinGeckoResponseType } from '../../templates/Manage/CreatePool/AddLiquidity'
 
@@ -17,6 +16,7 @@ export type TokenType = {
 }
 
 export type PoolData = {
+  termsAndConditions?: boolean,
   network?: string,
   poolName?: string,
   poolSymbol?: string,
@@ -30,9 +30,6 @@ export type PoolData = {
   privateAddressList?: {
     address: string
   }[],
-  tokensBalance?: {
-    [key: string]: BigNumber
-  },
   fees?: {
     [key: string]: {
       isChecked: boolean,
@@ -108,7 +105,7 @@ function handleAllocation(
   return newTokensList
 }
 
-function handleLiquidity(
+export function handleLiquidity(
   tokenInputLiquidity: Big,
   inputToken: string,
   tokensArr: TokenType[],
@@ -154,6 +151,7 @@ const initialState: IPoolCreationDataState = {
   createPoolData: {
     network: '',
     poolName: '',
+    termsAndConditions: false,
     poolSymbol: '',
     icon: {
       image_preview: '',
@@ -163,7 +161,6 @@ const initialState: IPoolCreationDataState = {
     privacy: 'public',
     tokens: [],
     privateAddressList: [],
-    tokensBalance: {},
     fees: {
       depositFee: {
         isChecked: false,
@@ -283,16 +280,16 @@ export const poolCreationSlice = createSlice({
       state.createPoolData.tokens = newLiquidity
     },
     setToggle: (state, action: PayloadAction<string>) => {
-      const fessList = state.createPoolData.fees
+      const feesList = state.createPoolData.fees
         ? state.createPoolData.fees
         : {}
 
       if (
         action.payload === 'depositFee' &&
-        fessList[action.payload].isChecked
+        feesList[action.payload].isChecked
       ) {
         state.createPoolData.fees = {
-          ...fessList,
+          ...feesList,
           [action.payload]: {
             feeRate: 0,
             isChecked: false
@@ -305,10 +302,26 @@ export const poolCreationSlice = createSlice({
         }
       } else if (
         action.payload === 'refferalFee' &&
-        fessList[action.payload].isChecked
+        !feesList[action.payload].isChecked
+      ) {
+        const feeRate = feesList.depositFee?.feeRate
+          ? feesList.depositFee?.feeRate
+          : 0
+        const fee = feeRate / 2
+        state.createPoolData.fees = {
+          ...feesList,
+          refferalFee: {
+            isChecked: true,
+            brokerCommision: fee,
+            managerShare: fee
+          }
+        }
+      } else if (
+        action.payload === 'refferalFee' &&
+        feesList[action.payload].isChecked
       ) {
         state.createPoolData.fees = {
-          ...fessList,
+          ...feesList,
           refferalFee: {
             isChecked: false,
             brokerCommision: 0,
@@ -317,10 +330,10 @@ export const poolCreationSlice = createSlice({
         }
       } else if (
         action.payload === 'managementFee' &&
-        fessList[action.payload].isChecked
+        feesList[action.payload].isChecked
       ) {
         state.createPoolData.fees = {
-          ...fessList,
+          ...feesList,
           managementFee: {
             isChecked: false,
             feeRate: 0
@@ -328,10 +341,10 @@ export const poolCreationSlice = createSlice({
         }
       } else {
         state.createPoolData.fees = {
-          ...fessList,
+          ...feesList,
           [action.payload]: {
-            ...fessList[action.payload],
-            isChecked: !fessList[action.payload].isChecked
+            ...feesList[action.payload],
+            isChecked: !feesList[action.payload].isChecked
           }
         }
       }
@@ -340,31 +353,31 @@ export const poolCreationSlice = createSlice({
       state,
       action: PayloadAction<{ inputName: string, inputValue: number }>
     ) => {
-      const fessList = state.createPoolData.fees
+      const feesList = state.createPoolData.fees
         ? state.createPoolData.fees
         : {}
 
       if (
         action.payload.inputName === 'depositFee' &&
-        fessList.refferalFee.isChecked
+        feesList.refferalFee.isChecked
       ) {
         state.createPoolData.fees = {
-          ...fessList,
+          ...feesList,
           [action.payload.inputName]: {
-            ...fessList[action.payload.inputName],
+            ...feesList[action.payload.inputName],
             feeRate: action.payload.inputValue
           },
           refferalFee: {
-            ...fessList.refferalFee,
+            ...feesList.refferalFee,
             brokerCommision: action.payload.inputValue / 2,
             managerShare: action.payload.inputValue / 2
           }
         }
       } else {
         state.createPoolData.fees = {
-          ...fessList,
+          ...feesList,
           [action.payload.inputName]: {
-            ...fessList[action.payload.inputName],
+            ...feesList[action.payload.inputName],
             feeRate: action.payload.inputValue
           }
         }
@@ -401,6 +414,10 @@ export const poolCreationSlice = createSlice({
           }
         }
       }
+    },
+    setTermsAndConditions: state => {
+      state.createPoolData.termsAndConditions =
+        !state.createPoolData.termsAndConditions
     }
   }
 })
@@ -418,7 +435,8 @@ export const {
   setLiquidity,
   setToggle,
   setFee,
-  setRefferalFee
+  setRefferalFee,
+  setTermsAndConditions
 } = poolCreationSlice.actions
 
 export default poolCreationSlice.reducer

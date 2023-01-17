@@ -13,12 +13,15 @@ import tooltip from '../../../../../../public/assets/utilities/tooltip.svg'
 import * as S from './styles'
 import { Table, THead, Tr, Th, TBody, Td } from '../../AssetsTable/styles'
 
-import { TokenType } from '../../../../../store/reducers/poolCreationSlice'
+import {
+  TokenType,
+  handleLiquidity
+} from '../../../../../store/reducers/poolCreationSlice'
 import { CoinGeckoResponseType } from '..'
 
 interface IAddLiquidityTableProps {
   coinsList: TokenType[];
-  tokenBalance: { [key: string]: BigNumber };
+  tokensBalance: { [key: string]: BigNumber };
   priceList: CoinGeckoResponseType | undefined;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onInputMaxClick: (token: string, liquidity: Big) => void;
@@ -27,7 +30,7 @@ interface IAddLiquidityTableProps {
 
 const AddLiquidityTable = ({
   coinsList,
-  tokenBalance,
+  tokensBalance,
   priceList,
   onChange,
   onInputMaxClick,
@@ -38,6 +41,44 @@ const AddLiquidityTable = ({
     let total = Big(0)
 
     for (const coin of coinsList) {
+      total = total.add(coin.amount.mul(Big(priceArr[coin.address].usd)))
+    }
+
+    return total
+  }
+
+  function totalAvailableLiquidity() {
+    const priceArr = priceList ? priceList : {}
+    let min = Big('99999999999999999999999999999999999999999999999999')
+    let tokenSymbol = ''
+    let liquidity = Big(0)
+    for (const token of coinsList) {
+      const diffAllocation = 100 - token.allocation
+
+      const balanceInDollar = Big(tokensBalance[token.address]?.toString() || 0)
+        .div(Big(10).pow(token.decimals))
+        .mul(Big(priceArr[token.address].usd))
+        .mul(Big(diffAllocation))
+
+      if (min.gte(balanceInDollar)) {
+        min = balanceInDollar
+        tokenSymbol = token.symbol
+        liquidity = Big(tokensBalance[token.address]?.toString() || 0).div(
+          Big(10).pow(token.decimals)
+        )
+      }
+    }
+
+    const liquidityList = handleLiquidity(
+      liquidity,
+      tokenSymbol,
+      coinsList,
+      priceArr
+    )
+
+    let total = Big(0)
+
+    for (const coin of liquidityList) {
       total = total.add(coin.amount.mul(Big(priceArr[coin.address].usd)))
     }
 
@@ -74,10 +115,10 @@ const AddLiquidityTable = ({
                   price={priceList ? priceList[coin.address].usd : 0}
                   url={coin.url}
                   balance={
-                    tokenBalance[coin.address]
+                    tokensBalance[coin.address]
                       ? Number(
                           BNtoDecimal(
-                            Big(tokenBalance[coin.address].toString()).div(
+                            Big(tokensBalance[coin.address].toString()).div(
                               Big(10).pow(coin.decimals)
                             ),
                             2
@@ -90,11 +131,12 @@ const AddLiquidityTable = ({
                 {coin.amount.lte(Big(0)) && (
                   <S.Error>Must be greater than 0</S.Error>
                 )}
-                {coin.amount.gt(
-                  Big(tokenBalance[coin.address].toString()).div(
-                    Big(10).pow(coin.decimals)
-                  )
-                ) && <S.Error>Exceeds wallet balance</S.Error>}
+                {tokensBalance[coin.address] &&
+                  coin.amount.gt(
+                    Big(tokensBalance[coin.address].toString()).div(
+                      Big(10).pow(coin.decimals)
+                    )
+                  ) && <S.Error>Exceeds wallet balance</S.Error>}
               </Td>
 
               <Td className="price">
@@ -102,9 +144,9 @@ const AddLiquidityTable = ({
               </Td>
 
               <Td className="balance">
-                {tokenBalance[coin.address]
+                {tokensBalance[coin.address]
                   ? BNtoDecimal(
-                      Big(tokenBalance[coin.address].toString()).div(
+                      Big(tokensBalance[coin.address].toString()).div(
                         Big(10).pow(coin.decimals)
                       ),
                       2
@@ -113,9 +155,9 @@ const AddLiquidityTable = ({
                 {coin.symbol}
                 <S.SecondaryText>
                   ~$
-                  {tokenBalance[coin.address] && priceList
+                  {tokensBalance[coin.address] && priceList
                     ? BNtoDecimal(
-                        Big(tokenBalance[coin.address].toString())
+                        Big(tokensBalance[coin.address].toString())
                           .div(Big(10).pow(coin.decimals))
                           .mul(Big(priceList[coin.address].usd)),
                         2
@@ -127,28 +169,38 @@ const AddLiquidityTable = ({
               <Td className="liquidity">
                 <S.InputWrapper
                   isBiggerThanZero={coin.amount.lte(Big(0))}
-                  isBiggerThanBalance={coin.amount.gt(
-                    Big(tokenBalance[coin.address].toString()).div(
-                      Big(10).pow(coin.decimals)
+                  isBiggerThanBalance={
+                    tokensBalance[coin.address] &&
+                    coin.amount.gt(
+                      Big(tokensBalance[coin.address].toString()).div(
+                        Big(10).pow(coin.decimals)
+                      )
                     )
-                  )}
+                  }
                 >
                   <InputNumberRight
+                    form="poolCreationForm"
                     name={coin.symbol}
                     type="number"
                     value={coin.amount.toString()}
-                    min={0}
-                    max="any"
+                    min={1 / 10 ** coin.decimals}
+                    max={
+                      tokensBalance[coin.address] &&
+                      Big(tokensBalance[coin.address].toString())
+                        .div(Big(10).pow(coin.decimals))
+                        .toNumber()
+                    }
                     placeholder=""
                     lable="add liquidity"
+                    required
                     onChange={onChange}
                     button
                     buttonText={'Max'}
                     onClick={() =>
                       onInputMaxClick(
                         coin.symbol,
-                        tokenBalance[coin.address]
-                          ? Big(tokenBalance[coin.address].toString()).div(
+                        tokensBalance[coin.address]
+                          ? Big(tokensBalance[coin.address].toString()).div(
                               Big(10).pow(coin.decimals)
                             )
                           : Big(0)
@@ -179,13 +231,19 @@ const AddLiquidityTable = ({
               <S.Total>
                 ${priceList ? BNtoDecimal(totalLiquidity(), 2) : 0}
                 {priceList && (
-                  <S.MaxButton onClick={() => onMaxClick(priceList)}>
+                  <S.MaxButton
+                    type="button"
+                    onClick={() => onMaxClick(priceList)}
+                  >
                     Max
                   </S.MaxButton>
                 )}
               </S.Total>
 
-              <S.Available>Available: $20,000.00</S.Available>
+              <S.Available>
+                Available: $
+                {priceList ? BNtoDecimal(totalAvailableLiquidity(), 2) : 0}
+              </S.Available>
             </S.TotalContainer>
           </Tr>
         </S.Footer>

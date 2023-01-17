@@ -4,10 +4,7 @@ import BigNumber from 'bn.js'
 import Big from 'big.js'
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import {
-  setLiquidity,
-  setPoolData
-} from '../../../../store/reducers/poolCreationSlice'
+import { setLiquidity } from '../../../../store/reducers/poolCreationSlice'
 import { ERC20 } from '../../../../hooks/useERC20Contract'
 
 import CreatePoolHeader from '../CreatePoolHeader'
@@ -46,6 +43,10 @@ const AddLiquidity = () => {
   const tokensList = tokensSummary ? tokensSummary : []
   const wallet = useAppSelector(state => state.userWalletAddress)
 
+  const [tokensBalance, setTokensBalance] = React.useState<{
+    [key: string]: BigNumber
+  }>({})
+
   let totalAllocation = 0
   let addressesList: string[] = []
   for (const token of tokensList) {
@@ -64,7 +65,7 @@ const AddLiquidity = () => {
       }
     }
 
-    dispatch(setPoolData({ tokensBalance: mockBalance }))
+    setTokensBalance(balancesList)
   }
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
@@ -94,7 +95,7 @@ const AddLiquidity = () => {
     for (const token of tokensList) {
       const diffAllocation = 100 - token.allocation
 
-      const balanceInDollar = Big(mockBalance[token.address].toString())
+      const balanceInDollar = Big(tokensBalance[token.address]?.toString())
         .div(Big(10).pow(token.decimals))
         .mul(Big(priceList[token.address].usd))
         .mul(Big(diffAllocation))
@@ -102,7 +103,7 @@ const AddLiquidity = () => {
       if (min.gte(balanceInDollar)) {
         min = balanceInDollar
         tokenSymbol = token.symbol
-        liquidity = Big(mockBalance[token.address].toString()).div(
+        liquidity = Big(tokensBalance[token.address].toString()).div(
           Big(10).pow(token.decimals)
         )
       }
@@ -123,9 +124,8 @@ const AddLiquidity = () => {
 
   React.useEffect(() => {
     getBalances()
-  }, [])
+  })
 
-  console.log(typeof tokensList[0].amount)
   return (
     <S.AddLiquidity>
       <CreatePoolHeader title="Pool creation on"></CreatePoolHeader>
@@ -160,22 +160,24 @@ const AddLiquidity = () => {
         ]}
       />
 
-      <S.PoolContainer>
-        <AddLiquidityTable
-          coinsList={tokensList}
-          tokenBalance={mockBalance}
-          priceList={data}
-          onChange={handleInput}
-          onInputMaxClick={handleInputMax}
-          onMaxClick={handleMaxClick}
-        />
+      {data && (
+        <S.PoolContainer>
+          <AddLiquidityTable
+            coinsList={tokensList}
+            tokensBalance={tokensBalance}
+            priceList={data}
+            onChange={handleInput}
+            onInputMaxClick={handleInputMax}
+            onMaxClick={handleMaxClick}
+          />
 
-        <FundSummary
-          coinsList={tokensList}
-          totalAllocation={totalAllocation}
-          priceList={data}
-        />
-      </S.PoolContainer>
+          <FundSummary
+            coinsList={tokensList}
+            totalAllocation={totalAllocation}
+            priceList={data}
+          />
+        </S.PoolContainer>
+      )}
     </S.AddLiquidity>
   )
 }

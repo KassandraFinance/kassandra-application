@@ -33,7 +33,7 @@ const FeeConfig = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) {
     const name = event.target.name
-    const value = parseFloat(event.target.value)
+    const value = parseFloat(event.target.value ? event.target.value : '0')
 
     dispatch(
       setRefferalFee({
@@ -74,6 +74,7 @@ const FeeConfig = () => {
               }
             >
               <InputText
+                form="poolCreationForm"
                 name="depositFee"
                 type="number"
                 placeholder=""
@@ -86,7 +87,13 @@ const FeeConfig = () => {
                 minLength={0}
                 maxLength={95}
                 lable="Deposit fee rate (%)"
-                error="50% is higher than average and may prevent potential investors. Consider setting a lower fee."
+                error={
+                  feesData.depositFee.feeRate &&
+                  feesData.depositFee.feeRate > 50 &&
+                  feesData.depositFee.feeRate < 95
+                    ? '50% is higher than average and may prevent potential investors. Consider setting a lower fee.'
+                    : 'The rate must be less than 95%'
+                }
                 onChange={event => handleFeeChange(event)}
               />
               <InputText
@@ -128,6 +135,7 @@ const FeeConfig = () => {
                 <S.InputRangeContent>
                   <p>Broker Commission</p>
                   <InputRange
+                    form="poolCreationForm"
                     name="brokerCommision"
                     InputRangeValue={
                       feesData.refferalFee.brokerCommision
@@ -143,6 +151,7 @@ const FeeConfig = () => {
                 <S.InputRangeContent>
                   <p>Manager Share</p>
                   <InputRange
+                    form="poolCreationForm"
                     name="managerShare"
                     InputRangeValue={
                       feesData.refferalFee.managerShare
@@ -212,10 +221,13 @@ const FeeConfig = () => {
             <S.WrapperInput
               isAddress={isAddress(userWalletAddress)}
               value={
-                feesData.depositFee.feeRate ? feesData.depositFee.feeRate : 0
+                feesData.managementFee.feeRate
+                  ? feesData.managementFee.feeRate
+                  : 0
               }
             >
               <InputText
+                form="poolCreationForm"
                 name="managementFee"
                 type="number"
                 placeholder=""
@@ -228,7 +240,13 @@ const FeeConfig = () => {
                 minLength={0}
                 maxLength={95}
                 lable="recipient address"
-                error="The rate must be less than 95%"
+                error={
+                  feesData.managementFee.feeRate &&
+                  feesData.managementFee.feeRate > 50 &&
+                  feesData.managementFee.feeRate < 95
+                    ? '50% is higher than average and may prevent potential investors. Consider setting a lower fee.'
+                    : 'The rate must be less than 95%'
+                }
                 onChange={event => handleFeeChange(event)}
               />
               <InputText

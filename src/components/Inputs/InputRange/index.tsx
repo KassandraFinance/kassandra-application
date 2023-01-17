@@ -1,7 +1,9 @@
 import React from 'react'
+
 import * as S from './styles'
 
 interface IInputRangeProps {
+  form?: string;
   name: string;
   min?: number;
   max?: number;
@@ -11,6 +13,7 @@ interface IInputRangeProps {
 }
 
 const InputRange = ({
+  form = undefined,
   name,
   InputRangeValue,
   handleInputRate,
@@ -31,6 +34,7 @@ const InputRange = ({
         onChange={event => handleInputRate(event)}
       />
       <S.InputNumber
+        form={form}
         type="number"
         name={name}
         min={min}

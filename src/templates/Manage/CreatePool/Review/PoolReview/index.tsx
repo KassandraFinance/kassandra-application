@@ -86,6 +86,27 @@ const PoolReview = () => {
     return total
   }
 
+  function getInitialPrice() {
+    let invariant = Big(0)
+    const numberOfTokens = poolData.tokens ? poolData.tokens?.length : 0
+    const initialLiquidity = totalLiquidity()
+
+    for (const token of tokensList) {
+      const weight = token.allocation / 100
+      const amountPowWeight = token.amount.toNumber() ** weight
+
+      if (invariant.lte(0)) {
+        invariant = invariant.add(amountPowWeight)
+      } else {
+        invariant = invariant.mul(amountPowWeight)
+      }
+    }
+
+    const price = initialLiquidity.div(invariant.mul(numberOfTokens))
+
+    return price
+  }
+
   return (
     <S.PoolReview>
       <S.PoolReviewContainer>
@@ -111,15 +132,7 @@ const PoolReview = () => {
             </S.PoolNameContent>
           </S.PoolNameContainer>
           <S.PoolValueContent>
-            <span>
-              $150.00{' '}
-              <img
-                src="/assets/utilities/edit-icon.svg"
-                alt=""
-                width={14}
-                height={14}
-              />
-            </span>
+            <span>~${data ? BNtoDecimal(getInitialPrice(), 2) : 0}</span>
             <p>INITIAL PRICE</p>
           </S.PoolValueContent>
         </S.PoolReviewHeader>

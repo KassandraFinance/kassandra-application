@@ -1,6 +1,7 @@
 import * as S from './styles'
 
 interface IInputNumberRightProps {
+  form?: string;
   name: string;
   type: string;
   value: string;
@@ -16,6 +17,7 @@ interface IInputNumberRightProps {
 }
 
 const InputNumberRight = ({
+  form = undefined,
   name,
   type,
   value,
@@ -35,6 +37,7 @@ const InputNumberRight = ({
 
       <S.InputContainer>
         <S.Input
+          form={form}
           id={name}
           name={name}
           type={type}
@@ -54,7 +57,9 @@ const InputNumberRight = ({
         {button && (
           <>
             <S.Line />
-            <S.InputButton onClick={onClick}>{buttonText}</S.InputButton>
+            <S.InputButton type="button" onClick={onClick}>
+              {buttonText}
+            </S.InputButton>
           </>
         )}
       </S.InputContainer>

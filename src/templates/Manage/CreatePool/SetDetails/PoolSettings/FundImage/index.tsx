@@ -56,9 +56,11 @@ const FundImage = () => {
         <Image src={hasPoolImage} alt="" width={56} height={56} />
 
         <input
+          form="poolCreationForm"
           id="InputFile"
           type="file"
           accept="image/png, image/jpg, image/jpeg"
+          required
           onChange={event => {
             if (event.target.files !== null) {
               handleImagePreview(event.target.files)

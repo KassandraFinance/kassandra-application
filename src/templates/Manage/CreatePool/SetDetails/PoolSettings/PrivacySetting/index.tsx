@@ -95,11 +95,17 @@ const PoolSettings = ({
             hasValue={inputAddress.length > 0}
           >
             <input
+              form="poolCreationForm"
+              id="inputAddress"
+              name="inputAddress"
               placeholder="Enter address..."
               value={inputAddress}
               onChange={event => handlePrivateAddress(event)}
               ref={InputRef}
-              required
+              required={
+                poolData.privateAddressList &&
+                poolData?.privateAddressList?.length < 1 === true
+              }
             />
 
             {isAddress(inputAddress) && (

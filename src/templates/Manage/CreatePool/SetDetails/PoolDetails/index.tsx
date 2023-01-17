@@ -35,6 +35,7 @@ const PoolDetails = () => {
         />
 
         <InputText
+          form="poolCreationForm"
           name="poolName"
           type="text"
           placeholder="Write Pool name"
@@ -48,6 +49,7 @@ const PoolDetails = () => {
         />
 
         <InputText
+          form="poolCreationForm"
           name="poolSymbol"
           type="text"
           placeholder="e.g.: ETH, BTC, AVAX, etc."

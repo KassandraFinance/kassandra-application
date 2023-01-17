@@ -1,6 +1,7 @@
 import * as S from './styles'
 
 interface IInputTextProps {
+  form?: string;
   name: string;
   type: string;
   value: string;
@@ -15,6 +16,7 @@ interface IInputTextProps {
 }
 
 const InputText = ({
+  form = undefined,
   name,
   type,
   value,
@@ -33,6 +35,7 @@ const InputText = ({
 
       <S.InputContainer>
         <S.Input
+          form={form}
           id={name}
           name={name}
           type={type}

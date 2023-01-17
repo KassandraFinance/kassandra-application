@@ -17,6 +17,7 @@ const ContainerButton = ({
     <S.ContainerButton>
       <S.ButtonsWrapper>
         <Button
+          type="button"
           text="Back"
           backgroundBlack
           fullWidth
@@ -24,7 +25,14 @@ const ContainerButton = ({
           onClick={onBack}
         />
 
-        <Button text="Next" backgroundPrimary fullWidth onClick={onNext} />
+        <Button
+          form="poolCreationForm"
+          type="submit"
+          text="Next"
+          backgroundPrimary
+          fullWidth
+          onClick={onNext}
+        />
       </S.ButtonsWrapper>
     </S.ContainerButton>
   )

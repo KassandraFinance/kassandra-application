@@ -34,6 +34,8 @@ const AssetsTable = ({ priceList, tokenBalance }: IAssetsTable) => {
     state => state.poolCreation.createPoolData.tokens
   )
 
+  const inputEl = React.useRef<HTMLInputElement>(null)
+
   function handleChecked(symbol: string): boolean {
     const assetsArr = assetsList ? assetsList : []
     const result = assetsArr.some(asset => asset.symbol === symbol)
@@ -46,6 +48,11 @@ const AssetsTable = ({ priceList, tokenBalance }: IAssetsTable) => {
   }
 
   function handleCheckbox(token: TokenType) {
+    const assets = assetsList ? assetsList : []
+    if (assets?.length <= 2) {
+      inputEl.current?.setCustomValidity('')
+    }
+
     dispatch(setTokens(token))
   }
 
@@ -66,6 +73,21 @@ const AssetsTable = ({ priceList, tokenBalance }: IAssetsTable) => {
       </S.SearchWrapper>
 
       <S.Table>
+        <S.InputValidation
+          ref={inputEl}
+          form="poolCreationForm"
+          type="radio"
+          id="selectToken"
+          name="selectToken"
+          value="selectToken"
+          required={assetsList && assetsList?.length < 2}
+          onInvalid={() => {
+            inputEl.current?.setCustomValidity(
+              'You show select at least two tokens'
+            )
+          }}
+        />
+
         <S.THead>
           <S.Tr>
             <S.Th className="asset">Asset</S.Th>
@@ -141,6 +163,7 @@ const AssetsTable = ({ priceList, tokenBalance }: IAssetsTable) => {
                 </S.Td>
                 <S.Td className="add">
                   <Checkbox
+                    form="poolCreationForm"
                     name={coin.coinSymbol}
                     label={coin.coinSymbol}
                     checked={handleChecked(coin.coinSymbol)}

@@ -58,6 +58,8 @@ export const SearchWrapper = styled.div`
 
 export const Table = styled.div`
   ${() => css`
+    position: relative;
+
     border-collapse: collapse;
 
     width: 100%;
@@ -209,5 +211,17 @@ export const Shadow = styled.div<IShadowProps>`
 export const TrsWrapper = styled.div`
   ${() => css`
     height: fit-content;
+  `}
+`
+
+export const InputValidation = styled.input`
+  ${() => css`
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    opacity: 0;
+
+    pointer-events: none;
   `}
 `

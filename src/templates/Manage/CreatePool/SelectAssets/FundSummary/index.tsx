@@ -71,6 +71,7 @@ const FundSummary = ({
                 <>
                   <S.AllocationContainer>
                     <S.LockButton
+                      type="button"
                       onClick={() => onLockToken(coin.symbol)}
                       active={coin.isLocked}
                     >
@@ -78,6 +79,7 @@ const FundSummary = ({
                     </S.LockButton>
 
                     <InputNumberRight
+                      form="poolCreationForm"
                       name={coin.symbol}
                       type="number"
                       placeholder="100%"
@@ -89,7 +91,10 @@ const FundSummary = ({
                       onChange={onChange}
                     />
 
-                    <S.RemoveButton onClick={() => onRemoveToken(coin)}>
+                    <S.RemoveButton
+                      type="button"
+                      onClick={() => onRemoveToken(coin)}
+                    >
                       <Image src={closeIcon} />
                     </S.RemoveButton>
                   </S.AllocationContainer>

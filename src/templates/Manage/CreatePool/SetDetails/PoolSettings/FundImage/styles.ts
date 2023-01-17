@@ -49,7 +49,9 @@ export const UploadImage = styled.div`
     }
 
     input {
-      display: none;
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
     }
   `}
 `

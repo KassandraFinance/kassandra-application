@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 export const Review = styled.div`
   ${() => css``}
 `
-export const ReviewContainer = styled.form`
+export const ReviewContainer = styled.div`
   ${() => css`
     display: grid;
     align-items: flex-start;

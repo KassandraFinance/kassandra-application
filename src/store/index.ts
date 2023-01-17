@@ -1,5 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import Big from 'big.js'
+import BigNumber from 'bn.js'
 import { IPoolCreationDataState } from './reducers/poolCreationSlice'
 
 import storage from 'redux-persist/lib/storage'
@@ -26,6 +27,7 @@ const SetTransform = createTransform(
     outboundState.createPoolData.tokens?.forEach(element => {
       element.amount = Big(element.amount)
     })
+
     return outboundState
   },
   { whitelist: ['poolCreation'] }

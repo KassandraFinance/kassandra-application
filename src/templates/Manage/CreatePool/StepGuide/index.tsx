@@ -86,7 +86,12 @@ const StepGuide = () => {
 
         <S.ButtonsContainer>
           <S.ButtonWrapper>
-            <S.ButtonNetwork borderColor="avalanche" selected={false} disabled>
+            <S.ButtonNetwork
+              type="button"
+              borderColor="avalanche"
+              selected={false}
+              disabled
+            >
               <Image src={avalancheIcon} width={24} height={24} />
               Avalanche
             </S.ButtonNetwork>
@@ -94,10 +99,23 @@ const StepGuide = () => {
             <S.LinkWrapper>
               <ExternalLink text="Coming soon..." />
             </S.LinkWrapper>
+            <S.InputValidation
+              form="poolCreationForm"
+              type="radio"
+              id="avalanche"
+              name="network"
+              value="avalanche"
+              checked={network === 'avalanche'}
+              onChange={() => {
+                return
+              }}
+              required
+            />
           </S.ButtonWrapper>
 
           <S.ButtonWrapper>
             <S.ButtonNetwork
+              type="button"
               borderColor="polygon"
               selected={network === 'polygon'}
               onClick={() => handleSelectNetwork('polygon')}
@@ -111,6 +129,18 @@ const StepGuide = () => {
                 onClick={() => setIsAvailableAssets(true)}
               />
             </S.LinkWrapper>
+            <S.InputValidation
+              form="poolCreationForm"
+              type="radio"
+              id="polygon"
+              name="network"
+              value="polygon"
+              checked={network === 'polygon'}
+              onChange={() => {
+                return
+              }}
+              required
+            />
           </S.ButtonWrapper>
         </S.ButtonsContainer>
       </S.SelectNetwork>
