@@ -128,16 +128,17 @@ const Invest = ({ typeAction }: IInvestProps) => {
     const tokenWithHigherLiquidityPool =
       await corePool.checkTokenWithHigherLiquidityPool()
 
+    const tokenWrappedAddress = corePool.getTokenWrapped(tokenWithHigherLiquidityPool.address)
+
     const response = await fetch(
       `${URL_1INCH}${pool.chainId}/swap?fromTokenAddress=${
         tokenSelect.address
       }&toTokenAddress=${
-        tokenWithHigherLiquidityPool.address
+        tokenWrappedAddress
       }&amount=${amountTokenIn}&fromAddress=${
         ProxyContract || '0x84f154A845784Ca37Ae962504250a618EB4859dc'
       }&slippage=1&disableEstimate=true`
     )
-
     const data = await response.json()
 
     setTrasactionData(data.tx.data)

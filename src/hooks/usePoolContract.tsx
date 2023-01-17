@@ -177,7 +177,7 @@ const usePoolContract = (address: string) => {
 
           return {
             address: token,
-            normalizedWeight: normalizedWeightToken 
+            normalizedWeight: normalizedWeightToken
           }
         })
       )
@@ -193,6 +193,18 @@ const usePoolContract = (address: string) => {
       });
 
       return tokensNormalizedWithSort[0] || {}
+    }
+
+    const getTokenWrapped = (address: string) => {
+      const tokenAddresses = pool.underlying_assets.find(item =>
+        item.token.id.toLocaleLowerCase() === address.toLocaleLowerCase()
+      )
+
+      if (tokenAddresses?.token.wraps) {
+        return tokenAddresses?.token.wraps.id
+      }
+
+      return address
     }
 
     const checkTokenInThePool = async (address: string) => {
@@ -236,7 +248,8 @@ const usePoolContract = (address: string) => {
       exitFee,
       totalDenormalizedWeight,
       checkTokenWithHigherLiquidityPool,
-      checkTokenInThePool
+      checkTokenInThePool,
+      getTokenWrapped
     }
   }, [contract])
 }
