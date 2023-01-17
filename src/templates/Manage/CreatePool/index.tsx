@@ -14,6 +14,7 @@ import SelectAssets from './SelectAssets'
 import AddLiquidity from './AddLiquidity'
 import ConfigureFee from './ConfigureFee'
 import Review from './Review'
+import PoolCreated from './PoolCreated'
 
 import * as S from './styles'
 
@@ -27,7 +28,8 @@ const CreatePool = () => {
     <SelectAssets key="selecAssets" />,
     <AddLiquidity key="addLiquidity" />,
     <ConfigureFee key="configureFee" />,
-    <Review key="review" />
+    <Review key="review" />,
+    <PoolCreated key="poolCreated" />
   ]
 
   function handleNextButton() {
@@ -47,13 +49,15 @@ const CreatePool = () => {
         <form id="poolCreationForm" onSubmit={handleSubmit}>
           {poolCreationSteps[stepNumber]}
 
-          <ContainerButton
-            backButtonDisabled={stepNumber < 1}
-            onBack={() => dispatch(setBackStepNumber())}
-            onNext={() => {
-              return
-            }}
-          />
+          {stepNumber < 6 && (
+            <ContainerButton
+              backButtonDisabled={stepNumber < 1}
+              onBack={() => dispatch(setBackStepNumber())}
+              onNext={() => {
+                return
+              }}
+            />
+          )}
         </form>
       </ModalFullWindow>
     </S.CreatePool>

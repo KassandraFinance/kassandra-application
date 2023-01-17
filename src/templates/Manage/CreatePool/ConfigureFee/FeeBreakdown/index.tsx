@@ -52,7 +52,7 @@ const FeeBreakdown = () => {
               </S.FeeBreakdownParagraph>
               {isAddress(userWalletAddress) ? (
                 <Link
-                  href={`https://snowtrace.io/address/${userWalletAddress}`}
+                  href={`https://polygonscan.com/address/${userWalletAddress}`}
                   passHref
                 >
                   <S.FeeBreakdownAdress target="_blank">
@@ -86,7 +86,7 @@ const FeeBreakdown = () => {
               </S.FeeBreakdownParagraph>
               {isAddress(userWalletAddress) ? (
                 <Link
-                  href={`https://snowtrace.io/address/${userWalletAddress}`}
+                  href={`https://polygonscan.com/address/${userWalletAddress}`}
                   passHref
                 >
                   <S.FeeBreakdownAdress target="_blank">

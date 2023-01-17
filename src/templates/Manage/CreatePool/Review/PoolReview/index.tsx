@@ -273,7 +273,7 @@ const PoolReview = () => {
                       </CopyToClipboard>
                     </span>
                     <Link
-                      href={`https://snowtrace.io/address/${wallet.address}`}
+                      href={`https://polygonscan.com/address/${wallet.address}`}
                       passHref
                     >
                       <a target="_blank">

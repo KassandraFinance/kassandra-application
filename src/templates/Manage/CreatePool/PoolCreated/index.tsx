@@ -1,15 +1,15 @@
 import React from 'react'
 import Link from 'next/link'
 
-import Button from '../Button'
+import Button from '../../../../components/Button'
 
-import createFundSucess from '../../../public/assets/iconGradient/sucess.svg'
+import createFundSucess from '../../../../../public/assets/iconGradient/sucess.svg'
 
 import * as S from './styles'
 
-const FundCreatedCard = () => {
+const PoolCreated = () => {
   return (
-    <S.FundCreatedCardContainer>
+    <S.PoolCreated>
       <S.fundCreateCard>
         <img src={createFundSucess.src} alt="" width={80} height={80} />
         <S.FundCreatedTitle>Your Pool has been created!</S.FundCreatedTitle>
@@ -34,8 +34,8 @@ const FundCreatedCard = () => {
           />
         </Link>
       </S.fundCreateCard>
-    </S.FundCreatedCardContainer>
+    </S.PoolCreated>
   )
 }
 
-export default FundCreatedCard
+export default PoolCreated
