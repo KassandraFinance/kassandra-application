@@ -41,6 +41,7 @@ export interface IPoolSlice {
   symbol: string;
   manager?: string;
   logo: string;
+  pool_version: number;
   poolId?: number;
   url: string;
   summary?: string;
@@ -76,6 +77,7 @@ const initialState: IPoolSlice = {
   symbol: '',
   manager: '',
   logo: '',
+  pool_version: 0,
   poolId: 0,
   url: '',
   summary: '',

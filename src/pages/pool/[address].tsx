@@ -51,6 +51,7 @@ const queryPool = `{
   vault
   chain_id
   logo
+  pool_version
   chain {
     id
     chainName
@@ -114,7 +115,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   // eslint-disable-next-line prettier/prettier
   const { address } = context.params as IParams
-  
+
   let poolId = address
 
   if (isAddress(address)) {
