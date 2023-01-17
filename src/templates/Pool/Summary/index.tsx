@@ -3,6 +3,7 @@ import Image from 'next/image'
 import CopyToClipboard from 'react-copy-to-clipboard'
 
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
+import { useAppSelector } from '../../../store/hooks'
 
 import { chains } from '../../../constants/tokenAddresses'
 
@@ -12,6 +13,8 @@ import { registerToken } from '../../../utils/registerToken'
 import { ToastInfo } from '../../../components/Toastify/toast'
 
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
+import comingSoon from '../../../../public/assets/icons/coming-soon.svg'
+
 import metaMaskIcon from '../../../../public/assets/logos/metamask.svg'
 
 import * as S from './styles'
@@ -26,15 +29,9 @@ interface Params {
   icon: any;
 }
 
-const Summary = ({
-  strategy,
-  poolContract,
-  poolController,
-  summary,
-  symbol,
-  link,
-  icon
-}: Params) => {
+const Summary = ({ strategy }: any) => {
+  const pool = useAppSelector(state => state.pool)
+
   const { trackEventFunction } = useMatomoEcommerce()
 
   const handleCopyLink = () => {
@@ -48,25 +45,25 @@ const Summary = ({
         <h2>Summary</h2>
       </S.Title>
       <S.Line />
-      <p>{summary}</p>
+      <p>{pool.summary}</p>
       <S.LinkContent>
         {/* <a href="https://coinmarketcap.com/">
           View On CoinMarketCap <img src="/assets/utilities/external-link.svg" alt="" />
         </a> */}
-        {symbol === 'aHYPE' ? (
+        {pool.symbol === 'aHYPE' ? (
           <a
-            href={link}
+            href={pool.url}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() =>
               trackEventFunction(
                 'click-on-link',
-                `discover-${symbol.toLocaleLowerCase()}`,
+                `discover-${pool.symbol.toLocaleLowerCase()}`,
                 'summary'
               )
             }
           >
-            Discover {symbol}
+            Discover {pool.symbol}
             <svg
               width="17"
               height="17"
@@ -90,18 +87,25 @@ const Summary = ({
       <S.CopyContract>
         <S.Blockchain>
           <div className="image">
-            <Image src={icon} alt="" />
+            <Image
+              src={pool.logo || comingSoon}
+              width={20}
+              height={20}
+              alt=""
+            />
           </div>
+          {/* REFATORAR LOGICA QUANDO FOR POLYGON */}
+          {/* CONSUMIR BLOCK EXPLORER DA CHAIN NO BACKEND */}
           <a
             href={`${
               process.env.NEXT_PUBLIC_MASTER === '1'
                 ? chains.avalanche.blockExplorerUrls
                 : chains.fuji.blockExplorerUrls
-            }address/${poolController}`}
+            }address/${pool.address}`}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span>CONTROLLER/{symbol} TOKEN</span>
+            <span>CONTROLLER/{pool.symbol} TOKEN</span>
             <svg
               width="17"
               height="17"
@@ -123,10 +127,10 @@ const Summary = ({
             className="metamask"
             type="button"
             onClick={() => {
-              registerToken(poolController, symbol, 18)
+              registerToken(pool.address, pool.symbol, 18)
               trackEventFunction(
                 'click-on-button',
-                `add-${symbol.toLocaleLowerCase()}-token`,
+                `add-${pool.symbol.toLocaleLowerCase()}-token`,
                 'summary'
               )
             }}
@@ -139,19 +143,19 @@ const Summary = ({
               width={14}
             />
           </button>
-          <CopyToClipboard text={poolController}>
+          <CopyToClipboard text={pool.address}>
             <button
               type="button"
               onClick={() => {
                 handleCopyLink()
                 trackEventFunction(
                   'click-to-button',
-                  `copy-${symbol.toLocaleLowerCase()}-tokencontract`,
+                  `copy-${pool.symbol.toLocaleLowerCase()}-tokencontract`,
                   'summary'
                 )
               }}
             >
-              {substr(poolController)}
+              {substr(pool.address)}
               <svg
                 width="12"
                 height="13"
@@ -171,14 +175,19 @@ const Summary = ({
       <S.CopyContract>
         <S.Blockchain>
           <div className="image">
-            <Image src={icon} alt="" />
+            <Image
+              src={pool.logo || comingSoon}
+              width={20}
+              height={20}
+              alt=""
+            />
           </div>
           <a
             href={`${
               process.env.NEXT_PUBLIC_MASTER === '1'
                 ? chains.avalanche.blockExplorerUrls
                 : chains.fuji.blockExplorerUrls
-            }address/${poolContract}`}
+            }address/${pool.address}`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -199,19 +208,19 @@ const Summary = ({
             </svg>
           </a>
         </S.Blockchain>
-        <CopyToClipboard text={poolContract}>
+        <CopyToClipboard text={pool.vault}>
           <button
             type="button"
             onClick={() => {
               handleCopyLink()
               trackEventFunction(
                 'click-to-button',
-                `copy-${symbol.toLocaleLowerCase()}-poolcontract`,
+                `copy-${pool.symbol.toLocaleLowerCase()}-poolcontract`,
                 'summary'
               )
             }}
           >
-            {substr(poolContract)}
+            {substr(pool.vault)}
             <svg
               width="12"
               height="13"
@@ -230,7 +239,12 @@ const Summary = ({
       <S.CopyContract>
         <S.Blockchain>
           <div className="image">
-            <Image src={icon} alt="" />
+            <Image
+              src={pool.logo || comingSoon}
+              width={20}
+              height={20}
+              alt=""
+            />
           </div>
           <a
             href={`${
@@ -265,7 +279,7 @@ const Summary = ({
               handleCopyLink()
               trackEventFunction(
                 'click-to-button',
-                `copy-${symbol.toLocaleLowerCase()}-strategycontract`,
+                `copy-${pool.symbol.toLocaleLowerCase()}-strategycontract`,
                 'summary'
               )
             }}
