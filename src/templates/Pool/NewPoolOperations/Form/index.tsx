@@ -1,6 +1,11 @@
 import React from 'react'
 
 // import { ChainDetails } from '../../../utils/changeChain'
+import { OperationProvider } from './PoolOperationContext';
+import { useAppSelector } from '../../../../store/hooks';
+
+import operationV1 from '../../../../Model/operationV1';
+import operationV2 from '../../../../Model/operationV2';
 
 import Invest from './Invest';
 import Withdraw from './Withdraw';
@@ -38,15 +43,18 @@ const Form = ({
   typeAction,
   typeWithdraw
 }: IFormProps) => {
+  const { pool_version } = useAppSelector(state => state.pool)
 
+  const operationVersion = pool_version === 1 ? new operationV1() : new operationV2()
   //chamar os dados da pool pelo Redux
 
-
   return (
-    <S.Form>
-      {typeAction === "Invest" && <Invest typeAction="Invest" />}
-      {typeAction === "Withdraw" && <Withdraw typeWithdraw={typeWithdraw} typeAction="Withdraw" />}
-    </S.Form>
+    <OperationProvider operation={operationVersion}>
+      <S.Form>
+        {typeAction === "Invest" && <Invest typeAction="Invest" />}
+        {typeAction === "Withdraw" && <Withdraw typeWithdraw={typeWithdraw} typeAction="Withdraw" />}
+      </S.Form>
+    </OperationProvider>
   )
 }
 
