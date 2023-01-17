@@ -101,9 +101,9 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
   const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
 
-  const proxy = useProxy(ProxyContract, pool.id, pool.core_pool)
+  const proxy = useProxy(ProxyContract, pool.id, pool.vault)
   const crpPoolToken = useERC20Contract(pool.id)
-  const corePool = usePoolContract(pool.core_pool)
+  const corePool = usePoolContract(pool.vault)
   const yieldYak = useYieldYak()
 
   const { data } = useSWR([GET_INFO_POOL], query =>
@@ -131,7 +131,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     const tokenWrappedAddress = corePool.getTokenWrapped(tokenWithHigherLiquidityPool.address)
 
     const response = await fetch(
-      `${URL_1INCH}${pool.chainId}/swap?fromTokenAddress=${
+      `${URL_1INCH}${pool.chain_id}/swap?fromTokenAddress=${
         tokenSelect.address
       }&toTokenAddress=${
         tokenWrappedAddress
@@ -330,7 +330,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
   // verificar se o token está aprovado
   React.useEffect(() => {
-    if (chainId !== pool.chainId) {
+    if (chainId !== pool.chain_id) {
       return
     }
 
@@ -389,7 +389,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
       return
     }
 
-    if (chainId !== pool.chainId) {
+    if (chainId !== pool.chain_id) {
       setAmountTokenOut(Big(0))
       return
     }
@@ -610,7 +610,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
           onClick={() => dispatch(setModalWalletActive(true))}
           text="Connect Wallet"
         />
-      ) : chainId === pool.chainId ? (
+      ) : chainId === pool.chain_id ? (
         <Button
           className="btn-submit"
           backgroundPrimary

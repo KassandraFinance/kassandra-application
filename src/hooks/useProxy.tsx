@@ -19,7 +19,7 @@ const useProxy = (address: string, crpPool: string, coreAddress: string) => {
   const [contract, setContract] = React.useState(new web3.eth.Contract((HermesProxy as unknown) as AbiItem, address))
 
   const { pool } = useAppSelector(state => state)
-  const corePool = usePoolContract(pool.core_pool)
+  const corePool = usePoolContract(pool.vault)
 
   const checkTokenInThePool = async (address: string) => {
     const tokens = pool.underlying_assets
