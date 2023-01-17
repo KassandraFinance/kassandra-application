@@ -33,8 +33,9 @@ export interface ChainInfo {
 
 export interface IPoolSlice {
   id: string;
-  core_pool: string;
-  chainId: number;
+  address: string;
+  vault: string;
+  chain_id: number;
   chain: ChainInfo;
   name: string;
   symbol: string;
@@ -56,8 +57,9 @@ export interface IPoolSlice {
 
 const initialState: IPoolSlice = {
   id: '',
-  core_pool: '',
-  chainId: 0,
+  address: '',
+  vault: '',
+  chain_id: 0,
   chain: {
     id: 0,
     logo: '',

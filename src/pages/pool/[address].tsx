@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { SWRConfig } from 'swr'
 import { ParsedUrlQuery } from 'querystring'
-import { toChecksumAddress } from 'web3-utils'
+import { toChecksumAddress, isAddress } from 'web3-utils'
 
 import { useAppDispatch } from '../../store/hooks'
 import { IPoolSlice, setPool } from '../../store/reducers/pool'
@@ -21,7 +21,7 @@ interface IPoolProps {
 const Index = ({ pool }: IPoolProps) => {
   const dispatch = useAppDispatch()
 
-  if (pool.chainId === 43114) {
+  if (pool.chain_id === 43114) {
     const renameWavax = pool.underlying_assets.find(asset => asset.token.symbol === 'WAVAX');
     if (renameWavax) {
       renameWavax.token.symbol = 'AVAX'
@@ -47,8 +47,9 @@ const Index = ({ pool }: IPoolProps) => {
 
 const queryPool = `{
   id
-  core_pool
-  chainId
+  address
+  vault
+  chain_id
   logo
   chain {
     id
@@ -113,6 +114,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   // eslint-disable-next-line prettier/prettier
   const { address } = context.params as IParams
+  
+  let poolId = address
+
+  if (isAddress(address)) {
+    poolId = toChecksumAddress(address)
+  }
 
   try {
     const res = await fetch('https://backend.kassandra.finance', {
@@ -123,7 +130,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       body: JSON.stringify({
         query: `query ($id: ID!) { pool (id: $id) ${queryPool}}`,
         variables: {
-          id: toChecksumAddress(address)
+          id: poolId
         }
       })
     })

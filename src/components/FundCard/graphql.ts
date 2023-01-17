@@ -37,7 +37,7 @@ export const GET_POOL = gql`
         where: { base: "usd", timestamp_gt: $period_selected }
         orderBy: timestamp
       ) {
-        value
+        close
         timestamp
       }
       # hourly allocation chart
