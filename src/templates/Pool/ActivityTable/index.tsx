@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React from 'react'
 import Image from 'next/image'
 
@@ -10,12 +9,10 @@ import { BNtoDecimal } from '../../../utils/numerals'
 import { getDateDiff } from '../../../utils/date'
 import substr from '../../../utils/substr'
 
-import { ITokenImages } from '../../../store/reducers/poolImages'
 import { useAppSelector } from '../../../store/hooks'
 import useDate from '../../../hooks/useDate'
 
-import { ITokenDetails, usePoolTokens } from '../../../context/PoolTokensContext'
-import { ProductDetails, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA } from '../../../constants/tokenAddresses'
 
 import ExternalLink from '../../../components/ExternalLink'
 import Pagination from '../../../components/Pagination'
@@ -39,10 +36,6 @@ const typeActivity = {
   swap: 'Swap'
 }
 
-interface IActivityTableProps {
-  product: ProductDetails;
-}
-
 type ITokenInfoProps = {
   id: string,
   balance_in_pool: string,
@@ -63,6 +56,7 @@ interface IPoolInfoProps {
 interface IActivitiesProps {
   id: string,
   address: string,
+  // eslint-disable-next-line prettier/prettier
   type: keyof typeof typeActivity,
   txHash: string,
   timestamp: number,
@@ -80,24 +74,19 @@ interface IPoolProps {
   };
 }
 
-const ActivityTable = ({ product }: IActivityTableProps) => {
+const ActivityTable = () => {
   const [skip, setSkip] = React.useState<number>(0)
-  const [poolInfo, setPoolInfo] = React.useState<IPoolInfoProps[]>([])
   const [activities, setActivities] = React.useState<IActivitiesProps[]>([])
 
-  const { poolImages }: { poolImages: ITokenImages } = useAppSelector(
-    state => state
-  )
-
-  const { poolTokens: poolTokensArray } = usePoolTokens()
+  const pool = useAppSelector(state => state.pool)
   const { date } = useDate()
-
-  const take = 20
-
+  
+  const take = 6
+  
   const { data } = useSWR<IPoolProps>(
-    [GET_ACTIVITY, skip, take, product.sipAddress],
+    [GET_ACTIVITY, skip, take, pool.id],
     (query, skip, take, productAddress) =>
-      request(SUBGRAPH_URL, query, {
+      request(BACKEND_KASSANDRA, query, {
         skip,
         take,
         id: productAddress
@@ -119,7 +108,6 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
 
   React.useEffect(() => {
     if (data) {
-      setPoolInfo(data?.pool?.underlying_assets)
       setActivities(data?.pool?.activities)
     }
   }, [data])
@@ -164,31 +152,31 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
                 </S.TitleTransaction>
                 <S.TransactionOutAndIn>
                   <span>
-                    {poolTokensArray.map((element: ITokenDetails) => {
-                      if (activity.type === "join" && element.symbol === "KACY")
-                        return <Image src={product.fundIcon} alt="" width={16} height={16} />
-
+                    {pool.underlying_assets.map((element) => {
+                      if (activity.type === "join" && element.token.symbol === "KACY")
+                      return <Image src={pool.logo} alt="" width={16} height={16} />
+                      
                       if (activity.type === "exit") {
-                        if (element.symbol === activity.symbol[0]) {
-                          return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.image} alt="" />
+                        if (element.token.symbol === activity.symbol[0]) {
+                          return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo  || element.token?.wraps?.logo} alt="" />
                         }
-                        if (activity.symbol.length < 3 && element.symbol === invertSymbol[activity.symbol[0]]) {
-                          return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.image} alt="" />
+                        if (activity.symbol.length < 3 && element.token.symbol === invertSymbol[activity.symbol[0]]) {
+                          return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
                         } 
-                        if (activity.symbol.length > 3 && element.symbol === "KACY") {
+                        if (activity.symbol.length > 3 && element.token.symbol === "KACY") {
                           return (
                             <S.TokensSymbols>
-                              <TokenIcons poolInfo={poolInfo} images={poolImages} />
-                              {poolInfo.length > 3 && <span>+{poolInfo.length - 3} MORE</span>}
+                              <TokenIcons />
+                              {pool.underlying_assets.length > 3 && <span>+{pool.underlying_assets.length - 3} MORE</span>}
                             </S.TokensSymbols>
                           )
                         }
                       }
 
-                      if (activity.type === "swap" && element.symbol === activity.symbol[1])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.image} alt="" />
-                      if (activity.type === "swap" && element.symbol === invertSymbol[activity.symbol[1]])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.image} alt="" />
+                      if (activity.type === "swap" && element.token.symbol === activity.symbol[1])
+                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
+                      if (activity.type === "swap" && element.token.symbol === invertSymbol[activity.symbol[1]])
+                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
                     })}
                     {activity.symbol.length > 2 ? null : BNtoDecimal(
                       Big(activity.amount[activity.type === "exit" ? 0 : 1] || '0'),
@@ -212,25 +200,25 @@ const ActivityTable = ({ product }: IActivityTableProps) => {
                 </S.TransactionOutAndIn>
                 <S.TransactionOutAndIn>
                   <span>
-                    {poolTokensArray.map((element: ITokenDetails) => {
-                      if (activity.type === "join" && element.symbol === activity.symbol[0])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.image} alt="" />
-                      if (activity.type === "join" && element.symbol === invertSymbol[activity.symbol[0]])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.image} alt="" />
+                    {pool.underlying_assets.map((element) => {
+                      if (activity.type === "join" && element.token.symbol === activity.symbol[0])
+                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.symbol} alt="" />
+                      if (activity.type === "join" && element.token.symbol === invertSymbol[activity.symbol[0]])
+                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
 
 
                       if (activity.type === "exit") {
-                        if (element.symbol === "KACY") {
-                          return <Image src={product.fundIcon} alt="" width={16} height={16} />
+                        if (element.token.symbol === "KACY") {
+                          return <Image src={pool.logo} alt="" width={16} height={16} />
                         } else {
                           null
                         }
                       }
 
-                      if (activity.type === "swap" && element.symbol === activity.symbol[0])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.image} alt="" />
-                      if (activity.type === "swap" && element.symbol === invertSymbol[activity.symbol[0]])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.image} alt="" />
+                      if (activity.type === "swap" && element.token.symbol === activity.symbol[0])
+                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
+                      if (activity.type === "swap" && element.token.symbol === invertSymbol[activity.symbol[0]])
+                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
                     })}
                     {BNtoDecimal(
                       Big(activity.amount[activity.type === "exit" ? activity.symbol.length > 2 ? 0 : 1 : 0]|| '0'),

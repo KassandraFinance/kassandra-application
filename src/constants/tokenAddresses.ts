@@ -89,6 +89,8 @@ export const SUBGRAPH_URL = `https://graph.kassandra.finance/subgraphs/name/${pr
   :
   'KassandraFuji'}`
 
+export const BACKEND_KASSANDRA = process.env.NEXT_PUBLIC_BACKEND_KASSANDRA ?? 'http://localhost:3001'
+
 export const URL_1INCH = 'https://api.1inch.io/v4.0/'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
