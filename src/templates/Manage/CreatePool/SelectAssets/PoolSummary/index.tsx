@@ -23,7 +23,7 @@ export type CoinType = {
   decimals: number
 }
 
-interface IFundSummaryProps {
+interface IPoolSummaryProps {
   creation?: boolean;
   coinsList: TokenType[];
   totalAllocation: number;
@@ -33,7 +33,7 @@ interface IFundSummaryProps {
   priceList: CoinGeckoResponseType | undefined;
 }
 
-const FundSummary = ({
+const PoolSummary = ({
   coinsList,
   totalAllocation,
   priceList,
@@ -47,9 +47,9 @@ const FundSummary = ({
   onLockToken = () => {
     return
   }
-}: IFundSummaryProps) => {
+}: IPoolSummaryProps) => {
   return (
-    <S.FundSummary>
+    <S.PoolSummary>
       <S.Header>
         <S.HeaderTitle>Fund Summary</S.HeaderTitle>
 
@@ -127,8 +127,8 @@ const FundSummary = ({
           <S.Error>The total can’t be over 100%</S.Error>
         )}
       </S.Body>
-    </S.FundSummary>
+    </S.PoolSummary>
   )
 }
 
-export default FundSummary
+export default PoolSummary

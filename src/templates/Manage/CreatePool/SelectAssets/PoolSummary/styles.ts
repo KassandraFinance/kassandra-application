@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const FundSummary = styled.div`
+export const PoolSummary = styled.div`
   ${() => css`
     border-radius: 0.8rem;
   `}
@@ -124,11 +124,11 @@ export const RemoveButton = styled.button`
 `
 
 export const ProgressBar = styled.div`
-  ${() => css`
+  ${({ theme }) => css`
     width: 100%;
     height: 0.4rem;
 
-    background-color: #8b8b8b;
+    background-color: ${theme.colors.lightGray};
     border-radius: 0.4rem;
     border: none;
   `}
