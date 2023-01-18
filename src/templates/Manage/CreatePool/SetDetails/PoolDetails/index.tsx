@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
-import { setDetails } from '../../../../../store/reducers/poolCreationSlice'
+import { setPoolData } from '../../../../../store/reducers/poolCreationSlice'
 
 import InputText from '../../../../../components/Inputs/InputText'
 import PoolText from './PoolText'
@@ -12,20 +12,18 @@ import * as S from './styles'
 const PoolDetails = () => {
   const dispatch = useAppDispatch()
 
-  const details = useAppSelector(
-    state => state.poolCreation.createPoolData.Details
-  )
+  const details = useAppSelector(state => state.poolCreation.createPoolData)
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
     dispatch(
-      setDetails({
+      setPoolData({
         [e.target.name]: e.target.value
       })
     )
   }
 
   function handleEditorChange({ text }: { text: string }) {
-    dispatch(setDetails({ strategy: text }))
+    dispatch(setPoolData({ strategy: text }))
   }
 
   return (
@@ -37,6 +35,7 @@ const PoolDetails = () => {
         />
 
         <InputText
+          form="poolCreationForm"
           name="poolName"
           type="text"
           placeholder="Write Pool name"
@@ -50,6 +49,7 @@ const PoolDetails = () => {
         />
 
         <InputText
+          form="poolCreationForm"
           name="poolSymbol"
           type="text"
           placeholder="e.g.: ETH, BTC, AVAX, etc."

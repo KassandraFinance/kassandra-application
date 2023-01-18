@@ -3,29 +3,18 @@ import Link from 'next/link'
 import { isAddress } from 'web3-utils'
 import Tippy from '@tippyjs/react'
 
-import substr from '../../../../../utils/substr'
+import { useAppSelector } from '../../../../../store/hooks'
 
-import {
-  IDepositAndManagementFeesProps,
-  IIsActiveTogglesProps,
-  IRefferalCommissionProps
-} from '..'
+import substr from '../../../../../utils/substr'
 
 import * as S from './styles'
 
-type IFeeConfigProps = {
-  isActiveToggles: IIsActiveTogglesProps,
-  depositFee: IDepositAndManagementFeesProps,
-  refferalCommission: IRefferalCommissionProps,
-  managementFee: IDepositAndManagementFeesProps
-}
+const FeeBreakdown = () => {
+  const feesData = useAppSelector(
+    state => state.poolCreation.createPoolData.fees
+  )
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
-const FeeBreakdown = ({
-  isActiveToggles,
-  depositFee,
-  managementFee,
-  refferalCommission
-}: IFeeConfigProps) => {
   return (
     <S.FeeBreakdown>
       <S.FeeBreakdownContainer>
@@ -35,39 +24,39 @@ const FeeBreakdown = ({
           <S.ReviewListContent>
             <S.FeeBreakdownTitle>Deposit fee</S.FeeBreakdownTitle>
             <S.FeeBreakdownPorcentage>
-              {depositFee.rate}%
+              {feesData?.depositFee.feeRate ? feesData.depositFee.feeRate : 0}%
             </S.FeeBreakdownPorcentage>
           </S.ReviewListContent>
-          {isActiveToggles.refferalCommission && (
+          {feesData?.refferalFee.isChecked && (
             <>
               <S.ReviewListContent>
                 <S.FeeBreakdownParagraph>
                   Broker commission
                 </S.FeeBreakdownParagraph>
                 <S.FeeBreakdownParagraph>
-                  {refferalCommission.broker.toFixed(2)}%
+                  {feesData.refferalFee.brokerCommision?.toFixed(2)}%
                 </S.FeeBreakdownParagraph>
               </S.ReviewListContent>
               <S.ReviewListContent>
                 <S.FeeBreakdownParagraph>Manager share</S.FeeBreakdownParagraph>
                 <S.FeeBreakdownParagraph>
-                  {refferalCommission.share.toFixed(2)}%
+                  {feesData.refferalFee.managerShare?.toFixed(2)}%
                 </S.FeeBreakdownParagraph>
               </S.ReviewListContent>
             </>
           )}
-          {isActiveToggles.depositFee && (
+          {feesData?.depositFee.isChecked && (
             <S.ReviewListContent>
               <S.FeeBreakdownParagraph>
                 Recipient address
               </S.FeeBreakdownParagraph>
-              {depositFee.address.length === 42 ? (
+              {isAddress(userWalletAddress) ? (
                 <Link
-                  href={`https://snowtrace.io/address/${depositFee.address}`}
+                  href={`https://polygonscan.com/address/${userWalletAddress}`}
                   passHref
                 >
                   <S.FeeBreakdownAdress target="_blank">
-                    {substr(depositFee.address)}
+                    {substr(userWalletAddress)}
                     <img
                       src="/assets/utilities/go-to-site.svg"
                       alt=""
@@ -87,21 +76,21 @@ const FeeBreakdown = ({
           <S.ReviewListContent>
             <S.FeeBreakdownTitle>Management Fee</S.FeeBreakdownTitle>
             <S.FeeBreakdownPorcentage>
-              {managementFee.rate}%
+              {feesData?.managementFee.feeRate}%
             </S.FeeBreakdownPorcentage>
           </S.ReviewListContent>
-          {isActiveToggles.managementFee && (
+          {feesData?.managementFee && (
             <S.ReviewListContent>
               <S.FeeBreakdownParagraph>
                 Recipient address
               </S.FeeBreakdownParagraph>
-              {isAddress(managementFee.address) ? (
+              {isAddress(userWalletAddress) ? (
                 <Link
-                  href={`https://snowtrace.io/address/${managementFee.address}`}
+                  href={`https://polygonscan.com/address/${userWalletAddress}`}
                   passHref
                 >
                   <S.FeeBreakdownAdress target="_blank">
-                    {substr(managementFee.address)}
+                    {substr(userWalletAddress)}
                     <img
                       src="/assets/utilities/go-to-site.svg"
                       alt=""

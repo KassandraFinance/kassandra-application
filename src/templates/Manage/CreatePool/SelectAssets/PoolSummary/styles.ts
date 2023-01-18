@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const FundSummary = styled.div`
+export const PoolSummary = styled.div`
   ${() => css`
     border-radius: 0.8rem;
   `}
@@ -124,11 +124,11 @@ export const RemoveButton = styled.button`
 `
 
 export const ProgressBar = styled.div`
-  ${() => css`
+  ${({ theme }) => css`
     width: 100%;
     height: 0.4rem;
 
-    background-color: #8b8b8b;
+    background-color: ${theme.colors.lightGray};
     border-radius: 0.4rem;
     border: none;
   `}
@@ -149,6 +149,10 @@ export const ProgressValue = styled.div<IProgressValueProps>`
 
     background-color: ${theme.colors.magenta};
 
+    transition-duration: 300ms;
+    transition-timing-function: ease;
+    transition-property: width;
+
     &::before {
       content: '';
       position: absolute;
@@ -164,12 +168,19 @@ export const ProgressValue = styled.div<IProgressValueProps>`
     }
   `}
   ${({theme, value}) => value > 100 && css`
+    width: 100%;
+
     background-color: ${theme.colors.error};
     background-image: none;
   `}
 `
 
-export const TotalContainer = styled.div`
+interface ITotalContainerProps {
+  value: number;
+}
+
+// prettier-ignore
+export const TotalContainer = styled.div<ITotalContainerProps>`
   ${() => css`
     display: grid;
     grid-template-columns: auto 13.5rem;
@@ -185,6 +196,14 @@ export const TotalContainer = styled.div`
         #ffbf00 -10.71%,
         #e843c4 110.71%
       );
+    }
+  `}
+  ${({ theme, value }) => value > 100 && css`
+    ${ProgressValue} {
+      width: 100%;
+
+      background-color: ${theme.colors.error};
+      background-image: none;
     }
   `}
 `

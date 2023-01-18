@@ -1,6 +1,7 @@
 import * as S from './styles'
 
 interface IInputTextProps {
+  form?: string;
   name: string;
   type: string;
   value: string;
@@ -10,10 +11,12 @@ interface IInputTextProps {
   maxLength: number;
   lable: string;
   error: string;
+  readonly?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const InputText = ({
+  form = undefined,
   name,
   type,
   value,
@@ -23,6 +26,7 @@ const InputText = ({
   maxLength,
   lable,
   error,
+  readonly = false,
   onChange
 }: IInputTextProps) => {
   return (
@@ -31,6 +35,7 @@ const InputText = ({
 
       <S.InputContainer>
         <S.Input
+          form={form}
           id={name}
           name={name}
           type={type}
@@ -42,6 +47,7 @@ const InputText = ({
           min={minLength}
           max={maxLength}
           step={0.1}
+          readOnly={readonly}
         />
 
         <S.PlaceholderWrapper>

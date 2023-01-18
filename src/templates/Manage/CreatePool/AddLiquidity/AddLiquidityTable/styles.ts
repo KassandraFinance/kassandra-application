@@ -1,5 +1,9 @@
 import styled, { css } from 'styled-components'
 import { Tr, Td, TBody } from '../../AssetsTable/styles'
+import {
+  Input,
+  InputButton
+} from '../../../../../components/Inputs/InputNumberRight/styles'
 
 export const AddLiquidityTable = styled.div`
   ${({ theme }) => css`
@@ -148,9 +152,28 @@ export const Available = styled.span`
   `}
 `
 
-export const InputWrapper = styled.div`
+interface IInputWrapperProps {
+  isBiggerThanZero: boolean;
+  isBiggerThanBalance: boolean;
+}
+
+// prettier-ignore
+export const InputWrapper = styled.div<IInputWrapperProps>`
   ${() => css`
     width: 11.6rem;
+  `}
+  ${({ theme, isBiggerThanZero, isBiggerThanBalance }) =>
+    (isBiggerThanZero || isBiggerThanBalance) && css`
+      ${Input} {
+        border-block: 0.1rem solid ${theme.colors.error};
+        border-left: 0.1rem solid ${theme.colors.error};
+      }
+
+      ${InputButton} {
+        border-block: 0.1rem solid ${theme.colors.error} !important;
+        border-right: 0.1rem solid ${theme.colors.error} !important;
+        border-left: none !inportant;
+      }
   `}
 `
 
@@ -180,5 +203,22 @@ export const MaxButton = styled.button`
 
       background-color: ${theme.colors.snow};
     }
+  `}
+`
+
+export const Error = styled.p`
+  ${({ theme }) => css`
+    /* display: none; */
+
+    margin-top: 0.8rem;
+
+    color: ${theme.colors.error};
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
+    line-height: 100%;
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: opacity;
   `}
 `

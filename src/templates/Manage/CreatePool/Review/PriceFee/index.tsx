@@ -1,4 +1,8 @@
 import React from 'react'
+
+import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
+import { setTermsAndConditions } from '../../../../../store/reducers/poolCreationSlice'
+
 import Checkbox from '../../../../../components/Inputs/Checkbox'
 
 import TermsAndConditions from '../../../../../components/Modals/TermsAndConditions'
@@ -6,9 +10,16 @@ import TermsAndConditions from '../../../../../components/Modals/TermsAndConditi
 import * as S from './styles'
 
 const PriceFee = () => {
+  const dispatch = useAppDispatch()
+  const termsAndConditions = useAppSelector(
+    state => state.poolCreation.createPoolData.termsAndConditions
+  )
   const [isOpenTermsAndConditions, setOpenTermsAndConditions] =
     React.useState(false)
-  const [isCheckbox, setIsCheckbox] = React.useState(false)
+
+  function handleClick() {
+    dispatch(setTermsAndConditions())
+  }
 
   return (
     <>
@@ -30,11 +41,13 @@ const PriceFee = () => {
           <hr />
           <S.WrapperInput>
             <Checkbox
-              checked={isCheckbox}
+              form="poolCreationForm"
+              checked={termsAndConditions ? termsAndConditions : false}
               name="inputChekbox"
-              onChange={() => setIsCheckbox(!isCheckbox)}
+              onChange={handleClick}
               label="I agree with"
               showLabel={true}
+              required
             />
             <span onClick={() => setOpenTermsAndConditions(true)}>
               terms and conditions.

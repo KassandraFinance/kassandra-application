@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const FundImage = styled.div`
+export const PoolImage = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
@@ -49,7 +49,9 @@ export const UploadImage = styled.div`
     }
 
     input {
-      display: none;
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
     }
   `}
 `

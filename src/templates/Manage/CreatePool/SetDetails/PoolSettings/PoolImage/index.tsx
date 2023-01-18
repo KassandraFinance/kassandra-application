@@ -1,31 +1,19 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { useAppSelector } from '../../../../../../store/hooks'
-
-import { IPoolImageProps } from '..'
-
+import { useAppSelector, useAppDispatch } from '../../../../../../store/hooks'
+import { setPoolData } from '../../../../../../store/reducers/poolCreationSlice'
 import defaultImage from '../../../../../../../public/assets/images/image-default.svg'
 
 import * as S from './styles'
 
-interface IFoundImageProps {
-  uploadPoolImage: IPoolImageProps;
-  setuploadPoolImage: React.Dispatch<React.SetStateAction<IPoolImageProps>>;
-  poolImage?: string;
-}
-
-const FundImage = ({
-  uploadPoolImage,
-  setuploadPoolImage,
-  poolImage
-}: IFoundImageProps) => {
-  const details = useAppSelector(
-    state => state.poolCreation.createPoolData.Details
-  )
+const PoolImage = () => {
   const [errorMessage, setErrorMessage] = React.useState<string>('')
+  const dispatch = useAppDispatch()
+  const details = useAppSelector(state => state.poolCreation.createPoolData)
 
-  const hasPoolImage = poolImage ? poolImage : defaultImage
+  const img = details.icon?.image_preview ? details.icon.image_preview : ''
+  const hasPoolImage = img.length > 0 ? img : defaultImage
 
   function handleImagePreview(event: FileList) {
     if (!event[0]) {
@@ -48,35 +36,32 @@ const FundImage = ({
     const image_as_base64 = URL.createObjectURL(event[0])
     const image_as_files = event[0]
 
-    setuploadPoolImage({
-      image_preview: image_as_base64,
-      image_file: image_as_files
-    })
+    dispatch(
+      setPoolData({
+        icon: {
+          image_preview: image_as_base64,
+          image_file: image_as_files
+        }
+      })
+    )
   }
 
   return (
-    <S.FundImage>
+    <S.PoolImage>
       <S.PoolSettingTitle>Fund image</S.PoolSettingTitle>
       <S.PoolSettingParagraph>
         Select an image as icon for your pool.
       </S.PoolSettingParagraph>
 
       <S.UploadImage>
-        <Image
-          src={
-            uploadPoolImage?.image_preview
-              ? uploadPoolImage?.image_preview
-              : hasPoolImage
-          }
-          alt=""
-          width={56}
-          height={56}
-        />
+        <Image src={hasPoolImage} alt="" width={56} height={56} />
 
         <input
+          form="poolCreationForm"
           id="InputFile"
           type="file"
           accept="image/png, image/jpg, image/jpeg"
+          required
           onChange={event => {
             if (event.target.files !== null) {
               handleImagePreview(event.target.files)
@@ -90,8 +75,8 @@ const FundImage = ({
       </S.UploadImage>
       <S.ErrorParagraph>{errorMessage}</S.ErrorParagraph>
       <S.Label htmlFor="InputFile">Upload image</S.Label>
-    </S.FundImage>
+    </S.PoolImage>
   )
 }
 
-export default FundImage
+export default PoolImage

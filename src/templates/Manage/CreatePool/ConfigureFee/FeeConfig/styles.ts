@@ -61,7 +61,9 @@ export const ManagementHeader = styled.span`
 
 interface IIsAddressProps {
   isAddress: boolean;
+  value: number;
 }
+
 // eslint-disable-next-line prettier/prettier
 export const WrapperInput = styled.div<IIsAddressProps>`
   ${({ theme, isAddress }) => css`
@@ -71,10 +73,10 @@ export const WrapperInput = styled.div<IIsAddressProps>`
     margin-top: 1.6rem;
 
     ${Input}[type="number"]:invalid:not([value=""]) {
-      border: 0.1rem solid ${theme.colors.amber};
+      border: 0.1rem solid ${theme.colors.error};
     }
     ${Input}[type="number"]:invalid:not([value='']) ~ ${Error} {
-      color: ${theme.colors.amber};
+      color: ${theme.colors.error};
     }
 
     ${Input}[type="text"]:valid {
@@ -89,6 +91,19 @@ export const WrapperInput = styled.div<IIsAddressProps>`
 
     animation: ${translateY} 0.4s ease;
   `}
+  ${({ theme, value }) =>
+    value > 50 &&
+    value <= 95 &&
+    css`
+      & ${Input}[type="number"] {
+        border: 0.1rem solid ${theme.colors.amber};
+      }
+      & ${Input}[type="number"] ~ ${Error} {
+        display: block;
+
+        color: ${theme.colors.amber};
+      }
+    `}
 `
 
 export const CardWrapperParagraph = styled.p`
@@ -111,8 +126,13 @@ export const CardWrapperTitle = styled.h3`
   `}
 `
 
+interface IWrapperInputFeeProps {
+  isAddress: boolean;
+  value: number;
+}
+
 // eslint-disable-next-line prettier/prettier
-export const WrapperInputFee = styled.span<IIsAddressProps>`
+export const WrapperInputFee = styled.span<IWrapperInputFeeProps>`
   ${({ theme, isAddress }) => css`
     display: flex;
     flex-direction: column;
@@ -120,10 +140,10 @@ export const WrapperInputFee = styled.span<IIsAddressProps>`
     margin-top: 1.6rem;
 
     ${Input}[type="number"]:invalid:not([value=""]) {
-      border: 0.1rem solid ${theme.colors.amber};
+      border: 0.1rem solid ${theme.colors.error};
     }
     ${Input}[type="number"]:invalid:not([value='']) ~ ${Error} {
-      color: ${theme.colors.amber};
+      color: ${theme.colors.error};
     }
 
     ${Input}[type="text"]:valid {
@@ -138,6 +158,18 @@ export const WrapperInputFee = styled.span<IIsAddressProps>`
 
     animation: ${translateY} 0.4s ease;
   `}
+  ${({ theme, value }) =>
+    value > 50 &&
+    value <= 95 &&
+    css`
+      ${Input}[type="number"]:valid {
+        border: 0.1rem solid ${theme.colors.amber};
+      }
+      ${Input}[type="number"]:not([value='']) ~ ${Error} {
+        display: block;
+        color: ${theme.colors.amber};
+      }
+    `}
 `
 
 export const RefferalCommissionContainer = styled.div`

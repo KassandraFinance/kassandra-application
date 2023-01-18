@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 export const ConfigureFee = styled.div`
   ${() => css``}
 `
-export const ConfigureFeeContainer = styled.form`
+export const ConfigureFeeContainer = styled.div`
   ${() => css`
     display: grid;
     align-items: flex-start;

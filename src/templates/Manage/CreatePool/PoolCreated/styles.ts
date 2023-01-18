@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const FundCreatedCardContainer = styled.div`
+export const PoolCreated = styled.div`
   ${() => css`
     display: flex;
   `}

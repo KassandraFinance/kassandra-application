@@ -1,5 +1,3 @@
-import { useAppSelector } from '../../store/hooks'
-
 import Button from '../Button'
 
 import * as S from './styles'
@@ -15,12 +13,11 @@ const ContainerButton = ({
   onBack,
   onNext
 }: IContainerButtonProps) => {
-  const isValid = useAppSelector(state => state.poolCreation.isValid)
-
   return (
     <S.ContainerButton>
       <S.ButtonsWrapper>
         <Button
+          type="button"
           text="Back"
           backgroundBlack
           fullWidth
@@ -29,11 +26,12 @@ const ContainerButton = ({
         />
 
         <Button
+          form="poolCreationForm"
+          type="submit"
           text="Next"
           backgroundPrimary
           fullWidth
           onClick={onNext}
-          disabledNoEvent={!isValid}
         />
       </S.ButtonsWrapper>
     </S.ContainerButton>

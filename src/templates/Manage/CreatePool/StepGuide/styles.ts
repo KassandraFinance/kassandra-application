@@ -195,3 +195,14 @@ export const LinkWrapper = styled.div`
     }
   `}
 `
+
+export const InputValidation = styled.input`
+  ${() => css`
+    position: absolute;
+    top: 0;
+
+    opacity: 0;
+
+    pointer-events: none;
+  `}
+`

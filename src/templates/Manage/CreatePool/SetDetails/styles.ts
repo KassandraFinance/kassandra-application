@@ -6,7 +6,7 @@ export const SetDetails = styled.div`
   `}
 `
 
-export const PoolContainer = styled.form`
+export const PoolContainer = styled.div`
   ${() => css`
     display: grid;
     grid-template-columns: 1fr 36rem;

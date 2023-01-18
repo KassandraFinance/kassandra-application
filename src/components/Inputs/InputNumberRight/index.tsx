@@ -1,13 +1,14 @@
 import * as S from './styles'
 
 interface IInputNumberRightProps {
+  form?: string;
   name: string;
   type: string;
   value: string;
   required?: boolean;
   placeholder: string;
   min: number;
-  max: number;
+  max: number | 'any';
   lable: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   button?: boolean;
@@ -16,6 +17,7 @@ interface IInputNumberRightProps {
 }
 
 const InputNumberRight = ({
+  form = undefined,
   name,
   type,
   value,
@@ -35,6 +37,7 @@ const InputNumberRight = ({
 
       <S.InputContainer>
         <S.Input
+          form={form}
           id={name}
           name={name}
           type={type}
@@ -42,6 +45,7 @@ const InputNumberRight = ({
           required={required}
           min={min}
           max={max}
+          step="any"
           onChange={onChange}
           button={button}
         />
@@ -53,7 +57,9 @@ const InputNumberRight = ({
         {button && (
           <>
             <S.Line />
-            <S.InputButton onClick={onClick}>{buttonText}</S.InputButton>
+            <S.InputButton type="button" onClick={onClick}>
+              {buttonText}
+            </S.InputButton>
           </>
         )}
       </S.InputContainer>

@@ -3,6 +3,8 @@ import dynamic from 'next/dynamic'
 import ReactMarkdown from 'react-markdown'
 import 'react-markdown-editor-lite/lib/index.css'
 
+import { useAppSelector } from '../../../../../../store/hooks'
+
 const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
   ssr: false
 })
@@ -17,9 +19,12 @@ interface IMarkdownEditorProps {
 }
 
 const MarkdownEditor = ({ handleEditorChange }: IMarkdownEditorProps) => {
+  const strategyText = useAppSelector(state => state.poolCreation.createPoolData.strategy)
+
   return (
     <S.MarkdownEditor>
       <MdEditor
+        value={strategyText}
         renderHTML={text => (
           <ReactMarkdown skipHtml={true} linkTarget={'_blank'}>
             {text}

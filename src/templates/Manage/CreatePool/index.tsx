@@ -12,10 +12,11 @@ import StepGuide from './StepGuide'
 import SetDetails from './SetDetails'
 import SelectAssets from './SelectAssets'
 import AddLiquidity from './AddLiquidity'
-
-import * as S from './styles'
 import ConfigureFee from './ConfigureFee'
 import Review from './Review'
+import PoolCreated from './PoolCreated'
+
+import * as S from './styles'
 
 const CreatePool = () => {
   const dispatch = useAppDispatch()
@@ -27,21 +28,37 @@ const CreatePool = () => {
     <SelectAssets key="selecAssets" />,
     <AddLiquidity key="addLiquidity" />,
     <ConfigureFee key="configureFee" />,
-    <Review key="review" />
+    <Review key="review" />,
+    <PoolCreated key="poolCreated" />
   ]
+
+  function handleNextButton() {
+    dispatch(setNextStepNumber())
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    handleNextButton()
+  }
 
   return (
     <S.CreatePool>
       <ModalFullWindow
         handleCloseModal={() => console.log('Function not implemented.')}
       >
-        {poolCreationSteps[stepNumber]}
+        <form id="poolCreationForm" onSubmit={handleSubmit}>
+          {poolCreationSteps[stepNumber]}
 
-        <ContainerButton
-          backButtonDisabled={stepNumber < 1}
-          onBack={() => dispatch(setBackStepNumber())}
-          onNext={() => dispatch(setNextStepNumber())}
-        />
+          {stepNumber < 6 && (
+            <ContainerButton
+              backButtonDisabled={stepNumber < 1}
+              onBack={() => dispatch(setBackStepNumber())}
+              onNext={() => {
+                return
+              }}
+            />
+          )}
+        </form>
       </ModalFullWindow>
     </S.CreatePool>
   )

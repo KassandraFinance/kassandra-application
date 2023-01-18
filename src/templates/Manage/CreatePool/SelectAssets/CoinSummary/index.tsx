@@ -47,7 +47,7 @@ const CoinSummary = ({
           {coinSymbol} <span>| ${price}</span>
         </S.Symbol>
 
-        {balance && (
+        {balance !== null && (
           <S.BalanceWrapper>
             <Image src={walletIcon} /> {balance} {coinSymbol}
           </S.BalanceWrapper>

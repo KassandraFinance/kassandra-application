@@ -1,6 +1,12 @@
 import React from 'react'
+import useSWR from 'swr'
 import Link from 'next/link'
 import CopyToClipboard from 'react-copy-to-clipboard'
+import { BNtoDecimal } from '../../../../../utils/numerals'
+import Big from 'big.js'
+
+import { useAppSelector } from '../../../../../store/hooks'
+import { TokenType } from '../../../../../store/reducers/poolCreationSlice'
 
 import substr from '../../../../../utils/substr'
 
@@ -8,18 +14,12 @@ import { ToastInfo } from '../../../../../components/Toastify/toast'
 import FeeBreakdown from '../../ConfigureFee/FeeBreakdown'
 import ModalViewCoinMobile from '../../../../../components/Modals/ModalViewCoinMobile'
 
+import { CoinGeckoResponseType } from '../../AddLiquidity'
+
 import * as S from './styles'
 
-type ITokenProps = {
-  image: string,
-  name: string,
-  allocation: string,
-  amount: string,
-  amountUSD: string
-}
-
 export type ITokenModalProps = {
-  image: string,
+  icon: string,
   name: string,
   tokenData: {
     name: string,
@@ -32,6 +32,18 @@ const PoolReview = () => {
   const [isOpenModal, setisOpenModal] = React.useState(false)
   const [tokenForModal, setTokenForModal] = React.useState<ITokenModalProps>()
 
+  const poolData = useAppSelector(state => state.poolCreation.createPoolData)
+
+  const tokensList = poolData.tokens ? poolData.tokens : []
+  let addressesList: string[] = []
+  for (const token of tokensList) {
+    addressesList = [...addressesList, token.address]
+  }
+
+  const { data } = useSWR<CoinGeckoResponseType>(
+    `https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=${addressesList.toString()}&vs_currencies=usd&include_24hr_change=true`
+  )
+
   function handleCurrentViewTable(method: string, value: number) {
     if (method === 'next') {
       setViewColumnInTable(value === 3 ? 1 : viewColumnInTable + 1)
@@ -40,28 +52,61 @@ const PoolReview = () => {
     }
   }
 
-  function handleClickViewCoin(item: ITokenProps) {
-    const { allocation, amount, amountUSD, image, name } = item
+  function handleClickViewCoin(item: TokenType, address: string) {
+    const { allocation, amount, icon, name } = item
+    const priceList = data ? data : {}
 
     setisOpenModal(true)
     setTokenForModal({
       name,
-      image,
+      icon,
       tokenData: [
         {
           name: 'Allocation',
-          value: allocation
+          value: allocation.toString()
         },
         {
           name: 'Amount',
-          value: amount
+          value: BNtoDecimal(amount, 2)
         },
         {
           name: 'Amount (USD)',
-          value: amountUSD
+          value: BNtoDecimal(amount.mul(Big(priceList[address].usd)), 2)
         }
       ]
     })
+  }
+
+  function totalLiquidity() {
+    const priceArr = data ? data : {}
+    let total = Big(0)
+
+    for (const coin of tokensList) {
+      total = total.add(coin.amount.mul(Big(priceArr[coin.address].usd)))
+    }
+
+    return total
+  }
+
+  function getInitialPrice() {
+    let invariant = Big(0)
+    const numberOfTokens = poolData.tokens ? poolData.tokens?.length : 0
+    const initialLiquidity = totalLiquidity()
+
+    for (const token of tokensList) {
+      const weight = token.allocation / 100
+      const amountPowWeight = token.amount.toNumber() ** weight
+
+      if (invariant.lte(0)) {
+        invariant = invariant.add(amountPowWeight)
+      } else {
+        invariant = invariant.mul(amountPowWeight)
+      }
+    }
+
+    const price = initialLiquidity.div(invariant.mul(numberOfTokens))
+
+    return price
   }
 
   return (
@@ -70,15 +115,15 @@ const PoolReview = () => {
         <S.PoolReviewHeader>
           <S.PoolNameContainer>
             <img
-              src="/assets/icons/coming-soon.svg"
+              src={poolData.icon?.image_preview}
               alt=""
               width={64}
               height={64}
             />
             <S.PoolNameContent>
-              <p>Fund Name</p>
+              <p>{poolData.poolName}</p>
               <span>
-                SYMBOL{' '}
+                {poolData.poolSymbol}
                 <img
                   src="/assets/utilities/edit-icon.svg"
                   alt=""
@@ -89,15 +134,7 @@ const PoolReview = () => {
             </S.PoolNameContent>
           </S.PoolNameContainer>
           <S.PoolValueContent>
-            <span>
-              $150.00{' '}
-              <img
-                src="/assets/utilities/edit-icon.svg"
-                alt=""
-                width={14}
-                height={14}
-              />
-            </span>
+            <span>~${data ? BNtoDecimal(getInitialPrice(), 2) : 0}</span>
             <p>INITIAL PRICE</p>
           </S.PoolValueContent>
         </S.PoolReviewHeader>
@@ -140,25 +177,31 @@ const PoolReview = () => {
             </S.ReviewThImg>
           </S.ReviewThead>
           <S.ReviewTbody>
-            {ListToken.map((token, index) => {
+            {poolData.tokens?.map((token, index) => {
               return (
                 <S.ReviewTr key={token.allocation + index}>
                   <S.ReviewTd>
-                    <img src={token.image} alt="" width={18} height={18} />
+                    <img src={token.icon} alt="" width={18} height={18} />
                     {token.name}
                   </S.ReviewTd>
                   <S.ReviewTd isView={viewColumnInTable === 1}>
-                    {token.allocation}
+                    {token.allocation}%
                   </S.ReviewTd>
                   <S.ReviewTd isView={viewColumnInTable === 2}>
-                    {token.amount}
+                    {BNtoDecimal(token.amount, 3)}
                   </S.ReviewTd>
                   <S.ReviewTd isView={viewColumnInTable === 3}>
-                    {token.amountUSD}
+                    $
+                    {data
+                      ? BNtoDecimal(
+                          token.amount.mul(Big(data[token.address].usd)),
+                          2
+                        )
+                      : 0}
                   </S.ReviewTd>
                   <S.ReviewTd
                     id="eyeIcon"
-                    onClick={() => handleClickViewCoin(token)}
+                    onClick={() => handleClickViewCoin(token, token.address)}
                   >
                     <img
                       src="/assets/utilities/eye-show.svg"
@@ -184,7 +227,7 @@ const PoolReview = () => {
               height={20}
             />
           </span>
-          <p>$20,000.000</p>
+          <p>${data ? BNtoDecimal(totalLiquidity(), 2) : 0}</p>
         </S.TvlContainer>
       </S.PoolReviewContainer>
 
@@ -202,9 +245,12 @@ const PoolReview = () => {
           </span>
         </S.PoolPrivacyLine>
         <S.WrapperPoolPrivate>
-          <p>addresses that can invest</p>
+          {poolData.privateAddressList &&
+            poolData?.privateAddressList?.length > 0 && (
+              <p>addresses that can invest</p>
+            )}
           <S.PrivateAddressList>
-            {privatyAddress.map((wallet, index) => {
+            {poolData.privateAddressList?.map((wallet, index) => {
               return (
                 <S.PrivateAddress
                   key={wallet.address}
@@ -229,7 +275,7 @@ const PoolReview = () => {
                       </CopyToClipboard>
                     </span>
                     <Link
-                      href={`https://snowtrace.io/address/${wallet.address}`}
+                      href={`https://polygonscan.com/address/${wallet.address}`}
                       passHref
                     >
                       <a target="_blank">
@@ -249,16 +295,7 @@ const PoolReview = () => {
         </S.WrapperPoolPrivate>
       </S.WrapperPoolPrivacy>
 
-      <FeeBreakdown
-        depositFee={{ address: '', rate: 0 }}
-        isActiveToggles={{
-          depositFee: true,
-          managementFee: true,
-          refferalCommission: true
-        }}
-        managementFee={{ address: '', rate: 0 }}
-        refferalCommission={{ broker: 0, share: 1 }}
-      />
+      <FeeBreakdown />
 
       {isOpenModal && (
         <ModalViewCoinMobile
@@ -272,64 +309,3 @@ const PoolReview = () => {
 }
 
 export default PoolReview
-
-const ListToken = [
-  {
-    image:
-      'https://assets.coingecko.com/coins/images/4713/thumb/matic-token-icon.png?1624446912',
-    name: 'MATIC',
-    allocation: '20.33%',
-    amount: '1000',
-    amountUSD: '$5000.00'
-  },
-  {
-    image:
-      'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png?1547034700',
-    name: 'LINK',
-    allocation: '20.33%',
-    amount: '1000',
-    amountUSD: '$5000.00'
-  },
-  {
-    image:
-      'https://assets.coingecko.com/coins/images/12504/small/uniswap-uni.png?1600306604',
-    name: 'UNI',
-    allocation: '20.33%',
-    amount: '1000',
-    amountUSD: '$5000.00'
-  },
-  {
-    image:
-      'https://assets.coingecko.com/coins/images/2518/small/weth.png?1628852295',
-    name: 'WETH',
-    allocation: '20.33%',
-    amount: '1000',
-    amountUSD: '$5000.00'
-  },
-  {
-    image:
-      'https://assets.coingecko.com/coins/images/22918/small/kacy.png?1643459818',
-    name: 'KACY',
-    allocation: '20.33%',
-    amount: '1000',
-    amountUSD: '$5000.00'
-  }
-]
-
-const privatyAddress = [
-  {
-    address: '0x10a07555273E98e42867c6B5d327A6B73740033d'
-  },
-  {
-    address: '0xb343CF4B6EbA89F51BbDbf8ACa97cD2C90aD2E1e'
-  },
-  {
-    address: '0x241cd3d66e932264E3dbe3fB226d5314bb5FB454'
-  },
-  {
-    address: '0x81ADaa2b115c4921f3Cc412A05F9Caa521b4e1AC'
-  },
-  {
-    address: '0x7D53f718C8799110bD8598f9aaD4A1FB109aA0aB'
-  }
-]

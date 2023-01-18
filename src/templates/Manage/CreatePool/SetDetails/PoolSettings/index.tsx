@@ -1,5 +1,9 @@
 import React from 'react'
-import FundImage from './FundImage'
+
+import { useAppDispatch } from '../../../../../store/hooks'
+import { setPrivateAddress } from '../../../../../store/reducers/poolCreationSlice'
+
+import PoolImage from './PoolImage'
 import PrivacySetting from './PrivacySetting'
 
 import * as S from './styles'
@@ -8,50 +12,25 @@ export type IPrivateAddressListProps = {
   address: string
 }
 
-export type IPoolImageProps = {
-  image_preview: string,
-  image_file: any
-}
-
 const PoolSettings = () => {
   const [inputAddress, setInputAddress] = React.useState<string>('')
-  const [privateAddressList, setPrivateAddressList] = React.useState<
-    IPrivateAddressListProps[]
-  >([])
-  const [poolPrivacySettings, setPoolPrivacySettings] =
-    React.useState<string>('public')
-  const [uploadPoolImage, setuploadPoolImage] = React.useState<IPoolImageProps>(
-    {
-      image_preview: '',
-      image_file: null
-    }
-  )
+  const dispatch = useAppDispatch()
 
   function handleAddPrivateAddress() {
-    if (privateAddressList.some(wallet => wallet.address === inputAddress))
-      return
-    setPrivateAddressList([
-      ...privateAddressList,
-      {
+    dispatch(
+      setPrivateAddress({
         address: inputAddress
-      }
-    ])
+      })
+    )
   }
 
   return (
     <S.PoolSettings>
-      <FundImage
-        uploadPoolImage={uploadPoolImage}
-        setuploadPoolImage={setuploadPoolImage}
-      />
+      <PoolImage />
 
       <PrivacySetting
         inputAddress={inputAddress}
         setInputAddress={setInputAddress}
-        privateAddressList={privateAddressList}
-        setPrivateAddressList={setPrivateAddressList}
-        poolPrivacySettings={poolPrivacySettings}
-        setPoolPrivacySettings={setPoolPrivacySettings}
         handleAddPrivateAddress={handleAddPrivateAddress}
       />
     </S.PoolSettings>
