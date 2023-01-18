@@ -36,6 +36,7 @@ export default {
     cyan: '#26DBDB',
     darkGray: '#343434',
     gray: '#8F8F8F',
+    lightGray: '8b8b8b',
     grayDisabled: '#bdbdbd',
     amber: '#FFBF00',
     snow: '#FCFCFC',
