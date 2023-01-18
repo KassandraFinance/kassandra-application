@@ -11,6 +11,7 @@ const SetDetails = () => {
   const network = useAppSelector(
     state => state.poolCreation.createPoolData.network
   )
+
   return (
     <S.SetDetails>
       <CreatePoolHeader title={`Create pool on ${network}`} />

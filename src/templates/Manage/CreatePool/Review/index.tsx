@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { useAppSelector } from '../../../../store/hooks'
+
 import Steps from '../../../../components/Steps'
 import CreatePoolHeader from '../CreatePoolHeader'
 import PoolReview from './PoolReview'
@@ -8,9 +10,13 @@ import PriceFee from './PriceFee'
 import * as S from './styles'
 
 const Review = () => {
+  const network = useAppSelector(
+    state => state.poolCreation.createPoolData.network
+  )
+
   return (
     <S.Review>
-      <CreatePoolHeader title={`Create pool on Avalanche`} />
+      <CreatePoolHeader title={`Create pool on ${network}`} />
 
       <Steps
         steps={[
