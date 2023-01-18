@@ -9,7 +9,7 @@ import { ERC20 } from '../../../../hooks/useERC20Contract'
 
 import CreatePoolHeader from '../CreatePoolHeader'
 import Steps from '../../../../components/Steps'
-import FundSummary from '../SelectAssets/FundSummary'
+import PoolSummary from '../SelectAssets/PoolSummary'
 import AddLiquidityTable from './AddLiquidityTable'
 
 import * as S from './styles'
@@ -36,16 +36,20 @@ const mockBalance: { [key: string]: BigNumber } = {
   )
 }
 const AddLiquidity = () => {
+  const [tokensBalance, setTokensBalance] = React.useState<{
+    [key: string]: BigNumber
+  }>({})
+
   const dispatch = useAppDispatch()
   const tokensSummary = useAppSelector(
     state => state.poolCreation.createPoolData.tokens
   )
-  const tokensList = tokensSummary ? tokensSummary : []
+  const network = useAppSelector(
+    state => state.poolCreation.createPoolData.network
+  )
   const wallet = useAppSelector(state => state.userWalletAddress)
 
-  const [tokensBalance, setTokensBalance] = React.useState<{
-    [key: string]: BigNumber
-  }>({})
+  const tokensList = tokensSummary ? tokensSummary : []
 
   let totalAllocation = 0
   let addressesList: string[] = []
@@ -124,11 +128,13 @@ const AddLiquidity = () => {
 
   React.useEffect(() => {
     getBalances()
-  })
+  }, [])
 
   return (
     <S.AddLiquidity>
-      <CreatePoolHeader title="Pool creation on"></CreatePoolHeader>
+      <CreatePoolHeader
+        title={`Pool creation on ${network}`}
+      ></CreatePoolHeader>
 
       <Steps
         steps={[
@@ -160,24 +166,22 @@ const AddLiquidity = () => {
         ]}
       />
 
-      {data && (
-        <S.PoolContainer>
-          <AddLiquidityTable
-            coinsList={tokensList}
-            tokensBalance={tokensBalance}
-            priceList={data}
-            onChange={handleInput}
-            onInputMaxClick={handleInputMax}
-            onMaxClick={handleMaxClick}
-          />
+      <S.PoolContainer>
+        <AddLiquidityTable
+          coinsList={tokensList}
+          tokensBalance={tokensBalance}
+          priceList={data}
+          onChange={handleInput}
+          onInputMaxClick={handleInputMax}
+          onMaxClick={handleMaxClick}
+        />
 
-          <FundSummary
-            coinsList={tokensList}
-            totalAllocation={totalAllocation}
-            priceList={data}
-          />
-        </S.PoolContainer>
-      )}
+        <PoolSummary
+          coinsList={tokensList}
+          totalAllocation={totalAllocation}
+          priceList={data}
+        />
+      </S.PoolContainer>
     </S.AddLiquidity>
   )
 }

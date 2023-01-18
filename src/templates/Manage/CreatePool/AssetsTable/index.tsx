@@ -28,8 +28,9 @@ interface IAssetsTable {
 }
 
 const AssetsTable = ({ priceList, tokenBalance }: IAssetsTable) => {
-  const dispatch = useAppDispatch()
+  // value vai ser usado na busca alterar nome
   const [value, setValue] = React.useState('')
+  const dispatch = useAppDispatch()
   const assetsList = useAppSelector(
     state => state.poolCreation.createPoolData.tokens
   )

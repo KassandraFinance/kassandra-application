@@ -3,6 +3,7 @@ import useSWR from 'swr'
 import Link from 'next/link'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { BNtoDecimal } from '../../../../../utils/numerals'
+import Big from 'big.js'
 
 import { useAppSelector } from '../../../../../store/hooks'
 import { TokenType } from '../../../../../store/reducers/poolCreationSlice'
@@ -16,7 +17,6 @@ import ModalViewCoinMobile from '../../../../../components/Modals/ModalViewCoinM
 import { CoinGeckoResponseType } from '../../AddLiquidity'
 
 import * as S from './styles'
-import Big from 'big.js'
 
 export type ITokenModalProps = {
   icon: string,
@@ -28,10 +28,21 @@ export type ITokenModalProps = {
 }
 
 const PoolReview = () => {
-  const poolData = useAppSelector(state => state.poolCreation.createPoolData)
   const [viewColumnInTable, setViewColumnInTable] = React.useState(1)
   const [isOpenModal, setisOpenModal] = React.useState(false)
   const [tokenForModal, setTokenForModal] = React.useState<ITokenModalProps>()
+
+  const poolData = useAppSelector(state => state.poolCreation.createPoolData)
+
+  const tokensList = poolData.tokens ? poolData.tokens : []
+  let addressesList: string[] = []
+  for (const token of tokensList) {
+    addressesList = [...addressesList, token.address]
+  }
+
+  const { data } = useSWR<CoinGeckoResponseType>(
+    `https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=${addressesList.toString()}&vs_currencies=usd&include_24hr_change=true`
+  )
 
   function handleCurrentViewTable(method: string, value: number) {
     if (method === 'next') {
@@ -41,8 +52,9 @@ const PoolReview = () => {
     }
   }
 
-  function handleClickViewCoin(item: TokenType) {
+  function handleClickViewCoin(item: TokenType, address: string) {
     const { allocation, amount, icon, name } = item
+    const priceList = data ? data : {}
 
     setisOpenModal(true)
     setTokenForModal({
@@ -59,21 +71,11 @@ const PoolReview = () => {
         },
         {
           name: 'Amount (USD)',
-          value: '0'
+          value: BNtoDecimal(amount.mul(Big(priceList[address].usd)), 2)
         }
       ]
     })
   }
-
-  const tokensList = poolData.tokens ? poolData.tokens : []
-  let addressesList: string[] = []
-  for (const token of tokensList) {
-    addressesList = [...addressesList, token.address]
-  }
-
-  const { data } = useSWR<CoinGeckoResponseType>(
-    `https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=${addressesList.toString()}&vs_currencies=usd&include_24hr_change=true`
-  )
 
   function totalLiquidity() {
     const priceArr = data ? data : {}
@@ -199,7 +201,7 @@ const PoolReview = () => {
                   </S.ReviewTd>
                   <S.ReviewTd
                     id="eyeIcon"
-                    onClick={() => handleClickViewCoin(token)}
+                    onClick={() => handleClickViewCoin(token, token.address)}
                   >
                     <img
                       src="/assets/utilities/eye-show.svg"

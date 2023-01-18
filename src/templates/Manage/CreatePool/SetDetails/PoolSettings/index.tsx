@@ -3,7 +3,7 @@ import React from 'react'
 import { useAppDispatch } from '../../../../../store/hooks'
 import { setPrivateAddress } from '../../../../../store/reducers/poolCreationSlice'
 
-import FundImage from './FundImage'
+import PoolImage from './PoolImage'
 import PrivacySetting from './PrivacySetting'
 
 import * as S from './styles'
@@ -13,9 +13,8 @@ export type IPrivateAddressListProps = {
 }
 
 const PoolSettings = () => {
-  const dispatch = useAppDispatch()
-
   const [inputAddress, setInputAddress] = React.useState<string>('')
+  const dispatch = useAppDispatch()
 
   function handleAddPrivateAddress() {
     dispatch(
@@ -27,7 +26,7 @@ const PoolSettings = () => {
 
   return (
     <S.PoolSettings>
-      <FundImage />
+      <PoolImage />
 
       <PrivacySetting
         inputAddress={inputAddress}

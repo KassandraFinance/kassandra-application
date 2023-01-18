@@ -13,7 +13,7 @@ import {
 
 import Steps from '../../../../components/Steps'
 import CreatePoolHeader from '../CreatePoolHeader'
-import FundSummary from './FundSummary'
+import PoolSummary from './PoolSummary'
 import AssetsTable from '../AssetsTable'
 
 import aave from '../../../../../public/assets/logos/aave.svg'
@@ -23,7 +23,7 @@ import eth from '../../../../../public/assets/logos/eth-logo.svg'
 
 import * as S from './styles'
 
-import { CoinType } from './FundSummary'
+import { CoinType } from './PoolSummary'
 
 export const mockData: CoinType[] = [
   {
@@ -73,18 +73,21 @@ export type CoinGeckoAssetsResponseType = {
 }
 
 const SelectAssets = () => {
+  const [tokenBalance, setTokenBalance] = React.useState<{
+    [key: string]: BigNumber
+  }>({})
+
   const dispatch = useAppDispatch()
   const tokensSummary = useAppSelector(
     state => state.poolCreation.createPoolData.tokens
   )
-
-  const tokensList = tokensSummary ? tokensSummary : []
+  const network = useAppSelector(
+    state => state.poolCreation.createPoolData.network
+  )
 
   const wallet = useAppSelector(state => state.userWalletAddress)
 
-  const [tokenBalance, setTokenBalance] = React.useState<{
-    [key: string]: BigNumber
-  }>({})
+  const tokensList = tokensSummary ? tokensSummary : []
 
   let totalAllocation = 0
   for (const token of tokensList) {
@@ -137,7 +140,9 @@ const SelectAssets = () => {
 
   return (
     <S.SelectAssets>
-      <CreatePoolHeader title="Pool creation on"></CreatePoolHeader>
+      <CreatePoolHeader
+        title={`Pool creation on ${network}`}
+      ></CreatePoolHeader>
 
       <Steps
         steps={[
@@ -171,7 +176,7 @@ const SelectAssets = () => {
       <S.PoolContainer>
         <AssetsTable priceList={data} tokenBalance={tokenBalance} />
 
-        <FundSummary
+        <PoolSummary
           coinsList={tokensList}
           totalAllocation={totalAllocation}
           creation
