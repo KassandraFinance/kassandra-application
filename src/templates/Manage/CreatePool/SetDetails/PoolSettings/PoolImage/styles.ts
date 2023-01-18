@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const FundImage = styled.div`
+export const PoolImage = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;

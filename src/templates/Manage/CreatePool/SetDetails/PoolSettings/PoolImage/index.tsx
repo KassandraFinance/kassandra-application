@@ -7,10 +7,11 @@ import defaultImage from '../../../../../../../public/assets/images/image-defaul
 
 import * as S from './styles'
 
-const FundImage = () => {
+const PoolImage = () => {
+  const [errorMessage, setErrorMessage] = React.useState<string>('')
   const dispatch = useAppDispatch()
   const details = useAppSelector(state => state.poolCreation.createPoolData)
-  const [errorMessage, setErrorMessage] = React.useState<string>('')
+
   const img = details.icon?.image_preview ? details.icon.image_preview : ''
   const hasPoolImage = img.length > 0 ? img : defaultImage
 
@@ -46,7 +47,7 @@ const FundImage = () => {
   }
 
   return (
-    <S.FundImage>
+    <S.PoolImage>
       <S.PoolSettingTitle>Fund image</S.PoolSettingTitle>
       <S.PoolSettingParagraph>
         Select an image as icon for your pool.
@@ -74,8 +75,8 @@ const FundImage = () => {
       </S.UploadImage>
       <S.ErrorParagraph>{errorMessage}</S.ErrorParagraph>
       <S.Label htmlFor="InputFile">Upload image</S.Label>
-    </S.FundImage>
+    </S.PoolImage>
   )
 }
 
-export default FundImage
+export default PoolImage
