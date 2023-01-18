@@ -242,7 +242,9 @@ const AddLiquidityTable = ({
 
               <S.Available>
                 Available: $
-                {priceList ? BNtoDecimal(totalAvailableLiquidity(), 2) : 0}
+                {Object.keys(tokensBalance).length > 0 && priceList
+                  ? BNtoDecimal(totalAvailableLiquidity(), 2)
+                  : 0}
               </S.Available>
             </S.TotalContainer>
           </Tr>
