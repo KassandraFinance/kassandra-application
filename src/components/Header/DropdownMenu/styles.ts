@@ -16,7 +16,7 @@ export const DropdownMenu = styled.div`
     }
   }
 
-  @media (max-width: 576px) {
+  @media (max-width: 768px) {
     width: 100%;
   }
 `
@@ -65,7 +65,7 @@ export const DropButton = styled.button<IDropdownProps>`
       transition: transform 300ms ease;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       width: 100%;
       padding: 2rem 2.4rem;
 
@@ -116,7 +116,7 @@ export const MenuWrapper = styled.div<IMenuWrapperProps>`
     transition-timing-function: ease-in-out;
     transition-property: max-height opacity;
 
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       position: static;
 
       padding: 0;
@@ -124,7 +124,7 @@ export const MenuWrapper = styled.div<IMenuWrapperProps>`
   `}
 
   ${({ adaptToResponsiveSize }) => adaptToResponsiveSize && css`
-    @media (max-width: 768px) {
+    @media (max-width: 992px) {
       left: auto;
       right: 0;
     }
@@ -148,7 +148,7 @@ export const DropdownContent = styled.div`
     backdrop-filter: blur(0.4rem);
     border-radius: 0.4rem;
 
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       gap: 2rem;
 
       background-color: #3d3f43;
@@ -222,7 +222,7 @@ export const DropDownLink = styled.a`
       opacity: 1;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       min-width: 24.9rem;
 
       font-weight: ${theme.font.weight.normal};
