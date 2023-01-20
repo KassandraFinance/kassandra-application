@@ -5,6 +5,7 @@ import { useAppSelector } from '../../store/hooks'
 import { chains } from '../../constants/tokenAddresses'
 
 import Header from '../../components/Header'
+import Overlay from '../../components/Overlay'
 import GetStarted from './GetStarted'
 import SideBar from './SideBar'
 
@@ -15,7 +16,6 @@ import walletIcon from '../../../public/assets/utilities/wallet.svg'
 import closeIcon from '../../../public/assets/utilities/close-icon.svg'
 
 import * as S from './styles'
-import Overlay from '../../components/Overlay'
 
 const Manage = () => {
   const [isOpen, setIsOpen] = React.useState(false)

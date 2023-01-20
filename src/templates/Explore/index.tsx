@@ -1,6 +1,5 @@
 import React from 'react'
 
-import Header from '../../components/Header'
 import Breadcrumb from '../../components/Breadcrumb'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import TitleSection from '../../components/TitleSection'
@@ -27,8 +26,6 @@ export default function Explore() {
 
   return (
     <>
-      <Header />
-
       <Breadcrumb>
         <BreadcrumbItem href={`/explore`} isLastPage>
           Explore

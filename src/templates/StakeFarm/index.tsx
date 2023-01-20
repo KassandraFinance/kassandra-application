@@ -9,7 +9,6 @@ import useConnect from '../../hooks/useConnect'
 
 import Web3Disabled from '../../components/Web3Disabled'
 import VotingPower from '../../components/VotingPower'
-import Header from '../../components/Header'
 import Breadcrumb from '../../components/Breadcrumb'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import SelectTabs from '../../components/SelectTabs'
@@ -38,9 +37,9 @@ const tabs = [
 
 const StakeFarm = () => {
   const [isSelectTab, setIsSelectTab] = React.useState<
-  string | string[] | undefined
+    string | string[] | undefined
   >('farm')
-  
+
   const { userWalletAddress, chainId } = useAppSelector(state => state)
   const { metamaskInstalled } = useConnect()
   const router = useRouter()
@@ -58,14 +57,14 @@ const StakeFarm = () => {
 
   return (
     <>
-      <Header />
       <Breadcrumb>
         <BreadcrumbItem href="/">Home</BreadcrumbItem>
         <BreadcrumbItem href="/farm" isLastPage>
           Stake/Farm
         </BreadcrumbItem>
       </Breadcrumb>
-      {metamaskInstalled && Number(chainId) !== chain.chainId || userWalletAddress.length > 0 && Number(chainId) !== chain.chainId ? (
+      {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
+      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
         <Web3Disabled
           textButton={`Connect to ${chain.chainName}`}
           textHeader="Your wallet is set to the wrong network."
