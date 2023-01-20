@@ -80,7 +80,7 @@ export const HeaderButtons = styled.div<IHeaderButtonsProps>`
 
       &:hover, &:focus {
         background-color: ${networkColor};
-        
+
         svg {
           path {
             fill: ${fillColor};

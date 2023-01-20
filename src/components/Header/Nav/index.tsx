@@ -17,7 +17,6 @@ import * as S from './styles'
 interface INavProps {
   isShowMenu: boolean;
   showOverlay: boolean;
-  setIsModalWaitingList: React.Dispatch<React.SetStateAction<boolean>>;
   setIsShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -25,7 +24,6 @@ interface INavProps {
 const Nav = ({
   isShowMenu,
   showOverlay,
-  setIsModalWaitingList,
   setIsShowMenu,
   setShowOverlay
 }: INavProps) => {
@@ -81,15 +79,16 @@ const Nav = ({
             Stake
           </S.MenuLink>
         </Link>
-        <S.MenuLink
-          onClick={() => {
-            setIsModalWaitingList(true)
-            trackEventFunction('click-on-link', 'manage', 'header')
-          }}
-          active={router.asPath === '/manage'}
-        >
-          Manage
-        </S.MenuLink>
+        <Link href="/manage" passHref>
+          <S.MenuLink
+            onClick={() => {
+              trackEventFunction('click-on-link', 'manage', 'header')
+            }}
+            active={router.asPath === '/manage'}
+          >
+            Manage
+          </S.MenuLink>
+        </Link>
         <DropdownMenu
           nameOnHeader="DAO"
           isActive={

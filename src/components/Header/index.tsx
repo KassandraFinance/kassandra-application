@@ -1,13 +1,13 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import { useAppSelector } from '../../store/hooks'
 
 import Nav from './Nav'
 import ModalAlert from '../Modals/ModalAlert'
 import ModalLogOut from '../Modals/ModalLogOut'
-import ModalWaitingList from '../Modals/ModalWaitingList'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalInstitucionalLinksMobile from '../Modals/ModalInstitucionalLinksMobile'
 import ModalChooseNetwork from '../Modals/ModalChooseNetwork'
@@ -25,24 +25,22 @@ export type MenuProps = {
 const Header = () => {
   const [isModalWallet, setIsModalWallet] = React.useState<boolean>(false)
   const [isModalLogout, setIsModalLogout] = React.useState<boolean>(false)
-  const [isModalWaitingList, setIsModalWaitingList] =
-    React.useState<boolean>(false)
   // const [isModalLanguages, setIsModalLanguages] = React.useState<boolean>(false)
   const [isModalSocialMedia, setIsModalSocialMedia] =
     React.useState<boolean>(false)
-
   const [isShowMenu, setIsShowMenu] = React.useState(false)
   const [showOverlay, setShowOverlay] = React.useState(false)
-
   const [isChooseNetwork, setIsChooseNetwork] = React.useState(false)
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
 
+  const router = useRouter()
+
   return (
     <>
-      <S.Wrapper id="top">
-        <S.LogoWrapper>
+      <S.Wrapper id="top" dashBoard={router.pathname === '/manage'}>
+        <S.LogoWrapper dashBoard={router.pathname === '/manage'}>
           <Link href="/" passHref>
             <a className="logo-desktop">
               <Image src={logoKassandra} alt="Kassandra" />
@@ -56,7 +54,7 @@ const Header = () => {
           </Link>
         </S.LogoWrapper>
 
-        <S.MenuWrapper>
+        <S.MenuWrapper dashBoard={router.pathname === '/manage'}>
           <S.HamburgerButton
             onClick={() => {
               setIsShowMenu(!isShowMenu)
@@ -73,7 +71,6 @@ const Header = () => {
           <Nav
             isShowMenu={isShowMenu}
             showOverlay={showOverlay}
-            setIsModalWaitingList={setIsModalWaitingList}
             setIsShowMenu={setIsShowMenu}
             setShowOverlay={setShowOverlay}
           />
@@ -96,10 +93,6 @@ const Header = () => {
         setModalOpen={setIsModalLogout}
         userWalletAddress={userWalletAddress}
       />
-
-      {isModalWaitingList && (
-        <ModalWaitingList setIsModalWaitingList={setIsModalWaitingList} />
-      )}
 
       {isError && <ModalAlert />}
 
