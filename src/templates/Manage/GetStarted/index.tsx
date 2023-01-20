@@ -1,5 +1,15 @@
 import React from 'react'
 import Image from 'next/image'
+import useSWR from 'swr'
+import request from 'graphql-request'
+import Big from 'big.js'
+
+import { useAppSelector } from '../../../store/hooks'
+
+import { GET_PROFILE } from './graphql'
+import { SUBGRAPH_URL } from '../../../constants/tokenAddresses'
+
+import { BNtoDecimal } from '../../../utils/numerals'
 
 import Button from '../../../components/Button'
 import ExternalLink from '../../../components/ExternalLink'
@@ -9,9 +19,23 @@ import kacyLogoShadow from '../../../../public/assets/images/kacy-logo-shadow.pn
 
 import * as S from './styles'
 
+type UserResponse = {
+  user: {
+    votingPower: string
+  }
+}
+
 const GetStarted = () => {
   const [isModalWaitingList, setIsModalWaitingList] =
     React.useState<boolean>(false)
+
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+
+  const { data } = useSWR<UserResponse>([GET_PROFILE], query =>
+    request(SUBGRAPH_URL, query, {
+      userVP: userWalletAddress
+    })
+  )
 
   return (
     <S.GetStarted>
@@ -33,16 +57,19 @@ const GetStarted = () => {
           Power.
         </S.Help>
 
-        <S.VotingPowerContainer>
-          <S.VotingPowerWrapper>
-            YOUR VOTING POWER <span>1000</span>
-          </S.VotingPowerWrapper>
+        {data?.user && (
+          <S.VotingPowerContainer>
+            <S.VotingPowerWrapper>
+              YOUR VOTING POWER{' '}
+              <span>{BNtoDecimal(Big(data.user.votingPower), 2)}</span>
+            </S.VotingPowerWrapper>
 
-          <ExternalLink
-            text="Obtain more Voting Power"
-            hrefNext="/farm?tab=stake"
-          />
-        </S.VotingPowerContainer>
+            <ExternalLink
+              text="Obtain more Voting Power"
+              hrefNext="/farm?tab=stake"
+            />
+          </S.VotingPowerContainer>
+        )}
 
         <Button
           text="Sign me up for the launch"
