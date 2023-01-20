@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { useAppSelector } from '../../store/hooks'
 import { chains } from '../../constants/tokenAddresses'
 
-import Header from '../../components/Header'
 import Overlay from '../../components/Overlay'
 import GetStarted from './GetStarted'
 import SideBar from './SideBar'
@@ -70,8 +69,6 @@ const Manage = () => {
         <div></div>
 
         <S.Content>
-          <Header />
-
           <GetStarted />
         </S.Content>
       </S.DashBoard>
