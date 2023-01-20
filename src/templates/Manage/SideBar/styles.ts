@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { HeaderButtons } from '../../../components/Header/HeaderButtons/styles'
 
 interface ISideBarProps {
   isOpen: boolean;
@@ -15,7 +16,6 @@ export const SideBar = styled.div<ISideBarProps>`
     width: 0rem;
 
     background-color: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(30px);
     border-radius: 0rem 0.8rem 0.8rem 0rem;
 
     overflow: hidden;
@@ -24,8 +24,9 @@ export const SideBar = styled.div<ISideBarProps>`
     transition-timing-function: ease;
     transition-property: width;
 
+    isolation: isolate;
 
-    z-index: 1030;
+    z-index: 1020;
 
     @media (min-width: 768px) {
       width: 7.4rem;
@@ -50,9 +51,17 @@ export const SideBarHeader = styled.div`
     flex-direction: column;
     gap: 6.6rem;
 
-    padding-top: 4rem;
-    padding-inline: 2.4rem;
+    padding-top: 2.4rem;
+    padding-inline: 1.6rem;
     padding-bottom: 1.6rem;
+
+    @media (min-width: 768px) {
+      padding-top: 3.2rem;
+    }
+
+    @media (min-width: 992px) {
+      padding-inline: 2.4rem;
+    }
   `}
 `
 
@@ -63,6 +72,9 @@ interface IImageWrapperProps {
 // prettier-ignore
 export const ImageWrapper = styled.a<IImageWrapperProps>`
   ${() => css`
+    margin-left: -0.5rem;
+    margin-top: -0.4rem;
+
     svg {
       .letters {
         opacity: 0;
@@ -74,13 +86,15 @@ export const ImageWrapper = styled.a<IImageWrapperProps>`
     }
 
     @media (min-width: 768px) {
+      margin-left: 0.3rem;
       width: 2.6rem;
       height: 2.6rem;
-      margin-left: -0.5rem;
-      margin-top: -0.4rem;
     }
 
     @media (min-width: 992px) {
+      margin-left: -0.5rem;
+      margin-top: -0.4rem;
+
       svg {
         .letters {
           opacity: 1;
@@ -91,10 +105,146 @@ export const ImageWrapper = styled.a<IImageWrapperProps>`
     }
   `}
   ${({ isOpen }) => isOpen && css`
+    margin-left: -0.5rem;
+
     svg {
       .letters {
         opacity: 1;
       }
+    }
+  `}
+`
+interface IUserInfoContainerProps {
+  isOpen: boolean;
+}
+
+// prettier-ignore
+export const UserInfoContainer = styled.div<IUserInfoContainerProps>`
+  ${({ theme, isOpen }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+
+    > ${HeaderButtons} {
+      position: static;
+
+      padding: 0rem;
+
+      flex-direction: ${isOpen ? 'row' : 'column'};
+      justify-content: space-between;
+
+      background-color: transparent;
+
+      .button-network,
+      .kacyAmount {
+        gap: ${isOpen ? '0.8rem' : '0rem'};
+
+        width: ${isOpen ? '50%' : '100%'};
+        padding: ${isOpen ? '1.6rem 1.2rem' : '1.2rem'};
+
+        font-size: ${isOpen ? theme.font.sizes.font12 : 0};
+      }
+
+      .kacyAmount {
+        width: 100%;
+      }
+
+      .button-wallet {
+        display: none;
+      }
+    }
+
+    @media (min-width: 992px) {
+      > ${HeaderButtons} {
+        display: none;
+      }
+    }
+  `}
+`
+
+export const UserHeader = styled.div`
+  ${() => css`
+    display: flex;
+    gap: 0.8rem;
+
+    cursor: pointer;
+  `}
+`
+
+export const UserImage = styled.div`
+  ${() => css`
+    min-width: 4rem;
+    min-height: 4rem;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+  `}
+`
+
+export const UserNameWrapper = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+  `}
+`
+
+interface IUserNameProps {
+  isOpen: boolean;
+}
+
+// prettier-ignore
+export const UserName = styled.div<IUserNameProps>`
+  ${({ theme, isOpen }) => css`
+    color: ${theme.colors.white};
+    font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font16};
+    line-height: ${theme.font.sizes.font16};
+    text-transform: capitalize;
+
+    transition-duration: 550ms;
+    transition-timing-function: ease;
+    transition-property: opacity visibility;
+
+    @media (min-width: 768px) {
+      visibility: ${isOpen ? 'visible' : 'hidden'};
+      opacity: ${isOpen ? '1' : '0'};
+    }
+
+    @media (min-width: 992px) {
+      visibility: visible;
+      opacity: 1;
+    }
+  `}
+`
+
+interface IUserHeaderTitleProps {
+  isOpen: boolean;
+}
+
+// prettier-ignore
+export const UserHeaderTitle = styled.div<IUserHeaderTitleProps>`
+  ${({ theme, isOpen }) => css`
+    color: ${theme.colors.white};
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
+    line-height: 100%;
+    letter-spacing: 0.05em;
+
+    transition-duration: 550ms;
+    transition-timing-function: ease;
+    transition-property: opacity visibility;
+
+    @media (min-width: 768px) {
+      visibility: ${isOpen ? 'visible' : 'hidden'};
+      opacity: ${isOpen ? '1' : '0'};
+    }
+
+    @media (min-width: 992px) {
+      visibility: visible;
+      opacity: 1;
     }
   `}
 `
@@ -226,5 +376,55 @@ export const Text = styled.p<ITextProps>`
   ${({ isOpen }) => isOpen && css`
     opacity: 1;
     pointer-events: visible;
+  `}
+`
+
+export const OpenButton = styled.button`
+  ${() => css`
+    display: none;
+
+    @media (min-width: 768px) {
+      position: absolute;
+      bottom: 2.8rem;
+      left: 2.1rem;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 3.2rem;
+      height: 3.2rem;
+
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+
+      z-index: 1020;
+
+      cursor: pointer;
+    }
+
+    @media (min-width: 992px) {
+      display: none;
+    }
+  `}
+`
+
+interface IImageWrapperProps {
+  isOpen: boolean;
+}
+
+// prettier-ignore
+export const ImageCloseButtonWrapper = styled.div<IImageWrapperProps>`
+  ${({ isOpen }) => css`
+      width: 1.6rem;
+      height: 1.6rem;
+
+      transform-origin: center;
+      transform: ${isOpen ? 'rotateZ(180deg)' : 'rotateZ(0deg)'} ;
+
+      transition-duration: 550ms;
+      transition-timing-function: ease;
+      transition-property: transform;
   `}
 `

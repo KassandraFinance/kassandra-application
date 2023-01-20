@@ -1,10 +1,12 @@
 import styled, { css } from 'styled-components'
+import { Overlay } from '../../components/Overlay/styles'
 
 export const Manage = styled.div`
   ${() => css`
     width: 100%;
   `}
 `
+
 interface IDashBoardProps {
   isOpen: boolean;
 }
@@ -19,8 +21,17 @@ export const DashBoard = styled.div<IDashBoardProps>`
     transition-timing-function: ease;
     transition-property: grid;
 
+    > ${Overlay} {
+      z-index: 1020;
+    }
+
     @media (min-width: 768px) {
       grid-template-columns: 7.4rem calc(100% - 7.4rem);
+
+      > ${Overlay} {
+        background-color: rgba(0, 0, 0, 0);
+        backdrop-filter: blur(0rem);
+      }
     }
 
     @media (min-width: 992px) {
@@ -28,7 +39,7 @@ export const DashBoard = styled.div<IDashBoardProps>`
     }
   `}
   ${({ isOpen }) => isOpen && css`
-    grid-template-columns: 26.4rem 100%;
+    grid-template-columns: 100%;
 
     @media (min-width: 768px) {
       grid-template-columns: 26.4rem calc(100% - 7.4rem);
@@ -40,60 +51,82 @@ export const DashBoard = styled.div<IDashBoardProps>`
   `}
 `
 
-export const Content = styled.section`
-  /* margin-bottom: 20rem;
-  transform: translate(0rem);
-  transition-duration: 550ms;
-  transition-timing-function: ease-in-out;
-  transition-property: transform;
+export const Content = styled.section``
 
-  position: relative;
-  &::before {
-    content: '';
-    position: absolute;
-    top: -8.8rem;
-
-    width: 100%;
-    height: 8.8rem;
-
-    background-color: rgba(255, 255, 255, 0.05);
-    /* backdrop-filter: blur(30px); */
-  } */
-
-  /* ${({ isOpen }) =>
-    isOpen &&
-    css`
-      transform: translateY(8.8rem);
-
-      @media (min-width: 992px) {
-        transform: translateY(0rem);
-      }
-    `}; */
-`
-
-export const OpenButton = styled.button`
+export const UserDashBoardButton = styled.button`
   ${() => css`
     position: absolute;
-    bottom: 2.8rem;
-    left: 2.1rem;
+    top: 2.4rem;
+    right: 7.2rem;
+
+    display: none;
+
+    @media (max-width: 768px) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 4rem;
+      height: 4rem;
+
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+
+      cursor: pointer;
+      z-index: 1020;
+    }
+  `}
+`
+
+interface IUserImageWrapperProps {
+  isOpen: boolean;
+}
+
+// prettier-ignore
+export const UserImageWrapper = styled.div<IUserImageWrapperProps>`
+  ${({ isOpen }) => css`
+    position: relative;
 
     display: flex;
     justify-content: center;
     align-items: center;
 
-    width: 3.2rem;
-    height: 3.2rem;
+    width: 2rem;
+    height: 2rem;
 
-    background-color: rgba(255, 255, 255, 0.1);
-    border: none;
-    border-radius: 50%;
+    opacity: ${isOpen ? '0' : '1'};
 
-    z-index: 1031;
+    transition-duration: 550ms;
+    transition-timing-function: ease;
+    transition-property: opacity;
+  `}
+`
 
-    cursor: pointer;
+interface ICloseIconWrapperProps {
+  isOpen: boolean;
+}
 
-    @media (min-width: 992px) {
-      display: none;
-    }
+// prettier-ignore
+export const CloseIconWrapper = styled.div<ICloseIconWrapperProps>`
+  ${({ isOpen }) => css`
+    position: absolute;
+
+    opacity: ${isOpen ? '1' : '0'};
+
+    transition-duration: 550ms;
+    transition-timing-function: ease;
+    transition-property: opacity;
+  `}
+`
+
+export const NetworkImageWrapper = styled.div`
+  ${() => css`
+    position: absolute;
+    right: -1rem;
+    bottom: -0.9rem;
+
+    width: 1.2rem;
+    height: 1.2rem;
   `}
 `

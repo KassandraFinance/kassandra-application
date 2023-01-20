@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components'
 interface IHeaderButtonsProps {
   networkColor: string;
   fillColor: string;
-  dashBoard: boolean;
 }
 
 // prettier-ignore
@@ -107,18 +106,6 @@ export const HeaderButtons = styled.div<IHeaderButtonsProps>`
         font-weight: ${theme.font.weight.light};
         font-size: ${theme.font.sizes.font12};
         line-height: ${theme.font.sizes.font12};
-      }
-    }
-  `}
-  ${({ dashBoard }) => dashBoard && css`
-    @media (max-width: 991.98px) {
-      .button-wallet {
-        width: 4rem;
-        padding: 1.2rem;
-
-        img {
-          width: 1.8rem;
-        }
       }
     }
   `}

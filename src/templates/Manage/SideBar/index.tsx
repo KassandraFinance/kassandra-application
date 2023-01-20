@@ -2,7 +2,16 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import profileIcon from '../../../../public/assets/iconGradient/profile.svg'
+import { useAppSelector } from '../../../store/hooks'
+
+import substr from '../../../utils/substr'
+
+import HeaderButtons from '../../../components/Header/HeaderButtons'
+import ModalWalletConnect from '../../../components/Modals/ModalWalletConnect'
+import ModalChooseNetwork from '../../../components/Modals/ModalChooseNetwork'
+
+import userIcon from '../../../../public/assets/icons/user.svg'
+import arrow from '../../../../public/assets/utilities/arrow-right-bold.svg'
 
 import * as S from './styles'
 
@@ -12,8 +21,20 @@ interface ISideBarProps {
 }
 
 const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
+  const [isModalWallet, setIsModalWallet] = React.useState<boolean>(false)
+  const [isChooseNetwork, setIsChooseNetwork] = React.useState(false)
+
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const { nickName, image } = useAppSelector(state => state.user)
+
   return (
     <S.SideBar isOpen={isOpen}>
+      <S.OpenButton onClick={() => setIsOpen(!isOpen)}>
+        <S.ImageCloseButtonWrapper isOpen={isOpen}>
+          <Image src={arrow} width={16} height={16} />
+        </S.ImageCloseButtonWrapper>
+      </S.OpenButton>
+
       <S.SideBarHeader>
         <Link href="/" passHref>
           <S.ImageWrapper isOpen={isOpen}>
@@ -223,16 +244,66 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             </svg>
           </S.ImageWrapper>
         </Link>
+        {
+          // <Link href="/manage" passHref>
+          //   <S.SideBarLink>
+          //     <S.IconWrapper>
+          //       <Image src={profileIcon} layout="responsive" />
+          //     </S.IconWrapper>
+          //
+          //     <S.Title isOpen={isOpen}>Manager Dashboard</S.Title>
+          //   </S.SideBarLink>
+          // </Link>
+        }
 
-        <Link href="/manage" passHref>
-          <S.SideBarLink>
-            <S.IconWrapper>
-              <Image src={profileIcon} layout="responsive" />
-            </S.IconWrapper>
+        <S.UserInfoContainer isOpen={isOpen}>
+          {userWalletAddress.length > 0 ? (
+            <Link href={`/profile/${userWalletAddress}`}>
+              <S.UserHeader>
+                <S.UserImage>
+                  <Image
+                    src={image.profilePic ? image.profilePic : userIcon}
+                    width={40}
+                    height={40}
+                  />
+                </S.UserImage>
 
-            <S.Title isOpen={isOpen}>Manager Dashboard</S.Title>
-          </S.SideBarLink>
-        </Link>
+                <S.UserNameWrapper>
+                  <S.UserName isOpen={isOpen}>
+                    {nickName.length > 0 ? nickName : substr(userWalletAddress)}
+                  </S.UserName>
+
+                  <S.UserHeaderTitle isOpen={isOpen}>
+                    Dashboard
+                  </S.UserHeaderTitle>
+                </S.UserNameWrapper>
+              </S.UserHeader>
+            </Link>
+          ) : (
+            <S.UserHeader onClick={() => setIsModalWallet(!isModalWallet)}>
+              <S.UserImage>
+                <Image
+                  src={image.profilePic ? image.profilePic : userIcon}
+                  width={40}
+                  height={40}
+                />
+              </S.UserImage>
+
+              <S.UserNameWrapper>
+                <S.UserName isOpen={isOpen}>
+                  {nickName.length > 0 ? nickName : substr(userWalletAddress)}
+                </S.UserName>
+
+                <S.UserHeaderTitle isOpen={isOpen}>Dashboard</S.UserHeaderTitle>
+              </S.UserNameWrapper>
+            </S.UserHeader>
+          )}
+
+          <HeaderButtons
+            setIsModalWallet={setIsModalWallet}
+            setIsChooseNetwork={setIsChooseNetwork}
+          />
+        </S.UserInfoContainer>
       </S.SideBarHeader>
 
       <S.Line isOpen={isOpen} />
@@ -248,6 +319,14 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
           choose from.
         </S.Text>
       </S.SideBarBody>
+      {isModalWallet && <ModalWalletConnect setModalOpen={setIsModalWallet} />}
+
+      {isChooseNetwork && (
+        <ModalChooseNetwork
+          setIsChooseNetwork={setIsChooseNetwork}
+          isOpen={isChooseNetwork}
+        />
+      )}
     </S.SideBar>
   )
 }

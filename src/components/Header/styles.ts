@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { HeaderButtons } from './HeaderButtons/styles'
 import theme from '../../styles/theme'
 
 interface IWrapperProps {
@@ -67,10 +68,22 @@ export const LogoWrapper = styled.div<ILogoWrapper>`
     `}
 `
 
-export const MenuWrapper = styled.div`
+interface IMenuWrapperProps {
+  dashBoard: boolean;
+}
+
+// prettier-ignore
+export const MenuWrapper = styled.div<IMenuWrapperProps>`
   ${() => css`
     display: flex;
     gap: 2rem;
+  `}
+  ${({ dashBoard }) => dashBoard && css`
+    @media (max-width: 991.98px) {
+      ${HeaderButtons} {
+        display: none;
+      }
+    }
   `}
 `
 
@@ -154,13 +167,13 @@ export const HamburgerButton = styled.button`
     position: relative;
     display: none;
 
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       display: flex;
       justify-content: center;
       align-items: center;
 
-      width: 3.2rem;
-      height: 3.2rem;
+      width: 4rem;
+      height: 4rem;
 
       background-color: rgba(255, 255, 255, 0.1);
       border: none;
@@ -179,7 +192,7 @@ interface IHambuergerMenuProps {
 // prettier-ignore
 export const HamburgerMenu = styled.div<IHambuergerMenuProps>`
   ${() => css`
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       position: absolute;
 
       width: 1.2rem;

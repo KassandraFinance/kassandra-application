@@ -54,7 +54,7 @@ const Header = () => {
           </Link>
         </S.LogoWrapper>
 
-        <S.MenuWrapper>
+        <S.MenuWrapper dashBoard={router.pathname === '/manage'}>
           <S.HamburgerButton
             onClick={() => {
               setIsShowMenu(!isShowMenu)
