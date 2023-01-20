@@ -18,7 +18,7 @@ import PoolCreated from './PoolCreated'
 
 import * as S from './styles'
 
-const CreatePool = () => {
+const CreatePool = ({ setIsCreatePool }: any) => {
   const dispatch = useAppDispatch()
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
 
@@ -43,9 +43,7 @@ const CreatePool = () => {
 
   return (
     <S.CreatePool>
-      <ModalFullWindow
-        handleCloseModal={() => console.log('Function not implemented.')}
-      >
+      <ModalFullWindow handleCloseModal={() => setIsCreatePool(false)}>
         <form id="poolCreationForm" onSubmit={handleSubmit}>
           {poolCreationSteps[stepNumber]}
 

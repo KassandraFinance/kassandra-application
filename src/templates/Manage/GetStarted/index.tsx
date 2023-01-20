@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import React from 'react'
 import Image from 'next/image'
 import useSWR from 'swr'
@@ -14,6 +15,7 @@ import { BNtoDecimal } from '../../../utils/numerals'
 import Button from '../../../components/Button'
 import ExternalLink from '../../../components/ExternalLink'
 import ModalWaitingList from '../../../components/Modals/ModalWaitingList'
+import CreatePool from '../CreatePool'
 
 import kacyLogoShadow from '../../../../public/assets/images/kacy-logo-shadow.png'
 
@@ -28,7 +30,7 @@ type UserResponse = {
 const GetStarted = () => {
   const [isModalWaitingList, setIsModalWaitingList] =
     React.useState<boolean>(false)
-
+  const [isCreatePool, setIsCreatePool] = React.useState(false)
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const { data } = useSWR<UserResponse>([GET_PROFILE], query =>
@@ -42,14 +44,12 @@ const GetStarted = () => {
       <Image src={kacyLogoShadow} />
 
       <S.Content>
-        <S.Title>
-          Want to simply manage pools of digital assets in one place?
-        </S.Title>
+        <S.Title>Ready to create your first pool?</S.Title>
 
         <S.Text>
-          Get ready to become a digital asset manager using the kassandra
-          platform. Easily manage your pools, view investors, earn rewards and
-          more in one place.
+          It looks like you don't have any pools to manage. Click on the button
+          below to combine tokens to create your first pool to start the journey
+          as a manager.
         </S.Text>
 
         <S.Help>
@@ -72,16 +72,18 @@ const GetStarted = () => {
         )}
 
         <Button
-          text="Sign me up for the launch"
+          text="Create New Pool"
           backgroundSecondary
           fullWidth
-          onClick={() => setIsModalWaitingList(true)}
+          // onClick={() => setIsModalWaitingList(true)}
+          onClick={() => setIsCreatePool(true)}
         />
       </S.Content>
 
-      {isModalWaitingList && (
+      {/* {isModalWaitingList && (
         <ModalWaitingList setIsModalWaitingList={setIsModalWaitingList} />
-      )}
+      )} */}
+      {isCreatePool && <CreatePool setIsCreatePool={setIsCreatePool} />}
     </S.GetStarted>
   )
 }
