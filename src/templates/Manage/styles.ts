@@ -100,6 +100,12 @@ export const UserImageWrapper = styled.div<IUserImageWrapperProps>`
     transition-duration: 550ms;
     transition-timing-function: ease;
     transition-property: opacity;
+
+    img {
+      object-fit: cover;
+
+      border-radius: 50%;
+    }
   `}
 `
 

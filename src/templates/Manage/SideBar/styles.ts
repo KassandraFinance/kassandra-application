@@ -178,7 +178,13 @@ export const UserImage = styled.div`
 
     border-radius: 50%;
 
-    overflow: hidden;
+    img {
+      width: 4rem;
+      height: 4rem;
+      object-fit: cover;
+
+      border-radius: 50%;
+    }
   `}
 `
 
