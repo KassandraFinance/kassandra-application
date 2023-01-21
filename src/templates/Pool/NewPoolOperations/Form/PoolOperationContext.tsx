@@ -1,8 +1,19 @@
 import React from 'react'
 
+import { CalcAllOutGivenPoolInParams, CalcAllOutGivenPoolInResult, CalcAmountOutParams, CalcAmountOutParamsResult, CalcSingleOutGivenPoolInParams, CalcSingleOutGivenPoolInResult, EstimatedGasParams, EstimatedGasResult, ExitSwapPoolAllTokenAmountInParams, ExitSwapPoolAmountInParams, JoinSwapAmountInParams } from '../../../../services/IOperation';
+
+export interface IOperations {
+  contractAddress: string;
+  calcInvestAmountOut: (params: CalcAmountOutParams) => Promise<CalcAmountOutParamsResult>;
+  joinswapExternAmountIn: (params: JoinSwapAmountInParams) => Promise<void>;
+  estimatedGas: (params: EstimatedGasParams) => Promise<EstimatedGasResult>;
+  calcSingleOutGivenPoolIn: (params: CalcSingleOutGivenPoolInParams) => Promise<CalcSingleOutGivenPoolInResult>;
+  calcAllOutGivenPoolIn: (params: CalcAllOutGivenPoolInParams) => Promise<CalcAllOutGivenPoolInResult>;
+  exitswapPoolAmountIn: (params: ExitSwapPoolAmountInParams) => Promise<any>;
+  exitswapPoolAllTokenAmountIn: (params: ExitSwapPoolAllTokenAmountInParams) => Promise<void>
+}
 interface IOperationModel {
-  increment: (number: number) => number;
-  decrement: (number: number) => number;
+  operation: IOperations;
 }
 
 // eslint-disable-next-line prettier/prettier
