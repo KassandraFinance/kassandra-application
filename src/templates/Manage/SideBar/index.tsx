@@ -261,8 +261,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             <Link href={`/profile/${userWalletAddress}`}>
               <S.UserHeader>
                 <S.UserImage>
-                  <Image
-                    src={image.profilePic ? image.profilePic : userIcon}
+                  <img
+                    src={image.profilePic ? image.profilePic : userIcon.src}
                     width={40}
                     height={40}
                   />
@@ -282,8 +282,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
           ) : (
             <S.UserHeader onClick={() => setIsModalWallet(!isModalWallet)}>
               <S.UserImage>
-                <Image
-                  src={image.profilePic ? image.profilePic : userIcon}
+                <img
+                  src={image.profilePic ? image.profilePic : userIcon.src}
                   width={40}
                   height={40}
                 />

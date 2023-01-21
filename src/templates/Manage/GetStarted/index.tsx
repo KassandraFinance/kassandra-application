@@ -71,12 +71,14 @@ const GetStarted = () => {
           </S.VotingPowerContainer>
         )}
 
-        <Button
-          text="Sign me up for the launch"
-          backgroundSecondary
-          fullWidth
-          onClick={() => setIsModalWaitingList(true)}
-        />
+        <S.ButtonWrapper>
+          <Button
+            text="Sign me up for the launch"
+            backgroundSecondary
+            fullWidth
+            onClick={() => setIsModalWaitingList(true)}
+          />
+        </S.ButtonWrapper>
       </S.Content>
 
       {isModalWaitingList && (

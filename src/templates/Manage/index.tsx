@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useAppSelector } from '../../store/hooks'
 import { chains } from '../../constants/tokenAddresses'
 
+import Overlay from '../../components/Overlay'
 import Header from '../../components/Header'
 import GetStarted from './GetStarted'
 import SideBar from './SideBar'
@@ -15,7 +16,6 @@ import walletIcon from '../../../public/assets/utilities/wallet.svg'
 import closeIcon from '../../../public/assets/utilities/close-icon.svg'
 
 import * as S from './styles'
-import Overlay from '../../components/Overlay'
 
 const Manage = () => {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -45,8 +45,8 @@ const Manage = () => {
           <S.UserImageWrapper isOpen={isOpen}>
             {userWalletAddress.length > 0 ? (
               <>
-                <Image
-                  src={image.profilePic ? image.profilePic : userIcon}
+                <img
+                  src={image.profilePic ? image.profilePic : userIcon.src}
                   width={20}
                   height={20}
                 />
