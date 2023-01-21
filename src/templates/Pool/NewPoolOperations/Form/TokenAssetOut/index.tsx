@@ -36,7 +36,7 @@ const TokenAssetOut = ({ typeAction, amountTokenOut }: ITokenAssetOutProps) => {
     if (
       pool.id.length === 0 ||
       userWalletAddress.length === 0 ||
-      pool.chain_id.toString().length === 0
+      pool.chainId.toString().length === 0
       // chainId !== pool.chainId
     ) {
       return
