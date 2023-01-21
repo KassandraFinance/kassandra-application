@@ -130,7 +130,6 @@ export const VotingPowerWrapper = styled.span`
     justify-content: space-between;
     align-items: center;
     padding: 1.6rem;
-    gap: 6.4rem;
 
     width: 100%;
 
@@ -145,6 +144,14 @@ export const VotingPowerWrapper = styled.span`
     @media (min-width: 768px) {
       font-size: ${theme.font.sizes.font16};
       line-height: ${theme.font.sizes.font24};
+    }
+  `}
+`
+
+export const ButtonWrapper = styled.div`
+  ${() => css`
+    @media (min-width: 992px) {
+      width: calc(50% - 0.8rem);
     }
   `}
 `

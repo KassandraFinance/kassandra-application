@@ -5,6 +5,7 @@ import { useAppSelector } from '../../store/hooks'
 import { chains } from '../../constants/tokenAddresses'
 
 import Overlay from '../../components/Overlay'
+
 import GetStarted from './GetStarted'
 import SideBar from './SideBar'
 
@@ -44,8 +45,8 @@ const Manage = () => {
           <S.UserImageWrapper isOpen={isOpen}>
             {userWalletAddress.length > 0 ? (
               <>
-                <Image
-                  src={image.profilePic ? image.profilePic : userIcon}
+                <img
+                  src={image.profilePic ? image.profilePic : userIcon.src}
                   width={20}
                   height={20}
                 />

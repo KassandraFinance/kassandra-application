@@ -70,14 +70,15 @@ const GetStarted = () => {
             />
           </S.VotingPowerContainer>
         )}
-
-        <Button
-          text="Create New Pool"
-          backgroundSecondary
-          fullWidth
-          // onClick={() => setIsModalWaitingList(true)}
-          onClick={() => setIsCreatePool(true)}
-        />
+        <S.ButtonWrapper>
+          <Button
+            text="Create New Pool"
+            backgroundSecondary
+            fullWidth
+            // onClick={() => setIsModalWaitingList(true)}
+            onClick={() => setIsCreatePool(true)}
+          />
+        </S.ButtonWrapper>
       </S.Content>
 
       {/* {isModalWaitingList && (
