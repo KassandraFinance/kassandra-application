@@ -31,11 +31,19 @@ export interface ChainInfo {
   addressWrapped: string;
 }
 
+export interface underlyingAssetsInfo {
+  balance: string;
+  weight_goal_normalized: string;
+  weight_normalized: string;
+  token: TokenInfo;
+}
+
 export interface IPoolSlice {
   id: string;
   address: string;
   vault: string;
   chain_id: number;
+  chainId: number;
   chain: ChainInfo;
   name: string;
   symbol: string;
@@ -48,12 +56,7 @@ export interface IPoolSlice {
   addresses: string[];
   partners?: string[];
   underlying_assets_addresses: string[];
-  underlying_assets: {
-    balance: string,
-    weight_goal_normalized: string,
-    weight_normalized: string,
-    token: TokenInfo
-  }[];
+  underlying_assets: underlyingAssetsInfo[];
 }
 
 const initialState: IPoolSlice = {
@@ -61,6 +64,7 @@ const initialState: IPoolSlice = {
   address: '',
   vault: '',
   chain_id: 0,
+  chainId: 0,
   chain: {
     id: 0,
     logo: '',
