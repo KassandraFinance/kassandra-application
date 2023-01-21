@@ -34,6 +34,8 @@ import {
 } from '../../../../../components/Toastify/toast'
 import Button from '../../../../../components/Button'
 
+import PoolOperationContext from '../PoolOperationContext'
+
 import InputAndOutputValueToken from '../InputAndOutputValueToken'
 import TokenAssetOut from '../TokenAssetOut'
 import TransactionSettings from '../TransactionSettings'
@@ -97,14 +99,14 @@ const Invest = ({ typeAction }: IInvestProps) => {
   const { pool, chainId, tokenSelect, tokenList1Inch, userWalletAddress } = useAppSelector(
     state => state
   )
+
+  const { operation } = React.useContext(PoolOperationContext)
+
   const dispatch = useAppDispatch()
 
   const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
 
-  const proxy = useProxy(ProxyContract, pool.id, pool.vault)
-  const crpPoolToken = useERC20Contract(pool.id)
   const corePool = usePoolContract(pool.vault)
-  const yieldYak = useYieldYak()
 
   const { data } = useSWR([GET_INFO_POOL], query =>
     request('https://backend.kassandra.finance', query, {
@@ -126,12 +128,12 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
   async function handle1Inch() {
     const tokenWithHigherLiquidityPool =
-      await corePool.checkTokenWithHigherLiquidityPool()
+      await corePool.checkTokenWithHigherLiquidityPool(pool.underlying_assets)
 
-    const tokenWrappedAddress = corePool.getTokenWrapped(tokenWithHigherLiquidityPool.address)
+      const tokenWrappedAddress = corePool.getTokenWrapped(pool.underlying_assets, tokenWithHigherLiquidityPool.address)
 
     const response = await fetch(
-      `${URL_1INCH}${pool.chain_id}/swap?fromTokenAddress=${
+      `${URL_1INCH}${pool.chainId}/swap?fromTokenAddress=${
         tokenSelect.address
       }&toTokenAddress=${
         tokenWrappedAddress
@@ -147,10 +149,10 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
   async function handleTokenSelected() {
     const tokensChecked = await corePool.checkTokenInThePool(
-      tokenSelect.address
+      pool.underlying_assets, tokenSelect.address
     )
     const tokenWithHigherLiquidityPool =
-      await corePool.checkTokenWithHigherLiquidityPool()
+      await corePool.checkTokenWithHigherLiquidityPool(pool.underlying_assets)
 
     const tokenAddressOrYRT =
       tokensChecked?.is_wraps === 1
@@ -293,7 +295,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
       try {
         if (approvals[typeAction][0] === 0 && tokenSelect.address !== addressNativeToken1Inch) {
           ERC20(tokenSelect.address).approve(
-            ProxyContract,
+            operation.contractAddress,
             userWalletAddress,
             approvalCallback(tokenSelect.symbol, tokenSelect.address, typeAction)
           )
@@ -301,13 +303,15 @@ const Invest = ({ typeAction }: IInvestProps) => {
         }
 
         trackBuying(pool.id, pool.symbol, data?.pool?.price_usd, pool.chain.chainName)
-        proxy.joinswapExternAmountIn(
-          tokenSelect.address,
-          new BigNumber(amountTokenIn.toString()),
-          new BigNumber(amountTokenOut.toString()).mul(slippageBase).div(slippageExp),
+
+        operation.joinswapExternAmountIn({
+          tokenInAddress: tokenSelect.address,
+          tokenAmountIn: new BigNumber(amountTokenIn.toString()),
+          minPoolAmountOut: new BigNumber(amountTokenOut.toString()).mul(slippageBase).div(slippageExp),
           userWalletAddress,
-          trasactionData,
-          investCallback(
+          data: trasactionData,
+          poolTokens: pool.underlying_assets,
+          callback: investCallback(
             pool.symbol,
             Number(BNtoDecimal(
               Big(amountTokenOut.toString())
@@ -318,10 +322,8 @@ const Invest = ({ typeAction }: IInvestProps) => {
               2
             ))
           )
-        )
-
+        })
         return
-
       } catch (error) {
         dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
       }
@@ -330,7 +332,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
   // verificar se o token está aprovado
   React.useEffect(() => {
-    if (chainId !== pool.chain_id) {
+    if (chainId !== pool.chainId) {
       return
     }
 
@@ -389,19 +391,20 @@ const Invest = ({ typeAction }: IInvestProps) => {
       return
     }
 
-    if (chainId !== pool.chain_id) {
+    if (chainId !== pool.chainId) {
       setAmountTokenOut(Big(0))
       return
     }
 
     async function generateEstimatedGas(transactionDataTx: any) {
-      const response = await proxy.estimatedGas(
+      const response = await operation.estimatedGas({
         userWalletAddress,
-        tokenSelect.address,
-        new BigNumber('0'),
-        new BigNumber(amountTokenIn.toString() || 0),
-        transactionDataTx
-      )
+        tokenInAddress: tokenSelect.address,
+        minPoolAmountOut: new BigNumber('0'),
+        amountTokenIn:  new BigNumber(amountTokenIn.toString() || 0),
+        data: transactionDataTx,
+        poolTokens: pool.underlying_assets
+      })
 
       if (response) {
         setGasFee(prevState => ({
@@ -414,80 +417,23 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
     const calc = async () => {
       try {
-        const { tokenInAddress, newAmountTokenIn, transactionDataTx, isWrap } = await handleTokenSelected()
+        const tokenSelected = await handleTokenSelected()
 
-        const [
-          tokenInTotalPoolBalance,
-          tokenInDenormalizedWeight,
-          poolSupply,
-          poolTotalDenormalizedWeight,
-          poolSwapFee
-        ] = await Promise.all([
-          corePool.balance(tokenInAddress),
-          corePool.denormalizedWeight(tokenInAddress),
-          crpPoolToken.totalSupply(),
-          corePool.totalDenormalizedWeight(),
-          corePool.swapFee()
-        ])
+        // await generateEstimatedGas(tokenSelected.transactionDataTx)
 
-        try {
-          await generateEstimatedGas(transactionDataTx)
-          const newSwapOutAmount = await proxy.tryJoinswapExternAmountIn(
-            tokenInAddress,
-            new BigNumber(newAmountTokenIn.toString()),
-            new BigNumber('0'),
-            userWalletAddress
-          )
+        const { investAmountOut, transactionError } = await operation.calcInvestAmountOut({
+          tokenSelected,
+          userWalletAddress,
+          minAmountOut: new BigNumber('0'),
+          selectedTokenInBalance
+        })
 
-          setAmountTokenOut(Big(newSwapOutAmount))
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-          let investAmoutInCalc: BigNumber = new BigNumber(
-            newAmountTokenIn.toString()
-          )
-
-          if (isWrap) {
-            investAmoutInCalc = await yieldYak.convertBalanceWrappedYRT(
-              new BigNumber(newAmountTokenIn.toString()),
-              tokenInAddress
-            )
-          }
-          const newSwapOutPrice = await corePool.calcPoolOutGivenSingleIn(
-            tokenInTotalPoolBalance,
-            tokenInDenormalizedWeight,
-            poolSupply,
-            poolTotalDenormalizedWeight,
-            investAmoutInCalc,
-            poolSwapFee
-          )
-
-          setAmountTokenOut(Big(newSwapOutPrice.toString()))
-
-          if (userWalletAddress.length > 0) {
-            const errorStr = error.toString()
-            if (errorStr.search(/ERR_(BPOW_BASE_TOO_|MATH_APPROX)/) > -1) {
-              setErrorMsg('This amount is too low for the pool!')
-              return
-            }
-            if (errorStr.search('ERR_MAX_IN_RATIO') > -1) {
-              setErrorMsg(
-                "The amount can't be more than half of what's in the pool!"
-              )
-              return
-            }
-            if (
-              Big(amountTokenIn).gt(selectedTokenInBalance) &&
-              Number(amountTokenIn.toString()) > 0
-            ) {
-              setErrorMsg('This amount exceeds your balance!')
-              return
-            }
-          }
+        setAmountTokenOut(Big(investAmountOut.toString()))
+        if (transactionError) {
+          setErrorMsg(transactionError)
         }
-
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-
         const errorStr = error.toString()
         if (userWalletAddress.length > 0) {
           if (errorStr.search('ERR_BPOW_BASE_TOO_HIGH') > -1) {
@@ -610,7 +556,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
           onClick={() => dispatch(setModalWalletActive(true))}
           text="Connect Wallet"
         />
-      ) : chainId === pool.chain_id ? (
+      ) : chainId === pool.chainId ? (
         <Button
           className="btn-submit"
           backgroundPrimary
@@ -620,7 +566,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
             (approvals[typeAction][0] === Approval.Approved &&
               (amountTokenIn.toString() === '0' ||
                 amountTokenOut.toString() === '0' ||
-                errorMsg.length > 0))
+                errorMsg?.length > 0))
           }
           fullWidth
           type="submit"
