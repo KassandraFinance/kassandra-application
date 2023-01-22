@@ -143,10 +143,10 @@ export default class operationV1 implements IOperations {
     minPoolAmountOut,
     userWalletAddress,
     data,
-    poolTokens,
-    callback
+    poolTokenList,
+    transactionCallback
   }: JoinSwapAmountInParams) {
-    const tokensChecked = await this.corePoolContract.checkTokenInThePool(poolTokens, tokenInAddress)
+    const tokensChecked = await this.corePoolContract.checkTokenInThePool(poolTokenList, tokenInAddress)
     const avaxValue = tokenInAddress === addressNativeToken1Inch ? tokenAmountIn : new BigNumber(0)
 
     if (tokensChecked) {
@@ -158,12 +158,12 @@ export default class operationV1 implements IOperations {
           minPoolAmountOut,
           this.referral
         )
-        .send({ from: userWalletAddress, value: avaxValue }, callback)
+        .send({ from: userWalletAddress, value: avaxValue }, transactionCallback)
 
       return res
     }
 
-    const { address: tokenExchange } = await this.corePoolContract.checkTokenWithHigherLiquidityPool(poolTokens)
+    const { address: tokenExchange } = await this.corePoolContract.checkTokenWithHigherLiquidityPool(poolTokenList)
 
     const res = await this.contract.methods
       .joinswapExternAmountInWithSwap(
@@ -175,7 +175,7 @@ export default class operationV1 implements IOperations {
         this.referral,
         data
       )
-      .send({ from: userWalletAddress, value: avaxValue }, callback)
+      .send({ from: userWalletAddress, value: avaxValue }, transactionCallback)
 
     return res
   }
@@ -186,11 +186,11 @@ export default class operationV1 implements IOperations {
     minPoolAmountOut,
     amountTokenIn,
     data,
-    poolTokens
+    poolTokenList
   }: EstimatedGasParams) {
-    const tokensChecked = await this.corePoolContract.checkTokenInThePool(poolTokens, tokenInAddress)
+    const tokensChecked = await this.corePoolContract.checkTokenInThePool(poolTokenList, tokenInAddress)
     const avaxValue = tokenInAddress === addressNativeToken1Inch ? amountTokenIn : new BigNumber(0)
-    const response = await this.corePoolContract.checkTokenWithHigherLiquidityPool(poolTokens)
+    const response = await this.corePoolContract.checkTokenWithHigherLiquidityPool(poolTokenList)
 
     const estimateGas = await web3.eth.estimateGas({
       // "value": '0x0', // Only tokens
@@ -323,22 +323,21 @@ export default class operationV1 implements IOperations {
 
   // calcWithdrawAmountsOut
   async calcAllOutGivenPoolIn({
-    tokenInAddress,
     poolAmountIn,
     userWalletAddress,
     selectedTokenInBalance,
-    underlyingAssetsInfo
+    poolTokenList
   }: CalcAllOutGivenPoolInParams) {
     let withdrawAllAmoutOut = [new BigNumber('0')]
     let transactionError: string | undefined = undefined
-    const tokensInPool = underlyingAssetsInfo.map(item => item.token.wraps?.id ?? item.token.id)
+    const tokensInPool = poolTokenList.map(item => item.token.wraps?.id ?? item.token.id)
 
     try {
       const poolSupply = await this.ER20Contract.totalSupply()
       const exitFee = await this.corePoolContract.exitFee()
 
       withdrawAllAmoutOut = await Promise.all(
-        underlyingAssetsInfo.map(async (item) => {
+        poolTokenList.map(async (item) => {
           const swapOutTotalPoolBalance = await this.corePoolContract.balance(item.token.id)
 
           const withdrawAmout = this.getWithdrawAmount(
@@ -391,12 +390,12 @@ export default class operationV1 implements IOperations {
     tokenOutAddress,
     tokenAmountIn,
     minPoolAmountOut,
-    walletAddress,
-    TransactionCallback: TransactionCallback
+    userWalletAddress,
+    transactionCallback
   }: ExitSwapPoolAmountInParams) {
     const res = await this.contract.methods
       .exitswapPoolAmountIn(this.crpPool, tokenOutAddress, tokenAmountIn, minPoolAmountOut)
-      .send({ from: walletAddress }, TransactionCallback)
+      .send({ from: userWalletAddress }, transactionCallback)
 
     return res
   }
@@ -406,9 +405,9 @@ export default class operationV1 implements IOperations {
     amountAllTokenOut,
     slippageBase,
     slippageExp,
-    walletAddress,
-    poolTokens,
-    TransactionCallback: TransactionCallback
+    userWalletAddress,
+    poolTokenList,
+    transactionCallback
   }: ExitSwapPoolAllTokenAmountInParams) {
     this.corePoolContract.currentTokens()
       .then(async tokens => {
@@ -422,7 +421,7 @@ export default class operationV1 implements IOperations {
         )
       }
 
-      const tokensWithdraw = poolTokens.map(token =>
+      const tokensWithdraw = poolTokenList.map(token =>
         token.token.wraps ?
         token.token.wraps.id :
         token.token.id
@@ -430,7 +429,7 @@ export default class operationV1 implements IOperations {
 
       const res = await this.contract.methods
         .exitPool(this.crpPool, tokenAmountIn, tokensWithdraw, swapOutAmounts)
-        .send({ from: walletAddress }, TransactionCallback)
+        .send({ from: userWalletAddress }, transactionCallback)
         return res
       })
   }

@@ -241,8 +241,8 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           tokenOutAddress: tokenSelect.address,
           tokenAmountIn: new BigNumber(amountTokenIn.toString()),
           minPoolAmountOut: new BigNumber(amountTokenOut.toString()).mul(slippageBase).div(slippageExp),
-          walletAddress: userWalletAddress,
-          TransactionCallback: withdrawCallback(pool.symbol, -1 * 0)
+          userWalletAddress,
+          transactionCallback: withdrawCallback(pool.symbol, -1 * 0)
         })
         return
       }
@@ -252,9 +252,9 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         amountAllTokenOut,
         slippageBase,
         slippageExp,
-        walletAddress: userWalletAddress,
-        poolTokens: pool.underlying_assets,
-        TransactionCallback: withdrawCallback(pool.symbol, -1 * 0)
+        userWalletAddress,
+        poolTokenList: pool.underlying_assets,
+        transactionCallback: withdrawCallback(pool.symbol, -1 * 0)
       })
       return
     } catch (error) {
@@ -286,11 +286,10 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       if (typeWithdraw === 'Best_value') {
         if (userWalletAddress.length > 0 && Big(amountTokenIn).gt(Big('0'))) {
           const { transactionError, withdrawAllAmoutOut } = await operation.calcAllOutGivenPoolIn({
-            tokenInAddress: tokenSelect.address,
             poolAmountIn: Big(amountTokenIn),
             userWalletAddress,
             selectedTokenInBalance,
-            underlyingAssetsInfo: pool.underlying_assets
+            poolTokenList: pool.underlying_assets
           })
           setamountAllTokenOut(withdrawAllAmoutOut ?? [])
           transactionError && setErrorMsg(transactionError)

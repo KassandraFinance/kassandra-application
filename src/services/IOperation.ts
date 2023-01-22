@@ -23,8 +23,8 @@ export type JoinSwapAmountInParams = {
   minPoolAmountOut: BigNumber,
   userWalletAddress: string,
   data: any,
-  poolTokens: underlyingAssetsInfo[],
-  callback: TransactionCallback
+  poolTokenList: underlyingAssetsInfo[],
+  transactionCallback: TransactionCallback
 }
 
 export type EstimatedGasParams = {
@@ -33,7 +33,7 @@ export type EstimatedGasParams = {
   minPoolAmountOut: BigNumber,
   amountTokenIn: BigNumber,
   data: any,
-  poolTokens: underlyingAssetsInfo[]
+  poolTokenList: underlyingAssetsInfo[]
 }
 
 export type EstimatedGasResult = {
@@ -56,11 +56,10 @@ export type CalcSingleOutGivenPoolInResult = {
 }
 
 export type CalcAllOutGivenPoolInParams = {
-  tokenInAddress: string,
   poolAmountIn: Big,
   userWalletAddress: string,
   selectedTokenInBalance: Big,
-  underlyingAssetsInfo: underlyingAssetsInfo[]
+  poolTokenList: underlyingAssetsInfo[]
 }
 
 export type CalcAllOutGivenPoolInResult = {
@@ -72,8 +71,8 @@ export type ExitSwapPoolAmountInParams = {
   tokenOutAddress: string,
   tokenAmountIn: BigNumber,
   minPoolAmountOut: BigNumber,
-  walletAddress: string,
-  TransactionCallback: TransactionCallback
+  userWalletAddress: string,
+  transactionCallback: TransactionCallback
 }
 
 export type ExitSwapPoolAllTokenAmountInParams = {
@@ -81,7 +80,7 @@ export type ExitSwapPoolAllTokenAmountInParams = {
   amountAllTokenOut: BigNumber[],
   slippageBase: BigNumber,
   slippageExp: BigNumber,
-  walletAddress: string,
-  poolTokens: underlyingAssetsInfo[],
-  TransactionCallback: TransactionCallback
+  userWalletAddress: string,
+  poolTokenList: underlyingAssetsInfo[],
+  transactionCallback: TransactionCallback
 }

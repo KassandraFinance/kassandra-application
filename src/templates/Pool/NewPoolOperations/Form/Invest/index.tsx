@@ -310,8 +310,8 @@ const Invest = ({ typeAction }: IInvestProps) => {
           minPoolAmountOut: new BigNumber(amountTokenOut.toString()).mul(slippageBase).div(slippageExp),
           userWalletAddress,
           data: trasactionData,
-          poolTokens: pool.underlying_assets,
-          callback: investCallback(
+          poolTokenList: pool.underlying_assets,
+          transactionCallback: investCallback(
             pool.symbol,
             Number(BNtoDecimal(
               Big(amountTokenOut.toString())
@@ -403,7 +403,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         minPoolAmountOut: new BigNumber('0'),
         amountTokenIn:  new BigNumber(amountTokenIn.toString() || 0),
         data: transactionDataTx,
-        poolTokens: pool.underlying_assets
+        poolTokenList: pool.underlying_assets
       })
 
       if (response) {

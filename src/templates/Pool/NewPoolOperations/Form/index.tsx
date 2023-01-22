@@ -50,13 +50,13 @@ const Form = ({
 }: IFormProps) => {
   const pool = useAppSelector(state => state.pool)
 
-  // const operationVersion = pool.pool_version === 1 ?
-  //   new operationV1(ProxyContract, pool.id) :
-  //   new operationV2(ProxyContract, pool.id)
+  const operationVersion = pool.pool_version === 1 ?
+    new operationV1(ProxyContract, pool.id, corePoolContract(pool.vault), ERC20(pool.address), YieldYakContract()) :
+    new operationV2(ProxyContract, pool.id)
   //chamar os dados da pool pelo Redux
 
   return (
-    <OperationProvider operation={{operation: new operationV1(ProxyContract, pool.id, corePoolContract(pool.vault), ERC20(pool.address), YieldYakContract())}}>
+    <OperationProvider operation={{operation: operationVersion}}>
       <S.Form>
         {typeAction === "Invest" && <Invest typeAction="Invest" />}
         {typeAction === "Withdraw" && <Withdraw typeWithdraw={typeWithdraw} typeAction="Withdraw" />}
