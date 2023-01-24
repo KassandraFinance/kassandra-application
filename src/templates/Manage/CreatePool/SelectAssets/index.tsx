@@ -1,6 +1,9 @@
 import React from 'react'
 import useSWR from 'swr'
 import BigNumber from 'bn.js'
+import Web3 from 'web3'
+import { AbiItem, toChecksumAddress } from 'web3-utils'
+import request from 'graphql-request'
 
 import { ERC20 } from '../../../../hooks/useERC20Contract'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
@@ -10,59 +13,37 @@ import {
   setAllocation,
   TokenType
 } from '../../../../store/reducers/poolCreationSlice'
+import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
+import { KASSANDRA_BACKEND } from '../../../../constants/tokenAddresses'
+import { GET_INFO_TOKENS } from './graphql'
 
 import Steps from '../../../../components/Steps'
 import CreatePoolHeader from '../CreatePoolHeader'
 import PoolSummary from './PoolSummary'
 import AssetsTable from '../AssetsTable'
 
-import aave from '../../../../../public/assets/logos/aave.svg'
-import matic from '../../../../../public/assets/logos/matic.svg'
-import btc from '../../../../../public/assets/logos/bitcon.svg'
-import eth from '../../../../../public/assets/logos/eth-logo.svg'
-
 import * as S from './styles'
 
-import { CoinType } from './PoolSummary'
-
-export const mockData: CoinType[] = [
-  {
-    coinName: 'Aave',
-    coinSymbol: 'aave',
-    coinImage: aave.src,
-    price: 0.05,
-    url: 'www.google.com',
-    address: '0xd6df932a45c0f255f85145f286ea0b292b21c90b',
-    decimals: 18
-  },
-  {
-    coinName: 'matic',
-    coinSymbol: 'matic',
-    coinImage: matic.src,
-    price: 0.73,
-    url: 'www.google.com',
-    address: '0x0000000000000000000000000000000000001010',
-    decimals: 18
-  },
-  {
-    coinName: 'Wrapped Bitcoin',
-    coinSymbol: 'wbtc',
-    coinImage: btc.src,
-    price: 0.05,
-    url: 'www.google.com',
-    address: '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6',
-    decimals: 8
-  },
-  {
-    coinName: 'WETH',
-    coinSymbol: 'weth',
-    coinImage: eth.src,
-    price: 0.73,
-    url: 'www.google.com',
-    address: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
-    decimals: 18
-  }
-]
+// whitelist vai ficar no subgraph
+const WHITELIST_ADDRESS = '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57'
+const mockTokens: { [key: string]: string } = {
+  '0x841a91e3De1202b7b750f464680068aAa0d0EA35':
+    '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', // dai
+  '0xDcfcef36F438ec310d8a699e3D3729398547b2BF':
+    '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', // wmatic
+  '0xca813266889e0FD141dF48B85294855616015fA4':
+    '0xeeeeeb57642040be42185f49c52f7e9b38f8eeee', // elk
+  '0xb22ED6ED220506E4757Bc90cbB05d41b6257b590':
+    '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', // tether
+  '0x2f52C8ce1e5A064B4202762aD34E075E8826C252':
+    '0x3BA4c387f786bFEE076A58914F5Bd38d668B42c3', // bnb
+  '0x874a7CE88d933e6Edc24f4867923F1d09568b08B':
+    '0xb33eaad8d922b1083446dc23f610c2567fb5180f', // uniswap
+  '0xB0C30dDFAF159ce47097E4b08A3436fAE8f43a4d':
+    '0xd6df932a45c0f255f85145f286ea0b292b21c90b', // aave
+  '0x07Fb45533CC34Cd88D69C57739ceFb77202733E9':
+    '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6' // wbiticoin
+}
 
 export type CoinGeckoAssetsResponseType = {
   [key: string]: {
@@ -72,7 +53,16 @@ export type CoinGeckoAssetsResponseType = {
   }
 }
 
+export type TokensInfoResponseType = {
+  id: string,
+  logo: string,
+  name: string,
+  symbol: string,
+  decimals: number,
+}
+
 const SelectAssets = () => {
+  const [whitelist, setWhitelist] = React.useState<string[]>();
   const [tokenBalance, setTokenBalance] = React.useState<{
     [key: string]: BigNumber
   }>({})
@@ -94,19 +84,15 @@ const SelectAssets = () => {
     totalAllocation = totalAllocation + token.allocation
   }
 
-  let addressesList: string[] = []
-  for (const token of mockData) {
-    addressesList = [...addressesList, token.address]
-  }
 
-  async function getBalances() {
+  async function getBalances(tokensList: TokensInfoResponseType[]) {
     let balanceArr = {}
-    for (const token of mockData) {
-      const { balance } = ERC20(token.address)
+    for (const token of tokensList) {
+      const { balance } = ERC20(token.id)
       const balanceValue = await balance(wallet)
       balanceArr = {
         ...balanceArr,
-        [token.address]: balanceValue
+        [token.id]: balanceValue
       }
     }
 
@@ -130,13 +116,50 @@ const SelectAssets = () => {
     dispatch(setTokenLock(id))
   }
 
-  const { data } = useSWR<CoinGeckoAssetsResponseType>(
+
+  React.useEffect(() => {
+    const getWhitelist = async () => {
+      try {
+        const web3 = new Web3("https://rpc.ankr.com/eth_goerli");
+        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, WHITELIST_ADDRESS);
+        const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
+        
+        setWhitelist(whitelist.map((token: string) => toChecksumAddress(mockTokens[token])));
+      } catch (error) {
+        
+      }
+    }
+    getWhitelist();
+  }, [])
+
+  const { data } = useSWR<{ tokensByIds: TokensInfoResponseType[] }>([GET_INFO_TOKENS, whitelist], (query, whitelist) =>
+    request(KASSANDRA_BACKEND, query, {
+      whitelist
+    })
+  )
+
+  const tokensListFiltered = data?.tokensByIds.filter(el => {
+    return el !== null
+  })
+
+  let addressesList: string[] = []
+  const tokensArr = data?.tokensByIds ? data.tokensByIds : []
+  if (data?.tokensByIds) {
+    for (const token of tokensArr) {
+      if (token) {
+        addressesList = [...addressesList, token.id]
+      }
+    }
+  }
+
+  const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
     `https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=${addressesList.toString()}&vs_currencies=usd&include_market_cap=true&include_24hr_change=true`
   )
 
   React.useEffect(() => {
-    getBalances()
-  }, [])
+    const arr = tokensListFiltered ? tokensListFiltered : []
+    getBalances(arr)
+  })
 
   return (
     <S.SelectAssets>
@@ -174,7 +197,7 @@ const SelectAssets = () => {
         ]}
       />
       <S.PoolContainer>
-        <AssetsTable priceList={data} tokenBalance={tokenBalance} />
+        <AssetsTable tokensData={tokensListFiltered} priceList={priceData} tokenBalance={tokenBalance} />
 
         <PoolSummary
           coinsList={tokensList}
@@ -183,7 +206,7 @@ const SelectAssets = () => {
           onChange={handleInput}
           onRemoveToken={handleRemoveToken}
           onLockToken={handleLockToken}
-          priceList={data}
+          priceList={priceData}
         />
       </S.PoolContainer>
     </S.SelectAssets>
