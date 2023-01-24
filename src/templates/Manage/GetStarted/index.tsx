@@ -14,7 +14,7 @@ import { BNtoDecimal } from '../../../utils/numerals'
 
 import Button from '../../../components/Button'
 import ExternalLink from '../../../components/ExternalLink'
-import ModalWaitingList from '../../../components/Modals/ModalWaitingList'
+
 import CreatePool from '../CreatePool'
 
 import kacyLogoShadow from '../../../../public/assets/images/kacy-logo-shadow.png'
