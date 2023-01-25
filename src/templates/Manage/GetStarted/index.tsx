@@ -5,6 +5,7 @@ import useSWR from 'swr'
 import request from 'graphql-request'
 import Big from 'big.js'
 
+import changeChain, { ChainDetails } from '../../../utils/changeChain'
 import { useAppSelector } from '../../../store/hooks'
 
 import { GET_PROFILE } from './graphql'
@@ -14,6 +15,7 @@ import { BNtoDecimal } from '../../../utils/numerals'
 
 import Button from '../../../components/Button'
 import ExternalLink from '../../../components/ExternalLink'
+import ModalWalletConnect from '../../../components/Modals/ModalWalletConnect'
 
 import CreatePool from '../CreatePool'
 
@@ -26,12 +28,27 @@ type UserResponse = {
     votingPower: string
   }
 }
+const goerliNetwork: ChainDetails = {
+  chainId: 5,
+  chainIdHex: '0x5',
+  chainName: 'Goerli test network',
+  nativeCurrency: {
+    name: 'Ether',
+    symbol: 'GoerliETH',
+    decimals: 18
+  },
+  rpcUrls: ['https://goerli.infura.io/v3/'],
+  blockExplorerUrls: ['https://goerli.etherscan.io'],
+  secondsPerBlock: 2,
+  wrapped: ''
+}
 
 const GetStarted = () => {
-  const [isModalWaitingList, setIsModalWaitingList] =
-    React.useState<boolean>(false)
+  const [isModalWallet, setIsModalWallet] = React.useState<boolean>(false)
   const [isCreatePool, setIsCreatePool] = React.useState(false)
+
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const chainId = useAppSelector(state => state.chainId)
 
   const { data } = useSWR<UserResponse>([GET_PROFILE], query =>
     request(SUBGRAPH_URL, query, {
@@ -71,20 +88,33 @@ const GetStarted = () => {
           </S.VotingPowerContainer>
         )}
         <S.ButtonWrapper>
-          <Button
-            text="Create New Pool"
-            backgroundSecondary
-            fullWidth
-            // onClick={() => setIsModalWaitingList(true)}
-            onClick={() => setIsCreatePool(true)}
-          />
+          {userWalletAddress.length !== 42 ? (
+            <Button
+              text="Connect Wallet"
+              backgroundSecondary
+              fullWidth
+              onClick={() => setIsModalWallet(true)}
+            />
+          ) : chainId !== 5 ? (
+            <Button
+              text="Connect to GoerliETH"
+              backgroundSecondary
+              fullWidth
+              onClick={() => changeChain(goerliNetwork)}
+            />
+          ) : (
+            <Button
+              text="Create New Pool"
+              backgroundSecondary
+              fullWidth
+              onClick={() => setIsCreatePool(true)}
+            />
+          )}
         </S.ButtonWrapper>
       </S.Content>
 
-      {/* {isModalWaitingList && (
-        <ModalWaitingList setIsModalWaitingList={setIsModalWaitingList} />
-      )} */}
       {isCreatePool && <CreatePool setIsCreatePool={setIsCreatePool} />}
+      {isModalWallet && <ModalWalletConnect setModalOpen={setIsModalWallet} />}
     </S.GetStarted>
   )
 }
