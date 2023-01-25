@@ -70,7 +70,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const tokensList = poolData.tokens ? poolData.tokens : []
 
     // for testnet Goerli
-    const mockTokensListSorted = mockTokensList.sort((a, b) => a < b ? 1 : -1)
+    const mockTokensListSorted = mockTokensList.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
     for (const mockToken of mockTokensListSorted) {
       if (mockTokens[mockToken]) {
         for (const token of tokensList) {

@@ -15,9 +15,9 @@ export const AssetsTable = styled.div`
 
       @media (min-width: 992px) {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
 
-        min-width: 4.3rem;
+        min-width: 6.5rem;
 
         text-align: right;
       }
@@ -28,16 +28,17 @@ export const AssetsTable = styled.div`
 
       @media (min-width: 576px) {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
 
-        min-width: 9.9rem;
+        min-width: 11rem;
 
         text-align: right;
       }
     }
 
     .balance {
-      min-width: 8rem;
+      align-items: flex-end;
+      min-width: 10rem;
 
       text-align: right;
     }
@@ -96,7 +97,7 @@ export const Tr = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1.6rem;
+    gap: 1rem;
 
     margin-inline: 1.6rem;
     padding-block: 2.4rem;
@@ -106,21 +107,21 @@ export const Tr = styled.div`
     }
 
     @media (min-width: 576px) {
-      gap: 5rem;
+      gap: 3.6rem;
     }
 
     @media (min-width: 768px) {
-      gap: 11rem;
+      gap: 9rem;
 
       margin-inline: 2.4rem;
     }
 
     @media (min-width: 992px) {
-      gap: 3.6rem;
+      gap: 0.8rem;
     }
 
     @media (min-width: 1200px) {
-      gap: 8.5rem;
+      gap: 6rem;
     }
   `}
 `
