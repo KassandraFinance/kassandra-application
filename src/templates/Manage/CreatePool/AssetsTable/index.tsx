@@ -155,22 +155,20 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                       : 0}
                   </S.Td>
                   <S.Td className="balance">
-                    {tokenBalance[coin.id]
-                      ? Number(
-                          BNtoDecimal(
-                            Big(tokenBalance[coin.id].toString()).div(
-                              Big(10).pow(coin.decimals)
-                            ),
-                            2
-                          )
+                    {tokenBalance[coin.id.toLowerCase()]
+                      ? BNtoDecimal(
+                          Big(
+                            tokenBalance[coin.id.toLowerCase()].toString()
+                          ).div(Big(10).pow(coin.decimals)),
+                          2
                         )
                       : 0}{' '}
                     {coin.symbol}
                     <S.SecondaryText>
                       ~$
-                      {tokenBalance[coin.id] && priceList
+                      {tokenBalance[coin.id.toLowerCase()] && priceList
                         ? BNtoDecimal(
-                            Big(tokenBalance[coin.id].toString())
+                            Big(tokenBalance[coin.id.toLowerCase()].toString())
                               .div(Big(10).pow(coin.decimals))
                               .mul(Big(priceList[coin.id.toLowerCase()].usd)),
                             2
