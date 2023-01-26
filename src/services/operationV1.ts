@@ -5,13 +5,14 @@ import { Contract } from 'web3-eth-contract';
 
 import HermesProxy from "../constants/abi/HermesProxy.json"
 
-import { CalcAllOutGivenPoolInParams, CalcAmountOutParams, CalcSingleOutGivenPoolInParams, EstimatedGasParams, ExitSwapPoolAllTokenAmountInParams, ExitSwapPoolAmountInParams, JoinSwapAmountInParams } from './IOperation';
+import { CalcAllOutGivenPoolInParams, CalcAmountOutParams, CalcSingleOutGivenPoolInParams, EstimatedGasParams, ExitSwapPoolAllTokenAmountInParams, ExitSwapPoolAmountInParams, IOperations, JoinSwapAmountInParams } from './IOperation';
 import { addressNativeToken1Inch } from '../constants/tokenAddresses';
-import { IOperations } from '../templates/Pool/NewPoolOperations/Form/PoolOperationContext';
 
 import { ERC20 } from '../hooks/useERC20Contract';
 import { corePoolContract } from '../hooks/usePoolContract';
 import { YieldYakContract } from '../hooks/useYieldYak';
+
+import { checkTokenInThePool, checkTokenWithHigherLiquidityPool } from '../utils/poolUtils';
 
 import web3 from '../utils/web3'
 
@@ -25,6 +26,7 @@ export default class operationV1 implements IOperations {
   contract: Contract;
   crpPool: string;
   contractAddress: string;
+  withdrawContract: string;
   referral = "0x0000000000000000000000000000000000000000";
   corePoolContract: ReturnType<typeof corePoolContract>;
   ER20Contract: ReturnType<typeof ERC20>
@@ -44,6 +46,7 @@ export default class operationV1 implements IOperations {
     this.corePoolContract = _corePoolContract
     this.ER20Contract = _ER20Contract
     this.yieldYakContract = _yieldYakContract
+    this.withdrawContract = proxyAddress
   }
 
   async getInfoPool(tokenInAddress: string) {
@@ -144,12 +147,12 @@ export default class operationV1 implements IOperations {
     userWalletAddress,
     data,
     poolTokenList,
+    hasTokenInPool,
     transactionCallback
   }: JoinSwapAmountInParams) {
-    const tokensChecked = await this.corePoolContract.checkTokenInThePool(poolTokenList, tokenInAddress)
     const avaxValue = tokenInAddress === addressNativeToken1Inch ? tokenAmountIn : new BigNumber(0)
 
-    if (tokensChecked) {
+    if (hasTokenInPool) {
       const res = await this.contract.methods
         .joinswapExternAmountIn(
           this.crpPool,
@@ -163,7 +166,7 @@ export default class operationV1 implements IOperations {
       return res
     }
 
-    const { address: tokenExchange } = await this.corePoolContract.checkTokenWithHigherLiquidityPool(poolTokenList)
+    const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(poolTokenList)
 
     const res = await this.contract.methods
       .joinswapExternAmountInWithSwap(
@@ -188,9 +191,9 @@ export default class operationV1 implements IOperations {
     data,
     poolTokenList
   }: EstimatedGasParams) {
-    const tokensChecked = await this.corePoolContract.checkTokenInThePool(poolTokenList, tokenInAddress)
+    const tokensChecked = checkTokenInThePool(poolTokenList, tokenInAddress)
     const avaxValue = tokenInAddress === addressNativeToken1Inch ? amountTokenIn : new BigNumber(0)
-    const response = await this.corePoolContract.checkTokenWithHigherLiquidityPool(poolTokenList)
+    const response = checkTokenWithHigherLiquidityPool(poolTokenList)
 
     const estimateGas = await web3.eth.estimateGas({
       // "value": '0x0', // Only tokens
