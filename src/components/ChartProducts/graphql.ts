@@ -27,7 +27,7 @@ export const GET_CHART = gql`
         orderBy: timestamp
         first: 365
       ) {
-        value
+        close
         timestamp
       }
       # hourly allocation chart

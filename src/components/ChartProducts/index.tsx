@@ -2,8 +2,6 @@ import React from 'react'
 import useSWR from 'swr'
 import request from 'graphql-request'
 
-import { SUBGRAPH_URL } from '../../constants/tokenAddresses'
-
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
@@ -46,7 +44,7 @@ const ChartProducts = () => {
   const { trackEventFunction } = useMatomoEcommerce()
 
   const { data } = useSWR([GET_CHART, params], (query, params) =>
-    request(SUBGRAPH_URL, query, params)
+    request('https://backend.kassandra.finance', query, params)
   )
 
   function returnDate(period: string) {
@@ -145,10 +143,10 @@ const ChartProducts = () => {
   React.useEffect(() => {
     if (data) {
       const newTVL = data?.pool?.total_value_locked.map(
-        (item: { timestamp: number, value: string }) => {
+        (item: { timestamp: number, close: string }) => {
           return {
             timestamp: item.timestamp,
-            value: Number(item.value)
+            value: Number(item.close)
           }
         }
       )
