@@ -47,6 +47,11 @@ export const ProxyContract = process.env.NEXT_PUBLIC_MASTER === '1' ?
   :
   '0x97e33051B09092C1301A90b964a74cA51C0b068B'
 
+// export const ProxyInvestV2 = '0xFADd38F6DFa4057c62C2e92C4FaFB4c3AC198e06'
+// export const BalancerHelpers = '0x5aDDCCa35b7A0D07C74063c48700C8590E87864E'
+export const ProxyInvestV2 = '0x1A5C772C6ED51e48F00Df7B33E4dAEEc36f37B76'
+export const BalancerHelpers = '0x239e55F427D44C3cc793f49bFB507ebe76638a2b' // Polygon
+
 export const addressNativeToken1Inch = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
 
 export const linkSnowtrace = process.env.NEXT_PUBLIC_MASTER === '1' ?
