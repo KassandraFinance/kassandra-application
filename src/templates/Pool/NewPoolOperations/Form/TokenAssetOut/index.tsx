@@ -5,6 +5,8 @@ import BigNumber from 'bn.js'
 import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
+import Jazzicon from 'react-jazzicon/dist/Jazzicon'
+import { jsNumberForAddress } from 'react-jazzicon'
 
 // import web3 from '../../../../../utils/web3'
 import { BNtoDecimal } from '../../../../../utils/numerals'
@@ -56,7 +58,14 @@ const TokenAssetOut = ({ typeAction, amountTokenOut }: ITokenAssetOutProps) => {
           <S.Title>Swap to</S.Title>
           <S.Token>
             <div className="img">
-              <img src={pool.logo} alt="" width={22} height={22} />
+              {pool.logo ? (
+                <img src={pool.logo} alt="" width={22} height={22} />
+              ) : (
+                <Jazzicon
+                  diameter={22}
+                  seed={jsNumberForAddress(pool.address)}
+                />
+              )}
             </div>
             <S.Symbol>{pool.symbol}</S.Symbol>
           </S.Token>

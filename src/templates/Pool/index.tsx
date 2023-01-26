@@ -7,6 +7,7 @@ import Big from 'big.js'
 
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 import { BNtoDecimal } from '../../utils/numerals'
 
@@ -226,7 +227,14 @@ const Pool = () => {
           <S.Product>
             <S.ProductDetails>
               <S.Intro introMobile={false} introDesktop={true}>
-                <img src={pool.logo} alt="" />
+                {pool.logo ? (
+                  <img src={pool.logo} alt="" />
+                ) : (
+                  <Jazzicon
+                    diameter={80}
+                    seed={jsNumberForAddress(pool.address)}
+                  />
+                )}
                 <S.NameIndex>
                   <S.NameAndSymbol>
                     <h1>{pool.name}</h1>
