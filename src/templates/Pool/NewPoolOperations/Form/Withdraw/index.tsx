@@ -9,11 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
 import { setModalWalletActive } from '../../../../../store/reducers/modalWalletActive'
 
-import useERC20Contract, { ERC20 } from '../../../../../hooks/useERC20Contract'
-import useProxy from '../../../../../hooks/useProxy'
-import useCoingecko from '../../../../../hooks/useCoingecko'
-import useYieldYak from '../../../../../hooks/useYieldYak'
-import usePoolContract from '../../../../../hooks/usePoolContract'
+import { ERC20 } from '../../../../../hooks/useERC20Contract'
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
 
 import waitTransaction, { MetamaskError, TransactionCallback } from '../../../../../utils/txWait'
@@ -30,7 +26,7 @@ import TokenAssetIn from '../TokenAssetIn'
 import TransactionSettings from '../TransactionSettings'
 
 import { GET_POOL } from './graphql'
-import { ProxyContract, SUBGRAPH_URL } from '../../../../../constants/tokenAddresses'
+import { ProxyContract } from '../../../../../constants/tokenAddresses'
 
 import * as S from './styles'
 
@@ -95,22 +91,10 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     state => state
   )
 
-  const proxy = useProxy(ProxyContract, pool.id, pool.vault)
-  const crpPoolToken = useERC20Contract(pool.id)
-  const corePool = usePoolContract(pool.vault)
-  const yieldYak = useYieldYak()
-
-  const tokenAddresses = pool.underlying_assets.map(item => item.token.wraps ? item.token.wraps.id : item.token.id)
-  const { priceToken } = useCoingecko(
-    pool.chain.nativeTokenName.toLowerCase(),
-    pool.chain.addressWrapped.toLowerCase(),
-    tokenAddresses.toString()
-  )
-
-  const { operation } = React.useContext(PoolOperationContext)
+  const { operation, priceToken } = React.useContext(PoolOperationContext)
 
   const { data } = useSWR([GET_POOL], query =>
-    request(SUBGRAPH_URL, query, { id: pool.id })
+    request('https://backend.kassandra.finance', query, { id: pool.id })
   )
 
   const approvalCallback = React.useCallback(
@@ -163,7 +147,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
           while (!approved) {
             approved = await ERC20(tokenAddress).allowance(
-              ProxyContract,
+              operation.withdrawContract,
               userWalletAddress
             )
             await new Promise(r => setTimeout(r, 200)) // sleep
@@ -229,10 +213,10 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       trackBuying(pool.id, pool.symbol, -1 * data?.pool?.price_usd, pool.chain.chainName)
 
       if (approvals[typeAction][0] === 0) {
-        ERC20(pool.id).approve(
-          operation.contractAddress,
+        ERC20(pool.address).approve(
+          operation.withdrawContract,
           userWalletAddress,
-          approvalCallback(pool.symbol, pool.id, typeAction)
+          approvalCallback(pool.symbol, pool.address, typeAction)
         )
         return
       }
@@ -291,8 +275,11 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
             selectedTokenInBalance,
             poolTokenList: pool.underlying_assets
           })
+
           setamountAllTokenOut(withdrawAllAmoutOut ?? [])
           transactionError && setErrorMsg(transactionError)
+
+          return
         }
       }
 
@@ -302,12 +289,12 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         const { withdrawAmoutOut, transactionError } = await operation.calcSingleOutGivenPoolIn({
           tokenInAddress: tokenAddress.token.id,
           tokenSelectAddress: tokenSelect.address,
-          poolAmountIn: Big(amountTokenIn),
+          poolAmountIn: amountTokenIn.toString(),
           isWrap: tokenAddress.token.wraps ? true : false,
           userWalletAddress,
           selectedTokenInBalance
         })
-        setAmountTokenOut(new Big(withdrawAmoutOut.toString()))
+        setAmountTokenOut(withdrawAmoutOut.toString())
         transactionError && setErrorMsg(transactionError)
       } catch (error) {
         return error
@@ -387,8 +374,8 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       const newApprovals: string[] = []
 
       // if (newApprovals.includes(tokenSelect.address)) return
-      const isAllowance = await ERC20(pool.id).allowance(
-        ProxyContract,
+      const isAllowance = await ERC20(pool.address).allowance(
+        operation.withdrawContract,
         userWalletAddress
       )
 
@@ -413,7 +400,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
     if (Big(amountTokenIn).gt(0) && parseFloat(amountTokenOut.toString()) > 0) {
       const usdAmountIn = Big(amountTokenIn)
-        .mul(Big(data?.pool?.price_usd))
+        .mul(Big(data?.pool?.price_usd ?? 0))
         .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
 
       const usdAmountOut = Big(amountTokenOut)

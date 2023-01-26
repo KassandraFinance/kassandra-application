@@ -4,22 +4,14 @@ import BigNumber from 'bn.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-import {
-  addressNativeToken1Inch,
-  ProxyContract,
-  URL_1INCH
-} from '../../../../../constants/tokenAddresses'
+import { addressNativeToken1Inch, URL_1INCH } from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
 import { setModalWalletActive } from '../../../../../store/reducers/modalWalletActive'
 
-import useProxy from '../../../../../hooks/useProxy'
-import useERC20Contract, { ERC20 } from '../../../../../hooks/useERC20Contract'
-import usePoolContract from '../../../../../hooks/usePoolContract'
-import useYieldYak from '../../../../../hooks/useYieldYak'
+import { ERC20 } from '../../../../../hooks/useERC20Contract'
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
-import useCoingecko from '../../../../../hooks/useCoingecko'
 
 import waitTransaction, {
   MetamaskError,
@@ -27,6 +19,7 @@ import waitTransaction, {
 } from '../../../../../utils/txWait'
 import changeChain from '../../../../../utils/changeChain'
 import { BNtoDecimal } from '../../../../../utils/numerals'
+import { checkTokenInThePool, checkTokenWithHigherLiquidityPool, getTokenWrapped } from '../../../../../utils/poolUtils'
 
 import {
   ToastSuccess,
@@ -96,17 +89,15 @@ const Invest = ({ typeAction }: IInvestProps) => {
     new Big(-1)
   )
 
-  const { pool, chainId, tokenSelect, tokenList1Inch, userWalletAddress } = useAppSelector(
+  const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
     state => state
   )
 
-  const { operation } = React.useContext(PoolOperationContext)
+  const { operation, priceToken } = React.useContext(PoolOperationContext)
 
   const dispatch = useAppDispatch()
 
   const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
-
-  const corePool = usePoolContract(pool.vault)
 
   const { data } = useSWR([GET_INFO_POOL], query =>
     request('https://backend.kassandra.finance', query, {
@@ -115,22 +106,10 @@ const Invest = ({ typeAction }: IInvestProps) => {
   )
 
   const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
-  // function handleSubmit() {
-
-  // }
-  const tokenAddresses = tokenList1Inch.map(token => token.address)
-
-  const { priceToken } = useCoingecko(
-    pool.chain.nativeTokenName.toLowerCase(),
-    pool.chain.addressWrapped.toLowerCase(),
-    tokenAddresses.toString()
-  )
 
   async function handle1Inch() {
-    const tokenWithHigherLiquidityPool =
-      await corePool.checkTokenWithHigherLiquidityPool(pool.underlying_assets)
-
-      const tokenWrappedAddress = corePool.getTokenWrapped(pool.underlying_assets, tokenWithHigherLiquidityPool.address)
+    const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(pool.underlying_assets)
+    const tokenWrappedAddress = getTokenWrapped(pool.underlying_assets, tokenWithHigherLiquidityPool.address)
 
     const response = await fetch(
       `${URL_1INCH}${pool.chainId}/swap?fromTokenAddress=${
@@ -138,7 +117,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
       }&toTokenAddress=${
         tokenWrappedAddress
       }&amount=${amountTokenIn}&fromAddress=${
-        ProxyContract || '0x84f154A845784Ca37Ae962504250a618EB4859dc'
+        operation.contractAddress || '0x84f154A845784Ca37Ae962504250a618EB4859dc'
       }&slippage=1&disableEstimate=true`
     )
     const data = await response.json()
@@ -148,11 +127,8 @@ const Invest = ({ typeAction }: IInvestProps) => {
   }
 
   async function handleTokenSelected() {
-    const tokensChecked = await corePool.checkTokenInThePool(
-      pool.underlying_assets, tokenSelect.address
-    )
-    const tokenWithHigherLiquidityPool =
-      await corePool.checkTokenWithHigherLiquidityPool(pool.underlying_assets)
+    const tokensChecked = checkTokenInThePool(pool.underlying_assets, tokenSelect.address)
+    const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(pool.underlying_assets)
 
     const tokenAddressOrYRT =
       tokensChecked?.is_wraps === 1
@@ -228,7 +204,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
           while (!approved) {
             approved = await ERC20(tokenAddress).allowance(
-              ProxyContract,
+              operation.contractAddress,
               userWalletAddress
             )
             await new Promise(r => setTimeout(r, 200)) // sleep
@@ -311,6 +287,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
           userWalletAddress,
           data: trasactionData,
           poolTokenList: pool.underlying_assets,
+          hasTokenInPool: !!checkTokenInThePool(pool.underlying_assets, tokenSelect.address),
           transactionCallback: investCallback(
             pool.symbol,
             Number(BNtoDecimal(
@@ -345,7 +322,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         newApprovals.push(addressNativeToken1Inch)
       } else {
         const isAllowance = await ERC20(tokenSelect.address).allowance(
-            ProxyContract,
+            operation.contractAddress,
             userWalletAddress
           )
 
@@ -385,9 +362,11 @@ const Invest = ({ typeAction }: IInvestProps) => {
     if (
       typeAction !== 'Invest' ||
       tokenSelect.address.length === 0 ||
-      pool.id.length === 0
+      pool.id.length === 0 ||
+      new BigNumber(amountTokenIn.toString()).isZero()
       // swapInAddress === crpPoolAddress
     ) {
+      setAmountTokenOut(Big(0))
       return
     }
 
