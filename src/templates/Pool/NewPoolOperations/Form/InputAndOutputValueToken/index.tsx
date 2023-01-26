@@ -10,8 +10,9 @@ import web3 from '../../../../../utils/web3'
 
 import { useAppSelector } from '../../../../../store/hooks'
 
+import PoolOperationContext from '../PoolOperationContext'
+
 import { ERC20 } from '../../../../../hooks/useERC20Contract'
-import useCoingecko from '../../../../../hooks/useCoingecko'
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
 
 import TokenSelect from '../TokenSelect'
@@ -50,17 +51,12 @@ const InputAndOutputValueToken = ({
   gasFee,
   errorMsg = ''
 }: IInputAndOutputValueTokenProps) => {
-  const { pool, chainId, tokenSelect, tokenList1Inch, userWalletAddress } = useAppSelector(
+  const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
     state => state
   )
+  const { priceToken } = React.useContext(PoolOperationContext)
 
-  const tokenAddresses = tokenList1Inch.map(token => token.address)
   const { trackEventFunction } = useMatomoEcommerce()
-  const { priceToken } = useCoingecko(
-    pool.chain.nativeTokenName.toLowerCase(),
-    pool.chain.addressWrapped.toLowerCase(),
-    tokenAddresses.toString()
-  )
 
   const disabled = userWalletAddress.length === 0 ?
     "Please connect your wallet by clicking the button below"
@@ -181,13 +177,14 @@ const InputAndOutputValueToken = ({
               className="noscroll"
               readOnly={!isInvestType || disabled.length > 0 }
               ref={inputAmountTokenRef}
-              value={isInvestType ? inputAmountTokenRef.current?.value : Number(
+              value={isInvestType ?
+                inputAmountTokenRef.current?.value :
                 BNtoDecimal(
                   new Big(amountTokenIn)?.div(Big(10).pow(18)) || new BigNumber(0),
                   18,
                   6
                 ).replace(/\s/g, '')
-              )}
+              }
               type="number"
               placeholder="0"
               step="any"

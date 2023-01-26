@@ -2,13 +2,15 @@ import Image from 'next/image'
 import React from 'react'
 import { useAppSelector } from '../../../../../store/hooks'
 import BigNumber from 'bn.js'
+import Big from 'big.js'
 
 import logoNone from '../../../../../../public/assets/icons/coming-soon.svg'
 
-import * as S from './styles'
+import PoolOperationContext from '../PoolOperationContext'
+
 import { BNtoDecimal } from '../../../../../utils/numerals'
-import Big from 'big.js'
-import useCoingecko from '../../../../../hooks/useCoingecko'
+
+import * as S from './styles'
 
 interface IListOfAllAssetProps {
   amountAllTokenOut: any;
@@ -18,14 +20,9 @@ const ListOfAllAsset = ({
   amountAllTokenOut,
   balanceAllTokenOut
 }: IListOfAllAssetProps) => {
-  const { pool, tokenList1Inch } = useAppSelector(state => state)
+  const { pool } = useAppSelector(state => state)
 
-  const tokenAddresses = tokenList1Inch.map(token => token.address)
-  const { priceToken } = useCoingecko(
-    pool.chain.nativeTokenName.toLowerCase(),
-    pool.chain.addressWrapped.toLowerCase(),
-    tokenAddresses.toString()
-  )
+  const { priceToken } = React.useContext(PoolOperationContext)
 
   return (
     <S.ListOfAllAsset>

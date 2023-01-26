@@ -44,7 +44,7 @@ const Distribution = () => {
   const { data: coinGecko } = useCoingecko(
     pool.chain.nativeTokenName.toLowerCase(),
     pool.chain.addressWrapped,
-    tokenAddresses.toString()
+    tokenAddresses
   )
 
   async function getDataYieldyak() {
