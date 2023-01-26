@@ -1,9 +1,31 @@
+/* eslint-disable prettier/prettier */
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 
 import { ItokenSelectedProps } from './operationV1'
 import { underlyingAssetsInfo } from '../store/reducers/pool'
 import { TransactionCallback } from '../utils/txWait'
+
+export interface IOperations {
+  contractAddress: string;
+  withdrawContract: string;
+  calcInvestAmountOut: (params: CalcAmountOutParams) => Promise<CalcAmountOutParamsResult>;
+  joinswapExternAmountIn: (params: JoinSwapAmountInParams) => Promise<void>;
+  estimatedGas: (params: EstimatedGasParams) => Promise<EstimatedGasResult>;
+  calcSingleOutGivenPoolIn: (params: CalcSingleOutGivenPoolInParams) => Promise<CalcSingleOutGivenPoolInResult>;
+  calcAllOutGivenPoolIn: (params: CalcAllOutGivenPoolInParams) => Promise<CalcAllOutGivenPoolInResult>;
+  exitswapPoolAmountIn: (params: ExitSwapPoolAmountInParams) => Promise<void>;
+  exitswapPoolAllTokenAmountIn: (params: ExitSwapPoolAllTokenAmountInParams) => Promise<void>
+}
+
+export type IPoolInfoProps = {
+  address: string,
+  id: string,
+  controller: string,
+  vault: string;
+  tokens: underlyingAssetsInfo[];
+  tokensAddresses: string[];
+}
 
 export type CalcAmountOutParams = {
   tokenSelected: ItokenSelectedProps,
@@ -24,6 +46,7 @@ export type JoinSwapAmountInParams = {
   userWalletAddress: string,
   data: any,
   poolTokenList: underlyingAssetsInfo[],
+  hasTokenInPool: boolean,
   transactionCallback: TransactionCallback
 }
 
@@ -44,7 +67,7 @@ export type EstimatedGasResult = {
 export type CalcSingleOutGivenPoolInParams = {
   tokenInAddress: string,
   tokenSelectAddress: string,
-  poolAmountIn: Big,
+  poolAmountIn: string,
   isWrap: boolean,
   userWalletAddress: string,
   selectedTokenInBalance: Big

@@ -1,19 +1,10 @@
 import React from 'react'
 
-import { CalcAllOutGivenPoolInParams, CalcAllOutGivenPoolInResult, CalcAmountOutParams, CalcAmountOutParamsResult, CalcSingleOutGivenPoolInParams, CalcSingleOutGivenPoolInResult, EstimatedGasParams, EstimatedGasResult, ExitSwapPoolAllTokenAmountInParams, ExitSwapPoolAmountInParams, JoinSwapAmountInParams } from '../../../../services/IOperation';
+import { IOperations } from '../../../../services/IOperation';
 
-export interface IOperations {
-  contractAddress: string;
-  calcInvestAmountOut: (params: CalcAmountOutParams) => Promise<CalcAmountOutParamsResult>;
-  joinswapExternAmountIn: (params: JoinSwapAmountInParams) => Promise<void>;
-  estimatedGas: (params: EstimatedGasParams) => Promise<EstimatedGasResult>;
-  calcSingleOutGivenPoolIn: (params: CalcSingleOutGivenPoolInParams) => Promise<CalcSingleOutGivenPoolInResult>;
-  calcAllOutGivenPoolIn: (params: CalcAllOutGivenPoolInParams) => Promise<CalcAllOutGivenPoolInResult>;
-  exitswapPoolAmountIn: (params: ExitSwapPoolAmountInParams) => Promise<any>;
-  exitswapPoolAllTokenAmountIn: (params: ExitSwapPoolAllTokenAmountInParams) => Promise<void>
-}
 interface IOperationModel {
   operation: IOperations;
+  priceToken: (address: string) => number | undefined
 }
 
 // eslint-disable-next-line prettier/prettier
