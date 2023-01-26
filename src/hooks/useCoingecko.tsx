@@ -15,13 +15,29 @@ type CoinGeckoResponseType = {
 const useCoingecko = (
   nativeTokenName: string,
   nativeTokenAddress: string,
-  tokenAddresses: string
+  tokenAddresses: string[]
 ) => {
   const nativeAddress = nativeTokenAddress
 
-  const { data } = useSWR<CoinGeckoResponseType>(
-    `${COINGECKO_API}/simple/token_price/${nativeTokenName}?contract_addresses=${tokenAddresses}&vs_currencies=usd&include_24hr_change=true`
+  const { data: dataOne } = useSWR<CoinGeckoResponseType>(
+    `${COINGECKO_API}/simple/token_price/${nativeTokenName}?contract_addresses=${tokenAddresses
+      .slice(0, 130)
+      .toString()}&vs_currencies=usd&include_24hr_change=true`
   )
+
+  const { data: dataTwo } = useSWR<CoinGeckoResponseType>(
+    tokenAddresses.length > 130
+      ? `${COINGECKO_API}/simple/token_price/${nativeTokenName}?contract_addresses=${tokenAddresses
+          .slice(130, tokenAddresses.length)
+          .toString()}&vs_currencies=usd&include_24hr_change=true`
+      : null
+  )
+
+  const data = !dataOne
+    ? {}
+    : dataTwo
+    ? Object.assign(dataOne, dataTwo)
+    : dataOne
 
   const priceToken = (address: string) => {
     let _address = address
