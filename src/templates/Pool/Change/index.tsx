@@ -4,26 +4,23 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 
 import { GET_POOL_PRICE } from './graphql'
-import { SUBGRAPH_URL } from '../../../constants/tokenAddresses'
 
-import { useAppDispatch } from '../../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { setPerformanceValues } from '../../../store/reducers/performanceValues'
 
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 
 import * as S from './styles'
 
-interface IChangeProps {
-  crpPoolAddress: string;
-}
-
-const Change = ({ crpPoolAddress }: IChangeProps) => {
+const Change = () => {
   const dispatch = useAppDispatch()
   const [arrChangePrice, setArrChangePrice] = React.useState<string[]>([])
 
+  const { pool } = useAppSelector(state => state)
+
   const { data } = useSWR([GET_POOL_PRICE], query =>
-    request(SUBGRAPH_URL, query, {
-      id: crpPoolAddress,
+    request('https://backend.kassandra.finance', query, {
+      id: pool.id,
       day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
       week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
       month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
@@ -40,15 +37,27 @@ const Change = ({ crpPoolAddress }: IChangeProps) => {
   React.useEffect(() => {
     const arrChangePrice = []
 
-    if (data?.now[0]?.close) {
-      const changeDay = calcChange(data.now[0].close, data.day[0]?.close)
-      const changeWeek = calcChange(data.now[0].close, data.week[0]?.close)
-      const changeMonth = calcChange(data.now[0].close, data.month[0]?.close)
-      const changeQuarterly = calcChange(
-        data.now[0].close,
-        data.quarterly[0]?.close
+    if (data?.pool) {
+      const changeDay = calcChange(
+        data.pool.now[0].close,
+        data.pool.day[0]?.close
       )
-      const changeYear = calcChange(data.now[0].close, data.year[0]?.close)
+      const changeWeek = calcChange(
+        data.pool.now[0].close,
+        data.pool.week[0]?.close
+      )
+      const changeMonth = calcChange(
+        data.pool.now[0].close,
+        data.pool.month[0]?.close
+      )
+      const changeQuarterly = calcChange(
+        data.pool.now[0].close,
+        data.pool.quarterly[0]?.close
+      )
+      const changeYear = calcChange(
+        data.pool.now[0].close,
+        data.pool.year[0]?.close
+      )
 
       arrChangePrice[0] = changeDay
       arrChangePrice[1] = changeWeek
