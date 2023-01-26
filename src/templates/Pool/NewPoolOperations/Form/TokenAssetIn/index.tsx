@@ -79,7 +79,7 @@ const TokenAssetIn = ({
       return
     }
 
-    const token = ERC20(pool.id)
+    const token = ERC20(pool.address)
     token
       .balance(userWalletAddress)
       .then(newBalance =>
