@@ -1,7 +1,7 @@
 import React from 'react'
 import { FixedSizeList as List, ListOnScrollProps } from 'react-window'
 
-import { IListbalanceTokenprops, IListTokenPricesprops, IUserTokenProps, ITokenList1InchProps } from '..'
+import { IListbalanceTokenprops, IUserTokenProps, ITokenList1InchProps } from '..'
 
 import { useAppDispatch, useAppSelector } from '../../../../../../store/hooks'
 import { setTokenSelect } from '../../../../../../store/reducers/tokenSelect'
@@ -13,7 +13,6 @@ interface IToken1inchListProps {
   filteredToken: IUserTokenProps[];
   searchToken: string;
   listBalanceToken: IListbalanceTokenprops;
-  listTokenPrices: IListTokenPricesprops;
   tokenPinList: ITokenList1InchProps[];
   setTokenPinList: React.Dispatch<React.SetStateAction<ITokenList1InchProps[]>>;
 }
@@ -27,12 +26,11 @@ interface ICurrencyRowProps {
   style: React.CSSProperties;
 }
 
-const Token1inchList = ({ 
-  filteredToken, 
-  searchToken, 
-  listBalanceToken, 
-  listTokenPrices, 
-  tokenPinList, 
+const Token1inchList = ({
+  filteredToken,
+  searchToken,
+  listBalanceToken,
+  tokenPinList,
   setTokenPinList
 }: IToken1inchListProps) => {
   const [isShowShadow, setisShowShadow] = React.useState(true)
@@ -134,7 +132,7 @@ const Token1inchList = ({
         </S.Token>
       )
     })
-  }, [searchToken, listBalanceToken, listTokenPrices, tokenPinList, userWalletAddress])
+  }, [searchToken, listBalanceToken, tokenPinList, userWalletAddress])
 
   return (
     <S.TokenListContainer ref={TokenListContainerRef}>

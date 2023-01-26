@@ -6,12 +6,13 @@ import { stringSimilarity } from 'string-similarity-js'
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setTokenSelectionActive } from '../../../../../store/reducers/tokenSelectionActive'
 
+import useCoingecko from '../../../../../hooks/useCoingecko'
+
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import {
   addressNativeToken1Inch,
-  URL_1INCH_BALANCE,
-  URL_COINGECKO
+  URL_1INCH_BALANCE
 } from '../../../../../constants/tokenAddresses'
 
 import TokenPin from './TokenPin'
@@ -57,17 +58,18 @@ const TokenSelection = () => {
         balance: 0
       }
     })
-  const [listTokenPrices, setlistTokenPrices] =
-    React.useState<IListTokenPricesprops>({
-      ['']: {
-        usd: 0
-      }
-    })
 
+  const dispatch = useAppDispatch()
   const { userWalletAddress, tokenList1Inch, pool } = useAppSelector(
     state => state
   )
-  const dispatch = useAppDispatch()
+
+  const tokenAddresses = tokenList1Inch.map(token => token.address)
+  const { priceToken } = useCoingecko(
+    pool.chain.nativeTokenName.toLowerCase(),
+    pool.chain.addressWrapped,
+    tokenAddresses
+  )
 
   // eslint-disable-next-line prettier/prettier
   function handleUserTokensBalance(
@@ -84,7 +86,7 @@ const TokenSelection = () => {
           : token.address
 
       const tokenBalance = balanceToken[token.address]?.balance || 0
-      const tokenPriceInDollar = listTokenPrices[checkToken]?.usd || 0
+      const tokenPriceInDollar = priceToken(checkToken.toLowerCase()) ?? 0
 
       const balanceTokenFormated = Big(tokenBalance || 0).div(
         Big(10).pow(token.decimals)
@@ -169,26 +171,6 @@ const TokenSelection = () => {
       ? handleTokenListFiltering(tokenList1Inch)
       : handleTokenListFilteringBybalance(tokenList1Inch)
 
-  async function handleFetchTokenPrice() {
-    // eslint-disable-next-line prettier/prettier
-    const tokenPrice = tokenList1Inch.reduce(
-      (addressAccumulator, tokenCurrent) =>
-        addressAccumulator + (tokenCurrent.address + ','),
-      ''
-    )
-
-    try {
-      const response = await fetch(
-        `${URL_COINGECKO}/simple/token_price/avalanche?contract_addresses=${tokenPrice}&vs_currencies=usd`
-      )
-
-      const listTokenPrices = await response.json()
-      setlistTokenPrices(listTokenPrices)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   async function handleFetchBalance() {
     try {
       const response = await fetch(
@@ -205,7 +187,6 @@ const TokenSelection = () => {
     if (userWalletAddress) {
       handleFetchBalance()
     }
-    handleFetchTokenPrice()
   }, [userWalletAddress])
 
   return (
@@ -237,7 +218,6 @@ const TokenSelection = () => {
           searchToken={searchToken}
           listBalanceToken={balanceToken}
           filteredToken={filteredToken}
-          listTokenPrices={listTokenPrices}
           tokenPinList={tokenPinList}
           setTokenPinList={setTokenPinList}
         />
