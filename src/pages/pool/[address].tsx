@@ -28,8 +28,9 @@ const Index = ({ pool }: IPoolProps) => {
       renameWavax.token.name = 'Avalanche'
     }
   }
-
-  dispatch(setPool(pool))
+  const underlying_assets = [...pool.underlying_assets].sort((a, b) => a.token.id > b.token.id ? 1 : -1)
+  const poolWithSortedTokens = {...pool, underlying_assets}
+  dispatch(setPool(poolWithSortedTokens))
 
   return (
     <SWRConfig
