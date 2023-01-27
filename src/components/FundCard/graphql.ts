@@ -12,6 +12,8 @@ export const GET_POOL = gql`
       name
       symbol
       name
+      logo
+      address
       chainId
       foundedBy
       price_usd # pool asset price

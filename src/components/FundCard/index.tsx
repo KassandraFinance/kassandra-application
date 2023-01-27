@@ -4,6 +4,8 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Link from 'next/link'
+import Jazzicon from 'react-jazzicon/dist/Jazzicon'
+import { jsNumberForAddress } from 'react-jazzicon'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 import { IPoolSlice } from '../../store/reducers/pool'
@@ -186,9 +188,21 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
             >
               <>
                 <S.CardHeader>
-                  {/* <S.ImageContainer>
-                  <Image src={data.pool.logo} width={36} height={36} />
-                </S.ImageContainer> */}
+                  <S.ImageContainer>
+                    {data && data.pool?.logo ? (
+                      <img
+                        src={data.pool?.logo}
+                        alt=""
+                        width={36}
+                        height={36}
+                      />
+                    ) : (
+                      <Jazzicon
+                        diameter={36}
+                        seed={jsNumberForAddress(data.pool?.address)}
+                      />
+                    )}
+                  </S.ImageContainer>
 
                   <S.FundPrice>
                     <h3>Price</h3>
