@@ -111,7 +111,7 @@ const PriceFee = () => {
     }
   }
 
-  getGasFee()
+  // getGasFee()
 
   return (
     <>
