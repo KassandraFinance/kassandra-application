@@ -1,16 +1,19 @@
 import React from 'react'
-import Web3 from 'web3'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 import { AbiItem } from 'web3-utils'
+import web3 from '../../../utils/web3'
 
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import {
   setBackStepNumber,
-  setNextStepNumber
+  setNextStepNumber,
+  setClear,
+  setToFirstStep
 } from '../../../store/reducers/poolCreationSlice'
+import { ERC20 } from '../../../hooks/useERC20Contract'
 
 import KassandraManagedControllerFactoryAbi from '../../../constants/abi/KassandraManagedControllerFactory.json'
+import KassandraControlerAbi from '../../../constants/abi/KassandraController.json'
 
 import ContainerButton from '../../../components/ContainerButton'
 import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
@@ -27,6 +30,7 @@ import * as S from './styles'
 import { mockTokens } from './SelectAssets'
 
 const WHITELIST_ADDRESS = '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57'
+const FACTORY_ADDRESS = '0xca36a7f25e8b0a2b3fc7a9baf3b2f22d80e03788'
 
 export const mockTokensList: string[] = [
   '0x841a91e3De1202b7b750f464680068aAa0d0EA35',
@@ -42,6 +46,8 @@ export const mockTokensList: string[] = [
 interface ICreatePoolProps {
   setIsCreatePool: React.Dispatch<React.SetStateAction<boolean>>
 }
+
+Big.RM = 0
 
 const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   const dispatch = useAppDispatch()
@@ -63,6 +69,40 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     dispatch(setNextStepNumber())
   }
 
+  async function getIsAproved(tokens: string[]) {
+    const tokensNotAproved: string[] = []
+    for (const token of tokens) {
+      const { allowance } = ERC20(token)
+      const isAproved = await allowance(FACTORY_ADDRESS, userWalletAddress)
+      if (isAproved === false) {
+        tokensNotAproved.push(token)
+      }
+    }
+
+    return tokensNotAproved
+  }
+
+  async function handleAproveTokens(notAprovedTokens: string[]) {
+    function callBack() {
+      console.log('Aprroved')
+    }
+
+    for (const token of notAprovedTokens) {
+      const { approve } = ERC20(token)
+      await approve(FACTORY_ADDRESS, userWalletAddress, callBack)
+    }
+  }
+
+  async function handlePrivateInvestors(poolControler: string, investorsList: { address: string }[]) {
+    const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
+
+    for (const address of investorsList) {
+      await controller.methods.addAllowedAddress(address.address).send({
+        from: userWalletAddress
+      })
+    }
+  }
+
   async function deployPool() {
     const maxAmountsIn: string[] = []
     const tokens: string[] = []
@@ -71,18 +111,25 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
     // for testnet Goerli
     const mockTokensListSorted = mockTokensList.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
+    let sum = Big(0)
     for (const mockToken of mockTokensListSorted) {
       if (mockTokens[mockToken]) {
         for (const token of tokensList) {
           if (token.address === mockTokens[mockToken].toLowerCase()) {
-            maxAmountsIn.push((new BigNumber(token.amount.mul(Big(10).pow(token.decimals)).round().toString())).toString())
-            normalizedWeights.push((new BigNumber(Big(token.allocation).div(100).mul(Big(10).pow(18)).round().toString())).toString())
+            sum = sum.plus(token.allocation)
+            maxAmountsIn.push(token.amount.mul(Big(10).pow(token.decimals)).round().toString())
+            normalizedWeights.push(Big(token.allocation).div(100).mul(Big(10).pow(18)).round().toString())
             tokens.push(mockToken)
           }
         }
       }
     }
 
+    const notAprovedTokens = await getIsAproved(tokens)
+
+    if (notAprovedTokens.length > 0) {
+      await handleAproveTokens(notAprovedTokens)
+    }
     // for production
     // const tokensArr = tokensList.sort((a, b) => a.address < b.address ? 1 : -1)
     // for (const token of tokensArr) {
@@ -102,7 +149,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
     const pool = {
       name: poolData.poolName,
-      symbol: poolData.strategy,
+      symbol: poolData.poolSymbol,
       isPrivatePool: poolData.privacy !== 'public',
       whitelist: WHITELIST_ADDRESS,
       maxAmountsIn: maxAmountsIn,
@@ -112,19 +159,19 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         swapFeePercentage: Big(0.03).mul(Big(10).pow(18)).toString(),
         swapEnabledOnStart: true,
         mustAllowlistLPs: false,
-        managementAumFeePercentage: poolData.fees?.managementFee.isChecked ? Big(managementAumFeePercentage).mul(Big(10).pow(18)).toString() : Big(0).mul(Big(10).pow(18)).toString(),
+        managementAumFeePercentage: poolData.fees?.managementFee.isChecked ? Big(managementAumFeePercentage).mul(Big(10).pow(18)).round().toString() : Big(0).mul(Big(10).pow(18)).toString(),
         aumFeeId: 3,
       },
       feesSettings: {
-        feesToManager: poolData.fees?.managementFee.isChecked ? Big(feesToManager).mul(Big(10).pow(18)).toString() : Big(0).mul(Big(10).pow(18)).toString(),
-        feesToReferral: poolData.fees?.refferalFee.isChecked ? Big(feesToReferral).mul(Big(10).pow(18)).toString() : Big(0).mul(Big(10).pow(18)).toString(),
+        feesToManager: poolData.fees?.managementFee.isChecked ? Big(feesToManager).mul(Big(10).pow(18)).round().toString() : Big(0).mul(Big(10).pow(18)).toString(),
+        feesToReferral: poolData.fees?.refferalFee.isChecked ? Big(feesToReferral).mul(Big(10).pow(18)).round().toString() : Big(0).mul(Big(10).pow(18)).toString(),
       },
     }
 
     try {
-      const web3 = new Web3("https://rpc.ankr.com/eth_goerli");
-      const factoryContract = new web3.eth.Contract((KassandraManagedControllerFactoryAbi as unknown) as AbiItem, factoryAddress);
-      const { pool: poolAddress, poolControler } = await factoryContract.methods.create(
+      const factoryContract = new web3.eth.Contract((KassandraManagedControllerFactoryAbi as unknown) as AbiItem, FACTORY_ADDRESS);
+
+      const response = await factoryContract.methods.create(
           pool.name,
           pool.symbol,
           pool.isPrivatePool,
@@ -134,8 +181,9 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           pool.feesSettings,
       ).call({
         from: userWalletAddress
-      });
-        
+      })
+      console.log(response)
+
       const tx = await factoryContract.methods.create(
           pool.name,
           pool.symbol,
@@ -144,33 +192,43 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           pool.maxAmountsIn,
           pool.settingsParams,
           pool.feesSettings,
-      ).send(
-        {
+      ).send({
           from: userWalletAddress
-        }
-      )
+      })
 
+      console.log(tx)
+      if (pool.isPrivatePool) {
+        const addressList = poolData?.privateAddressList ? poolData.privateAddressList : []
+        await handlePrivateInvestors(response.poolController, addressList)
+      }
+
+      dispatch(setClear())
     } catch (error) {
-      console.error('It was not possible to get whitelist', error)        
+      console.error('It was not possible to create pool', error)        
     }
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (stepNumber === 5) {
-      // deployPool()
-      console.log('teste')
+      deployPool()
     }
     handleNextButton()
   }
 
   return (
     <S.CreatePool>
-      <ModalFullWindow handleCloseModal={() => setIsCreatePool(false)}>
+      <ModalFullWindow handleCloseModal={() => {
+          if (stepNumber === 6) {
+            dispatch(setToFirstStep())
+          }
+          setIsCreatePool(false)
+        } 
+      }>
         <form id="poolCreationForm" onSubmit={handleSubmit}>
           {poolCreationSteps[stepNumber]}
 
-          {stepNumber < 7 && (
+          {stepNumber < 6 && (
             <ContainerButton
               backButtonDisabled={stepNumber < 1}
               onBack={() => dispatch(setBackStepNumber())}
