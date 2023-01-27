@@ -420,6 +420,40 @@ export const poolCreationSlice = createSlice({
     setTermsAndConditions: state => {
       state.createPoolData.termsAndConditions =
         !state.createPoolData.termsAndConditions
+    },
+    setClear: state => {
+      state.createPoolData = {
+        network: '',
+        poolName: '',
+        termsAndConditions: false,
+        poolSymbol: '',
+        icon: {
+          image_preview: '',
+          image_file: null
+        },
+        strategy: '',
+        privacy: 'public',
+        tokens: [],
+        privateAddressList: [],
+        fees: {
+          depositFee: {
+            isChecked: false,
+            feeRate: 0
+          },
+          refferalFee: {
+            isChecked: false,
+            brokerCommision: 0,
+            managerShare: 0
+          },
+          managementFee: {
+            isChecked: false,
+            feeRate: 0
+          }
+        }
+      }
+    },
+    setToFirstStep: state => {
+      state.stepNumber = 0
     }
   }
 })
@@ -438,7 +472,9 @@ export const {
   setToggle,
   setFee,
   setRefferalFee,
-  setTermsAndConditions
+  setTermsAndConditions,
+  setClear,
+  setToFirstStep
 } = poolCreationSlice.actions
 
 export default poolCreationSlice.reducer
