@@ -863,8 +863,8 @@ const Proposal = () => {
                           <S.LinkTargetSnowTrace
                             href={`${
                               process.env.NEXT_PUBLIC_MASTER === '1'
-                                ? chains.avalanche.blockExplorerUrls
-                                : chains.fuji.blockExplorerUrls
+                                ? chains.avalanche.blockExplorerUrl
+                                : chains.fuji.blockExplorerUrl
                             }address/${proposal.targets[index]}`}
                             target="_blank"
                             rel="noopener noreferrer"

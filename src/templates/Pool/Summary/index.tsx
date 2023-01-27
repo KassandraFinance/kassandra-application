@@ -97,11 +97,7 @@ const Summary = ({ strategy }: any) => {
           {/* REFATORAR LOGICA QUANDO FOR POLYGON */}
           {/* CONSUMIR BLOCK EXPLORER DA CHAIN NO BACKEND */}
           <a
-            href={`${
-              process.env.NEXT_PUBLIC_MASTER === '1'
-                ? chains.avalanche.blockExplorerUrls
-                : chains.fuji.blockExplorerUrls
-            }address/${pool.address}`}
+            href={`${pool.chain.blockExplorerUrl}/address/${pool.address}`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -183,11 +179,7 @@ const Summary = ({ strategy }: any) => {
             />
           </div>
           <a
-            href={`${
-              process.env.NEXT_PUBLIC_MASTER === '1'
-                ? chains.avalanche.blockExplorerUrls
-                : chains.fuji.blockExplorerUrls
-            }address/${pool.address}`}
+            href={`${pool.chain.blockExplorerUrl}/address/${pool.vault}`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -247,11 +239,7 @@ const Summary = ({ strategy }: any) => {
             />
           </div>
           <a
-            href={`${
-              process.env.NEXT_PUBLIC_MASTER === '1'
-                ? chains.avalanche.blockExplorerUrls
-                : chains.fuji.blockExplorerUrls
-            }address/${strategy}`}
+            href={`${pool.chain.blockExplorerUrl}/address/${pool.strategy}`}
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -12,7 +12,7 @@ export interface ChainDetails {
   chainName: string;
   nativeCurrency: CurrencyDetails;
   rpcUrls: [string];
-  blockExplorerUrls: [string];
+  blockExplorerUrl: string;
   secondsPerBlock: number;
   wrapped: string;
 }

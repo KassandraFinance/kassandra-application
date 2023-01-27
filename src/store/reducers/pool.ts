@@ -26,7 +26,7 @@ export interface ChainInfo {
   nativeTokenSymbol: string;
   nativeTokenDecimals: number;
   rpcUrls: [string];
-  blockExplorerUrls: [string];
+  blockExplorerUrl: string;
   secondsPerBlock: number;
   addressWrapped: string;
 }
@@ -47,6 +47,7 @@ export interface IPoolSlice {
   chain: ChainInfo;
   name: string;
   symbol: string;
+  strategy: string;
   manager?: string;
   logo: string;
   pool_version: number;
@@ -65,6 +66,7 @@ const initialState: IPoolSlice = {
   vault: '',
   chain_id: 0,
   chainId: 0,
+  strategy: '',
   chain: {
     id: 0,
     logo: '',
@@ -73,7 +75,7 @@ const initialState: IPoolSlice = {
     nativeTokenSymbol: '',
     nativeTokenDecimals: 0,
     rpcUrls: [''],
-    blockExplorerUrls: [''],
+    blockExplorerUrl: '',
     secondsPerBlock: 0,
     addressWrapped: ''
   },

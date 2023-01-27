@@ -10,7 +10,7 @@ import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import useYieldYak from '../../../hooks/useYieldYak'
 import useCoingecko from '../../../hooks/useCoingecko'
 
-import { YIELDYAK_API } from '../../../constants/tokenAddresses'
+import { platform, YIELDYAK_API } from '../../../constants/tokenAddresses'
 
 import none from '../../../../public/assets/icons/coming-soon.svg'
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
@@ -42,7 +42,7 @@ const Distribution = () => {
   })
 
   const { data: coinGecko } = useCoingecko(
-    pool.chain.nativeTokenName.toLowerCase(),
+    platform[pool.chain.id],
     pool.chain.addressWrapped,
     tokenAddresses
   )
