@@ -50,8 +50,8 @@ function handleAllocation(
   tokensList: TokenType[],
   tokenAllocation?: { token: string, allocation: number }
 ) {
-  const maxAllocation = 100
-  let allocationAmount = 0
+  const maxAllocation = Big(100)
+  let allocationAmount = Big(0)
   let unlokedTokensAmount = 0
 
   for (const token of tokensList) {
@@ -61,19 +61,21 @@ function handleAllocation(
       }
 
       if (token.isLocked === true) {
-        allocationAmount = allocationAmount + token.allocation
+        allocationAmount = allocationAmount.plus(token.allocation)
       }
     } else {
-      allocationAmount = allocationAmount + tokenAllocation.allocation
+      allocationAmount = allocationAmount.plus(tokenAllocation.allocation)
     }
   }
 
   const allocationValue =
-    (maxAllocation - allocationAmount) / unlokedTokensAmount
-  const fixedAllocationValue = Number(allocationValue.toFixed(2))
-  const teste =
-    maxAllocation -
-    (fixedAllocationValue * unlokedTokensAmount + allocationAmount)
+    unlokedTokensAmount === 0
+      ? 0
+      : maxAllocation.minus(allocationAmount).div(unlokedTokensAmount)
+  const fixedAllocationValue = Big(allocationValue.toFixed(2))
+  const teste = maxAllocation.minus(
+    fixedAllocationValue.mul(unlokedTokensAmount).plus(allocationAmount)
+  )
 
   let isFirstUnlocked = true
   const newTokensList = tokensList.map(token => {
@@ -86,13 +88,13 @@ function handleAllocation(
         isFirstUnlocked = false
         return {
           ...token,
-          allocation: fixedAllocationValue + teste
+          allocation: fixedAllocationValue.plus(teste).toNumber()
         }
       }
 
       return {
         ...token,
-        allocation: fixedAllocationValue
+        allocation: fixedAllocationValue.toNumber()
       }
     } else {
       return {
