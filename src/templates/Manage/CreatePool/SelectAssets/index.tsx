@@ -4,6 +4,7 @@ import BigNumber from 'bn.js'
 import Web3 from 'web3'
 import { AbiItem, toChecksumAddress } from 'web3-utils'
 import request from 'graphql-request'
+import Big from 'big.js'
 
 import { ERC20 } from '../../../../hooks/useERC20Contract'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
@@ -79,9 +80,9 @@ const SelectAssets = () => {
 
   const tokensList = tokensSummary ? tokensSummary : []
 
-  let totalAllocation = 0
+  let totalAllocation = Big(0)
   for (const token of tokensList) {
-    totalAllocation = totalAllocation + token.allocation
+    totalAllocation = totalAllocation.plus(token.allocation)
   }
 
   const { data } = useSWR<{ tokensByIds: TokensInfoResponseType[] }>([GET_INFO_TOKENS, whitelist?.map((token: string) => toChecksumAddress(mockTokens[token]))], (query, whitelist) =>
@@ -191,7 +192,7 @@ const SelectAssets = () => {
 
         <PoolSummary
           coinsList={tokensList}
-          totalAllocation={totalAllocation}
+          totalAllocation={totalAllocation.toNumber()}
           creation
           onChange={handleInput}
           onRemoveToken={handleRemoveToken}
