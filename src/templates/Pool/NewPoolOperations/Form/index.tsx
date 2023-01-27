@@ -4,7 +4,7 @@ import React from 'react'
 import { OperationProvider } from './PoolOperationContext';
 import { useAppSelector } from '../../../../store/hooks';
 
-import { BalancerHelpers, ProxyContract, ProxyInvestV2 } from '../../../../constants/tokenAddresses';
+import { BalancerHelpers, platform, ProxyContract, ProxyInvestV2 } from '../../../../constants/tokenAddresses';
 
 import operationV1 from '../../../../services/operationV1';
 import operationV2 from '../../../../services/operationV2';
@@ -66,7 +66,7 @@ const Form = ({
 
   const tokenAddresses = tokenList1Inch.map(token => token.address)
   const { priceToken } = useCoingecko(
-    pool.pool_version === 1 ? pool.chain.nativeTokenName.toLowerCase() : 'polygon-pos',
+    platform[pool.chainId],
     pool.chain.addressWrapped.toLowerCase(),
     tokenAddresses
   )

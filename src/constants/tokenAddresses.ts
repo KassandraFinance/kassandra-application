@@ -54,6 +54,11 @@ export const BalancerHelpers = '0x239e55F427D44C3cc793f49bFB507ebe76638a2b' // P
 
 export const addressNativeToken1Inch = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
 
+export const platform: Record<number, string> = {
+  [43114]: 'avalanche',
+  [137]: 'polygon-pos'
+}
+
 export const linkSnowtrace = process.env.NEXT_PUBLIC_MASTER === '1' ?
   'https://snowtrace.io'
   :
@@ -108,7 +113,7 @@ export const chains: { [key: string]: ChainInfo } = {
     nativeTokenSymbol: 'AVAX',
     nativeTokenDecimals: 18,
     rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
-    blockExplorerUrls: ['https://snowtrace.io/'],
+    blockExplorerUrl: 'https://snowtrace.io/',
     secondsPerBlock: 2,
     addressWrapped: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
   },
@@ -119,7 +124,7 @@ export const chains: { [key: string]: ChainInfo } = {
     nativeTokenSymbol: 'AVAX',
     nativeTokenDecimals: 18,
     rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
-    blockExplorerUrls: ['https://testnet.snowtrace.io/'],
+    blockExplorerUrl: 'https://testnet.snowtrace.io/',
     secondsPerBlock: 2,
     addressWrapped: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c',
   }

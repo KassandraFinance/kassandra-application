@@ -12,6 +12,7 @@ import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import {
   addressNativeToken1Inch,
+  platform,
   URL_1INCH_BALANCE
 } from '../../../../../constants/tokenAddresses'
 
@@ -66,7 +67,7 @@ const TokenSelection = () => {
 
   const tokenAddresses = tokenList1Inch.map(token => token.address)
   const { priceToken } = useCoingecko(
-    pool.chain.nativeTokenName.toLowerCase(),
+    platform[pool.chainId],
     pool.chain.addressWrapped,
     tokenAddresses
   )
