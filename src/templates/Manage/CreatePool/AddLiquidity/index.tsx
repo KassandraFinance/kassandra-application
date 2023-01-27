@@ -38,10 +38,10 @@ const AddLiquidity = () => {
 
   const tokensList = tokensSummary ? tokensSummary : []
 
-  let totalAllocation = 0
+  let totalAllocation = Big(0)
   let addressesList: string[] = []
   for (const token of tokensList) {
-    totalAllocation = totalAllocation + token.allocation
+    totalAllocation = totalAllocation.plus(token.allocation)
     addressesList = [...addressesList, token.address]
   }
 
@@ -166,7 +166,7 @@ const AddLiquidity = () => {
 
         <PoolSummary
           coinsList={tokensList}
-          totalAllocation={totalAllocation}
+          totalAllocation={totalAllocation.toNumber()}
           priceList={data}
         />
       </S.PoolContainer>
