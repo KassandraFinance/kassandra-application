@@ -79,8 +79,8 @@ const PoolSummary = ({
                       placeholder="100%"
                       lable={`${coin.name} allocation`}
                       required
-                      min={1}
-                      max={100}
+                      min="1"
+                      max="100"
                       value={coin.allocation.toString()}
                       onChange={onChange}
                     />
