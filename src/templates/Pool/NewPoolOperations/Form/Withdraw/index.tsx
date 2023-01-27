@@ -248,7 +248,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   }
 
   React.useEffect(() => {
-    if (typeAction !== 'Withdraw' || tokenSelect.address === pool.id) {
+    if (typeAction !== 'Withdraw' || tokenSelect.address === pool.id || new BigNumber(amountTokenIn.toString()).isZero()) {
       return
     }
 
@@ -304,7 +304,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     calc()
     setErrorMsg('')
     setAmountTokenOut(new Big(0))
-  }, [typeAction, chainId, amountTokenIn, tokenSelect])
+  }, [typeAction, typeWithdraw, chainId, amountTokenIn, tokenSelect])
 
   React.useEffect(() => {
     const handleWallectConnect = () => {

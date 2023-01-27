@@ -56,40 +56,42 @@ const NewPoolOperations = () => {
 
   return (
     <S.NewPoolOperations>
-      {isModalPoolOperations ?
-        // <ModalCardOperations
-        //   setInputChecked={setInputChecked}
-        //   inputCheckedBarMobile={inputCheckedBarMobile}
-        //   setInputCheckedBarMobile={setInputCheckedBarMobile}
-        //   modalOpen={isModalPoolOperations}
-        //   setModalOpen={setIsModalPoolOperations}
-        //   setIsModaWallet={setIsModaWallet}
+      <S.PoolOperationsContainer>
+        {isModalPoolOperations ?
+          // <ModalCardOperations
+          //   setInputChecked={setInputChecked}
+          //   inputCheckedBarMobile={inputCheckedBarMobile}
+          //   setInputCheckedBarMobile={setInputCheckedBarMobile}
+          //   modalOpen={isModalPoolOperations}
+          //   setModalOpen={setIsModalPoolOperations}
+          //   setIsModaWallet={setIsModaWallet}
 
-        //   poolChain={poolChain}
-        //   poolSymbol={poolSymbol}
-        //   crpPoolAddress={crpPoolAddress}
-        //   corePoolAddress={corePoolAddress}
-        //   productCategories={productCategories}
-        <p>modal card operation</p>
-        // />
-        :
-        tokenSelectionActive ?
-          <TokenSelection />
-        :
-        <SelectOperation
-          inputChecked={inputChecked}
-          setInputChecked={setInputChecked}
-          // handleSetInputChecked={handleSetInputChecked}
-          typeWithdrawChecked={typeWithdrawChecked}
-          setTypeWithdrawChecked={setTypeWithdrawChecked}
+          //   poolChain={poolChain}
+          //   poolSymbol={poolSymbol}
+          //   crpPoolAddress={crpPoolAddress}
+          //   corePoolAddress={corePoolAddress}
+          //   productCategories={productCategories}
+          <p>modal card operation</p>
+          // />
+          :
+          tokenSelectionActive ?
+            <TokenSelection />
+          :
+          <SelectOperation
+            inputChecked={inputChecked}
+            setInputChecked={setInputChecked}
+            // handleSetInputChecked={handleSetInputChecked}
+            typeWithdrawChecked={typeWithdrawChecked}
+            setTypeWithdrawChecked={setTypeWithdrawChecked}
+          />
+        }
+
+        <SelectOperationOnMobile
+          inputCheckedBarMobile={inputCheckedBarMobile}
+          setInputCheckedBarMobile={setInputCheckedBarMobile}
+          setModalOpen={setIsModalPoolOperations}
         />
-      }
-
-      <SelectOperationOnMobile
-        inputCheckedBarMobile={inputCheckedBarMobile}
-        setInputCheckedBarMobile={setInputCheckedBarMobile}
-        setModalOpen={setIsModalPoolOperations}
-      />
+      </S.PoolOperationsContainer>
     </S.NewPoolOperations>
   )
 }

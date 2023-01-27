@@ -1,28 +1,7 @@
-import styled, { css, keyframes } from 'styled-components'
+import styled, { css } from 'styled-components'
 import theme from '../../../../styles/theme'
 
 // eslint-disable-next-line prettier/prettier
-export const PoolOperationsContainer = styled.div`
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0.8rem;
-
-  min-width: 44.8rem;
-
-  background-color: rgba(255, 255, 255, 0.04);
-  border-radius: 1.2rem;
-
-  z-index: 10;
-
-  @media (max-width: 1200px) {
-    display: block;
-    margin: 0 auto;
-  }
-
-  @media (max-width: 960px) {
-    display: none;
-  }
-`
 
 export const SelectOperation = styled.div`
   ${() => css`
