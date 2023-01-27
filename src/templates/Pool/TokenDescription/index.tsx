@@ -25,9 +25,9 @@ const descriptions: DescriptionType = {
 }
 
 const TokenDescription = ({ symbol }: Input) => {
-  const description = descriptions[symbol.toLowerCase()] || <></>
+  const description = descriptions[symbol.toLowerCase()]
 
-  return (
+  return description ? (
     <>
       <S.Title>
         <Image src={iconBar} alt="" height={18} width={18} />
@@ -36,6 +36,8 @@ const TokenDescription = ({ symbol }: Input) => {
       <S.Line />
       <S.Text>{description}</S.Text>
     </>
+  ) : (
+    <></>
   )
 }
 

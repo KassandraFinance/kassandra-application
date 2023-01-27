@@ -331,7 +331,7 @@ const Pool = () => {
               </S.IntroCharts>
               <ChartProducts />
               <ScrollUpButton />
-              <Change crpPoolAddress={pool.id} />
+              <Change />
               <MyAsset
                 chain={pool.chain}
                 poolToken={pool.address}

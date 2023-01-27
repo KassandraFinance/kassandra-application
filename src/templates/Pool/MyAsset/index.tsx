@@ -184,29 +184,31 @@ const MyAsset = ({
           <h2>My asset</h2>
         </S.Title>
 
-        <S.AddToken
-          type="button"
-          onClick={() => {
-            registerToken(
-              poolToken,
-              symbol.toLocaleUpperCase(),
-              Number(decimals)
-            )
-            trackEventFunction(
-              'click-add-metamask',
-              `add-${symbol}`,
-              'my-asset'
-            )
-          }}
-        >
-          <Image
-            src="/assets/logos/metamask.svg"
-            alt="metamask logo"
-            width={14}
-            height={14}
-          />
-          <span>Add to Metamask</span>
-        </S.AddToken>
+        {symbol.length < 11 && (
+          <S.AddToken
+            type="button"
+            onClick={() => {
+              registerToken(
+                poolToken,
+                symbol.toLocaleUpperCase(),
+                Number(decimals)
+              )
+              trackEventFunction(
+                'click-add-metamask',
+                `add-${symbol}`,
+                'my-asset'
+              )
+            }}
+          >
+            <Image
+              src="/assets/logos/metamask.svg"
+              alt="metamask logo"
+              width={14}
+              height={14}
+            />
+            <span>Add to Metamask</span>
+          </S.AddToken>
+        )}
       </S.TitleWrapper>
 
       <S.Table>
@@ -266,7 +268,7 @@ const MyAsset = ({
         </S.TBody>
       </S.Table>
       <S.ButtonWrapper>
-        {chain.id === chainId ? (
+        {Number(chain.id) === chainId ? (
           <Button
             backgroundSecondary
             text={
