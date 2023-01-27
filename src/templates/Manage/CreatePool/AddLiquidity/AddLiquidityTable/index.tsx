@@ -183,12 +183,12 @@ const AddLiquidityTable = ({
                     name={coin.symbol}
                     type="number"
                     value={coin.amount.toString()}
-                    min={1 / 10 ** coin.decimals}
+                    min={Big(1).div(Big(10).pow(coin.decimals)).toString()}
                     max={
                       tokensBalance[coin.address] &&
                       Big(tokensBalance[coin.address].toString())
                         .div(Big(10).pow(coin.decimals))
-                        .toNumber()
+                        .toString()
                     }
                     placeholder=""
                     lable="add liquidity"

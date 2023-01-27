@@ -7,8 +7,8 @@ interface IInputNumberRightProps {
   value: string;
   required?: boolean;
   placeholder: string;
-  min: number;
-  max: number | 'any';
+  min: string;
+  max: string | 'any';
   lable: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   button?: boolean;
