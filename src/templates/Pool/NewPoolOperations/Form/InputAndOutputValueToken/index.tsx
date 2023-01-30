@@ -80,7 +80,7 @@ const InputAndOutputValueToken = ({
   }
 
   function handleMaxUserBalance() {
-    if (!inputAmountTokenRef || !amountTokenIn) {
+    if (!inputAmountTokenRef || !amountTokenIn || pool.chainId !== chainId) {
       return
     }
 
