@@ -72,7 +72,7 @@ const Form = ({
   )
 
   const operationVersion = pool.pool_version === 1 ?
-    new operationV1(ProxyContract, pool.address, corePoolContract(pool.vault), ERC20(pool.address), YieldYakContract()) :
+    new operationV1(ProxyContract, pool.address, poolInfo, corePoolContract(pool.vault), ERC20(pool.address), YieldYakContract()) :
     new operationV2(ProxyInvestV2, BalancerHelpers, poolInfo)
   //chamar os dados da pool pelo Redux
 

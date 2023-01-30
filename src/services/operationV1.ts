@@ -5,14 +5,14 @@ import { Contract } from 'web3-eth-contract';
 
 import HermesProxy from "../constants/abi/HermesProxy.json"
 
-import { CalcAllOutGivenPoolInParams, CalcAmountOutParams, CalcSingleOutGivenPoolInParams, EstimatedGasParams, ExitSwapPoolAllTokenAmountInParams, ExitSwapPoolAmountInParams, IOperations, JoinSwapAmountInParams } from './IOperation';
+import { CalcAllOutGivenPoolInParams, CalcAmountOutParams, CalcSingleOutGivenPoolInParams, EstimatedGasParams, ExitSwapPoolAllTokenAmountInParams, ExitSwapPoolAmountInParams, IOperations, IPoolInfoProps, JoinSwapAmountInParams } from './IOperation';
 import { addressNativeToken1Inch } from '../constants/tokenAddresses';
 
 import { ERC20 } from '../hooks/useERC20Contract';
 import { corePoolContract } from '../hooks/usePoolContract';
 import { YieldYakContract } from '../hooks/useYieldYak';
 
-import { checkTokenInThePool, checkTokenWithHigherLiquidityPool } from '../utils/poolUtils';
+import { checkTokenInThePool, checkTokenWithHigherLiquidityPool, getTokenWrapped } from '../utils/poolUtils';
 
 import web3 from '../utils/web3'
 
@@ -31,10 +31,12 @@ export default class operationV1 implements IOperations {
   corePoolContract: ReturnType<typeof corePoolContract>;
   ER20Contract: ReturnType<typeof ERC20>
   yieldYakContract: ReturnType<typeof YieldYakContract>
+  poolInfo: IPoolInfoProps;
 
   constructor(
     proxyAddress: string,
     _crpPool: string,
+    _poolInfo: IPoolInfoProps,
     _corePoolContract: ReturnType<typeof corePoolContract>,
     _ER20Contract: ReturnType<typeof ERC20>,
     _yieldYakContract: ReturnType<typeof YieldYakContract>
@@ -47,6 +49,7 @@ export default class operationV1 implements IOperations {
     this.ER20Contract = _ER20Contract
     this.yieldYakContract = _yieldYakContract
     this.withdrawContract = proxyAddress
+    this.poolInfo = _poolInfo
   }
 
   async getInfoPool(tokenInAddress: string) {
@@ -146,7 +149,6 @@ export default class operationV1 implements IOperations {
     minPoolAmountOut,
     userWalletAddress,
     data,
-    poolTokenList,
     hasTokenInPool,
     transactionCallback
   }: JoinSwapAmountInParams) {
@@ -189,19 +191,18 @@ export default class operationV1 implements IOperations {
     minPoolAmountOut,
     amountTokenIn,
     data,
-    poolTokenList
   }: EstimatedGasParams) {
-    const tokensChecked = checkTokenInThePool(poolTokenList, tokenInAddress)
+    const tokensChecked = checkTokenInThePool(this.poolInfo.tokens, tokenInAddress)
     const avaxValue = tokenInAddress === addressNativeToken1Inch ? amountTokenIn : new BigNumber(0)
-    const response = checkTokenWithHigherLiquidityPool(poolTokenList)
+    const tokenWithHigherLiquidity = checkTokenWithHigherLiquidityPool(this.poolInfo.tokens)
 
     const estimateGas = await web3.eth.estimateGas({
       // "value": '0x0', // Only tokens
       "data": tokensChecked ?
         this.contract.methods.joinswapExternAmountIn(this.crpPool, tokenInAddress, amountTokenIn, minPoolAmountOut, this.referral).encodeABI() :
-        this.contract.methods.joinswapExternAmountInWithSwap(this.crpPool, tokenInAddress, amountTokenIn, response.address, minPoolAmountOut, this.referral, data).encodeABI(),
+        this.contract.methods.joinswapExternAmountInWithSwap(this.crpPool, tokenInAddress, amountTokenIn, tokenWithHigherLiquidity.address, minPoolAmountOut, this.referral, data).encodeABI(),
       "from": userWalletAddress,
-      "to": response.address,
+      "to": tokenWithHigherLiquidity.address,
       "value": avaxValue
     });
     const gasPrice = await web3.eth.getGasPrice()
@@ -328,19 +329,18 @@ export default class operationV1 implements IOperations {
   async calcAllOutGivenPoolIn({
     poolAmountIn,
     userWalletAddress,
-    selectedTokenInBalance,
-    poolTokenList
+    selectedTokenInBalance
   }: CalcAllOutGivenPoolInParams) {
     let withdrawAllAmoutOut = [new BigNumber('0')]
     let transactionError: string | undefined = undefined
-    const tokensInPool = poolTokenList.map(item => item.token.wraps?.id ?? item.token.id)
+    const tokensInPool = this.poolInfo.tokens.map(item => item.token.wraps?.id ?? item.token.id)
 
     try {
       const poolSupply = await this.ER20Contract.totalSupply()
       const exitFee = await this.corePoolContract.exitFee()
 
       withdrawAllAmoutOut = await Promise.all(
-        poolTokenList.map(async (item) => {
+        this.poolInfo.tokens.map(async (item) => {
           const swapOutTotalPoolBalance = await this.corePoolContract.balance(item.token.id)
 
           const withdrawAmout = this.getWithdrawAmount(
@@ -409,7 +409,6 @@ export default class operationV1 implements IOperations {
     slippageBase,
     slippageExp,
     userWalletAddress,
-    poolTokenList,
     transactionCallback
   }: ExitSwapPoolAllTokenAmountInParams) {
     this.corePoolContract.currentTokens()
@@ -424,7 +423,7 @@ export default class operationV1 implements IOperations {
         )
       }
 
-      const tokensWithdraw = poolTokenList.map(token =>
+      const tokensWithdraw = this.poolInfo.tokens.map(token =>
         token.token.wraps ?
         token.token.wraps.id :
         token.token.id

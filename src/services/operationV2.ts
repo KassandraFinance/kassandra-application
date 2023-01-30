@@ -124,7 +124,6 @@ export default class operationV2 {
     minPoolAmountOut,
     userWalletAddress,
     data,
-    poolTokenList,
     transactionCallback
   }: JoinSwapAmountInParams) {
     const hasTokenInPool = checkTokenInThePool(this.poolInfo.tokens, tokenInAddress)
@@ -257,8 +256,7 @@ export default class operationV2 {
   async calcAllOutGivenPoolIn({
     poolAmountIn,
     userWalletAddress,
-    selectedTokenInBalance,
-    poolTokenList
+    selectedTokenInBalance
   }: CalcAllOutGivenPoolInParams) {
     // const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
     const assets = this.poolInfo.tokensAddresses
@@ -371,7 +369,6 @@ export default class operationV2 {
     slippageBase,
     slippageExp,
     userWalletAddress,
-    poolTokenList,
     transactionCallback
   }: ExitSwapPoolAllTokenAmountInParams) {
     try {

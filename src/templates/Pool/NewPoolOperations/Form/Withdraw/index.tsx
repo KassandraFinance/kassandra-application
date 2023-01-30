@@ -237,7 +237,6 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         slippageBase,
         slippageExp,
         userWalletAddress,
-        poolTokenList: pool.underlying_assets,
         transactionCallback: withdrawCallback(pool.symbol, -1 * 0)
       })
       return
@@ -272,8 +271,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           const { transactionError, withdrawAllAmoutOut } = await operation.calcAllOutGivenPoolIn({
             poolAmountIn: Big(amountTokenIn),
             userWalletAddress,
-            selectedTokenInBalance,
-            poolTokenList: pool.underlying_assets
+            selectedTokenInBalance
           })
 
           setamountAllTokenOut(withdrawAllAmoutOut ?? [])
