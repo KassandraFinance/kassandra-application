@@ -116,14 +116,14 @@ const Invest = ({ typeAction }: IInvestProps) => {
         tokenSelect.address
       }&toTokenAddress=${
         tokenWrappedAddress
-      }&amount=${amountTokenIn}&fromAddress=${
+      }&amount=${amountTokenIn.toString()}&fromAddress=${
         operation.contractAddress || '0x84f154A845784Ca37Ae962504250a618EB4859dc'
       }&slippage=1&disableEstimate=true`
     )
     const data = await response.json()
 
-    setTrasactionData(data.tx.data)
-    return { amountTokenIn: data.toTokenAmount || 0, transactionDataTx: data.tx.data }
+    setTrasactionData(data?.tx?.data)
+    return { amountTokenIn: data.toTokenAmount || 0, transactionDataTx: data?.tx?.data }
   }
 
   async function handleTokenSelected() {
@@ -396,19 +396,23 @@ const Invest = ({ typeAction }: IInvestProps) => {
       try {
         const tokenSelected = await handleTokenSelected()
 
-        // await generateEstimatedGas(tokenSelected.transactionDataTx)
-
         const { investAmountOut, transactionError } = await operation.calcInvestAmountOut({
           tokenSelected,
+          tokenInAddress: tokenSelect.address,
           userWalletAddress,
           minAmountOut: new BigNumber('0'),
-          selectedTokenInBalance
+          selectedTokenInBalance,
+          amountTokenIn: Big(amountTokenIn)
         })
 
         setAmountTokenOut(Big(investAmountOut.toString()))
         if (transactionError) {
           setErrorMsg(transactionError)
         }
+        if (tokenSelect.address === addressNativeToken1Inch) {
+          await generateEstimatedGas(tokenSelected.transactionDataTx)
+        }
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         const errorStr = error.toString()
@@ -467,7 +471,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
     const balanceMinusFee = amountInBalanceBN.sub(gasFeeBN)
 
-    if (tokenSelect.symbol === "AVAX" &&
+    if (tokenSelect.address === addressNativeToken1Inch &&
       amountTokenInBN.gt(new BigNumber(0)) &&
       amountTokenInBN.lte(amountInBalanceBN) &&
       amountTokenInBN.gte(balanceMinusFee)

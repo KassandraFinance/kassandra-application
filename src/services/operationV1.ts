@@ -74,7 +74,9 @@ export default class operationV1 implements IOperations {
     tokenSelected,
     userWalletAddress,
     minAmountOut,
-    selectedTokenInBalance
+    selectedTokenInBalance,
+    amountTokenIn,
+    tokenInAddress
   }: CalcAmountOutParams) {
     const {
       denormalizedWeight,
@@ -83,17 +85,40 @@ export default class operationV1 implements IOperations {
       poolTotalDenormalizedWeight,
       totalPoolBalance
     } = await this.getInfoPool(tokenSelected.tokenInAddress)
+    const checkedTokenInPool = checkTokenInThePool(this.poolInfo.tokens, tokenInAddress)
+    const avaxValue = tokenInAddress === addressNativeToken1Inch ? amountTokenIn : new BigNumber(0)
 
     try {
+      if (checkedTokenInPool) {
         const investAmountOut: BigNumber = await this.contract.methods
-        .joinswapExternAmountIn(
+          .joinswapExternAmountIn(
+            this.crpPool,
+            tokenInAddress,
+            new BigNumber(amountTokenIn.toString()),
+            minAmountOut,
+            this.referral
+          )
+          .call({ from: userWalletAddress })
+
+        return {
+          investAmountOut,
+          transactionError: undefined
+        }
+      }
+      const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(this.poolInfo.tokens)
+      const tokenWrappedAddress = getTokenWrapped(this.poolInfo.tokens, tokenExchange)
+
+      const investAmountOut = await this.contract.methods
+        .joinswapExternAmountInWithSwap(
           this.crpPool,
-          tokenSelected.newAmountTokenIn,
-          tokenSelected.tokenInAddress,
+          tokenInAddress,
+          new BigNumber(amountTokenIn.toString()),
+          tokenWrappedAddress,
           minAmountOut,
-          this.referral
+          this.referral,
+          tokenSelected.transactionDataTx
         )
-        .call({ from: userWalletAddress, value: new BigNumber(0) })
+        .call({ from: userWalletAddress, value: avaxValue })
 
       return {
         investAmountOut,
@@ -101,7 +126,7 @@ export default class operationV1 implements IOperations {
       }
 
     } catch (error: any) {
-        let investAmoutInCalc: BigNumber = new BigNumber(
+      let investAmoutInCalc: BigNumber = new BigNumber(
         tokenSelected.newAmountTokenIn.toString()
       )
 
@@ -131,7 +156,7 @@ export default class operationV1 implements IOperations {
         transactionError = "The amount can't be more than half of what's in the pool!"
       }
       if (
-        Big(tokenSelected.newAmountTokenIn).gt(selectedTokenInBalance) &&
+        Big(amountTokenIn).gt(selectedTokenInBalance) &&
         Number(tokenSelected.newAmountTokenIn.toString()) > 0
       ) {
         transactionError = 'This amount exceeds your balance!'
@@ -168,14 +193,15 @@ export default class operationV1 implements IOperations {
       return res
     }
 
-    const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(poolTokenList)
+    const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(this.poolInfo.tokens)
+    const tokenWrappedAddress = getTokenWrapped(this.poolInfo.tokens, tokenExchange)
 
     const res = await this.contract.methods
       .joinswapExternAmountInWithSwap(
         this.crpPool,
         tokenInAddress,
         tokenAmountIn,
-        tokenExchange,
+        tokenWrappedAddress,
         minPoolAmountOut,
         this.referral,
         data
