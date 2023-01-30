@@ -171,15 +171,26 @@ export default class operationV2 {
     tokenInAddress,
     minPoolAmountOut,
     amountTokenIn,
-    data,
-    poolTokenList
+    data
   }: EstimatedGasParams) {
-    const feeNumber = 0
-    const feeString = ''
+    const response = checkTokenWithHigherLiquidityPool(this.poolInfo.tokens)
+
+    const gasPrice = await web3.eth.getGasPrice()
+    const estimateGas = await this.contract.methods.joinPoolExactTokenInWithSwap(
+      this.poolInfo.id,
+      tokenInAddress,
+      amountTokenIn,
+      response.address,
+      minPoolAmountOut,
+      data
+    ).estimateGas({ from: userWalletAddress , value: amountTokenIn })
+
+    const fee = (Number(gasPrice) * estimateGas)  * 1.3
+    const finalGasInEther = web3.utils.fromWei(fee.toString(), 'ether');
 
     return {
-      feeNumber,
-      feeString
+      feeNumber: fee,
+      feeString: finalGasInEther
     }
   }
 
