@@ -69,7 +69,9 @@ export default class operationV2 {
     tokenSelected,
     userWalletAddress,
     minAmountOut,
-    selectedTokenInBalance
+    selectedTokenInBalance,
+    amountTokenIn,
+    tokenInAddress
   }: CalcAmountOutParams) {
     let investAmountOut
     let transactionError
@@ -93,23 +95,31 @@ export default class operationV2 {
         request
       ).call({ from: userWalletAddress })
 
-      return {
-      investAmountOut,
-      transactionError
-    }
-    } catch (error: any) {
-      const errorStr = error.toString()
-
-      let transactionError: string | undefined = undefined
-      if (Big(tokenSelected.newAmountTokenIn).gt(selectedTokenInBalance)) {
-        transactionError = 'This amount exceeds your balance!'
-      }
       // const feesResponse = await this.managedPoolController.methods.getJoinFees().call()
 
       // const amountOut = response.bptOut
       // const amountToManager = amountOut.mul(feesResponse.feesToManager).div(1e18.toString());
       // const amountToReferral = amountOut.mul(feesResponse.feesToReferral).div(1e18.toString());
       // const amountToInvestor = amountOut.sub(amountToManager.add(amountToReferral))
+
+      return {
+      investAmountOut,
+      transactionError
+    }
+    } catch (error: any) {
+      const errorStr = error.toString().match(/(BAL#\d{0,3})/)
+
+      if (errorStr) {
+        const errorCode = errorStr[0].replace('BAL#', '');
+
+        if (Number(errorCode) < 100) {
+          transactionError = 'This amount is too low for the pool!'
+        }
+      }
+
+      if (Big(amountTokenIn).gt(selectedTokenInBalance)) {
+        transactionError = 'This amount exceeds your balance!'
+      }
 
       return {
         investAmountOut,
@@ -241,8 +251,7 @@ export default class operationV2 {
         transactionError: undefined
       }
     } catch (error: any) {
-      console.log(error)
-      const errorStr = error.toString()
+      // const errorStr = error.toString()
 
       const response = await this.balancerHelpersContract.methods.queryExit(
         this.poolInfo.id,
@@ -250,7 +259,6 @@ export default class operationV2 {
         userWalletAddress,
         request
       ).call({ from: userWalletAddress });
-      console.log(response.amountsOut[indexToken])
 
       let transactionError: string | undefined = undefined
       if (Big(poolAmountIn).gt(selectedTokenInBalance)) {
@@ -280,6 +288,7 @@ export default class operationV2 {
     }
 
     let allAmountsOut
+    let transactionError: string | undefined = undefined
     try {
       // const response = await this.balancerHelpersContract.methods.exitPool(
       //   this.poolInfo.id, userWalletAddress, userWalletAddress, request
@@ -295,27 +304,29 @@ export default class operationV2 {
       // request.minAmountsOut = response.amountsOut
       allAmountsOut = response.amountsOut
 
-      // await this.vaultBalancer.methods.exitPool(
-      //   this.poolInfo.id,
-      //   userWalletAddress,
-      //   userWalletAddress,
-      //   request
-      // ).call({ from: userWalletAddress });
+      await this.vaultBalancer.methods.exitPool(
+        this.poolInfo.id,
+        userWalletAddress,
+        userWalletAddress,
+        request
+      ).call({ from: userWalletAddress });
 
       return {
         // withdrawAmoutOut: response.amountsOut,
         withdrawAllAmoutOut: allAmountsOut.map((item: string) => new BigNumber(item)),
         transactionError: undefined
       }
-    } catch (error) {
-      // const response = await this.balancerHelpersContract.methods.queryExit(
-      //   this.poolInfo.id,
-      //   userWalletAddress,
-      //   userWalletAddress,
-      //   request
-      // ).call({ from: userWalletAddress });
+    } catch (error: any) {
+      const errorStr = error.toString().match(/(BAL#\d{0,3})/)
 
-      let transactionError: string | undefined = undefined
+      if (errorStr) {
+        const errorCode = errorStr[0].replace('BAL#', '');
+
+        if (Number(errorCode) < 100) {
+          transactionError = 'This amount is below minimum withdraw!'
+        }
+      }
+
       if (Big(poolAmountIn).gt(selectedTokenInBalance)) {
         transactionError = 'This amount exceeds your balance!'
       }
@@ -347,6 +358,7 @@ export default class operationV2 {
       }
 
       if (indexToken === -1) throw new Error('Token not found')
+
       const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256', 'uint256'], [0, tokenAmountIn.toString(), indexToken])
       const minAmountsOut = this.poolInfo.tokensAddresses.map(item => {
         if(item.toLowerCase() === tokenOutAddress.toLowerCase()) {
