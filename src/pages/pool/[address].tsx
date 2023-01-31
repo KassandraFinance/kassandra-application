@@ -54,6 +54,7 @@ const queryPool = `{
   chainId
   logo
   pool_version
+  strategy
   chain {
     id
     chainName
