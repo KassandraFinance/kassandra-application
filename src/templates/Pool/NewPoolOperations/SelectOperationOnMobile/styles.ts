@@ -12,7 +12,7 @@ export const PoolOperationsContainerMobile = styled.div`
   bottom: 8.3rem;
   left: 2.5rem;
   right: 2.5rem;
-  z-index: 19;
+  z-index: 99;
   border-radius: 1.6rem;
 
   @media (min-width: 961px) {
@@ -26,7 +26,7 @@ export const PoolOperationsContainerMobile = styled.div`
 
 export const SelectOperationOnMobile = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   width: 100%;
 
   background: rgba(31, 31, 31, 0.72);

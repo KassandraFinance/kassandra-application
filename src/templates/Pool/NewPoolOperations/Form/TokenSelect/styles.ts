@@ -32,6 +32,10 @@ export const SelectToken = styled.div<ISelectedProps>`
 
     background-color: #4A4348;
     border-radius: ${openOptions ? '0.4rem 0.4rem 0 0px' : '0.4rem'};
+
+    @media (max-width: 400px) {
+      width: 11rem;
+    }
   `}
 `
 
@@ -53,6 +57,11 @@ export const Selected = styled.div<ISelectedProps>`
     border-radius: ${openOptions ? '0.4rem 0px' : '0.4rem'};
 
     cursor: pointer;
+
+    @media (max-width: 400px) {
+      font-size: ${theme.font.sizes.font16};
+      width: 11rem;
+    }
   `}
 `
 
@@ -103,6 +112,10 @@ export const OptionsContent = styled.div`
       background-color: rgba(255, 255, 255, 0.2);
       border-radius: 0.1rem;
     }
+
+    @media (max-width: 400px) {
+      width: 11rem;
+    }
   `}
 `
 
@@ -121,6 +134,10 @@ export const Option = styled.div`
 
     &:hover {
       background-color: #000;
+    }
+
+    @media (max-width: 400px) {
+      font-size: ${theme.font.sizes.font16};
     }
   `}
 `

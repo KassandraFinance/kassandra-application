@@ -28,6 +28,10 @@ export const SelectToken = styled.div<ISelectedProps>`
 
     background-color: #4A4348;
     border-radius: ${(openOptions ? '0.4rem 0.4rem 0 0px' : '0.4rem')};
+
+    @media (max-width: 400px) {
+      width: 11rem;
+    }
   `}
 `
 
@@ -58,6 +62,10 @@ export const Selected = styled.div<ISelectedProps>`
     #arrow-down {
       margin: 0 0 0.6rem auto;
       padding: 0;
+    }
+
+    @media (max-width: 400px) {
+      width: 11rem;
     }
   `}
 `
@@ -108,6 +116,10 @@ export const Option = styled.div`
 
     &:hover {
       background-color: #000;
+    }
+
+    @media (max-width: 400px) {
+      width: 11rem;
     }
   `}
 `

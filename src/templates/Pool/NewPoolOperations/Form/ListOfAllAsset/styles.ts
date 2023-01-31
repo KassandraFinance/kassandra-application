@@ -66,7 +66,7 @@ export const Input = styled.input`
 
     color: #fff;
     font-family: ${theme.font.family};
-    font-size: ${theme.font.sizes.font14};
+    font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.normal};
     line-height: ${theme.font.sizes.font14};
     text-align: right;
@@ -75,14 +75,6 @@ export const Input = styled.input`
     border: none;
 
     outline: none;
-
-    @media (max-width: 380px) {
-      font-size: 2.2rem;
-    }
-
-    @media (max-width: 360px) {
-      font-size: ${theme.font.sizes.font20};
-    }
 
     &::placeholder {
       color: #fff;

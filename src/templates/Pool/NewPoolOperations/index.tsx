@@ -3,12 +3,7 @@ import React from 'react'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { setTokenSelect } from '../../../store/reducers/tokenSelect'
 
-// import { chains } from '../../../constants/tokenAddresses'
-
-// import { ChainDetails } from '../../../utils/changeChain'
-
 import SelectOperation from './SelectOperation'
-// import ModalCardOperations from './ModalPoolOperations'
 import SelectOperationOnMobile, { TitlesMobile } from './SelectOperationOnMobile'
 import TokenSelection from './Form/TokenSelection'
 
@@ -28,22 +23,16 @@ export type Titles = keyof typeof messages;
 const messages = {
   Invest: 'Pay with',
   Withdraw: 'Send',
-  Swap: 'Swap from'
+  // Swap: 'Swap from',
 }
 
 const NewPoolOperations = () => {
-  const [isModalPoolOperations, setIsModalPoolOperations] = React.useState<boolean>(false)
-
   const [inputChecked, setInputChecked] = React.useState<Titles>('Invest')
   const [typeWithdrawChecked, setTypeWithdrawChecked] = React.useState<string>('Best_value')
+  const [isOpenPoolOperationMobile, setisOpenPoolOperationMobile] = React.useState(false)
   const [inputCheckedBarMobile, setInputCheckedBarMobile] = React.useState<TitlesMobile>('Disable')
 
   const { tokenSelectionActive } = useAppSelector(state => state)
-
-  // function handleSetInputChecked(title: Titles) {
-  //   if (chain.id === chainId) setInputChecked(title)
-  // }
-
 
   const dispatch = useAppDispatch()
   const { tokenList1Inch } = useAppSelector(state => state)
@@ -56,42 +45,36 @@ const NewPoolOperations = () => {
 
   return (
     <S.NewPoolOperations>
+      {isOpenPoolOperationMobile && (
+        <S.Backdrop onClick={() => {
+          setisOpenPoolOperationMobile(false)
+          setInputCheckedBarMobile('Disable')
+        }}/>
+      )}
+
       <S.PoolOperationsContainer>
-        {isModalPoolOperations ?
-          // <ModalCardOperations
-          //   setInputChecked={setInputChecked}
-          //   inputCheckedBarMobile={inputCheckedBarMobile}
-          //   setInputCheckedBarMobile={setInputCheckedBarMobile}
-          //   modalOpen={isModalPoolOperations}
-          //   setModalOpen={setIsModalPoolOperations}
-          //   setIsModaWallet={setIsModaWallet}
-
-          //   poolChain={poolChain}
-          //   poolSymbol={poolSymbol}
-          //   crpPoolAddress={crpPoolAddress}
-          //   corePoolAddress={corePoolAddress}
-          //   productCategories={productCategories}
-          <p>modal card operation</p>
-          // />
-          :
-          tokenSelectionActive ?
+        {tokenSelectionActive ?
+          <S.TokenSelectionContainer isOpen={isOpenPoolOperationMobile}>
             <TokenSelection />
+          </S.TokenSelectionContainer>
           :
-          <SelectOperation
-            inputChecked={inputChecked}
-            setInputChecked={setInputChecked}
-            // handleSetInputChecked={handleSetInputChecked}
-            typeWithdrawChecked={typeWithdrawChecked}
-            setTypeWithdrawChecked={setTypeWithdrawChecked}
-          />
+          <S.SelectOperationContianer isOpen={isOpenPoolOperationMobile}>
+            <SelectOperation
+              inputChecked={inputChecked}
+              setInputChecked={setInputChecked}
+              typeWithdrawChecked={typeWithdrawChecked}
+              setTypeWithdrawChecked={setTypeWithdrawChecked}
+            />
+          </S.SelectOperationContianer>
         }
-
-        <SelectOperationOnMobile
-          inputCheckedBarMobile={inputCheckedBarMobile}
-          setInputCheckedBarMobile={setInputCheckedBarMobile}
-          setModalOpen={setIsModalPoolOperations}
-        />
       </S.PoolOperationsContainer>
+
+      <SelectOperationOnMobile
+        setInputChecked={setInputChecked}
+        inputCheckedBarMobile={inputCheckedBarMobile}
+        setInputCheckedBarMobile={setInputCheckedBarMobile}
+        setisOpenPoolOperationMobile={setisOpenPoolOperationMobile}
+      />
     </S.NewPoolOperations>
   )
 }

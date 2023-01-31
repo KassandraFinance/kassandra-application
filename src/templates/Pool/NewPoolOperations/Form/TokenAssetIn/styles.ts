@@ -12,6 +12,15 @@ export const TokenAssetIn = styled.form`
 
     background: rgba(31, 31, 31, 0.72);
     border-radius: 1.6rem;
+
+    min-width: 38rem;
+
+    @media (max-width: 450px) {
+      min-width: 30rem;
+    }
+    @media (max-width: 390px) {
+      min-width: 25rem;
+    }
   `}
 `
 

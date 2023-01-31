@@ -33,6 +33,7 @@ const Token1inchList = ({
   tokenPinList,
   setTokenPinList
 }: IToken1inchListProps) => {
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   const [isShowShadow, setisShowShadow] = React.useState(true)
 
   const dispatch = useAppDispatch()
@@ -134,17 +135,29 @@ const Token1inchList = ({
     })
   }, [searchToken, listBalanceToken, tokenPinList, userWalletAddress])
 
+  React.useEffect(() => {
+    function watchWidth() {
+      setWindowWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", watchWidth);
+
+    return function () {
+      window.removeEventListener("resize", watchWidth);
+    };
+  }, []);
+
   return (
     <S.TokenListContainer ref={TokenListContainerRef}>
       {filteredToken.length > 0 ? (
         <>
           <List
-            innerElementType="ul"
-            itemCount={filteredToken.length}
-            itemSize={58}
-            height={3000}
-            width={384}
-            onScroll={(event) => handleOnScroll(event)}
+          innerElementType="ul"
+          itemCount={filteredToken.length}
+          itemSize={58}
+          height={3000}
+          width={windowWidth < 550 ? 260 : 384}
+          onScroll={(event) => handleOnScroll(event)}
           >
             {CurrencyRow}
           </List>

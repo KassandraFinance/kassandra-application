@@ -3,11 +3,18 @@ import styled, { css } from 'styled-components'
 export const InputAndOutputValueToken = styled.div`
   display: flex;
 
-  width: 100%;
+  min-width: 38rem;
   padding: 1rem 1.6rem;
 
   background: rgba(31, 31, 31, 0.72);
   border-radius: 1.6rem;
+
+  @media (max-width: 450px) {
+    min-width: 30rem;
+  }
+  @media (max-width: 390px) {
+    min-width: 25rem;
+  }
 `
 
 export const FlexContainer = styled.div`

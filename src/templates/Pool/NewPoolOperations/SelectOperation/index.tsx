@@ -23,7 +23,7 @@ import * as S from './styles'
 interface ISelectOperationProps {
   // inputChecked: Titles;
   inputChecked: string;
-  setInputChecked: React.Dispatch<React.SetStateAction<"Withdraw" | "Invest" | "Swap">>
+  setInputChecked: React.Dispatch<React.SetStateAction<"Withdraw" | "Invest">>
   // setInputChecked: React.Dispatch<React.SetStateAction<string>>;
   // handleSetInputChecked: (title: Titles) => void;
   // eslint-disable-next-line prettier/prettier
@@ -40,14 +40,11 @@ interface ISelectOperationProps {
 const SelectOperation = ({
   inputChecked,
   setInputChecked,
-  // handleSetInputChecked,
   typeWithdrawChecked,
   setTypeWithdrawChecked
 }: ISelectOperationProps) => {
-  // const dispatch = useAppDispatch()
-
   const { trackEventFunction } = useMatomoEcommerce()
-  // dispatch(setModalWalletActive(false))
+
   return (
     <>
       <S.SelectOperation>
@@ -57,7 +54,6 @@ const SelectOperation = ({
           id="Invest"
           onChange={() => {
             setInputChecked('Invest')
-            // handleSetInputChecked('Invest')
             trackEventFunction('click-on-tab', 'invest', 'operations-invest')
           }}
           checked={inputChecked === 'Invest'}
@@ -72,7 +68,6 @@ const SelectOperation = ({
           id="Withdraw"
           onChange={() => {
             setInputChecked('Withdraw')
-            // handleSetInputChecked('Withdraw')
             trackEventFunction('click-on-tab', 'withdraw', 'operations-invest')
           }}
           checked={inputChecked === 'Withdraw'}
