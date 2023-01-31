@@ -1,6 +1,5 @@
 import React from 'react'
 
-// import { ChainDetails } from '../../../utils/changeChain'
 import { OperationProvider } from './PoolOperationContext';
 import { useAppSelector } from '../../../../store/hooks';
 
@@ -24,21 +23,8 @@ export type Titles = keyof typeof messages;
 
 const messages = {
   Invest: 'Pay with',
-  Withdraw: 'Send',
-  Swap: 'Swap from'
+  Withdraw: 'Send'
 }
-
-// interface IFormProps {
-//   typeAction: string;
-//   title: Titles;
-//   typeWithdrawChecked: string;
-//   poolChain: ChainDetails;
-//   poolSymbol: string;
-//   crpPoolAddress: string;
-//   corePoolAddress: string;
-//   productCategories: string[];
-//   setIsModaWallet: React.Dispatch<React.SetStateAction<boolean>>
-// }
 
 interface IFormProps {
   typeAction: string;

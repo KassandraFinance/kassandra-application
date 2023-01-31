@@ -1,40 +1,16 @@
 import React from 'react'
-// import { ChainDetails } from '../../../../utils/changeChain'
-
-// import { useAppDispatch } from '../../../../store/hooks'
-// import { setModalWalletActive } from '../../../../store/reducers/modalWalletActive'
 
 import useMatomoEcommerce from '../../../../hooks/useMatomoEcommerce'
-
-// import { Titles } from '..'
 
 import Form from '../Form'
 
 import * as S from './styles'
 
-// export type Titles = keyof typeof messages;
-
-// const messages = {
-//   Invest: 'Pay with',
-//   Withdraw: 'Send',
-//   Swap: 'Swap from'
-// }
-
 interface ISelectOperationProps {
-  // inputChecked: Titles;
   inputChecked: string;
-  setInputChecked: React.Dispatch<React.SetStateAction<"Withdraw" | "Invest">>
-  // setInputChecked: React.Dispatch<React.SetStateAction<string>>;
-  // handleSetInputChecked: (title: Titles) => void;
-  // eslint-disable-next-line prettier/prettier
+  setInputChecked: React.Dispatch<React.SetStateAction<'Withdraw' | 'Invest'>>;
   typeWithdrawChecked: string;
   setTypeWithdrawChecked: React.Dispatch<React.SetStateAction<string>>;
-
-  // poolChain: ChainDetails;
-  // poolSymbol: string;
-  // crpPoolAddress: string;
-  // corePoolAddress: string;
-  // productCategories: string[];
 }
 
 const SelectOperation = ({

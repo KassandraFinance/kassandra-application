@@ -30,8 +30,8 @@ export default function Explore({ pools }: IIndexProps) {
       <Header />
 
       <Breadcrumb>
-        <BreadcrumbItem href={`/pool`} isLastPage>
-          Explore
+        <BreadcrumbItem href={`/`} isLastPage>
+          Invest
         </BreadcrumbItem>
       </Breadcrumb>
 
@@ -39,13 +39,13 @@ export default function Explore({ pools }: IIndexProps) {
         <S.TitleContainer>
           <TitleSection
             image={sectionTitleEye}
-            title="Explore Funds"
+            title="Explore Pools"
             text="Find a strategy that fits your needs"
           />
         </S.TitleContainer>
 
         <S.ExploreContainer>
-          <TitleSection image={featuredFunds} title="Featured Funds" text="" />
+          <TitleSection image={featuredFunds} title="Featured Pools" text="" />
 
           {loading && (
             <S.LoadingContainer>
@@ -62,7 +62,7 @@ export default function Explore({ pools }: IIndexProps) {
           <S.ComunitFundsContainer>
             <TitleSection
               image={communityFunds}
-              title="Community Funds"
+              title="Community Pools"
               text=""
             />
 

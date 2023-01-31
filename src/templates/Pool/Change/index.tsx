@@ -13,9 +13,9 @@ import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 import * as S from './styles'
 
 const Change = () => {
-  const dispatch = useAppDispatch()
   const [arrChangePrice, setArrChangePrice] = React.useState<string[]>([])
 
+  const dispatch = useAppDispatch()
   const { pool } = useAppSelector(state => state)
 
   const { data } = useSWR([GET_POOL_PRICE], query =>

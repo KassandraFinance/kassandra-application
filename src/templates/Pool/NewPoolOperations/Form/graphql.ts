@@ -6,9 +6,6 @@ export const GET_INFO_POOL = gql`
       # information pool
       decimals
       price_usd
-      total_value_locked_usd
-      fee_exit
-      fee_swap
     }
   }
 `

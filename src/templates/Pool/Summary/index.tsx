@@ -2,20 +2,17 @@ import React from 'react'
 import Image from 'next/image'
 import CopyToClipboard from 'react-copy-to-clipboard'
 
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import { useAppSelector } from '../../../store/hooks'
-
-import { chains } from '../../../constants/tokenAddresses'
+import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import substr from '../../../utils/substr'
 import { registerToken } from '../../../utils/registerToken'
 
 import { ToastInfo } from '../../../components/Toastify/toast'
 
-import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
-import comingSoon from '../../../../public/assets/icons/coming-soon.svg'
-
 import metaMaskIcon from '../../../../public/assets/logos/metamask.svg'
+import comingSoon from '../../../../public/assets/icons/coming-soon.svg'
+import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 
 import * as S from './styles'
 
@@ -83,7 +80,7 @@ const Summary = ({ strategy }: any) => {
           ''
         )}
       </S.LinkContent>
-      <S.ContractsName>AVALANCHE C-CHAIN CONTRACTS</S.ContractsName>
+      <S.ContractsName>{pool.chain.chainName} CONTRACTS</S.ContractsName>
       <S.CopyContract>
         <S.Blockchain>
           <div className="image">
@@ -94,8 +91,6 @@ const Summary = ({ strategy }: any) => {
               alt=""
             />
           </div>
-          {/* REFATORAR LOGICA QUANDO FOR POLYGON */}
-          {/* CONSUMIR BLOCK EXPLORER DA CHAIN NO BACKEND */}
           <a
             href={`${pool.chain.blockExplorerUrl}/address/${pool.address}`}
             target="_blank"

@@ -1,35 +1,32 @@
 import React from 'react'
-import useSWR from 'swr'
 import Image from 'next/image'
+import useSWR from 'swr'
 import { request } from 'graphql-request'
-
 import Big from 'big.js'
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 import { BNtoDecimal } from '../../utils/numerals'
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
-import { setFees } from '../../store/reducers/fees'
+import { setTokenList1Inch } from '../../store/reducers/tokenList1Inch'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+
+import { URL_1INCH } from '../../constants/tokenAddresses'
+
+import { GET_INFO_POOL } from './graphql'
 
 import Header from '../../components/Header'
 import Breadcrumb from '../../components/Breadcrumb'
 import Loading from '../../components/Loading'
 import ChartProducts from '../../components/ChartProducts'
-import PoolOperations from '../../components/PoolOperations'
 import ScrollUpButton from '../../components/ScrollUpButton'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
-import PoweredBy from './PoweredBy'
-import ActivityTable from './ActivityTable'
-
-import tooltip from '../../../public/assets/utilities/tooltip.svg'
-import ahype from '../../../public/assets/logos/ahype.svg'
-
-import { GET_INFO_POOL } from './graphql'
+// import PoweredBy from './PoweredBy'
+// import ActivityTable from './ActivityTable'
 
 import Change from './Change'
 import MyAsset from './MyAsset'
@@ -37,13 +34,12 @@ import Summary from './Summary'
 import Distribution from './Distribution'
 import TokenDescription from './TokenDescription'
 import ShareImageModal from './ShareImageModal'
+import NewPoolOperations from './NewPoolOperations'
 import SharedImage from './SharedImage'
 
-import * as S from './styles'
+import tooltip from '../../../public/assets/utilities/tooltip.svg'
 
-import NewPoolOperations from './NewPoolOperations'
-import { URL_1INCH, products } from '../../constants/tokenAddresses'
-import { setTokenList1Inch } from '../../store/reducers/tokenList1Inch'
+import * as S from './styles'
 
 export interface IfarmInfoYYProps {
   urlFarmContract: string;
@@ -163,23 +159,6 @@ const Pool = () => {
         0
       )
 
-      // dispatch(
-      //   setTokenAddress2Index(
-      //     tokenDetails.reduce(
-      //       (acc, cur, i) => ({ [cur.address]: i, ...acc }),
-      //       {}
-      //     )
-      //   )
-      // )
-
-      // dispatch(
-      //   setFees({
-      //     Invest: '0',
-      //     Withdraw: (data.pool.fee_exit * 100).toFixed(2),
-      //     Swap: (data.pool.fee_swap * 100).toFixed(2)
-      //   })
-      // )
-
       setInfoPool({
         tvl: BNtoDecimal(Big(data.pool.total_value_locked_usd), 2, 2, 2),
         swapFees: BNtoDecimal(Big(swapFees), 2, 2, 2),
@@ -210,11 +189,7 @@ const Pool = () => {
       </ShareImageModal>
       <Breadcrumb>
         <BreadcrumbItem href="/">Home</BreadcrumbItem>
-        <BreadcrumbItem href={`/explore`}>Explore</BreadcrumbItem>
-        <BreadcrumbItem
-          href={`/explore/${pool.symbol.toLowerCase()}`}
-          isLastPage
-        >
+        <BreadcrumbItem href={`/pool/${pool.symbol.toLowerCase()}`} isLastPage>
           ${pool.symbol}
         </BreadcrumbItem>
       </Breadcrumb>
@@ -258,7 +233,7 @@ const Pool = () => {
                   </S.NameAndSymbol>
                   <S.SymbolAndMade>
                     <h3>${pool.symbol}</h3>
-                    <p>by {pool.manager}</p>
+                    {pool.manager && <p>by {pool.manager}</p>}
                   </S.SymbolAndMade>
                 </S.NameIndex>
               </S.Intro>
@@ -278,7 +253,7 @@ const Pool = () => {
                       </S.Tooltip>
                     </Tippy>
                   </span>
-                  <h2>${infoPool.tvl}</h2>
+                  <p>${infoPool.tvl}</p>
                 </S.IndexData>
                 <S.IndexData>
                   <span>
@@ -294,7 +269,7 @@ const Pool = () => {
                       </S.Tooltip>
                     </Tippy>
                   </span>
-                  <h2>${infoPool.volume}</h2>
+                  <p>${infoPool.volume}</p>
                 </S.IndexData>
                 <S.IndexData>
                   <span>
@@ -310,7 +285,7 @@ const Pool = () => {
                       </S.Tooltip>
                     </Tippy>
                   </span>
-                  <h2>${infoPool.swapFees}</h2>
+                  <p>${infoPool.swapFees}</p>
                 </S.IndexData>
                 <S.IndexData>
                   <span>
@@ -326,7 +301,7 @@ const Pool = () => {
                       </S.Tooltip>
                     </Tippy>
                   </span>
-                  <h2>${infoPool.withdrawFees}</h2>
+                  <p>${infoPool.withdrawFees}</p>
                 </S.IndexData>
               </S.IntroCharts>
               <ChartProducts />
@@ -346,13 +321,6 @@ const Pool = () => {
               {/* <ActivityTable /> */}
               <TokenDescription symbol={pool.symbol} />
             </S.ProductDetails>
-            {/* <PoolOperations
-              poolChain={products[0].chain}
-              poolSymbol={products[0].symbol}
-              crpPoolAddress={products[0].sipAddress}
-              corePoolAddress={products[0].coreAddress}
-              productCategories={products[0].categories}
-            /> */}
             <NewPoolOperations />
           </S.Product>
         </S.Container>

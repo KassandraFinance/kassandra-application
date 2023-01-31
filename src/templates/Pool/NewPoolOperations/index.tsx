@@ -1,30 +1,21 @@
 import React from 'react'
 
-import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { setTokenSelect } from '../../../store/reducers/tokenSelect'
+import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { setTokenSelectionActive } from '../../../store/reducers/tokenSelectionActive'
 
 import SelectOperation from './SelectOperation'
-import SelectOperationOnMobile, { TitlesMobile } from './SelectOperationOnMobile'
 import TokenSelection from './Form/TokenSelection'
+import SelectOperationOnMobile, { TitlesMobile } from './SelectOperationOnMobile'
 
 import * as S from './styles'
-
-// interface IOperationsProps {
-//   poolChain: ChainDetails;
-//   poolSymbol: string;
-//   crpPoolAddress: string;
-//   corePoolAddress: string;
-//   productCategories: string[];
-// }
 
 // eslint-disable-next-line prettier/prettier
 export type Titles = keyof typeof messages;
 
 const messages = {
   Invest: 'Pay with',
-  Withdraw: 'Send',
-  // Swap: 'Swap from',
+  Withdraw: 'Send'
 }
 
 const NewPoolOperations = () => {

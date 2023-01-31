@@ -4,14 +4,12 @@ import { useRouter } from 'next/router'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 
-import {
-  Staking,
-  LPDaiAvax,
-  ProductDetails
-} from '../../../constants/tokenAddresses'
+import { Staking, LPDaiAvax } from '../../../constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG } from '../../../constants/pools'
 
 import { useAppDispatch } from '../../../store/hooks'
+import { useAppSelector } from '../../../store/hooks'
+import { ChainInfo } from '../../../store/reducers/pool'
 import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 
 import usePriceLP from '../../../hooks/usePriceLP'
@@ -19,18 +17,15 @@ import useERC20Contract from '../../../hooks/useERC20Contract'
 import useStakingContract from '../../../hooks/useStakingContract'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
-import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
-
+import changeChain from '../../../utils/changeChain'
 import { BNtoDecimal } from '../../../utils/numerals'
 import { registerToken } from '../../../utils/registerToken'
-import changeChain from '../../../utils/changeChain'
-
-import { useAppSelector } from '../../../store/hooks'
 
 import Button from '../../../components/Button'
 
+import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
+
 import * as S from './styles'
-import { ChainInfo } from '../../../store/reducers/pool'
 
 interface IMyAssetProps {
   chain: ChainInfo;

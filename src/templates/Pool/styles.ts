@@ -170,7 +170,7 @@ export const IndexData = styled.div`
     text-transform: uppercase;
   }
 
-  h2 {
+  p {
     font-size: ${theme.font.sizes.font18};
     font-weight: ${theme.font.weight.medium};
 
@@ -179,7 +179,7 @@ export const IndexData = styled.div`
 
   @media (max-width: 400px) {
     &:nth-child(even) {
-      h2 {
+      p {
         text-align: right;
       }
     }

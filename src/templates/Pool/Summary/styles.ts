@@ -72,10 +72,12 @@ export const LinkContent = styled.div`
 `
 
 export const ContractsName = styled.p`
-  /* margin-top: 1.25rem; */
   margin-bottom: 1.2rem;
+  /* margin-top: 1.25rem; */
 
   font-weight: ${theme.font.weight.normal} !important;
+
+  text-transform: uppercase;
 `
 
 export const CopyContract = styled.div`
