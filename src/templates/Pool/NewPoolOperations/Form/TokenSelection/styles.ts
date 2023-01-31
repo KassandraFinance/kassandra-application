@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 export const TokenSelection = styled.div`
   ${({ theme }) => css`
     font-size: ${theme.font.sizes.font16};
-    width: 100%;
+    max-width: 44.8rem;
   `}
 `
 
@@ -45,6 +45,10 @@ export const BodyToken = styled.div`
     box-shadow: 0px 4px 69px -17px rgba(0, 0, 0, 0.51);
     border-bottom-left-radius: 1.2rem;
     border-bottom-right-radius: 1.2rem;
+
+    @media (max-width: 960px) {
+      background: transparent;
+    }
   `}
 `
 export const InputContent = styled.div`

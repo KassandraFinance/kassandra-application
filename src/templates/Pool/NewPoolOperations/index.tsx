@@ -2,6 +2,7 @@ import React from 'react'
 
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { setTokenSelect } from '../../../store/reducers/tokenSelect'
+import { setTokenSelectionActive } from '../../../store/reducers/tokenSelectionActive'
 
 import SelectOperation from './SelectOperation'
 import SelectOperationOnMobile, { TitlesMobile } from './SelectOperationOnMobile'
@@ -47,6 +48,7 @@ const NewPoolOperations = () => {
     <S.NewPoolOperations>
       {isOpenPoolOperationMobile && (
         <S.Backdrop onClick={() => {
+          dispatch(setTokenSelectionActive(false))
           setisOpenPoolOperationMobile(false)
           setInputCheckedBarMobile('Disable')
         }}/>
