@@ -149,7 +149,7 @@ const Form = ({
   const proxy = useProxy(ProxyContract, crpPoolAddress, corePoolAddress)
   const crpPoolToken = useERC20Contract(crpPoolAddress)
   const corePool = usePoolContract(corePoolAddress)
-  const { convertBalanceYRTtoWrap, convertBalanceWrappedYRT } = useYieldYak()
+  const { convertBalanceYRTtoWrap, convertBalanceWrappedToYRT: convertBalanceWrappedYRT } = useYieldYak()
 
   function clearInput() {
     setSwapInAmount(new BigNumber(0))
@@ -521,14 +521,14 @@ const Form = ({
     }
 
     async function generateEstimatedGas() {
-      const response = await proxy.estimatedGas(
-        userWalletAddress,
-        swapInAddress,
-        new BigNumber('0'))
+      // const response = await proxy.estimatedGas(
+      //   userWalletAddress,
+      //   swapInAddress,
+      //   new BigNumber('0'))
 
-      if (response) {
-        setGasFee(prevState => ({ ...prevState, feeString: response.feeString, feeNumber: response.feeNumber }))
-      }
+      // if (response) {
+      //   setGasFee(prevState => ({ ...prevState, feeString: response.feeString, feeNumber: response.feeNumber }))
+      // }
     }
 
     const calc = async () => {
@@ -1131,13 +1131,13 @@ const Form = ({
               return
             }
             trackBuying(crpPoolAddress, poolSymbol, amountInUSD, productCategories)
-            proxy.joinswapExternAmountIn(
-              swapInAddressVal,
-              swapInAmountVal,
-              swapOutAmountVal[0].mul(slippageBase).div(slippageExp),
-              walletAddress.value,
-              investCallback(swapOutSymbol.value, amountInUSD)
-            )
+            // proxy.joinswapExternAmountIn(
+            //   swapInAddressVal,
+            //   swapInAmountVal,
+            //   swapOutAmountVal[0].mul(slippageBase).div(slippageExp),
+            //   walletAddress.value,
+            //   investCallback(swapOutSymbol.value, amountInUSD)
+            // )
             return
 
           case 'Withdraw':

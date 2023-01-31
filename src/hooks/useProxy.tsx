@@ -12,6 +12,7 @@ import { TransactionCallback } from '../utils/txWait'
 
 import { useAppSelector } from '../store/hooks'
 import usePoolContract from '../hooks/usePoolContract'
+import { checkTokenWithHigherLiquidityPool } from '../utils/poolUtils'
 
 const referral = "0x0000000000000000000000000000000000000000"
 
@@ -78,7 +79,7 @@ const useProxy = (address: string, crpPool: string, coreAddress: string) => {
         return res
       }
 
-      const { address: tokenExchange } = await corePool.checkTokenWithHigherLiquidityPool()
+      const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(pool.underlying_assets)
 
       const res = await contract.methods
         .joinswapExternAmountInWithSwap(
@@ -248,7 +249,7 @@ const useProxy = (address: string, crpPool: string, coreAddress: string) => {
     const estimatedGas = async (userWalletAddress: string, tokenIn: string, minPoolAmountOut: BigNumber, amountTokenIn: BigNumber, data: any) => {
       const tokensChecked = await checkTokenInThePool(tokenIn)
       const avaxValue = tokenIn === addressNativeToken1Inch ? amountTokenIn : new BigNumber(0)
-      const { address: tokenExchange } = await corePool.checkTokenWithHigherLiquidityPool()
+      const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(pool.underlying_assets)
 
       const estimateGas = await web3.eth.estimateGas({
         // "value": '0x0', // Only tokens
