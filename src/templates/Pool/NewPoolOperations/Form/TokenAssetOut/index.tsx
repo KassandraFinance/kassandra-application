@@ -85,13 +85,11 @@ const TokenAssetOut = ({ typeAction, amountTokenOut }: ITokenAssetOutProps) => {
             readOnly={true}
             type="number"
             placeholder="0"
-            value={Number(
-              BNtoDecimal(
-                amountTokenOut?.div(Big(10).pow(18)) || new BigNumber(0),
-                18,
-                6
-              ).replace(/\s/g, '')
-            )}
+            value={BNtoDecimal(
+              amountTokenOut?.div(Big(10).pow(18)) || new BigNumber(0),
+              18,
+              6
+            ).replace(/\s/g, '')}
           />
           {/* </Tippy> */}
           <S.PriceDolar>
