@@ -350,7 +350,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
             const balance = await web3.eth.getBalance(userWalletAddress)
             return new BigNumber(balance)
           }
-          const token = ERC20(item.token.id)
+          const token = ERC20(item.token.wraps?.id ?? item.token.id)
           return token.balance(userWalletAddress)
         })
       )
@@ -361,7 +361,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     getUserBalanceAllToken()
     return
 
-  }, [chainId, userWalletAddress, amountTokenIn])
+  }, [chainId, userWalletAddress, amountTokenIn, typeWithdraw])
 
   React.useEffect(() => {
     if (chainId !== pool.chainId) {
