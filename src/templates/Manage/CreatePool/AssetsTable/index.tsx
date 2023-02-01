@@ -159,7 +159,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                       ? BNtoDecimal(
                           Big(
                             tokenBalance[coin.id.toLowerCase()].toString()
-                          ).div(Big(10).pow(18)),
+                          ).div(Big(10).pow(coin.decimals)),
                           2
                         )
                       : 0}{' '}
@@ -169,7 +169,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                       {tokenBalance[coin.id.toLowerCase()] && priceList
                         ? BNtoDecimal(
                             Big(tokenBalance[coin.id.toLowerCase()].toString())
-                              .div(Big(10).pow(18))
+                              .div(Big(10).pow(coin.decimals))
                               .mul(Big(priceList[coin.id.toLowerCase()].usd)),
                             2
                           )
