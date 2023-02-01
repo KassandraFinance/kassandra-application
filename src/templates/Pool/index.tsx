@@ -15,7 +15,7 @@ import { setTokenList1Inch } from '../../store/reducers/tokenList1Inch'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
-import { URL_1INCH } from '../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA, URL_1INCH } from '../../constants/tokenAddresses'
 
 import { GET_INFO_POOL } from './graphql'
 
@@ -81,7 +81,7 @@ const Pool = () => {
   const dispatch = useAppDispatch()
 
   const { data } = useSWR([GET_INFO_POOL], query =>
-    request('https://backend.kassandra.finance', query, {
+    request(BACKEND_KASSANDRA, query, {
       id: pool.id,
       day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
     })

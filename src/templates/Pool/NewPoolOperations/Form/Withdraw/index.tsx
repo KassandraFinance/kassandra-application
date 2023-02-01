@@ -5,6 +5,8 @@ import web3 from '../../../../../utils/web3'
 import useSWR from 'swr';
 import { request } from 'graphql-request';
 
+import { BACKEND_KASSANDRA, ProxyContract } from '../../../../../constants/tokenAddresses'
+
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
 import { setModalWalletActive } from '../../../../../store/reducers/modalWalletActive'
@@ -26,7 +28,6 @@ import TokenAssetIn from '../TokenAssetIn'
 import TransactionSettings from '../TransactionSettings'
 
 import { GET_POOL } from './graphql'
-import { ProxyContract } from '../../../../../constants/tokenAddresses'
 
 import * as S from './styles'
 
@@ -94,7 +95,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   const { operation, priceToken } = React.useContext(PoolOperationContext)
 
   const { data } = useSWR([GET_POOL], query =>
-    request('https://backend.kassandra.finance', query, { id: pool.id })
+    request(BACKEND_KASSANDRA, query, { id: pool.id })
   )
 
   const approvalCallback = React.useCallback(

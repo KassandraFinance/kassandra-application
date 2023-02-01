@@ -3,6 +3,8 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
+import { BACKEND_KASSANDRA } from '../../../constants/tokenAddresses'
+
 import { GET_POOL_PRICE } from './graphql'
 
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
@@ -19,7 +21,7 @@ const Change = () => {
   const { pool } = useAppSelector(state => state)
 
   const { data } = useSWR([GET_POOL_PRICE], query =>
-    request('https://backend.kassandra.finance', query, {
+    request(BACKEND_KASSANDRA, query, {
       id: pool.id,
       day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
       week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),

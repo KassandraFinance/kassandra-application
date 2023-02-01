@@ -3,6 +3,8 @@ import { SWRConfig } from 'swr'
 import { ParsedUrlQuery } from 'querystring'
 import { toChecksumAddress, isAddress } from 'web3-utils'
 
+import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
+
 import { useAppDispatch } from '../../store/hooks'
 import { IPoolSlice, setPool } from '../../store/reducers/pool'
 
@@ -99,7 +101,7 @@ const queryPool = `{
 }`
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch('https://backend.kassandra.finance', {
+  const res = await fetch(BACKEND_KASSANDRA, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -126,7 +128,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
 
   try {
-    const res = await fetch('https://backend.kassandra.finance', {
+    const res = await fetch(BACKEND_KASSANDRA, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

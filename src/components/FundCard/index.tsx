@@ -9,6 +9,8 @@ import { jsNumberForAddress } from 'react-jazzicon'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
+import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
+
 import { BNtoDecimal } from '../../utils/numerals'
 
 import FundAreaChart from './FundAreaChart'
@@ -90,7 +92,7 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
   })
 
   const { data } = useSWR([GET_POOL, params], (query, params) =>
-    request('https://backend.kassandra.finance', query, params)
+    request(BACKEND_KASSANDRA, query, params)
   )
 
   const getPercentage = (weight: number) => {

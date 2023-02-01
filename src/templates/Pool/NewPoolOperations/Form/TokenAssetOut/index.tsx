@@ -8,6 +8,8 @@ import { request } from 'graphql-request'
 import Jazzicon from 'react-jazzicon/dist/Jazzicon'
 import { jsNumberForAddress } from 'react-jazzicon'
 
+import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
+
 // import web3 from '../../../../../utils/web3'
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
@@ -29,7 +31,7 @@ const TokenAssetOut = ({ typeAction, amountTokenOut }: ITokenAssetOutProps) => {
   const { pool, chainId, userWalletAddress } = useAppSelector(state => state)
 
   const { data } = useSWR([GET_INFO_POOL], query =>
-    request('https://backend.kassandra.finance', query, {
+    request(BACKEND_KASSANDRA, query, {
       id: pool.id
     })
   )

@@ -4,7 +4,7 @@ import BigNumber from 'bn.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-import { addressNativeToken1Inch, URL_1INCH } from '../../../../../constants/tokenAddresses'
+import { addressNativeToken1Inch, BACKEND_KASSANDRA, URL_1INCH } from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -100,7 +100,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
   const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
 
   const { data } = useSWR([GET_INFO_POOL], query =>
-    request('https://backend.kassandra.finance', query, {
+    request(BACKEND_KASSANDRA, query, {
       id: pool.id
     })
   )

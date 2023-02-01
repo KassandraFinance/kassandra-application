@@ -1,6 +1,8 @@
 import Head from 'next/head'
 import { GetStaticProps } from 'next'
 
+import { BACKEND_KASSANDRA } from '../constants/tokenAddresses'
+
 import Explore from '../templates/Explore'
 
 export interface IPoolAddress {
@@ -33,7 +35,7 @@ const poolAddresses = `{
 
 export const getStaticProps: GetStaticProps = async () => {
   try {
-    const res = await fetch('https://backend.kassandra.finance', {
+    const res = await fetch(BACKEND_KASSANDRA, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

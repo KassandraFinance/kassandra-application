@@ -4,6 +4,8 @@ import request from 'graphql-request'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
+import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
+
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setChartSelected } from '../../store/reducers/chartSelected'
 import { setPerformanceValues } from '../../store/reducers/performanceValues'
@@ -44,7 +46,7 @@ const ChartProducts = () => {
   const { trackEventFunction } = useMatomoEcommerce()
 
   const { data } = useSWR([GET_CHART, params], (query, params) =>
-    request('https://backend.kassandra.finance', query, params)
+    request(BACKEND_KASSANDRA, query, params)
   )
 
   function returnDate(period: string) {
