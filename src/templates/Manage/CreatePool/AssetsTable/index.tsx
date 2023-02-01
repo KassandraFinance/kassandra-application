@@ -20,16 +20,20 @@ import arrowDownIcon from '../../../../../public/assets/utilities/arrow-down-thi
 
 import * as S from './styles'
 
-import { mockData, CoinGeckoAssetsResponseType } from '../SelectAssets'
+import {
+  CoinGeckoAssetsResponseType,
+  TokensInfoResponseType
+} from '../SelectAssets'
 
 interface IAssetsTable {
+  tokensData: TokensInfoResponseType[] | undefined;
   tokenBalance: { [key: string]: BigNumber };
   priceList: CoinGeckoAssetsResponseType | undefined;
 }
 
-const AssetsTable = ({ priceList, tokenBalance }: IAssetsTable) => {
-  // value vai ser usado na busca alterar nome
-  const [value, setValue] = React.useState('')
+const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
+  const [search, setSearch] = React.useState('')
+  const [tokensArr, setTokensArr] = React.useState<TokensInfoResponseType[]>([])
   const dispatch = useAppDispatch()
   const assetsList = useAppSelector(
     state => state.poolCreation.createPoolData.tokens
@@ -44,8 +48,7 @@ const AssetsTable = ({ priceList, tokenBalance }: IAssetsTable) => {
   }
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
-    setValue(e.target.value)
-    console.log(e)
+    setSearch(e.target.value)
   }
 
   function handleCheckbox(token: TokenType) {
@@ -62,13 +65,23 @@ const AssetsTable = ({ priceList, tokenBalance }: IAssetsTable) => {
     threshold: 0.5
   })
 
+  React.useEffect(() => {
+    const expressao = new RegExp(search, 'i')
+    const arr = tokensData ? tokensData : []
+    const tokensFiltered = arr.filter(token => {
+      return expressao.test(token.symbol)
+    })
+
+    setTokensArr(tokensFiltered)
+  }, [tokensData, search])
+
   return (
     <S.AssetsTable>
       <S.SearchWrapper>
         <InputSearch
           placeholder="Search for assets to add"
           name="search"
-          value={value}
+          value={search}
           onChange={handleSearch}
         />
       </S.SearchWrapper>
@@ -111,81 +124,82 @@ const AssetsTable = ({ priceList, tokenBalance }: IAssetsTable) => {
 
         <S.TBody>
           <S.TrsWrapper>
-            {mockData.map((coin, i) => (
-              <S.Tr
-                key={coin.coinName}
-                ref={i === mockData.length - 1 ? ref : null}
-              >
-                <S.Td className="asset">
-                  <CoinSummary
-                    coinImage={coin.coinImage}
-                    coinName={coin.coinName}
-                    coinSymbol={coin.coinSymbol}
-                    price={priceList ? priceList[coin.address].usd : 0}
-                    url={coin.url}
-                    table
-                  />
-                </S.Td>
-                <S.Td className="price">
-                  ${priceList ? priceList[coin.address].usd : 0}
-                </S.Td>
-                <S.Td className="marketCap">
-                  $
-                  {priceList
-                    ? BNtoDecimal(
-                        Big(priceList[coin.address].usd_market_cap),
-                        2
-                      )
-                    : 0}
-                </S.Td>
-                <S.Td className="balance">
-                  {tokenBalance[coin.address]
-                    ? Number(
-                        BNtoDecimal(
-                          Big(tokenBalance[coin.address].toString()).div(
-                            Big(10).pow(coin.decimals)
-                          ),
-                          2
-                        )
-                      )
-                    : 0}{' '}
-                  {coin.coinSymbol}
-                  <S.SecondaryText>
-                    ~$
-                    {tokenBalance[coin.address] && priceList
+            {tokensData &&
+              tokensArr.map((coin, i) => (
+                <S.Tr
+                  key={coin.id}
+                  ref={i === tokensData.length - 1 ? ref : null}
+                >
+                  <S.Td className="asset">
+                    <CoinSummary
+                      coinImage={coin.logo}
+                      coinName={coin.name}
+                      coinSymbol={coin.symbol}
+                      price={
+                        priceList ? priceList[coin.id.toLowerCase()].usd : 0
+                      }
+                      url={`https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`}
+                      table
+                    />
+                  </S.Td>
+                  <S.Td className="price">
+                    ${priceList ? priceList[coin.id.toLowerCase()].usd : 0}
+                  </S.Td>
+                  <S.Td className="marketCap">
+                    $
+                    {priceList
                       ? BNtoDecimal(
-                          Big(tokenBalance[coin.address].toString())
-                            .div(Big(10).pow(coin.decimals))
-                            .mul(Big(priceList[coin.address].usd)),
+                          Big(priceList[coin.id.toLowerCase()].usd_market_cap),
                           2
                         )
                       : 0}
-                  </S.SecondaryText>
-                </S.Td>
-                <S.Td className="add">
-                  <Checkbox
-                    form="poolCreationForm"
-                    name={coin.coinSymbol}
-                    label={coin.coinSymbol}
-                    checked={handleChecked(coin.coinSymbol)}
-                    showLabel={false}
-                    onChange={() =>
-                      handleCheckbox({
-                        address: coin.address,
-                        name: coin.coinName,
-                        icon: coin.coinImage,
-                        symbol: coin.coinSymbol,
-                        decimals: coin.decimals,
-                        url: coin.url ? coin.url : '',
-                        allocation: 100,
-                        amount: Big(0),
-                        isLocked: false
-                      })
-                    }
-                  />
-                </S.Td>
-              </S.Tr>
-            ))}
+                  </S.Td>
+                  <S.Td className="balance">
+                    {tokenBalance[coin.id.toLowerCase()]
+                      ? BNtoDecimal(
+                          Big(
+                            tokenBalance[coin.id.toLowerCase()].toString()
+                          ).div(Big(10).pow(coin.decimals)),
+                          2
+                        )
+                      : 0}{' '}
+                    {coin.symbol}
+                    <S.SecondaryText>
+                      ~$
+                      {tokenBalance[coin.id.toLowerCase()] && priceList
+                        ? BNtoDecimal(
+                            Big(tokenBalance[coin.id.toLowerCase()].toString())
+                              .div(Big(10).pow(coin.decimals))
+                              .mul(Big(priceList[coin.id.toLowerCase()].usd)),
+                            2
+                          )
+                        : 0}
+                    </S.SecondaryText>
+                  </S.Td>
+                  <S.Td className="add">
+                    <Checkbox
+                      form="poolCreationForm"
+                      name={coin.symbol}
+                      label={coin.symbol}
+                      checked={handleChecked(coin.symbol)}
+                      showLabel={false}
+                      onChange={() =>
+                        handleCheckbox({
+                          address: coin.id.toLowerCase(),
+                          name: coin.name,
+                          icon: coin.logo,
+                          symbol: coin.symbol,
+                          decimals: coin.decimals,
+                          url: `https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`,
+                          allocation: 100,
+                          amount: Big(0),
+                          isLocked: false
+                        })
+                      }
+                    />
+                  </S.Td>
+                </S.Tr>
+              ))}
           </S.TrsWrapper>
 
           <S.Shadow inView={inView}></S.Shadow>

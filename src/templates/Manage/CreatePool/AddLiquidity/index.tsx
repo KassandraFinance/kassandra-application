@@ -14,6 +14,7 @@ import AddLiquidityTable from './AddLiquidityTable'
 
 import * as S from './styles'
 
+import { mockTokens } from '../SelectAssets'
 export type CoinGeckoResponseType = {
   [key: string]: {
     usd: number,
@@ -21,20 +22,6 @@ export type CoinGeckoResponseType = {
   }
 }
 
-const mockBalance: { [key: string]: BigNumber } = {
-  '0xd6df932a45c0f255f85145f286ea0b292b21c90b': new BigNumber(50).mul(
-    new BigNumber(10).pow(new BigNumber(18))
-  ),
-  '0x0000000000000000000000000000000000001010': new BigNumber(300).mul(
-    new BigNumber(10).pow(new BigNumber(18))
-  ),
-  '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6': new BigNumber(2).mul(
-    new BigNumber(10).pow(new BigNumber(6))
-  ),
-  '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619': new BigNumber(3).mul(
-    new BigNumber(10).pow(new BigNumber(18))
-  )
-}
 const AddLiquidity = () => {
   const [tokensBalance, setTokensBalance] = React.useState<{
     [key: string]: BigNumber
@@ -51,21 +38,22 @@ const AddLiquidity = () => {
 
   const tokensList = tokensSummary ? tokensSummary : []
 
-  let totalAllocation = 0
+  let totalAllocation = Big(0)
   let addressesList: string[] = []
   for (const token of tokensList) {
-    totalAllocation = totalAllocation + token.allocation
+    totalAllocation = totalAllocation.plus(token.allocation)
     addressesList = [...addressesList, token.address]
   }
 
+  // alterar função quando for entrar em produção
   async function getBalances() {
     let balancesList = {}
-    for (const token of tokensList) {
-      const { balance } = ERC20(token.address)
+    for (const token of Object.keys(mockTokens)) {
+      const { balance } = ERC20(token)
       const balanceValue = await balance(wallet)
       balancesList = {
         ...balancesList,
-        [token.address]: balanceValue
+        [mockTokens[token]]: balanceValue
       }
     }
 
@@ -178,7 +166,7 @@ const AddLiquidity = () => {
 
         <PoolSummary
           coinsList={tokensList}
-          totalAllocation={totalAllocation}
+          totalAllocation={totalAllocation.toNumber()}
           priceList={data}
         />
       </S.PoolContainer>

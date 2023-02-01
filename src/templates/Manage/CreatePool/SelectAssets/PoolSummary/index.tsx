@@ -13,16 +13,6 @@ import { CoinGeckoResponseType } from '../../AddLiquidity'
 
 import * as S from './styles'
 
-export type CoinType = {
-  coinName: string,
-  coinSymbol: string,
-  coinImage: string,
-  price: number | null,
-  url?: string | null,
-  address: string,
-  decimals: number
-}
-
 interface IPoolSummaryProps {
   creation?: boolean;
   coinsList: TokenType[];
@@ -64,7 +54,11 @@ const PoolSummary = ({
                 coinImage={coin.icon}
                 coinName={coin.name}
                 coinSymbol={coin.symbol}
-                price={priceList ? priceList[coin.address].usd : 0}
+                price={
+                  priceList && priceList[coin.address]
+                    ? priceList[coin.address].usd
+                    : 0
+                }
               />
 
               {creation ? (
@@ -85,8 +79,8 @@ const PoolSummary = ({
                       placeholder="100%"
                       lable={`${coin.name} allocation`}
                       required
-                      min={1}
-                      max={100}
+                      min="1"
+                      max="100"
                       value={coin.allocation.toString()}
                       onChange={onChange}
                     />

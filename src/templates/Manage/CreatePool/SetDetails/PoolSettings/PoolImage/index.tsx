@@ -61,7 +61,6 @@ const PoolImage = () => {
           id="InputFile"
           type="file"
           accept="image/png, image/jpg, image/jpeg"
-          required
           onChange={event => {
             if (event.target.files !== null) {
               handleImagePreview(event.target.files)
