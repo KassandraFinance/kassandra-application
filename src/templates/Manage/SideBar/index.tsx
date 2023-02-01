@@ -310,7 +310,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
       <S.SideBarBody>
         <S.Text isOpen={isOpen}>
-          Start your journey as an asset pool manager in kassandra's ecosystem.
+          Start your journey as an asset pool manager in kassandra&apos;s
+          ecosystem.
         </S.Text>
 
         <S.Text isOpen={isOpen}>

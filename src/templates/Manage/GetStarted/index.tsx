@@ -39,7 +39,7 @@ const GetStarted = () => {
 
   return (
     <S.GetStarted>
-      <Image src={kacyLogoShadow} />
+      <Image src={kacyLogoShadow} width={435} height={400} />
 
       <S.Content>
         <S.Title>
@@ -52,7 +52,7 @@ const GetStarted = () => {
           more in one place.
         </S.Text>
 
-        <S.Help>
+        {/* <S.Help>
           To be able to create a fund you need to have at least 10k Voting
           Power.
         </S.Help>
@@ -69,7 +69,7 @@ const GetStarted = () => {
               hrefNext="/farm?tab=stake"
             />
           </S.VotingPowerContainer>
-        )}
+        )} */}
 
         <S.ButtonWrapper>
           <Button
