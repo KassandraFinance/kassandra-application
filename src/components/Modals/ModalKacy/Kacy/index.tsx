@@ -200,7 +200,7 @@ const Kacy = ({
               backgroundPrimary
               fullWidth
               onClick={() => {
-                // changeChain(chain)
+                changeChain(chain)
                 setIsModalKacy(false)
               }}
             />

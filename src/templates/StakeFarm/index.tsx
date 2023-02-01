@@ -65,8 +65,8 @@ const StakeFarm = () => {
           Stake/Farm
         </BreadcrumbItem>
       </Breadcrumb>
-      {(metamaskInstalled && Number(chainId) !== chain.id) ||
-      (userWalletAddress.length > 0 && Number(chainId) !== chain.id) ? (
+      {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
+      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
         <Web3Disabled
           textButton={`Connect to ${chain.chainName}`}
           textHeader="Your wallet is set to the wrong network."

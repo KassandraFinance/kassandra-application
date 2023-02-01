@@ -1,5 +1,3 @@
-import { ChainInfo } from "../store/reducers/pool";
-
 interface CurrencyDetails {
   name: string;
   symbol: string;
@@ -8,13 +6,13 @@ interface CurrencyDetails {
 
 export interface ChainDetails {
   chainId: number;
-  chainIdHex: string;
   chainName: string;
   nativeCurrency: CurrencyDetails;
   rpcUrls: [string];
   blockExplorerUrl: string;
-  secondsPerBlock: number;
   wrapped: string;
+  chainIdHex?: string;
+  secondsPerBlock?: number;
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -25,8 +23,8 @@ declare let window: {
   }
 }
 
-export default async (chain: ChainInfo) => {
-  const hexString = Number(chain.id).toString(16);
+export default async (chain: ChainDetails) => {
+  const hexString = Number(chain.chainId).toString(16);
 
   try {
     await window.ethereum.request({

@@ -7,7 +7,6 @@ import { chains } from '../../constants/tokenAddresses'
 
 import { ChainDetails } from '../../utils/changeChain'
 
-import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalPoolOperations from '../Modals/ModalPoolOperations'
 import SelectOperatorCart from './SelectOperatorCart'
 import SelectOperatorMobile, { TitlesMobile } from './SelectOperatorMobile'
@@ -46,11 +45,8 @@ const PoolOperations = ({
 
   const { chainId } = useAppSelector(state => state)
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
-
   function handleSetInputChecked(title: Titles) {
-    if (chain.id === chainId) setInputChecked(title)
+    if (chains.avalanche.chainId === chainId) setInputChecked(title)
   }
 
   return (
@@ -95,11 +91,6 @@ const PoolOperations = ({
         setInputCheckedBarMobile={setInputCheckedBarMobile}
         setModalOpen={setIsModalPoolOperations}
       />
-
-      {isModalWallet &&
-        (<ModalWalletConnect
-          setModalOpen={setIsModaWallet}
-        />)}
     </div>
   )
 }

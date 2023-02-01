@@ -26,9 +26,6 @@ const Leaderboard = () => {
 
   const take = 10
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
-
   function handlePageClick(data: { selected: number }) {
     router.push({
       pathname: `${router.pathname}`,
@@ -52,12 +49,12 @@ const Leaderboard = () => {
           Voting Power Leaderboard
         </BreadcrumbItem>
       </Breadcrumb>
-      {(metamaskInstalled && Number(chainId) !== chain.id) ||
-      (userWalletAddress.length > 0 && Number(chainId) !== chain.id) ? (
+      {(metamaskInstalled && Number(chainId) !== chains.avalanche.chainId) ||
+      (userWalletAddress.length > 0 && Number(chainId) !== chains.avalanche.chainId) ? (
         <Web3Disabled
-          textButton={`Connect to ${chain.chainName}`}
+          textButton={`Connect to ${chains.avalanche.chainName}`}
           textHeader="Your wallet is set to the wrong network."
-          bodyText={`Please switch to the ${chain.chainName} network to have access to governance`}
+          bodyText={`Please switch to the ${chains.avalanche.chainName} network to have access to governance`}
           type="changeChain"
         />
       ) : (

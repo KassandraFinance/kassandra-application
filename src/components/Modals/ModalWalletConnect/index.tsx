@@ -18,11 +18,7 @@ import Modal from '../Modal'
 
 import * as S from './styles'
 
-interface IModalWalletConnect {
-  setModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const ModalWalletConnect = ({ setModalOpen }: IModalWalletConnect) => {
+const ModalWalletConnect = () => {
   const [hasEthereumProvider, setHasEthereumProvider] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [provider, setProvider] = React.useState('')
@@ -54,7 +50,6 @@ const ModalWalletConnect = ({ setModalOpen }: IModalWalletConnect) => {
     }
 
     dispatch(setModalWalletActive(false))
-    setModalOpen && setModalOpen(false)
   }
 
   function handleConnect() {

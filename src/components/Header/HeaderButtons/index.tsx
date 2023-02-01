@@ -6,7 +6,6 @@ import { setNickName, setProfilePic } from '../../../store/reducers/userSlice'
 import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import substr from '../../../utils/substr'
-import { chains } from '../../../constants/tokenAddresses'
 
 import ModalKacy from '../../Modals/ModalKacy'
 import Button from '../../Button'
@@ -14,14 +13,13 @@ import Button from '../../Button'
 import { disconnectedIcon, avalancheIcon, polygonIcon } from './SvgButtons'
 
 import * as S from './styles'
+import { chains } from '../../../constants/tokenAddresses'
 
 interface IHeaderButtonsProps {
   setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const HeaderButtons = ({
-  setIsChooseNetwork
-}: IHeaderButtonsProps) => {
+const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   const dispatch = useAppDispatch()
   const { trackEventFunction } = useMatomoEcommerce()
 
@@ -51,7 +49,7 @@ const HeaderButtons = ({
         fillColor: '#1E1322'
       })
     } else if (
-      chains.avalanche.chainId === chainId &&
+      chainId === chains.avalanche.chainId &&
       userWalletAddress.length > 0
     ) {
       setNetwork({
@@ -61,7 +59,7 @@ const HeaderButtons = ({
         fillColor: '#E84142'
       })
     } else if (
-      chains.polygon.chainId === chainId &&
+      chainId === chains.polygon.chainId &&
       userWalletAddress.length > 0
     ) {
       setNetwork({

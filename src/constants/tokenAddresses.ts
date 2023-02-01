@@ -5,6 +5,7 @@ import partners from '../components/Partner/list'
 
 import ahypeIcon from '../../public/assets/logos/ahype.svg'
 import tricryptoIcon from '../../public/assets/logos/tricrypto.svg'
+import { ChainDetails } from '../utils/changeChain'
 
 export const LPDaiAvax = process.env.NEXT_PUBLIC_MASTER === '1' ?
   '0xbA09679Ab223C6bdaf44D45Ba2d7279959289AB0'
@@ -77,7 +78,7 @@ export interface ProductDetails {
   // eslint-disable-next-line prettier/prettier
   platform: keyof Networks;
   categories: string[];
-  chain: ChainInfo;
+  chain: ChainDetails;
   name: string;
   symbol: string;
   partners: PartnerData[];
@@ -89,7 +90,7 @@ export interface ProductDetails {
   addresses: string[];
 }
 
-export type ProductSymbols = keyof typeof products;
+// export type ProductSymbols = keyof typeof products;
 
 export const YIELDYAK_API = 'https://staging-api.yieldyak.com'
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3'
@@ -105,28 +106,48 @@ export const URL_1INCH = 'https://api.1inch.io/v5.0/'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 
-export const chains: { [key: string]: ChainInfo } = {
+export const chains: { [key: string]: ChainDetails } = {
   avalanche: {
-    id: 43114,
+    chainId: 43114,
+    chainIdHex: '0xa86a',
     chainName: 'Avalanche Mainnet',
-    nativeTokenName: 'Avalanche',
-    nativeTokenSymbol: 'AVAX',
-    nativeTokenDecimals: 18,
+    nativeCurrency: {
+      name: 'Avalanche',
+      symbol: 'AVAX',
+      decimals: 18
+    },
     rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
     blockExplorerUrl: 'https://snowtrace.io/',
     secondsPerBlock: 2,
-    addressWrapped: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+    wrapped: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
   },
   fuji: {
-    id: 43113,
+    chainId: 43113,
+    chainIdHex: '0xa869',
     chainName: 'Avalanche Fuji Testnet',
-    nativeTokenName: 'Avalanche',
-    nativeTokenSymbol: 'AVAX',
-    nativeTokenDecimals: 18,
+    nativeCurrency: {
+      name: 'Avalanche',
+      symbol: 'AVAX',
+      decimals: 18
+    },
     rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
     blockExplorerUrl: 'https://testnet.snowtrace.io/',
     secondsPerBlock: 2,
-    addressWrapped: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c',
+    wrapped: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c',
+  },
+  polygon: {
+    chainId: 137,
+    chainIdHex: '0x89',
+    chainName: 'Polygon',
+    nativeCurrency: {
+      name: 'Polygon',
+      symbol: 'MATIC',
+      decimals: 18
+    },
+    rpcUrls: ["https://polygon-rpc.com"],
+    blockExplorerUrl: "https://polygonscan.com",
+    secondsPerBlock: 2,
+    wrapped: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270"
   }
 }
 

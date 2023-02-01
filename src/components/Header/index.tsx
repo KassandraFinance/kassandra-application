@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { useAppDispatch, useAppSelector } from '../../store/hooks'
+import { useAppSelector } from '../../store/hooks'
 
 import Nav from './Nav'
 import ModalAlert from '../Modals/ModalAlert'
@@ -30,11 +30,10 @@ const Header = () => {
   const [showOverlay, setShowOverlay] = React.useState(false)
   const [isChooseNetwork, setIsChooseNetwork] = React.useState(false)
 
-  const modalWalletActive = useAppSelector(state => state.userWalletAddress)
+  const modalWalletActive = useAppSelector(state => state.modalWalletActive)
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
 
-  const dispatch = useAppDispatch()
   const router = useRouter()
 
   return (
@@ -75,9 +74,7 @@ const Header = () => {
             setShowOverlay={setShowOverlay}
           />
 
-          <HeaderButtons
-            setIsChooseNetwork={setIsChooseNetwork}
-          />
+          <HeaderButtons setIsChooseNetwork={setIsChooseNetwork} />
         </S.MenuWrapper>
       </S.Wrapper>
 

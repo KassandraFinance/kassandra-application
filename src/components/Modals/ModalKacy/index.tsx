@@ -20,12 +20,6 @@ import kacyIcon from '../../../../public/assets/logos/kacy-96.svg'
 
 import * as S from './styles'
 
-const poolPlatform =
-  process.env.NEXT_PUBLIC_MASTER === '1' ? 'Avalanche' : 'Fuji'
-
-const chain =
-  process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
-
 interface IKacyMarketDataProps {
   price: number;
   marketCap: number;
@@ -74,14 +68,14 @@ const ModalKacy = () => {
         kacyPercentage: data.kacyPercentage
       })
     }
-  }, [poolPlatform, data])
+  }, [data])
 
   React.useEffect(() => {
     if (!userWalletAddress) {
       return
     }
 
-    if (Number(chainId) !== chain.id) {
+    if (Number(chainId) !== chains.avalanche.chainId) {
       return
     }
 
@@ -153,7 +147,7 @@ const ModalKacy = () => {
           <Button
             className="kacyAmount"
             text={
-              userWalletAddress && Number(chainId) === chain.chainId
+              userWalletAddress && Number(chainId) === chains.avalanche.chainId
                 ? isKacyZeroValue
                   ? 'Buy KACY'
                   : `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
@@ -162,7 +156,7 @@ const ModalKacy = () => {
             icon={<Image src={kacyIcon} width={18} height={18} />}
             backgroundBlack
             onClick={() =>
-              isKacyZeroValue && Number(chainId) === chain.chainId
+              isKacyZeroValue && Number(chainId) === chains.avalanche.chainId
                 ? setIsOpenModal(true)
                 : setIsModalKacy(true)
             }

@@ -198,7 +198,7 @@ const Profile = () => {
       }))
     }
 
-    if (priceLP && chains.avalanche.id === chainId) {
+    if (priceLP && chains.avalanche.chainId === chainId) {
       const priceLPJoe = await getPriceKacyAndLP(LP_KACY_AVAX_JOE, LPDaiAvax, true)
 
       if (priceLPJoe.priceLP) {
@@ -334,8 +334,8 @@ const Profile = () => {
   }, [router])
 
   React.useEffect(() => {
-    if ((metamaskInstalled && Number(chainId) !== chain.id) ||
-    (userWalletAddress.length > 0 && Number(chainId) !== chain.id) ) {
+    if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
+    (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ) {
       return
     }
 
@@ -346,8 +346,8 @@ const Profile = () => {
   }, [profileAddress, chainId])
 
   React.useEffect(() => {
-    if ((metamaskInstalled && Number(chainId) !== chain.id) ||
-    (userWalletAddress.length > 0 && Number(chainId) !== chain.id) ) {
+    if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
+    (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ) {
       return
     }
 
@@ -379,8 +379,8 @@ const Profile = () => {
   }, [profileAddress, priceToken, assetsValueInWallet, data, chainId])
 
   React.useEffect(() => {
-    if ((metamaskInstalled && Number(chainId) !== chain.id) ||
-    (userWalletAddress.length > 0 && Number(chainId) !== chain.id) ) {
+    if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
+    (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ) {
       return
     }
 
@@ -414,8 +414,8 @@ const Profile = () => {
       <S.ProfileContainer>
         <UserDescription userWalletUrl={profileAddress} />
 
-        {(metamaskInstalled && Number(chainId) !== chain.id) ||
-        (userWalletAddress.length > 0 && Number(chainId) !== chain.id) ? (
+        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
+        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
           <Web3Disabled
             textButton={`Connect to ${chain.chainName}`}
             textHeader="Your wallet is set to the wrong network."

@@ -325,7 +325,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         current.token.id.toLocaleLowerCase())
 
       return Big((amountAllTokenOut[index] || 0).toString())
-        .mul(Big( priceUSD || 0))
+        .mul(Big(priceUSD || 0))
         .div(Big(10).pow(Number(current.token.decimals)))
         .add(accumulator)
     }, Big(0))
@@ -402,7 +402,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
 
       const usdAmountOut = Big(amountTokenOut)
-        .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase())  || 0))
+        .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
         .div(Big(10).pow(Number(tokenSelect.decimals || 18)))
 
 
@@ -499,7 +499,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           className="btn-submit"
           backgroundPrimary
           disabledNoEvent={
-           (approvals[typeAction].length === 0) ||
+            (approvals[typeAction].length === 0) ||
             (approvals[typeAction][0] > Approval.Approved) ||
             (approvals[typeAction][0] === Approval.Approved &&
               (amountTokenIn.toString() === '0' ||
@@ -515,7 +515,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
               ? amountTokenIn.toString() !== '0' ||
                 inputAmountInTokenRef?.current?.value !== null
                 ?
-                  typeWithdraw === "Best_value" ?
+                typeWithdraw === "Best_value" ?
                   `${typeAction} ${'$' + priceInDollarOnWithdraw}`
                   :
                   `${typeAction} ${'$' +
@@ -530,11 +530,11 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
                   }`
                 : `${typeAction}`
               : approvals[typeAction][0] === Approval.WaitingTransaction
-              ? 'Approving...'
-              : approvals[typeAction][0] === undefined ||
-                approvals[typeAction][0] === Approval.Syncing
-              ? 'Syncing with Blockchain...'
-              : 'Approve'
+                ? 'Approving...'
+                : approvals[typeAction][0] === undefined ||
+                  approvals[typeAction][0] === Approval.Syncing
+                  ? 'Syncing with Blockchain...'
+                  : 'Approve'
           }
         />
       ) : (
@@ -543,7 +543,18 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           backgroundPrimary
           fullWidth
           type="button"
-          onClick={() => changeChain(pool.chain)}
+          onClick={() => changeChain({
+            chainId: pool.chain.id,
+            blockExplorerUrl: pool.chain.blockExplorerUrl,
+            chainName: pool.chain.chainName,
+            nativeCurrency: {
+              decimals: pool.chain.nativeTokenDecimals,
+              symbol: pool.chain.nativeTokenSymbol,
+              name: pool.chain.chainName
+            },
+            rpcUrls: pool.chain.rpcUrls,
+            wrapped: pool.chain.addressWrapped
+          })}
           disabled={walletConnect ? true : false}
           text={walletConnect ? `Change manually to ${pool.chain.chainName}` : `Change to ${pool.chain.chainName}`}
         />

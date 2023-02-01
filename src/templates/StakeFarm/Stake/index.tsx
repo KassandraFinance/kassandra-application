@@ -37,7 +37,7 @@ const Stake = () => {
   }, [])
 
   React.useEffect(() => {
-    if (userWalletAddress.length === 0 || Number(chainId) !== chain.id) {
+    if (userWalletAddress.length === 0 || Number(chainId) !== chain.chainId) {
       return
     }
 

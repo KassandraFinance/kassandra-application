@@ -12,7 +12,6 @@ import { useAppSelector } from '../../../store/hooks'
 import { Kacy } from '../../../constants/tokenAddresses'
 
 import Button from '../../Button'
-import ModalWalletConnect from '../ModalWalletConnect'
 import Overlay from '../../Overlay';
 
 import { provider } from '../../../utils/web3';
@@ -89,7 +88,6 @@ const ModalBuyKacyOnPangolin = ({
             </S.ModalBuyKacyContainer>
         </PangolinProvider>
       )}
-      {isModalWallet && <ModalWalletConnect setModalOpen={setIsModaWallet} />}
     </>
   )
 }

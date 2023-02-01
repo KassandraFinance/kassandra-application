@@ -57,11 +57,8 @@ const ModalCardOperations = ({
 
   const { chainId } = useAppSelector(state => state)
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
-
   function handleSetInputChecked(title: Titles) {
-    if (chain.id === chainId) setInputCheckedMobile(title)
+    if (chains.avalanche.chainId === chainId) setInputCheckedMobile(title)
   }
 
   const handleCloseModalPoolOperations = () => {

@@ -1498,7 +1498,7 @@ const Form = ({
             backgroundPrimary
             fullWidth
             type="button"
-            // onClick={() => changeChain(poolChain)}
+            onClick={() => changeChain(poolChain)}
             disabled={walletConnect ? true : false}
             text={walletConnect ? `Change manually to ${poolChain.chainName}` : `Change to ${poolChain.chainName}`}
           />
