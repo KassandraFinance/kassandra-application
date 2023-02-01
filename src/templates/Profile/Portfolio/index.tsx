@@ -6,7 +6,6 @@ import { useRouter } from 'next/router'
 import PortfolioHeading from '../../../components/PortfolioHeading'
 import AssetsTable from './AssetsTable'
 import AnyCard from '../../../components/AnyCard'
-import ModalWalletConnect from '../../../components/Modals/ModalWalletConnect'
 import AssetsCard, { IPriceToken } from './AssetsCard'
 
 import AssetsIcon from '../../../../public/assets/iconGradient/assets-distribution.svg'
@@ -140,7 +139,7 @@ const Portfolio = ({
             <AnyCard
               text="Looks like you have not invested in anything yet"
               button={true}
-              link="/explore"
+              link="/"
               buttonText="I Want To Invest"
             />
           ) : (
@@ -165,8 +164,6 @@ const Portfolio = ({
           priceToken={priceToken}
         />
       </S.AssetsCardContainer>
-
-      {isModalWallet && <ModalWalletConnect setModalOpen={setIsModalWallet} />}
     </>
   )
 }

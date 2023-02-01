@@ -25,12 +25,13 @@ const bridge = 'https://bridge.walletconnect.org'
 const connector = new WalletConnect({ bridge, qrcodeModal: QRCodeModal })
 
 const useConnect = () => {
-  const dispatch = useAppDispatch()
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const [isConnected, setIsConnected] = React.useState(false)
   const [metaMaskError, setMetaMaskError] = React.useState<string | null>(null)
   const [metamaskInstalled, setMetamaskInstalled] = React.useState(false)
-
+  
+  const dispatch = useAppDispatch()
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  
   const handleAccountsChanged = React.useCallback(accounts => {
     try {
       if (accounts.length === 0 || accounts[0] === undefined) {
@@ -45,7 +46,6 @@ const useConnect = () => {
 
   const handleChainChanged = React.useCallback(chainId => {
     dispatch(setChainId(Number.parseInt(chainId, 16)))
-    window.location.reload()
   }, [])
 
   const getAccounts = React.useCallback(async () => {
@@ -63,7 +63,6 @@ const useConnect = () => {
       dispatch(setUserWalletAddress(''))
       connector.killSession()
       localStorage.removeItem('walletconnect')
-      window.location.reload()
     }
   }, [])
 

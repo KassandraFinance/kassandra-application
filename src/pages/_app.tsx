@@ -35,7 +35,6 @@ const instance = createInstance({
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
-  const pathName = router.pathname
 
   return (
     <ReduxProvider>
@@ -101,7 +100,8 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
 
               <Component {...pageProps} />
             </SWRConfig>
-            {router.pathname === '/404' || pathName === '/manage' ? null : (
+            {router.pathname === '/404' ||
+            router.pathname === '/manage' ? null : (
               <Footer />
             )}
           </ThemeProvider>

@@ -5,6 +5,16 @@
         "internalType": "address",
         "name": "wNative",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "communityStore_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "swapProvider_",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -77,6 +87,19 @@
     ],
     "name": "OwnershipTransferred",
     "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "communityStore",
+    "outputs": [
+      {
+        "internalType": "contract IKassandraCommunityStore",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -256,6 +279,11 @@
         "internalType": "uint256[]",
         "name": "maxAmountsIn",
         "type": "uint256[]"
+      },
+      {
+        "internalType": "address",
+        "name": "referral",
+        "type": "address"
       }
     ],
     "name": "joinPool",
@@ -284,9 +312,63 @@
         "internalType": "uint256",
         "name": "minPoolAmountOut",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "referral",
+        "type": "address"
       }
     ],
     "name": "joinswapExternAmountIn",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "poolAmountOut",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "crpPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenIn",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenAmountIn",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenExchange",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minPoolAmountOut",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "referral",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "joinswapExternAmountInWithSwap",
     "outputs": [
       {
         "internalType": "uint256",
@@ -318,6 +400,11 @@
         "internalType": "uint256",
         "name": "maxAmountIn",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "referral",
+        "type": "address"
       }
     ],
     "name": "joinswapPoolAmountOut",
@@ -340,6 +427,19 @@
       }
     ],
     "name": "setController",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newSwapProvider",
+        "type": "address"
+      }
+    ],
+    "name": "setSwapProvider",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -434,6 +534,32 @@
       }
     ],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "swapProvider",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newCommunityStore",
+        "type": "address"
+      }
+    ],
+    "name": "updateCommunityStore",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

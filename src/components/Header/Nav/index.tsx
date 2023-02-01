@@ -59,11 +59,11 @@ const Nav = ({
             <Image src={kacyIcon} width={27} height={24} />
           </S.MenuLink>
         </Link>
-        <Link href="/explore" passHref>
+        <Link href="/" passHref>
           <S.MenuLink
-            active={router.asPath === '/explore' || router.asPath === '/'}
+            active={router.asPath === '/' || router.asPath === '/'}
             onClick={() =>
-              trackEventFunction('click-on-link', 'explore', 'header')
+              trackEventFunction('click-on-link', 'invest', 'header')
             }
           >
             Invest

@@ -1,11 +1,9 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import { IPoolCreationDataState } from './reducers/poolCreationSlice'
 
 import storage from 'redux-persist/lib/storage'
 import { persistReducer, persistStore, createTransform } from 'redux-persist'
-import thunk from 'redux-thunk'
 
 import userWalletAddressReducer from './reducers/userWalletAddress'
 import chainIdReducer from './reducers/chainId'
@@ -18,6 +16,11 @@ import performanceValuesReducer from './reducers/performanceValues'
 import modalAlertTextReducer from './reducers/modalAlertText'
 import userReducer from './reducers/userSlice'
 import poolCreationReducer from './reducers/poolCreationSlice'
+import tokenSelectionActiveReducer from './reducers/tokenSelectionActive'
+import tokenSelectReducer from './reducers/tokenSelect'
+import poolReducer from './reducers/pool'
+import tokenList1InchReducer from './reducers/tokenList1Inch'
+import modalWalletActiveReducer from './reducers/modalWalletActive'
 
 const SetTransform = createTransform(
   inboundState => {
@@ -51,7 +54,12 @@ export const rootReducer = combineReducers({
   periodSelected: periodSelectedReducer,
   modalAlertText: modalAlertTextReducer,
   user: userReducer,
-  poolCreation: poolCreationReducer
+  poolCreation: poolCreationReducer,
+  tokenSelectionActive: tokenSelectionActiveReducer,
+  tokenSelect: tokenSelectReducer,
+  pool: poolReducer,
+  tokenList1Inch: tokenList1InchReducer,
+  modalWalletActive: modalWalletActiveReducer
 })
 
 export type RootReducer = ReturnType<typeof rootReducer>

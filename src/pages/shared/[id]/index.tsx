@@ -20,7 +20,7 @@ const Page = ({ id }: Props) => {
   //   }, [id])
 
   React.useEffect(() => {
-    router.push(`/explore/${fund}`)
+    router.push(`/pool/${fund}`)
   }, [])
 
   return (

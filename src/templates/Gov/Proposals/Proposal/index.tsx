@@ -268,7 +268,7 @@ const Proposal = () => {
     if (data) {
       const secondsPerBlock =
         chains[process.env.NEXT_PUBLIC_MASTER === '1' ? 'avalanche' : 'fuji']
-          .secondsPerBlock
+          .secondsPerBlock ?? 2
 
       const createdProposal = new Date(Number(data.proposal[0].created) * 1000)
 
@@ -636,12 +636,12 @@ const Proposal = () => {
             Proposal {router.query.proposal}
           </BreadcrumbItem>
         </Breadcrumb>
-        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
-        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
+        {(metamaskInstalled && Number(chainId) !== chains.avalanche.chainId) ||
+        (userWalletAddress.length > 0 && Number(chainId) !== chains.avalanche.chainId) ? (
           <Web3Disabled
             textButton={`Connect to ${chain.chainName}`}
             textHeader="Your wallet is set to the wrong network."
-            bodyText={`Please switch to the ${chain.chainName} network to have access to governance`}
+            bodyText={`Please switch to the ${chains.avalanche.chainName} network to have access to governance`}
             type="changeChain"
           />
         ) : (
@@ -861,8 +861,8 @@ const Proposal = () => {
                           <S.LinkTargetSnowTrace
                             href={`${
                               process.env.NEXT_PUBLIC_MASTER === '1'
-                                ? chains.avalanche.blockExplorerUrls
-                                : chains.fuji.blockExplorerUrls
+                                ? chains.avalanche.blockExplorerUrl
+                                : chains.fuji.blockExplorerUrl
                             }address/${proposal.targets[index]}`}
                             target="_blank"
                             rel="noopener noreferrer"

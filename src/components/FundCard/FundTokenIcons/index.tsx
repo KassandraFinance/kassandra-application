@@ -11,6 +11,8 @@ interface TokenIconsProps {
 }
 
 const addressChanger: { [key: string]: string } = {
+  '0xd0F41b1C9338eB9d374c83cC76b684ba3BB71557':
+    '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE', //SAVAX
   '0xe28Ad9Fa07fDA82abab2E0C86c64A19D452b160E':
     '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab', // WETH
   '0xFA17fb53da4c837594127b73fFd09fdb15f42C49':
