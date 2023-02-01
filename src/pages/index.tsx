@@ -1,8 +1,16 @@
 import Head from 'next/head'
+import { GetStaticProps } from 'next'
 
-import Explore from './explore'
+import Explore from '../templates/Explore'
 
-export default function Index() {
+export interface IPoolAddress {
+  id: string;
+}
+export interface IIndexProps {
+  pools: IPoolAddress[];
+}
+
+export default function Index({ pools }: IIndexProps) {
   return (
     <>
       <Head>
@@ -14,7 +22,33 @@ export default function Index() {
         <meta property="og:image:height" content="506" />
         <meta property="og:url" content="https://kassandra.finance/" />
       </Head>
-      <Explore />
+      <Explore pools={pools} />
     </>
   )
+}
+
+const poolAddresses = `{
+  id
+}`
+
+export const getStaticProps: GetStaticProps = async () => {
+  try {
+    const res = await fetch('https://backend.kassandra.finance', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query: `query { pools ${poolAddresses}}`
+      })
+    })
+
+    const pools = (await res.json())?.data.pools
+    if (!pools) throw new Error('pools not found')
+
+    return { props: { pools } }
+  } catch (error) {
+    console.log(error)
+    return { notFound: true }
+  }
 }

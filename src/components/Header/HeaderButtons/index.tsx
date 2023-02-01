@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setNickName, setProfilePic } from '../../../store/reducers/userSlice'
+import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import substr from '../../../utils/substr'
 import { chains } from '../../../constants/tokenAddresses'
@@ -15,12 +16,10 @@ import { disconnectedIcon, avalancheIcon, polygonIcon } from './SvgButtons'
 import * as S from './styles'
 
 interface IHeaderButtonsProps {
-  setIsModalWallet: React.Dispatch<React.SetStateAction<boolean>>;
   setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const HeaderButtons = ({
-  setIsModalWallet,
   setIsChooseNetwork
 }: IHeaderButtonsProps) => {
   const dispatch = useAppDispatch()
@@ -205,7 +204,7 @@ const HeaderButtons = ({
           size="medium"
           onClick={() => {
             trackEventFunction('open-metamask', 'connect-wallet', 'header')
-            setIsModalWallet(true)
+            dispatch(setModalWalletActive(true))
           }}
           text="Connect Wallet"
         />

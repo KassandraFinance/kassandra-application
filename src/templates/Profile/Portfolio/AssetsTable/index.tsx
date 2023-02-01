@@ -126,7 +126,7 @@ export const AssetsTable = ({ assets, balanceFunds }: IAssetsTableProps) => {
       <S.Tr
         key={index}
         onClick={() => {
-          router.push(`/explore/${asset.symbol.toLowerCase()}`)
+          router.push(`/pool/${asset.symbol.toLowerCase()}`)
         }}
       >
         <S.Td>

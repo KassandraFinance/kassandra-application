@@ -98,7 +98,7 @@ const ChartPrice = ({ data, color }: IChartPriceProps) => {
             <TooltipCustomized
               chart="price"
               payload={[]}
-              currentPrice={data[data.length - 1]}
+              currentPrice={data && data[data?.length - 1]}
             />
           }
         />

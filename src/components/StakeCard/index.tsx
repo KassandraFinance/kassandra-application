@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 import Tippy from '@tippyjs/react'
+import 'tippy.js/dist/tippy.css'
 import useSWR from 'swr'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
@@ -21,6 +22,10 @@ import useStakingContract from '../../hooks/useStakingContract'
 import { ERC20 } from '../../hooks/useERC20Contract'
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
+import { useAppSelector, useAppDispatch } from '../../store/hooks'
+import { setModalAlertText } from '../../store/reducers/modalAlertText'
+import { setModalWalletActive } from '../../store/reducers/modalWalletActive'
+
 import { GET_INFO_POOL } from './graphql'
 
 import web3 from '../../utils/web3'
@@ -30,15 +35,10 @@ import waitTransaction, {
   TransactionCallback
 } from '../../utils/txWait'
 
-import { useAppSelector, useAppDispatch } from '../../store/hooks'
-import { setModalAlertText } from '../../store/reducers/modalAlertText'
-
-import 'tippy.js/dist/tippy.css'
 import Button from '../Button'
 import { ToastSuccess, ToastWarning } from '../Toastify/toast'
 import ModalRequestUnstake from '../Modals/ModalRequestUnstake'
 import ModalCancelUnstake from '../Modals/ModalCancelUnstake'
-import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalStakeAndWithdraw from '../Modals/ModalStakeAndWithdraw'
 import TokenWithNetworkImage from '../TokenWithNetworkImage'
 import ModalBuyKacyOnPangolin from '../Modals/ModalBuyKacyOnPangolin'
@@ -106,7 +106,6 @@ const StakeCard = ({
   const [isLoading, setIsLoading] = React.useState<boolean>(true)
   const [isDetails, setIsDetails] = React.useState<boolean>(false)
   const [isModalStake, setIsModalStake] = React.useState<boolean>(false)
-  const [isModalWallet, setIsModaWallet] = React.useState<boolean>(false)
   const [isOpenModalPangolin, setIsOpenModalPangolin] =
     React.useState<boolean>(false)
   const [isModalCancelUnstake, setIsModalCancelUnstake] =
@@ -533,7 +532,7 @@ const StakeCard = ({
                     size="huge"
                     backgroundSecondary
                     fullWidth
-                    onClick={() => setIsModaWallet(true)}
+                    onClick={() => dispatch(setModalWalletActive(true))}
                   />
                 )}
                 <S.ButtonDetails
@@ -609,7 +608,6 @@ const StakeCard = ({
           stakedUntil={stakingContract.stakedUntil}
         />
       )}
-      {isModalWallet && <ModalWalletConnect setModalOpen={setIsModaWallet} />}
       {isOpenModalPangolin && (
         <ModalBuyKacyOnPangolin
           modalOpen={isOpenModalPangolin}

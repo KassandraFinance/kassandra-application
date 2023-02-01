@@ -140,7 +140,7 @@ const Portfolio = ({
             <AnyCard
               text="Looks like you have not invested in anything yet"
               button={true}
-              link="/explore"
+              link="/"
               buttonText="I Want To Invest"
             />
           ) : (
