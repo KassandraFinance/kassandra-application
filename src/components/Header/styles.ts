@@ -1,7 +1,13 @@
 import styled, { css } from 'styled-components'
+import { HeaderButtons } from './HeaderButtons/styles'
 import theme from '../../styles/theme'
 
-export const Wrapper = styled.div`
+interface IWrapperProps {
+  dashBoard: boolean;
+}
+
+// prettier-ignore
+export const Wrapper = styled.div<IWrapperProps>`
   position: relative;
 
   display: flex;
@@ -9,7 +15,7 @@ export const Wrapper = styled.div`
   align-items: center;
 
   max-width: 114rem;
-  margin: 0 auto;
+  margin-inline: auto;
   margin-block: 3.2rem;
 
   z-index: ${theme.layers.menu};
@@ -25,9 +31,24 @@ export const Wrapper = styled.div`
   @media (max-width: 576px) {
     padding-inline: 1.6rem;
   }
+
+  ${({ dashBoard }) => dashBoard && css`
+    justify-content: flex-end;
+
+    margin-inline: auto 2.4rem;
+
+    @media (max-width: 1200px) {
+      padding-inline: 0rem;
+    }
+  `}
 `
 
-export const LogoWrapper = styled.div`
+interface ILogoWrapper {
+  dashBoard: boolean;
+}
+
+// prettier-ignore
+export const LogoWrapper = styled.div<ILogoWrapper>`
   .logo-desktop {
     @media (max-width: 992px) {
       display: none;
@@ -41,12 +62,28 @@ export const LogoWrapper = styled.div`
   }
 
   cursor: pointer;
+
+  ${({ dashBoard }) => dashBoard && css`
+      display: none;
+    `}
 `
 
-export const MenuWrapper = styled.div`
+interface IMenuWrapperProps {
+  dashBoard: boolean;
+}
+
+// prettier-ignore
+export const MenuWrapper = styled.div<IMenuWrapperProps>`
   ${() => css`
     display: flex;
     gap: 2rem;
+  `}
+  ${({ dashBoard }) => dashBoard && css`
+    @media (max-width: 991.98px) {
+      ${HeaderButtons} {
+        display: none;
+      }
+    }
   `}
 `
 
@@ -130,13 +167,13 @@ export const HamburgerButton = styled.button`
     position: relative;
     display: none;
 
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       display: flex;
       justify-content: center;
       align-items: center;
 
-      width: 3.2rem;
-      height: 3.2rem;
+      width: 4rem;
+      height: 4rem;
 
       background-color: rgba(255, 255, 255, 0.1);
       border: none;
@@ -155,7 +192,7 @@ interface IHambuergerMenuProps {
 // prettier-ignore
 export const HamburgerMenu = styled.div<IHambuergerMenuProps>`
   ${() => css`
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       position: absolute;
 
       width: 1.2rem;

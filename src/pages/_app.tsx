@@ -94,7 +94,9 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
           >
             <Component {...pageProps} />
           </SWRConfig>
-          {router.pathname !== '/404' && <Footer />}
+          {router.pathname !== '/404' || pathName !== '/manage' ? null : (
+            <Footer />
+          )}
         </ThemeProvider>
       </MatomoProvider>
     </ReduxProvider>

@@ -17,7 +17,7 @@ export const Nav = styled.nav<IMenuProps>`
       gap: 1.6rem;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       position: fixed;
       top: 0;
       left: -100%;
@@ -44,7 +44,7 @@ export const Nav = styled.nav<IMenuProps>`
   `}
 
   ${({ isShowMenu }) => isShowMenu && css`
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       left: 0;
     }
   `}
@@ -94,7 +94,7 @@ export const MenuLink = styled.a<IMenuLinkProps>`
       display: none;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
 
       width: 100%;
       padding: 2rem 2.4rem;
