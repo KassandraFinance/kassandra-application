@@ -316,8 +316,12 @@ export const SideBarBody = styled.div`
     flex-direction: column;
 
     height: 100%;
-    padding-inline: 3.2rem;
+    padding-inline: 2.4rem;
     padding-bottom: 2.8rem;
+
+    @media (max-width: 992px) {
+      padding-inline: 1.6rem;
+    }
   `}
 `
 
@@ -329,9 +333,9 @@ interface ILineProps {
 export const Line = styled.span<ILineProps>`
   ${() => css`
     display: inline-block;
-    width: 5rem;
+    width: 4rem;
     height: 0.1rem;
-    margin-inline: 1.2rem;
+    margin-inline: 1.6rem;
 
     background-color: rgba(255, 255, 255, 0.3);
 
@@ -340,13 +344,11 @@ export const Line = styled.span<ILineProps>`
     transition-property: width margin;
 
     @media (min-width: 992px) {
-      width: 9rem;
-      margin-inline: 3.2rem;
+      margin-inline: 2.6rem;
     }
   `}
   ${({ isOpen }) => isOpen && css`
-    width: 9rem;
-    margin-inline: 3.2rem;
+    margin-inline: 1.6rem;
   `}
 `
 
@@ -357,7 +359,7 @@ interface ITextProps {
 // prettier-ignore
 export const Text = styled.p<ITextProps>`
   ${({ theme }) => css`
-    width: 18.4rem;
+    width: 22rem;
     margin-top: 2.4rem;
 
     color: ${theme.colors.snow};
