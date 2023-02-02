@@ -191,7 +191,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         }
       }
     }
-    
+
     // for production
     // const tokensArr = tokensList.sort((a, b) => a.address > b.address ? 1 : -1)
     // for (const token of tokensArr) {
@@ -227,6 +227,12 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       })
     }
 
+    transactionsList.push({
+      key: 'sendToBackEnd',
+      transaction: 'Synchronizing with servers',
+      status: 'WAITING'
+    })
+
     transactionsList[0] = {
       ...transactionsList[0],
       status: 'NEXT'
@@ -256,7 +262,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         signature: signature, // retorno da função sign
       }
     } catch (error) {
-      return error 
+      return error
     }
   }
 
@@ -280,7 +286,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         }
       }
     }
-    
+
     // for production
     // const tokensArr = tokensList.sort((a, b) => a.address > b.address ? 1 : -1)
     // for (const token of tokensArr) {
@@ -382,7 +388,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       // dispatch(setClear())
       setIsApproving(false)
     } catch (error) {
-      console.error('It was not possible to create pool', error)        
+      console.error('It was not possible to create pool', error)
     }
   }
 
@@ -402,7 +408,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
             dispatch(setToFirstStep())
           }
           setIsCreatePool(false)
-        } 
+        }
       }>
         <form id="poolCreationForm" onSubmit={handleSubmit}>
           {poolCreationSteps[stepNumber]}
