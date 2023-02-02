@@ -83,11 +83,13 @@ const Token1inchList = ({
       const token = filteredToken[index]
 
       return (
-        <S.Token key={token?.symbol} style={style}>
-          <S.TokenNameContent onClick={() => {
-              dispatch(setTokenSelect(token))
-              dispatch(setTokenSelectionActive(false))
-            }}>
+        <S.Token
+          key={token?.symbol} style={style}
+          onClick={() => {
+            dispatch(setTokenSelect(token))
+            dispatch(setTokenSelectionActive(false))
+          }}>
+          <S.TokenNameContent>
             <img
               src={token?.logoURI}
               alt=""
