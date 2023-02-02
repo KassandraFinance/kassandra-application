@@ -1,7 +1,8 @@
 import React from 'react'
 import Big from 'big.js'
-import { AbiItem } from 'web3-utils'
+import { AbiItem, keccak256 } from 'web3-utils'
 import web3 from '../../../utils/web3'
+import crypto from 'crypto'
 
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import {
@@ -63,11 +64,14 @@ Big.RM = 0
 
 const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   const [transactions, setTransactions] = React.useState<TransactionsListType[]>([])
+  const [isPoolCreated, setIsPoolCreated] = React.useState<boolean>(false)
+  const [isApproving, setIsApproving] = React.useState<boolean>(false)
 
   const dispatch = useAppDispatch()
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
   const poolData = useAppSelector(state => state.poolCreation.createPoolData)
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const chainId = useAppSelector(state => state.chainId)
 
   const poolCreationSteps = [
     <StepGuide key="stepGuide" />,
@@ -76,7 +80,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     <AddLiquidity key="addLiquidity" />,
     <ConfigureFee key="configureFee" />,
     <Review key="review" />,
-    <ModalTransactions key="modalTransactions" transactions={transactions} onStart={deployPool} onCancel={() => {dispatch(setBackStepNumber())}} onComfirm={() => {dispatch(setNextStepNumber())}} />,
+    <ModalTransactions key="modalTransactions" isApproving={isApproving} isCompleted={isPoolCreated} transactions={transactions} onStart={deployPool} onCancel={() => {dispatch(setBackStepNumber())}} onComfirm={() => {dispatch(setNextStepNumber())}} />,
     <PoolCreated key="poolCreated" />
   ]
 
@@ -119,6 +123,10 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     if (txReceipt.status) {
       let transactionIndex = -100
       setTransactions(prev => prev.map((item, index) => {
+        if (item.transaction === 'createPool' && item.status === 'APPROVING') {
+          setIsPoolCreated(true)
+        }
+
         if (item.status === 'APPROVING') {
           transactionIndex = index
 
@@ -227,7 +235,33 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     setTransactions(transactionsList)
   }
 
+  async function sendPoolData(controller: string, logo: string, summary: string, chainId: number) {
+    try {
+      const nonce = crypto.randomBytes(12).toString('base64')
+      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${keccak256(logo)}\nsummary: ${summary}`
+
+      const signature = await web3.eth.personal.sign(
+        message,
+        userWalletAddress,
+        nonce
+      )
+
+      console.log(signature)
+
+      const body = {
+        controller: controller, // endereço do controller
+        logo: logo, // base64 da imagem
+        summary: summary, // descrição da pool
+        chainId: chainId,
+        signature: signature, // retorno da função sign
+      }
+    } catch (error) {
+      return error 
+    }
+  }
+
   async function deployPool() {
+    setIsApproving(true)
     const maxAmountsIn: string[] = []
     const tokens: string[] = []
     const normalizedWeights: string[] = []
@@ -325,25 +359,28 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       })
       console.log(response)
 
-      const tx = await factoryContract.methods.create(
-          pool.name,
-          pool.symbol,
-          pool.isPrivatePool,
-          pool.whitelist,
-          pool.maxAmountsIn,
-          pool.settingsParams,
-          pool.feesSettings,
-      ).send({
-          from: userWalletAddress
-      }, callBack)
+      // const tx = await factoryContract.methods.create(
+      //     pool.name,
+      //     pool.symbol,
+      //     pool.isPrivatePool,
+      //     pool.whitelist,
+      //     pool.maxAmountsIn,
+      //     pool.settingsParams,
+      //     pool.feesSettings,
+      // ).send({
+      //     from: userWalletAddress
+      // }, callBack)
 
-      console.log(tx)
+      // console.log(tx)
       if (pool.isPrivatePool) {
         const addressList = poolData?.privateAddressList ? poolData.privateAddressList : []
         await handlePrivateInvestors(response.poolController, addressList)
       }
 
-      dispatch(setClear())
+      await sendPoolData('0x7EB180CFF5E6B3060B2A0aA411E06F8507dd2c0F', poolData.poolSymbol || '', poolData.strategy || '', chainId)
+
+      // dispatch(setClear())
+      setIsApproving(false)
     } catch (error) {
       console.error('It was not possible to create pool', error)        
     }
