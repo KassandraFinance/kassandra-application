@@ -25,6 +25,8 @@ interface ISelectOperationProps {
 // eslint-disable-next-line prettier/prettier
 export const TokenSelectionContainer = styled.div<ISelectOperationProps>`
   ${({ isOpen }) => css`
+    /* animation: ${fadeInAnimation} 750ms forwards; */
+
     ${isOpen
       ? `
       position: fixed;
@@ -53,7 +55,7 @@ export const SelectOperationContianer = styled.div<ISelectOperationProps>`
     position: sticky;
     top: 0.8rem;
 
-    animation: ${fadeInAnimation} 750ms forwards;
+    /* animation: ${fadeInAnimation} 750ms forwards; */
 
     ${isOpen
       ? `
