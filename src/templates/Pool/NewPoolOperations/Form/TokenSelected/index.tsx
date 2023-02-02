@@ -1,7 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
 
-// import { ITokenDetails } from '../../../../context/PoolTokensContext'
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 
 import { setTokenSelectionActive } from '../../../../../store/reducers/tokenSelectionActive'
@@ -11,20 +10,13 @@ import none from '../../../../../../public/assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 
-// interface ISelectInputProps {
-//   // poolTokens: ITokenDetails[];
-//   tokenDetails: any[];
-//   setSwapAddress: React.Dispatch<React.SetStateAction<string>>;
-// }
-
 const TokenSelected = () => {
   const { tokenSelect } = useAppSelector(state => state)
   const dispatch = useAppDispatch()
 
   return (
-    <S.SelectToken openOptions={true}>
+    <S.SelectToken>
       <S.Selected
-        openOptions={true}
         onClick={() => {
           dispatch(setTokenSelectionActive(true))
         }}

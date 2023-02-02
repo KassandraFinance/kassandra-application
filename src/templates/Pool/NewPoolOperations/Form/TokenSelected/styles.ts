@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components'
-// import theme from '../../../styles/theme'
 
 export const Backdrop = styled.div`
   position: fixed;
@@ -14,20 +13,15 @@ export const Backdrop = styled.div`
   z-index: 9;
 `
 
-interface ISelectedProps {
-  openOptions: boolean;
-}
-
-// prettier-ignore
-export const SelectToken = styled.div<ISelectedProps>`
-  ${({ theme, openOptions }) => css`
+export const SelectToken = styled.div`
+  ${({ theme }) => css`
     max-width: 12.8rem;
     margin: 0.8rem 0;
 
     font-size: ${theme.font.sizes.font20};
 
-    background-color: #4A4348;
-    border-radius: ${(openOptions ? '0.4rem 0.4rem 0 0px' : '0.4rem')};
+    background-color: #4a4348;
+    border-radius: 0.4rem;
 
     @media (max-width: 400px) {
       width: 11rem;
@@ -35,9 +29,8 @@ export const SelectToken = styled.div<ISelectedProps>`
   `}
 `
 
-// prettier-ignore
-export const Selected = styled.div<ISelectedProps>`
-  ${({ theme, openOptions }) => css`
+export const Selected = styled.div`
+  ${({ theme }) => css`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -50,7 +43,7 @@ export const Selected = styled.div<ISelectedProps>`
     font-size: ${theme.font.sizes.font20};
     line-height: ${theme.font.sizes.font20};
 
-    border-radius: ${openOptions ? '0.4rem 0px' : '0.4rem'};
+    border-radius: 0.4rem;
 
     cursor: pointer;
 
