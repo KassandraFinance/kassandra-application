@@ -1,29 +1,21 @@
-import styled, { css } from 'styled-components'
-
-export const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 102;
-
-  width: 100vw;
-  height: 100vh;
-
-  background-color: rgba(0, 0, 0, 0.6);
-`
+import styled, { css, keyframes } from 'styled-components'
 
 export const NewPoolOperations = styled.div``
 
+// eslint-disable-next-line prettier/prettier
 export const PoolOperationsContainer = styled.div`
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0.8rem;
+  ${() => css`
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0.8rem;
 
-  /* min-width: 44.8rem; */
+    /* min-width: 44.8rem; */
+    border-radius: 1.2rem;
 
-  border-radius: 1.2rem;
-
-  z-index: 103;
+    @media (max-width: 960px) {
+      z-index: 1041;
+    }
+  `}
 `
 
 interface ISelectOperationProps {
@@ -33,7 +25,6 @@ interface ISelectOperationProps {
 // eslint-disable-next-line prettier/prettier
 export const TokenSelectionContainer = styled.div<ISelectOperationProps>`
   ${({ isOpen }) => css`
-    z-index: 103;
     ${isOpen
       ? `
       position: fixed;
@@ -46,11 +37,11 @@ export const TokenSelectionContainer = styled.div<ISelectOperationProps>`
       border-radius: 1.2rem;
     `
       : `
-      position: auto;
       @media (max-width: 960px) {
         display: none;
       }
     `}
+    animation: ${fadeInAnimation} 750ms forwards;
   `}
 `
 
@@ -58,7 +49,12 @@ export const TokenSelectionContainer = styled.div<ISelectOperationProps>`
 export const SelectOperationContianer = styled.div<ISelectOperationProps>`
   ${({ isOpen }) => css`
     max-width: 44.8rem;
-    z-index: 103;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0.8rem;
+
+    animation: ${fadeInAnimation} 750ms forwards;
+
     ${isOpen
       ? `
         position: fixed;
@@ -71,14 +67,14 @@ export const SelectOperationContianer = styled.div<ISelectOperationProps>`
         border-radius: 1.2rem;
       `
       : `
-        position: auto;
         @media (max-width: 960px) {
           display: none;
         }
       `}
   `}
+`
 
-  @media (max-width: 960px) {
-    /* display: none; */
-  }
+const fadeInAnimation = keyframes`
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 `
