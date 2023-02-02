@@ -21,7 +21,7 @@ const messages = {
 
 const NewPoolOperations = () => {
   const [inputChecked, setInputChecked] = React.useState<Titles>('Invest')
-  const [typeWithdrawChecked, setTypeWithdrawChecked] = React.useState<string>('Best_value')
+  const [typeWithdrawChecked, setTypeWithdrawChecked] = React.useState<string>('Single_asset')
   const [isOpenPoolOperationMobile, setisOpenPoolOperationMobile] = React.useState(false)
   const [inputCheckedBarMobile, setInputCheckedBarMobile] = React.useState<TitlesMobile>('Disable')
 
