@@ -254,7 +254,7 @@ const InputAndOutputValueToken = ({
           <>
             {gasFee && gasFee?.error && (
               <S.GasFeeError>
-                Don’t forget the gas fees! Leave at least{' '}
+                Don’t forget the gas fee! Leave at least some{' '}
                 {gasFee.feeString.slice(0, 8)} AVAX on your wallet to ensure a
                 smooth transaction
               </S.GasFeeError>
