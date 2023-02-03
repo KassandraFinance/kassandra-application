@@ -20,6 +20,8 @@ import waitTransaction, {
 
 import KassandraManagedControllerFactoryAbi from '../../../constants/abi/KassandraManagedControllerFactory.json'
 import KassandraControlerAbi from '../../../constants/abi/KassandraController.json'
+import { BACKEND_KASSANDRA } from '../../../constants/tokenAddresses'
+import { SAVE_POOL } from './graphql'
 
 import ContainerButton from '../../../components/ContainerButton'
 import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
@@ -35,6 +37,7 @@ import ModalTransactions from '../../../components/Modals/ModalTransactions'
 import * as S from './styles'
 
 import { mockTokens } from './SelectAssets'
+
 
 const WHITELIST_ADDRESS = '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57'
 const FACTORY_ADDRESS = '0xca36a7f25e8b0a2b3fc7a9baf3b2f22d80e03788'
@@ -123,11 +126,11 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     if (txReceipt.status) {
       let transactionIndex = -100
       setTransactions(prev => prev.map((item, index) => {
-        if (item.transaction === 'createPool' && item.status === 'APPROVING') {
-          setIsPoolCreated(true)
-        }
-
+        
         if (item.status === 'APPROVING') {
+          if (item.key === 'createPool') {
+            setIsPoolCreated(true)
+          }
           transactionIndex = index
 
             return {
@@ -229,7 +232,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
     transactionsList.push({
       key: 'sendToBackEnd',
-      transaction: 'Synchronizing with servers',
+      transaction: 'Save metadata',
       status: 'WAITING'
     })
 
@@ -252,18 +255,41 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         nonce
       )
 
-      console.log(signature)
-
       const body = {
-        controller: controller, // endereço do controller
-        logo: logo, // base64 da imagem
-        summary: summary, // descrição da pool
-        chainId: chainId,
-        signature: signature, // retorno da função sign
+        controller,
+        logo, 
+        summary,
+        chainId,
+        signature,
+      }
+
+      const response = await fetch(BACKEND_KASSANDRA, {
+        body: JSON.stringify({
+          query: SAVE_POOL,
+          variables: body
+        }),
+        headers: { 'content-type': 'application/json' },
+        method: 'POST'
+      })
+      
+      if(response.status === 200) {
+        const { data } = await response.json()
+        if (data.savePool.ok) {
+          setTransactions(prev => {
+            prev[prev.length - 1].status = 'APROVED'
+            return prev
+          })
+          return
+        }
       }
     } catch (error) {
-      return error
+      console.error(error)
     }
+    
+    dispatch(setModalAlertText({
+      errorText: "Could not save strategy and image, but the pool was created sucessfully",
+      solutionText: "Please try adding them in the dashboard later"
+    }))
   }
 
   async function deployPool() {
@@ -351,7 +377,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
     try {
       const factoryContract = new web3.eth.Contract((KassandraManagedControllerFactoryAbi as unknown) as AbiItem, FACTORY_ADDRESS);
-
+      
       const response = await factoryContract.methods.create(
           pool.name,
           pool.symbol,
@@ -363,29 +389,27 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       ).call({
         from: userWalletAddress
       })
-      console.log(response)
 
-      // const tx = await factoryContract.methods.create(
-      //     pool.name,
-      //     pool.symbol,
-      //     pool.isPrivatePool,
-      //     pool.whitelist,
-      //     pool.maxAmountsIn,
-      //     pool.settingsParams,
-      //     pool.feesSettings,
-      // ).send({
-      //     from: userWalletAddress
-      // }, callBack)
+      const tx = await factoryContract.methods.create(
+          pool.name,
+          pool.symbol,
+          pool.isPrivatePool,
+          pool.whitelist,
+          pool.maxAmountsIn,
+          pool.settingsParams,
+          pool.feesSettings,
+      ).send({
+          from: userWalletAddress
+      }, callBack)
 
-      // console.log(tx)
       if (pool.isPrivatePool) {
         const addressList = poolData?.privateAddressList ? poolData.privateAddressList : []
         await handlePrivateInvestors(response.poolController, addressList)
       }
+      
+      await sendPoolData(response.poolController, poolData.icon?.image_preview || '', poolData.strategy || '', chainId)
 
-      await sendPoolData('0x7EB180CFF5E6B3060B2A0aA411E06F8507dd2c0F', poolData.poolSymbol || '', poolData.strategy || '', chainId)
-
-      // dispatch(setClear())
+      dispatch(setClear())
       setIsApproving(false)
     } catch (error) {
       console.error('It was not possible to create pool', error)
