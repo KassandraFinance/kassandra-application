@@ -184,7 +184,6 @@ const Pool = () => {
           totalValueLocked={infoPool.tvl}
           socialIndex={pool.symbol}
           productName={pool.name}
-          fundImage={pool.logo}
         />
       </ShareImageModal>
       <Breadcrumb>

@@ -1,7 +1,6 @@
 import React from 'react'
 import Blockies from 'react-blockies'
 
-import { usePoolTokens } from '../../../context/PoolTokensContext'
 import { useAppSelector } from '../../../store/hooks'
 
 // import substr from '../../../utils/substr'
@@ -21,32 +20,15 @@ interface ISharedImageProps {
   totalValueLocked: string;
   socialIndex: string;
   productName: string;
-  fundImage: any;
-}
-
-const assetsImages: { [key: string]: string } = {
-  '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab': '/assets/logos/weth.png',
-  '0x50b7545627a5162f82a992c33b87adc75187b218': '/assets/logos/wbtc.png',
-  '0xd586e7f844cea2f87f50152665bcbc2c279d8d70': '/assets/logos/dai.png',
-  '0xf32398dae246C5f672B52A54e9B413dFFcAe1A44': '/assets/logos/kacy.png',
-
-  '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7': '/assets/logos/avax.png',
-  '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd': '/assets/logos/joe.png',
-  '0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5': '/assets/logos/qi.png',
-  '0xA32608e873F9DdEF944B24798db69d80Bbb4d1ed': '/assets/logos/cra.png',
-  '0x60781C2586D68229fde47564546784ab3fACA982': '/assets/logos/png.png',
-  '0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4': '/assets/logos/xava.png'
 }
 
 const SharedImage = ({
   crpPoolAddress,
   totalValueLocked,
   socialIndex,
-  productName,
-  fundImage
+  productName
 }: ISharedImageProps) => {
-  const { performanceValues } = useAppSelector(state => state)
-  const { poolTokens } = usePoolTokens()
+  const { performanceValues, pool } = useAppSelector(state => state)
 
   return (
     <S.SharedImage className="bg-image-color">
@@ -61,7 +43,7 @@ const SharedImage = ({
               className="poolIcon"
               size={8}
               scale={5}
-          />
+            />
           )}
           <h1>{productName}</h1>
           <S.Detail>${socialIndex}</S.Detail>
@@ -124,13 +106,10 @@ const SharedImage = ({
                 <span>Assets</span>
               </S.InfoTitle>
               <S.AssetsContainer>
-                {poolTokens.slice(0, -1).map((token, index) => (
+                {pool.underlying_assets.map((item, index) => (
                   <img
                     key={index}
-                    src={
-                      assetsImages[token.address] ??
-                      '/assets/icons/coming-soon.svg'
-                    }
+                    src={item.token.wraps?.logo ?? item.token.logo}
                     width={25}
                     height={25}
                   />
