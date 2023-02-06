@@ -61,7 +61,7 @@ const TokenSelection = () => {
     })
 
   const dispatch = useAppDispatch()
-  const { userWalletAddress, tokenList1Inch, pool } = useAppSelector(
+  const { userWalletAddress, tokenList1Inch, pool, chainId } = useAppSelector(
     state => state
   )
 
@@ -173,6 +173,8 @@ const TokenSelection = () => {
       : handleTokenListFilteringBybalance(tokenList1Inch)
 
   async function handleFetchBalance() {
+    if (chainId !== pool.chainId) return
+
     try {
       const response = await fetch(
         `${URL_1INCH_BALANCE}/${pool.chainId}/allowancesAndBalances/0x1111111254eeb25477b68fb85ed929f73a960582/${userWalletAddress}?tokensFetchType=listedTokens`
