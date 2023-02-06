@@ -53,7 +53,7 @@ export const Intro = styled.div<IIntroProps>`
   align-items: center;
   gap: 2rem;
 
-  max-width: 44rem;
+  max-width: 45rem;
 
   h1 {
     font-size: 1.8rem;

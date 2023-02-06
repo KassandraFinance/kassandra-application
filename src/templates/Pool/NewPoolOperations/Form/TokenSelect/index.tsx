@@ -14,9 +14,13 @@ const TokenSelect = () => {
   const { pool, tokenSelect } = useAppSelector(state => state)
   const dispatch = useAppDispatch()
 
+  const listTokensWithinPool = [...pool.underlying_assets].sort(
+    (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
+  )
+
   React.useEffect(() => {
-    const tokenInfo = pool.underlying_assets[0].token
-    const { symbol, name, logo, decimals, id } = tokenInfo.wraps
+    const tokenInfo = listTokensWithinPool[0]?.token
+    const { symbol, name, logo, decimals, id } = tokenInfo?.wraps
       ? tokenInfo.wraps
       : tokenInfo
 
@@ -55,7 +59,7 @@ const TokenSelect = () => {
           <>
             <S.Backdrop onClick={() => setOpenOptions(false)} />
             <S.OptionsContent>
-              {pool.underlying_assets.map(item => {
+              {listTokensWithinPool.map(item => {
                 const token = item.token.wraps ? item.token.wraps : item.token
 
                 return (

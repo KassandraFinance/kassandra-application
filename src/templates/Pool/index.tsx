@@ -77,7 +77,7 @@ const Pool = () => {
 
   const { trackProductPageView, trackEventFunction } = useMatomoEcommerce()
 
-  const pool = useAppSelector(state => state.pool)
+  const { pool } = useAppSelector(state => state)
   const dispatch = useAppDispatch()
 
   const { data } = useSWR([GET_INFO_POOL], query =>
@@ -92,8 +92,11 @@ const Pool = () => {
     const json = await res.json()
     const listToken1Linch = json.tokens
     const listTokenPool = {}
+    const listTokensWithinPool = [...pool.underlying_assets].sort(
+      (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
+    )
 
-    pool.underlying_assets.forEach(item => {
+    listTokensWithinPool.forEach(item => {
       if (item.token.is_wrap_token) {
         Object.assign(listTokenPool, {
           [item.token.wraps.id.toLowerCase()]: {
@@ -218,7 +221,7 @@ const Pool = () => {
                     scale: 9,
                     seedName: pool.name
                   }}
-                  />
+                />
                 <S.NameIndex>
                   <S.NameAndSymbol>
                     <h1>{pool.name}</h1>
@@ -324,7 +327,7 @@ const Pool = () => {
                 pid={pool.poolId}
                 decimals={infoPool.decimals}
               />
-              <Summary strategy={data?.pool.strategy || 'Coming soon...'} />
+              <Summary strategy={pool.strategy} />
               {/* {pool.partners ?? <PoweredBy partners={pool.partners} />} */}
               <Distribution />
               {/* <ActivityTable /> */}
