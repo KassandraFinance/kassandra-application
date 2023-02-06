@@ -3,7 +3,6 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Big from 'big.js'
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
@@ -25,6 +24,7 @@ import Loading from '../../components/Loading'
 import ChartProducts from '../../components/ChartProducts'
 import ScrollUpButton from '../../components/ScrollUpButton'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
+import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 // import PoweredBy from './PoweredBy'
 // import ActivityTable from './ActivityTable'
 
@@ -77,7 +77,7 @@ const Pool = () => {
 
   const { trackProductPageView, trackEventFunction } = useMatomoEcommerce()
 
-  const pool = useAppSelector(state => state.pool)
+  const { pool } = useAppSelector(state => state)
   const dispatch = useAppDispatch()
 
   const { data } = useSWR([GET_INFO_POOL], query =>
@@ -92,8 +92,11 @@ const Pool = () => {
     const json = await res.json()
     const listToken1Linch = json.tokens
     const listTokenPool = {}
+    const listTokensWithinPool = [...pool.underlying_assets].sort(
+      (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
+    )
 
-    pool.underlying_assets.forEach(item => {
+    listTokensWithinPool.forEach(item => {
       if (item.token.is_wrap_token) {
         Object.assign(listTokenPool, {
           [item.token.wraps.id.toLowerCase()]: {
@@ -184,7 +187,6 @@ const Pool = () => {
           totalValueLocked={infoPool.tvl}
           socialIndex={pool.symbol}
           productName={pool.name}
-          fundImage={pool.logo}
         />
       </ShareImageModal>
       <Breadcrumb>
@@ -202,14 +204,24 @@ const Pool = () => {
           <S.Product>
             <S.ProductDetails>
               <S.Intro introMobile={false} introDesktop={true}>
-                {pool.logo ? (
-                  <img src={pool.logo} alt="" />
-                ) : (
-                  <Jazzicon
-                    diameter={80}
-                    seed={jsNumberForAddress(pool.address)}
-                  />
-                )}
+                <TokenWithNetworkImage
+                  tokenImage={{
+                    url: pool.logo,
+                    height: 75,
+                    width: 75,
+                    withoutBorder: true
+                  }}
+                  networkImage={{
+                    url: pool.chain?.logo,
+                    height: 20,
+                    width: 20
+                  }}
+                  blockies={{
+                    size: 8,
+                    scale: 9,
+                    seedName: pool.name
+                  }}
+                />
                 <S.NameIndex>
                   <S.NameAndSymbol>
                     <h1>{pool.name}</h1>
@@ -315,7 +327,7 @@ const Pool = () => {
                 pid={pool.poolId}
                 decimals={infoPool.decimals}
               />
-              <Summary strategy={data?.pool.strategy || 'Coming soon...'} />
+              <Summary strategy={pool.strategy} />
               {/* {pool.partners ?? <PoweredBy partners={pool.partners} />} */}
               <Distribution />
               {/* <ActivityTable /> */}

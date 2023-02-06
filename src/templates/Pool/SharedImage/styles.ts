@@ -34,6 +34,10 @@ export const Title = styled.div`
     font-size: 4rem;
     font-weight: 300;
   }
+
+  .poolIcon {
+    border-radius: 50%;
+  }
 `
 
 export const Detail = styled.div`

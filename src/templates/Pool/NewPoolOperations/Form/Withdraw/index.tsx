@@ -17,6 +17,7 @@ import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
 import waitTransaction, { MetamaskError, TransactionCallback } from '../../../../../utils/txWait'
 import changeChain from '../../../../../utils/changeChain'
 import { BNtoDecimal } from '../../../../../utils/numerals'
+import { getBalanceToken } from '../../../../../utils/poolUtils';
 
 import PoolOperationContext from '../PoolOperationContext';
 
@@ -196,6 +197,23 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
         if (txReceipt.status) {
           ToastSuccess(`Withdrawal of ${tokenSymbol} confirmed`)
+
+          const amountPool = await getBalanceToken(pool.address, userWalletAddress)
+          if (inputAmountInTokenRef && inputAmountInTokenRef.current !== null) {
+            inputAmountInTokenRef.current.value = ''
+          }
+          if (typeWithdraw === 'Single_asset') {
+            const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
+
+            setSelectedTokenInBalance(amountPool)
+            setSelectedTokenOutBalance(amountToken)
+
+            setAmountTokenOut(Big(0))
+            setamountTokenIn(Big(0))
+          } else {
+            getUserBalanceAllToken()
+          }
+
           return
         }
       }
@@ -242,9 +260,24 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       })
       return
     } catch (error) {
-      // console.log(error)
       dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
     }
+  }
+
+  const getUserBalanceAllToken = async () => {
+    const newSwapOutBalance = await Promise.all(
+      pool.underlying_assets.map(async (item) => {
+
+        if (item.token.id === pool.chain.addressWrapped) {
+          const balance = await web3.eth.getBalance(userWalletAddress)
+          return new BigNumber(balance)
+        }
+        const token = ERC20(item.token.wraps?.id ?? item.token.id)
+        return token.balance(userWalletAddress)
+      })
+    )
+
+    setbalanceAllTokenOut(newSwapOutBalance)
   }
 
   React.useEffect(() => {
@@ -343,22 +376,6 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       return
     }
 
-    const getUserBalanceAllToken = async () => {
-      const newSwapOutBalance = await Promise.all(
-        pool.underlying_assets.map(async (item) => {
-
-          if (item.token.id === pool.chain.addressWrapped) {
-            const balance = await web3.eth.getBalance(userWalletAddress)
-            return new BigNumber(balance)
-          }
-          const token = ERC20(item.token.wraps?.id ?? item.token.id)
-          return token.balance(userWalletAddress)
-        })
-      )
-
-      setbalanceAllTokenOut(newSwapOutBalance)
-    }
-
     getUserBalanceAllToken()
     return
 
@@ -389,7 +406,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       }))
     }
     handleTokensApproved()
-  }, [typeAction, userWalletAddress])
+  }, [typeAction, userWalletAddress, chainId])
 
   React.useEffect(() => {
     if (!inputAmountInTokenRef?.current?.value) {

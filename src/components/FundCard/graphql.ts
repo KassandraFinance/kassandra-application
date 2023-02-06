@@ -22,6 +22,9 @@ export const GET_POOL = gql`
       # base can be usd or btc
       # period is in seconds, 5m, 15m, 1h, 4h, 1d, 7d
       # timestamp_gt it's since when to catch
+      chain {
+        logo
+      }
       price_candles(
         where: {
           base: "usd"
@@ -63,9 +66,13 @@ export const GET_POOL = gql`
         token {
           id
           name
+          logo
           decimals
           symbol
           price_usd
+          wraps {
+            logo
+          }
         }
       }
       now: price_candles(

@@ -24,13 +24,24 @@ const ListOfAllAsset = ({
 
   const { priceToken } = React.useContext(PoolOperationContext)
 
+  const ListTokenWithBalance = pool.underlying_assets.map((item, index) => {
+    return {
+      ...item,
+      amount: amountAllTokenOut[index],
+      balance: balanceAllTokenOut[index]
+    }
+  })
+  const tokenSorting = [...ListTokenWithBalance].sort(
+    (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
+  )
+
   return (
     <S.ListOfAllAsset>
       <S.IntroBestValue>
         <S.title>Receive(est.)</S.title>
       </S.IntroBestValue>
       <S.AllInput>
-        {pool.underlying_assets.map((item, index) => {
+        {tokenSorting.map(item => {
           const token = item.token.wraps ? item.token.wraps : item.token
 
           return (
@@ -45,18 +56,14 @@ const ListOfAllAsset = ({
                       height={21}
                     />
                   </S.tokenLogo>
-                  {BNtoDecimal(
-                    amountAllTokenOut[index] || new BigNumber(0),
-                    token.decimals
-                  )}{' '}
-                  {/* {poolTokenDetails.length > 0 ? token.symbol : '...'} */}
+                  {BNtoDecimal(item.amount || new BigNumber(0), token.decimals)}{' '}
                   {token.symbol}
                 </S.SymbolContainer>
                 <S.SpanLight>
                   Balance:{' '}
-                  {balanceAllTokenOut[index] > new BigNumber(-1)
+                  {item.balance > new BigNumber(-1)
                     ? BNtoDecimal(
-                        balanceAllTokenOut[index] || new BigNumber(0),
+                        item.balance || new BigNumber(0),
                         token.decimals
                       )
                     : '...'}
@@ -70,7 +77,7 @@ const ListOfAllAsset = ({
                   value={
                     '$' +
                     BNtoDecimal(
-                      Big(amountAllTokenOut[index] || 0)
+                      Big(item.amount || 0)
                         .mul(
                           Big(
                             priceToken(

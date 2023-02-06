@@ -106,6 +106,9 @@ export const Token = styled.div<ITokenProps>`
       margin-top: 0.2rem;
     }
 
+    .poolIcon {
+      border-radius: 50%;
+    }
   `}
 `
 

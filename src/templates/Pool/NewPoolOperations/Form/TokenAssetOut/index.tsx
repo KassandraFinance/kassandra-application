@@ -5,16 +5,15 @@ import BigNumber from 'bn.js'
 import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
-import Jazzicon from 'react-jazzicon/dist/Jazzicon'
-import { jsNumberForAddress } from 'react-jazzicon'
+import Blockies from 'react-blockies'
 
 import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
 
 // import web3 from '../../../../../utils/web3'
 import { BNtoDecimal } from '../../../../../utils/numerals'
+import { getBalanceToken } from '../../../../../utils/poolUtils'
 
 import { useAppSelector } from '../../../../../store/hooks'
-import { ERC20 } from '../../../../../hooks/useERC20Contract'
 
 import { GET_INFO_POOL } from '../graphql'
 
@@ -23,11 +22,16 @@ import * as S from './styles'
 interface ITokenAssetOutProps {
   typeAction: string;
   amountTokenOut?: Big;
+  outAssetBalance: Big;
+  setOutAssetBalance: React.Dispatch<React.SetStateAction<Big>>;
 }
 
-const TokenAssetOut = ({ typeAction, amountTokenOut }: ITokenAssetOutProps) => {
-  const [outAssetBalance, setOutAssetBalance] = React.useState(new Big(-1))
-
+const TokenAssetOut = ({
+  typeAction,
+  amountTokenOut,
+  outAssetBalance,
+  setOutAssetBalance
+}: ITokenAssetOutProps) => {
   const { pool, chainId, userWalletAddress } = useAppSelector(state => state)
 
   const { data } = useSWR([GET_INFO_POOL], query =>
@@ -41,16 +45,14 @@ const TokenAssetOut = ({ typeAction, amountTokenOut }: ITokenAssetOutProps) => {
       pool.id.length === 0 ||
       userWalletAddress.length === 0 ||
       pool.chainId.toString().length === 0
-      // chainId !== pool.chainId
     ) {
       return
     }
-
-    const token = ERC20(pool.address)
-
-    token
-      .balance(userWalletAddress)
-      .then(newBalance => setOutAssetBalance(Big(newBalance.toString())))
+    // eslint-disable-next-line prettier/prettier
+    (async () => {
+      const balance = await getBalanceToken(pool.address, userWalletAddress)
+      setOutAssetBalance(balance)
+    })()
   }, [chainId, typeAction, userWalletAddress, pool])
 
   return (
@@ -63,9 +65,11 @@ const TokenAssetOut = ({ typeAction, amountTokenOut }: ITokenAssetOutProps) => {
               {pool.logo ? (
                 <img src={pool.logo} alt="" width={22} height={22} />
               ) : (
-                <Jazzicon
-                  diameter={22}
-                  seed={jsNumberForAddress(pool.address)}
+                <Blockies
+                  className="poolIcon"
+                  seed={pool.name}
+                  size={8}
+                  scale={3}
                 />
               )}
             </div>

@@ -170,12 +170,16 @@ export const CopyContract = styled.div`
 
 export const Blockchain = styled.div`
   display: flex;
+  align-items: center;
   max-height: 2.4rem;
+
+  .poolIcon {
+    border-radius: 50%;
+  }
 
   .image {
     max-width: 2.4rem;
     max-height: 2.4rem;
-    margin-right: 1.6rem;
   }
 
   span {
