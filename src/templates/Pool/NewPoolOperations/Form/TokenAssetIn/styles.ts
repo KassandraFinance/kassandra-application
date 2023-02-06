@@ -98,6 +98,10 @@ export const Token = styled.div`
     align-items: center;
 
     margin: 0.8rem 0;
+
+    .poolIcon {
+      border-radius: 50%;
+    }
   `}
 `
 

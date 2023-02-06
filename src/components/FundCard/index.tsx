@@ -4,8 +4,6 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Link from 'next/link'
-import Jazzicon from 'react-jazzicon/dist/Jazzicon'
-import { jsNumberForAddress } from 'react-jazzicon'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
@@ -16,6 +14,7 @@ import { BNtoDecimal } from '../../utils/numerals'
 import FundAreaChart from './FundAreaChart'
 import FundBarChart from './FundBarChart'
 import FundTokenIcons from './FundTokenIcons'
+import TokenWithNetworkImage from '../TokenWithNetworkImage'
 
 import arrowAscend from '../../../public/assets/notificationStatus/arrow-ascend.svg'
 import arrowDescend from '../../../public/assets/notificationStatus/arrow-descend.svg'
@@ -189,19 +188,23 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
               <>
                 <S.CardHeader>
                   <S.ImageContainer>
-                    {data && data.pool?.logo ? (
-                      <img
-                        src={data.pool?.logo}
-                        alt=""
-                        width={36}
-                        height={36}
+                    <TokenWithNetworkImage
+                      tokenImage={{
+                        url: data.pool?.logo,
+                        height: 36,
+                        width: 36
+                      }}
+                      networkImage={{
+                        url: data.pool.chain?.logo,
+                        height: 16,
+                        width: 16
+                      }}
+                      blockies={{
+                        size: 8,
+                        scale: 5,
+                        seedName: data.pool.name ?? ''
+                      }}
                       />
-                    ) : (
-                      <Jazzicon
-                        diameter={36}
-                        seed={jsNumberForAddress(data.pool?.address)}
-                      />
-                    )}
                   </S.ImageContainer>
 
                   <S.FundPrice>

@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
+import Blockies from 'react-blockies'
 
 import { Staking, LPDaiAvax } from '../../../constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG } from '../../../constants/pools'
@@ -219,7 +220,16 @@ const MyAsset = ({
           <S.Tr>
             <S.Td>
               <S.TdWrapper>
-                {/* <Image src={fundIcon} alt="" width={20} height={20} /> */}
+                {pool.logo ? (
+                  <img src={pool.logo} width={20} height={20} alt="" />
+                ) : (
+                  <Blockies
+                    seed={pool.name}
+                    className="poolIcon"
+                    size={7}
+                    scale={4}
+                  />
+                )}
                 <span>{symbol}</span>
               </S.TdWrapper>
             </S.Td>

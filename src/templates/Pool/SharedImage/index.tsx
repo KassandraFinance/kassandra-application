@@ -1,4 +1,5 @@
 import React from 'react'
+import Blockies from 'react-blockies'
 
 import { usePoolTokens } from '../../../context/PoolTokensContext'
 import { useAppSelector } from '../../../store/hooks'
@@ -52,11 +53,16 @@ const SharedImage = ({
       <Background />
       <S.Header>
         <S.Title>
-          <img
-            src={fundImage.src || '/assets/modalShareImage.png'}
-            width={40}
-            height={40}
+          {pool.logo ? (
+            <img src={pool.logo} width={40} height={40} />
+          ) : (
+            <Blockies
+              seed={pool.name}
+              className="poolIcon"
+              size={8}
+              scale={5}
           />
+          )}
           <h1>{productName}</h1>
           <S.Detail>${socialIndex}</S.Detail>
           {/* <S.HorizontalLine /> */}

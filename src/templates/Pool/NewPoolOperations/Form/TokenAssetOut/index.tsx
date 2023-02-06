@@ -5,8 +5,7 @@ import BigNumber from 'bn.js'
 import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
-import Jazzicon from 'react-jazzicon/dist/Jazzicon'
-import { jsNumberForAddress } from 'react-jazzicon'
+import Blockies from 'react-blockies'
 
 import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
 
@@ -63,9 +62,11 @@ const TokenAssetOut = ({ typeAction, amountTokenOut }: ITokenAssetOutProps) => {
               {pool.logo ? (
                 <img src={pool.logo} alt="" width={22} height={22} />
               ) : (
-                <Jazzicon
-                  diameter={22}
-                  seed={jsNumberForAddress(pool.address)}
+                <Blockies
+                  className="poolIcon"
+                  seed={pool.name}
+                  size={8}
+                  scale={3}
                 />
               )}
             </div>

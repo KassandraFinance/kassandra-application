@@ -3,7 +3,6 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Big from 'big.js'
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
@@ -25,6 +24,7 @@ import Loading from '../../components/Loading'
 import ChartProducts from '../../components/ChartProducts'
 import ScrollUpButton from '../../components/ScrollUpButton'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
+import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 // import PoweredBy from './PoweredBy'
 // import ActivityTable from './ActivityTable'
 
@@ -202,14 +202,24 @@ const Pool = () => {
           <S.Product>
             <S.ProductDetails>
               <S.Intro introMobile={false} introDesktop={true}>
-                {pool.logo ? (
-                  <img src={pool.logo} alt="" />
-                ) : (
-                  <Jazzicon
-                    diameter={80}
-                    seed={jsNumberForAddress(pool.address)}
+                <TokenWithNetworkImage
+                  tokenImage={{
+                    url: pool.logo,
+                    height: 75,
+                    width: 75,
+                    withoutBorder: true
+                  }}
+                  networkImage={{
+                    url: pool.chain?.logo,
+                    height: 20,
+                    width: 20
+                  }}
+                  blockies={{
+                    size: 8,
+                    scale: 9,
+                    seedName: pool.name
+                  }}
                   />
-                )}
                 <S.NameIndex>
                   <S.NameAndSymbol>
                     <h1>{pool.name}</h1>

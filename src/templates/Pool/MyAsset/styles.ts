@@ -119,6 +119,10 @@ export const TdWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 0.4rem;
+
+  .poolIcon {
+    border-radius: 50%;
+  }
 `
 
 export const Value = styled.span`

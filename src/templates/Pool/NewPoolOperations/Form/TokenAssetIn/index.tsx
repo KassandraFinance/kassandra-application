@@ -1,8 +1,7 @@
 import React from 'react'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js';
-import Jazzicon from 'react-jazzicon/dist/Jazzicon';
-import { jsNumberForAddress } from 'react-jazzicon';
+import Blockies from 'react-blockies'
 
 import { useAppSelector } from '../../../../../store/hooks'
 
@@ -99,9 +98,11 @@ const TokenAssetIn = ({
               {pool.logo ? (
                 <img src={pool.logo} alt="" width={22} height={22} />
                 ) : (
-                  <Jazzicon
-                    diameter={22}
-                    seed={jsNumberForAddress(pool.address)}
+                  <Blockies
+                    className="poolIcon"
+                    seed={pool.name}
+                    size={8}
+                    scale={3}
                   />
                 )}
             </span>
