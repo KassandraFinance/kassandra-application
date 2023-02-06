@@ -32,35 +32,6 @@ interface IFundCardProps {
   poolAddress: string;
 }
 
-const network2coingeckoID: { [key: number]: string } = {
-  1: 'ethereum',
-  43113: 'avalanche',
-  43114: 'avalanche'
-}
-
-const addressChanger: { [key: string]: string } = {
-  '0xd00ae08403B9bbb9124bB305C09058E32C39A48c':
-    '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7', // WAVAX
-  '0xd0F41b1C9338eB9d374c83cC76b684ba3BB71557':
-    '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE', //SAVAX
-  '0xe401e9Ce0E354Ad9092a63eE1dFA3168bB83F3DA':
-    '0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5', // QI
-  '0xf22f05168508749fa42eDBddE10CB323D87c201d':
-    '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd', // JOE
-  '0x83080D4b5fC60e22dFFA8d14AD3BB41Dde48F199':
-    '0x60781C2586D68229fde47564546784ab3fACA982', // PNG
-  '0xBA1C32241Ac77b97C8573c3dbFDe4e1e2A8fc0DF':
-    '0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7', // YAK
-  '0x1d7C6846F033e593b4f3f21C39573bb1b41D43Cb':
-    '0x1d7C6846F033e593b4f3f21C39573bb1b41D43Cb', // KACY
-  '0xe28Ad9Fa07fDA82abab2E0C86c64A19D452b160E':
-    '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab', // WETH
-  '0xFA17fb53da4c837594127b73fFd09fdb15f42C49':
-    '0xd586e7f844cea2f87f50152665bcbc2c279d8d70', //DAI
-  '0xbbcED92AC9B958F88A501725f080c0360007e858':
-    '0x50b7545627a5162f82a992c33b87adc75187b218' //WBTC
-}
-
 const FundCard = ({ poolAddress }: IFundCardProps) => {
   const { trackEventFunction } = useMatomoEcommerce()
 
@@ -72,9 +43,6 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
   })
   const [poolInfo, setPoolInfo] = React.useState<any[]>([])
   const [poolObject, setPoolObject] = React.useState<any>({})
-  const [tokenImages, setTokenImages] = React.useState<{
-    [key: string]: string
-  }>({})
 
   const [price, setPrice] = React.useState([])
 
@@ -152,25 +120,6 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
     }
   }, [poolInfo])
 
-  React.useEffect(() => {
-    const arrayAddressPool = poolInfo
-      .slice(0, poolInfo.length >= 3 ? 3 : poolInfo.length)
-      .map(asset => addressChanger[asset.token.id] || asset.token.id)
-
-    const getCoingecko = async () => {
-      const URL = `/api/image-coingecko?poolinfo=${
-        network2coingeckoID[data?.pool?.chainId]
-      }&tokenAddress=${arrayAddressPool}`
-
-      const res = await fetch(URL)
-      const resData = await res.json()
-
-      setTokenImages(resData.images)
-    }
-
-    getCoingecko()
-  }, [poolInfo])
-
   return (
     <>
       {infoPool.price > '0.1' ? (
@@ -204,7 +153,7 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
                         scale: 5,
                         seedName: data.pool.name ?? ''
                       }}
-                      />
+                    />
                   </S.ImageContainer>
 
                   <S.FundPrice>
@@ -283,7 +232,7 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
                   <FundAreaChart areaChartData={price} color="#E843C4" />
 
                   <S.TokenIconsContainer>
-                    <FundTokenIcons tokens={tokenImages} poolInfo={poolInfo} />
+                    <FundTokenIcons poolInfo={poolInfo ?? []} />
                     {poolInfo.length > 3 && (
                       <p>
                         +{poolInfo.length - 3}

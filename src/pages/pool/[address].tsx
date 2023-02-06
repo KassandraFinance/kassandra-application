@@ -59,6 +59,7 @@ const queryPool = `{
   strategy
   chain {
     id
+    logo
     chainName
     nativeTokenName
     nativeTokenSymbol
@@ -111,7 +112,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   const pools: { id: string }[] = (await res.json()).data?.pools
 
-  const paths = pools.map(pool => ({
+  const paths = pools?.map(pool => ({
     params: { address: pool.id }
   }))
   return { paths, fallback: 'blocking' }
