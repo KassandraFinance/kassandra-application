@@ -7,6 +7,7 @@ import { addressNativeToken1Inch } from '../../../../../constants/tokenAddresses
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import web3 from '../../../../../utils/web3'
+import { getBalanceToken } from '../../../../../utils/poolUtils'
 
 import { useAppSelector } from '../../../../../store/hooks'
 
@@ -110,24 +111,10 @@ const InputAndOutputValueToken = ({
       return
     }
 
-    if (tokenSelect.address === addressNativeToken1Inch ||
-      tokenSelect.address === pool.chain.addressWrapped
-    ) {
-      web3.eth
-        .getBalance(userWalletAddress)
-        .then(newBalance =>
-          setSelectedTokenInBalance(Big(newBalance.toString()))
-        )
-      return
-    }
-
-    const token = ERC20(tokenSelect.address)
-
-    token
-      .balance(userWalletAddress)
-      .then(newBalance =>
-        setSelectedTokenInBalance(Big(newBalance.toString()))
-      )
+    (async () => {
+      const userTokenBalance = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
+      setSelectedTokenInBalance(userTokenBalance)
+    })()
   }, [
     chainId,
     typeAction,
@@ -143,7 +130,7 @@ const InputAndOutputValueToken = ({
           <S.Info>
             <S.Title>{isInvestType ? 'Pay with' : 'Swap to'}</S.Title>
             {isInvestType ? <TokenSelected/> : <TokenSelect />}
-            <S.Span spanlight={true}>
+            <S.Span spanlight={true} onClick={() => handleMaxUserBalance()}>
               Balance:{' '}
               {selectedTokenInBalance > new Big(-1)
                 ? BNtoDecimal(

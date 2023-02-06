@@ -1,4 +1,10 @@
+import Big from 'big.js'
+import web3 from './web3'
+
+import { ERC20 } from '../hooks/useERC20Contract'
 import { underlyingAssetsInfo } from '../store/reducers/pool'
+
+import { addressNativeToken1Inch } from '../constants/tokenAddresses'
 
 export const checkTokenWithHigherLiquidityPool = (
   underlyingAssets: underlyingAssetsInfo[]
@@ -62,4 +68,26 @@ export const checkTokenInThePool = (underlyingAssets: underlyingAssetsInfo[], ad
       return token
     }
   })
+}
+
+export const getBalanceToken = async (
+  address: string,
+  userWalletAddress: string,
+  addressWrapped?: string
+) => {
+  if (address === addressNativeToken1Inch || address === addressWrapped) {
+    const balanceToken = await web3.eth
+      .getBalance(userWalletAddress)
+      .then(newBalance => Big(newBalance.toString()))
+
+    return balanceToken
+  }
+
+  const token = ERC20(address)
+
+  const balanceToken = await token
+    .balance(userWalletAddress)
+    .then(newBalance => Big(newBalance.toString()))
+
+  return balanceToken
 }

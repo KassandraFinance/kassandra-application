@@ -19,7 +19,7 @@ import waitTransaction, {
 } from '../../../../../utils/txWait'
 import changeChain from '../../../../../utils/changeChain'
 import { BNtoDecimal } from '../../../../../utils/numerals'
-import { checkTokenInThePool, checkTokenWithHigherLiquidityPool, getTokenWrapped } from '../../../../../utils/poolUtils'
+import { checkTokenInThePool, checkTokenWithHigherLiquidityPool, getBalanceToken, getTokenWrapped } from '../../../../../utils/poolUtils'
 
 import {
   ToastSuccess,
@@ -85,6 +85,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     feeNumber: 0,
     feeString: ''
   })
+  const [outAssetBalance, setOutAssetBalance] = React.useState(new Big(-1))
   const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
     new Big(-1)
   )
@@ -252,6 +253,16 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
         if (txReceipt.status) {
           ToastSuccess(`Investment in ${tokenSymbol} confirmed`)
+
+          const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
+          const amountPool = await getBalanceToken(pool.address, userWalletAddress)
+
+          setSelectedTokenInBalance(amountToken)
+          setOutAssetBalance(amountPool)
+          setAmountTokenOut(Big(0))
+          if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
+            inputAmountTokenRef.current.value = ''
+          }
           return
         }
       }
@@ -340,7 +351,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     }
     handleTokensApproved()
     // setIsReload(!isReload)
-  }, [typeAction, tokenSelect.address, userWalletAddress])
+  }, [typeAction, tokenSelect.address, userWalletAddress, chainId])
 
   React.useEffect(() => {
     const handleWallectConnect = () => {
@@ -433,7 +444,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     calc()
     setErrorMsg('')
     setAmountTokenOut(Big(0))
-  }, [pool, tokenSelect, amountTokenIn])
+    }, [pool, tokenSelect, amountTokenIn])
 
   React.useEffect(() => {
     if (!inputAmountTokenRef?.current?.value) {
@@ -502,7 +513,12 @@ const Invest = ({ typeAction }: IInvestProps) => {
         alt=""
         style={{ margin: '12px 0' }}
       />
-      <TokenAssetOut typeAction={typeAction} amountTokenOut={amountTokenOut} />
+      <TokenAssetOut
+        typeAction={typeAction}
+        amountTokenOut={amountTokenOut}
+        outAssetBalance={outAssetBalance}
+        setOutAssetBalance={setOutAssetBalance}
+      />
       <S.ExchangeRate>
         <S.SpanLight>Price Impact:</S.SpanLight>
         <S.PriceImpactWrapper price={BNtoDecimal(
@@ -586,9 +602,9 @@ const Invest = ({ typeAction }: IInvestProps) => {
           fullWidth
           type="button"
           onClick={() => changeChain({
-            chainId: pool.chain.id, 
-            blockExplorerUrl: pool.chain.blockExplorerUrl, 
-            chainName: pool.chain.chainName, 
+            chainId: pool.chain.id,
+            blockExplorerUrl: pool.chain.blockExplorerUrl,
+            chainName: pool.chain.chainName,
             nativeCurrency: {
               decimals: pool.chain.nativeTokenDecimals,
               symbol: pool.chain.nativeTokenSymbol,
