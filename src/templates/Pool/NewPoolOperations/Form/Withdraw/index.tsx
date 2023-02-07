@@ -281,11 +281,11 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   }
 
   React.useEffect(() => {
-    if (typeAction !== 'Withdraw' || tokenSelect.address === pool.id || new BigNumber(amountTokenIn.toString()).isZero()) {
+    if (typeAction !== 'Withdraw' || tokenSelect.address === pool.id) {
       return
     }
 
-    if (chainId !== pool.chainId) {
+    if (chainId !== pool.chainId || new BigNumber(amountTokenIn.toString()).isZero()) {
       if (tokenSelect.address === '') {
         setAmountTokenOut(new Big(0))
         return

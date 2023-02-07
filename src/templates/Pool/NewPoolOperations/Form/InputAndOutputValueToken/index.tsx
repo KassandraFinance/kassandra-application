@@ -167,7 +167,7 @@ const InputAndOutputValueToken = ({
               value={isInvestType ?
                 inputAmountTokenRef.current?.value :
                 BNtoDecimal(
-                  new Big(amountTokenIn)?.div(Big(10).pow(18)) || new BigNumber(0),
+                  Big(amountTokenIn)?.div(Big(10).pow(18)) || new BigNumber(0),
                   18,
                   6
                 ).replace(/\s/g, '')

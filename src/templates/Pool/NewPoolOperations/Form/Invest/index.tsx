@@ -444,7 +444,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     calc()
     setErrorMsg('')
     setAmountTokenOut(Big(0))
-    }, [pool, tokenSelect, amountTokenIn])
+  }, [pool, tokenSelect, amountTokenIn])
 
   React.useEffect(() => {
     if (!inputAmountTokenRef?.current?.value) {
@@ -454,13 +454,12 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
     if (Big(amountTokenIn).gt(0) && parseFloat(amountTokenOut.toString()) > 0) {
       const usdAmountIn = Big(amountTokenIn)
-      .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase())  || 0))
-      .div(Big(10).pow(Number(tokenSelect.decimals || 18)))
+        .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase())  || 0))
+        .div(Big(10).pow(Number(tokenSelect.decimals || 18)))
 
       const usdAmountOut = Big(amountTokenOut)
-      .mul(Big(data?.pool?.price_usd))
-      .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
-
+        .mul(Big(data?.pool?.price_usd || 0))
+        .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
 
       const subValue = usdAmountIn.sub(usdAmountOut)
 
