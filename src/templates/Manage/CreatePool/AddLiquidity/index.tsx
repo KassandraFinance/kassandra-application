@@ -116,7 +116,7 @@ const AddLiquidity = () => {
 
   React.useEffect(() => {
     getBalances()
-  }, [])
+  }, [wallet])
 
   return (
     <S.AddLiquidity>

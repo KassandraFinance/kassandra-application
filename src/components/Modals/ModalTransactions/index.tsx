@@ -11,6 +11,8 @@ import { TransactionsListType } from '../../../templates/Manage/CreatePool'
 
 interface IModalTransactionsProps {
   transactions: TransactionsListType[];
+  isCompleted: boolean;
+  isApproving: boolean;
   onStart: () => Promise<void>;
   onCancel: () => void;
   onComfirm: () => void;
@@ -18,6 +20,8 @@ interface IModalTransactionsProps {
 
 const ModalTransactions = ({
   transactions,
+  isCompleted,
+  isApproving,
   onStart,
   onCancel,
   onComfirm
@@ -71,17 +75,25 @@ const ModalTransactions = ({
       </S.TransactionContainer>
 
       <S.ButtonsWrapper>
-        {transactions.at(-1)?.status !== 'APROVED' && (
+        {!isCompleted && (
           <Button
-            text="Start approval process"
+            text={
+              !isApproving ? 'Start approval process' : 'Waiting for approval'
+            }
             backgroundPrimary
             fullWidth
             type="button"
-            onClick={onStart}
+            onClick={
+              !isApproving
+                ? onStart
+                : () => {
+                    return
+                  }
+            }
           />
         )}
 
-        {transactions.at(-1)?.status === 'APROVED' && (
+        {isCompleted && (
           <Button
             text="Confirm"
             backgroundPrimary
@@ -91,7 +103,7 @@ const ModalTransactions = ({
           />
         )}
 
-        {transactions.at(-1)?.status !== 'APROVED' && (
+        {!isCompleted && (
           <Button
             text="Cancel"
             type="button"

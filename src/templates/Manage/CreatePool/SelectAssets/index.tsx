@@ -150,7 +150,7 @@ const SelectAssets = () => {
   React.useEffect(() => {
     const arr = whitelist ? whitelist : []
     getBalances(arr)
-  }, [whitelist])
+  }, [whitelist, wallet])
 
   return (
     <S.SelectAssets>

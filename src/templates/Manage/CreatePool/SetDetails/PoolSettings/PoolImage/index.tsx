@@ -15,7 +15,7 @@ const PoolImage = () => {
   const img = details.icon?.image_preview ? details.icon.image_preview : ''
   const hasPoolImage = img.length > 0 ? img : defaultImage
 
-  function handleImagePreview(event: FileList) {
+  async function handleImagePreview(event: FileList) {
     if (!event[0]) {
       return
     }
@@ -33,7 +33,10 @@ const PoolImage = () => {
     }
     setErrorMessage('')
 
-    const image_as_base64 = URL.createObjectURL(event[0])
+    const buffer = await event[0].arrayBuffer()
+    const image_as_base64 = `data:${event[0].type};base64,${Buffer.from(
+      buffer
+    ).toString('base64')}`
     const image_as_files = event[0]
 
     dispatch(
