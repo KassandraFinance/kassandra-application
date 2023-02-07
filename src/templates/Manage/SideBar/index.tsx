@@ -8,6 +8,7 @@ import substr from '../../../utils/substr'
 
 import HeaderButtons from '../../../components/Header/HeaderButtons'
 import ModalChooseNetwork from '../../../components/Modals/ModalChooseNetwork'
+import SideBarMenu from './SideBarMenu'
 
 import userIcon from '../../../../public/assets/icons/user.svg'
 import arrow from '../../../../public/assets/utilities/arrow-right-bold.svg'
@@ -18,6 +19,27 @@ interface ISideBarProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+export type PoolType = {
+  poolLogo: string,
+  poolName: string,
+  poolSymbol: string
+}
+
+const mockPools: PoolType[] = [
+  {
+    poolLogo:
+      'https://app.kassandra.finance/_next/static/media/ahype.5b1acc28.svg',
+    poolName: 'Avalanche Social Index',
+    poolSymbol: 'aHYPE'
+  },
+  {
+    poolLogo:
+      'https://app.kassandra.finance/_next/static/media/tricrypto.b6b82cd9.svg',
+    poolName: 'Kassandra Tricrypto Index',
+    poolSymbol: 'K3C'
+  }
+]
 
 const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
   const [isModalWallet, setIsModalWallet] = React.useState<boolean>(false)
@@ -307,10 +329,12 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
       <S.Line isOpen={isOpen} />
 
       <S.SideBarBody>
-        <S.Text isOpen={isOpen}>
-          Start your journey as an asset pool manager in kassandra&apos;s
-          ecosystem.
-        </S.Text>
+        <SideBarMenu
+          title="My managed pool"
+          icon={poolIcon}
+          itemsList={mockPools}
+          isSideBarOpen={isOpen}
+        />
 
         <S.Text isOpen={isOpen}>
           Bring your strategy or develop one as you begin a streamlined process
