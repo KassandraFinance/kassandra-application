@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import { HeaderButtons } from '../../../components/Header/HeaderButtons/styles'
+import { Wrapper } from '../../../components/Button/styles'
 
 interface ISideBarProps {
   isOpen: boolean;
@@ -314,10 +315,21 @@ export const SideBarBody = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
+    gap: 2.4rem;
+
+    height: 100%;
+    margin-top: 1.6rem;
+    padding-bottom: 2.8rem;
+  `}
+`
+
+export const SideBarContainer = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
 
     height: 100%;
     padding-inline: 2.4rem;
-    padding-bottom: 2.8rem;
 
     @media (max-width: 992px) {
       padding-inline: 1.6rem;
@@ -434,5 +446,47 @@ export const ImageCloseButtonWrapper = styled.div<IImageWrapperProps>`
       transition-duration: 550ms;
       transition-timing-function: ease;
       transition-property: transform;
+  `}
+`
+
+interface IButtonWrapper {
+  isOpen: boolean;
+}
+
+// prettier-ignore
+export const ButtonWrapper = styled.div<IButtonWrapper>`
+  ${() => css`
+    width: 100%;
+  `}
+  ${({ isOpen }) => !isOpen && css`
+      ${Wrapper} {
+        justify-content: space-between;
+
+        padding: 1.2rem 1.6rem;
+
+        font-size: 0rem;
+
+        @media (min-width: 992px) {
+          justify-content: center;
+
+          font-size: 1.6rem;
+        }
+      }
+      ${PlusIconWrapper} {
+        display: block;
+        @media (min-width: 992px) {
+          display: none;
+        }
+
+      }
+  `}
+`
+
+export const PlusIconWrapper = styled.div`
+  ${() => css`
+    display: none;
+
+    min-width: 1.2rem;
+    min-height: 1.2rem;
   `}
 `
