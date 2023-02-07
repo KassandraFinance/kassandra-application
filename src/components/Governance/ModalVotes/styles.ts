@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
 
 export const Backdrop = styled.div`
@@ -164,39 +164,12 @@ export const ProgressBar = styled.progress<IVoteBarProps>`
   }
 `
 
-interface ITableContainerProps {
-  showShadow: boolean;
-}
-
 // eslint-disable-next-line prettier/prettier
-export const TableContainer = styled.table<ITableContainerProps>`
-  width: 100%;
-  padding: 0 3.2rem 3.2rem 3.2rem;
+export const TableContainer = styled.table`
   position: relative;
 
-  &::after {
-    content: '';
-    ${props =>
-      props.showShadow
-        ? `
-      position: absolute;
-      bottom: 32px;
-
-      width: calc(100% - 16%);
-      height: 90px;
-
-      background: linear-gradient(rgba(255, 255, 255, 0), #1a1e2c 60%) 0 100%,
-        radial-gradient(
-            farthest-side at 50% 100%,
-            rgba(0, 0, 0, 0.2),
-            rgba(0, 0, 0, 0)
-          )
-          0 100%;
-      background-repeat: no-repeat;
-      background-size: 100% 45px, 100% 20px;
-    `
-        : ``}
-  }
+  width: 100%;
+  padding: 0 3.2rem 3.2rem 3.2rem;
 `
 
 export const Thead = styled.thead``
@@ -229,6 +202,28 @@ export const Tbody = styled.tbody`
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: 1rem;
   }
+`
+
+interface IShadowProps {
+  inView: boolean;
+}
+
+// eslint-disable-next-line prettier/prettier
+export const shadow = styled.div<IShadowProps>`
+  ${({ inView }) => css`
+    position: absolute;
+    bottom: 3rem;
+    left: 0;
+    right: 0;
+
+    display: ${inView ? 'none' : 'block'};
+    height: 5rem;
+    width: 90%;
+
+    background: linear-gradient(180deg, #1a1e2c20 -100%, #1a1e2c 100%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  `}
 `
 
 export const UserData = styled.tr`

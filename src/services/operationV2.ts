@@ -76,7 +76,6 @@ export default class operationV2 {
     let investAmountOut
     let transactionError
     const request = this.createRequestJoinInPool(tokenSelected.tokenInAddress, tokenSelected.newAmountTokenIn.toString(), minAmountOut)
-
     try {
       const response = await this.balancerHelpersContract.methods.queryJoin(
         this.poolInfo.id,
@@ -137,6 +136,7 @@ export default class operationV2 {
     transactionCallback
   }: JoinSwapAmountInParams) {
     const hasTokenInPool = checkTokenInThePool(this.poolInfo.tokens, tokenInAddress)
+    const gasPriceValue =  await web3.eth.getGasPrice()
 
     if (hasTokenInPool) {
       const request = this.createRequestJoinInPool(tokenInAddress, tokenAmountIn.toString(), minPoolAmountOut)
@@ -147,7 +147,7 @@ export default class operationV2 {
         // userWalletAddress,
         // this.referral,
         // this.poolInfo.controller,
-      ).send({ from: userWalletAddress }, transactionCallback)
+      ).send({ from: userWalletAddress, gasPrice: new BigNumber(gasPriceValue) }, transactionCallback)
 
       return result
     }
@@ -171,7 +171,7 @@ export default class operationV2 {
       tokenExchange,
       minPoolAmountOut,
       data
-    ).send({ from: userWalletAddress , value: nativeValue})
+    ).send({ from: userWalletAddress, value: nativeValue, gasPrice: new BigNumber(gasPriceValue) })
 
     return res
   }
@@ -374,12 +374,13 @@ export default class operationV2 {
         toInternalBalance: false
       }
 
+      const gasPriceValue =  await web3.eth.getGasPrice()
       await this.vaultBalancer.methods.exitPool(
         this.poolInfo.id,
         userWalletAddress,
         userWalletAddress,
         request
-      ).send({ from: userWalletAddress }, transactionCallback);
+      ).send({ from: userWalletAddress, gasPrice: gasPriceValue }, transactionCallback);
 
     } catch (error) {
       console.log(error)
@@ -408,12 +409,13 @@ export default class operationV2 {
         toInternalBalance: false
       }
 
+      const gasPriceValue =  await web3.eth.getGasPrice()
       await this.vaultBalancer.methods.exitPool(
         this.poolInfo.id,
         userWalletAddress,
         userWalletAddress,
         request
-      ).send({ from: userWalletAddress}, transactionCallback);
+      ).send({ from: userWalletAddress, gasPrice: gasPriceValue }, transactionCallback);
 
       // return {
       //   withdrawAmoutOut: response.amountsOut,

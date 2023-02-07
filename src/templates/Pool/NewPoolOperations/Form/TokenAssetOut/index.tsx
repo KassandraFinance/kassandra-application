@@ -44,7 +44,7 @@ const TokenAssetOut = ({
     if (
       pool.id.length === 0 ||
       userWalletAddress.length === 0 ||
-      pool.chainId.toString().length === 0
+      pool.chainId !== chainId
     ) {
       return
     }
