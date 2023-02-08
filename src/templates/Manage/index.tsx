@@ -5,6 +5,7 @@ import { useAppSelector } from '../../store/hooks'
 import { chains } from '../../constants/tokenAddresses'
 
 import Overlay from '../../components/Overlay'
+import Header from '../../components/Header'
 
 import GetStarted from './GetStarted'
 import SideBar from './SideBar'
@@ -70,6 +71,7 @@ const Manage = () => {
         <div></div>
 
         <S.Content>
+          <Header />
           <GetStarted />
         </S.Content>
       </S.DashBoard>
