@@ -1,8 +1,7 @@
 import React from 'react'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js';
-import Jazzicon from 'react-jazzicon/dist/Jazzicon';
-import { jsNumberForAddress } from 'react-jazzicon';
+import Blockies from 'react-blockies'
 
 import { useAppSelector } from '../../../../../store/hooks'
 
@@ -10,6 +9,7 @@ import { ERC20 } from '../../../../../hooks/useERC20Contract';
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
 
 import { BNtoDecimal } from '../../../../../utils/numerals';
+import { getBalanceToken } from '../../../../../utils/poolUtils';
 
 import * as S from './styles'
 
@@ -43,7 +43,6 @@ const TokenAssetIn = ({
   disabled
  }: ITokenAssetInProps) => {
   const { pool, userWalletAddress, chainId } = useAppSelector(state => state)
-
   const { trackEventFunction } = useMatomoEcommerce()
 
   function wei2String(input: Big) {
@@ -76,18 +75,18 @@ const TokenAssetIn = ({
       pool.id.length === 0 ||
       userWalletAddress.length === 0 ||
       chainId.toString().length === 0 ||
-      chainId !== pool.chainId
+      chainId !== pool.chainId ||
+      !Big(amountTokenIn).lte(Big(0))
     ) {
       return
     }
 
-    const token = ERC20(pool.address)
-    token
-      .balance(userWalletAddress)
-      .then(newBalance =>
-        setSelectedTokenInBalance(Big(newBalance.toString()))
-      )
-  }, [userWalletAddress, pool])
+    (async () => {
+      const balance = await getBalanceToken(pool.address, userWalletAddress)
+      setSelectedTokenInBalance(balance)
+    })()
+
+  }, [userWalletAddress, pool, amountTokenIn])
 
   return (
     <S.TokenAssetIn>
@@ -99,15 +98,17 @@ const TokenAssetIn = ({
               {pool.logo ? (
                 <img src={pool.logo} alt="" width={22} height={22} />
                 ) : (
-                  <Jazzicon
-                    diameter={22}
-                    seed={jsNumberForAddress(pool.address)}
+                  <Blockies
+                    className="poolIcon"
+                    seed={pool.name}
+                    size={8}
+                    scale={3}
                   />
                 )}
             </span>
             <S.Symbol>{pool.symbol}</S.Symbol>
           </S.Token>
-          <S.Span>
+          <S.Span onClick={() => handleMaxUserBalance()}>
             Balance:{' '}
             {selectedTokenInBalance > new Big(-1)
               ? BNtoDecimal(
@@ -139,7 +140,7 @@ const TokenAssetIn = ({
               className="noscroll"
               readOnly={userWalletAddress.length === 0}
               ref={inputAmountTokenRef}
-              // value={inputAmountTokenRef?.current?.value}
+              value={inputAmountTokenRef?.current?.value}
               type="number"
               placeholder="0"
               step="any"

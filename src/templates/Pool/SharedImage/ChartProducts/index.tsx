@@ -5,7 +5,7 @@ import request from 'graphql-request'
 import { useAppSelector } from '../../../../store/hooks'
 import useMatomoEcommerce from '../../../../hooks/useMatomoEcommerce'
 
-import { SUBGRAPH_URL } from '../../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA } from '../../../../constants/tokenAddresses'
 
 import Loading from '../../../../components/Loading'
 
@@ -47,7 +47,7 @@ const ChartProducts = ({ crpPoolAddress, height }: IChartProductsProps) => {
   const { trackEventFunction } = useMatomoEcommerce()
 
   const { data } = useSWR([GET_CHART, params], (query, params) =>
-    request(SUBGRAPH_URL, query, params)
+    request(BACKEND_KASSANDRA, query, params)
   )
 
   function returnDate(period: string) {

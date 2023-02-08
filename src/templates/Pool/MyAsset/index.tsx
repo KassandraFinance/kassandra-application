@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
+import Blockies from 'react-blockies'
 
 import { Staking, LPDaiAvax } from '../../../constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG } from '../../../constants/pools'
@@ -65,7 +66,7 @@ const MyAsset = ({
   const { trackEventFunction } = useMatomoEcommerce()
   const { getPriceKacyAndLP } = usePriceLP()
 
-  const { chainId, userWalletAddress } = useAppSelector(state => state)
+  const { chainId, userWalletAddress, pool } = useAppSelector(state => state)
 
   const dispatch = useAppDispatch()
   const router = useRouter()
@@ -157,21 +158,21 @@ const MyAsset = ({
 
       getStakedToken()
     }
-  }, [userWalletAddress])
+  }, [userWalletAddress, chainId])
 
   React.useEffect(() => {
     if (userWalletAddress !== '' && typeof pid === 'number') {
       getLiquidityPoolPriceInDollar()
     }
-  }, [price, userWalletAddress])
+  }, [price, userWalletAddress, chainId])
 
   React.useEffect(() => {
     if (userWalletAddress !== '') {
       getApr()
     }
-  }, [priceToken, userWalletAddress])
+  }, [priceToken, userWalletAddress, chainId])
 
-  return (
+  return !apr.isZero() || pool.poolId ? (
     <S.MyAsset>
       <S.TitleWrapper>
         <S.Title>
@@ -219,14 +220,25 @@ const MyAsset = ({
           <S.Tr>
             <S.Td>
               <S.TdWrapper>
-                {/* <Image src={fundIcon} alt="" width={20} height={20} /> */}
+                {pool.logo ? (
+                  <img src={pool.logo} width={20} height={20} alt="" />
+                ) : (
+                  <Blockies
+                    seed={pool.name}
+                    className="poolIcon"
+                    size={7}
+                    scale={4}
+                  />
+                )}
                 <span>{symbol}</span>
               </S.TdWrapper>
             </S.Td>
             <S.Td>
               <S.TdWrapper>
                 <span>
-                  {userWalletAddress ? BNtoDecimal(stakedToken, 18) : '...'}{' '}
+                  {userWalletAddress
+                    ? BNtoDecimal(stakedToken, decimals, 4)
+                    : '...'}{' '}
                   {symbol}
                 </span>
                 <S.Value>
@@ -245,7 +257,7 @@ const MyAsset = ({
             <S.Td>
               <S.TdWrapper>
                 <span>
-                  {userWalletAddress ? BNtoDecimal(balance, 18) : '...'}{' '}
+                  {userWalletAddress ? BNtoDecimal(balance, 18, 4) : '...'}{' '}
                   {symbol}
                 </span>
                 <S.Value>
@@ -313,7 +325,7 @@ const MyAsset = ({
         )}
       </S.ButtonWrapper>
     </S.MyAsset>
-  )
+  ) : null
 }
 
 export default MyAsset

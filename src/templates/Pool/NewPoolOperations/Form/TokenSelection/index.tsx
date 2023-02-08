@@ -19,6 +19,7 @@ import {
 import TokenPin from './TokenPin'
 import InputSearch from './InputSearch'
 import Token1inchList from './Token1inchList'
+import Loading from '../../../../../components/Loading'
 
 import * as S from './styles'
 
@@ -50,6 +51,7 @@ export interface IUserTokenProps extends ITokenList1InchProps {
 
 const TokenSelection = () => {
   const [searchToken, setSearchToken] = React.useState('')
+  const [loading, setLoading] = React.useState(true)
   const [tokenPinList, setTokenPinList] = React.useState<
     ITokenList1InchProps[]
   >([])
@@ -61,7 +63,7 @@ const TokenSelection = () => {
     })
 
   const dispatch = useAppDispatch()
-  const { userWalletAddress, tokenList1Inch, pool } = useAppSelector(
+  const { userWalletAddress, tokenList1Inch, pool, chainId } = useAppSelector(
     state => state
   )
 
@@ -159,6 +161,7 @@ const TokenSelection = () => {
     // eslint-disable-next-line prettier/prettier
     const tokenArrayFormated: IUserTokenProps[] =
       handleUserTokensBalance(tokenArray)
+
     return tokenArrayFormated.sort((a, b) => {
       if (a.balanceInDollar > b.balanceInDollar) return -1
       if (a.balanceInDollar < b.balanceInDollar) return 1
@@ -173,6 +176,8 @@ const TokenSelection = () => {
       : handleTokenListFilteringBybalance(tokenList1Inch)
 
   async function handleFetchBalance() {
+    if (chainId !== pool.chainId) return
+
     try {
       const response = await fetch(
         `${URL_1INCH_BALANCE}/${pool.chainId}/allowancesAndBalances/0x1111111254eeb25477b68fb85ed929f73a960582/${userWalletAddress}?tokensFetchType=listedTokens`
@@ -189,6 +194,12 @@ const TokenSelection = () => {
       handleFetchBalance()
     }
   }, [userWalletAddress])
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 2000)
+  }, [])
 
   return (
     <S.TokenSelection>
@@ -215,13 +226,19 @@ const TokenSelection = () => {
           tokenList1Inch={tokenList1Inch}
         />
 
-        <Token1inchList
-          searchToken={searchToken}
-          listBalanceToken={balanceToken}
-          filteredToken={filteredToken}
-          tokenPinList={tokenPinList}
-          setTokenPinList={setTokenPinList}
-        />
+        {loading ? (
+          <S.LoadingContainer>
+            <Loading marginTop={0} />
+          </S.LoadingContainer>
+        ) : (
+          <Token1inchList
+            searchToken={searchToken}
+            listBalanceToken={balanceToken}
+            filteredToken={filteredToken}
+            tokenPinList={tokenPinList}
+            setTokenPinList={setTokenPinList}
+          />
+        )}
       </S.BodyToken>
     </S.TokenSelection>
   )

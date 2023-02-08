@@ -21,6 +21,7 @@ export const FlexContainer = styled.div`
 export const TokenContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `
 
 export const InputContainer = styled.div`
@@ -28,6 +29,7 @@ export const InputContainer = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
+  width: 100%;
 `
 
 export const Title = styled.span`
@@ -104,6 +106,9 @@ export const Token = styled.div<ITokenProps>`
       margin-top: 0.2rem;
     }
 
+    .poolIcon {
+      border-radius: 50%;
+    }
   `}
 `
 

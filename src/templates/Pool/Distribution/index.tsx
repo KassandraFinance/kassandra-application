@@ -84,6 +84,14 @@ const Distribution = () => {
     }
   }
 
+  function handleSortingForHighLiquidity() {
+    const tokenSorting = [...pool.underlying_assets].sort(
+      (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
+    )
+
+    return tokenSorting
+  }
+
   React.useEffect(() => {
     const getBalanceYY = async () => {
       let balance = {}
@@ -128,7 +136,7 @@ const Distribution = () => {
           </S.Tr>
         </thead>
         <tbody>
-          {pool.underlying_assets.map(coin => {
+          {handleSortingForHighLiquidity().map(coin => {
             if (coin.token.is_wrap_token === 0) {
               return (
                 <S.Tr key={`key_${coin.token.name}`}>

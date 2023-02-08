@@ -69,6 +69,8 @@ export const Span = styled.span`
     font-weight: ${theme.font.weight.light};
     letter-spacing: 0.03rem;
 
+    cursor: pointer;
+
     @media (max-width: 380px) {
       font-size: 1.3rem;
     }
@@ -98,6 +100,10 @@ export const Token = styled.div`
     align-items: center;
 
     margin: 0.8rem 0;
+
+    .poolIcon {
+      border-radius: 50%;
+    }
   `}
 `
 

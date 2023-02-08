@@ -21,7 +21,7 @@ export default function Explore({ pools }: IIndexProps) {
   React.useEffect(() => {
     setTimeout(() => {
       setLoading(false)
-    }, 2200)
+    }, 2700)
   }, [])
 
   return (

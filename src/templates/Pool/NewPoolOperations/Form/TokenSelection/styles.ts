@@ -7,6 +7,18 @@ export const TokenSelection = styled.div`
   `}
 `
 
+export const LoadingContainer = styled.div`
+  ${() => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32rem;
+
+    background: rgba(31, 31, 31, 0.72);
+    border-radius: 1rem;
+  `}
+`
+
 export const TokenSelectionHeader = styled.div`
   ${({ theme }) => css`
     display: flex;

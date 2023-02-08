@@ -78,6 +78,8 @@ export const Span = styled.span<ISpanProps>`
         color: ${theme.colors.snow};
         font-size: ${theme.font.sizes.font12};
       `}
+
+    cursor: pointer;
   `}
 
   @media(max-width: 380px) {
