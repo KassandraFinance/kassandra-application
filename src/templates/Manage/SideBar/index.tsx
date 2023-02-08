@@ -2,15 +2,24 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { useAppSelector } from '../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../store/hooks'
+import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 
 import substr from '../../../utils/substr'
 
 import HeaderButtons from '../../../components/Header/HeaderButtons'
 import ModalChooseNetwork from '../../../components/Modals/ModalChooseNetwork'
+import Button from '../../../components/Button'
+import SideBarMenu from './SideBarMenu'
+import CreatePool from '../CreatePool'
+import SideBarLink from './SideBarLink'
 
 import userIcon from '../../../../public/assets/icons/user.svg'
 import arrow from '../../../../public/assets/utilities/arrow-right-bold.svg'
+import poolIcon from '../../../../public/assets/utilities/pool.svg'
+import plusIcon from '../../../../public/assets/utilities/plus.svg'
+import walletIcon from '../../../../public/assets/utilities/wallet.svg'
+import { profile, rewards, analytics, activities } from './icons'
 
 import * as S from './styles'
 
@@ -19,12 +28,51 @@ interface ISideBarProps {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+export type PoolType = {
+  poolLogo: string,
+  poolName: string,
+  poolSymbol: string
+}
+
+const mockPools: PoolType[] = [
+  {
+    poolLogo:
+      'https://app.kassandra.finance/_next/static/media/ahype.5b1acc28.svg',
+    poolName: 'Avalanche Social Index',
+    poolSymbol: 'aHYPE'
+  },
+  {
+    poolLogo:
+      'https://app.kassandra.finance/_next/static/media/tricrypto.b6b82cd9.svg',
+    poolName: 'Kassandra Tricrypto Index',
+    poolSymbol: 'K3C'
+  }
+]
+
+const links = [
+  {
+    name: 'Analytics',
+    icon: analytics
+  },
+  {
+    name: 'Activities',
+    icon: activities
+  },
+  {
+    name: 'Rewards',
+    icon: rewards
+  }
+]
+
 const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
   const [isModalWallet, setIsModalWallet] = React.useState<boolean>(false)
   const [isChooseNetwork, setIsChooseNetwork] = React.useState(false)
+  const [isCreatePool, setIsCreatePool] = React.useState(false)
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const { nickName, image } = useAppSelector(state => state.user)
+
+  const dispatch = useAppDispatch()
 
   return (
     <S.SideBar isOpen={isOpen}>
@@ -243,18 +291,6 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             </svg>
           </S.ImageWrapper>
         </Link>
-        {
-          // <Link href="/manage" passHref>
-          //   <S.SideBarLink>
-          //     <S.IconWrapper>
-          //       <Image src={profileIcon} layout="responsive" />
-          //     </S.IconWrapper>
-          //
-          //     <S.Title isOpen={isOpen}>Manager Dashboard</S.Title>
-          //   </S.SideBarLink>
-          // </Link>
-        }
-
         <S.UserInfoContainer isOpen={isOpen}>
           {userWalletAddress.length > 0 ? (
             <Link href={`/profile/${userWalletAddress}`}>
@@ -298,26 +334,70 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             </S.UserHeader>
           )}
 
-          <HeaderButtons
-            setIsChooseNetwork={setIsChooseNetwork}
-          />
+          <HeaderButtons setIsChooseNetwork={setIsChooseNetwork} />
         </S.UserInfoContainer>
       </S.SideBarHeader>
 
       <S.Line isOpen={isOpen} />
 
       <S.SideBarBody>
-        <S.Text isOpen={isOpen}>
-          Start your journey as an asset pool manager in kassandra&apos;s
-          ecosystem.
-        </S.Text>
+        {userWalletAddress.length === 42 && (
+          <>
+            <S.LinksContainer>
+              <SideBarLink name="My Profile" icon={profile} isOpen={isOpen} />
+            </S.LinksContainer>
 
-        <S.Text isOpen={isOpen}>
-          Bring your strategy or develop one as you begin a streamlined process
-          for creating managed pools that utilize digital assets that you can
-          choose from.
-        </S.Text>
+            <SideBarMenu
+              title="My managed pool"
+              icon={poolIcon}
+              itemsList={mockPools}
+              isSideBarOpen={isOpen}
+            />
+
+            <S.LinksContainer>
+              {links.map(link => (
+                <SideBarLink
+                  key={link.name}
+                  name={link.name}
+                  icon={link.icon}
+                  isOpen={isOpen}
+                />
+              ))}
+            </S.LinksContainer>
+          </>
+        )}
+        <S.SideBarContainer>
+          <S.ButtonWrapper isOpen={isOpen}>
+            {userWalletAddress.length !== 42 ? (
+              <Button
+                text="Connect Wallet"
+                backgroundSecondary
+                fullWidth
+                icon={
+                  <S.PlusIconWrapper>
+                    <Image src={walletIcon} />
+                  </S.PlusIconWrapper>
+                }
+                onClick={() => dispatch(setModalWalletActive(true))}
+              />
+            ) : (
+              <Button
+                text="Create New Pool"
+                backgroundSecondary
+                fullWidth
+                icon={
+                  <S.PlusIconWrapper>
+                    <Image src={plusIcon} width={12} height={12} />
+                  </S.PlusIconWrapper>
+                }
+                onClick={() => setIsCreatePool(true)}
+              />
+            )}
+          </S.ButtonWrapper>
+        </S.SideBarContainer>
       </S.SideBarBody>
+
+      {isCreatePool && <CreatePool setIsCreatePool={setIsCreatePool} />}
 
       {isChooseNetwork && (
         <ModalChooseNetwork

@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import { HeaderButtons } from '../../../components/Header/HeaderButtons/styles'
+import { Wrapper } from '../../../components/Button/styles'
 
 interface ISideBarProps {
   isOpen: boolean;
@@ -255,73 +256,40 @@ export const UserHeaderTitle = styled.div<IUserHeaderTitleProps>`
   `}
 `
 
-export const SideBarLink = styled.a`
-  ${() => css`
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-
-    overflow: hidden;
-  `}
-`
-
-export const IconWrapper = styled.div`
-  ${() => css`
-    width: 2.4rem;
-    height: 2.4rem;
-    z-index: 1;
-  `}
-`
-
-interface ITitleProps {
-  isOpen: boolean;
-}
-
-// prettier-ignore
-export const Title = styled.span<ITitleProps>`
-  ${({ theme }) => css`
-    position: absolute;
-    left: 3.2rem;
-    opacity: 0;
-
-    color: ${theme.colors.white};
-    font-weight: ${theme.font.weight.medium};
-    font-size: ${theme.font.sizes.font16};
-    line-height: ${theme.font.sizes.font16};
-    text-transform: capitalize;
-    white-space: nowrap;
-
-    transition-duration: 550ms;
-    transition-timing-function: ease;
-    transition-property: opacity;
-
-    @media (min-width: 992px) {
-      left: 3.2rem;
-      opacity: 1;
-    }
-  `}
-  ${({ isOpen }) => isOpen && css`
-    left: 3.2rem;
-    opacity: 1;
-
-    overflow: hidden;
-  `}
-`
-
 export const SideBarBody = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
+    gap: 2.4rem;
+
+    height: 100%;
+    margin-top: 1.6rem;
+    padding-bottom: 2.8rem;
+  `}
+`
+
+export const SideBarContainer = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
 
     height: 100%;
     padding-inline: 2.4rem;
-    padding-bottom: 2.8rem;
 
     @media (max-width: 992px) {
       padding-inline: 1.6rem;
     }
+  `}
+`
+
+export const LinksContainer = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+
+    padding-inline: 2.4rem;
   `}
 `
 
@@ -434,5 +402,50 @@ export const ImageCloseButtonWrapper = styled.div<IImageWrapperProps>`
       transition-duration: 550ms;
       transition-timing-function: ease;
       transition-property: transform;
+  `}
+`
+
+interface IButtonWrapper {
+  isOpen: boolean;
+}
+
+// prettier-ignore
+export const ButtonWrapper = styled.div<IButtonWrapper>`
+  ${() => css`
+    width: 100%;
+  `}
+  ${({ isOpen }) => !isOpen && css`
+      ${Wrapper} {
+        justify-content: space-between;
+
+        padding: 1.2rem 1.6rem;
+
+        font-size: 0rem;
+
+        @media (min-width: 992px) {
+          justify-content: center;
+
+          font-size: 1.6rem;
+        }
+      }
+      ${PlusIconWrapper} {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        @media (min-width: 992px) {
+          display: none;
+        }
+
+      }
+  `}
+`
+
+export const PlusIconWrapper = styled.div`
+  ${() => css`
+    display: none;
+
+    min-width: 1.2rem;
+    min-height: 1.2rem;
   `}
 `
