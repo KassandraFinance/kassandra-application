@@ -1,12 +1,12 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import arrowIcon from '../../../../../public/assets/utilities/arrow-select-down.svg'
 
 import * as S from './styles'
 
 import { PoolType } from '../index'
-import Link from 'next/link'
 
 interface ISideBarMenuProps {
   title: string;

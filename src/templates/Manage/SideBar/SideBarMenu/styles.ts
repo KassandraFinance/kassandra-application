@@ -109,7 +109,6 @@ export const PoolContainer = styled.div<IPoolContainerProps>`
     max-height: ${4 * height + 0.8}rem;
 
     opacity: 1;
-
     overflow: visible;
   `}
   ${({ isOpen, height }) => isOpen && css`

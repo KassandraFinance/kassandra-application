@@ -327,6 +327,7 @@ export const SideBarContainer = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
+    gap: 2.4rem;
 
     height: 100%;
     padding-inline: 2.4rem;
@@ -334,6 +335,16 @@ export const SideBarContainer = styled.div`
     @media (max-width: 992px) {
       padding-inline: 1.6rem;
     }
+  `}
+`
+
+export const LinksContainer = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+
+    padding-inline: 2.4rem;
   `}
 `
 

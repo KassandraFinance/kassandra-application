@@ -12,11 +12,13 @@ import ModalChooseNetwork from '../../../components/Modals/ModalChooseNetwork'
 import Button from '../../../components/Button'
 import SideBarMenu from './SideBarMenu'
 import CreatePool from '../CreatePool'
+import SideBarLink from './SideBarLink'
 
 import userIcon from '../../../../public/assets/icons/user.svg'
 import arrow from '../../../../public/assets/utilities/arrow-right-bold.svg'
 import poolIcon from '../../../../public/assets/utilities/pool.svg'
 import plusIcon from '../../../../public/assets/utilities/plus.svg'
+import { profile, rewards, analytics, activities } from './icons'
 
 import * as S from './styles'
 
@@ -43,6 +45,21 @@ const mockPools: PoolType[] = [
       'https://app.kassandra.finance/_next/static/media/tricrypto.b6b82cd9.svg',
     poolName: 'Kassandra Tricrypto Index',
     poolSymbol: 'K3C'
+  }
+]
+
+const links = [
+  {
+    name: 'Analytics',
+    icon: analytics
+  },
+  {
+    name: 'Activities',
+    icon: activities
+  },
+  {
+    name: 'Rewards',
+    icon: rewards
   }
 ]
 
@@ -335,12 +352,28 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
       <S.Line isOpen={isOpen} />
 
       <S.SideBarBody>
+        <S.LinksContainer>
+          <SideBarLink name="My Profile" icon={profile} isOpen={isOpen} />
+        </S.LinksContainer>
+
         <SideBarMenu
           title="My managed pool"
           icon={poolIcon}
           itemsList={mockPools}
           isSideBarOpen={isOpen}
         />
+
+        <S.LinksContainer>
+          {links.map(link => (
+            <SideBarLink
+              key={link.name}
+              name={link.name}
+              icon={link.icon}
+              isOpen={isOpen}
+            />
+          ))}
+        </S.LinksContainer>
+
         <S.SideBarContainer>
           {
             // <>
