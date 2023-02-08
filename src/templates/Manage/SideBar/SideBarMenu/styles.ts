@@ -46,7 +46,7 @@ export const TitleText = styled.p<ITitleTextProps>`
 
     opacity: 1;
 
-    transition-duration: 550ms;
+    transition-duration: 700ms;
     transition-timing-function: ease;
     transition-property: opacity;
   `}

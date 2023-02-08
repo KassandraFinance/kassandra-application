@@ -18,6 +18,7 @@ import userIcon from '../../../../public/assets/icons/user.svg'
 import arrow from '../../../../public/assets/utilities/arrow-right-bold.svg'
 import poolIcon from '../../../../public/assets/utilities/pool.svg'
 import plusIcon from '../../../../public/assets/utilities/plus.svg'
+import walletIcon from '../../../../public/assets/utilities/wallet.svg'
 import { profile, rewards, analytics, activities } from './icons'
 
 import * as S from './styles'
@@ -290,18 +291,6 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             </svg>
           </S.ImageWrapper>
         </Link>
-        {
-          // <Link href="/manage" passHref>
-          //   <S.SideBarLink>
-          //     <S.IconWrapper>
-          //       <Image src={profileIcon} layout="responsive" />
-          //     </S.IconWrapper>
-          //
-          //     <S.Title isOpen={isOpen}>Manager Dashboard</S.Title>
-          //   </S.SideBarLink>
-          // </Link>
-        }
-
         <S.UserInfoContainer isOpen={isOpen}>
           {userWalletAddress.length > 0 ? (
             <Link href={`/profile/${userWalletAddress}`}>
@@ -352,52 +341,46 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
       <S.Line isOpen={isOpen} />
 
       <S.SideBarBody>
-        <S.LinksContainer>
-          <SideBarLink name="My Profile" icon={profile} isOpen={isOpen} />
-        </S.LinksContainer>
+        {userWalletAddress.length === 42 && (
+          <>
+            <S.LinksContainer>
+              <SideBarLink name="My Profile" icon={profile} isOpen={isOpen} />
+            </S.LinksContainer>
 
-        <SideBarMenu
-          title="My managed pool"
-          icon={poolIcon}
-          itemsList={mockPools}
-          isSideBarOpen={isOpen}
-        />
-
-        <S.LinksContainer>
-          {links.map(link => (
-            <SideBarLink
-              key={link.name}
-              name={link.name}
-              icon={link.icon}
-              isOpen={isOpen}
+            <SideBarMenu
+              title="My managed pool"
+              icon={poolIcon}
+              itemsList={mockPools}
+              isSideBarOpen={isOpen}
             />
-          ))}
-        </S.LinksContainer>
 
+            <S.LinksContainer>
+              {links.map(link => (
+                <SideBarLink
+                  key={link.name}
+                  name={link.name}
+                  icon={link.icon}
+                  isOpen={isOpen}
+                />
+              ))}
+            </S.LinksContainer>
+          </>
+        )}
         <S.SideBarContainer>
-          {
-            // <>
-            //   <S.Text isOpen={isOpen}>
-            //     Start your journey as an asset pool manager in kassandra&apos;s
-            //     ecosystem.
-            //   </S.Text>
-            //   <S.Text isOpen={isOpen}>
-            //     Bring your strategy or develop one as you begin a streamlined
-            //     process for creating managed pools that utilize digital assets
-            //     that you can choose from.
-            //   </S.Text>
-            // </>
-          }
-
-          {userWalletAddress.length !== 42 ? (
-            <Button
-              text="Connect Wallet"
-              backgroundSecondary
-              fullWidth
-              onClick={() => dispatch(setModalWalletActive(true))}
-            />
-          ) : (
-            <S.ButtonWrapper isOpen={isOpen}>
+          <S.ButtonWrapper isOpen={isOpen}>
+            {userWalletAddress.length !== 42 ? (
+              <Button
+                text="Connect Wallet"
+                backgroundSecondary
+                fullWidth
+                icon={
+                  <S.PlusIconWrapper>
+                    <Image src={walletIcon} />
+                  </S.PlusIconWrapper>
+                }
+                onClick={() => dispatch(setModalWalletActive(true))}
+              />
+            ) : (
               <Button
                 text="Create New Pool"
                 backgroundSecondary
@@ -409,8 +392,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
                 }
                 onClick={() => setIsCreatePool(true)}
               />
-            </S.ButtonWrapper>
-          )}
+            )}
+          </S.ButtonWrapper>
         </S.SideBarContainer>
       </S.SideBarBody>
 

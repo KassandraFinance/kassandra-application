@@ -256,61 +256,6 @@ export const UserHeaderTitle = styled.div<IUserHeaderTitleProps>`
   `}
 `
 
-export const SideBarLink = styled.a`
-  ${() => css`
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-
-    overflow: hidden;
-  `}
-`
-
-export const IconWrapper = styled.div`
-  ${() => css`
-    width: 2.4rem;
-    height: 2.4rem;
-    z-index: 1;
-  `}
-`
-
-interface ITitleProps {
-  isOpen: boolean;
-}
-
-// prettier-ignore
-export const Title = styled.span<ITitleProps>`
-  ${({ theme }) => css`
-    position: absolute;
-    left: 3.2rem;
-    opacity: 0;
-
-    color: ${theme.colors.white};
-    font-weight: ${theme.font.weight.medium};
-    font-size: ${theme.font.sizes.font16};
-    line-height: ${theme.font.sizes.font16};
-    text-transform: capitalize;
-    white-space: nowrap;
-
-    transition-duration: 550ms;
-    transition-timing-function: ease;
-    transition-property: opacity;
-
-    @media (min-width: 992px) {
-      left: 3.2rem;
-      opacity: 1;
-    }
-  `}
-  ${({ isOpen }) => isOpen && css`
-    left: 3.2rem;
-    opacity: 1;
-
-    overflow: hidden;
-  `}
-`
-
 export const SideBarBody = styled.div`
   ${() => css`
     display: flex;
@@ -484,7 +429,10 @@ export const ButtonWrapper = styled.div<IButtonWrapper>`
         }
       }
       ${PlusIconWrapper} {
-        display: block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
         @media (min-width: 992px) {
           display: none;
         }
