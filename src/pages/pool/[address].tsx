@@ -75,7 +75,10 @@ const queryPool = `{
   poolId
   url
   summary
-  partners
+  partners {
+    logo
+    url
+  }
   underlying_assets_addresses
   underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
     balance

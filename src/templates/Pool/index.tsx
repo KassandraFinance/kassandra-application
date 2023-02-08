@@ -25,7 +25,7 @@ import ChartProducts from '../../components/ChartProducts'
 import ScrollUpButton from '../../components/ScrollUpButton'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
-// import PoweredBy from './PoweredBy'
+import PoweredBy from './PoweredBy'
 // import ActivityTable from './ActivityTable'
 
 import Change from './Change'
@@ -328,7 +328,7 @@ const Pool = () => {
                 decimals={infoPool.decimals}
               />
               <Summary strategy={pool.strategy} />
-              {/* {pool.partners ?? <PoweredBy partners={pool.partners} />} */}
+              {pool.partners && <PoweredBy />}
               <Distribution />
               {/* <ActivityTable /> */}
               <TokenDescription symbol={pool.symbol} />

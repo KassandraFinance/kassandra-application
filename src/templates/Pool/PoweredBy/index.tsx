@@ -1,17 +1,17 @@
 import React from 'react'
 import Image from 'next/image'
 
+import { useAppSelector } from '../../../store/hooks'
+
 import iconPower from '../../../../public/assets/iconGradient/voting-power-rank.svg'
 
 import Partner, { PartnerData } from '../../../components/Partner'
 
 import * as S from './styles'
 
-interface Input {
-  partners: PartnerData[];
-}
+const PoweredBy = () => {
+  const { pool } = useAppSelector(state => state)
 
-const PoweredBy = ({ partners }: Input) => {
   return (
     <S.PoweredBy>
       <S.Title>
@@ -20,14 +20,17 @@ const PoweredBy = ({ partners }: Input) => {
       </S.Title>
       <S.Line />
       <S.PartnersContent>
-        {partners.map(partner => (
-          <Partner
-            key={partner.name}
-            href={partner.href}
-            image={partner.image}
-            name={partner.name}
-          />
-        ))}
+        {pool.partners &&
+          pool.partners.map(
+            (partner, index) =>
+              partner && (
+                <Partner
+                  key={index + partner.logo}
+                  href={partner.url}
+                  logo={partner.logo}
+                />
+              )
+          )}
       </S.PartnersContent>
     </S.PoweredBy>
   )
