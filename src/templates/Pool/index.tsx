@@ -18,7 +18,6 @@ import { BACKEND_KASSANDRA, URL_1INCH } from '../../constants/tokenAddresses'
 
 import { GET_INFO_POOL } from './graphql'
 
-import Header from '../../components/Header'
 import Breadcrumb from '../../components/Breadcrumb'
 import Loading from '../../components/Loading'
 import ChartProducts from '../../components/ChartProducts'
@@ -175,7 +174,6 @@ const Pool = () => {
 
   return (
     <>
-      <Header />
       <ShareImageModal
         poolId={pool.id}
         setOpenModal={setOpenModal}
