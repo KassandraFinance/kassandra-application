@@ -95,7 +95,6 @@ const GlobalStyles: GlobalStyleComponent<
 
   html, body, #root {
     min-height: 100%;
-    overflow-x: hidden;
   }
 
   ${({ selectBackground }) => css`
@@ -107,8 +106,6 @@ const GlobalStyles: GlobalStyleComponent<
       background-color: #151117;
       font-family: 'Rubik', sans-serif;
       color: #fcfcfc;
-
-      overflow-x: hidden;
 
       ${selectBackground
         ? `background-image: url('/assets/images/background-products.png');

@@ -52,7 +52,7 @@ export const Label = styled.label<ILabelProps>`
     align-items: center;
     justify-content: center;
 
-    padding: ${theme.spacings.space24} 0;
+    padding: 2.2rem 0;
 
     color: ${selected ? '#fff' : theme.colors.gray};
     font-size: ${theme.font.sizes.font16};
