@@ -1,9 +1,12 @@
 import React from 'react'
-import Header from '../../components/Header'
 
+import Header from '../../components/Header'
 import SelectTabs from '../../components/SelectTabs'
 import Overlay from '../../components/Overlay'
 import SideBar from '../Manage/SideBar'
+import Button from '../../components/Button'
+
+import ManageAssets from '../Manage/ManageAssets'
 
 import analytics from '../../../public/assets/tabManage/analytics.svg'
 import allocations from '../../../public/assets/tabManage/allocations.svg'
@@ -12,10 +15,13 @@ import investors from '../../../public/assets/tabManage/investors.svg'
 import rewards from '../../../public/assets/tabManage/rewards.svg'
 import brokers from '../../../public/assets/tabManage/brokers.svg'
 import info from '../../../public/assets/tabManage/info.svg'
+import gear from '../../../public/assets/icons/gear.svg'
 
 import * as S from './styles'
 
 const PoolManager = () => {
+  const [isManageAssets, setIsManageAssets] = React.useState(false)
+
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
   >('analytics')
@@ -69,7 +75,13 @@ const PoolManager = () => {
 
         <S.Content>
           <Header />
-
+          <Button
+            backgroundSecondary
+            size="large"
+            text="Manage Assets"
+            image={gear.src}
+            onClick={() => setIsManageAssets(true)}
+          />
           <SelectTabs
             tabs={tabs}
             isSelect={isSelectTab}
@@ -78,6 +90,7 @@ const PoolManager = () => {
           <h1>saudades do que a gente ainda não viveu</h1>
         </S.Content>
       </S.DashBoard>
+      {isManageAssets && <ManageAssets />}
     </S.PoolManager>
   )
 }
