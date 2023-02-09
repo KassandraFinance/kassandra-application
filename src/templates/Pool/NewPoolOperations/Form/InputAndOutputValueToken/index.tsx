@@ -90,6 +90,7 @@ const InputAndOutputValueToken = ({
       if (maxActive) {
         inputAmountTokenRef.current.value = ''
         setAmountTokenIn(new Big(0))
+
         setMaxActive(false)
         return
       }
@@ -108,7 +109,7 @@ const InputAndOutputValueToken = ({
       chainId.toString().length === 0 ||
       chainId !== pool.chainId
     ) {
-      return
+      return setSelectedTokenInBalance(Big(0))
     }
 
     (async () => {
@@ -160,65 +161,67 @@ const InputAndOutputValueToken = ({
               </S.ButtonMax>
             )}
             <Tippy content={disabled} disabled={disabled.length === 0}>
-            <S.Input
-              className="noscroll"
-              readOnly={!isInvestType || disabled.length > 0 }
-              ref={inputAmountTokenRef}
-              value={isInvestType ?
-                inputAmountTokenRef.current?.value :
-                BNtoDecimal(
-                  Big(amountTokenIn)?.div(Big(10).pow(18)) || new BigNumber(0),
-                  18,
-                  6
-                ).replace(/\s/g, '')
-              }
-              type="number"
-              placeholder="0"
-              step="any"
-              onWheel={() => handleOnWheel()}
-              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                const target = e.target as HTMLInputElement
-                // don't allow negative numbers
-                if (e.key === '-') {
-                  e.preventDefault()
-                }
-                // Blink bug makes the value come empty if pressing the decimal symbol that is not that of the current locale
-                else if (e.key === '.' || e.key === ',') {
-                  // first time value will be ok, if pressing twice it zeroes, we ignore those
-                  if (target.value.length > 0 && target.value.search(/[,.]/) === -1) {
-                    target.dataset.lastvalue = target.value
-                  }
-                }
-                else if (e.key === 'Backspace' || e.key === 'Delete') {
-                  target.dataset.lastvalue = '0'
-                }
-              }}
-              onChange={
-                (e: React.ChangeEvent<HTMLInputElement>) => {
-                  let { value } = e.target
+              {isInvestType ? (
+                <S.Input
+                  className="noscroll"
+                  readOnly={!isInvestType || disabled.length > 0 }
+                  ref={inputAmountTokenRef}
+                  type="number"
+                  placeholder="0"
+                  step="any"
+                  onWheel={() => handleOnWheel()}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    const target = e.target as HTMLInputElement
+                    // don't allow negative numbers`
+                    if (e.key.length === 1 && e.key.search(/[0-9,.]/) === -1) {
+                      e.preventDefault()
+                    }
+                    // Blink bug makes the value come empty if pressing the decimal symbol that is not that of the current locale
+                    else if (e.key === '.' || e.key === ',') {
+                      // first time value will be ok, if pressing twice it zeroes, we ignore those
+                      if (target.value.length > 0 && target.value.search(/[,.]/) === -1) {
+                        target.dataset.lastvalue = target.value
+                      }
+                    }
+                    else if (e.key === 'Backspace' || e.key === 'Delete') {
+                      target.dataset.lastvalue = '0'
+                    }
+                  }}
+                  onChange={
+                    (e: React.ChangeEvent<HTMLInputElement>) => {
+                      let { value } = e.target
 
-                  if (value.length === 0) {
-                    value = e.target.dataset.lastvalue as string
-                  }
-                  else if (value[0] === '0') {
-                    e.target.value = value.replace(/^0+/, '')
-                  }
+                      if (value.length === 0) {
+                        value = e.target.dataset.lastvalue as string
+                      }
+                      else if (value[0] === '0') {
+                        e.target.value = value.replace(/^0+/, '')
+                      }
 
-                  if (e.target.value[0] === '.') {
-                    e.target.value = `0${e.target.value}`
+                      if (e.target.value[0] === '.') {
+                        e.target.value = `0${e.target.value}`
+                      }
+
+                      const decimalsNum = tokenSelect.decimals
+                      const values = value.split('.')
+                      const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)}`
+
+                      setMaxActive && setMaxActive(false)
+                      setAmountTokenIn(paddedRight)
+                    }
                   }
-
-                  const decimalsNum = tokenSelect.decimals
-                  const values = value.split('.')
-                  const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)}`
-
-                  setMaxActive && setMaxActive(false)
-                  setAmountTokenIn(paddedRight)
-                }
-              }
-            />
+                />
+              ) : (
+                <S.amountTokenOutText>
+                  {BNtoDecimal(
+                    Big(amountTokenIn)?.div(Big(10).pow(18)) || new BigNumber(0),
+                      18,
+                      6
+                    ).replace(/\s/g, '')}
+                </S.amountTokenOutText>
+              )}
             </Tippy>
-            <span className="price-dolar">
+            <p className="price-dolar">
               {tokenSelect.address &&
                 amountTokenIn &&
                 'USD: ' +
@@ -232,7 +235,7 @@ const InputAndOutputValueToken = ({
                     2,
                     2
                   )}
-            </span>
+            </p>
           </S.Amount>
         </S.Top>
         {errorMsg !== '' ? (
@@ -242,7 +245,7 @@ const InputAndOutputValueToken = ({
             {gasFee && gasFee?.error && (
               <S.GasFeeError>
                 Don’t forget the gas fee! Leave at least some{' '}
-                {gasFee.feeString.slice(0, 8)} AVAX on your wallet to ensure a
+                {gasFee.feeString.slice(0, 8)} {tokenSelect.symbol} on your wallet to ensure a
                 smooth transaction
               </S.GasFeeError>
             )}
