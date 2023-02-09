@@ -5,11 +5,9 @@ import Blockies from 'react-blockies'
 
 import { useAppSelector } from '../../../../../store/hooks'
 
-import { ERC20 } from '../../../../../hooks/useERC20Contract';
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
 
 import { BNtoDecimal } from '../../../../../utils/numerals';
-import { getBalanceToken } from '../../../../../utils/poolUtils';
 
 import * as S from './styles'
 
@@ -24,7 +22,6 @@ interface ITokenAssetInProps {
   maxActive: boolean;
   setMaxActive: React.Dispatch<React.SetStateAction<boolean>>;
   selectedTokenInBalance: Big;
-  setSelectedTokenInBalance: React.Dispatch<React.SetStateAction<Big>>;
   inputAmountTokenRef: React.RefObject<HTMLInputElement>;
   errorMsg: string;
   disabled: string;
@@ -37,12 +34,11 @@ const TokenAssetIn = ({
   maxActive,
   setMaxActive,
   selectedTokenInBalance,
-  setSelectedTokenInBalance,
   inputAmountTokenRef,
   errorMsg,
   disabled
  }: ITokenAssetInProps) => {
-  const { pool, userWalletAddress, chainId } = useAppSelector(state => state)
+  const { pool, userWalletAddress } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
 
   function wei2String(input: Big) {
@@ -69,24 +65,6 @@ const TokenAssetIn = ({
       setMaxActive(true)
     }
   }
-
-  React.useEffect(() => {
-    if (
-      pool.id.length === 0 ||
-      userWalletAddress.length === 0 ||
-      chainId.toString().length === 0 ||
-      chainId !== pool.chainId ||
-      !Big(amountTokenIn).lte(Big(0))
-    ) {
-      return setSelectedTokenInBalance(Big(0))
-    }
-
-    (async () => {
-      const balance = await getBalanceToken(pool.address, userWalletAddress)
-      setSelectedTokenInBalance(balance)
-    })()
-
-  }, [userWalletAddress, pool])
 
   return (
     <S.TokenAssetIn>

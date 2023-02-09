@@ -220,7 +220,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         }
       }
     },
-    [ProxyContract]
+    []
   )
 
   const submitAction = (event: React.FormEvent<HTMLFormElement>) => {
@@ -343,6 +343,25 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   }, [typeAction, typeWithdraw, chainId, amountTokenIn, tokenSelect])
 
   React.useEffect(() => {
+    if (
+      pool.id.length === 0 ||
+      userWalletAddress.length === 0 ||
+      chainId.toString().length === 0 ||
+      chainId !== pool.chainId ||
+      !Big(amountTokenIn).lte(Big(0))
+    ) {
+      return setSelectedTokenInBalance(Big(0))
+    }
+
+
+    (async () => {
+      const balance = await getBalanceToken(pool.address, userWalletAddress)
+      setSelectedTokenInBalance(balance)
+    })()
+
+  }, [userWalletAddress, pool, typeAction, typeWithdraw])
+
+  React.useEffect(() => {
     const handleWallectConnect = () => {
       const connect = localStorage.getItem('walletconnect')
 
@@ -445,7 +464,6 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         amountTokenIn={amountTokenIn}
         setamountTokenIn={setamountTokenIn}
         selectedTokenInBalance={selectedTokenInBalance}
-        setSelectedTokenInBalance={setSelectedTokenInBalance}
         inputAmountTokenRef={inputAmountInTokenRef}
         errorMsg={errorMsg}
         maxActive={maxActive}
