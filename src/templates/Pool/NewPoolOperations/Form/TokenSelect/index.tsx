@@ -44,7 +44,12 @@ const TokenSelect = () => {
         >
           <S.tokenInfo>
             <S.TokenLogo>
-              <Image src={tokenSelect.logoURI} alt="" width={22} height={22} />
+              <Image
+                src={tokenSelect.logoURI || logoNone.src}
+                alt=""
+                width={22}
+                height={22}
+              />
             </S.TokenLogo>
             <p>{tokenSelect.symbol}</p>
           </S.tokenInfo>
