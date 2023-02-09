@@ -298,9 +298,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             </S.UserHeader>
           )}
 
-          <HeaderButtons
-            setIsChooseNetwork={setIsChooseNetwork}
-          />
+          <HeaderButtons setIsChooseNetwork={setIsChooseNetwork} />
         </S.UserInfoContainer>
       </S.SideBarHeader>
 
