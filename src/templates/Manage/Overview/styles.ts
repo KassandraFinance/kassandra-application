@@ -51,8 +51,6 @@ export const ChartWrapper = styled.div`
     width: 100%;
     height: 34.5rem;
 
-    background-color: red;
-
     @media (min-width: 768px) {
       height: 39.2rem;
     }
