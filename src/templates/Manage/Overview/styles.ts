@@ -18,7 +18,7 @@ export const TitleWrapper = styled.div`
     padding-bottom: 1.6rem;
     margin-bottom: 1.6rem;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 0.1rem solid rgba(255, 255, 255, 0.1);
 
     @media (min-width: 768px) {
       padding-bottom: 1.7rem;
