@@ -198,21 +198,23 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         if (txReceipt.status) {
           ToastSuccess(`Withdrawal of ${tokenSymbol} confirmed`)
 
-          const amountPool = await getBalanceToken(pool.address, userWalletAddress)
-          if (inputAmountInTokenRef && inputAmountInTokenRef.current !== null) {
-            inputAmountInTokenRef.current.value = ''
-          }
-          if (typeWithdraw === 'Single_asset') {
-            const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
+          setTimeout(async () => {
+            const amountPool = await getBalanceToken(pool.address, userWalletAddress)
+            if (inputAmountInTokenRef && inputAmountInTokenRef.current !== null) {
+              inputAmountInTokenRef.current.value = ''
+            }
+            if (typeWithdraw === 'Single_asset') {
+              const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
 
-            setSelectedTokenInBalance(amountPool)
-            setSelectedTokenOutBalance(amountToken)
+              setSelectedTokenInBalance(amountPool)
+              setSelectedTokenOutBalance(amountToken)
 
-            setAmountTokenOut(Big(0))
-            setamountTokenIn(Big(0))
-          } else {
-            getUserBalanceAllToken()
-          }
+              setAmountTokenOut(Big(0))
+              setamountTokenIn(Big(0))
+            } else {
+              getUserBalanceAllToken()
+            }
+          }, 2000);
 
           return
         }
@@ -286,12 +288,14 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     }
 
     if (chainId !== pool.chainId || new BigNumber(amountTokenIn.toString()).isZero()) {
+      setamountAllTokenOut(Array(pool.underlying_assets.length).fill(new BigNumber(0)))
+      setAmountTokenOut(new Big(0))
+      setErrorMsg('')
+
       if (tokenSelect.address === '') {
         setAmountTokenOut(new Big(0))
         return
       }
-
-      setAmountTokenOut(new Big(0))
       return
     }
 
@@ -373,7 +377,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       chainId !== pool.chainId ||
       typeWithdraw === 'Best_Value'
     ) {
-      return
+      return setbalanceAllTokenOut(Array(pool.underlying_assets.length).fill(new BigNumber(0)))
     }
 
     getUserBalanceAllToken()

@@ -78,7 +78,7 @@ const TokenAssetIn = ({
       chainId !== pool.chainId ||
       !Big(amountTokenIn).lte(Big(0))
     ) {
-      return
+      return setSelectedTokenInBalance(Big(0))
     }
 
     (async () => {
@@ -86,7 +86,7 @@ const TokenAssetIn = ({
       setSelectedTokenInBalance(balance)
     })()
 
-  }, [userWalletAddress, pool, amountTokenIn])
+  }, [userWalletAddress, pool])
 
   return (
     <S.TokenAssetIn>
@@ -140,7 +140,7 @@ const TokenAssetIn = ({
               className="noscroll"
               readOnly={userWalletAddress.length === 0}
               ref={inputAmountTokenRef}
-              value={inputAmountTokenRef?.current?.value}
+              // value={inputAmountTokenRef?.current?.value}
               type="number"
               placeholder="0"
               step="any"
@@ -149,7 +149,7 @@ const TokenAssetIn = ({
                 // eslint-disable-next-line prettier/prettier
                 const target = e.target as HTMLInputElement
                 // don't allow negative numbers
-                if (e.key === '-') {
+                if (e.key.length === 1 && e.key.search(/[0-9,.]/) === -1) {
                   e.preventDefault()
                 }
                 // Blink bug makes the value come empty if pressing the decimal symbol that is not that of the current locale
@@ -188,7 +188,7 @@ const TokenAssetIn = ({
               }
             />
           </Tippy>
-          <span className="price-dolar">
+          <p className="price-dolar">
             {pool.id &&
               amountTokenIn &&
               'USD: ' +
@@ -202,7 +202,7 @@ const TokenAssetIn = ({
                   2,
                   2
                 )}
-          </span>
+          </p>
         </S.AmountContainer>
       </S.Body>
       {errorMsg && errorMsg !== '' && (
