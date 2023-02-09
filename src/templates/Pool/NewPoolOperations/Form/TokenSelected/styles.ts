@@ -15,8 +15,8 @@ export const Backdrop = styled.div`
 
 export const SelectToken = styled.div`
   ${({ theme }) => css`
-    /* max-width: 12.8rem; */
     margin: 0.8rem 0;
+    max-width: 14.5rem;
     min-width: 12.8rem;
 
     font-size: ${theme.font.sizes.font20};

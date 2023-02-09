@@ -37,7 +37,7 @@ export const Info = styled.div`
   flex-direction: column;
   justify-content: space-between;
 
-  /* width: 100%; */
+  width: 100%;
 `
 
 export const Amount = styled.div`
@@ -73,6 +73,7 @@ export const Span = styled.span<ISpanProps>`
     ${spanlight
       ? `
         height: 1.7rem;
+        width: 100%;
 
         color: ${theme.colors.grayDisabled};
         font-size: ${theme.font.sizes.font14};
