@@ -6,6 +6,8 @@ import { useRouter } from 'next/router'
 
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
+import ModalWaitingList from '../../../components/Modals/ModalWaitingList'
+
 import DropdownMenu from '../DropdownMenu'
 import Overlay from '../../Overlay'
 import MenuFooter from '../MenuFooter'
@@ -27,8 +29,12 @@ const Nav = ({
   setIsShowMenu,
   setShowOverlay
 }: INavProps) => {
-  const router = useRouter()
+  const [isModalWaitingList, setIsModalWaitingList] =
+    React.useState<boolean>(false)
+
   const { trackEventFunction } = useMatomoEcommerce()
+
+  const router = useRouter()
 
   function handleClickOverlay() {
     setIsShowMenu(false)
@@ -79,16 +85,17 @@ const Nav = ({
             Stake
           </S.MenuLink>
         </Link>
-        <Link href="/manage" passHref>
-          <S.MenuLink
-            onClick={() => {
-              trackEventFunction('click-on-link', 'manage', 'header')
-            }}
-            active={router.asPath === '/manage'}
-          >
-            Manage
-          </S.MenuLink>
-        </Link>
+        {/* <Link href="/manage" passHref> */}
+        <S.MenuLink
+          onClick={() => {
+            setIsModalWaitingList(true)
+            trackEventFunction('click-on-link', 'manage', 'header')
+          }}
+          active={router.asPath === '/manage'}
+        >
+          Manage
+        </S.MenuLink>
+        {/* </Link> */}
         <DropdownMenu
           nameOnHeader="DAO"
           isActive={
@@ -150,6 +157,9 @@ const Nav = ({
 
         <MenuFooter />
       </S.Nav>
+      {isModalWaitingList && (
+        <ModalWaitingList setIsModalWaitingList={setIsModalWaitingList} />
+      )}
     </>
   )
 }
