@@ -17,6 +17,10 @@ export const TokenWithNetworkImage = styled.div<IwithoutBorderProps>`
 
     background-color: ${!withoutBorder && '#211426'};
     border-radius: 50%;
+
+    .poolIcon {
+      border-radius: 50%;
+    }
   `}
 `
 
@@ -34,5 +38,9 @@ export const networkImageContainer = styled.span<IwithoutBorderProps>`
 
     background-color: ${!withoutBorder && '#211426'};
     border-radius: 50%;
+
+    > img {
+      z-index: 10;
+    }
   `}
 `

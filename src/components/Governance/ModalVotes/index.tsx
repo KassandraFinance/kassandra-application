@@ -3,6 +3,7 @@ import router from 'next/router'
 import useSWR from 'swr'
 import BigNumber from 'bn.js'
 import { request } from 'graphql-request'
+import { useInView } from 'react-intersection-observer'
 
 import { SUBGRAPH_URL } from '../../../constants/tokenAddresses'
 
@@ -52,30 +53,11 @@ const ModalVotes = ({
 }: IModalVotes) => {
   // eslint-disable-next-line prettier/prettier
   const [modalVotesList, setModalVotesList] = React.useState<IModalVotesList[]>([])
-  const [showShadow, setShowShadow] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(true)
 
-  const handleApplyShadowList = () => {
-    const lastItemList = document
-      .getElementsByClassName('last-item')[0]
-      .getBoundingClientRect().top
-
-    const tBodyHeight = Array.from(
-      // eslint-disable-next-line prettier/prettier
-      document.getElementsByClassName('tbody-list') as HTMLCollectionOf<HTMLElement>,
-    );
-    const tableBodyHeight = tBodyHeight[0].offsetHeight
-
-    const tableBodyTopPosition = document
-      .getElementsByClassName('tbody-list')[0]
-      .getBoundingClientRect().top
-
-    if (tableBodyHeight > lastItemList - tableBodyTopPosition) {
-      setShowShadow(false)
-    } else {
-      setShowShadow(true)
-    }
-  }
+  const { ref, inView } = useInView({
+    threshold: 0.1
+  })
 
   function getTextButton(typeVote: string) {
     if (typeVote === 'For') {
@@ -92,7 +74,8 @@ const ModalVotes = ({
     setIsModalOpen(false)
   }
 
-  const { data } = useSWR([GET_MODALVOTES, checkAllVoterModal],
+  const { data } = useSWR(
+    [GET_MODALVOTES, checkAllVoterModal],
     (query, checkAllVoterModal) =>
       request(SUBGRAPH_URL, query, {
         number: Number(router.query.proposal),
@@ -114,7 +97,6 @@ const ModalVotes = ({
         }
       })
 
-      votes.length > 6 ? setShowShadow(true) : setShowShadow(false)
       setModalVotesList(votes)
       setIsLoading(false)
     }
@@ -127,7 +109,10 @@ const ModalVotes = ({
       <S.Container modalOpen={isModalOpen}>
         <S.Close>
           <button type="button" onClick={() => handleCloseModal()}>
-            <img src="/assets/utilities/close-icon.svg" alt="Close Modal Votes" />{' '}
+            <img
+              src="/assets/utilities/close-icon.svg"
+              alt="Close Modal Votes"
+            />{' '}
           </button>
         </S.Close>
         <S.ModalHeader>
@@ -138,10 +123,14 @@ const ModalVotes = ({
             <S.TotalVotes>{totalVotingPower}</S.TotalVotes>
           </S.TotalPercentageAndVotes>
           <S.VoteBar>
-            <S.ProgressBar VotingState={voteType} value={percentage} max="100" />
+            <S.ProgressBar
+              VotingState={voteType}
+              value={percentage}
+              max="100"
+            />
           </S.VoteBar>
         </S.ModalHeader>
-        <S.TableContainer showShadow={showShadow}>
+        <S.TableContainer>
           <S.Thead>
             <S.Tr>
               <S.Th>{modalVotesList.length} addresses</S.Th>
@@ -150,35 +139,40 @@ const ModalVotes = ({
           </S.Thead>
           {isLoading ? (
             <S.LoadingContainer>
-              <Loading marginTop={0}/>
+              <Loading marginTop={0} />
             </S.LoadingContainer>
           ) : modalVotesList.length > 0 ? (
-            <S.Tbody
-              onScroll={() => handleApplyShadowList()}
-              className="tbody-list"
-            >
-              {modalVotesList.map((user, index) => {
-                const lastItem = index === modalVotesList.length - 1
-
-                return (
-                  <S.UserData
-                    key={index + user.voter.id}
-                    className={lastItem ? `last-item` : ``}
-                  >
-                    <S.UserName>
-                      <ImageProfile
-                        address={user.voter.id}
-                        diameter={27}
-                        hasAddress={true}
-                        isLink={true}
-                        tab="?tab=governance-data"
-                      />
-                    </S.UserName>
-                    <S.UserVote>{BNtoDecimal(user.votingPower, 0, 2)}</S.UserVote>
-                  </S.UserData>
-                )
-              })}
-            </S.Tbody>
+            <>
+              <S.Tbody>
+                {modalVotesList.map((user, index) => {
+                  return (
+                    <S.UserData
+                      key={index + user.voter.id}
+                      ref={
+                        index === modalVotesList.length - 1 &&
+                        modalVotesList.length !== 0
+                          ? ref
+                          : null
+                      }
+                    >
+                      <S.UserName>
+                        <ImageProfile
+                          address={user.voter.id}
+                          diameter={27}
+                          hasAddress={true}
+                          isLink={true}
+                          tab="?tab=governance-data"
+                        />
+                      </S.UserName>
+                      <S.UserVote>
+                        {BNtoDecimal(user.votingPower, 0, 2)}
+                      </S.UserVote>
+                    </S.UserData>
+                  )
+                })}
+              </S.Tbody>
+              <S.shadow inView={inView} />
+            </>
           ) : (
             <S.textContainer>
               <p>nobody voted on this proposal yet</p>

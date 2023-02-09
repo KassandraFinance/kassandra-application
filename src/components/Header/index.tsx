@@ -23,15 +23,14 @@ export type MenuProps = {
 }
 
 const Header = () => {
-  const [isModalWallet, setIsModalWallet] = React.useState<boolean>(false)
   const [isModalLogout, setIsModalLogout] = React.useState<boolean>(false)
-  // const [isModalLanguages, setIsModalLanguages] = React.useState<boolean>(false)
   const [isModalSocialMedia, setIsModalSocialMedia] =
     React.useState<boolean>(false)
   const [isShowMenu, setIsShowMenu] = React.useState(false)
   const [showOverlay, setShowOverlay] = React.useState(false)
   const [isChooseNetwork, setIsChooseNetwork] = React.useState(false)
 
+  const modalWalletActive = useAppSelector(state => state.modalWalletActive)
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
 
@@ -75,10 +74,7 @@ const Header = () => {
             setShowOverlay={setShowOverlay}
           />
 
-          <HeaderButtons
-            setIsModalWallet={setIsModalWallet}
-            setIsChooseNetwork={setIsChooseNetwork}
-          />
+          <HeaderButtons setIsChooseNetwork={setIsChooseNetwork} />
         </S.MenuWrapper>
       </S.Wrapper>
 
@@ -86,7 +82,7 @@ const Header = () => {
         <ModalInstitucionalLinksMobile setModalOpen={setIsModalSocialMedia} />
       )}
 
-      {isModalWallet && <ModalWalletConnect setModalOpen={setIsModalWallet} />}
+      {modalWalletActive && <ModalWalletConnect />}
 
       <ModalLogOut
         modalOpen={isModalLogout}

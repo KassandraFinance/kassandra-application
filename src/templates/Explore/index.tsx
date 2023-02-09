@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { IIndexProps } from '../../pages'
+
 import Header from '../../components/Header'
 import Breadcrumb from '../../components/Breadcrumb'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
@@ -12,17 +14,15 @@ import sectionTitleEye from '../../../public/assets/iconGradient/section-title-e
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
 import communityFunds from '../../../public/assets/iconGradient/community.svg'
 
-import { products } from '../../constants/tokenAddresses'
-
 import * as S from './styles'
 
-export default function Explore() {
+export default function Explore({ pools }: IIndexProps) {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
     setTimeout(() => {
       setLoading(false)
-    }, 2200)
+    }, 2700)
   }, [])
 
   return (
@@ -30,8 +30,8 @@ export default function Explore() {
       <Header />
 
       <Breadcrumb>
-        <BreadcrumbItem href={`/explore`} isLastPage>
-          Explore
+        <BreadcrumbItem href={`/`} isLastPage>
+          Invest
         </BreadcrumbItem>
       </Breadcrumb>
 
@@ -39,13 +39,13 @@ export default function Explore() {
         <S.TitleContainer>
           <TitleSection
             image={sectionTitleEye}
-            title="Explore Funds"
+            title="Explore Pools"
             text="Find a strategy that fits your needs"
           />
         </S.TitleContainer>
 
         <S.ExploreContainer>
-          <TitleSection image={featuredFunds} title="Featured Funds" text="" />
+          <TitleSection image={featuredFunds} title="Featured Pools" text="" />
 
           {loading && (
             <S.LoadingContainer>
@@ -54,15 +54,15 @@ export default function Explore() {
           )}
 
           <S.CardContainer loading={loading}>
-            {products.map((product, index: number) => {
-              return <FundCard key={index} product={product} />
-            })}
+            {pools.map(pool => (
+              <FundCard key={pool.id} poolAddress={pool.id} />
+            ))}
           </S.CardContainer>
 
           <S.ComunitFundsContainer>
             <TitleSection
               image={communityFunds}
-              title="Community Funds"
+              title="Community Pools"
               text=""
             />
 

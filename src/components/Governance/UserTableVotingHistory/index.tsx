@@ -73,7 +73,7 @@ export const UserTableVotingHistory = ({
 
   const secondsPerBlock =
     chains[process.env.NEXT_PUBLIC_MASTER === '1' ? 'avalanche' : 'fuji']
-      .secondsPerBlock
+      .secondsPerBlock ?? 2
 
   const { data } = useSWR([GET_PROPOSALS], query =>
     request(SUBGRAPH_URL, query, {

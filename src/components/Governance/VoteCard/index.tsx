@@ -6,10 +6,11 @@ import ExternalLink from '../../ExternalLink'
 import { checkVoteButton } from '../../../utils/checkVoteButton'
 import { IUserVotedProps } from '../../../templates/Gov/Proposals/Proposal'
 
-import ModalWalletConnect from '../../Modals/ModalWalletConnect'
-
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
+
+import { useAppDispatch } from '../../../store/hooks'
+import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 
 import * as S from './styles'
 
@@ -36,8 +37,7 @@ const VoteCard = ({
 }: IVoteCardProps) => {
   userVote.yourVotingPowerInProposal = yourVotingPowerInProposal
 
-  const [isModalWalletConnect, setIsModalWalletConnect] =
-    React.useState<boolean>(false)
+  const dispatch = useAppDispatch()
 
   function getTextButton(typeVote: string) {
     if (typeVote === 'For') {
@@ -78,7 +78,7 @@ const VoteCard = ({
                 }}
                 onClick={() => {
                   if (userVote.userWalletAddress === '') {
-                    setIsModalWalletConnect(true)
+                    dispatch(setModalWalletActive(true))
                     return
                   }
 
@@ -94,9 +94,6 @@ const VoteCard = ({
           />
         </S.ActionWrapper>
       </S.Container>
-      {isModalWalletConnect && (
-        <ModalWalletConnect setModalOpen={setIsModalWalletConnect} />
-      )}
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request'
 
-export const GET_CHART = gql`
+export const GET_POOL = gql`
   query (
     $id: ID!
     $price_period: Int!
@@ -9,12 +9,22 @@ export const GET_CHART = gql`
     $month: Int!
   ) {
     pool(id: $id) {
+      name
+      symbol
+      name
+      logo
+      address
+      chainId
+      foundedBy
       price_usd # pool asset price
       # price candlestick
       # just taking the close value can make a line graph
       # base can be usd or btc
       # period is in seconds, 5m, 15m, 1h, 4h, 1d, 7d
       # timestamp_gt it's since when to catch
+      chain {
+        logo
+      }
       price_candles(
         where: {
           base: "usd"
@@ -32,7 +42,7 @@ export const GET_CHART = gql`
         where: { base: "usd", timestamp_gt: $period_selected }
         orderBy: timestamp
       ) {
-        value
+        close
         timestamp
       }
       # hourly allocation chart
@@ -56,37 +66,41 @@ export const GET_CHART = gql`
         token {
           id
           name
+          logo
           decimals
           symbol
           price_usd
+          wraps {
+            logo
+          }
         }
       }
-    }
-    now: candles(
-      where: { base: "usd", period: 3600, pool: $id }
-      orderBy: timestamp
-      orderDirection: desc
-      first: 1
-    ) {
-      timestamp
-      close
-    }
-    day: candles(
-      where: { base: "usd", period: 3600, timestamp_gt: $day, pool: $id }
-      orderBy: timestamp
-      first: 1
-    ) {
-      timestamp
-      close
-    }
+      now: price_candles(
+        where: { base: "usd", period: 3600 }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      day: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $day }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
 
-    month: candles(
-      where: { base: "usd", period: 3600, timestamp_gt: $month, pool: $id }
-      orderBy: timestamp
-      first: 1
-    ) {
-      timestamp
-      close
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
     }
   }
 `

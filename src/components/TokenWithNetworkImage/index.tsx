@@ -1,4 +1,5 @@
 import React from 'react'
+import Blockies from 'react-blockies'
 
 import avax from '../../../public/assets/logos/avax.png'
 
@@ -17,10 +18,16 @@ interface ITokenWithNetworkImage {
     height?: number,
     withoutBorder?: boolean
   };
+  blockies?: {
+    seedName: string,
+    size: number,
+    scale: number
+  };
 }
 
 const TokenWithNetworkImage = ({
   tokenImage,
+  blockies,
   networkImage = {
     url: avax.src,
     height: 20,
@@ -29,12 +36,21 @@ const TokenWithNetworkImage = ({
 }: ITokenWithNetworkImage) => {
   return (
     <S.TokenWithNetworkImage withoutBorder={tokenImage.withoutBorder}>
-      <img
-        src={tokenImage.url}
-        alt="token image"
-        width={tokenImage.width}
-        height={tokenImage.height}
-      />
+      {!tokenImage.url && blockies ? (
+        <Blockies
+          className="poolIcon"
+          seed={blockies.seedName}
+          size={blockies.size}
+          scale={blockies.scale}
+        />
+      ) : (
+        <img
+          src={tokenImage.url}
+          alt="token image"
+          width={tokenImage.width}
+          height={tokenImage.height}
+        />
+      )}
       <S.networkImageContainer withoutBorder={networkImage.withoutBorder}>
         <img
           src={networkImage?.url}

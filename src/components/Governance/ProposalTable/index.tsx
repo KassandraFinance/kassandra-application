@@ -62,7 +62,7 @@ export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
 
   const secondsPerBlock =
     chains[process.env.NEXT_PUBLIC_MASTER === '1' ? 'avalanche' : 'fuji']
-      .secondsPerBlock
+      .secondsPerBlock ?? 2
 
   const { data } = useSWR([GET_PROPOSALS, skip, take], (query, skip, take) =>
     request(SUBGRAPH_URL, query, { skip, take })

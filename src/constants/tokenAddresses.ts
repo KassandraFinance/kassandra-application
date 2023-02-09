@@ -1,10 +1,11 @@
-import { ChainDetails } from '../utils/changeChain'
+import { ChainInfo } from '../store/reducers/pool'
 
 import { PartnerData } from '../components/Partner'
-import partners from '../components/Partner/list'
+// import partners from '../components/Partner/list'
 
 import ahypeIcon from '../../public/assets/logos/ahype.svg'
 import tricryptoIcon from '../../public/assets/logos/tricrypto.svg'
+import { ChainDetails } from '../utils/changeChain'
 
 export const LPDaiAvax = process.env.NEXT_PUBLIC_MASTER === '1' ?
   '0xbA09679Ab223C6bdaf44D45Ba2d7279959289AB0'
@@ -43,9 +44,21 @@ export const GovernorAlpha = process.env.NEXT_PUBLIC_MASTER === '1' ?
   '0x2B6C46b9552B6Fa36DD097b6527ba20fdDB3FfD5'
 
 export const ProxyContract = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  '0x84f154A845784Ca37Ae962504250a618EB4859dc'
+  '0xCf734790E7D25f4E366b7d2F9710D3Eb1DB62036'
   :
   '0x97e33051B09092C1301A90b964a74cA51C0b068B'
+
+// export const ProxyInvestV2 = '0xFADd38F6DFa4057c62C2e92C4FaFB4c3AC198e06'
+// export const BalancerHelpers = '0x5aDDCCa35b7A0D07C74063c48700C8590E87864E'
+export const ProxyInvestV2 = '0x1A5C772C6ED51e48F00Df7B33E4dAEEc36f37B76'
+export const BalancerHelpers = '0x239e55F427D44C3cc793f49bFB507ebe76638a2b' // Polygon
+
+export const addressNativeToken1Inch = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+
+export const platform: Record<number, string> = {
+  [43114]: 'avalanche',
+  [137]: 'polygon-pos'
+}
 
 export const linkSnowtrace = process.env.NEXT_PUBLIC_MASTER === '1' ?
   'https://snowtrace.io'
@@ -68,7 +81,7 @@ export interface ProductDetails {
   chain: ChainDetails;
   name: string;
   symbol: string;
-  partners: PartnerData[];
+  partners?: PartnerData[];
   fundBy?: string;
   fundIcon?: any;
   pid?: number;
@@ -77,13 +90,21 @@ export interface ProductDetails {
   addresses: string[];
 }
 
-export type ProductSymbols = keyof typeof products;
+// export type ProductSymbols = keyof typeof products;
+
+export const YIELDYAK_API = 'https://staging-api.yieldyak.com'
+export const COINGECKO_API = 'https://api.coingecko.com/api/v3'
 
 export const SUBGRAPH_URL = `https://graph.kassandra.finance/subgraphs/name/${process.env.NEXT_PUBLIC_MASTER === '1' ?
   'KassandraAvalanche'
   :
   'KassandraFuji'}`
 
+export const BACKEND_KASSANDRA = process.env.NEXT_PUBLIC_BACKEND_KASSANDRA ?? 'http://localhost:3001'
+
+export const URL_1INCH = 'https://api.1inch.io/v5.0/'
+export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
+export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 
 export const chains: { [key: string]: ChainDetails } = {
   avalanche: {
@@ -96,7 +117,7 @@ export const chains: { [key: string]: ChainDetails } = {
       decimals: 18
     },
     rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
-    blockExplorerUrls: ['https://snowtrace.io/'],
+    blockExplorerUrl: 'https://snowtrace.io/',
     secondsPerBlock: 2,
     wrapped: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
   },
@@ -110,7 +131,7 @@ export const chains: { [key: string]: ChainDetails } = {
       decimals: 18
     },
     rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
-    blockExplorerUrls: ['https://testnet.snowtrace.io/'],
+    blockExplorerUrl: 'https://testnet.snowtrace.io/',
     secondsPerBlock: 2,
     wrapped: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c',
   },
@@ -124,7 +145,7 @@ export const chains: { [key: string]: ChainDetails } = {
       decimals: 18
     },
     rpcUrls: ["https://polygon-rpc.com"],
-    blockExplorerUrls: ["https://polygonscan.com"],
+    blockExplorerUrl: "https://polygonscan.com",
     secondsPerBlock: 2,
     wrapped: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270"
   }
@@ -146,11 +167,11 @@ const ahype: ProductDetails  = process.env.NEXT_PUBLIC_MASTER === '1' ?
     fundSummary: `The Social Index $aHYPE reflects the performance of a portfolio selected
     from the most socially active cryptocurrencies in the past 30 days,
     using Heimdall Social Score data.`,
-    partners: [
-      partners.avalanche,
-      partners.heimdall,
-      partners.api3
-    ],
+    // partners: [
+    //   partners.avalanche,
+    //   partners.heimdall,
+    //   partners.api3
+    // ],
     addresses: [
       '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd',
@@ -181,11 +202,11 @@ const ahype: ProductDetails  = process.env.NEXT_PUBLIC_MASTER === '1' ?
     fundSummary: `The Social Index $aHYPE reflects the performance of a portfolio selected
     from the most socially active cryptocurrencies in the past 30 days,
     using Heimdall Social Score data.`,
-    partners: [
-      partners.avalanche,
-      partners.heimdall,
-      partners.api3
-    ],
+    // partners: [
+    //   partners.avalanche,
+    //   partners.heimdall,
+    //   partners.api3
+    // ],
     addresses: [
       '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd',
@@ -213,13 +234,13 @@ const tricrypto: ProductDetails  = process.env.NEXT_PUBLIC_MASTER === '1' ?
     fundLink: 'https://kassandrafoundation.medium.com/kassandras-new-autocompounding-strategy-tricrypto-185eb1fca2c2',
     fundSummary: `The #K3C represents a yield-earning portfolio composed of BTC,
     ETH, DAI and KACY built in partnership with our friends back at Yield Yak.`,
-    partners: [
-      partners.avalanche,
-      partners.yieldYak,
-      partners.traderJoe,
-      partners.aave,
-      partners.benqi,
-    ],
+    // partners: [
+    //   partners.avalanche,
+    //   partners.yieldYak,
+    //   partners.traderJoe,
+    //   partners.aave,
+    //   partners.benqi,
+    // ],
     addresses: [
       '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab',
       '0x50b7545627a5162f82a992c33b87adc75187b218',
@@ -242,13 +263,13 @@ const tricrypto: ProductDetails  = process.env.NEXT_PUBLIC_MASTER === '1' ?
     fundLink: 'https://kassandrafoundation.medium.com/kassandras-new-autocompounding-strategy-tricrypto-185eb1fca2c2',
     fundSummary: `The #K3C represents a yield-earning portfolio composed of BTC,
     ETH, DAI and KACY built in partnership with our friends back at Yield Yak.`,
-    partners: [
-      partners.avalanche,
-      partners.yieldYak,
-      partners.traderJoe,
-      partners.aave,
-      partners.benqi,
-    ],
+    // partners: [
+    //   partners.avalanche,
+    //   partners.yieldYak,
+    //   partners.traderJoe,
+    //   partners.aave,
+    //   partners.benqi,
+    // ],
     addresses: [
       '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd',

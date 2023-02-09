@@ -183,7 +183,8 @@ const Proposal = () => {
     yourVotingPowerInProposal: new BigNumber(0)
   })
   // eslint-disable-next-line prettier/prettier
-  const [yourVotingPowerInProposal, setYourVotingPowerInProposal] = React.useState(new BigNumber(0))
+  const [yourVotingPowerInProposal, setYourVotingPowerInProposal] =
+    React.useState(new BigNumber(0))
   const router = useRouter()
   const governance = useGovernance(GovernorAlpha)
   const votingPower = useVotingPower(Staking)
@@ -268,7 +269,7 @@ const Proposal = () => {
     if (data) {
       const secondsPerBlock =
         chains[process.env.NEXT_PUBLIC_MASTER === '1' ? 'avalanche' : 'fuji']
-          .secondsPerBlock
+          .secondsPerBlock ?? 2
 
       const createdProposal = new Date(Number(data.proposal[0].created) * 1000)
 
@@ -631,18 +632,18 @@ const Proposal = () => {
       <>
         <Header />
         <Breadcrumb>
-          <BreadcrumbItem href="/">Home</BreadcrumbItem>
+          <BreadcrumbItem href="/">Invest</BreadcrumbItem>
           <BreadcrumbItem href="/gov">Governance</BreadcrumbItem>
           <BreadcrumbItem href={router.asPath} isLastPage>
             Proposal {router.query.proposal}
           </BreadcrumbItem>
         </Breadcrumb>
-        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
-        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
+        {(metamaskInstalled && Number(chainId) !== chains.avalanche.chainId) ||
+        (userWalletAddress.length > 0 && Number(chainId) !== chains.avalanche.chainId) ? (
           <Web3Disabled
             textButton={`Connect to ${chain.chainName}`}
             textHeader="Your wallet is set to the wrong network."
-            bodyText={`Please switch to the ${chain.chainName} network to have access to governance`}
+            bodyText={`Please switch to the ${chains.avalanche.chainName} network to have access to governance`}
             type="changeChain"
           />
         ) : (
@@ -715,7 +716,7 @@ const Proposal = () => {
                       voteType: 'For',
                       percentage: `${percentageVotes.for}`,
                       // eslint-disable-next-line prettier/prettier
-                    totalVotingPower: `${BNtoDecimal(
+                      totalVotingPower: `${BNtoDecimal(
                         proposal.forVotes,
                         0,
                         2,
@@ -739,7 +740,7 @@ const Proposal = () => {
                       voteType: 'Against',
                       percentage: `${percentageVotes.against}`,
                       // eslint-disable-next-line prettier/prettier
-                    totalVotingPower: `${BNtoDecimal(
+                      totalVotingPower: `${BNtoDecimal(
                         proposal.againstVotes,
                         0,
                         2,
@@ -862,8 +863,8 @@ const Proposal = () => {
                           <S.LinkTargetSnowTrace
                             href={`${
                               process.env.NEXT_PUBLIC_MASTER === '1'
-                                ? chains.avalanche.blockExplorerUrls
-                                : chains.fuji.blockExplorerUrls
+                                ? chains.avalanche.blockExplorerUrl
+                                : chains.fuji.blockExplorerUrl
                             }address/${proposal.targets[index]}`}
                             target="_blank"
                             rel="noopener noreferrer"

@@ -27,6 +27,10 @@ export const SelectToken = styled.div<ISelectedProps>`
 
   background-color: #4A4348;
   border-radius: ${props => (props.openOptions ? '0.4rem 0.4rem 0 0px' : '0.4rem')};
+
+  @media (max-width: 400px) {
+    width: 10rem;
+  }
 `
 
 // prettier-ignore
@@ -56,6 +60,10 @@ export const Selected = styled.div<ISelectedProps>`
     margin: 0 0 0.6rem auto;
     padding: 0;
   }
+
+  @media (max-width: 400px) {
+    width: 10rem;
+  }
 `
 
 export const OptionsContent = styled.div`
@@ -77,6 +85,10 @@ export const OptionsContent = styled.div`
   &::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: 0.1rem;
+  }
+
+  @media (max-width: 400px) {
+    width: 10rem;
   }
 `
 
@@ -103,5 +115,9 @@ export const Option = styled.div`
 
   &:hover {
     background-color: #000;
+  }
+
+  @media (max-width: 400px) {
+    width: 10rem;
   }
 `

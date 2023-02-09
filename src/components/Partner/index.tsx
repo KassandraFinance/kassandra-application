@@ -1,18 +1,12 @@
 import React from 'react'
-import Image, { StaticImageData } from 'next/image'
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 export interface PartnerData {
   href: string;
-  image: {
-    src: StaticImageData,
-    width: number,
-    height: number
-  };
-  name: string;
+  logo: string;
 }
 
-const Partner = ({ href, image, name }: PartnerData) => {
+const Partner = ({ href, logo }: PartnerData) => {
   const { trackEventFunction } = useMatomoEcommerce()
 
   return (
@@ -21,15 +15,10 @@ const Partner = ({ href, image, name }: PartnerData) => {
       target="_blank"
       rel="noopener noreferrer"
       onClick={() =>
-        trackEventFunction('click-on-partner', name, 'powered-invest')
+        trackEventFunction('click-on-partner', href, 'powered-invest')
       }
     >
-      <Image
-        src={image.src}
-        alt={name}
-        width={image.width}
-        height={image.height}
-      />
+      <img src={logo} alt={href} />
     </a>
   )
 }

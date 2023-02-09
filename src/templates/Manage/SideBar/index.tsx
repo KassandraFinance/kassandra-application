@@ -7,7 +7,6 @@ import { useAppSelector } from '../../../store/hooks'
 import substr from '../../../utils/substr'
 
 import HeaderButtons from '../../../components/Header/HeaderButtons'
-import ModalWalletConnect from '../../../components/Modals/ModalWalletConnect'
 import ModalChooseNetwork from '../../../components/Modals/ModalChooseNetwork'
 
 import userIcon from '../../../../public/assets/icons/user.svg'
@@ -300,7 +299,6 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
           )}
 
           <HeaderButtons
-            setIsModalWallet={setIsModalWallet}
             setIsChooseNetwork={setIsChooseNetwork}
           />
         </S.UserInfoContainer>
@@ -320,7 +318,6 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
           choose from.
         </S.Text>
       </S.SideBarBody>
-      {isModalWallet && <ModalWalletConnect setModalOpen={setIsModalWallet} />}
 
       {isChooseNetwork && (
         <ModalChooseNetwork

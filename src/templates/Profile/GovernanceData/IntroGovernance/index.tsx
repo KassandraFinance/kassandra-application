@@ -8,14 +8,15 @@ import 'tippy.js/dist/tippy.css'
 
 import { Staking } from '../../../../constants/tokenAddresses'
 
-import useStakingContract from '../../../../hooks/useStakingContract'
-import { BNtoDecimal } from '../../../../utils/numerals'
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
+import { setModalWalletActive } from '../../../../store/reducers/modalWalletActive'
 
-import { useAppSelector } from '../../../../store/hooks'
+import useStakingContract from '../../../../hooks/useStakingContract'
+
+import { BNtoDecimal } from '../../../../utils/numerals'
 
 import Button from '../../../../components/Button'
 import ExternalLink from '../../../../components/ExternalLink'
-import ModalWalletConnect from '../../../../components/Modals/ModalWalletConnect'
 import ModalManageVotingPower from '../../../../components/Governance/ModalManageVotingPower'
 
 import tooltip from '../../../../../public/assets/utilities/tooltip.svg'
@@ -37,9 +38,6 @@ const IntroGovernance = ({
   const [isModalManageVotingPower, setIsModalManageVotingPower] =
     React.useState<boolean>(false)
   // eslint-disable-next-line prettier/prettier
-  const [isModalWalletConnect, setIsModalWalletConnect] =
-    React.useState<boolean>(false)
-  // eslint-disable-next-line prettier/prettier
   const [totalKacyStaked, setTotalKacyStaked] = React.useState<BigNumber>(
     new BigNumber(0)
   )
@@ -47,6 +45,7 @@ const IntroGovernance = ({
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const { userInfo } = useStakingContract(Staking)
+  const dispatch = useAppDispatch()
 
   const callUserInfo = async () => {
     let totalStaked = new BigNumber(0)
@@ -116,7 +115,7 @@ const IntroGovernance = ({
               </span>
             ) : (
               <Button
-                onClick={() => setIsModalWalletConnect(true)}
+                onClick={() => dispatch(setModalWalletActive(true))}
                 size="large"
                 text="Connect Wallet"
                 backgroundSecondary
@@ -180,9 +179,6 @@ const IntroGovernance = ({
           modalOpen={isModalManageVotingPower}
           setModalOpen={setIsModalManageVotingPower}
         />
-      )}
-      {isModalWalletConnect && (
-        <ModalWalletConnect setModalOpen={setIsModalWalletConnect} />
       )}
     </>
   )

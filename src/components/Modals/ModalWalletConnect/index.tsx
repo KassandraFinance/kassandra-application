@@ -1,13 +1,15 @@
 import React from 'react'
-import detectEthereumProvider from '@metamask/detect-provider'
-
 import { useRouter } from 'next/router'
-import useConnect from '../../../hooks/useConnect'
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
-import { useAppSelector } from '../../../store/hooks'
+import detectEthereumProvider from '@metamask/detect-provider'
 
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
+
+import { useAppDispatch, useAppSelector } from '../../../store/hooks'
+import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
+
+import useConnect from '../../../hooks/useConnect'
+import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import WalletConnecting from './WalletConnecting'
 import ModalConnectError from './ModalConnectError'
@@ -16,11 +18,14 @@ import Modal from '../Modal'
 
 import * as S from './styles'
 
-interface IModalWalletConnect {
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+const ModalWalletConnect = () => {
+  const [hasEthereumProvider, setHasEthereumProvider] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
+  const [provider, setProvider] = React.useState('')
 
-const ModalWalletConnect = ({ setModalOpen }: IModalWalletConnect) => {
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const dispatch = useAppDispatch()
+
   const {
     connect,
     connectToWalletConnect,
@@ -28,13 +33,9 @@ const ModalWalletConnect = ({ setModalOpen }: IModalWalletConnect) => {
     metaMaskError,
     cleanError
   } = useConnect()
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const { trackEventFunction } = useMatomoEcommerce()
 
   const router = useRouter()
-  const [hasEthereumProvider, setHasEthereumProvider] = React.useState(false)
-  const [loading, setLoading] = React.useState(false)
-  const [provider, setProvider] = React.useState('')
 
   function handleCloseModal() {
     const pahtName = router.pathname
@@ -48,7 +49,7 @@ const ModalWalletConnect = ({ setModalOpen }: IModalWalletConnect) => {
       cleanError()
     }
 
-    setModalOpen(false)
+    dispatch(setModalWalletActive(false))
   }
 
   function handleConnect() {
