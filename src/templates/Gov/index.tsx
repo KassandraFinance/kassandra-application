@@ -36,7 +36,7 @@ const Gov = () => {
     <>
       <Header />
       <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem href="/gov" isLastPage>
           Governance
         </BreadcrumbItem>

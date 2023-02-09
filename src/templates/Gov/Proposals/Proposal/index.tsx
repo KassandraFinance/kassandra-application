@@ -632,7 +632,7 @@ const Proposal = () => {
       <>
         <Header />
         <Breadcrumb>
-          <BreadcrumbItem href="/">Home</BreadcrumbItem>
+          <BreadcrumbItem href="/">Invest</BreadcrumbItem>
           <BreadcrumbItem href="/gov">Governance</BreadcrumbItem>
           <BreadcrumbItem href={router.asPath} isLastPage>
             Proposal {router.query.proposal}

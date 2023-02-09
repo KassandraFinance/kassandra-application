@@ -190,7 +190,7 @@ const Pool = () => {
         />
       </ShareImageModal>
       <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem href={`/pool/${pool.symbol.toLowerCase()}`} isLastPage>
           ${pool.symbol}
         </BreadcrumbItem>
@@ -327,11 +327,11 @@ const Pool = () => {
                 pid={pool.poolId}
                 decimals={infoPool.decimals}
               />
-              <Summary strategy={pool.strategy} />
+              <Summary />
               {pool.partners && <PoweredBy />}
               <Distribution />
               {/* <ActivityTable /> */}
-              <TokenDescription symbol={pool.symbol} />
+              <TokenDescription />
             </S.ProductDetails>
             <NewPoolOperations />
           </S.Product>
