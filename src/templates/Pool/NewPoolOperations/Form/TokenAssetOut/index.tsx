@@ -46,7 +46,7 @@ const TokenAssetOut = ({
       userWalletAddress.length === 0 ||
       pool.chainId !== chainId
     ) {
-      return
+      return setOutAssetBalance(Big(0))
     }
     // eslint-disable-next-line prettier/prettier
     (async () => {

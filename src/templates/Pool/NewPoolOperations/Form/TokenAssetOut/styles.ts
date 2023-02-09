@@ -1,14 +1,14 @@
 import styled, { css } from 'styled-components'
 
 export const TokenAssetOut = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
 
     width: 100%;
     padding: 1rem 1.6rem;
 
     background: rgba(31, 31, 31, 0.72);
-    border-radius: 1.6rem;
+    border-radius: 1rem;
   `}
 `
 
