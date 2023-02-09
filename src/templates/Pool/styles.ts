@@ -13,6 +13,10 @@ export const Product = styled.section`
   max-height: 100%;
   margin-top: ${theme.spacings.space32};
 
+  @media (min-width: 960px) {
+    align-items: baseline;
+  }
+
   @media (max-width: 1200px) {
     padding: 0 3rem;
   }
@@ -60,12 +64,12 @@ export const Intro = styled.div<IIntroProps>`
   }
 
   img {
-    max-width: 100%;
+    min-width: 100%;
   }
 
   @media (max-width: 960px) {
     display: grid;
-    grid-template-columns: 4rem auto;
+    grid-template-columns: 7.2rem auto;
 
     max-width: 100%;
     margin: 3.2rem 0;

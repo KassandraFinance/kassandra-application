@@ -1,5 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
+import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
+
+import { useAppSelector } from '../../../store/hooks'
 
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 
@@ -7,34 +10,39 @@ import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 
 import * as S from './styles'
 
-import AhypeDescription from './ahype'
-import TricryptoDescription from './tricrypto'
+// import AhypeDescription from './ahype'
+// import TricryptoDescription from './tricrypto'
 
-interface DescriptionType {
-  //[key: ProductSymbols]: JSX.Element;
-  [key: string]: JSX.Element;
-}
+// interface DescriptionType {
+//   //[key: ProductSymbols]: JSX.Element;
+//   [key: string]: JSX.Element;
+// }
 
-interface Input {
-  symbol: string;
-}
+// interface Input {
+//   symbol: string;
+// }
 
-const descriptions: DescriptionType = {
-  ahype: <AhypeDescription />,
-  k3c: <TricryptoDescription />
-}
+// const descriptions: DescriptionType = {
+//   ahype: <AhypeDescription />,
+//   k3c: <TricryptoDescription />
+// }
 
-const TokenDescription = ({ symbol }: Input) => {
-  const description = descriptions[symbol.toLowerCase()]
+const TokenDescription = () => {
+  // const description = descriptions[symbol.toLowerCase()]
+  const { pool } = useAppSelector(state => state)
 
-  return description ? (
+  return pool.summary ? (
     <>
       <S.Title>
         <Image src={iconBar} alt="" height={18} width={18} />
         <h2>Token Description</h2>
       </S.Title>
       <S.Line />
-      <S.Text>{description}</S.Text>
+      <S.Text>
+        <ReactMarkdown skipHtml={true} linkTarget={'_blank'}>
+          {pool.summary}
+        </ReactMarkdown>
+      </S.Text>
     </>
   ) : (
     <></>

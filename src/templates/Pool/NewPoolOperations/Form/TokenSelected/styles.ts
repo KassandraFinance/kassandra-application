@@ -15,8 +15,9 @@ export const Backdrop = styled.div`
 
 export const SelectToken = styled.div`
   ${({ theme }) => css`
-    max-width: 12.8rem;
     margin: 0.8rem 0;
+    max-width: 14.5rem;
+    min-width: 12.8rem;
 
     font-size: ${theme.font.sizes.font20};
 
@@ -36,7 +37,8 @@ export const Selected = styled.div`
     align-items: center;
     gap: 0.8rem;
 
-    width: 12.8rem;
+    width: 100%;
+    /* min-width: 12.8rem; */
     height: 3.4rem;
     padding: 0.6rem 0.8rem 0.4rem;
 
@@ -48,13 +50,12 @@ export const Selected = styled.div`
     cursor: pointer;
 
     img {
-      max-width: 2.1rem;
       border-radius: 50%;
     }
 
     #arrow-down {
-      margin: 0 0 0.6rem auto;
-      padding: 0;
+      /* margin: 0 0 0.6rem auto;
+      padding: 0; */
     }
 
     @media (max-width: 400px) {
@@ -63,56 +64,12 @@ export const Selected = styled.div`
   `}
 `
 
-export const OptionsContent = styled.div`
-  position: absolute;
+export const tokenInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
 
-  width: 12.8rem;
-  max-height: 16.2rem;
-  overflow: auto;
-
-  background-color: #4a4348;
-  border-radius: 0 0 0.4rem 0.4rem;
-
-  z-index: 101;
-
-  &::-webkit-scrollbar {
-    width: 0.4rem;
+  p {
+    white-space: nowrap;
   }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 0.1rem;
-  }
-`
-
-export const Option = styled.div`
-  ${({ theme }) => css`
-    display: flex;
-    align-items: center;
-
-    width: 12rem;
-    padding: 0.4rem 0.8rem 0.4rem;
-
-    font-size: ${theme.font.sizes.font20};
-    line-height: ${theme.font.sizes.font20};
-
-    cursor: pointer;
-
-    img {
-      max-width: 2.1rem;
-      border-radius: 50%;
-    }
-
-    .img {
-      margin-right: 0.8rem;
-    }
-
-    &:hover {
-      background-color: #000;
-    }
-
-    @media (max-width: 400px) {
-      width: 11rem;
-    }
-  `}
 `

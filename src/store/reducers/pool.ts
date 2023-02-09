@@ -38,6 +38,10 @@ export interface underlyingAssetsInfo {
   token: TokenInfo;
 }
 
+export interface Partners {
+  logo: string;
+  url: string;
+}
 export interface IPoolSlice {
   id: string;
   address: string;
@@ -55,7 +59,7 @@ export interface IPoolSlice {
   url: string;
   summary?: string;
   addresses: string[];
-  partners?: string[];
+  partners?: Partners[];
   underlying_assets_addresses: string[];
   underlying_assets: underlyingAssetsInfo[];
 }

@@ -25,7 +25,7 @@ interface ISelectedProps {
 // prettier-ignore
 export const SelectToken = styled.div<ISelectedProps>`
   ${({ theme, openOptions }) => css`
-    max-width: 13.8rem;
+    width: 14.2rem;
     margin: 0.8rem 0;
 
     font-size: ${theme.font.sizes.font20};
@@ -47,7 +47,7 @@ export const Selected = styled.div<ISelectedProps>`
     align-items: center;
     gap: 0.8rem;
 
-    width: 13.8rem;
+    width: 100%;
     height: 3.4rem;
     padding: 0.6rem 0.8rem 0.4rem;
 
@@ -65,9 +65,22 @@ export const Selected = styled.div<ISelectedProps>`
   `}
 `
 
+export const tokenInfo = styled.span`
+  ${({ theme }) => css`
+    display: flex;
+    align-items: center;
+
+    p {
+      font-size: ${theme.font.sizes.font20};
+      line-height: ${theme.font.sizes.font20};
+    }
+  `}
+`
+
 export const TokenLogo = styled.span`
   ${() => css`
     min-width: 2.2rem;
+    margin-right: 0.8rem;
 
     img {
       border-radius: 50%;
@@ -94,8 +107,7 @@ export const ArrowDown = styled.span<IopenOptionsProps>`
 export const OptionsContent = styled.div`
   ${() => css`
     position: absolute;
-
-    width: 13.8rem;
+    width: 14.2rem;
     max-height: 16.2rem;
     overflow: auto;
 

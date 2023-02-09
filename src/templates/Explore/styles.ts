@@ -37,6 +37,7 @@ interface ICardContainerProps {
 // eslint-disable-next-line prettier/prettier
 export const CardContainer = styled.div<ICardContainerProps>`
   display: ${props => (props.loading ? 'none' : 'flex')};
+  flex-wrap: wrap;
 
   gap: 7.8rem;
 

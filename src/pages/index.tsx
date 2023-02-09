@@ -50,7 +50,6 @@ export const getStaticProps: GetStaticProps = async () => {
 
     return { props: { pools } }
   } catch (error) {
-    console.log(error)
-    return { notFound: true }
+    return { props: { pools: [] } }
   }
 }

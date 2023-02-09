@@ -42,10 +42,12 @@ const TokenSelect = () => {
           openOptions={openOptions}
           onClick={() => setOpenOptions(!openOptions)}
         >
-          <S.TokenLogo>
-            <Image src={tokenSelect.logoURI} alt="" width={22} height={22} />
-          </S.TokenLogo>
-          {tokenSelect.symbol}
+          <S.tokenInfo>
+            <S.TokenLogo>
+              <Image src={tokenSelect.logoURI} alt="" width={22} height={22} />
+            </S.TokenLogo>
+            <p>{tokenSelect.symbol}</p>
+          </S.tokenInfo>
           <S.ArrowDown openOptions={openOptions}>
             <Image
               src="/assets/utilities/arrow-down-thin.svg"

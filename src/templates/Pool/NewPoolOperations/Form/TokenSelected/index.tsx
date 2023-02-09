@@ -21,18 +21,21 @@ const TokenSelected = () => {
           dispatch(setTokenSelectionActive(true))
         }}
       >
-        <div className="img">
-          <Image
+        <S.tokenInfo>
+          <img
             src={tokenSelect.logoURI || none}
             alt=""
             width={22}
             height={22}
           />
-        </div>
-        {tokenSelect.symbol}
-        <div id="arrow-down">
-          <Image src={arrow} alt="" />
-        </div>
+          <p>{tokenSelect.symbol}</p>
+        </S.tokenInfo>
+        <img
+          src="/assets/utilities/arrow-down-thin.svg"
+          alt=""
+          width={14}
+          height={14}
+        />
       </S.Selected>
     </S.SelectToken>
   )

@@ -142,7 +142,7 @@ export const AssetsTable = ({ assets, balanceFunds }: IAssetsTableProps) => {
         </S.Td>
         <S.Td>
           <S.NetworkWrapper>
-            <Image src={asset.partners[0].image.src} width={16} height={16} />
+            <Image src="/assets/logos/avalanche.svg" width={16} height={16} />
           </S.NetworkWrapper>
         </S.Td>
         <S.Td>${parseFloat(price[asset.sipAddress]).toFixed(2)}</S.Td>
