@@ -90,6 +90,7 @@ export const Title = styled.span`
   ${({ theme }) => css`
     color: ${theme.colors.snow};
     font-size: ${theme.font.sizes.font12};
+    height: 2rem;
 
     @media (max-width: 360px) {
       padding-left: 1.2rem;
