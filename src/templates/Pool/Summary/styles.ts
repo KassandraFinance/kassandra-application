@@ -67,8 +67,8 @@ export const LinkContent = styled.div`
   display: flex;
   justify-content: space-between;
   max-width: 25rem;
-  margin-top: 1.2rem;
-  margin-bottom: 2.4rem;
+  /* margin-top: 1.2rem; */
+  /* margin-bottom: 2.4rem; */
 `
 
 export const ContractsName = styled.p`

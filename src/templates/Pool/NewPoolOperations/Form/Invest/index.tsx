@@ -261,6 +261,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
             setSelectedTokenInBalance(amountToken)
             setOutAssetBalance(amountPool)
             setAmountTokenOut(Big(0))
+            setAmountTokenIn(Big(0))
             if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
               inputAmountTokenRef.current.value = ''
             }
