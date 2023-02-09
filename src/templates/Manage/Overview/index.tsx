@@ -2,6 +2,7 @@ import React from 'react'
 
 import TitleSection from '../../../components/TitleSection'
 import StatusCard from './StatusCard'
+import TVMChart from './TVMChart'
 
 import managerOveriewIcon from '../../../../public/assets/iconGradient/section-title-eye.svg'
 
@@ -20,7 +21,9 @@ const Overview = () => {
       </S.TitleWrapper>
 
       <S.ManagerOverviewContainer>
-        <S.ChartWrapper></S.ChartWrapper>
+        <S.ChartWrapper>
+          <TVMChart />
+        </S.ChartWrapper>
 
         <S.StatsContainer>
           <StatusCard
