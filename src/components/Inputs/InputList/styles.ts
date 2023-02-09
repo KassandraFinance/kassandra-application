@@ -27,8 +27,8 @@ export const Datalist = styled.div<IDataListProps>`
     max-height: 2.2rem;
 
     background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 2px;
+    border: 0.1rem solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.2rem;
     backdrop-filter: blur(70px);
 
     overflow: hidden;
@@ -52,10 +52,8 @@ export const Option = styled.span`
     display: flex;
     gap: 0.4rem;
 
-    padding: 8px 10px;
+    padding: 0.8rem 1rem;
 
-    font-family: 'Rubik';
-    font-style: normal;
     color: ${theme.colors.white};
     font-weight: ${theme.font.weight.normal};
     font-size: ${theme.font.sizes.font12};
@@ -70,8 +68,8 @@ export const Option = styled.span`
     transition-property: background-color;
 
     &:first-of-type {
-      padding: 4px 10px;
-      padding-inline: 10px 0.5rem;
+      padding: 0.4rem 1rem;
+      padding-inline: 1rem 0.5rem;
     }
 
     &:last-of-type {
