@@ -16,6 +16,7 @@ import walletIcon from '../../../public/assets/utilities/wallet.svg'
 import closeIcon from '../../../public/assets/utilities/close-icon.svg'
 
 import * as S from './styles'
+import Overview from './Overview'
 
 const Manage = () => {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -70,7 +71,10 @@ const Manage = () => {
         <div></div>
 
         <S.Content>
-          <GetStarted />
+          {
+            // userWalletAddress.length !== 42 ? <GetStarted /> : <Overview />
+          }
+          <Overview />
         </S.Content>
       </S.DashBoard>
     </S.Manage>

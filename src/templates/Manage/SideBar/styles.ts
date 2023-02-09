@@ -21,7 +21,7 @@ export const SideBar = styled.div<ISideBarProps>`
 
     overflow: hidden;
 
-    transition-duration: 550ms;
+    transition-duration: 500ms;
     transition-timing-function: ease;
     transition-property: width;
 
@@ -80,7 +80,7 @@ export const ImageWrapper = styled.a<IImageWrapperProps>`
       .letters {
         opacity: 0;
 
-        transition-duration: 550ms;
+        transition-duration: 500ms;
         transition-timing-function: ease;
         transition-property: transform opacity;
       }
@@ -211,7 +211,7 @@ export const UserName = styled.div<IUserNameProps>`
     line-height: ${theme.font.sizes.font16};
     text-transform: capitalize;
 
-    transition-duration: 550ms;
+    transition-duration: 500ms;
     transition-timing-function: ease;
     transition-property: opacity visibility;
 
@@ -240,7 +240,7 @@ export const UserHeaderTitle = styled.div<IUserHeaderTitleProps>`
     line-height: 100%;
     letter-spacing: 0.05em;
 
-    transition-duration: 550ms;
+    transition-duration: 500ms;
     transition-timing-function: ease;
     transition-property: opacity visibility;
 
@@ -338,7 +338,7 @@ export const Text = styled.p<ITextProps>`
     opacity: 0;
     pointer-events: none;
 
-    transition-duration: 550ms;
+    transition-duration: 500ms;
     transition-timing-function: ease;
     transition-property: opacity;
 
@@ -399,7 +399,7 @@ export const ImageCloseButtonWrapper = styled.div<IImageWrapperProps>`
       transform-origin: center;
       transform: ${isOpen ? 'rotateZ(180deg)' : 'rotateZ(0deg)'} ;
 
-      transition-duration: 550ms;
+      transition-duration: 500ms;
       transition-timing-function: ease;
       transition-property: transform;
   `}
