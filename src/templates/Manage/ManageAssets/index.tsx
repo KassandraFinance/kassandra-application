@@ -1,6 +1,9 @@
 import React from 'react'
 
+import AddAssets from './AddAssets'
+import RemoveAssets from './RemoveAssets'
 import ChooseAction from './ChooseAction'
+import RebalanceAssets from './RebalanceAssets'
 import ContainerButton from '../../../components/ContainerButton'
 import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
 
@@ -21,6 +24,9 @@ const ManageAssets = () => {
       >
         <S.ManageAssetsBody id="managerAssets" onSubmit={handleSubmit}>
           {/* <ChooseAction /> */}
+          {/* <RebalanceAssets /> */}
+          {/* <AddAssets /> */}
+          {/* <RemoveAssets /> */}
         </S.ManageAssetsBody>
 
         <ContainerButton
