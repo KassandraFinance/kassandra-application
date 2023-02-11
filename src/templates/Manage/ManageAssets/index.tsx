@@ -1,35 +1,35 @@
 import React from 'react'
 
+import ChooseAction from './ChooseAction'
+import ContainerButton from '../../../components/ContainerButton'
 import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
 
 import * as S from './styles'
 
 const ManageAssets = () => {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    console.log('Form')
+  }
+
   return (
     <S.ManageAssets>
       <ModalFullWindow
-        // handleCloseModal={() => {
-        //   if (stepNumber === 7) {
-        //     dispatch(setToFirstStep())
-        //   }
-        //   setIsCreatePool(false)
-        // }}
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         handleCloseModal={() => {}}
       >
-        {/* <form id="poolCreationForm" onSubmit={handleSubmit}>
-          {poolCreationSteps[stepNumber]}
+        <S.ManageAssetsBody id="managerAssets" onSubmit={handleSubmit}>
+          {/* <ChooseAction /> */}
+        </S.ManageAssetsBody>
 
-          {stepNumber < 6 && (
-            <ContainerButton
-              backButtonDisabled={stepNumber < 1}
-              onBack={() => dispatch(setBackStepNumber())}
-              onNext={() => {
-                return
-              }}
-            />
-          )}
-        </form> */}
+        <ContainerButton
+          backButtonDisabled={false}
+          onBack={() => console.log('aqui')}
+          onNext={() => {
+            return
+          }}
+        />
       </ModalFullWindow>
     </S.ManageAssets>
   )
