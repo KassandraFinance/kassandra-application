@@ -19,7 +19,7 @@ interface IDataListProps {
 }
 
 // prettier-ignore
-export const Datalist = styled.div<IDataListProps>`
+export const Datalist = styled.ul<IDataListProps>`
   ${() => css`
     display: flex;
     flex-direction: column;
@@ -47,7 +47,7 @@ export const Datalist = styled.div<IDataListProps>`
   `}
 `
 
-export const Option = styled.span`
+export const Option = styled.li`
   ${({ theme }) => css`
     display: flex;
     gap: 0.4rem;
