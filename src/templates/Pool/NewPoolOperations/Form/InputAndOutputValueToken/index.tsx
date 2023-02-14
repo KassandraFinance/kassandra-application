@@ -3,17 +3,13 @@ import Tippy from '@tippyjs/react'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 
-import { addressNativeToken1Inch } from '../../../../../constants/tokenAddresses'
-
 import { BNtoDecimal } from '../../../../../utils/numerals'
-import web3 from '../../../../../utils/web3'
-import { getBalanceToken } from '../../../../../utils/poolUtils'
+import { getBalanceToken, decimalToBN } from '../../../../../utils/poolUtils'
 
 import { useAppSelector } from '../../../../../store/hooks'
 
 import PoolOperationContext from '../PoolOperationContext'
 
-import { ERC20 } from '../../../../../hooks/useERC20Contract'
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
 
 import TokenSelect from '../TokenSelect'
@@ -202,12 +198,10 @@ const InputAndOutputValueToken = ({
                         e.target.value = `0${e.target.value}`
                       }
 
-                      const decimalsNum = tokenSelect.decimals
-                      const values = value.split('.')
-                      const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)}`
+                      const valueFormatted = decimalToBN(value, tokenSelect.decimals)
 
                       setMaxActive && setMaxActive(false)
-                      setAmountTokenIn(paddedRight)
+                      setAmountTokenIn(valueFormatted)
                     }
                   }
                 />
@@ -215,7 +209,7 @@ const InputAndOutputValueToken = ({
                 <S.amountTokenOutText>
                   {BNtoDecimal(
                     Big(amountTokenIn)?.div(Big(10).pow(18)) || new BigNumber(0),
-                      18,
+                      tokenSelect.decimals,
                       6
                     ).replace(/\s/g, '')}
                 </S.amountTokenOutText>

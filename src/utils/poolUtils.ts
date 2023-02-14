@@ -91,3 +91,14 @@ export const getBalanceToken = async (
 
   return balanceToken
 }
+
+export const decimalToBN = (value: string, decimals?: number) => {
+  const decimalsNum = decimals ?? 18
+  const values = value.split('.')
+
+  const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(
+    decimalsNum
+  )}`.slice(0, decimalsNum)}`
+
+  return paddedRight
+}
