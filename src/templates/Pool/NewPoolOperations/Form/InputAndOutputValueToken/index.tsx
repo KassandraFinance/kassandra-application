@@ -198,7 +198,7 @@ const InputAndOutputValueToken = ({
                         e.target.value = `0${e.target.value}`
                       }
 
-                      const valueFormatted = decimalToBN(value)
+                      const valueFormatted = decimalToBN(value, tokenSelect.decimals)
 
                       setMaxActive && setMaxActive(false)
                       setAmountTokenIn(valueFormatted)
@@ -209,7 +209,7 @@ const InputAndOutputValueToken = ({
                 <S.amountTokenOutText>
                   {BNtoDecimal(
                     Big(amountTokenIn)?.div(Big(10).pow(18)) || new BigNumber(0),
-                      18,
+                      tokenSelect.decimals,
                       6
                     ).replace(/\s/g, '')}
                 </S.amountTokenOutText>
