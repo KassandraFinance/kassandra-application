@@ -30,7 +30,7 @@ export const TitleWrapper = styled.div`
 export const ManagerOverviewContainer = styled.div`
   ${() => css`
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 100%;
     gap: 1.6rem;
 
     width: 100%;
@@ -40,7 +40,7 @@ export const ManagerOverviewContainer = styled.div`
     }
 
     @media (min-width: 992px) {
-      grid-template-columns: 1fr 264px;
+      grid-template-columns: 1fr 26.4rem;
       gap: 2.4rem;
     }
   `}
