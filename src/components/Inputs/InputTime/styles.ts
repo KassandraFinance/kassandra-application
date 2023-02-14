@@ -51,6 +51,8 @@ export const InputNumber = styled.input`
       color: transparent;
     }
 
+    outline: none;
+
     ::-webkit-inner-spin-button,
     ::-webkit-outer-spin-button {
       -webkit-appearance: none;

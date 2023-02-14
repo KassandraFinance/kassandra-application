@@ -6,13 +6,21 @@ import styled, { css } from 'styled-components'
 // eslint-disable-next-line prettier/prettier
 
 export const RebalanceAssets = styled.div`
-  ${() => css``}
+  ${() => css`
+    width: 100%;
+    /* width: 113.1rem; */
+    /* margin: 0 auto; */
+
+    /* display: flex;
+    flex-direction: column; */
+  `}
 `
 
 export const RebalanceAssetsBody = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
+    width: 100%;
 
     > h2 {
       font-size: ${theme.font.sizes.font14};
@@ -43,10 +51,17 @@ export const RebalanceAssetsBody = styled.div`
 
 export const AllocationsAndExecutionPeriod = styled.div`
   ${() => css`
-    display: grid;
-    grid-template-columns: 74.6rem 1fr;
+    display: flex;
+    justify-content: space-between;
+    /* display: grid; */
+    /* grid-template-columns: 1fr 36.1rem; */
+    /* grid-template-columns: 74.6rem 1fr; */
     /* align-items: center; */
-    justify-content: center;
+    /* justify-content: center; */
     gap: 2.4rem;
+
+    @media (max-width: 976px) {
+      flex-direction: column;
+    }
   `}
 `
