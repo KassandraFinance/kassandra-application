@@ -19,7 +19,13 @@ import waitTransaction, {
 } from '../../../../../utils/txWait'
 import changeChain from '../../../../../utils/changeChain'
 import { BNtoDecimal } from '../../../../../utils/numerals'
-import { checkTokenInThePool, checkTokenWithHigherLiquidityPool, getBalanceToken, getTokenWrapped } from '../../../../../utils/poolUtils'
+import {
+  checkTokenInThePool,
+  checkTokenWithHigherLiquidityPool,
+  getBalanceToken,
+  getTokenWrapped,
+  decimalToBN
+} from '../../../../../utils/poolUtils'
 
 import {
   ToastSuccess,
@@ -408,6 +414,8 @@ const Invest = ({ typeAction }: IInvestProps) => {
     }
 
     const calc = async () => {
+      if (!(inputAmountTokenRef && inputAmountTokenRef.current !== null)) return
+
       try {
         const tokenSelected = await handleTokenSelected()
 
@@ -419,6 +427,10 @@ const Invest = ({ typeAction }: IInvestProps) => {
           selectedTokenInBalance,
           amountTokenIn: Big(amountTokenIn)
         })
+
+        const valueFormatted = decimalToBN(inputAmountTokenRef.current.value, tokenSelect.decimals)
+
+        if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
 
         setAmountTokenOut(Big(investAmountOut.toString()))
         if (transactionError) {

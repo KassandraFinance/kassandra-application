@@ -8,6 +8,7 @@ import { useAppSelector } from '../../../../../store/hooks'
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
 
 import { BNtoDecimal } from '../../../../../utils/numerals';
+import { decimalToBN } from '../../../../../utils/poolUtils';
 
 import * as S from './styles'
 
@@ -156,12 +157,10 @@ const TokenAssetIn = ({
                     e.target.value = `0${e.target.value}`
                   }
 
-                  const decimalsNum = 18
-                  const values = value.split('.')
-                  const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)}`
+                  const valueFormatted = decimalToBN(value)
 
                   setMaxActive(false)
-                  setamountTokenIn(paddedRight)
+                  setamountTokenIn(valueFormatted)
                 }
               }
             />

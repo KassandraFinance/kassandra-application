@@ -5,7 +5,7 @@ import web3 from '../../../../../utils/web3'
 import useSWR from 'swr';
 import { request } from 'graphql-request';
 
-import { BACKEND_KASSANDRA, ProxyContract } from '../../../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -17,7 +17,7 @@ import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
 import waitTransaction, { MetamaskError, TransactionCallback } from '../../../../../utils/txWait'
 import changeChain from '../../../../../utils/changeChain'
 import { BNtoDecimal } from '../../../../../utils/numerals'
-import { getBalanceToken } from '../../../../../utils/poolUtils';
+import { getBalanceToken, decimalToBN } from '../../../../../utils/poolUtils';
 
 import PoolOperationContext from '../PoolOperationContext';
 
@@ -300,6 +300,8 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     }
 
     const calc = async () => {
+      if (!(inputAmountInTokenRef && inputAmountInTokenRef.current !== null)) return
+
       const tokenAddress = pool.underlying_assets.find(item =>
         (item.token.wraps ? item.token.wraps.id : item.token.id) === tokenSelect.address
       )
@@ -311,6 +313,10 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
             userWalletAddress,
             selectedTokenInBalance
           })
+
+          const valueFormatted = decimalToBN(inputAmountInTokenRef.current.value, tokenSelect.decimals)
+
+          if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
 
           setamountAllTokenOut(withdrawAllAmoutOut ?? [])
           transactionError && setErrorMsg(transactionError)
@@ -330,6 +336,11 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           userWalletAddress,
           selectedTokenInBalance
         })
+
+        const valueFormatted = decimalToBN(inputAmountInTokenRef.current.value, tokenSelect.decimals)
+
+        if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
+
         setAmountTokenOut(withdrawAmoutOut.toString())
         transactionError && setErrorMsg(transactionError)
       } catch (error) {
