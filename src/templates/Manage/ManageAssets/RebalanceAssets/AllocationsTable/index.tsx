@@ -1,8 +1,9 @@
-import { COSTON_TESTNET } from '@pangolindex/sdk'
-import Tippy from '@tippyjs/react'
-import Link from 'next/link'
 import React from 'react'
+import Link from 'next/link'
+import Tippy from '@tippyjs/react'
+
 import InputNumber from '../../../../../components/Inputs/InputNumber'
+import PoolToken from './PoolToken'
 
 import * as S from './styles'
 
@@ -51,7 +52,17 @@ const AllocationsTable = () => {
         {poolTokenList.map((token, index) => {
           return (
             <S.TrBody key={token.currentAmount + index}>
-              <S.TokenInfo>
+              <PoolToken
+                allocationPorcentage={token.allocationPorcentage}
+                currentAmount={token.currentAmount}
+                currentAmountInDollar={token.currentAmountInDollar}
+                name={token.name}
+                newAllocation={token.newAllocation}
+                newAmount={token.newAmount}
+                newAmountInDollar={token.newAmountInDollar}
+                symbol={token.symbol}
+              />
+              {/* <S.TokenInfo>
                 <img
                   src="/assets/logos/tricrypto.svg"
                   alt=""
@@ -114,7 +125,7 @@ const AllocationsTable = () => {
                   {token.newAmount} {token.symbol}
                 </span>
                 <p>~${token.newAmountInDollar.toFixed(2)}</p>
-              </S.NewAmount>
+              </S.NewAmount> */}
             </S.TrBody>
           )
         })}

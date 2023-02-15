@@ -32,26 +32,27 @@ export const TableHead = styled.thead`
 export const TableHeadRow = styled.tr`
   ${() => css`
     display: grid;
-    /* grid-template-columns: repeat(6, 1fr); */
     grid-template-columns: 1fr 1fr 1fr 4.8rem 1fr 1fr;
-    /* padding: 2.4rem; */
-
-    /* display: flex;
-    justify-content: space-between;
-    align-items: center; */
     gap: 1rem;
+    padding: 2.4rem;
 
-    padding-inline: 2.4rem;
-    padding-block: 2.4rem;
-
-    th:last-child {
-      justify-content: flex-end;
-    }
     th:not(:first-child, :last-child) {
       justify-content: center;
     }
+    th:last-child,
     th:nth-child(2) {
       justify-content: flex-end;
+    }
+
+    @media (max-width: 576px) {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      padding: 1.6rem;
+
+      th:not(:first-child, :nth-child(5)) {
+        display: none;
+      }
     }
   `}
 `
@@ -83,8 +84,6 @@ export const TBodyAllocations = styled.tbody`
 
 export const TrBody = styled.tr`
   ${() => css`
-    /* display: flex;
-    justify-content: space-between; */
     display: grid;
     /* grid-template-columns: repeat(6, 1fr); */
     grid-template-columns: 1fr 1fr 1fr 4.8rem 1fr 1fr;
@@ -95,142 +94,184 @@ export const TrBody = styled.tr`
     :not(:first-child) {
       border-top: 1px solid rgba(255, 255, 255, 0.3);
     }
-  `}
-`
 
-export const TokenInfo = styled.td`
-  ${() => css`
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-  `}
-`
-
-export const TokenNameContainer = styled.div`
-  ${({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.4rem;
-
-    > p {
-      color: #bdbdbd;
-      font-size: ${theme.font.sizes.font12};
-      font-weight: ${theme.font.weight.light};
-      line-height: 104%;
+    @media (max-width: 576px) {
+      margin-inline: 1.6rem;
+      padding: 1.4rem 0;
+      /* grid-template-columns: repeat(5, 1fr); */
+      /* grid-template-columns: 1fr 1fr 1fr 1fr 1fr; */
+      grid-template-columns: none;
+      gap: 0;
+      grid-template-areas:
+        'tokenInfo porcentage arrow newAllocation'
+        '. moreInfo moreInfo .'
+        'currentAmount currentAmount newAmount newAmount';
     }
   `}
 `
 
-export const TokenName = styled.span`
-  ${({ theme }) => css`
-    > a {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
+// export const TokenInfo = styled.td`
+//   ${() => css`
+//     display: flex;
+//     align-items: center;
+//     gap: 1.2rem;
 
-      color: #fcfcfc;
-      font-size: ${theme.font.sizes.font14};
-      font-weight: ${theme.font.weight.medium};
-      line-height: 104%;
+//     @media (max-width: 576px) {
+//       grid-area: tokenInfo;
+//     }
+//   `}
+// `
 
-      text-decoration: none;
-    }
-  `}
-`
+// export const TokenNameContainer = styled.div`
+//   ${({ theme }) => css`
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+//     gap: 0.4rem;
 
-export const CurrentAmount = styled.td`
-  ${({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 0.4rem;
+//     > p {
+//       color: #bdbdbd;
+//       font-size: ${theme.font.sizes.font12};
+//       font-weight: ${theme.font.weight.light};
+//       line-height: 104%;
+//     }
+//   `}
+// `
 
-    > span {
-      color: #ffffff;
-      font-size: ${theme.font.sizes.font14};
-      font-weight: ${theme.font.weight.medium};
-      line-height: 104%;
-    }
-    > p {
-      color: #bfbfbf;
-      font-size: ${theme.font.sizes.font14};
-      font-weight: ${theme.font.weight.light};
-      line-height: 104%;
-    }
-  `}
-`
-export const Allocation = styled.td`
-  ${({ theme }) => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+// export const TokenName = styled.span`
+//   ${({ theme }) => css`
+//     > a {
+//       display: flex;
+//       align-items: center;
+//       gap: 0.4rem;
 
-    color: #ffffff;
-    font-size: ${theme.font.sizes.font16};
-    font-weight: ${theme.font.weight.medium};
-    line-height: 100%;
-  `}
-`
+//       color: #fcfcfc;
+//       font-size: ${theme.font.sizes.font14};
+//       font-weight: ${theme.font.weight.medium};
+//       line-height: 104%;
 
-export const Arrow = styled.td`
-  ${({ theme }) => css`
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  `}
-`
+//       text-decoration: none;
+//     }
+//   `}
+// `
 
-export const NewAllocation = styled.td`
-  ${() => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.8rem;
+// export const CurrentAmount = styled.td`
+//   ${({ theme }) => css`
+//     display: flex;
+//     flex-direction: column;
+//     align-items: flex-end;
+//     justify-content: center;
+//     gap: 0.4rem;
 
-    /* input {
-      max-width: 6.1rem;
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 4px;
-      padding: 8px 8px 8px 12px;
-    } */
-  `}
-`
+//     > span {
+//       color: #ffffff;
+//       font-size: ${theme.font.sizes.font14};
+//       font-weight: ${theme.font.weight.medium};
+//       line-height: 104%;
+//     }
+//     > p {
+//       color: #bfbfbf;
+//       font-size: ${theme.font.sizes.font14};
+//       font-weight: ${theme.font.weight.light};
+//       line-height: 104%;
+//     }
 
-export const ImageContent = styled.span`
-  ${() => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
+//     @media (max-width: 576px) {
+//       grid-area: currentAmount;
+//     }
+//   `}
+// `
+// export const Allocation = styled.td`
+//   ${({ theme }) => css`
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     text-align: center;
 
-    height: 3.2rem;
-    min-width: 3.2rem;
-    border-radius: 50%;
-    background: #ffffff10;
-  `}
-`
+//     color: #ffffff;
+//     font-size: ${theme.font.sizes.font16};
+//     font-weight: ${theme.font.weight.medium};
+//     line-height: 100%;
 
-export const NewAmount = styled.td`
-  ${({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: center;
+//     @media (max-width: 576px) {
+//       grid-area: porcentage;
+//     }
+//   `}
+// `
 
-    > span {
-      color: #ffffff;
-      font-size: ${theme.font.sizes.font14};
-      font-weight: ${theme.font.weight.medium};
-      line-height: 104%;
-    }
-    > p {
-      color: #bfbfbf;
-      font-size: ${theme.font.sizes.font14};
-      font-weight: ${theme.font.weight.light};
-      line-height: 104%;
-    }
-  `}
-`
+// export const Arrow = styled.td`
+//   ${() => css`
+//     display: flex;
+//     align-items: center;
+//     justify-content: flex-start;
+
+//     @media (max-width: 576px) {
+//       grid-area: arrow;
+//     }
+//   `}
+// `
+
+// export const NewAllocation = styled.td`
+//   ${() => css`
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     gap: 0.8rem;
+
+//     @media (max-width: 576px) {
+//       grid-area: newAllocation;
+//     }
+
+//     /* input {
+//       max-width: 6.1rem;
+//       background: rgba(255, 255, 255, 0.15);
+//       border: 1px solid rgba(255, 255, 255, 0.05);
+//       border-radius: 4px;
+//       padding: 8px 8px 8px 12px;
+//     } */
+//   `}
+// `
+
+// export const ImageContent = styled.span`
+//   ${() => css`
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+
+//     height: 3.2rem;
+//     min-width: 3.2rem;
+//     border-radius: 50%;
+//     background: #ffffff10;
+//   `}
+// `
+
+// export const InputCheckbox = styled.td`
+//   max-width: 1rem;
+//   max-height: 1rem;
+// `
+
+// export const NewAmount = styled.td`
+//   ${({ theme }) => css`
+//     display: flex;
+//     flex-direction: column;
+//     align-items: flex-end;
+//     justify-content: center;
+
+//     > span {
+//       color: #ffffff;
+//       font-size: ${theme.font.sizes.font14};
+//       font-weight: ${theme.font.weight.medium};
+//       line-height: 104%;
+//     }
+//     > p {
+//       color: #bfbfbf;
+//       font-size: ${theme.font.sizes.font14};
+//       font-weight: ${theme.font.weight.light};
+//       line-height: 104%;
+//     }
+
+//     @media (max-width: 576px) {
+//       grid-area: newAmount;
+//     }
+//   `}
+// `
