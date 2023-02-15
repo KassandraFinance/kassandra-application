@@ -17,7 +17,7 @@ export const DashBoard = styled.div<IDashBoardProps>`
     display: grid;
     grid-template-columns: 0rem 100%;
 
-    transition-duration: 550ms;
+    transition-duration: 500ms;
     transition-timing-function: ease;
     transition-property: grid;
 
@@ -97,7 +97,7 @@ export const UserImageWrapper = styled.div<IUserImageWrapperProps>`
 
     opacity: ${isOpen ? '0' : '1'};
 
-    transition-duration: 550ms;
+    transition-duration: 500ms;
     transition-timing-function: ease;
     transition-property: opacity;
 
@@ -120,7 +120,7 @@ export const CloseIconWrapper = styled.div<ICloseIconWrapperProps>`
 
     opacity: ${isOpen ? '1' : '0'};
 
-    transition-duration: 550ms;
+    transition-duration: 500ms;
     transition-timing-function: ease;
     transition-property: opacity;
   `}

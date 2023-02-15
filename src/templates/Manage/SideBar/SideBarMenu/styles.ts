@@ -46,7 +46,7 @@ export const TitleText = styled.p<ITitleTextProps>`
 
     opacity: 1;
 
-    transition-duration: 700ms;
+    transition-duration: 500ms;
     transition-timing-function: ease;
     transition-property: opacity;
   `}
@@ -78,7 +78,7 @@ export const OpenButton = styled.div<IOpenButtonProps>`
 
     background-color: transparent;
 
-    transition-duration: 550ms;
+    transition-duration: 500ms;
     transition-timing-function: ease;
     transition-property: transform;
   `}
@@ -101,7 +101,7 @@ export const PoolContainer = styled.div<IPoolContainerProps>`
     opacity: 0;
     overflow: hidden;
 
-    transition-duration: 700ms;
+    transition-duration: 500ms;
     transition-timing-function: ease;
     transition-property: max-height opacity;
   `}
@@ -109,15 +109,12 @@ export const PoolContainer = styled.div<IPoolContainerProps>`
     max-height: ${4 * height + 0.8}rem;
 
     opacity: 1;
-    overflow: visible;
   `}
   ${({ isOpen, height }) => isOpen && css`
     @media (min-width: 992px) {
       max-height: ${4 * height + 0.8}rem;
 
       opacity: 1;
-
-      overflow: visible;
     }
   `}
 `
