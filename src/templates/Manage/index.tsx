@@ -5,6 +5,7 @@ import { useAppSelector } from '../../store/hooks'
 import { chains } from '../../constants/tokenAddresses'
 
 import Overlay from '../../components/Overlay'
+import Header from '../../components/Header'
 
 import GetStarted from './GetStarted'
 import SideBar from './SideBar'
@@ -71,10 +72,9 @@ const Manage = () => {
         <div></div>
 
         <S.Content>
-          {
-            // userWalletAddress.length !== 42 ? <GetStarted /> : <Overview />
-          }
-          <Overview />
+          <Header />
+
+          {userWalletAddress.length !== 42 ? <GetStarted /> : <Overview />}
         </S.Content>
       </S.DashBoard>
     </S.Manage>
