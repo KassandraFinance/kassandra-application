@@ -1,7 +1,7 @@
 import { TooltipProps } from 'recharts'
 
 import Big from 'big.js'
-import { BNtoDecimal } from '../../../../../../utils/numerals'
+import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import * as S from './styles'
 

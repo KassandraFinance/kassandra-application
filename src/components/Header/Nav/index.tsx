@@ -85,17 +85,16 @@ const Nav = ({
             Stake
           </S.MenuLink>
         </Link>
-        {/* <Link href="/manage" passHref> */}
-        <S.MenuLink
-          onClick={() => {
-            setIsModalWaitingList(true)
-            trackEventFunction('click-on-link', 'manage', 'header')
-          }}
-          active={router.asPath === '/manage'}
-        >
-          Manage
-        </S.MenuLink>
-        {/* </Link> */}
+        <Link href="/manage" passHref>
+          <S.MenuLink
+            onClick={() => {
+              trackEventFunction('click-on-link', 'manage', 'header')
+            }}
+            active={router.asPath === '/manage'}
+          >
+            Manage
+          </S.MenuLink>
+        </Link>
         <DropdownMenu
           nameOnHeader="DAO"
           isActive={
