@@ -60,9 +60,10 @@ const TokenAssetIn = ({
         setMaxActive(false)
         return
       }
-
-      inputAmountTokenRef.current.value = wei2String(selectedTokenInBalance)
-      setamountTokenIn(selectedTokenInBalance)
+      const tokenInBalance = wei2String(selectedTokenInBalance)
+      inputAmountTokenRef.current.value = tokenInBalance
+      setamountTokenIn(decimalToBN(tokenInBalance))
+      // setamountTokenIn(selectedTokenInBalance)
       setMaxActive(true)
     }
   }
