@@ -22,17 +22,22 @@ export const ExecutionPeriod = styled.div`
       text-transform: uppercase;
     }
 
-    @media (max-width: 976px) {
+    @media (max-width: 992px) {
       max-width: 100%;
+      margin-bottom: 15rem;
     }
   `}
 `
 
 export const ExecutionPeriodBody = styled.div`
   ${() => css`
-    @media (max-width: 976px) {
+    @media (min-width: 576px) and (max-width: 992px) {
       display: flex;
     }
+    /*
+    @media (max-width: 576px) {
+      flex-direction: column;
+    } */
   `}
 `
 
@@ -47,8 +52,9 @@ export const SelectPeriodCotainer = styled.div`
 
     width: 100%;
 
-    @media (max-width: 976px) {
+    @media (min-width: 576px) and (max-width: 992px) {
       margin-right: 2.4rem;
+      margin-bottom: 0;
     }
   `}
 `
@@ -85,7 +91,7 @@ export const PersonalizePeriodContainer = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
-    /* padding-top: 2.4rem; */
+    padding-top: 2.4rem;
     width: 100%;
 
     border-top: 1px solid rgba(255, 255, 255, 0.3);
@@ -100,11 +106,13 @@ export const PersonalizePeriodContainer = styled.div`
       margin-bottom: 1.6rem;
     }
 
-    @media (max-width: 976px) {
-      border-top: none;
-      border-left: 1px solid rgba(255, 255, 255, 0.3);
+    @media (min-width: 576px) and (max-width: 992px) {
       margin-top: 2.5rem;
       padding-left: 2.4rem;
+      padding-top: 0;
+
+      border-top: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.3);
     }
   `}
 `
@@ -123,6 +131,8 @@ export const PersonalizePeriod = styled.div`
       font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.light};
       line-height: 135%;
+
+      padding-right: 2rem;
     }
   `}
 `

@@ -60,8 +60,11 @@ export const AllocationsAndExecutionPeriod = styled.div`
     /* justify-content: center; */
     gap: 2.4rem;
 
-    @media (max-width: 976px) {
+    @media (max-width: 992px) {
       flex-direction: column;
+    }
+    @media (max-width: 576px) {
+      align-items: center;
     }
   `}
 `
