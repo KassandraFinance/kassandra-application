@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 
 import Header from '../../components/Header'
 import SelectTabs from '../../components/SelectTabs'
@@ -6,6 +6,9 @@ import Overlay from '../../components/Overlay'
 import SideBar from '../Manage/SideBar'
 import Button from '../../components/Button'
 
+import Analytics from './Analytics'
+import Allocations from './Allocations'
+import ComingSoon from './ComingSoon'
 import ManageAssets from '../Manage/ManageAssets'
 
 import analytics from '../../../public/assets/tabManage/analytics.svg'
@@ -19,51 +22,60 @@ import gear from '../../../public/assets/icons/gear.svg'
 
 import * as S from './styles'
 
+const tabs = [
+  {
+    asPathText: 'analytics',
+    text: 'Analytics',
+    icon: analytics
+  },
+  {
+    asPathText: 'allocations',
+    text: 'Allocations',
+    icon: allocations
+  },
+  {
+    asPathText: 'activity',
+    text: 'Activity',
+    icon: activity
+  },
+  {
+    asPathText: 'investors',
+    text: 'Investors',
+    icon: investors
+  },
+  {
+    asPathText: 'fee-rewards',
+    text: 'Fee Rewards',
+    icon: rewards
+  },
+  {
+    asPathText: 'brokers',
+    text: 'Brokers',
+    icon: brokers
+  },
+  {
+    asPathText: 'info',
+    text: 'Info',
+    icon: info
+  }
+]
+
 const PoolManager = () => {
   const [isManageAssets, setIsManageAssets] = React.useState(false)
-
+  const [isOpen, setIsOpen] = React.useState(false)
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
   >('analytics')
-  const [isOpen, setIsOpen] = React.useState(false)
 
-  const tabs = [
-    {
-      asPathText: 'analytics',
-      text: 'Analytics',
-      icon: analytics
-    },
-    {
-      asPathText: 'allocations',
-      text: 'Allocations',
-      icon: allocations
-    },
-    {
-      asPathText: 'activity',
-      text: 'Activity',
-      icon: activity
-    },
-    {
-      asPathText: 'investors',
-      text: 'Investors',
-      icon: investors
-    },
-    {
-      asPathText: 'fee-rewards',
-      text: 'Fee Rewards',
-      icon: rewards
-    },
-    {
-      asPathText: 'brokers',
-      text: 'Brokers',
-      icon: brokers
-    },
-    {
-      asPathText: 'info',
-      text: 'Info',
-      icon: info
-    }
-  ]
+  const PoolManagerComponents: { [key: string]: ReactElement } = {
+    analytics: <Analytics />,
+    allocations: <Allocations />,
+    activity: <ComingSoon />,
+    investors: <ComingSoon />,
+    feeRewards: <ComingSoon />,
+    brokers: <ComingSoon />,
+    info: <ComingSoon />
+  }
 
   return (
     <S.PoolManager>
@@ -75,6 +87,9 @@ const PoolManager = () => {
 
         <S.Content>
           <Header />
+          <S.Intro>
+            <p>Awesome Pool</p>
+          </S.Intro>
           <Button
             backgroundSecondary
             size="large"
@@ -87,7 +102,11 @@ const PoolManager = () => {
             isSelect={isSelectTab}
             setIsSelect={setIsSelectTab}
           />
-          <h1>saudades do que a gente ainda não viveu</h1>
+          {
+            PoolManagerComponents[
+              `${isSelectTab === 'fee-rewards' ? 'feeRewards' : isSelectTab}`
+            ]
+          }
         </S.Content>
       </S.DashBoard>
       {isManageAssets && <ManageAssets />}
