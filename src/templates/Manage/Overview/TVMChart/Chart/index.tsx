@@ -25,7 +25,7 @@ interface IChartProps {
 const Chart = ({ data, color }: IChartProps) => {
   return (
     <S.Chart>
-      <ResponsiveContainer width="99.9%" height="100%">
+      <ResponsiveContainer width="99%" height="100%">
         <AreaChart
           data={data}
           style={{

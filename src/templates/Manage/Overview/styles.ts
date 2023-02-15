@@ -2,9 +2,10 @@ import styled, { css } from 'styled-components'
 
 export const Overview = styled.div`
   ${() => css`
-    min-height: 100vh;
     margin-top: 2.4rem;
     padding-inline: 1.6rem;
+
+    overflow: hidden;
 
     @media (min-width: 768px) {
       margin-top: 6.3rem;
@@ -34,6 +35,7 @@ export const ManagerOverviewContainer = styled.div`
     gap: 1.6rem;
 
     width: 100%;
+    margin-bottom: 4.8rem;
 
     @media (min-width: 768px) {
       gap: 1.9rem;
@@ -73,5 +75,11 @@ export const StatsContainer = styled.div`
     @media (min-width: 992px) {
       flex-direction: column;
     }
+  `}
+`
+
+export const ManagedPoolsContainer = styled.div`
+  ${() => css`
+    width: 100%;
   `}
 `
