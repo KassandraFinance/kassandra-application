@@ -1,8 +1,8 @@
 import React from 'react'
 
 import TitleSection from '../../../components/TitleSection'
-import StatusCard from './StatusCard'
-import TVMChart from './TVMChart'
+import StatusCard from '../../../components/Manage/StatusCard'
+import TVMChart from '../../../components/Manage/TVMChart'
 import ManagedPools from './ManagedPools'
 
 import managerOveriewIcon from '../../../../public/assets/iconGradient/section-title-eye.svg'

@@ -2,10 +2,10 @@ import React from 'react'
 
 import Chart from './Chart'
 import Change from './Change'
-import InputList from '../../../../components/Inputs/InputList'
+import InputList from '../../Inputs/InputList'
 
 import * as S from './styles'
-import SegmentedControls from '../../../../components/Inputs/SegmentedControls'
+import SegmentedControls from '../../Inputs/SegmentedControls'
 
 const dataList = ['1D', '1M', '3M', '6M']
 

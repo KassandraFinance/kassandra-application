@@ -1,6 +1,4 @@
-import InputList, {
-  DataListType
-} from '../../../../components/Inputs/InputList'
+import InputList, { DataListType } from '../../Inputs/InputList'
 
 import * as S from './styles'
 

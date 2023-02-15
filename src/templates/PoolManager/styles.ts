@@ -54,10 +54,8 @@ export const DashBoard = styled.div<IDashBoardProps>`
 export const Content = styled.div`
   ${() => css`
     min-height: 100vh;
-    margin-top: 2.4rem;
     padding-inline: 1.6rem;
     @media (min-width: 768px) {
-      margin-top: 6.3rem;
       padding-inline: 2.4rem;
     }
   `}
