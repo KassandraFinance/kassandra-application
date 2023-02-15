@@ -22,11 +22,11 @@ export const FilterWrapper = styled.div`
 
 export const ManagedPoolsWrapper = styled.div`
   ${() => css`
-    width: 40rem;
+    max-width: 400px;
     margin-inline: auto;
 
     @media (min-width: 768px) {
-      width: 100%;
+      max-width: 100%;
     }
   `}
 `
