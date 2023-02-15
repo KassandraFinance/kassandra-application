@@ -31,12 +31,10 @@ const ManagedPools = () => {
       </S.FilterContainer>
 
       <S.ManagedPoolsWrapper>
-      <S.ManagedPoolsContainer>
-        <FundCard poolAddress="0x38918142779e2CD1189cBd9e932723C968363D1E" />
-        <FundCard poolAddress="0xA6CAB4b1019ee22309dcA5ba62C3372a791dcB2E" />
-        <FundCard poolAddress="0xA6CAB4b1019ee22309dcA5ba62C3372a791dcB2E" />
-        <FundCard poolAddress="0xA6CAB4b1019ee22309dcA5ba62C3372a791dcB2E" />
-      </S.ManagedPoolsContainer>
+        <S.ManagedPoolsContainer>
+          <FundCard poolAddress="0x38918142779e2CD1189cBd9e932723C968363D1E" />
+          <FundCard poolAddress="0xA6CAB4b1019ee22309dcA5ba62C3372a791dcB2E" />
+        </S.ManagedPoolsContainer>
       </S.ManagedPoolsWrapper>
     </S.ManagedPools>
   )

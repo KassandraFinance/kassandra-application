@@ -22,7 +22,7 @@ export const FilterWrapper = styled.div`
 
 export const ManagedPoolsWrapper = styled.div`
   ${() => css`
-    max-width: 400px;
+    max-width: 40rem;
     margin-inline: auto;
 
     @media (min-width: 768px) {
@@ -34,7 +34,7 @@ export const ManagedPoolsWrapper = styled.div`
 export const ManagedPoolsContainer = styled.div`
   ${() => css`
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(310px, auto));
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
     gap: 1.6rem;
 
     width: 100%;
