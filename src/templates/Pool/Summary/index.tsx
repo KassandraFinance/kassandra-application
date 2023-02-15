@@ -17,17 +17,7 @@ import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 
 import * as S from './styles'
 
-interface ISummaryProps {
-  strategy: string;
-  // poolContract: string;
-  // poolController: string;
-  // summary: string | undefined;
-  // symbol: string;
-  // link: string | undefined;
-  // icon: any;
-}
-
-const Summary = ({ strategy }: ISummaryProps) => {
+const Summary = () => {
   const pool = useAppSelector(state => state.pool)
 
   const { trackEventFunction } = useMatomoEcommerce()
@@ -43,12 +33,12 @@ const Summary = ({ strategy }: ISummaryProps) => {
         <h2>Summary</h2>
       </S.Title>
       <S.Line />
-      <p>{pool.summary}</p>
+      {/* <p>{pool.summary}</p> */}
       <S.LinkContent>
         {/* <a href="https://coinmarketcap.com/">
           View On CoinMarketCap <img src="/assets/utilities/external-link.svg" alt="" />
         </a> */}
-        {pool.symbol === 'aHYPE' ? (
+        {/* {pool.symbol === 'aHYPE' ? (
           <a
             href={pool.url}
             target="_blank"
@@ -79,7 +69,7 @@ const Summary = ({ strategy }: ISummaryProps) => {
           </a>
         ) : (
           ''
-        )}
+        )} */}
       </S.LinkContent>
       <S.ContractsName>{pool.chain.chainName} CONTRACTS</S.ContractsName>
       <S.CopyContract>
@@ -283,9 +273,9 @@ const Summary = ({ strategy }: ISummaryProps) => {
             </svg>
           </a>
         </S.Blockchain>
-        {strategy &&
-        strategy !== '0x0000000000000000000000000000000000000000' ? (
-          <CopyToClipboard text={strategy}>
+        {pool.strategy &&
+        pool.strategy !== '0x0000000000000000000000000000000000000000' ? (
+          <CopyToClipboard text={pool.strategy}>
             <button
               type="button"
               onClick={() => {
@@ -297,7 +287,7 @@ const Summary = ({ strategy }: ISummaryProps) => {
                 )
               }}
             >
-              {substr(strategy)}
+              {substr(pool.strategy)}
               <svg
                 width="12"
                 height="13"

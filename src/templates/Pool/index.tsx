@@ -24,7 +24,7 @@ import ChartProducts from '../../components/ChartProducts'
 import ScrollUpButton from '../../components/ScrollUpButton'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
-// import PoweredBy from './PoweredBy'
+import PoweredBy from './PoweredBy'
 // import ActivityTable from './ActivityTable'
 
 import Change from './Change'
@@ -188,7 +188,7 @@ const Pool = () => {
         />
       </ShareImageModal>
       <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem href={`/pool/${pool.symbol.toLowerCase()}`} isLastPage>
           ${pool.symbol}
         </BreadcrumbItem>
@@ -325,11 +325,11 @@ const Pool = () => {
                 pid={pool.poolId}
                 decimals={infoPool.decimals}
               />
-              <Summary strategy={pool.strategy} />
-              {/* {pool.partners ?? <PoweredBy partners={pool.partners} />} */}
+              <Summary />
+              {pool.partners && <PoweredBy />}
               <Distribution />
               {/* <ActivityTable /> */}
-              <TokenDescription symbol={pool.symbol} />
+              <TokenDescription />
             </S.ProductDetails>
             <NewPoolOperations />
           </S.Product>

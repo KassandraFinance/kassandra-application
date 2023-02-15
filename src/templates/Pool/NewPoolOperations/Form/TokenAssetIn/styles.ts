@@ -11,7 +11,7 @@ export const TokenAssetIn = styled.form`
     font-size: ${theme.font.sizes.font16};
 
     background: rgba(31, 31, 31, 0.72);
-    border-radius: 1.6rem;
+    border-radius: 1rem;
 
     min-width: 38rem;
 
@@ -52,10 +52,14 @@ export const AmountContainer = styled.div`
 
     .price-dolar {
       margin-top: 0.2rem;
+      max-width: 20rem;
 
       color: #c4c4c4;
       font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.light};
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   `}
 `
@@ -86,6 +90,7 @@ export const Title = styled.span`
   ${({ theme }) => css`
     color: ${theme.colors.snow};
     font-size: ${theme.font.sizes.font12};
+    height: 2rem;
 
     @media (max-width: 360px) {
       padding-left: 1.2rem;
@@ -128,6 +133,7 @@ export const Input = styled.input`
   ${({ theme }) => css`
     width: 100%;
     margin: 0.8rem 0;
+    max-width: 20rem;
 
     background-color: transparent;
     border: none;

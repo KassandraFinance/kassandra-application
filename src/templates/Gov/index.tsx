@@ -34,7 +34,7 @@ const Gov = () => {
   return (
     <>
       <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem href="/gov" isLastPage>
           Governance
         </BreadcrumbItem>

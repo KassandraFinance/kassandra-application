@@ -41,7 +41,7 @@ export const getStaticProps: GetStaticProps = async () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        query: `query { pools ${poolAddresses}}`
+        query: `query { pools (where: {chain_id_not: 137}) ${poolAddresses}}`
       })
     })
 
@@ -50,7 +50,6 @@ export const getStaticProps: GetStaticProps = async () => {
 
     return { props: { pools } }
   } catch (error) {
-    console.log(error)
-    return { notFound: true }
+    return { props: { pools: [] } }
   }
 }

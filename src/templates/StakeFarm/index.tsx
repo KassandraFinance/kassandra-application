@@ -58,7 +58,7 @@ const StakeFarm = () => {
   return (
     <>
       <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem href="/farm" isLastPage>
           Stake/Farm
         </BreadcrumbItem>

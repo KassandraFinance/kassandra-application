@@ -19,7 +19,13 @@ import waitTransaction, {
 } from '../../../../../utils/txWait'
 import changeChain from '../../../../../utils/changeChain'
 import { BNtoDecimal } from '../../../../../utils/numerals'
-import { checkTokenInThePool, checkTokenWithHigherLiquidityPool, getBalanceToken, getTokenWrapped } from '../../../../../utils/poolUtils'
+import {
+  checkTokenInThePool,
+  checkTokenWithHigherLiquidityPool,
+  getBalanceToken,
+  getTokenWrapped,
+  decimalToBN
+} from '../../../../../utils/poolUtils'
 
 import {
   ToastSuccess,
@@ -254,15 +260,18 @@ const Invest = ({ typeAction }: IInvestProps) => {
         if (txReceipt.status) {
           ToastSuccess(`Investment in ${tokenSymbol} confirmed`)
 
-          const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
-          const amountPool = await getBalanceToken(pool.address, userWalletAddress)
+          setTimeout( async () => {
+            const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
+            const amountPool = await getBalanceToken(pool.address, userWalletAddress)
 
-          setSelectedTokenInBalance(amountToken)
-          setOutAssetBalance(amountPool)
-          setAmountTokenOut(Big(0))
-          if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
-            inputAmountTokenRef.current.value = ''
-          }
+            setSelectedTokenInBalance(amountToken)
+            setOutAssetBalance(amountPool)
+            setAmountTokenOut(Big(0))
+            setAmountTokenIn(Big(0))
+            if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
+              inputAmountTokenRef.current.value = ''
+            }
+          }, 2000);
           return
         }
       }
@@ -377,6 +386,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
       // swapInAddress === crpPoolAddress
     ) {
       setAmountTokenOut(Big(0))
+      setErrorMsg('')
       return
     }
 
@@ -404,6 +414,8 @@ const Invest = ({ typeAction }: IInvestProps) => {
     }
 
     const calc = async () => {
+      if (!(inputAmountTokenRef && inputAmountTokenRef.current !== null)) return
+
       try {
         const tokenSelected = await handleTokenSelected()
 
@@ -415,6 +427,10 @@ const Invest = ({ typeAction }: IInvestProps) => {
           selectedTokenInBalance,
           amountTokenIn: Big(amountTokenIn)
         })
+
+        const valueFormatted = decimalToBN(inputAmountTokenRef.current.value, tokenSelect.decimals)
+
+        if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
 
         setAmountTokenOut(Big(investAmountOut.toString()))
         if (transactionError) {
@@ -518,28 +534,31 @@ const Invest = ({ typeAction }: IInvestProps) => {
         outAssetBalance={outAssetBalance}
         setOutAssetBalance={setOutAssetBalance}
       />
-      <S.ExchangeRate>
-        <S.SpanLight>Price Impact:</S.SpanLight>
-        <S.PriceImpactWrapper price={BNtoDecimal(
-          priceImpact,
-          18,
-          2,
-          2
-        )}>
-          {BNtoDecimal(
+
+      <S.TransactionSettingsContainer>
+        <S.ExchangeRate>
+          <S.SpanLight>Price Impact:</S.SpanLight>
+          <S.PriceImpactWrapper price={BNtoDecimal(
             priceImpact,
             18,
             2,
             2
-          )}%
-        </S.PriceImpactWrapper>
-      </S.ExchangeRate>
-      <S.ExchangeRate>
-        {/* <S.SpanLight>{title} fee:</S.SpanLight>
-        <S.SpanLight>{fees[title]}%</S.SpanLight> */}
-        <S.SpanLight>Invest fee:</S.SpanLight>
-        <S.SpanLight>0%</S.SpanLight>
-      </S.ExchangeRate>
+          )}>
+            {BNtoDecimal(
+              priceImpact,
+              18,
+              2,
+              2
+            )}%
+          </S.PriceImpactWrapper>
+        </S.ExchangeRate>
+        <S.ExchangeRate>
+          {/* <S.SpanLight>{title} fee:</S.SpanLight>
+          <S.SpanLight>{fees[title]}%</S.SpanLight> */}
+          <S.SpanLight>Invest fee:</S.SpanLight>
+          <S.SpanLight>0%</S.SpanLight>
+        </S.ExchangeRate>
+      </S.TransactionSettingsContainer>
       <S.TransactionSettingsOptions>
         <TransactionSettings slippage={slippage} setSlippage={setSlippage} />
       </S.TransactionSettingsOptions>

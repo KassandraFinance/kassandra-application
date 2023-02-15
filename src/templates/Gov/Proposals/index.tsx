@@ -47,7 +47,7 @@ const Proposals = () => {
   return (
     <>
       <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem href="/gov">Governance</BreadcrumbItem>
         <BreadcrumbItem href="/gov/proposals" isLastPage>
           Governance Proposals

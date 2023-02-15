@@ -5,11 +5,10 @@ import Blockies from 'react-blockies'
 
 import { useAppSelector } from '../../../../../store/hooks'
 
-import { ERC20 } from '../../../../../hooks/useERC20Contract';
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
 
 import { BNtoDecimal } from '../../../../../utils/numerals';
-import { getBalanceToken } from '../../../../../utils/poolUtils';
+import { decimalToBN } from '../../../../../utils/poolUtils';
 
 import * as S from './styles'
 
@@ -24,7 +23,6 @@ interface ITokenAssetInProps {
   maxActive: boolean;
   setMaxActive: React.Dispatch<React.SetStateAction<boolean>>;
   selectedTokenInBalance: Big;
-  setSelectedTokenInBalance: React.Dispatch<React.SetStateAction<Big>>;
   inputAmountTokenRef: React.RefObject<HTMLInputElement>;
   errorMsg: string;
   disabled: string;
@@ -37,12 +35,11 @@ const TokenAssetIn = ({
   maxActive,
   setMaxActive,
   selectedTokenInBalance,
-  setSelectedTokenInBalance,
   inputAmountTokenRef,
   errorMsg,
   disabled
  }: ITokenAssetInProps) => {
-  const { pool, userWalletAddress, chainId } = useAppSelector(state => state)
+  const { pool, userWalletAddress } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
 
   function wei2String(input: Big) {
@@ -69,24 +66,6 @@ const TokenAssetIn = ({
       setMaxActive(true)
     }
   }
-
-  React.useEffect(() => {
-    if (
-      pool.id.length === 0 ||
-      userWalletAddress.length === 0 ||
-      chainId.toString().length === 0 ||
-      chainId !== pool.chainId ||
-      !Big(amountTokenIn).lte(Big(0))
-    ) {
-      return
-    }
-
-    (async () => {
-      const balance = await getBalanceToken(pool.address, userWalletAddress)
-      setSelectedTokenInBalance(balance)
-    })()
-
-  }, [userWalletAddress, pool, amountTokenIn])
 
   return (
     <S.TokenAssetIn>
@@ -140,7 +119,7 @@ const TokenAssetIn = ({
               className="noscroll"
               readOnly={userWalletAddress.length === 0}
               ref={inputAmountTokenRef}
-              value={inputAmountTokenRef?.current?.value}
+              // value={inputAmountTokenRef?.current?.value}
               type="number"
               placeholder="0"
               step="any"
@@ -149,7 +128,7 @@ const TokenAssetIn = ({
                 // eslint-disable-next-line prettier/prettier
                 const target = e.target as HTMLInputElement
                 // don't allow negative numbers
-                if (e.key === '-') {
+                if (e.key.length === 1 && e.key.search(/[0-9,.]/) === -1) {
                   e.preventDefault()
                 }
                 // Blink bug makes the value come empty if pressing the decimal symbol that is not that of the current locale
@@ -178,17 +157,15 @@ const TokenAssetIn = ({
                     e.target.value = `0${e.target.value}`
                   }
 
-                  const decimalsNum = 18
-                  const values = value.split('.')
-                  const paddedRight = `${values[0]}${`${values[1] || 0}${'0'.repeat(decimalsNum)}`.slice(0, decimalsNum)}`
+                  const valueFormatted = decimalToBN(value)
 
                   setMaxActive(false)
-                  setamountTokenIn(paddedRight)
+                  setamountTokenIn(valueFormatted)
                 }
               }
             />
           </Tippy>
-          <span className="price-dolar">
+          <p className="price-dolar">
             {pool.id &&
               amountTokenIn &&
               'USD: ' +
@@ -202,7 +179,7 @@ const TokenAssetIn = ({
                   2,
                   2
                 )}
-          </span>
+          </p>
         </S.AmountContainer>
       </S.Body>
       {errorMsg && errorMsg !== '' && (

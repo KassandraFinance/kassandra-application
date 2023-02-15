@@ -4,8 +4,7 @@ export const ListOfAllAsset = styled.form`
   ${() => css`
     width: 100%;
 
-    margin-bottom: 0.8rem;
-    padding-top: 1.6rem;
+    padding-top: 1rem;
     padding-right: 0.8rem;
     padding-bottom: 1.6rem;
     padding-left: 1.6rem;
@@ -117,7 +116,7 @@ export const IntroBestValue = styled.div`
     align-items: center;
 
     padding-right: 0.8rem;
-    padding-bottom: 1.6rem;
+    padding-bottom: 0.2rem;
   `}
 `
 

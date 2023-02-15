@@ -1,7 +1,7 @@
 import { ChainInfo } from '../store/reducers/pool'
 
 import { PartnerData } from '../components/Partner'
-import partners from '../components/Partner/list'
+// import partners from '../components/Partner/list'
 
 import ahypeIcon from '../../public/assets/logos/ahype.svg'
 import tricryptoIcon from '../../public/assets/logos/tricrypto.svg'
@@ -81,7 +81,7 @@ export interface ProductDetails {
   chain: ChainDetails;
   name: string;
   symbol: string;
-  partners: PartnerData[];
+  partners?: PartnerData[];
   fundBy?: string;
   fundIcon?: any;
   pid?: number;
@@ -168,11 +168,11 @@ const ahype: ProductDetails  = process.env.NEXT_PUBLIC_MASTER === '1' ?
     fundSummary: `The Social Index $aHYPE reflects the performance of a portfolio selected
     from the most socially active cryptocurrencies in the past 30 days,
     using Heimdall Social Score data.`,
-    partners: [
-      partners.avalanche,
-      partners.heimdall,
-      partners.api3
-    ],
+    // partners: [
+    //   partners.avalanche,
+    //   partners.heimdall,
+    //   partners.api3
+    // ],
     addresses: [
       '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd',
@@ -203,11 +203,11 @@ const ahype: ProductDetails  = process.env.NEXT_PUBLIC_MASTER === '1' ?
     fundSummary: `The Social Index $aHYPE reflects the performance of a portfolio selected
     from the most socially active cryptocurrencies in the past 30 days,
     using Heimdall Social Score data.`,
-    partners: [
-      partners.avalanche,
-      partners.heimdall,
-      partners.api3
-    ],
+    // partners: [
+    //   partners.avalanche,
+    //   partners.heimdall,
+    //   partners.api3
+    // ],
     addresses: [
       '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd',
@@ -235,13 +235,13 @@ const tricrypto: ProductDetails  = process.env.NEXT_PUBLIC_MASTER === '1' ?
     fundLink: 'https://kassandrafoundation.medium.com/kassandras-new-autocompounding-strategy-tricrypto-185eb1fca2c2',
     fundSummary: `The #K3C represents a yield-earning portfolio composed of BTC,
     ETH, DAI and KACY built in partnership with our friends back at Yield Yak.`,
-    partners: [
-      partners.avalanche,
-      partners.yieldYak,
-      partners.traderJoe,
-      partners.aave,
-      partners.benqi,
-    ],
+    // partners: [
+    //   partners.avalanche,
+    //   partners.yieldYak,
+    //   partners.traderJoe,
+    //   partners.aave,
+    //   partners.benqi,
+    // ],
     addresses: [
       '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab',
       '0x50b7545627a5162f82a992c33b87adc75187b218',
@@ -264,13 +264,13 @@ const tricrypto: ProductDetails  = process.env.NEXT_PUBLIC_MASTER === '1' ?
     fundLink: 'https://kassandrafoundation.medium.com/kassandras-new-autocompounding-strategy-tricrypto-185eb1fca2c2',
     fundSummary: `The #K3C represents a yield-earning portfolio composed of BTC,
     ETH, DAI and KACY built in partnership with our friends back at Yield Yak.`,
-    partners: [
-      partners.avalanche,
-      partners.yieldYak,
-      partners.traderJoe,
-      partners.aave,
-      partners.benqi,
-    ],
+    // partners: [
+    //   partners.avalanche,
+    //   partners.yieldYak,
+    //   partners.traderJoe,
+    //   partners.aave,
+    //   partners.benqi,
+    // ],
     addresses: [
       '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd',

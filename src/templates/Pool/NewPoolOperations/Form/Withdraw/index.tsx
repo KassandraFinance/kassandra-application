@@ -5,7 +5,7 @@ import web3 from '../../../../../utils/web3'
 import useSWR from 'swr';
 import { request } from 'graphql-request';
 
-import { BACKEND_KASSANDRA, ProxyContract } from '../../../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -17,7 +17,7 @@ import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
 import waitTransaction, { MetamaskError, TransactionCallback } from '../../../../../utils/txWait'
 import changeChain from '../../../../../utils/changeChain'
 import { BNtoDecimal } from '../../../../../utils/numerals'
-import { getBalanceToken } from '../../../../../utils/poolUtils';
+import { getBalanceToken, decimalToBN } from '../../../../../utils/poolUtils';
 
 import PoolOperationContext from '../PoolOperationContext';
 
@@ -198,27 +198,29 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         if (txReceipt.status) {
           ToastSuccess(`Withdrawal of ${tokenSymbol} confirmed`)
 
-          const amountPool = await getBalanceToken(pool.address, userWalletAddress)
-          if (inputAmountInTokenRef && inputAmountInTokenRef.current !== null) {
-            inputAmountInTokenRef.current.value = ''
-          }
-          if (typeWithdraw === 'Single_asset') {
-            const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
+          setTimeout(async () => {
+            const amountPool = await getBalanceToken(pool.address, userWalletAddress)
+            if (inputAmountInTokenRef && inputAmountInTokenRef.current !== null) {
+              inputAmountInTokenRef.current.value = ''
+            }
+            if (typeWithdraw === 'Single_asset') {
+              const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
 
-            setSelectedTokenInBalance(amountPool)
-            setSelectedTokenOutBalance(amountToken)
+              setSelectedTokenInBalance(amountPool)
+              setSelectedTokenOutBalance(amountToken)
 
-            setAmountTokenOut(Big(0))
-            setamountTokenIn(Big(0))
-          } else {
-            getUserBalanceAllToken()
-          }
+              setAmountTokenOut(Big(0))
+              setamountTokenIn(Big(0))
+            } else {
+              getUserBalanceAllToken()
+            }
+          }, 2000);
 
           return
         }
       }
     },
-    [ProxyContract]
+    []
   )
 
   const submitAction = (event: React.FormEvent<HTMLFormElement>) => {
@@ -286,16 +288,20 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     }
 
     if (chainId !== pool.chainId || new BigNumber(amountTokenIn.toString()).isZero()) {
+      setamountAllTokenOut(Array(pool.underlying_assets.length).fill(new BigNumber(0)))
+      setAmountTokenOut(new Big(0))
+      setErrorMsg('')
+
       if (tokenSelect.address === '') {
         setAmountTokenOut(new Big(0))
         return
       }
-
-      setAmountTokenOut(new Big(0))
       return
     }
 
     const calc = async () => {
+      if (!(inputAmountInTokenRef && inputAmountInTokenRef.current !== null)) return
+
       const tokenAddress = pool.underlying_assets.find(item =>
         (item.token.wraps ? item.token.wraps.id : item.token.id) === tokenSelect.address
       )
@@ -307,6 +313,10 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
             userWalletAddress,
             selectedTokenInBalance
           })
+
+          const valueFormatted = decimalToBN(inputAmountInTokenRef.current.value, tokenSelect.decimals)
+
+          if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
 
           setamountAllTokenOut(withdrawAllAmoutOut ?? [])
           transactionError && setErrorMsg(transactionError)
@@ -326,6 +336,11 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           userWalletAddress,
           selectedTokenInBalance
         })
+
+        const valueFormatted = decimalToBN(inputAmountInTokenRef.current.value, tokenSelect.decimals)
+
+        if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
+
         setAmountTokenOut(withdrawAmoutOut.toString())
         transactionError && setErrorMsg(transactionError)
       } catch (error) {
@@ -337,6 +352,25 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     setErrorMsg('')
     setAmountTokenOut(new Big(0))
   }, [typeAction, typeWithdraw, chainId, amountTokenIn, tokenSelect])
+
+  React.useEffect(() => {
+    if (
+      pool.id.length === 0 ||
+      userWalletAddress.length === 0 ||
+      chainId.toString().length === 0 ||
+      chainId !== pool.chainId ||
+      !Big(amountTokenIn).lte(Big(0))
+    ) {
+      return setSelectedTokenInBalance(Big(0))
+    }
+
+
+    (async () => {
+      const balance = await getBalanceToken(pool.address, userWalletAddress)
+      setSelectedTokenInBalance(balance)
+    })()
+
+  }, [userWalletAddress, pool, typeAction, typeWithdraw])
 
   React.useEffect(() => {
     const handleWallectConnect = () => {
@@ -373,7 +407,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       chainId !== pool.chainId ||
       typeWithdraw === 'Best_Value'
     ) {
-      return
+      return setbalanceAllTokenOut(Array(pool.underlying_assets.length).fill(new BigNumber(0)))
     }
 
     getUserBalanceAllToken()
@@ -441,7 +475,6 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         amountTokenIn={amountTokenIn}
         setamountTokenIn={setamountTokenIn}
         selectedTokenInBalance={selectedTokenInBalance}
-        setSelectedTokenInBalance={setSelectedTokenInBalance}
         inputAmountTokenRef={inputAmountInTokenRef}
         errorMsg={errorMsg}
         maxActive={maxActive}

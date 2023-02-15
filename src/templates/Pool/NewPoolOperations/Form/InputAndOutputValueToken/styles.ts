@@ -7,7 +7,7 @@ export const InputAndOutputValueToken = styled.div`
   padding: 1rem 1.6rem;
 
   background: rgba(31, 31, 31, 0.72);
-  border-radius: 1.6rem;
+  border-radius: 1rem;
 
   @media (max-width: 450px) {
     min-width: 30rem;
@@ -52,10 +52,14 @@ export const Amount = styled.div`
   .price-dolar {
     ${({ theme }) => css`
       margin-top: 0.2rem;
+      max-width: 20rem;
 
       color: #c4c4c4;
       font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.light};
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     `}
   }
 `
@@ -69,6 +73,7 @@ export const Span = styled.span<ISpanProps>`
     ${spanlight
       ? `
         height: 1.7rem;
+        width: 100%;
 
         color: ${theme.colors.grayDisabled};
         font-size: ${theme.font.sizes.font14};
@@ -104,12 +109,34 @@ export const Title = styled.span`
   }
 `
 
+export const amountTokenOutText = styled.p`
+  ${({ theme }) => css`
+    color: #fff;
+    font-size: ${theme.font.sizes.font20};
+    max-width: 20rem;
+
+    text-align: right;
+    width: 100%;
+    margin: 0.8rem 0;
+
+    outline: none;
+
+    @media (max-width: 380px) {
+      font-size: 22px;
+    }
+    @media (max-width: 350px) {
+      font-size: ${theme.font.sizes.font20};
+    }
+  `}
+`
+
 export const Input = styled.input`
   ${({ theme }) => css`
     background-color: transparent;
     border: none;
     color: #fff;
     font-size: ${theme.font.sizes.font20};
+    max-width: 20rem;
 
     text-align: right;
     width: 100%;

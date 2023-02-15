@@ -31,6 +31,15 @@ export const ExchangeRate = styled.div`
   margin-top: 0.8rem;
 `
 
+export const TransactionSettingsContainer = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 1rem;
+  `}
+`
+
 export const TransactionSettingsOptions = styled.div`
   display: flex;
   justify-content: space-between;

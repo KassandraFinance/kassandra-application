@@ -395,7 +395,7 @@ const Profile = () => {
   return (
     <>
       <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem
           href={`/profile/${userWalletAddress}`}
           isLastPage={userWalletAddress === profileAddress}

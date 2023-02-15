@@ -41,14 +41,15 @@ const Leaderboard = () => {
   return (
     <>
       <Breadcrumb>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem href="/gov">Governance</BreadcrumbItem>
         <BreadcrumbItem href="/gov/leaderboard" isLastPage>
           Voting Power Leaderboard
         </BreadcrumbItem>
       </Breadcrumb>
       {(metamaskInstalled && Number(chainId) !== chains.avalanche.chainId) ||
-      (userWalletAddress.length > 0 && Number(chainId) !== chains.avalanche.chainId) ? (
+      (userWalletAddress.length > 0 &&
+        Number(chainId) !== chains.avalanche.chainId) ? (
         <Web3Disabled
           textButton={`Connect to ${chains.avalanche.chainName}`}
           textHeader="Your wallet is set to the wrong network."
