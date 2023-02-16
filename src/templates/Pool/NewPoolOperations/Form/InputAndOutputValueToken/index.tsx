@@ -91,8 +91,10 @@ const InputAndOutputValueToken = ({
         return
       }
 
-      inputAmountTokenRef.current.value = wei2String(selectedTokenInBalance)
-      setAmountTokenIn(selectedTokenInBalance)
+      const tokenInBalance = wei2String(selectedTokenInBalance)
+      inputAmountTokenRef.current.value = tokenInBalance
+      setAmountTokenIn(decimalToBN(tokenInBalance, tokenSelect.decimals))
+      // setAmountTokenIn(selectedTokenInBalance)
       setMaxActive(true)
     }
   }
