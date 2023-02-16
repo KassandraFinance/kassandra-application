@@ -94,7 +94,7 @@ export default class operationV1 implements IOperations {
           .joinswapExternAmountIn(
             this.crpPool,
             tokenInAddress,
-            new BigNumber(amountTokenIn.toString()),
+            new BigNumber(amountTokenIn.toFixed()),
             minAmountOut,
             this.referral
           )
@@ -112,7 +112,7 @@ export default class operationV1 implements IOperations {
         .joinswapExternAmountInWithSwap(
           this.crpPool,
           tokenInAddress,
-          new BigNumber(amountTokenIn.toString()),
+          new BigNumber(amountTokenIn.toFixed()),
           tokenWrappedAddress,
           minAmountOut,
           this.referral,
@@ -127,12 +127,12 @@ export default class operationV1 implements IOperations {
 
     } catch (error: any) {
       let investAmoutInCalc: BigNumber = new BigNumber(
-        tokenSelected.newAmountTokenIn.toString()
+        Big(tokenSelected.newAmountTokenIn).toFixed()
       )
 
       if (tokenSelected.isWrap) {
         investAmoutInCalc = await this.yieldYakContract.convertBalanceWrappedToYRT(
-          new BigNumber(tokenSelected.newAmountTokenIn.toString()),
+          investAmoutInCalc,
           tokenSelected.tokenInAddress
         )
       }

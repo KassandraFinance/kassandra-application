@@ -73,11 +73,11 @@ const InputAndOutputValueToken = ({
   }
 
   function wei2String(input: Big) {
-    return BNtoDecimal(input.div(Big(10).pow(Number(tokenSelect.decimals))), tokenSelect.decimals).replace(/\u00A0/g, '')
+    return input.div(Big(10).pow(Number(tokenSelect.decimals)))
   }
 
   function handleMaxUserBalance() {
-    if (!inputAmountTokenRef || !amountTokenIn || pool.chainId !== chainId) {
+    if (!inputAmountTokenRef || !amountTokenIn || pool.chainId !== chainId || Big(selectedTokenInBalance).lte(0)) {
       return
     }
 
@@ -92,9 +92,9 @@ const InputAndOutputValueToken = ({
       }
 
       const tokenInBalance = wei2String(selectedTokenInBalance)
-      inputAmountTokenRef.current.value = tokenInBalance
-      setAmountTokenIn(decimalToBN(tokenInBalance, tokenSelect.decimals))
-      // setAmountTokenIn(selectedTokenInBalance)
+      inputAmountTokenRef.current.value = tokenInBalance.toFixed()
+
+      setAmountTokenIn(selectedTokenInBalance)
       setMaxActive(true)
     }
   }
@@ -222,7 +222,7 @@ const InputAndOutputValueToken = ({
                 amountTokenIn &&
                 'USD: ' +
                   BNtoDecimal(
-                    Big(amountTokenIn.toString())
+                    Big(amountTokenIn)
                       .mul(
                         Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0)
                       )
