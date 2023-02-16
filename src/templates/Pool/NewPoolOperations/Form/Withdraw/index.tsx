@@ -244,8 +244,8 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       if (typeWithdraw === 'Single_asset') {
         operation.exitswapPoolAmountIn({
           tokenOutAddress: tokenSelect.address,
-          tokenAmountIn: new BigNumber(amountTokenIn.toString()),
-          minPoolAmountOut: new BigNumber(amountTokenOut.toString()).mul(slippageBase).div(slippageExp),
+          tokenAmountIn: new BigNumber(Big(amountTokenIn).toFixed()),
+          minPoolAmountOut: new BigNumber(Big(amountTokenOut).toFixed()).mul(slippageBase).div(slippageExp),
           userWalletAddress,
           transactionCallback: withdrawCallback(pool.symbol, -1 * 0)
         })
@@ -253,7 +253,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       }
 
       operation.exitswapPoolAllTokenAmountIn({
-        tokenAmountIn: new BigNumber(amountTokenIn.toString()),
+        tokenAmountIn: new BigNumber(Big(amountTokenIn).toFixed()),
         amountAllTokenOut,
         slippageBase,
         slippageExp,
@@ -287,7 +287,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       return
     }
 
-    if (chainId !== pool.chainId || new BigNumber(amountTokenIn.toString()).isZero()) {
+    if (chainId !== pool.chainId || Big(amountTokenIn).lte(0)) {
       setamountAllTokenOut(Array(pool.underlying_assets.length).fill(new BigNumber(0)))
       setAmountTokenOut(new Big(0))
       setErrorMsg('')
@@ -331,13 +331,13 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         const { withdrawAmoutOut, transactionError } = await operation.calcSingleOutGivenPoolIn({
           tokenInAddress: tokenAddress.token.id,
           tokenSelectAddress: tokenSelect.address,
-          poolAmountIn: amountTokenIn.toString(),
+          poolAmountIn: Big(amountTokenIn).toFixed(),
           isWrap: tokenAddress.token.wraps ? true : false,
           userWalletAddress,
           selectedTokenInBalance
         })
 
-        const valueFormatted = decimalToBN(inputAmountInTokenRef.current.value, tokenSelect.decimals)
+        const valueFormatted = decimalToBN(inputAmountInTokenRef.current.value)
 
         if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
 

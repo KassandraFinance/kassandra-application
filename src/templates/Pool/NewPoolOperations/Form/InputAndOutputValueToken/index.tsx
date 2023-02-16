@@ -210,7 +210,7 @@ const InputAndOutputValueToken = ({
               ) : (
                 <S.amountTokenOutText>
                   {BNtoDecimal(
-                    Big(amountTokenIn)?.div(Big(10).pow(18)) || new BigNumber(0),
+                    Big(amountTokenIn)?.div(Big(10).pow(tokenSelect.decimals)) || new BigNumber(0),
                       tokenSelect.decimals,
                       6
                     ).replace(/\s/g, '')}
