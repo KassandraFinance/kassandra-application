@@ -52,7 +52,7 @@ interface ICoinCardProps {
   symbol: string;
 }
 
-const CoinCard2 = ({ image, name, symbol }: ICoinCardProps) => {
+const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
   const [dataPeriod, setDataPeriod] = React.useState<string>('1D')
   const [isOpen, setIsOpen] = React.useState<boolean>(false)
 
@@ -189,4 +189,4 @@ const CoinCard2 = ({ image, name, symbol }: ICoinCardProps) => {
   )
 }
 
-export default CoinCard2
+export default CoinCard
