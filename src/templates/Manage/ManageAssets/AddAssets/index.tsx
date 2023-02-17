@@ -1,5 +1,7 @@
 import React from 'react'
 
+import AddAssetsTable from './AddAssetsTable'
+
 import * as S from './styles'
 
 // interface IRemoveAssetsProps {
@@ -9,7 +11,7 @@ import * as S from './styles'
 const AddAssets = () => {
   return (
     <S.AddAssets>
-      <h1>AddAssets</h1>
+      <AddAssetsTable />
     </S.AddAssets>
   )
 }

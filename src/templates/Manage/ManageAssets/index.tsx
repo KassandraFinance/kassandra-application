@@ -25,7 +25,7 @@ const ManageAssets = () => {
         <S.ManageAssetsBody id="managerAssets" onSubmit={handleSubmit}>
           {/* <ChooseAction /> */}
           {/* <RebalanceAssets /> */}
-          {/* <AddAssets /> */}
+          <AddAssets />
           {/* <RemoveAssets /> */}
         </S.ManageAssetsBody>
 

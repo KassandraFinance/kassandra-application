@@ -5,6 +5,6 @@ import styled, { css } from 'styled-components'
 // }
 // eslint-disable-next-line prettier/prettier
 
-export const AddAssets = styled.span`
+export const AddAssets = styled.div`
   ${() => css``}
 `
