@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface ICoinCardProps {
-  isOpen: boolean;
+  isShowMore: boolean;
 }
 
 // prettier-ignore
@@ -20,13 +20,13 @@ export const CoinCard = styled.article<ICoinCardProps>`
     transition-timing-function: ease;
     transition-property: transform;
   `}
-  ${({ isOpen }) => isOpen && css`
+  ${({ isShowMore }) => isShowMore && css`
       transform: rotateY(180deg);
   `}
 `
 
 interface ICoinCardFrontProps {
-  isOpen: boolean;
+  isShowMore: boolean;
 }
 
 // prettier-ignore
@@ -57,7 +57,7 @@ export const CoinCardFront = styled.div<ICoinCardFrontProps>`
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
   `}
-  ${({ isOpen }) => isOpen && css`
+  ${({ isShowMore }) => isShowMore && css`
       opacity: 0;
   `}
 `
@@ -176,7 +176,7 @@ export const Change = styled.span`
 `
 
 interface IShowMoreProps {
-  isOpen: boolean;
+  isShowMore: boolean;
 }
 
 // prettier-ignore
@@ -216,7 +216,7 @@ export const ShowMore = styled.button<IShowMoreProps>`
       color: ${theme.colors.snow};
     }
   `}
-  ${({ isOpen }) => isOpen && css`
+  ${({ isShowMore }) => isShowMore && css`
     transform: rotateY(180deg) translateX(50%);
   `}
 `
@@ -291,7 +291,7 @@ export const InfoValue = styled.span<IInfoValueProps>`
 `
 
 interface ICoinCardBackProps {
-  isOpen: boolean;
+  isShowMore: boolean;
 }
 
 // prettier-ignore
@@ -327,7 +327,7 @@ export const CoinCardBack = styled.div<ICoinCardBackProps>`
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
   `}
-  ${({ isOpen }) => isOpen && css`
+  ${({ isShowMore }) => isShowMore && css`
       opacity: 1;
 
       pointer-events: auto;

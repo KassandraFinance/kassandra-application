@@ -39,9 +39,9 @@ const sparkDataMock: sparkData[] = [
     timestamp: 1676246400
   },
   {
-    // close: '83021.6322759742165446435973994729',
+    close: '83021.6322759742165446435973994729',
     // close: '94318.37054523511140168523952945796',
-    close: '95091.74746429377807836123162616105',
+    // close: '95091.74746429377807836123162616105',
     timestamp: 1675814400
   }
 ]
@@ -54,7 +54,7 @@ interface ICoinCardProps {
 
 const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
   const [dataPeriod, setDataPeriod] = React.useState<string>('1D')
-  const [isOpen, setIsOpen] = React.useState<boolean>(false)
+  const [isShowMore, setIsShowMore] = React.useState<boolean>(false)
 
   const change = Big(sparkDataMock[sparkDataMock.length - 1].close).sub(
     sparkDataMock[0].close
@@ -81,13 +81,16 @@ const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
   }
 
   return (
-    <S.CoinCard isOpen={isOpen}>
-      <S.ShowMore onClick={() => setIsOpen(!isOpen)} isOpen={isOpen}>
+    <S.CoinCard isShowMore={isShowMore}>
+      <S.ShowMore
+        onClick={() => setIsShowMore(!isShowMore)}
+        isShowMore={isShowMore}
+      >
         Show More
         <S.Line />
       </S.ShowMore>
 
-      <S.CoinCardFront isOpen={isOpen}>
+      <S.CoinCardFront isShowMore={isShowMore}>
         <S.PoolAssetsCardName>
           <S.NameContainer>
             <S.ImageWrapper>
@@ -125,7 +128,7 @@ const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
         </S.ChartData>
       </S.CoinCardFront>
 
-      <S.CoinCardBack isOpen={isOpen}>
+      <S.CoinCardBack isShowMore={isShowMore}>
         <S.MoreInfoContainer>
           <S.Info>
             <S.InfoName>Asset</S.InfoName>
