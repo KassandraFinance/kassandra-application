@@ -21,6 +21,8 @@ export const DashBoard = styled.div<IDashBoardProps>`
     transition-timing-function: ease;
     transition-property: grid;
 
+    overflow-x: hidden;
+
     > ${Overlay} {
       z-index: 1020;
     }

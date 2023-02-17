@@ -34,8 +34,8 @@ export const ManagedPoolsWrapper = styled.div`
 export const ManagedPoolsContainer = styled.div`
   ${() => css`
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-    gap: 1.6rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2.4rem;
 
     width: 100%;
   `}
