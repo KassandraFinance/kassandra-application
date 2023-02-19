@@ -30,22 +30,53 @@ export const TokenNameContainer = styled.div`
       font-weight: ${theme.font.weight.light};
       line-height: 104%;
     }
+
+    @media (max-width: 576px) {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    #mobile {
+      display: none;
+      @media (max-width: 576px) {
+        display: flex;
+        align-items: flex-end;
+      }
+    }
+    #desktop,
+    p {
+      @media (max-width: 576px) {
+        display: none;
+      }
+    }
   `}
 `
 
-export const TokenName = styled.span`
+export const TokenName = styled.a`
   ${({ theme }) => css`
-    > a {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 
-      color: #fcfcfc;
-      font-size: ${theme.font.sizes.font14};
-      font-weight: ${theme.font.weight.medium};
-      line-height: 104%;
+    color: #fcfcfc;
+    font-size: ${theme.font.sizes.font14};
+    font-weight: ${theme.font.weight.medium};
+    line-height: 104%;
 
-      text-decoration: none;
+    text-decoration: none;
+  `}
+`
+
+export const Line = styled.span`
+  ${() => css`
+    display: none;
+    margin-left: 0.9rem;
+    height: 1.4rem;
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    @media (max-width: 576px) {
+      display: block;
     }
   `}
 `
@@ -54,13 +85,31 @@ interface IMoreInfoProps {
 }
 
 // eslint-disable-next-line prettier/prettier
-export const CurrentAmount = styled.td<IMoreInfoProps>`
-  ${({ theme, isOpen }) => css`
+export const CurrentAmountContainer = styled.td<IMoreInfoProps>`
+  ${({ isOpen }) => css`
+    display: flex;
+    align-items: center;
+    /* justify-content: space-around; */
+    /* max-width: 19.5rem; */
+
+    @media (max-width: 576px) {
+      display: ${isOpen ? 'flex' : 'none'};
+      align-items: center;
+      animation: ${moveDown} 0.4s ease;
+      grid-area: currentAmount;
+      /* max-width: 23rem; */
+    }
+  `}
+`
+
+export const CurrentAmount = styled.div`
+  ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     justify-content: center;
     gap: 0.4rem;
+    width: 100%;
 
     p:first-child {
       margin-bottom: 0.4rem;
@@ -83,12 +132,20 @@ export const CurrentAmount = styled.td<IMoreInfoProps>`
     }
 
     @media (max-width: 576px) {
-      display: ${isOpen ? 'flex' : 'none'};
-      animation: ${moveDown} 0.4s ease;
-      grid-area: currentAmount;
       align-items: center;
+    }
+  `}
+`
+export const AmountLine = styled.span`
+  ${() => css`
+    display: none;
+    height: 2.8rem;
+    margin-right: 1.6rem;
 
-      border-right: 0.1rem solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    @media (max-width: 576px) {
+      display: block;
     }
   `}
 `
@@ -98,6 +155,7 @@ export const Allocation = styled.td`
     align-items: center;
     justify-content: center;
     text-align: center;
+    min-width: 6.3rem;
 
     color: #ffffff;
     font-size: ${theme.font.sizes.font16};
@@ -118,6 +176,7 @@ export const Arrow = styled.td`
 
     @media (max-width: 576px) {
       grid-area: arrow;
+      justify-content: center;
     }
   `}
 `

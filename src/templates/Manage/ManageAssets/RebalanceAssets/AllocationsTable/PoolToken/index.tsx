@@ -11,7 +11,6 @@ interface IPoolTokensProps {
   currentAmount: number;
   currentAmountInDollar: number;
   allocationPorcentage: number;
-  newAllocation: number;
   newAmount: number;
   newAmountInDollar: number;
 }
@@ -22,7 +21,6 @@ const PoolToken = ({
   currentAmount,
   currentAmountInDollar,
   allocationPorcentage,
-  newAllocation,
   newAmount,
   newAmountInDollar
 }: IPoolTokensProps) => {
@@ -34,29 +32,42 @@ const PoolToken = ({
       <S.TokenInfo onAnimationEnd={e => console.log(e)}>
         <img src="/assets/logos/tricrypto.svg" alt="" width={24} height={24} />
         <S.TokenNameContainer>
-          <S.TokenName>
-            <Link href="#" passHref>
-              <a>
-                {name}
-                <img
-                  src="/assets/utilities/go-to-site.svg"
-                  alt=""
-                  width={12}
-                  height={12}
-                />
-              </a>
-            </Link>
-          </S.TokenName>
+          <Link href="#" passHref>
+            <S.TokenName id="mobile">
+              {symbol}
+              <img
+                src="/assets/utilities/external-link.svg"
+                alt=""
+                width={18}
+                height={18}
+              />
+            </S.TokenName>
+          </Link>
+          <S.Line />
+          <Link href="#" passHref>
+            <S.TokenName id="desktop">
+              {name}
+              <img
+                src="/assets/utilities/external-link.svg"
+                alt=""
+                width={18}
+                height={18}
+              />
+            </S.TokenName>
+          </Link>
           <p>{symbol}</p>
         </S.TokenNameContainer>
       </S.TokenInfo>
-      <S.CurrentAmount isOpen={moreInfo}>
-        <p>Amount</p>
-        <span>
-          {currentAmount} {symbol}
-        </span>
-        <p>~${currentAmountInDollar.toFixed(2)}</p>
-      </S.CurrentAmount>
+      <S.CurrentAmountContainer isOpen={moreInfo}>
+        <S.CurrentAmount>
+          <p>Amount</p>
+          <span>
+            {currentAmount} {symbol}
+          </span>
+          <p>~${currentAmountInDollar.toFixed(2)}</p>
+        </S.CurrentAmount>
+        <S.AmountLine />
+      </S.CurrentAmountContainer>
       <S.Allocation>{allocationPorcentage}%</S.Allocation>
       <S.Arrow>
         <img src="/assets/utilities/arrow-right.svg" alt="" width={32} />
@@ -82,20 +93,11 @@ const PoolToken = ({
         </S.ImageContent>
       </S.NewAllocation>
       <S.MoreInfoContainer>
-        <button onClick={() => setMoreInfo(!moreInfo)}>
+        <button type="button" onClick={() => setMoreInfo(!moreInfo)}>
           {moreInfo ? 'Less' : 'More'} Info{' '}
           <img src="/assets/utilities/arrow-select-down.svg" alt="" />
         </button>
       </S.MoreInfoContainer>
-      {/* <S.InputCheckbox> */}
-      {/* <input
-        type="checkbox"
-        id={name + index}
-        name={name + index}
-        // onChange={event => handleClickInput(event)}
-      />
-      <label htmlFor={name + index}>More Info</label> */}
-      {/* </S.InputCheckbox> */}
       <S.NewAmount isOpen={moreInfo}>
         <p>New Amount</p>
         <span>
