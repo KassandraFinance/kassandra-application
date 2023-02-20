@@ -152,7 +152,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     return { props: { pool }, revalidate:  300 }
   } catch (error) {
     console.log(error)
-    return { notFound: true }
+    return { notFound: true, revalidate:  60 }
   }
 }
 
