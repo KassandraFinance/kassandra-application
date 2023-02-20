@@ -1,7 +1,7 @@
 import Tippy from '@tippyjs/react'
 import React from 'react'
-import InputRadio from '../../../../../components/Inputs/InputRadio'
-import InputTime from '../../../../../components/Inputs/InputTime'
+import InputRadio from '../../../../../../components/Inputs/InputRadio'
+import InputTime from '../../../../../../components/Inputs/InputTime'
 
 import * as S from './styles'
 

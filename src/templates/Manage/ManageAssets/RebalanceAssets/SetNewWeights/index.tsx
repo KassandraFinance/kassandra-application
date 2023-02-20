@@ -1,8 +1,8 @@
 import React from 'react'
 
-// import RebalanceReview from './RebalanceReview'
-import SetNewWeights from './SetNewWeights'
-import CreatePoolHeader from '../../CreatePool/CreatePoolHeader'
+import Steps from '../../../../../components/Steps'
+import ExecutionPeriod from './ExecutionPeriod'
+import AllocationsTable from './AllocationsTable'
 
 import * as S from './styles'
 
@@ -10,11 +10,10 @@ import * as S from './styles'
 //   test: string;
 // }
 
-const RebalanceAssets = () => {
+const SetNewWeights = () => {
   return (
-    <S.RebalanceAssets>
-      <CreatePoolHeader title="Change token weights" />
-      {/* <Steps
+    <S.SetNewWeights>
+      <Steps
         steps={[
           {
             stepNumber: 1,
@@ -27,9 +26,9 @@ const RebalanceAssets = () => {
             state: 'NEXT'
           }
         ]}
-      /> */}
+      />
 
-      {/* <S.RebalanceAssetsBody>
+      <S.SetNewWeightsBody>
         <h2>Token Weights</h2>
         <p>Define the new Allocations of the assets that make up the pool</p>
 
@@ -37,11 +36,9 @@ const RebalanceAssets = () => {
           <AllocationsTable />
           <ExecutionPeriod />
         </S.AllocationsAndExecutionPeriod>
-      </S.RebalanceAssetsBody> */}
-      <SetNewWeights />
-      {/* <RebalanceReview /> */}
-    </S.RebalanceAssets>
+      </S.SetNewWeightsBody>
+    </S.SetNewWeights>
   )
 }
 
-export default RebalanceAssets
+export default SetNewWeights

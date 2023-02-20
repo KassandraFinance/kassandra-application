@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { Label } from '../../../../../components/Inputs/InputRadio/styles'
+import { Label } from '../../../../../../components/Inputs/InputRadio/styles'
 
 // interface IProps {
 //   isActive: boolean;

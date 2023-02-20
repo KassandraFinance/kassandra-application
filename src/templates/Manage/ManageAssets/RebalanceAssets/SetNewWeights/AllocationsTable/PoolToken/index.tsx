@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 
-import InputNumber from '../../../../../../components/Inputs/InputNumber'
+import InputNumber from '../../../../../../../components/Inputs/InputNumber'
 
 import * as S from './styles'
 

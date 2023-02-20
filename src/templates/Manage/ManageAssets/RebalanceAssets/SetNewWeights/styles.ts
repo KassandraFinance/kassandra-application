@@ -5,13 +5,13 @@ import styled, { css } from 'styled-components'
 // }
 // eslint-disable-next-line prettier/prettier
 
-export const RebalanceAssets = styled.div`
+export const SetNewWeights = styled.div`
   ${() => css`
     width: 100%;
   `}
 `
 
-export const RebalanceAssetsBody = styled.div`
+export const SetNewWeightsBody = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
