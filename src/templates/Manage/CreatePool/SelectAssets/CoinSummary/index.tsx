@@ -33,7 +33,7 @@ const CoinSummary = ({
 
       <S.TextWrapper>
         <S.Name>
-          {coinName}
+          <div>{coinName}</div>
           {url && (
             <Link href={url} passHref>
               <S.ALink>
