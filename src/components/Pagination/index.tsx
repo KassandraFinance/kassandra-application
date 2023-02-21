@@ -34,8 +34,8 @@ const Pagination = ({
           breakLabel="..."
           nextLabel=">"
           onPageChange={handleClick}
-          pageRangeDisplayed={1}
-          marginPagesDisplayed={2}
+          pageRangeDisplayed={2}
+          marginPagesDisplayed={1}
           pageCount={pageCount}
           forcePage={page}
           previousLabel="<"
@@ -47,14 +47,15 @@ const Pagination = ({
           previousLinkClassName={'paginate__link__previous'}
           nextLinkClassName={'paginate__link__next'}
           activeLinkClassName={'paginate__active'}
+          breakLinkClassName={'paginate__break__link'}
         />
       ) : (
         <ReactPaginate
           breakLabel="..."
           nextLabel=">"
           onPageChange={handleClick}
-          pageRangeDisplayed={1}
-          marginPagesDisplayed={2}
+          pageRangeDisplayed={2}
+          marginPagesDisplayed={1}
           pageCount={pageCount}
           previousLabel="<"
           containerClassName={'paginate__container'}
@@ -65,6 +66,7 @@ const Pagination = ({
           previousLinkClassName={'paginate__link__previous'}
           nextLinkClassName={'paginate__link__next'}
           activeLinkClassName={'paginate__active'}
+          breakLinkClassName={'paginate__break__link'}
         />
       )}
     </S.PaginateContainer>
