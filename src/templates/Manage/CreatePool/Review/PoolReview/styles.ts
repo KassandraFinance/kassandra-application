@@ -66,6 +66,19 @@ export const PoolNameContainer = styled.span`
   `}
 `
 
+export const ImageWrapper = styled.div`
+  width: 7.2rem;
+  height: 7.2rem;
+
+  overflow: hidden;
+  border-radius: 50%;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+`
+
 export const PoolNameContent = styled.span`
   ${({ theme }) => css`
     display: flex;
