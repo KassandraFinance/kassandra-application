@@ -2,6 +2,7 @@ import React from 'react'
 import useSWR from 'swr'
 import Link from 'next/link'
 import CopyToClipboard from 'react-copy-to-clipboard'
+import Blockies from 'react-blockies'
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import Big from 'big.js'
 
@@ -114,12 +115,18 @@ const PoolReview = () => {
       <S.PoolReviewContainer>
         <S.PoolReviewHeader>
           <S.PoolNameContainer>
-            <img
-              src={poolData.icon?.image_preview}
-              alt=""
-              width={64}
-              height={64}
-            />
+            <S.ImageWrapper>
+              {poolData.icon?.image_preview ? (
+                <img
+                  src={poolData.icon?.image_preview}
+                  alt=""
+                  width={64}
+                  height={64}
+                />
+              ) : (
+                <Blockies size={8} scale={9} seed={poolData.poolName ?? ''} />
+              )}
+            </S.ImageWrapper>
             <S.PoolNameContent>
               <p>{poolData.poolName}</p>
               <span>
