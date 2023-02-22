@@ -12,6 +12,18 @@ export const MarkdownEditor = styled.div`
       overflow: hidden;
     }
 
+    .full {
+      height: calc(100vh - 76px) !important;
+
+      @media (min-width: 768px) {
+        height: calc(100vh - 96px) !important;
+      }
+
+      @media (min-width: 992px) {
+        height: calc(100vh - 80px) !important;
+      }
+    }
+
     .rc-md-navigation {
       padding: 1.2rem;
 

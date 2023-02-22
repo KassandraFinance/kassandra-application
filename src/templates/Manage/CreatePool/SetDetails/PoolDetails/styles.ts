@@ -21,5 +21,9 @@ export const Strategy = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
+
+    @media (min-width: 992px) {
+      margin-bottom: 10rem;
+    }
   `}
 `

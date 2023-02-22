@@ -16,30 +16,54 @@ export const StepGuide = styled.div`
     `}
 `
 
+export const ContainerCardAndNetwork = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3.1rem;
+
+  max-width: 55.3rem;
+  margin-inline: auto;
+
+  @media (min-width: 992px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.1rem;
+
+    max-width: 100%;
+  }
+`
+
 export const StepCardContainer = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
     gap: 1.6rem;
 
-    max-width: 55.3rem;
     margin-inline: auto;
-    margin-bottom: 2.4rem;
+    margin-bottom: 20rem;
 
     @media (min-width: 768px) {
       gap: 2.4rem;
 
-      margin-bottom: 3.1rem;
+      width: 100%;
+
+      margin: 0;
+      margin-bottom: 33rem;
     }
   `}
 `
 
 export const SelectNetwork = styled.div`
   ${() => css`
-    max-width: 55.3rem;
     margin-inline: auto;
+    margin-bottom: 3.1rem;
 
-    margin-bottom: 26.3rem;
+    @media (min-width: 768px) {
+      width: 100%;
+
+      margin: 0;
+      /* margin-bottom: 26.3rem; */
+    }
   `}
 `
 
