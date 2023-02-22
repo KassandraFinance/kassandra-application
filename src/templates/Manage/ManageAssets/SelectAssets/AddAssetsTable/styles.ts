@@ -58,19 +58,30 @@ export const AddAssetsTable = styled.div`
       text-align: right;
     }
 
-    .allocation {
-      min-width: 10rem;
-      text-align: right;
-    }
-
     .marketCap {
       min-width: 11rem;
       text-align: right;
+
+      @media (min-width: 992px) {
+        min-width: 15rem;
+      }
+
+      @media (min-width: 1200px) {
+        min-width: 20rem;
+      }
     }
 
     .balance {
       min-width: 10rem;
       text-align: right;
+
+      @media (min-width: 992px) {
+        min-width: 12rem;
+      }
+
+      @media (min-width: 1200px) {
+        min-width: 15rem;
+      }
     }
 
     .button {
@@ -213,6 +224,36 @@ export const ViewButton = styled.button`
     border: none;
 
     cursor: pointer;
+  `}
+`
+
+interface IShadowProps {
+  inView: boolean;
+}
+
+// prettier-ignore
+export const Shadow = styled.div<IShadowProps>`
+  ${() => css`
+    position: absolute;
+    bottom: 0;
+
+    width: 100%;
+    height: 10.9rem;
+
+    background: linear-gradient(180deg, rgba(31, 31, 31, 0) 0%, #1f1f1f 100%);
+    border-radius: 0px 0px 8px 8px;
+
+    opacity: 1;
+    visibility: visible;
+    pointer-events: none;
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: opacity visibility;
+  `}
+  ${({ inView }) => inView && css`
+    opacity: 0;
+    visibility: hidden;
   `}
 `
 

@@ -123,84 +123,77 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
         </S.THead>
 
         <S.TBody>
-          <S.TrsWrapper>
-            {tokensData &&
-              tokensArr.map((coin, i) => (
-                <S.Tr
-                  key={coin.id}
-                  ref={i === tokensData.length - 1 ? ref : null}
-                >
-                  <S.Td className="asset">
-                    <CoinSummary
-                      coinImage={coin.logo}
-                      coinName={coin.name}
-                      coinSymbol={coin.symbol}
-                      price={
-                        priceList ? priceList[coin.id.toLowerCase()].usd : 0
-                      }
-                      url={`https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`}
-                      table
-                    />
-                  </S.Td>
-                  <S.Td className="price">
-                    ${priceList ? priceList[coin.id.toLowerCase()].usd : 0}
-                  </S.Td>
-                  <S.Td className="marketCap">
-                    $
-                    {priceList
+          {tokensData &&
+            tokensArr.map((coin, i) => (
+              <S.Tr key={coin.id} ref={i === tokensArr.length - 1 ? ref : null}>
+                <S.Td className="asset">
+                  <CoinSummary
+                    coinImage={coin.logo}
+                    coinName={coin.name}
+                    coinSymbol={coin.symbol}
+                    price={priceList ? priceList[coin.id.toLowerCase()].usd : 0}
+                    url={`https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`}
+                    table
+                  />
+                </S.Td>
+                <S.Td className="price">
+                  ${priceList ? priceList[coin.id.toLowerCase()].usd : 0}
+                </S.Td>
+                <S.Td className="marketCap">
+                  $
+                  {priceList
+                    ? BNtoDecimal(
+                        Big(priceList[coin.id.toLowerCase()].usd_market_cap),
+                        2
+                      )
+                    : 0}
+                </S.Td>
+                <S.Td className="balance">
+                  {tokenBalance[coin.id.toLowerCase()]
+                    ? BNtoDecimal(
+                        Big(tokenBalance[coin.id.toLowerCase()].toString()).div(
+                          Big(10).pow(coin.decimals)
+                        ),
+                        2
+                      )
+                    : 0}{' '}
+                  {coin.symbol}
+                  <S.SecondaryText>
+                    ~$
+                    {tokenBalance[coin.id.toLowerCase()] && priceList
                       ? BNtoDecimal(
-                          Big(priceList[coin.id.toLowerCase()].usd_market_cap),
+                          Big(tokenBalance[coin.id.toLowerCase()].toString())
+                            .div(Big(10).pow(coin.decimals))
+                            .mul(Big(priceList[coin.id.toLowerCase()].usd)),
                           2
                         )
                       : 0}
-                  </S.Td>
-                  <S.Td className="balance">
-                    {tokenBalance[coin.id.toLowerCase()]
-                      ? BNtoDecimal(
-                          Big(
-                            tokenBalance[coin.id.toLowerCase()].toString()
-                          ).div(Big(10).pow(coin.decimals)),
-                          2
-                        )
-                      : 0}{' '}
-                    {coin.symbol}
-                    <S.SecondaryText>
-                      ~$
-                      {tokenBalance[coin.id.toLowerCase()] && priceList
-                        ? BNtoDecimal(
-                            Big(tokenBalance[coin.id.toLowerCase()].toString())
-                              .div(Big(10).pow(coin.decimals))
-                              .mul(Big(priceList[coin.id.toLowerCase()].usd)),
-                            2
-                          )
-                        : 0}
-                    </S.SecondaryText>
-                  </S.Td>
-                  <S.Td className="add">
-                    <Checkbox
-                      form="poolCreationForm"
-                      name={coin.symbol}
-                      label={coin.symbol}
-                      checked={handleChecked(coin.symbol)}
-                      showLabel={false}
-                      onChange={() =>
-                        handleCheckbox({
-                          address: coin.id.toLowerCase(),
-                          name: coin.name,
-                          icon: coin.logo,
-                          symbol: coin.symbol,
-                          decimals: coin.decimals,
-                          url: `https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`,
-                          allocation: 100,
-                          amount: Big(0),
-                          isLocked: false
-                        })
-                      }
-                    />
-                  </S.Td>
-                </S.Tr>
-              ))}
-          </S.TrsWrapper>
+                  </S.SecondaryText>
+                </S.Td>
+                <S.Td className="add">
+                  <Checkbox
+                    form="poolCreationForm"
+                    name={coin.symbol}
+                    label={coin.symbol}
+                    checked={handleChecked(coin.symbol)}
+                    showLabel={false}
+                    onChange={() =>
+                      handleCheckbox({
+                        address: coin.id.toLowerCase(),
+                        name: coin.name,
+                        icon: coin.logo,
+                        symbol: coin.symbol,
+                        decimals: coin.decimals,
+                        url: `https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`,
+                        allocation: 100,
+                        amount: Big(0),
+                        isLocked: false
+                      })
+                    }
+                  />
+                </S.Td>
+              </S.Tr>
+            ))}
 
           <S.Shadow inView={inView}></S.Shadow>
         </S.TBody>

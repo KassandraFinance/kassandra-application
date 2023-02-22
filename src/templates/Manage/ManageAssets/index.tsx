@@ -1,6 +1,6 @@
 import React from 'react'
 
-import AddAssets from './AddAssets'
+import SelectAssets from './SelectAssets'
 import RemoveAssets from './RemoveAssets'
 import ChooseAction from './ChooseAction'
 import RebalanceAssets from './RebalanceAssets'
@@ -25,7 +25,7 @@ const ManageAssets = () => {
         <S.ManageAssetsBody id="managerAssets" onSubmit={handleSubmit}>
           {/* <ChooseAction /> */}
           {/* <RebalanceAssets /> */}
-          <AddAssets />
+          <SelectAssets />
           {/* <RemoveAssets /> */}
         </S.ManageAssetsBody>
 
