@@ -1,11 +1,12 @@
 import React from 'react'
-import Big from 'big.js'
+import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
+import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
-import Link from 'next/link'
 
-import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+// import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
 
@@ -34,7 +35,7 @@ interface IFundCardProps {
 }
 
 const FundCard = ({ poolAddress }: IFundCardProps) => {
-  const { trackEventFunction } = useMatomoEcommerce()
+  // const { trackEventFunction } = useMatomoEcommerce()
 
   const dateNow = new Date()
 
@@ -58,6 +59,7 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30)
   })
+  const router = useRouter()
 
   const { data } = useSWR([GET_POOL, params], (query, params) =>
     request(BACKEND_KASSANDRA, query, params)
@@ -137,7 +139,14 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
     <>
       {infoPool.price > '0.1' ? (
         <S.CardContainer>
-          <Link href={`/pool/${poolAddress}`} passHref>
+          <Link
+            href={
+              router.asPath === '/manage'
+                ? `/manage/${poolAddress}`
+                : `/pool/${poolAddress}`
+            }
+            passHref
+          >
             <a
             // onClick={() =>
             //   trackEventFunction(
