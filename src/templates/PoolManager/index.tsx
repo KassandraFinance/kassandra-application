@@ -1,10 +1,15 @@
 import React, { ReactElement } from 'react'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+import useSWR from 'swr'
+import { request } from 'graphql-request'
 
 import Header from '../../components/Header'
 import SelectTabs from '../../components/SelectTabs'
 import Overlay from '../../components/Overlay'
 import SideBar from '../Manage/SideBar'
 import Button from '../../components/Button'
+import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 
 import Analytics from './Analytics'
 import Allocations from './Allocations'
@@ -20,7 +25,10 @@ import brokers from '../../../public/assets/tabManage/brokers.svg'
 import info from '../../../public/assets/tabManage/info.svg'
 import gear from '../../../public/assets/icons/gear.svg'
 
+import { GET_POOL } from './graphql'
+
 import * as S from './styles'
+import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
 
 const tabs = [
   {
@@ -63,9 +71,24 @@ const tabs = [
 const PoolManager = () => {
   const [isManageAssets, setIsManageAssets] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
+  // const [openModal, setOpenModal] = React.useState(false)
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
   >('analytics')
+
+  const router = useRouter().query
+  const pool = router.pool
+  console.log(pool)
+
+  const { data } = useSWR([GET_POOL, pool], (query, pool) =>
+    request(BACKEND_KASSANDRA, query, { id: pool })
+  )
+  console.log(data)
+  // const { data } = useSWR(
+  //   [GET_POOL, router.query.pool],
+  //   (query, userWalletAddress) =>
+  //     request(SUBGRAPH_URL, query, { id: userWalletAddress })
+  // )
 
   const PoolManagerComponents: { [key: string]: ReactElement } = {
     analytics: <Analytics />,
@@ -85,18 +108,87 @@ const PoolManager = () => {
 
         <div></div>
 
+        <Header />
         <S.Content>
-          <Header />
           <S.Intro>
-            <p>Awesome Pool</p>
+            <S.GridIntro>
+              <TokenWithNetworkImage
+                tokenImage={{
+                  url: data.pool.logo,
+                  height: 75,
+                  width: 75,
+                  withoutBorder: true
+                }}
+                networkImage={{
+                  url: data.pool.chain.logo,
+                  height: 20,
+                  width: 20
+                }}
+                blockies={{
+                  size: 8,
+                  scale: 9,
+                  seedName: data.pool.name
+                }}
+              />
+              <S.NameIndex>
+                <S.NameAndSymbol>
+                  <h1>{data.pool.name}</h1>
+                </S.NameAndSymbol>
+                <S.SymbolAndLink>
+                  <h3>${data.pool.symbol}</h3>
+                  <button
+                    onClick={() => alert('abrir invest da pool')}
+                    className="circle"
+                  >
+                    <Image
+                      src="/assets/icons/share.svg"
+                      width={32}
+                      height={32}
+                    />
+                  </button>
+                  <a
+                    // href={`${pool.chain.blockExplorerUrl}/address/${pool.address}`}
+                    className="circle"
+                    href="https://polygonscan.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Image
+                      src="/assets/utilities/go-to-site.svg"
+                      width={32}
+                      height={32}
+                    />
+                  </a>
+                  <button
+                    onClick={() => {
+                      alert('asddsa')
+                      // setOpenModal(true)
+                      // trackEventFunction(
+                      //   'click',
+                      //   `social-share-${pool.name}`,
+                      //   'pool'
+                      // )
+                    }}
+                    className="circle"
+                  >
+                    <Image
+                      src="/assets/icons/share.svg"
+                      width={32}
+                      height={32}
+                    />
+                  </button>
+                </S.SymbolAndLink>
+              </S.NameIndex>
+            </S.GridIntro>
+
+            <Button
+              backgroundSecondary
+              size="large"
+              text="Manage Assets"
+              image={gear.src}
+              onClick={() => setIsManageAssets(true)}
+            />
           </S.Intro>
-          <Button
-            backgroundSecondary
-            size="large"
-            text="Manage Assets"
-            image={gear.src}
-            onClick={() => setIsManageAssets(true)}
-          />
           <SelectTabs
             tabs={tabs}
             isSelect={isSelectTab}
@@ -110,6 +202,19 @@ const PoolManager = () => {
         </S.Content>
       </S.DashBoard>
       {isManageAssets && <ManageAssets />}
+      {/* <ShareImageModal
+        poolId={pool.id}
+        setOpenModal={setOpenModal}
+        openModal={openModal}
+        productName={pool.symbol}
+      >
+        <SharedImage
+          crpPoolAddress={pool.id}
+          totalValueLocked={infoPool.tvl}
+          socialIndex={pool.symbol}
+          productName={pool.name}
+        />
+      </ShareImageModal> */}
     </S.PoolManager>
   )
 }
