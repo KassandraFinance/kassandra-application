@@ -26,6 +26,7 @@ export const AddAssetsTable = styled.div`
       > span {
         display: none;
       }
+
       @media (max-width: 767.98px) {
         color: ${theme.colors.snow};
         font-weight: ${theme.font.weight.medium};

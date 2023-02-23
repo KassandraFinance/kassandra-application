@@ -104,7 +104,7 @@ const AddAssetsTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
     const arr = tokensData ? tokensData : []
 
     const sortedArr = arr.sort((a, b) => {
-      return a?.balance?.gt(b?.balance || new BigNumber(0)) ? 1 : -1
+      return a?.balance?.lt(b?.balance || new BigNumber(0)) ? 1 : -1
     })
     const tokensFiltered = sortedArr.filter(token => {
       return expressao.test(token.symbol)
