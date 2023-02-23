@@ -43,18 +43,15 @@ export default class operationV2 {
 
   createRequestJoinInPool(tokenInAddress: string, newAmountTokenIn: string, minAmountOut: BigNumber) {
     const joinKind = 1
-    // const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
-    const assets = this.poolInfo.tokensAddresses
+    const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
     const amountsIn = this.poolInfo.tokensAddresses.map(item => {
       if (item.toLowerCase() === tokenInAddress.toLowerCase()) {
         return newAmountTokenIn
       }
       return '0'
     })
-    // const maxAmountsIn = [0, ...amountsIn]
-    const maxAmountsIn = amountsIn
-    const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256[]', 'uint256'], [joinKind, maxAmountsIn, minAmountOut])
-
+    const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256[]', 'uint256'], [joinKind, amountsIn, minAmountOut])
+    const maxAmountsIn = [0, ...amountsIn]
     const request = {
       assets,
       maxAmountsIn,
@@ -79,18 +76,17 @@ export default class operationV2 {
     try {
       const response = await this.balancerHelpersContract.methods.queryJoin(
         this.poolInfo.id,
-        userWalletAddress,
-        userWalletAddress,
+        this.poolInfo.controller,
+        this.poolInfo.controller,
         request
-      ).call({ from: userWalletAddress });
+      ).call({ from: this.poolInfo.controller });
 
       investAmountOut = response.bptOut
 
       await this.contract.methods.joinPool(
-        // userWalletAddress,
-        // this.referral,
-        // this.poolInfo.controller,
-        this.poolInfo.id,
+        userWalletAddress,
+        this.referral,
+        this.poolInfo.controller,
         request
       ).call({ from: userWalletAddress })
 
@@ -140,14 +136,12 @@ export default class operationV2 {
 
     if (hasTokenInPool) {
       const request = this.createRequestJoinInPool(tokenInAddress, tokenAmountIn.toString(), minPoolAmountOut)
-
       const result = await this.contract.methods.joinPool(
-        this.poolInfo.id,
+        userWalletAddress,
+        this.referral,
+        this.poolInfo.controller,
         request
-        // userWalletAddress,
-        // this.referral,
-        // this.poolInfo.controller,
-      ).send({ from: userWalletAddress, gasPrice: new BigNumber(gasPriceValue) }, transactionCallback)
+      ).send({ from: userWalletAddress }, transactionCallback)
 
       return result
     }
