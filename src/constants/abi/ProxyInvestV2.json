@@ -48,46 +48,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "poolId",
-        "type": "bytes32"
-      },
-      {
-        "components": [
-          {
-            "internalType": "contract IAsset[]",
-            "name": "assets",
-            "type": "address[]"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "minAmountsOut",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "bytes",
-            "name": "userData",
-            "type": "bytes"
-          },
-          {
-            "internalType": "bool",
-            "name": "toInternalBalance",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IVault.ExitPoolRequest",
-        "name": "request",
-        "type": "tuple"
-      }
-    ],
-    "name": "exitPoolExactIn",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getSwapProvider",
     "outputs": [
@@ -116,9 +76,19 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "poolId",
-        "type": "bytes32"
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "referrer",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "controller",
+        "type": "address"
       },
       {
         "components": [
@@ -149,36 +119,74 @@
       }
     ],
     "name": "joinPool",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amountToRecipient",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountToReferrer",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountToManager",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "amountsIn",
+        "type": "uint256[]"
+      }
+    ],
     "stateMutability": "payable",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "poolId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "contract IERC20",
-        "name": "tokenIn",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenAmountIn",
-        "type": "uint256"
-      },
-      {
-        "internalType": "contract IERC20",
-        "name": "tokenExchange",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "minTokenAmountOut",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "address",
+            "name": "recipient",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "referrer",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "controller",
+            "type": "address"
+          },
+          {
+            "internalType": "contract IERC20",
+            "name": "tokenIn",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenAmountIn",
+            "type": "uint256"
+          },
+          {
+            "internalType": "contract IERC20",
+            "name": "tokenExchange",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minTokenAmountOut",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ProxyInvest.ProxyParams",
+        "name": "params",
+        "type": "tuple"
       },
       {
         "internalType": "bytes",
@@ -187,7 +195,28 @@
       }
     ],
     "name": "joinPoolExactTokenInWithSwap",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amountToRecipient",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountToReferrer",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountToManager",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "amountsIn",
+        "type": "uint256[]"
+      }
+    ],
     "stateMutability": "payable",
     "type": "function"
   },
