@@ -1,16 +1,15 @@
 import React from 'react'
 
+import ReviewTable from './ReviewTable'
 import Steps from '../../../../../components/Steps'
+import CreatePoolHeader from '../../../CreatePool/CreatePoolHeader'
 
 import * as S from './styles'
-
-// interface IRemoveAssetsProps {
-//   test: string;
-// }
 
 const RebalanceReview = () => {
   return (
     <S.RebalanceReview>
+      <CreatePoolHeader title="Change token weights" />
       <Steps
         steps={[
           {
@@ -31,7 +30,7 @@ const RebalanceReview = () => {
         <p>Check the information one last time before proceeding</p>
 
         <S.ReviewTableAndExecutionPeriod>
-          <h1>asd</h1>
+          <ReviewTable />
           <S.ExecutionPeriodCard>
             <h3>Execution period</h3>
             <span>30 hours</span>
