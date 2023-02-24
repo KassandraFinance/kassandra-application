@@ -1,11 +1,34 @@
 import styled, { css } from 'styled-components'
 
-export const WrapperInputNumber = styled.div`
+interface IValidateInputValueProps {
+  value: number;
+  max: number;
+  min: number;
+}
+
+// eslint-disable-next-line prettier/prettier
+export const WrapperInputNumber = styled.div<IValidateInputValueProps>`
   ${({ theme }) => css`
     color: #ffffff;
     font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.medium};
+
+    border: 1px solid transparent;
+    border-radius: 0.8rem;
   `}
+
+  ${({ value, max, min }) =>
+    (value > max || value < min) &&
+    css`
+      border: 1px solid #e8372c;
+    `}
+  ${({ value, max, min }) =>
+    value >= min &&
+    value <= max &&
+    value !== 0 &&
+    css`
+      border: 1px solid #2ce878;
+    `}
 `
 
 interface ILabelProps {

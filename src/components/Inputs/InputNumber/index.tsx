@@ -22,7 +22,7 @@ const InputNumber = ({
   step = 0.01
 }: IInputNumberProps) => {
   return (
-    <S.WrapperInputNumber>
+    <S.WrapperInputNumber max={max} min={min} value={InputNumberValue}>
       <S.Label value={String(InputNumberValue)}>
         <S.InputNumber
           form={form}
