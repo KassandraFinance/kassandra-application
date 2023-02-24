@@ -17,7 +17,7 @@ import {
 export const NewAllocationTable = styled.div`
   ${({ theme }) => css`
     ${CoinSummary} {
-      @media (max-width: 767.98px) {
+      @media (max-width: 575.98px) {
         gap: 0.8rem;
       }
     }
@@ -27,7 +27,7 @@ export const NewAllocationTable = styled.div`
         display: none;
       }
 
-      @media (max-width: 767.98px) {
+      @media (max-width: 575.98px) {
         color: ${theme.colors.snow};
         font-weight: ${theme.font.weight.medium};
         font-size: ${theme.font.sizes.font12};
@@ -36,7 +36,16 @@ export const NewAllocationTable = styled.div`
     }
 
     ${Name} {
-      @media (max-width: 767.98px) {
+      display: grid;
+      grid-template-columns: 1fr 1.4rem;
+
+      > div {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      @media (max-width: 575.98px) {
         display: none;
       }
     }
@@ -45,7 +54,7 @@ export const NewAllocationTable = styled.div`
       min-width: 8.7rem;
 
       @media (min-width: 576px) {
-        min-width: 13.5rem;
+        min-width: 21rem;
       }
     }
 
