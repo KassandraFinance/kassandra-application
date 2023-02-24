@@ -5,10 +5,6 @@ import InputTime from '../../../../../../components/Inputs/InputTime'
 
 import * as S from './styles'
 
-// interface IRemoveAssetsProps {
-//   test: string;
-// }
-
 const ExecutionPeriod = () => {
   const [timeValue, setTimeValue] = React.useState<number>()
   const [timePeriodSelect, setTimePeriodSelect] = React.useState('optimized')
@@ -17,7 +13,6 @@ const ExecutionPeriod = () => {
     const value = event.target.value
 
     setTimePeriodSelect(value)
-    console.log('RADIO', value)
   }
 
   function handleInputTime(event: React.ChangeEvent<HTMLInputElement>) {
