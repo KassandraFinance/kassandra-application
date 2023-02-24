@@ -1,23 +1,21 @@
 import React from 'react'
 
-import Steps from '../../../../../components/Steps'
 import ExecutionPeriod from './ExecutionPeriod'
 import AllocationsTable from './AllocationsTable'
+import Steps from '../../../../../components/Steps'
+import CreatePoolHeader from '../../../CreatePool/CreatePoolHeader'
 
 import * as S from './styles'
-
-// interface IRemoveAssetsProps {
-//   test: string;
-// }
 
 const SetNewWeights = () => {
   return (
     <S.SetNewWeights>
+      <CreatePoolHeader title="Change token weights" />
       <Steps
         steps={[
           {
             stepNumber: 1,
-            stepeTitle: 'Set new token weights and rebalance execution period',
+            stepeTitle: 'Set new token weights',
             state: 'CURRENT'
           },
           {

@@ -44,7 +44,12 @@ export const TableHeadRow = styled.tr`
       justify-content: flex-end;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 620px) {
+      gap: 0.4rem;
+      padding-inline: 1.6rem;
+    }
+
+    @media (max-width: 745px) {
       display: flex;
       justify-content: space-between;
       width: 100%;
@@ -95,7 +100,12 @@ export const TrBody = styled.tr`
       border-top: 1px solid rgba(255, 255, 255, 0.3);
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 620px) {
+      gap: 0.4rem;
+      margin-inline: 1.6rem;
+    }
+
+    @media (max-width: 745px) {
       margin-inline: 1.6rem;
       padding: 1.4rem 0;
       grid-template-columns: none;

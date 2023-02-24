@@ -11,7 +11,7 @@ export const TokenInfo = styled.td`
     align-items: center;
     gap: 1.2rem;
 
-    @media (max-width: 576px) {
+    @media (max-width: 745px) {
       grid-area: tokenInfo;
     }
   `}
@@ -31,21 +31,21 @@ export const TokenNameContainer = styled.div`
       line-height: 104%;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 745px) {
       flex-direction: row;
       align-items: center;
     }
 
     #mobile {
       display: none;
-      @media (max-width: 576px) {
+      @media (max-width: 745px) {
         display: flex;
         align-items: flex-end;
       }
     }
     #desktop,
     p {
-      @media (max-width: 576px) {
+      @media (max-width: 745px) {
         display: none;
       }
     }
@@ -75,7 +75,7 @@ export const Line = styled.span`
 
     border: 1px solid rgba(255, 255, 255, 0.3);
 
-    @media (max-width: 576px) {
+    @media (max-width: 745px) {
       display: block;
     }
   `}
@@ -89,13 +89,20 @@ export const CurrentAmountContainer = styled.td<IMoreInfoProps>`
   ${({ isOpen }) => css`
     display: flex;
     align-items: center;
-    /* justify-content: space-around; */
-    /* max-width: 19.5rem; */
 
-    @media (max-width: 576px) {
-      display: ${isOpen ? 'flex' : 'none'};
+    transition: height 0.4s ease, opacity 0.4s ease, margin-top 0.4s ease;
+
+    @media (max-width: 745px) {
+      height: ${isOpen ? '5.5rem' : '0'};
+      opacity: ${isOpen ? '1' : '0'};
+      z-index: ${isOpen ? '1000' : '-1'};
+      margin-top: ${isOpen ? '0' : '-2rem'};
+
+      ${CurrentAmount} {
+        height: ${isOpen ? '5.5rem' : '0'};
+      }
+
       align-items: center;
-      animation: ${moveDown} 0.4s ease;
       grid-area: currentAmount;
       /* max-width: 23rem; */
     }
@@ -113,7 +120,7 @@ export const CurrentAmount = styled.div`
 
     p:first-child {
       margin-bottom: 0.4rem;
-      @media (min-width: 576px) {
+      @media (min-width: 745px) {
         display: none;
       }
     }
@@ -131,7 +138,7 @@ export const CurrentAmount = styled.div`
       line-height: 104%;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 745px) {
       align-items: center;
     }
   `}
@@ -144,7 +151,7 @@ export const AmountLine = styled.span`
 
     border: 1px solid rgba(255, 255, 255, 0.3);
 
-    @media (max-width: 576px) {
+    @media (max-width: 745px) {
       display: block;
     }
   `}
@@ -162,7 +169,7 @@ export const Allocation = styled.td`
     font-weight: ${theme.font.weight.medium};
     line-height: 100%;
 
-    @media (max-width: 576px) {
+    @media (max-width: 745px) {
       grid-area: porcentage;
     }
   `}
@@ -174,7 +181,10 @@ export const Arrow = styled.td`
     align-items: center;
     justify-content: flex-start;
 
-    @media (max-width: 576px) {
+    @media (max-width: 650px) {
+      justify-content: center;
+    }
+    @media (max-width: 745px) {
       grid-area: arrow;
       justify-content: center;
     }
@@ -188,7 +198,7 @@ export const NewAllocation = styled.td`
     justify-content: center;
     gap: 0.8rem;
 
-    @media (max-width: 576px) {
+    @media (max-width: 745px) {
       grid-area: newAllocation;
       justify-content: flex-end;
     }
@@ -206,7 +216,7 @@ export const ImageContent = styled.span`
     border-radius: 50%;
     background: #ffffff10;
 
-    @media (max-width: 576px) {
+    @media (max-width: 745px) {
       width: 1.6rem;
     }
   `}
@@ -227,7 +237,7 @@ export const NewAmount = styled.td<IMoreInfoProps>`
 
     p:first-child {
       margin-bottom: 0.4rem;
-      @media (min-width: 576px) {
+      @media (min-width: 745px) {
         display: none;
       }
     }
@@ -245,17 +255,23 @@ export const NewAmount = styled.td<IMoreInfoProps>`
       line-height: 104%;
     }
 
-    @media (max-width: 576px) {
-      display: ${isOpen ? 'flex' : 'none'};
-      animation: ${moveDown} 0.4s ease;
+    transition: height 0.4s ease, opacity 0.4s ease, margin-top 0.4s ease;
+
+    @media (max-width: 745px) {
+      height: ${isOpen ? '5.5rem' : '0'};
+      opacity: ${isOpen ? '1' : '0'};
+      z-index: ${isOpen ? '1000' : '-1'};
+      margin-top: ${isOpen ? '0' : '-4rem'};
+
       grid-area: newAmount;
       align-items: center;
     }
   `}
 `
 
-export const MoreInfoContainer = styled.td`
-  ${({ theme }) => css`
+// eslint-disable-next-line prettier/prettier
+export const MoreInfoContainer = styled.td<IMoreInfoProps>`
+  ${({ theme, isOpen }) => css`
     display: flex;
     align-items: center;
     justify-content: center;
@@ -263,6 +279,11 @@ export const MoreInfoContainer = styled.td`
     margin-bottom: 1.4rem;
     grid-area: moreInfo;
 
+
+    img {
+      transition: transform 0.4s ease;
+      transform: rotate(${isOpen ? '180deg' : '0'});
+    }
 
     button {
       display: flex;
@@ -282,13 +303,8 @@ export const MoreInfoContainer = styled.td`
       cursor: pointer;
     }
 
-    @media (min-width: 576px) {
+    @media (min-width: 745px) {
       display: none;
     }
   `}
-`
-
-const moveDown = keyframes`
-  0% { transform: translateY(-2rem); }
-  100% { transform: translateY(0); }
 `

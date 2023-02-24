@@ -29,7 +29,7 @@ const PoolToken = ({
 
   return (
     <>
-      <S.TokenInfo onAnimationEnd={e => console.log(e)}>
+      <S.TokenInfo>
         <img src="/assets/logos/tricrypto.svg" alt="" width={24} height={24} />
         <S.TokenNameContainer>
           <Link href="#" passHref>
@@ -61,9 +61,7 @@ const PoolToken = ({
       <S.CurrentAmountContainer isOpen={moreInfo}>
         <S.CurrentAmount>
           <p>Amount</p>
-          <span>
-            {currentAmount} {symbol}
-          </span>
+          <span>{currentAmount}</span>
           <p>~${currentAmountInDollar.toFixed(2)}</p>
         </S.CurrentAmount>
         <S.AmountLine />
@@ -92,7 +90,7 @@ const PoolToken = ({
           />
         </S.ImageContent>
       </S.NewAllocation>
-      <S.MoreInfoContainer>
+      <S.MoreInfoContainer isOpen={moreInfo}>
         <button type="button" onClick={() => setMoreInfo(!moreInfo)}>
           {moreInfo ? 'Less' : 'More'} Info{' '}
           <img src="/assets/utilities/arrow-select-down.svg" alt="" />
@@ -100,9 +98,7 @@ const PoolToken = ({
       </S.MoreInfoContainer>
       <S.NewAmount isOpen={moreInfo}>
         <p>New Amount</p>
-        <span>
-          {newAmount} {symbol}
-        </span>
+        <span>{newAmount}</span>
         <p>~${newAmountInDollar.toFixed(2)}</p>
       </S.NewAmount>
     </>

@@ -15,7 +15,7 @@ const AllocationsTable = () => {
     symbol: '$K3C',
     currentAmount: 1000,
     currentAmountInDollar: 2940,
-    allocationPorcentage: 9,
+    allocationPorcentage: 39,
     newAmount: 1000,
     newAmountInDollar: 2940
   }
@@ -28,14 +28,14 @@ const AllocationsTable = () => {
           <S.ThHead>Asset Name</S.ThHead>
           <S.ThHead>Current amount</S.ThHead>
           <S.ThHead>
-            Allocation
+            Weight
             <Tippy content="TIPPY">
               <img src="/assets/utilities/tooltip.svg" />
             </Tippy>
           </S.ThHead>
           <S.ThHead id="arrowIconContent" />
           <S.ThHead>
-            New Allocation
+            New Weight
             <Tippy content="TIPPY">
               <img src="/assets/utilities/tooltip.svg" />
             </Tippy>
