@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 
 export const AddLiquidity = styled.div`
   ${() => css`
-    margin-bottom: 10rem;
+    margin-bottom: 16rem;
   `}
 `
 
@@ -13,7 +13,7 @@ export const Container = styled.div`
     gap: 2.4rem;
 
     @media (min-width: 992px) {
-      grid-template-columns: 457px 1fr;
+      grid-template-columns: minmax(400px, 457px) 1fr;
     }
   `}
 `
