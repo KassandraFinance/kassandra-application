@@ -1,4 +1,20 @@
 import React from 'react'
+import Image from 'next/image'
+import useSWR from 'swr'
+import { request } from 'graphql-request'
+import Big from 'big.js'
+import BigNumber from 'bn.js'
+
+import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
+import { GET_POOL_TOKENS } from '../graphql'
+import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
+import {
+  setAmount,
+  setAllocation
+} from '../../../../../store/reducers/addAssetSlice'
+import { ERC20 } from '../../../../../hooks/useERC20Contract'
+
+import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import CoinSummary from '../../../CreatePool/SelectAssets/CoinSummary'
 import InputNumberRight from '../../../../../components/Inputs/InputNumberRight'
@@ -6,19 +22,68 @@ import InputNumberRight from '../../../../../components/Inputs/InputNumberRight'
 import arrowDown from '../../../../../../public/assets/utilities/arrow-down.svg'
 
 import * as S from './styles'
-import Image from 'next/image'
+
+type AssetsType = {
+  weight_normalized: string,
+  token: {
+    decimals: number,
+    id: string,
+    logo: string | null,
+    name: string,
+    symbol: string
+  }
+}
+
+export type GetPoolTokensType = {
+  pool: {
+    address: string,
+    chainId: number,
+    logo: string,
+    name: string,
+    price_usd: string,
+    symbol: string,
+    weight_goals: {
+      weights: AssetsType[]
+    }[]
+  }
+}
 
 const AddLiquidityOperation = () => {
-  const [tokenAmount, setTokenAmount] = React.useState('')
-  const [tokenAllocation, setTokenAllocation] = React.useState('')
+  const dispatch = useAppDispatch()
+
+  const [balance, setBalance] = React.useState<BigNumber>()
+
+  const token = useAppSelector(state => state.addAsset.token)
+  const poolId = useAppSelector(state => state.addAsset.poolId)
+  const liquidit = useAppSelector(state => state.addAsset.liquidit)
+  const wallet = useAppSelector(state => state.userWalletAddress)
+
+  const params = {
+    id: poolId
+  }
 
   function handleTokenAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setTokenAmount(e.target.value)
+    dispatch(setAmount(e.target.value))
   }
 
   function handleTokenAllocatinChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setTokenAllocation(e.target.value)
+    dispatch(setAllocation(e.target.value))
   }
+
+  const { data } = useSWR<GetPoolTokensType>(
+    [GET_POOL_TOKENS, params],
+    (query, params) => request(BACKEND_KASSANDRA, query, params)
+  )
+
+  React.useEffect(() => {
+    async function getBalances(token: string) {
+      const { balance } = ERC20(token)
+      const balanceValue = await balance(wallet)
+      setBalance(balanceValue)
+    }
+
+    getBalances('0x841a91e3De1202b7b750f464680068aAa0d0EA35')
+  }, [wallet])
 
   return (
     <S.AddLiquidityOperation>
@@ -27,9 +92,9 @@ const AddLiquidityOperation = () => {
       <S.Container>
         <S.InputContainer>
           <CoinSummary
-            coinName="Wrapped Bitcoin"
-            coinSymbol="wbtc"
-            coinImage="https://tokens.1inch.io/0x2260fac5e5542a773aa44fbcfedf7c193bc2c599.png"
+            coinName={token.name}
+            coinSymbol={token.symbol}
+            coinImage={token.image}
             url={`https://heimdall-frontend.vercel.app/coins/btc`}
             price={0}
           />
@@ -40,15 +105,23 @@ const AddLiquidityOperation = () => {
               type="number"
               buttonText="Max"
               button
-              value={tokenAmount}
+              value={liquidit.amount}
               min="1"
-              max="any"
+              max={
+                balance
+                  ? Big(balance.toString())
+                      .div(Big(10).pow(token.decimals))
+                      .toString()
+                  : '0'
+              }
               lable="Token Amount"
               placeholder=""
               onChange={handleTokenAmountChange}
             />
 
-            <S.Balance>Balance: 50000.255</S.Balance>
+            <S.Balance>
+              Balance: {balance ? BNtoDecimal(balance, token.decimals) : '0'}
+            </S.Balance>
           </S.InputWrapper>
         </S.InputContainer>
 
@@ -62,7 +135,7 @@ const AddLiquidityOperation = () => {
             type="number"
             buttonText="Max"
             button
-            value={tokenAllocation}
+            value={liquidit.allocation}
             min="1"
             max="any"
             lable="Token Allocation"
@@ -77,21 +150,24 @@ const AddLiquidityOperation = () => {
       <S.Title>Receive (est.)</S.Title>
 
       <S.Container>
-        <S.InputContainer>
-          <CoinSummary
-            coinName="Pool Name LP"
-            coinSymbol="pnlp"
-            coinImage="https://tokens.1inch.io/0x62edc0692bd897d2295872a9ffcac5425011c661.png"
-            url={`https://heimdall-frontend.vercel.app/coins/btc`}
-            price={0}
-          />
+        {data && (
+          <S.InputContainer>
+            <CoinSummary
+              coinName={data?.pool.name}
+              coinSymbol={data?.pool.symbol}
+              coinImage={data?.pool.logo}
+              price={0}
+            />
 
-          <S.InputWrapper>
-            <S.Value>0</S.Value>
+            <S.InputWrapper>
+              <S.Value>0</S.Value>
 
-            <S.SecondaryValue>~$0.00</S.SecondaryValue>
-          </S.InputWrapper>
-        </S.InputContainer>
+              <S.SecondaryValue>
+                ~${BNtoDecimal(Big(data.pool.price_usd), 2)}
+              </S.SecondaryValue>
+            </S.InputWrapper>
+          </S.InputContainer>
+        )}
       </S.Container>
     </S.AddLiquidityOperation>
   )

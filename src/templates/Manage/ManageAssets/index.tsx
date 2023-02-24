@@ -11,6 +11,12 @@ import AddLiquidity from './AddLiquidity'
 import * as S from './styles'
 
 const ManageAssets = () => {
+  const [step, setStep] = React.useState(0)
+  const addNewAsset = [
+    <SelectAssets key="selectAssets" />,
+    <AddLiquidity key="addLiquidity" />
+  ]
+
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
@@ -26,19 +32,14 @@ const ManageAssets = () => {
         <S.ManageAssetsBody id="managerAssets" onSubmit={handleSubmit}>
           {/* <ChooseAction /> */}
           {/* <RebalanceAssets /> */}
-          {
-            // <SelectAssets />
-          }
-          <AddLiquidity />
           {/* <RemoveAssets /> */}
+          {addNewAsset[step]}
         </S.ManageAssetsBody>
 
         <ContainerButton
           backButtonDisabled={false}
-          onBack={() => console.log('aqui')}
-          onNext={() => {
-            return
-          }}
+          onBack={() => setStep(prev => prev - 1)}
+          onNext={() => setStep(prev => prev + 1)}
         />
       </ModalFullWindow>
     </S.ManageAssets>

@@ -1,13 +1,36 @@
 import React from 'react'
 import Image from 'next/image'
+import useSWR from 'swr'
+import { request } from 'graphql-request'
+import Big from 'big.js'
+
+import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
+import { GET_POOL_TOKENS } from '../graphql'
+import { useAppSelector } from '../../../../../store/hooks'
+
+import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import CoinSummary from '../../../CreatePool/SelectAssets/CoinSummary'
 
 import arrowRight from '../../../../../../public/assets/utilities/arrow-right.svg'
+import notFound from '../../../../../../public/assets/icons/coming-soon.svg'
+
+import { GetPoolTokensType } from '../AddLiquidityOperation'
 
 import * as S from './styles'
 
 const NewAllocationTable = () => {
+  const poolId = useAppSelector(state => state.addAsset.poolId)
+
+  const params = {
+    id: poolId
+  }
+
+  const { data } = useSWR<GetPoolTokensType>(
+    [GET_POOL_TOKENS, params],
+    (query, params) => request(BACKEND_KASSANDRA, query, params)
+  )
+
   return (
     <S.NewAllocationTable>
       <S.Table>
@@ -21,23 +44,29 @@ const NewAllocationTable = () => {
         </S.THead>
 
         <S.TBody>
-          <S.Tr>
-            <S.Td className="asset">
-              <CoinSummary
-                coinImage="https://tokens.1inch.io/0x2260fac5e5542a773aa44fbcfedf7c193bc2c599.png"
-                coinName="Bitcoin"
-                coinSymbol="wbtc.e"
-                price={0}
-                url={`https://heimdall-frontend.vercel.app/coins/${'bitcoin'}`}
-                table
-              />
-            </S.Td>
-            <S.Td className="allocation">10%</S.Td>
-            <S.Td className="arrow">
-              <Image src={arrowRight} />
-            </S.Td>
-            <S.Td className="newAllocation">---</S.Td>
-          </S.Tr>
+          {data
+            ? data.pool.weight_goals[0].weights.map(asset => (
+                <S.Tr key={asset.token.id}>
+                  <S.Td className="asset">
+                    <CoinSummary
+                      coinImage={asset.token.logo || notFound}
+                      coinName={asset.token.name}
+                      coinSymbol={asset.token.symbol}
+                      price={0}
+                      url={`https://heimdall-frontend.vercel.app/coins/${'bitcoin'}`}
+                      table
+                    />
+                  </S.Td>
+                  <S.Td className="allocation">
+                    {BNtoDecimal(Big(asset.weight_normalized).mul(100), 2)}%
+                  </S.Td>
+                  <S.Td className="arrow">
+                    <Image src={arrowRight} />
+                  </S.Td>
+                  <S.Td className="newAllocation">---</S.Td>
+                </S.Tr>
+              ))
+            : null}
         </S.TBody>
       </S.Table>
     </S.NewAllocationTable>
