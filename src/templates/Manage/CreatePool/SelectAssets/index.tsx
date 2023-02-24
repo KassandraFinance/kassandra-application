@@ -114,10 +114,16 @@ const SelectAssets = () => {
   }
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
+    let allocation = e.target.value
+    
+    if (allocation.length > 0) {
+      allocation = allocation.replace(/^0+/, '')
+    }
+
     dispatch(
       setAllocation({
         token: e.target.name,
-        allocation: Number(e.target.value)
+        allocation: allocation ? allocation : '0'
       })
     )
   }

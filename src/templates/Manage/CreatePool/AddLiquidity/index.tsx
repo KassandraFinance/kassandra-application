@@ -61,10 +61,16 @@ const AddLiquidity = () => {
   }
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
+    let liquidity = e.target.value
+
+    if (liquidity.length > 0) {
+      liquidity = liquidity.replace(/^0+/, '')
+    }
+
     dispatch(
       setLiquidity({
         token: e.target.name,
-        liquidity: e.target.value ? e.target.value : '0',
+        liquidity: liquidity ? liquidity : '0',
         tokenPriceList: data ? data : {}
       })
     )
@@ -85,7 +91,7 @@ const AddLiquidity = () => {
     let tokenSymbol = ''
     let liquidity = Big(0)
     for (const token of tokensList) {
-      const diffAllocation = 100 - token.allocation
+      const diffAllocation = 100 - Number(token.allocation)
 
       const balanceInDollar = Big(tokensBalance[token.address]?.toString())
         .div(Big(10).pow(token.decimals))

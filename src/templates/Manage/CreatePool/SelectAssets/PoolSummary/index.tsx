@@ -92,7 +92,7 @@ const PoolSummary = ({
                       <Image src={closeIcon} />
                     </S.RemoveButton>
                   </S.AllocationContainer>
-                  {coin.allocation < 1 && (
+                  {Number(coin.allocation) < 1 && (
                     <S.Error>Allocation must be above 1%</S.Error>
                   )}
                 </>
@@ -101,7 +101,9 @@ const PoolSummary = ({
               )}
 
               <S.ProgressBar>
-                <S.ProgressValue value={coin.allocation}></S.ProgressValue>
+                <S.ProgressValue
+                  value={Number(coin.allocation)}
+                ></S.ProgressValue>
               </S.ProgressBar>
             </S.CoinContainer>
           ))}

@@ -191,7 +191,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                           symbol: coin.symbol,
                           decimals: coin.decimals,
                           url: `https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`,
-                          allocation: 100,
+                          allocation: '100',
                           amount: '0',
                           isLocked: false
                         })

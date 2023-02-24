@@ -10,7 +10,7 @@ export type TokenType = {
   url: string,
   address: string,
   decimals: number,
-  allocation: number,
+  allocation: string,
   amount: string,
   isLocked: boolean
 }
@@ -48,7 +48,7 @@ export interface IPoolCreationDataState {
 
 function handleAllocation(
   tokensList: TokenType[],
-  tokenAllocation?: { token: string, allocation: number }
+  tokenAllocation?: { token: string, allocation: string }
 ) {
   const maxAllocation = Big(100)
   let allocationAmount = Big(0)
@@ -88,13 +88,13 @@ function handleAllocation(
         isFirstUnlocked = false
         return {
           ...token,
-          allocation: fixedAllocationValue.plus(teste).toNumber()
+          allocation: fixedAllocationValue.plus(teste).toFixed()
         }
       }
 
       return {
         ...token,
-        allocation: fixedAllocationValue.toNumber()
+        allocation: fixedAllocationValue.toFixed()
       }
     } else {
       return {
@@ -114,7 +114,7 @@ export function handleLiquidity(
   tokenPriceList: CoinGeckoResponseType
 ) {
   let inputAddress = ''
-  let tokenInputAllocation = 0
+  let tokenInputAllocation = '0'
   for (const token of tokensArr) {
     if (token.symbol === inputToken) {
       inputAddress = token.address
@@ -141,7 +141,7 @@ export function handleLiquidity(
     const liquidityInToken = tokenRealocatedLiquidity.div(
       tokenPriceList[token.address].usd
     )
-    return { ...token, amount: String(liquidityInToken) }
+    return { ...token, amount: liquidityInToken.toFixed() }
   })
 
   return newArr
@@ -254,7 +254,7 @@ export const poolCreationSlice = createSlice({
     },
     setAllocation: (
       state,
-      action: PayloadAction<{ token: string, allocation: number }>
+      action: PayloadAction<{ token: string, allocation: string }>
     ) => {
       const tokensArr = state.createPoolData.tokens
         ? state.createPoolData.tokens

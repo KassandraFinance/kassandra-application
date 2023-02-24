@@ -95,7 +95,7 @@ const PoolReview = () => {
     const initialLiquidity = totalLiquidity()
 
     for (const token of tokensList) {
-      const weight = token.allocation / 100
+      const weight = Number(token.allocation) / 100
       const amountPowWeight = Big(token.amount).toNumber() ** weight
 
       if (invariant.lte(0)) {

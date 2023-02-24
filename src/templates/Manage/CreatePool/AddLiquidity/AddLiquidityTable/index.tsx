@@ -53,7 +53,7 @@ const AddLiquidityTable = ({
     let tokenSymbol = ''
     let liquidity = Big(0)
     for (const token of coinsList) {
-      const diffAllocation = 100 - token.allocation
+      const diffAllocation = 100 - Number(token.allocation)
 
       const balanceInDollar = Big(tokensBalance[token.address]?.toString() || 0)
         .div(Big(10).pow(token.decimals))
