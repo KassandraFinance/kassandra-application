@@ -30,10 +30,6 @@ const ChooseAction = () => {
         <p>Choose an action you would like to start on your pool</p>
       </S.Header>
       <S.ChooseActionBody>
-        <S.FundCardContainer>
-          <FundCard poolAddress="0x38918142779e2CD1189cBd9e932723C968363D1E" />
-        </S.FundCardContainer>
-
         <S.CardChooseActionContainer>
           <CardChooseAction
             ImageUrl="/assets/iconGradient/rebalance.svg"
@@ -60,6 +56,10 @@ const ChooseAction = () => {
             setChooseActionSelect={setChooseActionSelect}
           />
         </S.CardChooseActionContainer>
+
+        <S.FundCardContainer>
+          <FundCard poolAddress="0x38918142779e2CD1189cBd9e932723C968363D1E" />
+        </S.FundCardContainer>
       </S.ChooseActionBody>
     </S.ChooseAction>
   )
