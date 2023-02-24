@@ -4,6 +4,9 @@ import BigNumber from 'bn.js'
 import Big from 'big.js'
 import { useInView } from 'react-intersection-observer'
 
+import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
+import { setSelectedToken } from '../../../../../store/reducers/addAssetSlice'
+
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import InputSearch from '../../../../../components/Inputs/InputSearch'
@@ -34,13 +37,12 @@ interface IAddAssestsTableProps {
   priceList: CoinGeckoAssetsResponseType | undefined;
 }
 
-const AddAssetsTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
+const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
   const [searchValue, setSearchValue] = React.useState('')
   const [filteredArr, setFilteredArr] = React.useState<
     (TokensInfoResponseType & { balance?: BigNumber })[]
   >([])
   const [inViewCollum, setInViewCollum] = React.useState(1)
-  const [tokenId, setTokenId] = React.useState('')
   const [token, setToken] = React.useState({
     logo: '',
     name: ''
@@ -52,6 +54,9 @@ const AddAssetsTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
     symbol: '',
     balance: new BigNumber(0)
   })
+
+  const dispatch = useAppDispatch()
+  const tokenId = useAppSelector(state => state.addAsset.token.id)
 
   const { ref, inView } = useInView({
     threshold: 0.5
@@ -75,7 +80,19 @@ const AddAssetsTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
   }
 
   function handleInputRadio(event: React.ChangeEvent<HTMLInputElement>) {
-    setTokenId(event.target.name)
+    filteredArr.forEach(item => {
+      if (item.id === event.target.name) {
+        dispatch(
+          setSelectedToken({
+            id: event.target.name,
+            name: item.name,
+            symbol: item.symbol,
+            image: item.logo,
+            decimals: item.decimals
+          })
+        )
+      }
+    })
   }
 
   function handleView(
@@ -115,7 +132,7 @@ const AddAssetsTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
 
   return (
     <>
-      <S.AddAssetsTable>
+      <S.AddAssetTable>
         <S.InputSearchWrapper>
           <InputSearch
             name="addAssetsInput"
@@ -247,7 +264,7 @@ const AddAssetsTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
             <S.Shadow inView={inView}></S.Shadow>
           </S.TBody>
         </S.Table>
-      </S.AddAssetsTable>
+      </S.AddAssetTable>
       <ModalViewCoin
         title={token}
         isOpen={isOpen}
@@ -308,4 +325,4 @@ const AddAssetsTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
   )
 }
 
-export default AddAssetsTable
+export default AddAssetTable

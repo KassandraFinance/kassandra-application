@@ -11,7 +11,7 @@ import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { KASSANDRA_BACKEND } from '../../../../constants/tokenAddresses'
 import { GET_INFO_TOKENS } from './graphql'
 
-import AddAssetsTable from './AddAssetsTable'
+import AddAssetTable from './AddAssetTable'
 import CreatePoolHeader from '../../CreatePool/CreatePoolHeader'
 import Steps from '../../../../components/Steps'
 
@@ -155,7 +155,7 @@ const SelectAssets = () => {
         <S.AddAssetsText>Select from the list the asset that will be added to the pool</S.AddAssetsText>
       </S.TextContainer>
 
-      <AddAssetsTable tokensData={tokensList} priceList={priceData} />
+      <AddAssetTable tokensData={tokensList} priceList={priceData} />
     </S.SelectAssets>
   )
 }

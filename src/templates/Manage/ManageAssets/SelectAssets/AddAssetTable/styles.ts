@@ -14,7 +14,7 @@ import {
   Symbol
 } from '../../../CreatePool/SelectAssets/CoinSummary/styles'
 
-export const AddAssetsTable = styled.div`
+export const AddAssetTable = styled.div`
   ${({ theme }) => css`
     ${CoinSummary} {
       @media (max-width: 767.98px) {
