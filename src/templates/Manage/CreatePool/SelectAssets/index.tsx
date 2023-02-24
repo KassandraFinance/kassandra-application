@@ -135,6 +135,7 @@ const SelectAssets = () => {
     const getWhitelist = async () => {
       try {
         const web3 = new Web3("https://rpc.ankr.com/eth_goerli");
+        // eslint-disable-next-line prettier/prettier
         const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, WHITELIST_ADDRESS);
         const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
         

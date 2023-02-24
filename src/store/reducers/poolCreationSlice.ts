@@ -11,7 +11,7 @@ export type TokenType = {
   address: string,
   decimals: number,
   allocation: number,
-  amount: Big,
+  amount: string,
   isLocked: boolean
 }
 
@@ -108,7 +108,7 @@ function handleAllocation(
 }
 
 export function handleLiquidity(
-  tokenInputLiquidity: Big,
+  tokenInputLiquidity: string,
   inputToken: string,
   tokensArr: TokenType[],
   tokenPriceList: CoinGeckoResponseType
@@ -122,7 +122,7 @@ export function handleLiquidity(
     }
   }
 
-  const tokenInputDolar = tokenInputLiquidity.mul(
+  const tokenInputDolar = Big(tokenInputLiquidity).mul(
     Big(tokenPriceList[inputAddress].usd)
   )
 
@@ -141,7 +141,7 @@ export function handleLiquidity(
     const liquidityInToken = tokenRealocatedLiquidity.div(
       tokenPriceList[token.address].usd
     )
-    return { ...token, amount: liquidityInToken }
+    return { ...token, amount: String(liquidityInToken) }
   })
 
   return newArr
@@ -265,7 +265,7 @@ export const poolCreationSlice = createSlice({
       state,
       action: PayloadAction<{
         token: string,
-        liquidity: Big,
+        liquidity: string,
         tokenPriceList: CoinGeckoResponseType
       }>
     ) => {

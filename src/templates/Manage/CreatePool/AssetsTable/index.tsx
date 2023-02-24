@@ -124,11 +124,11 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
 
         <S.TBody>
           <S.TrsWrapper>
-            {tokensData &&
+            {tokensArr.length > 0 &&
               tokensArr.map((coin, i) => (
                 <S.Tr
                   key={coin.id}
-                  ref={i === tokensData.length - 1 ? ref : null}
+                  ref={i === tokensArr.length - 1 ? ref : null}
                 >
                   <S.Td className="asset">
                     <CoinSummary
@@ -192,7 +192,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                           decimals: coin.decimals,
                           url: `https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`,
                           allocation: 100,
-                          amount: Big(0),
+                          amount: '0',
                           isLocked: false
                         })
                       }

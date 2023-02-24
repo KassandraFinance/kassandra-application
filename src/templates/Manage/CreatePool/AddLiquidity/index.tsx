@@ -64,13 +64,13 @@ const AddLiquidity = () => {
     dispatch(
       setLiquidity({
         token: e.target.name,
-        liquidity: Big(e.target.value ? e.target.value : 0),
+        liquidity: e.target.value ? e.target.value : '0',
         tokenPriceList: data ? data : {}
       })
     )
   }
 
-  function handleInputMax(token: string, liquidity: Big) {
+  function handleInputMax(token: string, liquidity: string) {
     dispatch(
       setLiquidity({
         token: token,
@@ -104,7 +104,7 @@ const AddLiquidity = () => {
     dispatch(
       setLiquidity({
         token: tokenSymbol,
-        liquidity: liquidity,
+        liquidity: liquidity.toString(),
         tokenPriceList: priceList
       })
     )

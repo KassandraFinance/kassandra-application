@@ -169,6 +169,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   }
 
   async function handlePrivateInvestors(poolControler: string, investorsList: { address: string }[]) {
+    // eslint-disable-next-line prettier/prettier
     const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
 
     for (const address of investorsList) {
@@ -305,7 +306,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       if (mockTokens[mockToken]) {
         for (const token of tokensList) {
           if (token.address === mockTokens[mockToken].toLowerCase()) {
-            maxAmountsIn.push(token.amount.mul(Big(10).pow(token.decimals)).round().toString())
+            maxAmountsIn.push(Big(token.amount).mul(Big(10).pow(token.decimals)).round().toString())
             normalizedWeights.push(Big(token.allocation).div(100).mul(Big(10).pow(18)).round().toString())
             tokens.push(mockToken)
           }
