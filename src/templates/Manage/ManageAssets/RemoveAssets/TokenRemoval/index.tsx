@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Steps from '../../../../../components/Steps'
-// import SelectTokenRemove from './SelectTokenRemove'
+import SelectTokenRemove from './SelectTokenRemove'
 import CreatePoolHeader from '../../../CreatePool/CreatePoolHeader'
 
 import * as S from './styles'
@@ -29,7 +29,7 @@ const TokenRemoval = () => {
         <p>Select the token you wish to be removed from the pool</p>
 
         <S.SelectTokenAndTableAllocation>
-          {/* <SelectTokenRemove /> */}
+          <SelectTokenRemove />
           {/* table */}
         </S.SelectTokenAndTableAllocation>
       </S.TokenRemovalsBody>
