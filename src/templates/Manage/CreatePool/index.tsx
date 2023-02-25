@@ -350,8 +350,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const managerShare = poolData.fees?.refferalFee.managerShare ? poolData.fees.refferalFee.managerShare : 0
     const brokerCommision = poolData.fees?.refferalFee.brokerCommision ? poolData.fees.refferalFee.brokerCommision : 0
 
-    const managementAumFeePercentage = poolData.fees?.managementFee?.feeRate ? managementFeeRate / 100 : 0 / 100
-    const feesToManager = poolData.fees?.depositFee.isChecked ? poolData.fees.refferalFee.isChecked ? managerShare / 100 : depositFeeRate / 100 : 0 / 100
+    const managementAumFeePercentage = poolData.fees?.managementFee?.feeRate ? Number(managementFeeRate) / 100 : 0 / 100
+    const feesToManager = poolData.fees?.depositFee.isChecked ? poolData.fees.refferalFee.isChecked ? managerShare / 100 : Number(depositFeeRate) / 100 : 0 / 100
     const feesToReferral = poolData.fees?.refferalFee.brokerCommision ? brokerCommision / 100 : 0 / 100
 
     const pool = {
