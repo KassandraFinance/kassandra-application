@@ -129,15 +129,7 @@ const PoolReview = () => {
             </S.ImageWrapper>
             <S.PoolNameContent>
               <p>{poolData.poolName}</p>
-              <span>
-                {poolData.poolSymbol}
-                <img
-                  src="/assets/utilities/edit-icon.svg"
-                  alt=""
-                  width={14}
-                  height={14}
-                />
-              </span>
+              <span>{poolData.poolSymbol}</span>
             </S.PoolNameContent>
           </S.PoolNameContainer>
           <S.PoolValueContent>
@@ -241,15 +233,7 @@ const PoolReview = () => {
       <S.WrapperPoolPrivacy>
         <S.PoolPrivacyLine>
           <p>Privacy</p>
-          <span>
-            Public{' '}
-            <img
-              src="/assets/utilities/edit-icon.svg"
-              alt=""
-              width={16}
-              height={16}
-            />
-          </span>
+          <span>Public</span>
         </S.PoolPrivacyLine>
         <S.WrapperPoolPrivate>
           {poolData.privateAddressList &&
