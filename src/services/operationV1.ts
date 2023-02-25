@@ -94,7 +94,7 @@ export default class operationV1 implements IOperations {
           .joinswapExternAmountIn(
             this.crpPool,
             tokenInAddress,
-            new BigNumber(amountTokenIn.toString()),
+            new BigNumber(amountTokenIn.toFixed()),
             minAmountOut,
             this.referral
           )
@@ -112,7 +112,7 @@ export default class operationV1 implements IOperations {
         .joinswapExternAmountInWithSwap(
           this.crpPool,
           tokenInAddress,
-          new BigNumber(amountTokenIn.toString()),
+          new BigNumber(amountTokenIn.toFixed()),
           tokenWrappedAddress,
           minAmountOut,
           this.referral,
@@ -127,12 +127,12 @@ export default class operationV1 implements IOperations {
 
     } catch (error: any) {
       let investAmoutInCalc: BigNumber = new BigNumber(
-        tokenSelected.newAmountTokenIn.toString()
+        Big(tokenSelected.newAmountTokenIn).toFixed()
       )
 
       if (tokenSelected.isWrap) {
         investAmoutInCalc = await this.yieldYakContract.convertBalanceWrappedToYRT(
-          new BigNumber(tokenSelected.newAmountTokenIn.toString()),
+          investAmoutInCalc,
           tokenSelected.tokenInAddress
         )
       }
@@ -255,7 +255,7 @@ export default class operationV1 implements IOperations {
       const withdrawAmoutOut: BigNumber = await this.contract.methods.exitswapPoolAmountIn(
         this.crpPool,
         tokenSelectAddress,
-        new BigNumber(poolAmountIn.toString()),
+        new BigNumber(poolAmountIn),
         new BigNumber('0'),
       ).call({ from: userWalletAddress })
 
@@ -281,7 +281,7 @@ export default class operationV1 implements IOperations {
         denormalizedWeight,
         poolSupply,
         poolTotalDenormalizedWeight,
-        new BigNumber(poolAmountIn.toString()),
+        new BigNumber(poolAmountIn),
         poolSwapFee,
         exitFee
       )
@@ -371,7 +371,7 @@ export default class operationV1 implements IOperations {
 
           const withdrawAmout = this.getWithdrawAmount(
             poolSupply,
-            new BigNumber(poolAmountIn.toString()),
+            new BigNumber(poolAmountIn.toFixed()),
             swapOutTotalPoolBalance,
             exitFee
           )
@@ -384,7 +384,7 @@ export default class operationV1 implements IOperations {
 
       await this.contract.methods.exitPool(
         this.crpPool,
-        new BigNumber(poolAmountIn.toString()),
+        new BigNumber(poolAmountIn.toFixed()),
         tokensInPool,
         Array(tokensInPool.length).fill(new BigNumber('0')),
       ).call({ from: userWalletAddress })
