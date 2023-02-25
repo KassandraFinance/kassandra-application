@@ -140,7 +140,10 @@ const AddLiquidityTable = ({
               </Td>
 
               <Td className="price">
-                ${priceList ? priceList[coin.address].usd : 0}
+                $
+                {priceList
+                  ? BNtoDecimal(Big(priceList[coin.address].usd), 4)
+                  : 0}
               </Td>
 
               <Td className="balance">

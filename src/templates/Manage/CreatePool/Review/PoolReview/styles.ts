@@ -318,9 +318,8 @@ export const ReviewTable = styled.div`
 
 export const ReviewThead = styled.div`
   ${() => css`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 15rem 1fr 1fr 1fr;
 
     @media (max-width: 576px) {
       display: grid;
@@ -334,16 +333,14 @@ interface IIsViewProps {
 }
 
 // eslint-disable-next-line prettier/prettier
-export const ReviewTh = styled.p<IIsViewProps>`
+export const ReviewTh = styled.div<IIsViewProps>`
   ${({ theme, isView }) => css`
-    width: 100%;
-
     color: ${theme.colors.white};
     font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.light};
     line-height: 104%;
 
-    text-align: center;
+    text-align: right;
 
     :first-child {
       text-align: start;
@@ -416,8 +413,9 @@ export const ReviewTbody = styled.div`
 
 export const ReviewTr = styled.div`
   ${() => css`
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 15rem 1fr 1fr 1fr;
+
     padding-bottom: 1.6rem;
     padding-top: 1.6rem;
 
@@ -447,7 +445,7 @@ export const ReviewTd = styled.span<IIsViewProps>`
     font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.medium};
     line-height: 104%;
-    text-align: center;
+    text-align: right;
 
     :first-child {
       display: flex;
