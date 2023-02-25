@@ -4,11 +4,8 @@ import { imageContent } from './CardChooseAction/styles'
 
 export const ChooseAction = styled.div`
   ${() => css`
-    height: 100vh;
-    margin-bottom: 22rem;
-
     @media (max-width: 576px) {
-      margin-bottom: 0;
+      margin-bottom: 10rem;
     }
   `}
 `
@@ -75,10 +72,6 @@ export const ChooseActionBody = styled.div`
 export const FundCardContainer = styled.div`
   ${() => css`
     min-width: 32.8rem;
-
-    @media (max-width: 576px) {
-      display: none;
-    }
   `}
 `
 

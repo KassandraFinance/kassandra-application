@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { Label } from '../../../../../components/Inputs/InputRadio/styles'
+import { Label } from '../../../../../../components/Inputs/InputRadio/styles'
 
 // interface IProps {
 //   isActive: boolean;
@@ -22,8 +22,8 @@ export const ExecutionPeriod = styled.div`
       text-transform: uppercase;
     }
 
-    @media (max-width: 992px) {
-      max-width: 100%;
+    @media (max-width: 1160px) {
+      min-width: 100%;
       margin-bottom: 15rem;
     }
   `}
@@ -31,7 +31,7 @@ export const ExecutionPeriod = styled.div`
 
 export const ExecutionPeriodBody = styled.div`
   ${() => css`
-    @media (min-width: 576px) and (max-width: 992px) {
+    @media (min-width: 576px) and (max-width: 1160px) {
       display: flex;
     }
     /*
@@ -52,7 +52,7 @@ export const SelectPeriodCotainer = styled.div`
 
     width: 100%;
 
-    @media (min-width: 576px) and (max-width: 992px) {
+    @media (min-width: 576px) and (max-width: 1160px) {
       margin-right: 2.4rem;
       margin-bottom: 0;
     }
@@ -106,7 +106,7 @@ export const PersonalizePeriodContainer = styled.div`
       margin-bottom: 1.6rem;
     }
 
-    @media (min-width: 576px) and (max-width: 992px) {
+    @media (min-width: 576px) and (max-width: 1160px) {
       margin-top: 2.5rem;
       padding-left: 2.4rem;
       padding-top: 0;
