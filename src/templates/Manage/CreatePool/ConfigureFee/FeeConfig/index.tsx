@@ -24,9 +24,20 @@ const FeeConfig = () => {
 
   function handleFeeChange(event: React.ChangeEvent<HTMLInputElement>) {
     const inputName = event.target.name
-    const inputValue = event.target.value
+    let inputValue = event.target.value
 
-    dispatch(setFee({ inputName: inputName, inputValue: Number(inputValue) }))
+    if (inputValue.length > 0) {
+      inputValue = inputValue.replace(/^0+/, '')
+
+      const [value, decimals] = inputValue.split('.')
+      if (decimals && decimals.length > 1) {
+        inputValue = `${value}.${decimals.slice(0, 1)}`
+      }
+
+      if (Number(inputValue) > 100) inputValue = '100'
+    }
+
+    dispatch(setFee({ inputName: inputName, inputValue: inputValue }))
   }
 
   function handlerefferalCommission(
@@ -70,7 +81,9 @@ const FeeConfig = () => {
               className="depositFee"
               isAddress={isAddress(userWalletAddress)}
               value={
-                feesData.depositFee.feeRate ? feesData.depositFee.feeRate : 0
+                feesData.depositFee.feeRate
+                  ? Number(feesData.depositFee.feeRate)
+                  : 0
               }
             >
               <InputText
@@ -85,12 +98,12 @@ const FeeConfig = () => {
                     : '0'
                 }
                 minLength={0}
-                maxLength={95}
+                maxLength={94}
                 lable="Deposit fee rate (%)"
                 error={
                   feesData.depositFee.feeRate &&
-                  feesData.depositFee.feeRate > 50 &&
-                  feesData.depositFee.feeRate < 95
+                  Number(feesData.depositFee.feeRate) > 50 &&
+                  Number(feesData.depositFee.feeRate) < 95
                     ? '50% is higher than average and may prevent potential investors. Consider setting a lower fee.'
                     : 'The rate must be less than 95%'
                 }
@@ -144,7 +157,7 @@ const FeeConfig = () => {
                     }
                     handleInputRate={handlerefferalCommission}
                     min={0}
-                    max={feesData ? feesData.depositFee.feeRate : 0}
+                    max={feesData ? Number(feesData.depositFee.feeRate) : 0}
                     step={0.01}
                   />
                 </S.InputRangeContent>
@@ -160,7 +173,7 @@ const FeeConfig = () => {
                     }
                     handleInputRate={handlerefferalCommission}
                     min={0}
-                    max={feesData ? feesData.depositFee.feeRate : 0}
+                    max={feesData ? Number(feesData.depositFee.feeRate) : 0}
                     step={0.01}
                   />
                 </S.InputRangeContent>
@@ -222,7 +235,7 @@ const FeeConfig = () => {
               isAddress={isAddress(userWalletAddress)}
               value={
                 feesData.managementFee.feeRate
-                  ? feesData.managementFee.feeRate
+                  ? Number(feesData.managementFee.feeRate)
                   : 0
               }
             >
@@ -242,8 +255,8 @@ const FeeConfig = () => {
                 lable="recipient address"
                 error={
                   feesData.managementFee.feeRate &&
-                  feesData.managementFee.feeRate > 50 &&
-                  feesData.managementFee.feeRate < 95
+                  Number(feesData.managementFee.feeRate) > 50 &&
+                  Number(feesData.managementFee.feeRate) < 95
                     ? '50% is higher than average and may prevent potential investors. Consider setting a lower fee.'
                     : 'The rate must be less than 95%'
                 }
