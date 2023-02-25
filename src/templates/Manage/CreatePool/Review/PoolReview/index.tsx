@@ -68,11 +68,11 @@ const PoolReview = () => {
         },
         {
           name: 'Amount',
-          value: BNtoDecimal(amount, 2)
+          value: BNtoDecimal(Big(amount), 2)
         },
         {
           name: 'Amount (USD)',
-          value: BNtoDecimal(amount.mul(Big(priceList[address].usd)), 2)
+          value: BNtoDecimal(Big(amount).mul(Big(priceList[address].usd)), 2)
         }
       ]
     })
@@ -83,7 +83,7 @@ const PoolReview = () => {
     let total = Big(0)
 
     for (const coin of tokensList) {
-      total = total.add(coin.amount.mul(Big(priceArr[coin.address].usd)))
+      total = total.add(Big(coin.amount).mul(Big(priceArr[coin.address].usd)))
     }
 
     return total
@@ -95,8 +95,8 @@ const PoolReview = () => {
     const initialLiquidity = totalLiquidity()
 
     for (const token of tokensList) {
-      const weight = token.allocation / 100
-      const amountPowWeight = token.amount.toNumber() ** weight
+      const weight = Number(token.allocation) / 100
+      const amountPowWeight = Big(token.amount).toNumber() ** weight
 
       if (invariant.lte(0)) {
         invariant = invariant.add(amountPowWeight)
@@ -195,13 +195,13 @@ const PoolReview = () => {
                     {token.allocation}%
                   </S.ReviewTd>
                   <S.ReviewTd isView={viewColumnInTable === 2}>
-                    {BNtoDecimal(token.amount, 3)}
+                    {BNtoDecimal(Big(token.amount), 3)}
                   </S.ReviewTd>
                   <S.ReviewTd isView={viewColumnInTable === 3}>
                     $
                     {data
                       ? BNtoDecimal(
-                          token.amount.mul(Big(data[token.address].usd)),
+                          Big(token.amount).mul(Big(data[token.address].usd)),
                           2
                         )
                       : 0}
