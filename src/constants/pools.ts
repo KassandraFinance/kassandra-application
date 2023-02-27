@@ -158,7 +158,7 @@ const ahype: PoolDetails = {
       style: { width: '5.8rem' }
     },
     title: '$aHYPE',
-    link: '/explore/ahype'
+    link: `/pool/${AHYPE_ADDRESS}`
   },
   stakeWithVotingPower: false,
   stakeWithLockPeriod: false,
@@ -175,7 +175,7 @@ const tricrypto: PoolDetails = {
       style: { width: '5.8rem' }
     },
     title: '$K3C',
-    link: '/explore/k3c'
+    link: `/pool/${TRICRYPTO_ADDRESS}`
   },
   stakeWithVotingPower: false,
   stakeWithLockPeriod: false,

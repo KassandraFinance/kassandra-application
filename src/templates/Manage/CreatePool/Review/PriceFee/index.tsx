@@ -37,7 +37,7 @@ const PriceFee = () => {
       try {
         const estimateGasUsed = new BigNumber(7_805_975)
         const baseFee = (await web3.eth.getBlock('latest')).baseFeePerGas
-        console.log(baseFee)
+
         const gas = web3.utils
           .fromWei(
             estimateGasUsed.mul(

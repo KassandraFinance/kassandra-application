@@ -123,7 +123,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         tokenSelect.address
       }&toTokenAddress=${
         tokenWrappedAddress
-      }&amount=${amountTokenIn.toString()}&fromAddress=${
+      }&amount=${Big(amountTokenIn).toFixed()}&fromAddress=${
         operation.contractAddress || '0x84f154A845784Ca37Ae962504250a618EB4859dc'
       }&slippage=1&disableEstimate=true`
     )
@@ -302,15 +302,15 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
         operation.joinswapExternAmountIn({
           tokenInAddress: tokenSelect.address,
-          tokenAmountIn: new BigNumber(amountTokenIn.toString()),
-          minPoolAmountOut: new BigNumber(amountTokenOut.toString()).mul(slippageBase).div(slippageExp),
+          tokenAmountIn: new BigNumber(Big(amountTokenIn).toFixed()),
+          minPoolAmountOut: new BigNumber(amountTokenOut.toFixed()).mul(slippageBase).div(slippageExp),
           userWalletAddress,
           data: trasactionData,
           hasTokenInPool: !!checkTokenInThePool(pool.underlying_assets, tokenSelect.address),
           transactionCallback: investCallback(
             pool.symbol,
             Number(BNtoDecimal(
-              Big(amountTokenOut.toString())
+              Big(amountTokenOut.toFixed())
                 .mul(Big(data?.pool?.price_usd || 0))
                 .div(Big(10).pow(data?.pool?.decimals)),
               18,
@@ -382,7 +382,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
       typeAction !== 'Invest' ||
       tokenSelect.address.length === 0 ||
       pool.id.length === 0 ||
-      new BigNumber(amountTokenIn.toString()).isZero()
+      Big(amountTokenIn).lte(0)
       // swapInAddress === crpPoolAddress
     ) {
       setAmountTokenOut(Big(0))
@@ -400,7 +400,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         userWalletAddress,
         tokenInAddress: tokenSelect.address,
         minPoolAmountOut: new BigNumber('0'),
-        amountTokenIn:  new BigNumber(amountTokenIn.toString() || '0'),
+        amountTokenIn:  new BigNumber(Big(amountTokenIn).toFixed() || '0'),
         data: transactionDataTx
       })
 
@@ -436,10 +436,10 @@ const Invest = ({ typeAction }: IInvestProps) => {
         if (transactionError) {
           setErrorMsg(transactionError)
         }
-        if (tokenSelect.address === addressNativeToken1Inch) {
+
+        if (tokenSelect.name === pool.chain.nativeTokenName) {
           await generateEstimatedGas(tokenSelected.transactionDataTx)
         }
-
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         const errorStr = error.toString()
@@ -471,7 +471,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     if (Big(amountTokenIn).gt(0) && parseFloat(amountTokenOut.toString()) > 0) {
       const usdAmountIn = Big(amountTokenIn)
         .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase())  || 0))
-        .div(Big(10).pow(Number(tokenSelect.decimals || 18)))
+        .div(Big(10).pow(tokenSelect.decimals || 18))
 
       const usdAmountOut = Big(amountTokenOut)
         .mul(Big(data?.pool?.price_usd || 0))
@@ -489,18 +489,15 @@ const Invest = ({ typeAction }: IInvestProps) => {
   }, [tokenSelect, amountTokenOut])
 
   React.useEffect(() => {
-    if (typeAction === 'Withdraw') return
+    if (tokenSelect.name !== pool.chain.nativeTokenName || Big(amountTokenIn).lte(0)) return
 
-    const amountInBalanceBN = new BigNumber(selectedTokenInBalance.toString() || 0)
-    const amountTokenInBN = new BigNumber(amountTokenIn.toString() || 0)
-    const gasFeeBN = new BigNumber(String(gasFee?.feeNumber) || '0')
+    const gasFeeBig = Big(String(gasFee?.feeNumber) || '0')
 
-    const balanceMinusFee = amountInBalanceBN.sub(gasFeeBN)
+    const balanceMinusFee = Big(amountTokenIn).sub(gasFeeBig)
 
-    if (tokenSelect.address === addressNativeToken1Inch &&
-      amountTokenInBN.gt(new BigNumber(0)) &&
-      amountTokenInBN.lte(amountInBalanceBN) &&
-      amountTokenInBN.gte(balanceMinusFee)
+    if (tokenSelect.name === pool.chain.nativeTokenName &&
+      Big(amountTokenIn).lte(selectedTokenInBalance) &&
+      Big(amountTokenIn).gte(balanceMinusFee)
     ){
       setGasFee({ ...gasFee, error: true })
       return

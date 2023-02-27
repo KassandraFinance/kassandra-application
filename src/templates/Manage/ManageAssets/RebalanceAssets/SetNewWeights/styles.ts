@@ -1,17 +1,21 @@
 import styled, { css } from 'styled-components'
+import { Line } from '../../../../../components/Steps/Step/styles'
+import { Steps } from '../../../../../components/Steps/styles'
 
-// interface IProps {
-//   isActive: boolean;
-// }
-// eslint-disable-next-line prettier/prettier
-
-export const RebalanceAssets = styled.div`
+export const SetNewWeights = styled.div`
   ${() => css`
     width: 100%;
+
+    ${Steps} {
+      justify-content: flex-start;
+    }
+    ${Line} {
+      width: 4.8rem;
+    }
   `}
 `
 
-export const RebalanceAssetsBody = styled.div`
+export const SetNewWeightsBody = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
@@ -23,10 +27,6 @@ export const RebalanceAssetsBody = styled.div`
       line-height: 1.6rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-
-      @media (max-width: 768px) {
-        display: none;
-      }
     }
 
     > p {
@@ -36,10 +36,6 @@ export const RebalanceAssetsBody = styled.div`
       font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.light};
       line-height: 135%;
-
-      @media (max-width: 768px) {
-        display: none;
-      }
     }
   `}
 `
@@ -53,11 +49,12 @@ export const AllocationsAndExecutionPeriod = styled.div`
 
     gap: 2.4rem;
 
-    @media (max-width: 992px) {
+    @media (max-width: 1160px) {
       flex-direction: column;
     }
     @media (max-width: 576px) {
       align-items: center;
+      margin-bottom: 0;
     }
   `}
 `

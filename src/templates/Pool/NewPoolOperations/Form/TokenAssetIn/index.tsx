@@ -43,11 +43,11 @@ const TokenAssetIn = ({
   const { trackEventFunction } = useMatomoEcommerce()
 
   function wei2String(input: Big) {
-    return BNtoDecimal(input.div(Big(10).pow(Number(18))), 18).replace(/\u00A0/g, '')
+    return input.div(Big(10).pow(Number(18)))
   }
 
   function handleMaxUserBalance() {
-    if (!inputAmountTokenRef || !amountTokenIn || userWalletAddress.length === 0) {
+    if (!inputAmountTokenRef || !amountTokenIn || userWalletAddress.length === 0 || !Big(selectedTokenInBalance).gt(0)) {
       return
     }
 
@@ -60,8 +60,8 @@ const TokenAssetIn = ({
         setMaxActive(false)
         return
       }
-
-      inputAmountTokenRef.current.value = wei2String(selectedTokenInBalance)
+      const tokenInBalance = wei2String(selectedTokenInBalance)
+      inputAmountTokenRef.current.value = tokenInBalance.toString()
       setamountTokenIn(selectedTokenInBalance)
       setMaxActive(true)
     }

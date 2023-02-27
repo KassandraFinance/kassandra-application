@@ -9,10 +9,11 @@ export interface IPoolAddress {
   id: string;
 }
 export interface IIndexProps {
-  pools: IPoolAddress[];
+  poolsCommunity: IPoolAddress[];
+  poolsKassandra: IPoolAddress[];
 }
 
-export default function Index({ pools }: IIndexProps) {
+export default function Index({ poolsKassandra, poolsCommunity }: IIndexProps) {
   return (
     <>
       <Head>
@@ -24,14 +25,20 @@ export default function Index({ pools }: IIndexProps) {
         <meta property="og:image:height" content="506" />
         <meta property="og:url" content="https://kassandra.finance/" />
       </Head>
-      <Explore pools={pools} />
+      <Explore poolsCommunity={poolsCommunity} poolsKassandra={poolsKassandra} />
     </>
   )
 }
 
-const poolAddresses = `{
+const props = `{
   id
+  featured
 }`
+
+type Props = {
+  id: string,
+  featured: null | boolean
+}
 
 export const getStaticProps: GetStaticProps = async () => {
   try {
@@ -41,15 +48,40 @@ export const getStaticProps: GetStaticProps = async () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        query: `query { pools (where: {chain_id_not: 137}) ${poolAddresses}}`
+        query: `query { pools ${props} }`
       })
     })
 
-    const pools = (await res.json())?.data.pools
+    const pools: Props[] = (await res.json())?.data.pools
+
     if (!pools) throw new Error('pools not found')
 
-    return { props: { pools } }
+    const poolsId = pools.reduce((acc, { featured, id }) => {
+      if (featured) {
+        acc.poolsKassandra.push({ id })
+      } else {
+        acc.poolsCommunity.push({ id })
+      }
+      return acc
+    }, {
+      // eslint-disable-next-line prettier/prettier
+      poolsKassandra: [] as Array<{ id: string }>,
+      poolsCommunity: [] as Array<{ id: string }>
+    })
+
+    return {
+      props: {
+        poolsCommunity: poolsId.poolsCommunity,
+        poolsKassandra: poolsId.poolsKassandra
+      }
+    }
   } catch (error) {
-    return { props: { pools: [] } }
+    console.log('error ', error)
+    return {
+      props: {
+        poolsCommunity: [],
+        poolsKassandra: []
+      }
+    }
   }
 }

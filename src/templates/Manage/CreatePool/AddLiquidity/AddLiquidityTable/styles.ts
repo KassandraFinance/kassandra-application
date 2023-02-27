@@ -14,8 +14,6 @@ export const AddLiquidityTable = styled.div`
     .price {
       display: none;
 
-      min-width: 4.3rem;
-
       text-align: right;
     }
 
@@ -45,6 +43,10 @@ export const AddLiquidityTable = styled.div`
       }
 
       @media (min-width: 992px) {
+        gap: 3rem;
+      }
+
+      @media (min-width: 1050px) {
         gap: 4.5rem;
       }
 
