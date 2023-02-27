@@ -1,37 +1,10 @@
 import Big from 'big.js'
-
-type WeightsV2 = {
-  start_timestamp: number,
-  end_timestamp: number,
-  weights: {
-    weight_normalized: Big,
-    token: {
-      id: string
-    }
-  }[]
-}
-
-type UnderlyingAssets = {
-  balance: Big,
-  weight_normalized: Big,
-  weight_goal_normalized: Big,
-  token: {
-    id: string,
-    name: string,
-    logo: string,
-    decimals: number,
-    symbol: string,
-    price_usd: Big,
-    wraps?: {
-      logo: string
-    }
-  }
-}
+import { underlyingAssetsInfo, WeightsV2 } from '../store/reducers/pool'
 
 export function getWeightsNormalizedV2(
   weights: WeightsV2[],
-  underlying_assets: UnderlyingAssets[]
-): UnderlyingAssets[] | undefined {
+  underlying_assets: underlyingAssetsInfo[]
+): underlyingAssetsInfo[] | undefined {
   if (weights.length <= 0) return
 
   const currentTime = new Date().getTime() / 1000
@@ -48,11 +21,12 @@ export function getWeightsNormalizedV2(
       )
 
       if (asset) {
-        asset.weight_normalized = endWeight
+        asset.weight_normalized = Big(endWeight)
           .sub(startWeight)
           .div(endTime - startTime)
           .mul(currentTime - startTime)
           .add(startWeight)
+          .toFixed()
       } else {
         throw new Error()
       }

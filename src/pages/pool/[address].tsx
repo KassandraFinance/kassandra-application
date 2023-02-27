@@ -11,6 +11,7 @@ import { IPoolSlice, setPool } from '../../store/reducers/pool'
 import { PoolTokensProvider } from '../../context/PoolTokensContext'
 
 import Pool from '../../templates/Pool'
+import { getWeightsNormalizedV2 } from '../../utils/updateAssetsToV2'
 
 interface IParams extends ParsedUrlQuery {
   address: string;
@@ -30,7 +31,17 @@ const Index = ({ pool }: IPoolProps) => {
       renameWavax.token.name = 'Avalanche'
     }
   }
-  const underlying_assets = [...pool.underlying_assets].sort((a, b) => a.token.id > b.token.id ? 1 : -1)
+  let underlying_assets = [...pool.underlying_assets].sort((a, b) => a.token.id > b.token.id ? 1 : -1)
+  
+  if (pool.pool_version === 2) {
+    try {
+      const assetsV2 = getWeightsNormalizedV2(pool.weight_goals, underlying_assets)
+      if (assetsV2) {
+        underlying_assets = assetsV2
+      }
+    } catch { /* empty */ }
+  }
+
   const poolWithSortedTokens = {...pool, underlying_assets}
   dispatch(setPool(poolWithSortedTokens))
 
@@ -100,6 +111,16 @@ const queryPool = `{
         name
         logo
       }
+    }
+  }
+  weight_goals(orderBy: end_timestamp orderDirection: desc first: 2) {
+    start_timestamp
+    end_timestamp
+    weights(orderBy: weight_normalized orderDirection: desc) {
+      token {
+        id
+      }
+      weight_normalized
     }
   }
 }`
