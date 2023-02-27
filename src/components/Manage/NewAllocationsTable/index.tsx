@@ -1,6 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
 
+import AllocationGraph from '../AllocationGraph'
+
 import * as S from './styles'
 
 type IAllocationListProps = {
@@ -12,12 +14,34 @@ type IAllocationListProps = {
   NewWeight: number
 }
 
+type IDataAllocationGraphProps = {
+  imageUrl: string,
+  name: string,
+  currentAllocation: number,
+  newAllocation: number
+}
+
 interface INewAllocationsTableProps {
   AllocationList: IAllocationListProps[];
 }
 
 const NewAllocationsTable = ({ AllocationList }: INewAllocationsTableProps) => {
   const [openAllocationGraph, setOpenAllocationGraph] = React.useState(false)
+  const [dataAllocationGraph, setDataAllocationGraph] =
+    React.useState<IDataAllocationGraphProps[]>()
+
+  React.useEffect(() => {
+    const dataAllocation = AllocationList.map(item => {
+      return {
+        imageUrl: item.logo,
+        name: item.name,
+        currentAllocation: item.currentWeight,
+        newAllocation: item.NewWeight
+      }
+    })
+
+    setDataAllocationGraph(dataAllocation)
+  }, [])
 
   return (
     <S.NewAllocationsTable>
@@ -102,10 +126,12 @@ const NewAllocationsTable = ({ AllocationList }: INewAllocationsTableProps) => {
           height={14}
         />
       </S.VisualInformation>
-      {/* <AllocationGraph
-        isOpen={openAllocationGraph}
-        data={dataAllocationGraph}
-      /> */}
+      {dataAllocationGraph && (
+        <AllocationGraph
+          isOpen={openAllocationGraph}
+          data={dataAllocationGraph}
+        />
+      )}
     </S.NewAllocationsTable>
   )
 }
