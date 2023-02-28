@@ -81,7 +81,6 @@ const AddLiquidityOperation = () => {
     [GET_POOL_TOKENS, params],
     (query, params) => request(BACKEND_KASSANDRA, query, params)
   )
-  console.log(data)
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
     `${COINGECKO_API}/simple/token_price/polygon-pos?contract_addresses=${token.id}&vs_currencies=usd`
@@ -130,7 +129,7 @@ const AddLiquidityOperation = () => {
               buttonText="Max"
               button
               value={liquidit.amount}
-              min="1"
+              min="0"
               max={
                 balance
                   ? Big(balance.toString())
@@ -161,7 +160,7 @@ const AddLiquidityOperation = () => {
             buttonText="Max"
             button
             value={liquidit.allocation}
-            min="1"
+            min="0"
             max="any"
             lable="Token Allocation"
             placeholder=""

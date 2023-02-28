@@ -7,6 +7,7 @@ import RebalanceAssets from './RebalanceAssets'
 import ContainerButton from '../../../components/ContainerButton'
 import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
 import AddLiquidity from './AddLiquidity'
+import ReviewAddAsset from './ReviewAddAsset'
 
 import * as S from './styles'
 
@@ -14,7 +15,8 @@ const ManageAssets = () => {
   const [step, setStep] = React.useState(0)
   const addNewAsset = [
     <SelectAssets key="selectAssets" />,
-    <AddLiquidity key="addLiquidity" />
+    <AddLiquidity key="addLiquidity" />,
+    <ReviewAddAsset key="reviewAddAsset" />
   ]
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
