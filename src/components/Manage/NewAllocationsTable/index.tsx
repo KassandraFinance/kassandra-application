@@ -5,7 +5,7 @@ import AllocationGraph from '../AllocationGraph'
 
 import * as S from './styles'
 
-type IAllocationListProps = {
+export type IAllocationListProps = {
   name: string,
   symbol: string,
   logo: string,
@@ -31,7 +31,7 @@ const NewAllocationsTable = ({ AllocationList }: INewAllocationsTableProps) => {
     React.useState<IDataAllocationGraphProps[]>()
 
   React.useEffect(() => {
-    const dataAllocation = AllocationList.map(item => {
+    const dataAllocation = AllocationList?.map(item => {
       return {
         imageUrl: item.logo,
         name: item.name,
@@ -60,7 +60,7 @@ const NewAllocationsTable = ({ AllocationList }: INewAllocationsTableProps) => {
           </S.TrHead>
         </S.TableHead>
         <S.AllocationTBody>
-          {AllocationList.map(token => {
+          {AllocationList?.map(token => {
             return (
               <S.TrBody key={token.name}>
                 <S.AssetsInfoContent>
