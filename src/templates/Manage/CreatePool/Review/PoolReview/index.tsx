@@ -2,6 +2,7 @@ import React from 'react'
 import useSWR from 'swr'
 import Link from 'next/link'
 import CopyToClipboard from 'react-copy-to-clipboard'
+import Blockies from 'react-blockies'
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import Big from 'big.js'
 
@@ -67,11 +68,11 @@ const PoolReview = () => {
         },
         {
           name: 'Amount',
-          value: BNtoDecimal(amount, 2)
+          value: BNtoDecimal(Big(amount), 2)
         },
         {
           name: 'Amount (USD)',
-          value: BNtoDecimal(amount.mul(Big(priceList[address].usd)), 2)
+          value: BNtoDecimal(Big(amount).mul(Big(priceList[address].usd)), 2)
         }
       ]
     })
@@ -82,7 +83,7 @@ const PoolReview = () => {
     let total = Big(0)
 
     for (const coin of tokensList) {
-      total = total.add(coin.amount.mul(Big(priceArr[coin.address].usd)))
+      total = total.add(Big(coin.amount).mul(Big(priceArr[coin.address].usd)))
     }
 
     return total
@@ -94,8 +95,8 @@ const PoolReview = () => {
     const initialLiquidity = totalLiquidity()
 
     for (const token of tokensList) {
-      const weight = token.allocation / 100
-      const amountPowWeight = token.amount.toNumber() ** weight
+      const weight = Number(token.allocation) / 100
+      const amountPowWeight = Big(token.amount).toNumber() ** weight
 
       if (invariant.lte(0)) {
         invariant = invariant.add(amountPowWeight)
@@ -114,23 +115,21 @@ const PoolReview = () => {
       <S.PoolReviewContainer>
         <S.PoolReviewHeader>
           <S.PoolNameContainer>
-            <img
-              src={poolData.icon?.image_preview}
-              alt=""
-              width={64}
-              height={64}
-            />
+            <S.ImageWrapper>
+              {poolData.icon?.image_preview ? (
+                <img
+                  src={poolData.icon?.image_preview}
+                  alt=""
+                  width={64}
+                  height={64}
+                />
+              ) : (
+                <Blockies size={8} scale={9} seed={poolData.poolName ?? ''} />
+              )}
+            </S.ImageWrapper>
             <S.PoolNameContent>
               <p>{poolData.poolName}</p>
-              <span>
-                {poolData.poolSymbol}
-                <img
-                  src="/assets/utilities/edit-icon.svg"
-                  alt=""
-                  width={14}
-                  height={14}
-                />
-              </span>
+              <span>{poolData.poolSymbol}</span>
             </S.PoolNameContent>
           </S.PoolNameContainer>
           <S.PoolValueContent>
@@ -188,13 +187,13 @@ const PoolReview = () => {
                     {token.allocation}%
                   </S.ReviewTd>
                   <S.ReviewTd isView={viewColumnInTable === 2}>
-                    {BNtoDecimal(token.amount, 3)}
+                    {BNtoDecimal(Big(token.amount), 3)}
                   </S.ReviewTd>
                   <S.ReviewTd isView={viewColumnInTable === 3}>
                     $
                     {data
                       ? BNtoDecimal(
-                          token.amount.mul(Big(data[token.address].usd)),
+                          Big(token.amount).mul(Big(data[token.address].usd)),
                           2
                         )
                       : 0}
@@ -234,15 +233,7 @@ const PoolReview = () => {
       <S.WrapperPoolPrivacy>
         <S.PoolPrivacyLine>
           <p>Privacy</p>
-          <span>
-            Public{' '}
-            <img
-              src="/assets/utilities/edit-icon.svg"
-              alt=""
-              width={16}
-              height={16}
-            />
-          </span>
+          <span>Public</span>
         </S.PoolPrivacyLine>
         <S.WrapperPoolPrivate>
           {poolData.privateAddressList &&

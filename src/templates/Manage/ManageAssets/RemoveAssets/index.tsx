@@ -1,5 +1,7 @@
 import React from 'react'
 
+import TokenRemoval from './TokenRemoval'
+
 import * as S from './styles'
 
 // interface IRemoveAssetsProps {
@@ -9,7 +11,7 @@ import * as S from './styles'
 const RemoveAssets = () => {
   return (
     <S.RemoveAssets>
-      <h1>RemoveAssets</h1>
+      <TokenRemoval />
     </S.RemoveAssets>
   )
 }

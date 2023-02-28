@@ -64,86 +64,90 @@ const StepGuide = () => {
       {/* Network icon comes from api */}
       <CreatePoolHeader title="pool creation step guide" />
 
-      <S.StepCardContainer>
-        {stepGuide.map(step => (
-          <StepCard
-            key={step.title}
-            icon={step.icon}
-            title={step.title}
-            text={step.text}
-          />
-        ))}
-      </S.StepCardContainer>
+      <S.ContainerCardAndNetwork>
+        <S.SelectNetwork>
+          <S.TextContainer>
+            <S.Title>Network selection</S.Title>
 
-      <S.SelectNetwork>
-        <S.TextContainer>
-          <S.Title>Network selection</S.Title>
+            <S.Text>
+              Choose which network you would like to publish your pool:
+            </S.Text>
+          </S.TextContainer>
 
-          <S.Text>
-            Choose which network you would like to publish your pool:
-          </S.Text>
-        </S.TextContainer>
+          <S.ButtonsContainer>
+            <S.ButtonWrapper>
+              <S.ButtonNetwork
+                type="button"
+                borderColor="avalanche"
+                selected={false}
+                disabled
+              >
+                <Image src={avalancheIcon} width={24} height={24} />
+                Avalanche
+              </S.ButtonNetwork>
 
-        <S.ButtonsContainer>
-          <S.ButtonWrapper>
-            <S.ButtonNetwork
-              type="button"
-              borderColor="avalanche"
-              selected={false}
-              disabled
-            >
-              <Image src={avalancheIcon} width={24} height={24} />
-              Avalanche
-            </S.ButtonNetwork>
-
-            <S.LinkWrapper>
-              <ExternalLink text="Coming soon..." />
-            </S.LinkWrapper>
-            <S.InputValidation
-              form="poolCreationForm"
-              type="radio"
-              id="avalanche"
-              name="network"
-              value="avalanche"
-              checked={network === 'avalanche'}
-              onChange={() => {
-                return
-              }}
-              required
-            />
-          </S.ButtonWrapper>
-
-          <S.ButtonWrapper>
-            <S.ButtonNetwork
-              type="button"
-              borderColor="polygon"
-              selected={network === 'polygon'}
-              onClick={() => handleSelectNetwork('polygon')}
-            >
-              <Image src={polygonIcon} width={24} height={24} /> Polygon
-            </S.ButtonNetwork>
-
-            <S.LinkWrapper>
-              <ExternalLink
-                text="Available assets"
-                onClick={() => setIsAvailableAssets(true)}
+              <S.LinkWrapper>
+                <ExternalLink text="Coming soon..." />
+              </S.LinkWrapper>
+              <S.InputValidation
+                form="poolCreationForm"
+                type="radio"
+                id="avalanche"
+                name="network"
+                value="avalanche"
+                checked={network === 'avalanche'}
+                onChange={() => {
+                  return
+                }}
+                required
               />
-            </S.LinkWrapper>
-            <S.InputValidation
-              form="poolCreationForm"
-              type="radio"
-              id="polygon"
-              name="network"
-              value="polygon"
-              checked={network === 'polygon'}
-              onChange={() => {
-                return
-              }}
-              required
+            </S.ButtonWrapper>
+
+            <S.ButtonWrapper>
+              <S.ButtonNetwork
+                type="button"
+                borderColor="polygon"
+                selected={network === 'polygon'}
+                onClick={() => handleSelectNetwork('polygon')}
+              >
+                <Image src={polygonIcon} width={24} height={24} /> Polygon
+              </S.ButtonNetwork>
+
+              <S.LinkWrapper>
+                <ExternalLink
+                  text="Available assets"
+                  onClick={() => setIsAvailableAssets(true)}
+                />
+              </S.LinkWrapper>
+              <S.InputValidation
+                form="poolCreationForm"
+                type="radio"
+                id="polygon"
+                name="network"
+                value="polygon"
+                checked={network === 'polygon'}
+                onChange={() => {
+                  return
+                }}
+                required
+              />
+            </S.ButtonWrapper>
+          </S.ButtonsContainer>
+        </S.SelectNetwork>
+
+        <S.StepCardContainer>
+          <S.Title>Next Steps preview</S.Title>
+          {stepGuide.map(step => (
+            <StepCard
+              key={step.title}
+              icon={step.icon}
+              title={step.title}
+              text={step.text}
             />
-          </S.ButtonWrapper>
-        </S.ButtonsContainer>
-      </S.SelectNetwork>
+          ))}
+        </S.StepCardContainer>
+      </S.ContainerCardAndNetwork>
+
       {isAvailableAssets && (
         <ModalAvailableAssets
           chainIcon={<Image src={polygonIcon} />}

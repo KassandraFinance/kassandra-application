@@ -8,11 +8,6 @@ import styled, { css } from 'styled-components'
 export const RebalanceAssets = styled.div`
   ${() => css`
     width: 100%;
-    /* width: 113.1rem; */
-    /* margin: 0 auto; */
-
-    /* display: flex;
-    flex-direction: column; */
   `}
 `
 
@@ -53,11 +48,9 @@ export const AllocationsAndExecutionPeriod = styled.div`
   ${() => css`
     display: flex;
     justify-content: space-between;
-    /* display: grid; */
-    /* grid-template-columns: 1fr 36.1rem; */
-    /* grid-template-columns: 74.6rem 1fr; */
-    /* align-items: center; */
-    /* justify-content: center; */
+    align-items: flex-start;
+    margin-bottom: 10rem;
+
     gap: 2.4rem;
 
     @media (max-width: 992px) {

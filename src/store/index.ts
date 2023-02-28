@@ -1,9 +1,7 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
-import Big from 'big.js'
-import { IPoolCreationDataState } from './reducers/poolCreationSlice'
 
 import storage from 'redux-persist/lib/storage'
-import { persistReducer, persistStore, createTransform } from 'redux-persist'
+import { persistReducer, persistStore } from 'redux-persist'
 
 import userWalletAddressReducer from './reducers/userWalletAddress'
 import chainIdReducer from './reducers/chainId'
@@ -23,24 +21,9 @@ import tokenList1InchReducer from './reducers/tokenList1Inch'
 import modalWalletActiveReducer from './reducers/modalWalletActive'
 import addAssetReducer from './reducers/addAssetSlice'
 
-const SetTransform = createTransform(
-  inboundState => {
-    return inboundState
-  },
-  (outboundState: IPoolCreationDataState) => {
-    outboundState.createPoolData.tokens?.forEach(element => {
-      element.amount = Big(element.amount)
-    })
-
-    return outboundState
-  },
-  { whitelist: ['poolCreation'] }
-)
-
 const persistConfig = {
   key: 'root',
   storage,
-  transforms: [SetTransform],
   whitelist: ['poolCreation']
 }
 

@@ -168,6 +168,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   }
 
   async function handlePrivateInvestors(poolControler: string, investorsList: { address: string }[]) {
+    // eslint-disable-next-line prettier/prettier
     const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
 
     for (const address of investorsList) {
@@ -304,7 +305,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       if (mockTokens[mockToken]) {
         for (const token of tokensList) {
           if (token.address === mockTokens[mockToken].toLowerCase()) {
-            maxAmountsIn.push(token.amount.mul(Big(10).pow(token.decimals)).round().toString())
+            maxAmountsIn.push(Big(token.amount).mul(Big(10).pow(token.decimals)).round().toString())
             normalizedWeights.push(Big(token.allocation).div(100).mul(Big(10).pow(18)).round().toString())
             tokens.push(mockToken)
           }
@@ -349,8 +350,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const managerShare = poolData.fees?.refferalFee.managerShare ? poolData.fees.refferalFee.managerShare : 0
     const brokerCommision = poolData.fees?.refferalFee.brokerCommision ? poolData.fees.refferalFee.brokerCommision : 0
 
-    const managementAumFeePercentage = poolData.fees?.managementFee?.feeRate ? managementFeeRate / 100 : 0 / 100
-    const feesToManager = poolData.fees?.depositFee.isChecked ? poolData.fees.refferalFee.isChecked ? managerShare / 100 : depositFeeRate / 100 : 0 / 100
+    const managementAumFeePercentage = poolData.fees?.managementFee?.feeRate ? Number(managementFeeRate) / 100 : 0 / 100
+    const feesToManager = poolData.fees?.depositFee.isChecked ? poolData.fees.refferalFee.isChecked ? managerShare / 100 : Number(depositFeeRate) / 100 : 0 / 100
     const feesToReferral = poolData.fees?.refferalFee.brokerCommision ? brokerCommision / 100 : 0 / 100
 
     const pool = {

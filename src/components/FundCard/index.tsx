@@ -9,6 +9,7 @@ import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
 
+import { getWeightsNormalizedV2 } from '../../utils/updateAssetsToV2'
 import { BNtoDecimal } from '../../utils/numerals'
 
 import FundAreaChart from './FundAreaChart'
@@ -104,7 +105,19 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
       })
 
       setPrice(newPrice)
-      setPoolInfo(data.pool.underlying_assets)
+      if (data.pool.pool_version === 2) {
+        try {
+          const poolInfo = getWeightsNormalizedV2(
+            data.pool.weight_goals,
+            data.pool.underlying_assets
+          )
+          setPoolInfo(poolInfo ?? data.pool.underlying_assets)
+        } catch (error) {
+          setPoolInfo(data.pool.underlying_assets)
+        }
+      } else {
+        setPoolInfo(data.pool.underlying_assets)
+      }
     }
   }, [data])
 
@@ -169,7 +182,7 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
                 <S.CardBody>
                   <S.FundName>
                     <h3>{data?.pool?.name}</h3>
-                    <span>by {data?.pool?.foundedBy}</span>
+                    <span>by {data?.pool?.foundedBy ?? 'Community'}</span>
                   </S.FundName>
 
                   <S.FundStatusContainer>

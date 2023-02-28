@@ -50,8 +50,11 @@ export const ProxyContract = process.env.NEXT_PUBLIC_MASTER === '1' ?
 
 // export const ProxyInvestV2 = '0xFADd38F6DFa4057c62C2e92C4FaFB4c3AC198e06'
 // export const BalancerHelpers = '0x5aDDCCa35b7A0D07C74063c48700C8590E87864E'
-export const ProxyInvestV2 = '0x1A5C772C6ED51e48F00Df7B33E4dAEEc36f37B76'
-export const BalancerHelpers = '0x239e55F427D44C3cc793f49bFB507ebe76638a2b' // Polygon
+// export const ProxyInvestV2 = '0x1A5C772C6ED51e48F00Df7B33E4dAEEc36f37B76'
+// export const BalancerHelpers = '0x239e55F427D44C3cc793f49bFB507ebe76638a2b' // Polygon
+
+export const ProxyInvestV2 = '0xFADd38F6DFa4057c62C2e92C4FaFB4c3AC198e06' // Goerli
+export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Goerli
 
 export const addressNativeToken1Inch = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
 

@@ -6,7 +6,6 @@ import Breadcrumb from '../../components/Breadcrumb'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import TitleSection from '../../components/TitleSection'
 import FundCard from '../../components/FundCard'
-import AnyCard from '../../components/AnyCard'
 import Loading from '../../components/Loading'
 
 import sectionTitleEye from '../../../public/assets/iconGradient/section-title-eye.svg'
@@ -15,7 +14,10 @@ import communityFunds from '../../../public/assets/iconGradient/community.svg'
 
 import * as S from './styles'
 
-export default function Explore({ pools }: IIndexProps) {
+export default function Explore({
+  poolsKassandra,
+  poolsCommunity
+}: IIndexProps) {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
@@ -51,7 +53,7 @@ export default function Explore({ pools }: IIndexProps) {
           )}
 
           <S.CardContainer loading={loading}>
-            {pools.map(pool => (
+            {poolsKassandra.map(pool => (
               <FundCard key={pool.id} poolAddress={pool.id} />
             ))}
           </S.CardContainer>
@@ -62,8 +64,11 @@ export default function Explore({ pools }: IIndexProps) {
               title="Community Pools"
               text=""
             />
-
-            <AnyCard text="Coming Soon…" />
+            <S.CardContainer loading={loading}>
+              {poolsCommunity.map(pool => (
+                <FundCard key={pool.id} poolAddress={pool.id} />
+              ))}
+            </S.CardContainer>
           </S.ComunitFundsContainer>
         </S.ExploreContainer>
       </S.Explore>

@@ -14,10 +14,6 @@ export const StepCard = styled.div`
     backdrop-filter: blur(5.7rem);
     border-radius: 1rem;
 
-    @media (min-width: 576px) {
-      max-width: 55.3rem;
-    }
-
     @media (min-width: 768px) {
       grid-template-columns: 3.2rem 1fr;
       align-items: center;

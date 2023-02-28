@@ -1,13 +1,9 @@
 import Tippy from '@tippyjs/react'
 import React from 'react'
-import InputRadio from '../../../../../components/Inputs/InputRadio'
-import InputTime from '../../../../../components/Inputs/InputTime'
+import InputRadio from '../../../../../../components/Inputs/InputRadio'
+import InputTime from '../../../../../../components/Inputs/InputTime'
 
 import * as S from './styles'
-
-// interface IRemoveAssetsProps {
-//   test: string;
-// }
 
 const ExecutionPeriod = () => {
   const [timeValue, setTimeValue] = React.useState<number>()
@@ -17,7 +13,6 @@ const ExecutionPeriod = () => {
     const value = event.target.value
 
     setTimePeriodSelect(value)
-    console.log('RADIO', value)
   }
 
   function handleInputTime(event: React.ChangeEvent<HTMLInputElement>) {

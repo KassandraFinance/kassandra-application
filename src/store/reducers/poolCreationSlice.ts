@@ -10,8 +10,8 @@ export type TokenType = {
   url: string,
   address: string,
   decimals: number,
-  allocation: number,
-  amount: Big,
+  allocation: string,
+  amount: string,
   isLocked: boolean
 }
 
@@ -33,7 +33,7 @@ export type PoolData = {
   fees?: {
     [key: string]: {
       isChecked: boolean,
-      feeRate?: number,
+      feeRate?: string,
       brokerCommision?: number,
       managerShare?: number
     }
@@ -48,7 +48,7 @@ export interface IPoolCreationDataState {
 
 function handleAllocation(
   tokensList: TokenType[],
-  tokenAllocation?: { token: string, allocation: number }
+  tokenAllocation?: { token: string, allocation: string }
 ) {
   const maxAllocation = Big(100)
   let allocationAmount = Big(0)
@@ -88,13 +88,13 @@ function handleAllocation(
         isFirstUnlocked = false
         return {
           ...token,
-          allocation: fixedAllocationValue.plus(teste).toNumber()
+          allocation: fixedAllocationValue.plus(teste).toFixed()
         }
       }
 
       return {
         ...token,
-        allocation: fixedAllocationValue.toNumber()
+        allocation: fixedAllocationValue.toFixed()
       }
     } else {
       return {
@@ -108,13 +108,13 @@ function handleAllocation(
 }
 
 export function handleLiquidity(
-  tokenInputLiquidity: Big,
+  tokenInputLiquidity: string,
   inputToken: string,
   tokensArr: TokenType[],
   tokenPriceList: CoinGeckoResponseType
 ) {
   let inputAddress = ''
-  let tokenInputAllocation = 0
+  let tokenInputAllocation = '0'
   for (const token of tokensArr) {
     if (token.symbol === inputToken) {
       inputAddress = token.address
@@ -122,7 +122,7 @@ export function handleLiquidity(
     }
   }
 
-  const tokenInputDolar = tokenInputLiquidity.mul(
+  const tokenInputDolar = Big(tokenInputLiquidity).mul(
     Big(tokenPriceList[inputAddress].usd)
   )
 
@@ -141,7 +141,7 @@ export function handleLiquidity(
     const liquidityInToken = tokenRealocatedLiquidity.div(
       tokenPriceList[token.address].usd
     )
-    return { ...token, amount: liquidityInToken }
+    return { ...token, amount: liquidityInToken.toFixed() }
   })
 
   return newArr
@@ -166,7 +166,7 @@ const initialState: IPoolCreationDataState = {
     fees: {
       depositFee: {
         isChecked: false,
-        feeRate: 0
+        feeRate: '0'
       },
       refferalFee: {
         isChecked: false,
@@ -175,7 +175,7 @@ const initialState: IPoolCreationDataState = {
       },
       managementFee: {
         isChecked: false,
-        feeRate: 0
+        feeRate: '0'
       }
     }
   }
@@ -254,7 +254,7 @@ export const poolCreationSlice = createSlice({
     },
     setAllocation: (
       state,
-      action: PayloadAction<{ token: string, allocation: number }>
+      action: PayloadAction<{ token: string, allocation: string }>
     ) => {
       const tokensArr = state.createPoolData.tokens
         ? state.createPoolData.tokens
@@ -265,7 +265,7 @@ export const poolCreationSlice = createSlice({
       state,
       action: PayloadAction<{
         token: string,
-        liquidity: Big,
+        liquidity: string,
         tokenPriceList: CoinGeckoResponseType
       }>
     ) => {
@@ -293,7 +293,7 @@ export const poolCreationSlice = createSlice({
         state.createPoolData.fees = {
           ...feesList,
           [action.payload]: {
-            feeRate: 0,
+            feeRate: '0',
             isChecked: false
           },
           refferalFee: {
@@ -309,7 +309,7 @@ export const poolCreationSlice = createSlice({
         const feeRate = feesList.depositFee?.feeRate
           ? feesList.depositFee?.feeRate
           : 0
-        const fee = feeRate / 2
+        const fee = Number(feeRate) / 2
         state.createPoolData.fees = {
           ...feesList,
           refferalFee: {
@@ -338,7 +338,7 @@ export const poolCreationSlice = createSlice({
           ...feesList,
           managementFee: {
             isChecked: false,
-            feeRate: 0
+            feeRate: '0'
           }
         }
       } else {
@@ -353,7 +353,7 @@ export const poolCreationSlice = createSlice({
     },
     setFee: (
       state,
-      action: PayloadAction<{ inputName: string, inputValue: number }>
+      action: PayloadAction<{ inputName: string, inputValue: string }>
     ) => {
       const feesList = state.createPoolData.fees
         ? state.createPoolData.fees
@@ -371,8 +371,8 @@ export const poolCreationSlice = createSlice({
           },
           refferalFee: {
             ...feesList.refferalFee,
-            brokerCommision: action.payload.inputValue / 2,
-            managerShare: action.payload.inputValue / 2
+            brokerCommision: Number(action.payload.inputValue) / 2,
+            managerShare: Number(action.payload.inputValue) / 2
           }
         }
       } else {
@@ -395,7 +395,7 @@ export const poolCreationSlice = createSlice({
 
       const depositFee = fessList.depositFee.feeRate
         ? fessList.depositFee.feeRate
-        : 0
+        : '0'
 
       if (action.payload.inputName === 'brokerCommision') {
         state.createPoolData.fees = {
@@ -403,7 +403,7 @@ export const poolCreationSlice = createSlice({
           refferalFee: {
             ...fessList.refferalFee,
             [action.payload.inputName]: action.payload.inputValue,
-            managerShare: depositFee - action.payload.inputValue
+            managerShare: Number(depositFee) - action.payload.inputValue
           }
         }
       } else {
@@ -412,7 +412,7 @@ export const poolCreationSlice = createSlice({
           refferalFee: {
             ...fessList.refferalFee,
             [action.payload.inputName]: action.payload.inputValue,
-            brokerCommision: depositFee - action.payload.inputValue
+            brokerCommision: Number(depositFee) - action.payload.inputValue
           }
         }
       }
@@ -438,7 +438,7 @@ export const poolCreationSlice = createSlice({
         fees: {
           depositFee: {
             isChecked: false,
-            feeRate: 0
+            feeRate: '0'
           },
           refferalFee: {
             isChecked: false,
@@ -447,7 +447,7 @@ export const poolCreationSlice = createSlice({
           },
           managementFee: {
             isChecked: false,
-            feeRate: 0
+            feeRate: '0'
           }
         }
       }

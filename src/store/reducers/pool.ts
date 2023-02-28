@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import Big from 'big.js'
 
 export interface TokenInfo {
   id: string;
@@ -29,6 +30,17 @@ export interface ChainInfo {
   blockExplorerUrl: string;
   secondsPerBlock: number;
   addressWrapped: string;
+}
+
+export interface WeightsV2 {
+  start_timestamp: number;
+  end_timestamp: number;
+  weights: {
+    weight_normalized: string,
+    token: {
+      id: string
+    }
+  }[];
 }
 
 export interface underlyingAssetsInfo {
@@ -62,6 +74,7 @@ export interface IPoolSlice {
   partners?: Partners[];
   underlying_assets_addresses: string[];
   underlying_assets: underlyingAssetsInfo[];
+  weight_goals: WeightsV2[];
 }
 
 const initialState: IPoolSlice = {
@@ -116,6 +129,20 @@ const initialState: IPoolSlice = {
           price_usd: ''
         }
       }
+    }
+  ],
+  weight_goals: [
+    {
+      start_timestamp: 0,
+      end_timestamp: 0,
+      weights: [
+        {
+          weight_normalized: '',
+          token: {
+            id: ''
+          }
+        }
+      ]
     }
   ]
 }

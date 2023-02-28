@@ -24,7 +24,7 @@ interface IAddLiquidityTableProps {
   tokensBalance: { [key: string]: BigNumber };
   priceList: CoinGeckoResponseType | undefined;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onInputMaxClick: (token: string, liquidity: Big) => void;
+  onInputMaxClick: (token: string, liquidity: string) => void;
   onMaxClick: (priceList: CoinGeckoResponseType) => void;
 }
 
@@ -41,7 +41,7 @@ const AddLiquidityTable = ({
     let total = Big(0)
 
     for (const coin of coinsList) {
-      total = total.add(coin.amount.mul(Big(priceArr[coin.address].usd)))
+      total = total.add(Big(coin.amount).mul(Big(priceArr[coin.address].usd)))
     }
 
     return total
@@ -53,7 +53,7 @@ const AddLiquidityTable = ({
     let tokenSymbol = ''
     let liquidity = Big(0)
     for (const token of coinsList) {
-      const diffAllocation = 100 - token.allocation
+      const diffAllocation = 100 - Number(token.allocation)
 
       const balanceInDollar = Big(tokensBalance[token.address]?.toString() || 0)
         .div(Big(10).pow(token.decimals))
@@ -70,7 +70,7 @@ const AddLiquidityTable = ({
     }
 
     const liquidityList = handleLiquidity(
-      liquidity,
+      liquidity.toString(),
       tokenSymbol,
       coinsList,
       priceArr
@@ -79,7 +79,7 @@ const AddLiquidityTable = ({
     let total = Big(0)
 
     for (const coin of liquidityList) {
-      total = total.add(coin.amount.mul(Big(priceArr[coin.address].usd)))
+      total = total.add(Big(coin.amount).mul(Big(priceArr[coin.address].usd)))
     }
 
     return total
@@ -128,11 +128,11 @@ const AddLiquidityTable = ({
                   }
                   table
                 />
-                {coin.amount.lte(Big(0)) && (
+                {Big(coin.amount).lte(Big(0)) && (
                   <S.Error>Must be greater than 0</S.Error>
                 )}
                 {tokensBalance[coin.address] &&
-                  coin.amount.gt(
+                  Big(coin.amount).gt(
                     Big(tokensBalance[coin.address].toString()).div(
                       Big(10).pow(coin.decimals)
                     )
@@ -140,7 +140,10 @@ const AddLiquidityTable = ({
               </Td>
 
               <Td className="price">
-                ${priceList ? priceList[coin.address].usd : 0}
+                $
+                {priceList
+                  ? BNtoDecimal(Big(priceList[coin.address].usd), 4)
+                  : 0}
               </Td>
 
               <Td className="balance">
@@ -168,10 +171,10 @@ const AddLiquidityTable = ({
 
               <Td className="liquidity">
                 <S.InputWrapper
-                  isBiggerThanZero={coin.amount.lte(Big(0))}
+                  isBiggerThanZero={Big(coin.amount).lte(Big(0))}
                   isBiggerThanBalance={
                     tokensBalance[coin.address] &&
-                    coin.amount.gt(
+                    Big(coin.amount).gt(
                       Big(tokensBalance[coin.address].toString()).div(
                         Big(10).pow(coin.decimals)
                       )
@@ -200,10 +203,12 @@ const AddLiquidityTable = ({
                       onInputMaxClick(
                         coin.symbol,
                         tokensBalance[coin.address]
-                          ? Big(tokensBalance[coin.address].toString()).div(
-                              Big(10).pow(coin.decimals)
+                          ? String(
+                              Big(tokensBalance[coin.address].toString()).div(
+                                Big(10).pow(coin.decimals)
+                              )
                             )
-                          : Big(0)
+                          : '0'
                       )
                     }
                   />
@@ -213,7 +218,7 @@ const AddLiquidityTable = ({
                   ~$
                   {priceList
                     ? BNtoDecimal(
-                        coin.amount.mul(Big(priceList[coin.address].usd)),
+                        Big(coin.amount).mul(Big(priceList[coin.address].usd)),
                         4
                       )
                     : 0}

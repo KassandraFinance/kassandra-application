@@ -19,7 +19,7 @@ const ExternalLink = ({
   return (
     <>
       {hrefNext ? (
-        <Link href={hrefNext}>
+        <Link href={hrefNext} passHref>
           <S.Link onClick={onClick}>
             <span>{text}</span>
             <span className="icon">
