@@ -1,7 +1,14 @@
 import React from 'react'
+import Big from 'big.js'
+
+import { useAppSelector } from '../../../../store/hooks'
 
 import CreatePoolHeader from '../../CreatePool/CreatePoolHeader'
 import Steps from '../../../../components/Steps'
+import TransactionSummary from './TransactionSummary'
+import NewAllocationsTable, {
+  IAllocationListProps
+} from '../../../../components/Manage/NewAllocationsTable'
 
 import * as S from './styles'
 import {
@@ -11,6 +18,18 @@ import {
 } from '../SelectAssets/styles'
 
 const ReviewAddAsset = () => {
+  const tokens = useAppSelector(state => state.addAsset.weights)
+  const tokensList: IAllocationListProps[] = tokens.map(token => {
+    return {
+      name: token.token.name,
+      symbol: token.token.symbol,
+      logo: token.token.logo,
+      link: token.token.symbol,
+      currentWeight: Number(Big(token.weight_normalized).mul(100).toFixed(2)),
+      NewWeight: Number(Big(token.newWeight).mul(100).toFixed(2))
+    }
+  })
+
   return (
     <S.ReviewAddAsset>
       <CreatePoolHeader title="Add new assets to the pool" />
@@ -40,7 +59,11 @@ const ReviewAddAsset = () => {
         </AddAssetsText>
       </TextContainer>
 
-      <S.Container></S.Container>
+      <S.Container>
+        <TransactionSummary />
+
+        <NewAllocationsTable AllocationList={tokensList} />
+      </S.Container>
     </S.ReviewAddAsset>
   )
 }
