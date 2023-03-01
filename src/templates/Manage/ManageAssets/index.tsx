@@ -156,7 +156,7 @@ const ManageAssets = () => {
 
   async function handleAproveTokens(notAprovedToken: string) {
     const { approve } = ERC20(notAprovedToken)
-    await approve(FACTORY_ADDRESS, userWalletAddress, callBack)
+    await approve(controller, userWalletAddress, callBack)
   }
 
   async function handleAddToken() {
