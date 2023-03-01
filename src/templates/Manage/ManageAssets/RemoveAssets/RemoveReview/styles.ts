@@ -36,19 +36,14 @@ export const RemoveReviewBody = styled.div`
 
 export const ReviewCardAndTable = styled.div`
   ${() => css`
-    display: flex;
-    gap: 2.4rem;
-
-    > h1 {
-      min-width: 45.7rem;
-    }
-    /* display: grid;
-    grid-template-columns: 45.7rem max-content; */
+    display: grid;
+    grid-template-columns: minmax(40rem, 45.7rem) 1fr;
+    align-items: flex-start;
     gap: 2.4rem;
     margin-bottom: 10rem;
 
     @media (max-width: 992px) {
-      flex-direction: column;
+      grid-template-columns: 1fr;
     }
   `}
 `

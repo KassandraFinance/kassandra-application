@@ -1,8 +1,9 @@
 import React from 'react'
-import NewAllocationsTable from '../../../../../components/Manage/NewAllocationsTable'
 
 import Steps from '../../../../../components/Steps'
 import CreatePoolHeader from '../../../CreatePool/CreatePoolHeader'
+import TransactionSummaryCard from './TransactionSummaryCard'
+import NewAllocationsTable from '../../../../../components/Manage/NewAllocationsTable'
 
 import * as S from './styles'
 
@@ -33,7 +34,7 @@ const RemoveReview = () => {
         <p>Check the information one last time before proceeding</p>
 
         <S.ReviewCardAndTable>
-          <h1>CARD REMOVE</h1>
+          <TransactionSummaryCard />
           <NewAllocationsTable AllocationList={mockCoinsList} />
         </S.ReviewCardAndTable>
       </S.RemoveReviewBody>

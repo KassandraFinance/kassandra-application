@@ -1,6 +1,7 @@
 import React from 'react'
 
 import TokenRemoval from './TokenRemoval'
+import RemoveReview from './RemoveReview'
 
 import * as S from './styles'
 
@@ -11,7 +12,8 @@ import * as S from './styles'
 const RemoveAssets = () => {
   return (
     <S.RemoveAssets>
-      <TokenRemoval />
+      {/* <TokenRemoval /> */}
+      {/* <RemoveReview /> */}
     </S.RemoveAssets>
   )
 }
