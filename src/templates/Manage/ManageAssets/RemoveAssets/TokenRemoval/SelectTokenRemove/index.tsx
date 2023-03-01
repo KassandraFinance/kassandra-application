@@ -1,5 +1,7 @@
 import React from 'react'
 
+import SelectToken from './SelectToken'
+
 import * as S from './styles'
 
 // interface SelectTokenRemove {
@@ -9,7 +11,7 @@ import * as S from './styles'
 const SelectTokenRemove = () => {
   return (
     <S.SelectTokenRemove>
-      <h1>select token</h1>
+      <SelectToken />
       <S.RemovedTokenReviewCard>
         <S.LineRemovedTokenReview>
           <S.ValueText>Allocation</S.ValueText>

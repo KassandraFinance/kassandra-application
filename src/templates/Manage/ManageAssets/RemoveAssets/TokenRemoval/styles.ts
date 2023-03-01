@@ -34,8 +34,17 @@ export const TokenRemovalsBody = styled.div`
   `}
 `
 
-export const SelectTokenAndTableAllocation = styled.span`
-  ${() => css``}
+export const SelectTokenAndTableAllocation = styled.div`
+  ${() => css`
+    display: grid;
+    grid-template-columns: 36.1rem 1fr;
+    gap: 2.4rem;
+    margin-bottom: 10rem;
+
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr;
+    }
+  `}
 `
 
 // export const RemoveAssets = styled.span`

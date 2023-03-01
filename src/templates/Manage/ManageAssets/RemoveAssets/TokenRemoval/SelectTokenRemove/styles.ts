@@ -9,7 +9,7 @@ export const SelectTokenRemove = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
-    width: 36.1rem;
+    width: 100%;
     gap: 1.2rem;
   `}
 `
