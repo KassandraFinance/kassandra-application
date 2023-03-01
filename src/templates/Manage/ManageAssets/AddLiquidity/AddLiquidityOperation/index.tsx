@@ -16,6 +16,7 @@ import {
   setAllocation,
   setTVL,
   setPrice,
+  setController,
   AssetType
 } from '../../../../../store/reducers/addAssetSlice'
 import { ERC20 } from '../../../../../hooks/useERC20Contract'
@@ -44,6 +45,7 @@ export type GetPoolTokensType = {
     price_usd: string,
     symbol: string,
     total_value_locked_usd: string,
+    controller: string,
     weight_goals: {
       weights: AssetType[]
     }[]
@@ -89,6 +91,7 @@ const AddLiquidityOperation = () => {
   React.useEffect(() => {
     if (data) {
       dispatch(setTVL(data.pool.total_value_locked_usd))
+      dispatch(setController(data.pool.controller))
     }
   }, [data])
 
@@ -141,6 +144,7 @@ const AddLiquidityOperation = () => {
               placeholder=""
               onChange={handleTokenAmountChange}
               onClick={handleMaxTokenInput}
+              required
             />
 
             <S.Balance>

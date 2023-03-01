@@ -81,10 +81,10 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
 
   function handleInputRadio(event: React.ChangeEvent<HTMLInputElement>) {
     filteredArr.forEach(item => {
-      if (item.id === event.target.name) {
+      if (item.id === event.target.id) {
         dispatch(
           setSelectedToken({
-            id: event.target.name,
+            id: event.target.id,
             name: item.name,
             symbol: item.symbol,
             image: item.logo,
@@ -186,11 +186,13 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                   <S.Td className="select">
                     <S.InputWrapper>
                       <InputRadio
-                        name={coin.id}
+                        form="manageAssetsForm"
+                        name="selectAssets"
                         inputId={coin.id}
                         inputChecked={coin.id === tokenId}
                         handleClickInput={handleInputRadio}
                         text=""
+                        required
                       />
                     </S.InputWrapper>
                   </S.Td>
