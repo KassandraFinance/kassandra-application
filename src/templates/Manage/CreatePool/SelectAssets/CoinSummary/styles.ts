@@ -10,8 +10,8 @@ export const CoinSummary = styled.div`
 
 export const ImageWrapper = styled.div`
   ${() => css`
-    width: 2.4rem;
-    height: 2.4rem;
+    min-width: 2.4rem;
+    min-height: 2.4rem;
   `}
 `
 
