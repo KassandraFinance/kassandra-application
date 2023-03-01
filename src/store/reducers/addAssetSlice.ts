@@ -24,6 +24,7 @@ interface IAddAssetsProps {
   token: TokenType;
   poolId: string;
   tvl: string;
+  controller: string;
   liquidit: {
     amount: string,
     allocation: string,
@@ -42,6 +43,7 @@ const initialState: IAddAssetsProps = {
   },
   poolId: '50x88c7b8479b0f95eaa5c97481a3dd2c8890a63bfb0001000000000000000005d4',
   tvl: '',
+  controller: '',
   liquidit: {
     amount: '',
     allocation: '',
@@ -91,6 +93,9 @@ export const poolCreationSlice = createSlice({
       action: PayloadAction<(AssetType & { newWeight: string })[]>
     ) => {
       state.weights = action.payload
+    },
+    setController: (state, action: PayloadAction<string>) => {
+      state.controller = action.payload
     }
   }
 })
@@ -102,7 +107,8 @@ export const {
   setAllocation,
   setTVL,
   setPrice,
-  setWeights
+  setWeights,
+  setController
 } = poolCreationSlice.actions
 
 export default poolCreationSlice.reducer

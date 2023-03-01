@@ -32,7 +32,7 @@ import AddLiquidity from './AddLiquidity'
 import ConfigureFee from './ConfigureFee'
 import Review from './Review'
 import PoolCreated from './PoolCreated'
-import ModalTransactions from '../../../components/Modals/ModalTransactions'
+import ModalTransactions, { TransactionsListType } from '../../../components/Modals/ModalTransactions'
 
 import * as S from './styles'
 
@@ -51,12 +51,6 @@ export const mockTokensList: string[] = [
   '0xB0C30dDFAF159ce47097E4b08A3436fAE8f43a4d',
   '0x07Fb45533CC34Cd88D69C57739ceFb77202733E9',
 ]
-
-export type TransactionsListType = {
-  key: string,
-  transaction: string,
-  status: 'WAITING' | 'APROVED' | 'APPROVING' | 'NEXT'
-}
 
 interface ICreatePoolProps {
   setIsCreatePool: React.Dispatch<React.SetStateAction<boolean>>
@@ -439,6 +433,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
           {stepNumber < 6 && (
             <ContainerButton
+              form='poolCreationForm'
               backButtonDisabled={stepNumber < 1}
               onBack={() => dispatch(setBackStepNumber())}
               onNext={() => {

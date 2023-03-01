@@ -7,7 +7,11 @@ import spinerIcon from '../../../../public/assets/iconGradient/spinner.png'
 
 import * as S from './styles'
 
-import { TransactionsListType } from '../../../templates/Manage/CreatePool'
+export type TransactionsListType = {
+  key: string,
+  transaction: string,
+  status: 'WAITING' | 'APROVED' | 'APPROVING' | 'NEXT'
+}
 
 interface IModalTransactionsProps {
   transactions: TransactionsListType[];
