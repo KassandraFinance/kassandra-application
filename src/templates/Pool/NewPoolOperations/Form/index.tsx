@@ -36,16 +36,13 @@ const Form = ({
   typeWithdraw
 }: IFormProps) => {
   const { pool, tokenList1Inch } = useAppSelector(state => state)
-
-  const poolController = '0x3cfbB0657A5E47548ff3b3f157A9CF085d4Ba5A2'
   const poolId = pool.id.slice(pool.chainId.toString().length)
 
   const poolInfo = {
     id: poolId,
     address: pool.address,
-    controller: poolController,
-    vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
-    // vault: pool.vault,
+    controller: pool.controller,
+    vault: pool.vault,
     tokens: pool.underlying_assets,
     tokensAddresses: pool.underlying_assets_addresses,
   }
