@@ -147,7 +147,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                   </S.Td>
                   <S.Td className="marketCap">
                     $
-                    {priceList
+                    {priceList && tokenBalance[coin.id.toLowerCase()]
                       ? BNtoDecimal(
                           Big(tokenBalance[coin.id.toLowerCase()].toString())
                             .div(Big(10).pow(coin.decimals))
