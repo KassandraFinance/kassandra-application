@@ -66,7 +66,24 @@ export const Intro = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  margin-top: 3rem;
+  margin: 3.2rem 0;
+
+  @media (max-width: 768px) {
+    margin-top: 0;
+  }
+
+  @media (max-width: 510px) {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    margin: 0;
+
+    .btn-manage-assets {
+      max-width: 36rem;
+      margin-top: 3.2rem;
+      margin-bottom: 4rem;
+    }
+  }
 `
 
 export const GridIntro = styled.div`
@@ -90,7 +107,6 @@ export const GridIntro = styled.div`
     grid-template-columns: 7.2rem auto;
 
     max-width: 100%;
-    margin: 3.2rem 0;
   }
 `
 

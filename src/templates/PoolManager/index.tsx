@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react'
+import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
@@ -114,65 +115,62 @@ const PoolManager = () => {
             <S.GridIntro>
               <TokenWithNetworkImage
                 tokenImage={{
-                  url: data.pool.logo,
+                  url: pool.logo,
                   height: 75,
                   width: 75,
                   withoutBorder: true
                 }}
                 networkImage={{
-                  url: data.pool.chain.logo,
+                  url: pool.chain.logo,
                   height: 20,
                   width: 20
                 }}
                 blockies={{
                   size: 8,
                   scale: 9,
-                  seedName: data.pool.name
+                  seedName: pool.name
                 }}
               />
               <S.NameIndex>
                 <S.NameAndSymbol>
-                  <h1>{data.pool.name}</h1>
+                  <h1>{pool.name}</h1>
                 </S.NameAndSymbol>
                 <S.SymbolAndLink>
-                  <h3>${data.pool.symbol}</h3>
-                  <button
-                    onClick={() => alert('abrir invest da pool')}
-                    className="circle"
-                  >
-                    <Image
-                      src="/assets/icons/share.svg"
-                      width={32}
-                      height={32}
-                    />
-                  </button>
+                  <h3>${pool.symbol}</h3>
+                  <Link href={`/pool/${pool.id}`}>
+                    <button className="circle">
+                      <Image
+                        src="/assets/icons/website-with-bg.svg"
+                        width={32}
+                        height={32}
+                      />
+                    </button>
+                  </Link>
                   <a
-                    // href={`${pool.chain.blockExplorerUrl}/address/${pool.address}`}
+                    href={`${pool.chain.blockExplorerUrl}/address/${pool.address}`}
                     className="circle"
-                    href="https://polygonscan.com/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <Image
-                      src="/assets/utilities/go-to-site.svg"
+                      src="/assets/icons/go-to-site-with-bg.svg"
                       width={32}
                       height={32}
                     />
                   </a>
                   <button
                     onClick={() => {
-                      alert('asddsa')
-                      // setOpenModal(true)
-                      // trackEventFunction(
-                      //   'click',
-                      //   `social-share-${pool.name}`,
-                      //   'pool'
-                      // )
+                      setOpenModal(true)
+                      trackEventFunction(
+                        'click',
+                        `social-share-${pool.name}`,
+                        'pool'
+                      )
                     }}
                     className="circle"
                   >
                     <Image
-                      src="/assets/icons/share.svg"
+                      src="/assets/icons/share-with-bg.svg"
                       width={32}
                       height={32}
                     />
@@ -182,6 +180,7 @@ const PoolManager = () => {
             </S.GridIntro>
 
             <Button
+              className="btn-manage-assets"
               backgroundSecondary
               size="large"
               text="Manage Assets"
