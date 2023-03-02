@@ -201,7 +201,7 @@ const ManageAssets = () => {
         userWalletAddress
       ).send({
           from: userWalletAddress
-        }) 
+        }, callBack) 
 
 
       console.log(response)
