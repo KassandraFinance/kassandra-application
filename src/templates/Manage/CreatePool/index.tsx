@@ -36,7 +36,7 @@ import ModalTransactions, { TransactionsListType } from '../../../components/Mod
 
 import * as S from './styles'
 
-import { mockTokens } from './SelectAssets'
+import { mockTokens } from '../../../constants/tokenAddresses'
 
 const WHITELIST_ADDRESS = '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57'
 const FACTORY_ADDRESS = '0x99bF9381EC974FC836Bb0221316F8157d77B57f2'
