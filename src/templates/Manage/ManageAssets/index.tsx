@@ -71,8 +71,8 @@ const ManageAssets = () => {
     if (isAproved) {
       transactionsList.push({
         key: token.id,
-        transaction: `Aprove ${token.symbol}`,
-        status: 'APROVED'
+        transaction: `Approve ${token.symbol}`,
+        status: 'APPROVED'
       })
 
       transactionsList.push({
@@ -83,7 +83,7 @@ const ManageAssets = () => {
     } else {
       transactionsList.push({
         key: token.id,
-        transaction: `Aprove ${token.symbol}`,
+        transaction: `Approve ${token.symbol}`,
         status: 'NEXT'
       })
 
@@ -126,7 +126,7 @@ const ManageAssets = () => {
 
             return {
               ...item,
-              status: 'APROVED'
+              status: 'APPROVED'
             }
           } else if (index === transactionIndex + 1) {
             return {
@@ -156,7 +156,7 @@ const ManageAssets = () => {
 
   async function handleAproveTokens(notAprovedToken: string) {
     const { approve } = ERC20(notAprovedToken)
-    await approve(FACTORY_ADDRESS, userWalletAddress, callBack)
+    await approve(controller, userWalletAddress, callBack)
   }
 
   async function handleAddToken() {
@@ -189,8 +189,8 @@ const ManageAssets = () => {
     }
 
     try {
-      const allocation = Big(tokenLiquidity.allocation).div(100).mul(Big(10).pow(18)).toFixed()
-      const tokenToAddBalance = Big(tokenLiquidity.amount).mul(Big(10).pow(token.decimals)).toFixed()
+      const allocation = Big(tokenLiquidity.allocation).div(100).mul(Big(10).pow(18)).toFixed(0)
+      const tokenToAddBalance = Big(tokenLiquidity.amount).mul(Big(10).pow(token.decimals)).toFixed(0)
       
       const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, controller);
       const response = await poolController.methods.addToken(
@@ -201,7 +201,7 @@ const ManageAssets = () => {
         userWalletAddress
       ).send({
           from: userWalletAddress
-        }) 
+        }, callBack) 
 
 
       console.log(response)

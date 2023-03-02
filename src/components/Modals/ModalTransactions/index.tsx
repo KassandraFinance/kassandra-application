@@ -7,10 +7,12 @@ import spinerIcon from '../../../../public/assets/iconGradient/spinner.png'
 
 import * as S from './styles'
 
+export type StatusType = 'WAITING' | 'APPROVED' | 'APPROVING' | 'NEXT'
+
 export type TransactionsListType = {
   key: string,
   transaction: string,
-  status: 'WAITING' | 'APROVED' | 'APPROVING' | 'NEXT'
+  status: StatusType
 }
 
 interface IModalTransactionsProps {
@@ -45,7 +47,7 @@ const ModalTransactions = ({
               </S.TransactionText>
 
               <S.TransactionStatus>
-                {transaction.status === 'APROVED' && (
+                {transaction.status === 'APPROVED' && (
                   <Image src={executedIcon} width={20} height={20} />
                 )}
 

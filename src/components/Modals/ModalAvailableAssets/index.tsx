@@ -17,7 +17,7 @@ import KassandraWhitelistAbi from "../../../constants/abi/KassandraWhitelist.jso
 
 import * as S from './styles'
 
-import { mockTokens } from '../../../templates/Manage/CreatePool/SelectAssets'
+import { mockTokens } from '../../../constants/tokenAddresses'
 
 // whitelist vai ficar no subgraph
 const WHITELIST_ADDRESS = "0xe119DE3b0FDab34e9CE490FDAa562e6457126A57";

@@ -36,7 +36,7 @@ import ModalTransactions, { TransactionsListType } from '../../../components/Mod
 
 import * as S from './styles'
 
-import { mockTokens } from './SelectAssets'
+import { mockTokens } from '../../../constants/tokenAddresses'
 
 const WHITELIST_ADDRESS = '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57'
 const FACTORY_ADDRESS = '0x99bF9381EC974FC836Bb0221316F8157d77B57f2'
@@ -45,11 +45,11 @@ export const mockTokensList: string[] = [
   '0x841a91e3De1202b7b750f464680068aAa0d0EA35',
   '0xDcfcef36F438ec310d8a699e3D3729398547b2BF',
   '0xca813266889e0FD141dF48B85294855616015fA4',
-  '0xb22ED6ED220506E4757Bc90cbB05d41b6257b590',
+  '0xf22f05168508749fa42eDBddE10CB323D87c201d',
   '0x2f52C8ce1e5A064B4202762aD34E075E8826C252',
   '0x874a7CE88d933e6Edc24f4867923F1d09568b08B',
   '0xB0C30dDFAF159ce47097E4b08A3436fAE8f43a4d',
-  '0x07Fb45533CC34Cd88D69C57739ceFb77202733E9',
+  '0xBA1C32241Ac77b97C8573c3dbFDe4e1e2A8fc0DF',
 ]
 
 interface ICreatePoolProps {
@@ -128,7 +128,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
             return {
               ...item,
-              status: 'APROVED'
+              status: 'APPROVED'
             }
         } else if (index === transactionIndex + 1) {
             return {
@@ -270,7 +270,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         const { data } = await response.json()
         if (data.savePool.ok) {
           setTransactions(prev => {
-            prev[prev.length - 1].status = 'APROVED'
+            prev[prev.length - 1].status = 'APPROVED'
             return prev
           })
           return
