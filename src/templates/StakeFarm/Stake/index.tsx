@@ -2,7 +2,7 @@
 import React from 'react'
 import BigNumber from 'bn.js'
 
-import { chains, Staking } from '../../../constants/tokenAddresses'
+import { networks, Staking } from '../../../constants/tokenAddresses'
 
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import useStakingContract from '../../../hooks/useStakingContract'
@@ -26,8 +26,7 @@ const Stake = () => {
 
   const { userWalletAddress, chainId } = useAppSelector(state => state)
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
+  const chain = networks[43114]
 
   React.useEffect(() => {
     trackCategoryPageView([

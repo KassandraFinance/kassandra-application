@@ -28,19 +28,10 @@ import * as S from './styles'
 //     votingPower: string
 //   }
 // }
-const goerliNetwork: ChainDetails = {
+const goerliNetwork = {
   chainId: 5,
-  chainIdHex: '0x5',
   chainName: 'Goerli test network',
-  nativeCurrency: {
-    name: 'Ether',
-    symbol: 'GoerliETH',
-    decimals: 18
-  },
-  rpcUrls: ['https://goerli.infura.io/v3/'],
-  blockExplorerUrl: 'https://goerli.etherscan.io',
-  secondsPerBlock: 2,
-  wrapped: ''
+  rpcUrls: ['https://goerli.infura.io/v3/']
 }
 
 const GetStarted = () => {

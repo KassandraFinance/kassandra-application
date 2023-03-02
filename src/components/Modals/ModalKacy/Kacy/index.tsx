@@ -8,7 +8,7 @@ import { setModalWalletActive } from '../../../../store/reducers/modalWalletActi
 
 import { BNtoDecimal } from '../../../../utils/numerals'
 import changeChain from '../../../../utils/changeChain'
-import { chains } from '../../../../constants/tokenAddresses'
+import { networks } from '../../../../constants/tokenAddresses'
 
 import Overlay from '../../../Overlay'
 import Modal from '../../Modal'
@@ -46,8 +46,7 @@ const Kacy = ({
   const connect = process.browser && localStorage.getItem('walletconnect')
   const dispatch = useAppDispatch()
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
+  const avalancheNetwork = networks[43114]
 
   const totalSupply = 10000000
 
@@ -60,7 +59,7 @@ const Kacy = ({
 
       <Modal title="Your KACY Stats" onCloseModal={handleCloseModal}>
         <S.ModalContent>
-          {userWalletAddress && chainId === chain.chainId && (
+          {userWalletAddress && chainId === avalancheNetwork.chainId && (
             <>
               <S.KacyTotalContainer>
                 <S.ImgContainer>
@@ -173,7 +172,7 @@ const Kacy = ({
             </S.Li>
           </S.Ul>
 
-          {chainId === chain.chainId && userWalletAddress ? (
+          {chainId === avalancheNetwork.chainId && userWalletAddress ? (
             connect ? (
               <Button
                 text="Buy KACY"
@@ -194,13 +193,17 @@ const Kacy = ({
                 }}
               />
             )
-          ) : chainId !== chain.chainId ? (
+          ) : chainId !== avalancheNetwork.chainId ? (
             <Button
-              text={`Change to ${chain.chainName}`}
+              text={`Change to ${avalancheNetwork.chainName}`}
               backgroundPrimary
               fullWidth
               onClick={() => {
-                changeChain(chain)
+                changeChain({
+                  chainId: avalancheNetwork.chainId,
+                  chainName: avalancheNetwork.chainName,
+                  rpcUrls: [avalancheNetwork.rpc]
+                })
                 setIsModalKacy(false)
               }}
             />

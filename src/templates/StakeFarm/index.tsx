@@ -2,7 +2,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
-import { chains } from '../../constants/tokenAddresses'
+import { networks } from '../../constants/tokenAddresses'
 
 import { useAppSelector } from '../../store/hooks'
 import useConnect from '../../hooks/useConnect'
@@ -44,8 +44,7 @@ const StakeFarm = () => {
   const { metamaskInstalled } = useConnect()
   const router = useRouter()
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
+  const chain = networks[43114]
 
   React.useEffect(() => {
     const isSelectQueryTab = router.query.tab

@@ -15,8 +15,6 @@ import { BNtoDecimal } from '../../../utils/numerals'
 
 import { useAppSelector } from '../../../store/hooks'
 
-import { products, ProductDetails } from '../../../constants/tokenAddresses'
-
 import { IAssetsValueWalletProps, IKacyLpPool } from '..'
 
 import * as S from './styles'
@@ -34,6 +32,7 @@ interface IProfileProps {
   priceToken: IPriceToken;
   myFunds: ImyFundsType;
   priceInDolar: IpriceInDolarProps;
+  pools: string[];
 }
 
 interface ImyFundsType {
@@ -49,14 +48,14 @@ const Portfolio = ({
   cardstakesPool,
   priceToken,
   myFunds,
-  priceInDolar
+  priceInDolar,
+  pools
 }: IProfileProps) => {
   const router = useRouter()
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   // eslint-disable-next-line prettier/prettier
-  const [tokenizedFunds, setTokenizedFunds] = React.useState<ProductDetails[]>([])
-  const [isModalWallet, setIsModalWallet] = React.useState<boolean>(false)
+  const [tokenizedFunds, setTokenizedFunds] = React.useState<string[]>([])
   const [balanceFunds, setBalanceFunds] = React.useState<IBalanceType>({})
   const [amountProdInPool, setAmountProdInPool] =
     React.useState<IAssetsValueWalletProps>({ '': new BigNumber(0) })
@@ -100,20 +99,20 @@ const Portfolio = ({
   React.useEffect(() => {
     setTokenizedFunds([])
 
-    products.forEach(prod => {
-      const balanceInWallet = assetsValueInWallet[prod.sipAddress]
-      const balanceInPool = amountProdInPool[prod.sipAddress]
+    pools.forEach(address => {
+      const balanceInWallet = assetsValueInWallet[address]
+      const balanceInPool = amountProdInPool[address]
       const balanceProductAll = balanceInWallet
         ? balanceInWallet.add(balanceInPool ? balanceInPool : new BigNumber(0))
         : new BigNumber(0)
 
       if (balanceProductAll.gt(new BigNumber(0))) {
-        setTokenizedFunds(prevState => [...prevState, prod])
+        setTokenizedFunds(prevState => [...prevState, address])
       }
 
       setBalanceFunds(prevState => ({
         ...prevState,
-        [prod.sipAddress]: balanceProductAll
+        [address]: balanceProductAll
       }))
     })
   }, [profileAddress, assetsValueInWallet, router, userWalletAddress])

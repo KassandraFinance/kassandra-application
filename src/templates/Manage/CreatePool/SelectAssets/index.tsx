@@ -15,7 +15,7 @@ import {
   TokenType
 } from '../../../../store/reducers/poolCreationSlice'
 import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
-import { KASSANDRA_BACKEND, mockTokens } from '../../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA, mockTokens } from '../../../../constants/tokenAddresses'
 import { GET_INFO_TOKENS } from './graphql'
 
 import Steps from '../../../../components/Steps'
@@ -68,7 +68,7 @@ const SelectAssets = () => {
   }
 
   const { data } = useSWR<{ tokensByIds: TokensInfoResponseType[] }>([GET_INFO_TOKENS, whitelist?.map((token: string) => toChecksumAddress(mockTokens[token]))], (query, whitelist) =>
-    request(KASSANDRA_BACKEND, query, {
+    request(BACKEND_KASSANDRA, query, {
       whitelist
     })
   )
@@ -97,7 +97,7 @@ const SelectAssets = () => {
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
     let allocation = e.target.value
-    
+
     if (allocation.length > 0) {
       allocation = allocation.replace(/^0+/, '')
     }
@@ -126,11 +126,11 @@ const SelectAssets = () => {
         // eslint-disable-next-line prettier/prettier
         const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, WHITELIST_ADDRESS);
         const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
-        
+
         // setWhitelist(whitelist.map((token: string) => toChecksumAddress(mockTokens[token])));
         setWhitelist(whitelist);
       } catch (error) {
-        console.error('It was not possible to get whitelist')        
+        console.error('It was not possible to get whitelist')
       }
     }
     getWhitelist();

@@ -1,291 +1,99 @@
-import { ChainInfo } from '../store/reducers/pool'
+export const LPDaiAvax =
+  process.env.NEXT_PUBLIC_MASTER === '1'
+    ? '0xbA09679Ab223C6bdaf44D45Ba2d7279959289AB0'
+    : '0xe64b1772a9e28E694FEc27Bc7901f88855252E9F'
 
-import { PartnerData } from '../components/Partner'
-// import partners from '../components/Partner/list'
+export const LPKacyAvaxPNG =
+  process.env.NEXT_PUBLIC_MASTER === '1'
+    ? '0x1938cE0E14dD71caab96F52dF3F49b1D1DAF8861'
+    : '0xbaa8b0d2AA6415d5b4077C1FA06b3507577FBCd7'
 
-import ahypeIcon from '../../public/assets/logos/ahype.svg'
-import tricryptoIcon from '../../public/assets/logos/tricrypto.svg'
-import { ChainDetails } from '../utils/changeChain'
+export const LPKacyAvaxJOE =
+  process.env.NEXT_PUBLIC_MASTER === '1'
+    ? '0xc45893e0ee426a643e54829ee8c697995e5980ed'
+    : ''
 
-export const LPDaiAvax = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  '0xbA09679Ab223C6bdaf44D45Ba2d7279959289AB0'
-  :
-  '0xe64b1772a9e28E694FEc27Bc7901f88855252E9F'
+export const Kacy =
+  process.env.NEXT_PUBLIC_MASTER === '1'
+    ? '0xf32398dae246C5f672B52A54e9B413dFFcAe1A44'
+    : '0x1d7C6846F033e593b4f3f21C39573bb1b41D43Cb'
 
-export const LPKacyAvaxPNG = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  '0x1938cE0E14dD71caab96F52dF3F49b1D1DAF8861'
-  :
-  '0xbaa8b0d2AA6415d5b4077C1FA06b3507577FBCd7'
+export const Staking =
+  process.env.NEXT_PUBLIC_MASTER === '1'
+    ? '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031'
+    : '0xe08eD1e470160AF3dF917be221a6aed6284c1D2F'
 
+export const Timelock =
+  process.env.NEXT_PUBLIC_MASTER === '1'
+    ? ''
+    : '0xB8897C7f08D085Ded52A938785Df63C79BBE9c25'
 
-export const LPKacyAvaxJOE = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  '0xc45893e0ee426a643e54829ee8c697995e5980ed'
-  :
-  ''
+export const GovernorAlpha =
+  process.env.NEXT_PUBLIC_MASTER === '1'
+    ? '0x87E60617738F4F9Fb3Db3B61C7A34b9fF82412a4'
+    : '0x2B6C46b9552B6Fa36DD097b6527ba20fdDB3FfD5'
 
-export const Kacy = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  '0xf32398dae246C5f672B52A54e9B413dFFcAe1A44'
-  :
-  '0x1d7C6846F033e593b4f3f21C39573bb1b41D43Cb'
-
-export const Staking = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031'
-  :
-  '0xe08eD1e470160AF3dF917be221a6aed6284c1D2F'
-
-export const Timelock = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  ''
-  :
-  '0xB8897C7f08D085Ded52A938785Df63C79BBE9c25'
-
-export const GovernorAlpha = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  '0x87E60617738F4F9Fb3Db3B61C7A34b9fF82412a4'
-  :
-  '0x2B6C46b9552B6Fa36DD097b6527ba20fdDB3FfD5'
-
-export const ProxyContract = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  '0xCf734790E7D25f4E366b7d2F9710D3Eb1DB62036'
-  :
-  '0x97e33051B09092C1301A90b964a74cA51C0b068B'
-
-// export const ProxyInvestV2 = '0xFADd38F6DFa4057c62C2e92C4FaFB4c3AC198e06'
-// export const BalancerHelpers = '0x5aDDCCa35b7A0D07C74063c48700C8590E87864E'
-// export const ProxyInvestV2 = '0x1A5C772C6ED51e48F00Df7B33E4dAEEc36f37B76'
-// export const BalancerHelpers = '0x239e55F427D44C3cc793f49bFB507ebe76638a2b' // Polygon
+export const ProxyContract =
+  process.env.NEXT_PUBLIC_MASTER === '1'
+    ? '0xCf734790E7D25f4E366b7d2F9710D3Eb1DB62036'
+    : '0x97e33051B09092C1301A90b964a74cA51C0b068B'
 
 export const ProxyInvestV2 = '0xFADd38F6DFa4057c62C2e92C4FaFB4c3AC198e06' // Goerli
 export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Goerli
 
-export const addressNativeToken1Inch = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+export const addressNativeToken1Inch =
+  '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export const platform: Record<number, string> = {
   [43114]: 'avalanche',
   [137]: 'polygon-pos'
 }
 
-export const linkSnowtrace = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  'https://snowtrace.io'
-  :
-  'https://testnet.snowtrace.io'
-
-
-export interface Networks {
-  Ropsten: string;
-  Avalanche: string;
-  Fuji: string;
-}
-
-export interface ProductDetails {
-  sipAddress: string;
-  coreAddress: string;
-  // eslint-disable-next-line prettier/prettier
-  platform: keyof Networks;
-  categories: string[];
-  chain: ChainDetails;
-  name: string;
-  symbol: string;
-  partners?: PartnerData[];
-  fundBy?: string;
-  fundIcon?: any;
-  pid?: number;
-  fundSummary?: string;
-  fundLink?: string;
-  addresses: string[];
-}
-
-// export type ProductSymbols = keyof typeof products;
+export const linkSnowtrace = 'https://snowtrace.io'
 
 export const YIELDYAK_API = 'https://staging-api.yieldyak.com'
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3'
 
-export const KASSANDRA_BACKEND = 'https://backend.kassandra.finance'
-export const SUBGRAPH_URL = `https://graph.kassandra.finance/subgraphs/name/${process.env.NEXT_PUBLIC_MASTER === '1' ?
-  'KassandraAvalanche'
-  :
-  'KassandraFuji'}`
+export const SUBGRAPH_URL =
+  'https://graph.kassandra.finance/subgraphs/name/KassandraAvalanche'
 
-export const BACKEND_KASSANDRA = process.env.NEXT_PUBLIC_BACKEND_KASSANDRA ?? 'http://localhost:3001'
+export const BACKEND_KASSANDRA =
+  process.env.NEXT_PUBLIC_BACKEND_KASSANDRA ?? 'http://localhost:3001'
 
 export const URL_1INCH = 'https://api.1inch.io/v5.0/'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 
-export const chains: { [key: string]: ChainDetails } = {
-  avalanche: {
-    chainId: 43114,
-    chainIdHex: '0xa86a',
-    chainName: 'Avalanche Mainnet',
-    nativeCurrency: {
-      name: 'Avalanche',
-      symbol: 'AVAX',
-      decimals: 18
-    },
-    rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
-    blockExplorerUrl: 'https://snowtrace.io/',
-    secondsPerBlock: 2,
-    wrapped: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+type NetworkType = Record<
+  number,
+  {
+    chainName: string,
+    chainId: number,
+    rpc: string,
+    coingecko: string
+  }
+>
+
+export const networks: NetworkType = {
+  '5': {
+    chainName: 'Goerli Test Network',
+    chainId: 5,
+    rpc: 'https://rpc.ankr.com/eth_goerli',
+    coingecko: 'polygon-pos'
   },
-  fuji: {
-    chainId: 43113,
-    chainIdHex: '0xa869',
-    chainName: 'Avalanche Fuji Testnet',
-    nativeCurrency: {
-      name: 'Avalanche',
-      symbol: 'AVAX',
-      decimals: 18
-    },
-    rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
-    blockExplorerUrl: 'https://testnet.snowtrace.io/',
-    secondsPerBlock: 2,
-    wrapped: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c',
-  },
-  polygon: {
-    chainId: 137,
-    chainIdHex: '0x89',
+  '137': {
     chainName: 'Polygon',
-    nativeCurrency: {
-      name: 'Polygon',
-      symbol: 'MATIC',
-      decimals: 18
-    },
-    rpcUrls: ["https://polygon-rpc.com"],
-    blockExplorerUrl: "https://polygonscan.com",
-    secondsPerBlock: 2,
-    wrapped: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270"
+    chainId: 137,
+    rpc: 'https://polygon-rpc.com/',
+    coingecko: 'polygon-pos'
+  },
+  '43114': {
+    chainId: 43114,
+    chainName: 'Avalanche Mainnet',
+    rpc: 'https://api.avax.network/ext/bc/C/rpc',
+    coingecko: 'avalanche'
   }
 }
-
-const ahype: ProductDetails  = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  {
-    sipAddress: '0x38918142779e2CD1189cBd9e932723C968363D1E',
-    coreAddress: '0x17C1037B17b221f2f3b53f85cebD817C941f6bC5',
-    platform: 'Avalanche',
-    categories: ['Avalanche', 'Pool'],
-    chain: chains.avalanche,
-    name: 'Avalanche Social Index',
-    fundBy: 'HEIMDALL.land',
-    symbol: 'aHYPE',
-    fundIcon: ahypeIcon,
-    pid: 6,
-    fundLink: 'https://kassandrafoundation.medium.com/avalanche-social-index-4042a823c972',
-    fundSummary: `The Social Index $aHYPE reflects the performance of a portfolio selected
-    from the most socially active cryptocurrencies in the past 30 days,
-    using Heimdall Social Score data.`,
-    // partners: [
-    //   partners.avalanche,
-    //   partners.heimdall,
-    //   partners.api3
-    // ],
-    addresses: [
-      '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
-      '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd',
-      '0xf32398dae246C5f672B52A54e9B413dFFcAe1A44',
-      '0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5',
-      '0xA32608e873F9DdEF944B24798db69d80Bbb4d1ed',
-      '0x60781C2586D68229fde47564546784ab3fACA982',
-      '0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4',
-      '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE',
-      '0x22d4002028f537599bE9f666d1c4Fa138522f9c8',
-      '0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7',
-      '0x5817D4F0b62A59b17f75207DA1848C2cE75e7AF4'
-    ]
-  }
- :
-  {
-    sipAddress: '0xE34A2935B04e9c879f5bDd022b97D7Cf2F1Dde1d',
-    coreAddress: '0xFCfB171A8a4666bc53Eac2d91Cb0b5203DDa63cD',
-    platform: 'Fuji',
-    categories: ['Fuji', 'Pool'],
-    chain: chains.fuji,
-    name: 'Avalanche Social Index',
-    fundBy: 'HEIMDALL.land',
-    symbol: 'aHYPE',
-    fundIcon: ahypeIcon,
-    pid: 4,
-    fundLink: 'https://kassandrafoundation.medium.com/avalanche-social-index-4042a823c972',
-    fundSummary: `The Social Index $aHYPE reflects the performance of a portfolio selected
-    from the most socially active cryptocurrencies in the past 30 days,
-    using Heimdall Social Score data.`,
-    // partners: [
-    //   partners.avalanche,
-    //   partners.heimdall,
-    //   partners.api3
-    // ],
-    addresses: [
-      '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
-      '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd',
-      '0xf32398dae246C5f672B52A54e9B413dFFcAe1A44',
-      '0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5',
-      '0xA32608e873F9DdEF944B24798db69d80Bbb4d1ed',
-      '0x60781C2586D68229fde47564546784ab3fACA982',
-      '0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4',
-      '0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE'
-    ]
-  }
-
-const tricrypto: ProductDetails  = process.env.NEXT_PUBLIC_MASTER === '1' ?
-  {
-    sipAddress: '0xA6CAB4b1019ee22309dcA5ba62C3372a791dcB2E',
-    coreAddress: '0x440C5De429B36967E46C192f2140259e2ec22fc8',
-    platform: 'Avalanche',
-    categories: ['Avalanche', 'Pool'],
-    chain: chains.avalanche,
-    name: 'Kassandra Tricrypto Index',
-    fundBy: 'Kassandra with Yield Yak',
-    symbol: 'K3C',
-    fundIcon: tricryptoIcon,
-    pid: 8,
-    fundLink: 'https://kassandrafoundation.medium.com/kassandras-new-autocompounding-strategy-tricrypto-185eb1fca2c2',
-    fundSummary: `The #K3C represents a yield-earning portfolio composed of BTC,
-    ETH, DAI and KACY built in partnership with our friends back at Yield Yak.`,
-    // partners: [
-    //   partners.avalanche,
-    //   partners.yieldYak,
-    //   partners.traderJoe,
-    //   partners.aave,
-    //   partners.benqi,
-    // ],
-    addresses: [
-      '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab',
-      '0x50b7545627a5162f82a992c33b87adc75187b218',
-      '0xd586e7f844cea2f87f50152665bcbc2c279d8d70',
-      '0xf32398dae246C5f672B52A54e9B413dFFcAe1A44'
-    ]
-  }
-:
-  {
-    sipAddress: '0xE34A2935B04e9c879f5bDd022b97D7Cf2F1Dde1d',
-    coreAddress: '0xFCfB171A8a4666bc53Eac2d91Cb0b5203DDa63cD',
-    platform: 'Fuji',
-    categories: ['Fuji', 'Pool'],
-    chain: chains.fuji,
-    name: 'Kassandra Tricrypto Index',
-    fundBy: 'Kassandra with Yield Yak',
-    symbol: 'K3C',
-    fundIcon: tricryptoIcon,
-    pid: 4,
-    fundLink: 'https://kassandrafoundation.medium.com/kassandras-new-autocompounding-strategy-tricrypto-185eb1fca2c2',
-    fundSummary: `The #K3C represents a yield-earning portfolio composed of BTC,
-    ETH, DAI and KACY built in partnership with our friends back at Yield Yak.`,
-    // partners: [
-    //   partners.avalanche,
-    //   partners.yieldYak,
-    //   partners.traderJoe,
-    //   partners.aave,
-    //   partners.benqi,
-    // ],
-    addresses: [
-      '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
-      '0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd',
-      '0xf32398dae246C5f672B52A54e9B413dFFcAe1A44',
-      '0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5',
-      '0xA32608e873F9DdEF944B24798db69d80Bbb4d1ed',
-      '0x60781C2586D68229fde47564546784ab3fACA982',
-      '0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4'
-    ]
-  }
-
-export const products = [ahype, tricrypto]
 
 export const mockTokens: { [key: string]: string } = {
   '0x841a91e3De1202b7b750f464680068aAa0d0EA35':
@@ -307,42 +115,28 @@ export const mockTokens: { [key: string]: string } = {
 }
 
 export const mockTokensReverse: { [key: string]: string } = {
-  '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063': // dai
+  // dai
+  '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063':
     '0x841a91e3De1202b7b750f464680068aAa0d0EA35',
-  '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': // wmatic
+  // wmatic
+  '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270':
     '0xDcfcef36F438ec310d8a699e3D3729398547b2BF',
-  '0xeeeeeb57642040be42185f49c52f7e9b38f8eeee': // elk
+  // elk
+  '0xeeeeeb57642040be42185f49c52f7e9b38f8eeee':
     '0xca813266889e0FD141dF48B85294855616015fA4',
-  '0xc2132d05d31c914a87c6611c10748aeb04b58e8f': // tether
+  // tether
+  '0xc2132d05d31c914a87c6611c10748aeb04b58e8f':
     '0xf22f05168508749fa42eDBddE10CB323D87c201d',
-  '0x3BA4c387f786bFEE076A58914F5Bd38d668B42c3': // bnb
+  // bnb
+  '0x3BA4c387f786bFEE076A58914F5Bd38d668B42c3':
     '0x2f52C8ce1e5A064B4202762aD34E075E8826C252',
-  '0xb33eaad8d922b1083446dc23f610c2567fb5180f': // uniswap
+  // uniswap
+  '0xb33eaad8d922b1083446dc23f610c2567fb5180f':
     '0x874a7CE88d933e6Edc24f4867923F1d09568b08B',
-  '0xd6df932a45c0f255f85145f286ea0b292b21c90b': // aave
+  // aave
+  '0xd6df932a45c0f255f85145f286ea0b292b21c90b':
     '0xB0C30dDFAF159ce47097E4b08A3436fAE8f43a4d',
-  '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6': // wbiticoin
+  // wbiticoin
+  '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6':
     '0xBA1C32241Ac77b97C8573c3dbFDe4e1e2A8fc0DF'
-}
-
-type NetworkType = Record<number, {
-  chainName: string,
-  chainId: number,
-  rpc: string,
-  coingecko: string
-}>
-
-export const networks: NetworkType = {
-  '5': {
-    chainName: 'Goerli Test Network',
-    chainId: 5,
-    rpc: "https://rpc.ankr.com/eth_goerli",
-    coingecko: 'polygon-pos'
-  },
-  '137': {
-    chainName: 'Polygon',
-    chainId: 137,
-    rpc: "https://polygon-rpc.com/",
-    coingecko: 'polygon-pos'
-  }
 }

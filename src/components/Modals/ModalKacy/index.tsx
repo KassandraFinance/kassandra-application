@@ -6,7 +6,7 @@ import BigNumber from 'bn.js'
 import { useAppSelector } from '../../../store/hooks'
 import { ERC20 } from '../../../hooks/useERC20Contract'
 import { poolsKacy, allPools } from '../../../constants/pools'
-import { Staking, chains } from '../../../constants/tokenAddresses'
+import { Staking, networks } from '../../../constants/tokenAddresses'
 import useStakingContract from '../../../hooks/useStakingContract'
 
 import { BNtoDecimal } from '../../../utils/numerals'
@@ -75,7 +75,7 @@ const ModalKacy = () => {
       return
     }
 
-    if (Number(chainId) !== chains.avalanche.chainId) {
+    if (Number(chainId) !== networks[43114].chainId) {
       return
     }
 
@@ -147,7 +147,7 @@ const ModalKacy = () => {
           <Button
             className="kacyAmount"
             text={
-              userWalletAddress && Number(chainId) === chains.avalanche.chainId
+              userWalletAddress && Number(chainId) === networks[43114].chainId
                 ? isKacyZeroValue
                   ? 'Buy KACY'
                   : `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
@@ -156,7 +156,7 @@ const ModalKacy = () => {
             icon={<Image src={kacyIcon} width={18} height={18} />}
             backgroundBlack
             onClick={() =>
-              isKacyZeroValue && Number(chainId) === chains.avalanche.chainId
+              isKacyZeroValue && Number(chainId) === networks[43114].chainId
                 ? setIsOpenModal(true)
                 : setIsModalKacy(true)
             }
