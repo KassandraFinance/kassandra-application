@@ -189,8 +189,8 @@ const ManageAssets = () => {
     }
 
     try {
-      const allocation = Big(tokenLiquidity.allocation).div(100).mul(Big(10).pow(18)).toFixed()
-      const tokenToAddBalance = Big(tokenLiquidity.amount).mul(Big(10).pow(token.decimals)).toFixed()
+      const allocation = Big(tokenLiquidity.allocation).div(100).mul(Big(10).pow(18)).toFixed(0)
+      const tokenToAddBalance = Big(tokenLiquidity.amount).mul(Big(10).pow(token.decimals)).toFixed(0)
       
       const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, controller);
       const response = await poolController.methods.addToken(
