@@ -1,5 +1,5 @@
-import Image from 'next/image'
 import React, { ReactNode } from 'react'
+import Image from 'next/image'
 
 import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
 import Overlay from '../../Overlay'

@@ -16,6 +16,7 @@ export type TransactionsListType = {
 }
 
 interface IModalTransactionsProps {
+  title: string;
   transactions: TransactionsListType[];
   isCompleted: boolean;
   isApproving: boolean;
@@ -25,6 +26,7 @@ interface IModalTransactionsProps {
 }
 
 const ModalTransactions = ({
+  title,
   transactions,
   isCompleted,
   isApproving,
@@ -34,9 +36,7 @@ const ModalTransactions = ({
 }: IModalTransactionsProps) => {
   return (
     <S.ModalTransactions>
-      <S.Title>
-        To finish the creation of your pool you need to approve the following:
-      </S.Title>
+      <S.Title>{title}</S.Title>
 
       <S.TransactionContainer>
         {transactions?.map(transaction => {

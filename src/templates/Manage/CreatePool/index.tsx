@@ -76,7 +76,16 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     <AddLiquidity key="addLiquidity" />,
     <ConfigureFee key="configureFee" />,
     <Review key="review" />,
-    <ModalTransactions key="modalTransactions" isApproving={isApproving} isCompleted={isPoolCreated} transactions={transactions} onStart={deployPool} onCancel={() => {dispatch(setBackStepNumber())}} onComfirm={() => {dispatch(setNextStepNumber())}} />,
+    <ModalTransactions
+      title='To finish the creation of your pool you need to approve the following:' 
+      key="modalTransactions"
+      isApproving={isApproving}
+      isCompleted={isPoolCreated}
+      transactions={transactions}
+      onStart={deployPool}
+      onCancel={() => {dispatch(setBackStepNumber())}}
+      onComfirm={() => {dispatch(setNextStepNumber())}}
+    />,
     <PoolCreated key="poolCreated" />
   ]
 

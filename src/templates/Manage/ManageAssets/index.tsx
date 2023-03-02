@@ -53,6 +53,7 @@ const ManageAssets = () => {
     <ReviewAddAsset key="reviewAddAsset" />,
     <ModalTransactions
       key="modalTransactions"
+      title='To finish the process of adding the asset to the pool do the following:'
       isApproving={isApproving}
       isCompleted={isTokenAdd}
       transactions={transactions}
