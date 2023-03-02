@@ -6,7 +6,7 @@ import { AssetType } from '../../../../../store/reducers/addAssetSlice'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
-import CoinSummary from '../../../CreatePool/SelectAssets/CoinSummary'
+import CoinSummary from '@/templates/Manage/CreatePool/SelectAssets/CoinSummary'
 
 import arrowRight from '../../../../../../public/assets/utilities/arrow-right.svg'
 import notFound from '../../../../../../public/assets/icons/coming-soon.svg'

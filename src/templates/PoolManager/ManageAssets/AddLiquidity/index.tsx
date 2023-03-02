@@ -8,7 +8,7 @@ import { setWeights, AssetType } from '../../../../store/reducers/addAssetSlice'
 import { BACKEND_KASSANDRA } from '../../../../constants/tokenAddresses'
 import { GET_POOL_TOKENS } from './graphql'
 
-import CreatePoolHeader from '../../CreatePool/CreatePoolHeader'
+import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 import Steps from '../../../../components/Steps'
 import NewAllocationTable from './NewAllocationTable'
 import AddLiquidityOperation, {

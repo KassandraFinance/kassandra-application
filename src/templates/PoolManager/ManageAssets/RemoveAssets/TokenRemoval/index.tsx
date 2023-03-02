@@ -2,7 +2,7 @@ import React from 'react'
 
 import Steps from '../../../../../components/Steps'
 import SelectTokenRemove from './SelectTokenRemove'
-import CreatePoolHeader from '../../../CreatePool/CreatePoolHeader'
+import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 import NewAllocationTable from '../../AddLiquidity/NewAllocationTable'
 
 import * as S from './styles'

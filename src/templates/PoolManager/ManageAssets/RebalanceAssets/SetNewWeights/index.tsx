@@ -3,7 +3,7 @@ import React from 'react'
 import ExecutionPeriod from './ExecutionPeriod'
 import AllocationsTable from './AllocationsTable'
 import Steps from '../../../../../components/Steps'
-import CreatePoolHeader from '../../../CreatePool/CreatePoolHeader'
+import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 
 import * as S from './styles'
 

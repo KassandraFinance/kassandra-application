@@ -18,7 +18,7 @@ import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 import Analytics from './Analytics'
 import Allocations from './Allocations'
 import ComingSoon from './ComingSoon'
-import ManageAssets from '../Manage/ManageAssets'
+import ManageAssets from './ManageAssets'
 
 import analytics from '../../../public/assets/tabManage/analytics.svg'
 import allocations from '../../../public/assets/tabManage/allocations.svg'

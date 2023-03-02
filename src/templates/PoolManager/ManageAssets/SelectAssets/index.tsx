@@ -18,7 +18,7 @@ import {
 import { GET_INFO_TOKENS } from './graphql'
 
 import AddAssetTable from './AddAssetTable'
-import CreatePoolHeader from '../../CreatePool/CreatePoolHeader'
+import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 import Steps from '../../../../components/Steps'
 
 import * as S from './styles'
@@ -56,7 +56,7 @@ const SelectAssets = () => {
     whitelist: whitelist?.map((token: string) => toChecksumAddress(mockTokens[token]))
   }
 
-  const { data } = useSWR<({ tokensByIds: TokensInfoResponseType[], pool: {underlying_assets_addresses: string[]} })>([GET_INFO_TOKENS, params], (query, params) => 
+  const { data } = useSWR<({ tokensByIds: TokensInfoResponseType[], pool: {underlying_assets_addresses: string[]} })>([GET_INFO_TOKENS, params], (query, params) =>
     request(BACKEND_KASSANDRA, query, params)
   )
 
@@ -77,11 +77,11 @@ const SelectAssets = () => {
         const web3 = new Web3(networks[chainId].rpc);
         const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, WHITELIST_ADDRESS);
         const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
-        
+
         // setWhitelist(whitelist.map((token: string) => toChecksumAddress(mockTokens[token])));
         setWhitelist(whitelist);
       } catch (error) {
-        console.error('It was not possible to get whitelist')        
+        console.error('It was not possible to get whitelist')
       }
     }
     getWhitelist();
