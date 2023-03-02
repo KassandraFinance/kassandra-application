@@ -15,7 +15,7 @@ import {
   TokenType
 } from '../../../../store/reducers/poolCreationSlice'
 import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
-import { KASSANDRA_BACKEND } from '../../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA } from '../../../../constants/tokenAddresses'
 import { GET_INFO_TOKENS } from './graphql'
 
 import Steps from '../../../../components/Steps'
@@ -86,7 +86,7 @@ const SelectAssets = () => {
   }
 
   const { data } = useSWR<{ tokensByIds: TokensInfoResponseType[] }>([GET_INFO_TOKENS, whitelist?.map((token: string) => toChecksumAddress(mockTokens[token]))], (query, whitelist) =>
-    request(KASSANDRA_BACKEND, query, {
+    request(BACKEND_KASSANDRA, query, {
       whitelist
     })
   )

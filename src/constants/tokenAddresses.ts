@@ -54,7 +54,6 @@ export const linkSnowtrace = 'https://snowtrace.io'
 export const YIELDYAK_API = 'https://staging-api.yieldyak.com'
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3'
 
-export const KASSANDRA_BACKEND = 'https://backend.kassandra.finance'
 export const SUBGRAPH_URL =
   'https://graph.kassandra.finance/subgraphs/name/KassandraAvalanche'
 
