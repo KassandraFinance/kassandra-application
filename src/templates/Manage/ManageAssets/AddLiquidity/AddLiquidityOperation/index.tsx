@@ -7,7 +7,9 @@ import BigNumber from 'bn.js'
 
 import {
   BACKEND_KASSANDRA,
-  COINGECKO_API
+  COINGECKO_API,
+  networks,
+  mockTokensReverse
 } from '../../../../../constants/tokenAddresses'
 import { GET_POOL_TOKENS } from '../graphql'
 import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
@@ -59,6 +61,7 @@ const AddLiquidityOperation = () => {
 
   const token = useAppSelector(state => state.addAsset.token)
   const poolId = useAppSelector(state => state.addAsset.poolId)
+  const chainId = useAppSelector(state => state.addAsset.chainId)
   const liquidit = useAppSelector(state => state.addAsset.liquidit)
   const wallet = useAppSelector(state => state.userWalletAddress)
 
@@ -85,7 +88,7 @@ const AddLiquidityOperation = () => {
   )
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/polygon-pos?contract_addresses=${token.id}&vs_currencies=usd`
+    `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
   )
 
   React.useEffect(() => {
@@ -108,7 +111,7 @@ const AddLiquidityOperation = () => {
       setBalance(balanceValue)
     }
 
-    getBalances('0x841a91e3De1202b7b750f464680068aAa0d0EA35')
+    getBalances(mockTokensReverse[token.id.toLowerCase()])
   }, [wallet])
 
   return (
@@ -132,7 +135,7 @@ const AddLiquidityOperation = () => {
               buttonText="Max"
               button
               value={liquidit.amount}
-              min="0"
+              min={Big(1).div(Big(10).pow(token.decimals)).toString()}
               max={
                 balance
                   ? Big(balance.toString())
@@ -165,7 +168,7 @@ const AddLiquidityOperation = () => {
             button
             value={liquidit.allocation}
             min="0"
-            max="any"
+            max="95"
             lable="Token Allocation"
             placeholder=""
             onChange={handleTokenAllocatinChange}

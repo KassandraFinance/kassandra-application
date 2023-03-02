@@ -324,3 +324,25 @@ export const mockTokensReverse: { [key: string]: string } = {
   '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6': // wbiticoin
     '0xBA1C32241Ac77b97C8573c3dbFDe4e1e2A8fc0DF'
 }
+
+type NetworkType = Record<number, {
+  chainName: string,
+  chainId: number,
+  rpc: string,
+  coingecko: string
+}>
+
+export const networks: NetworkType = {
+  '5': {
+    chainName: 'Goerli Test Network',
+    chainId: 5,
+    rpc: "https://rpc.ankr.com/eth_goerli",
+    coingecko: 'polygon-pos'
+  },
+  '137': {
+    chainName: 'Polygon',
+    chainId: 137,
+    rpc: "https://polygon-rpc.com/",
+    coingecko: 'polygon-pos'
+  }
+}

@@ -7,8 +7,14 @@ import BigNumber from 'bn.js'
 
 import { ERC20 } from '../../../../hooks/useERC20Contract'
 import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import { KASSANDRA_BACKEND, mockTokens, mockTokensReverse } from '../../../../constants/tokenAddresses'
+import { useAppSelector } from '../../../../store/hooks'
+import {
+  KASSANDRA_BACKEND,
+  COINGECKO_API,
+  networks,
+  mockTokens,
+  mockTokensReverse
+} from '../../../../constants/tokenAddresses'
 import { GET_INFO_TOKENS } from './graphql'
 
 import AddAssetTable from './AddAssetTable'
@@ -43,6 +49,7 @@ const SelectAssets = () => {
 
   const wallet = useAppSelector(state => state.userWalletAddress)
   const poolId = useAppSelector(state => state.addAsset.poolId)
+  const chainId = useAppSelector(state => state.addAsset.chainId)
 
   const params = {
     id: poolId,
@@ -54,7 +61,7 @@ const SelectAssets = () => {
   )
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=${whitelist?.map((token: string) => toChecksumAddress(mockTokens[token])).toString()}&vs_currencies=usd&include_market_cap=true&include_24hr_change=true`
+    `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${whitelist?.map((token: string) => toChecksumAddress(mockTokens[token])).toString()}&vs_currencies=usd&include_market_cap=true&include_24hr_change=true`
   )
 
   React.useEffect(() => {
@@ -67,7 +74,7 @@ const SelectAssets = () => {
   React.useEffect(() => {
     const getWhitelist = async () => {
       try {
-        const web3 = new Web3("https://rpc.ankr.com/eth_goerli");
+        const web3 = new Web3(networks[chainId].rpc);
         const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, WHITELIST_ADDRESS);
         const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
         

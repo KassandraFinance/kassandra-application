@@ -76,7 +76,16 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     <AddLiquidity key="addLiquidity" />,
     <ConfigureFee key="configureFee" />,
     <Review key="review" />,
-    <ModalTransactions key="modalTransactions" isApproving={isApproving} isCompleted={isPoolCreated} transactions={transactions} onStart={deployPool} onCancel={() => {dispatch(setBackStepNumber())}} onComfirm={() => {dispatch(setNextStepNumber())}} />,
+    <ModalTransactions
+      title='To finish the creation of your pool you need to approve the following:' 
+      key="modalTransactions"
+      isApproving={isApproving}
+      isCompleted={isPoolCreated}
+      transactions={transactions}
+      onStart={deployPool}
+      onCancel={() => {dispatch(setBackStepNumber())}}
+      onComfirm={() => {dispatch(setNextStepNumber())}}
+    />,
     <PoolCreated key="poolCreated" />
   ]
 
@@ -357,15 +366,15 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       settingsParams: {
         tokens: tokens,
         normalizedWeights: normalizedWeights,
-        swapFeePercentage: Big(0.03).mul(Big(10).pow(18)).toString(),
+        swapFeePercentage: Big(0.03).mul(Big(10).pow(18)).toFixed(0),
         swapEnabledOnStart: true,
         mustAllowlistLPs: false,
-        managementAumFeePercentage: poolData.fees?.managementFee.isChecked ? Big(managementAumFeePercentage).mul(Big(10).pow(18)).round().toString() : Big(0).mul(Big(10).pow(18)).toString(),
+        managementAumFeePercentage: poolData.fees?.managementFee.isChecked ? Big(managementAumFeePercentage).mul(Big(10).pow(18)).toFixed(0) : Big(0).mul(Big(10).pow(18)).toFixed(0),
         aumFeeId: 3,
       },
       feesSettings: {
-        feesToManager: poolData.fees?.managementFee.isChecked ? Big(feesToManager).mul(Big(10).pow(18)).round().toString() : Big(0).mul(Big(10).pow(18)).toString(),
-        feesToReferral: poolData.fees?.refferalFee.isChecked ? Big(feesToReferral).mul(Big(10).pow(18)).round().toString() : Big(0).mul(Big(10).pow(18)).toString(),
+        feesToManager: poolData.fees?.managementFee.isChecked ? Big(feesToManager).mul(Big(10).pow(18)).toFixed(0) : Big(0).mul(Big(10).pow(18)).toFixed(0),
+        feesToReferral: poolData.fees?.refferalFee.isChecked ? Big(feesToReferral).mul(Big(10).pow(18)).toFixed(0) : Big(0).mul(Big(10).pow(18)).toFixed(0),
       },
     }
 
