@@ -2,6 +2,7 @@ import React from 'react'
 
 import TokenRemoval from './TokenRemoval'
 import RemoveReview from './RemoveReview'
+import AssetRemovelCard from './AssetRemovelCard'
 
 import * as S from './styles'
 
@@ -14,6 +15,7 @@ const RemoveAssets = () => {
     <S.RemoveAssets>
       {/* <TokenRemoval /> */}
       {/* <RemoveReview /> */}
+      {/* <AssetRemovelCard /> */}
     </S.RemoveAssets>
   )
 }
