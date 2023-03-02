@@ -3,7 +3,7 @@ import React from 'react'
 import Steps from '../../../../../components/Steps'
 import SelectTokenRemove from './SelectTokenRemove'
 import CreatePoolHeader from '../../../CreatePool/CreatePoolHeader'
-// import NewAllocationsTable from '../../../../../components/Manage/NewAllocationsTable'
+import NewAllocationTable from '../../AddLiquidity/NewAllocationTable'
 
 import * as S from './styles'
 
@@ -31,7 +31,7 @@ const TokenRemoval = () => {
 
         <S.SelectTokenAndTableAllocation>
           <SelectTokenRemove />
-          {/* <NewAllocationsTable AllocationList={mockCoinsList} /> */}
+          <NewAllocationTable assets={test} />
         </S.SelectTokenAndTableAllocation>
       </S.TokenRemovalsBody>
     </S.TokenRemoval>
@@ -39,6 +39,20 @@ const TokenRemoval = () => {
 }
 
 export default TokenRemoval
+
+export const test = [
+  {
+    newWeight: '12',
+    token: {
+      decimals: 18,
+      id: 'asd',
+      logo: '',
+      name: 'test123',
+      symbol: 'test'
+    },
+    weight_normalized: '12'
+  }
+]
 
 export const mockCoinsList = [
   {
