@@ -5,9 +5,43 @@ export const TabsContainer = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
+
   margin-top: 6rem;
 
+  white-space: nowrap;
+
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  @media (max-width: 1200px) {
+    overflow-x: auto;
+
+    ::-webkit-scrollbar {
+      height: 1px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0);
+    }
+
+    ::-moz-scrollbar {
+      height: 1px;
+    }
+    ::-moz-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0);
+    }
+
+    ::-o-scrollbar {
+      height: 1px;
+    }
+    ::-o-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0);
+    }
+
+    ::-ms-scrollbar {
+      height: 1px;
+    }
+    ::-ms-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0);
+    }
+  }
 `
 
 interface ITabsButtonProps {

@@ -71,6 +71,7 @@ export interface IPoolSlice {
   url: string;
   summary?: string;
   addresses: string[];
+  total_value_locked_usd?: string;
   partners?: Partners[];
   underlying_assets_addresses: string[];
   underlying_assets: underlyingAssetsInfo[];
