@@ -7,7 +7,7 @@ import { AbiItem, toChecksumAddress } from 'web3-utils'
 import Web3 from 'web3'
 
 import { GET_INFO_TOKENS } from './graphql'
-import { KASSANDRA_BACKEND } from '../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA } from '../../../constants/tokenAddresses'
 
 import Loading from '../../Loading'
 import Overlay from '../../Overlay'
@@ -60,7 +60,7 @@ const ModalAvailableAssets = ({
   }, [])
 
   const { data } = useSWR([GET_INFO_TOKENS, whitelist], (query, whitelist) =>
-    request(KASSANDRA_BACKEND, query, {
+    request(BACKEND_KASSANDRA, query, {
       whitelist
     })
   )

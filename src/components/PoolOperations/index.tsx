@@ -3,7 +3,7 @@ import React from 'react'
 
 import { useAppSelector } from '../../store/hooks'
 
-import { chains } from '../../constants/tokenAddresses'
+import { networks } from '../../constants/tokenAddresses'
 
 import { ChainDetails } from '../../utils/changeChain'
 
@@ -46,7 +46,7 @@ const PoolOperations = ({
   const { chainId } = useAppSelector(state => state)
 
   function handleSetInputChecked(title: Titles) {
-    if (chains.avalanche.chainId === chainId) setInputChecked(title)
+    if (networks[43114].chainId === chainId) setInputChecked(title)
   }
 
   return (

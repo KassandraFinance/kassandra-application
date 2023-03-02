@@ -304,15 +304,8 @@ const MyAsset = ({
             onClick={() =>
               changeChain({
                 chainId: chain.id,
-                blockExplorerUrl: chain.blockExplorerUrl,
                 chainName: chain.chainName,
-                nativeCurrency: {
-                  decimals: chain.nativeTokenDecimals,
-                  symbol: chain.nativeTokenSymbol,
-                  name: chain.chainName
-                },
-                rpcUrls: chain.rpcUrls,
-                wrapped: chain.addressWrapped
+                rpcUrls: chain.rpcUrls
               })
             }
             disabled={walletConnect ? true : false}

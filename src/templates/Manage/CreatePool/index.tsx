@@ -40,7 +40,7 @@ import { mockTokens } from './SelectAssets'
 
 
 const WHITELIST_ADDRESS = '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57'
-const FACTORY_ADDRESS = '0xca36a7f25e8b0a2b3fc7a9baf3b2f22d80e03788'
+const FACTORY_ADDRESS = '0x99bF9381EC974FC836Bb0221316F8157d77B57f2'
 
 export const mockTokensList: string[] = [
   '0x841a91e3De1202b7b750f464680068aAa0d0EA35',

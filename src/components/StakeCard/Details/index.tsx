@@ -4,7 +4,7 @@ import React from 'react'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 
-import { chains, Staking } from '../../../constants/tokenAddresses'
+import { Staking } from '../../../constants/tokenAddresses'
 
 import useStakingContract from '../../../hooks/useStakingContract'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
@@ -137,11 +137,7 @@ const Details = ({
       </S.Info>
       <S.Info>
         <ExternalLink
-          hrefLink={
-            process.env.NEXT_PUBLIC_MASTER === '1'
-              ? `${chains.avalanche.blockExplorerUrl}address/${stakingToken}`
-              : `${chains.fuji.blockExplorerUrl}address/${stakingToken}`
-          }
+          hrefLink={`https://snowtrace.io/address/${stakingToken}`}
           text="See contract"
         />
         {symbol === 'KACY' ? (

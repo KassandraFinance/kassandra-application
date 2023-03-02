@@ -618,15 +618,9 @@ const Invest = ({ typeAction }: IInvestProps) => {
           type="button"
           onClick={() => changeChain({
             chainId: pool.chain.id,
-            blockExplorerUrl: pool.chain.blockExplorerUrl,
             chainName: pool.chain.chainName,
-            nativeCurrency: {
-              decimals: pool.chain.nativeTokenDecimals,
-              symbol: pool.chain.nativeTokenSymbol,
-              name: pool.chain.chainName
-            },
-          rpcUrls: pool.chain.rpcUrls,
-          wrapped: pool.chain.addressWrapped})}
+            rpcUrls: pool.chain.rpcUrls
+          })}
           disabled={walletConnect ? true : false}
           text={walletConnect ? `Change manually to ${pool.chain.chainName}` : `Change to ${pool.chain.chainName}`}
         />

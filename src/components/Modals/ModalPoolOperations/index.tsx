@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React from 'react'
 
-import { chains } from '../../../constants/tokenAddresses';
+import { networks } from '../../../constants/tokenAddresses';
 
 import { useAppSelector } from '../../../store/hooks';
 
@@ -58,7 +58,7 @@ const ModalCardOperations = ({
   const { chainId } = useAppSelector(state => state)
 
   function handleSetInputChecked(title: Titles) {
-    if (chains.avalanche.chainId === chainId) setInputCheckedMobile(title)
+    if (networks[43114].chainId === chainId) setInputCheckedMobile(title)
   }
 
   const handleCloseModalPoolOperations = () => {
