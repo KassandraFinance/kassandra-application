@@ -1,9 +1,12 @@
 import React, { ReactElement } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/router'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
+
+import { IPoolSlice } from '../../store/reducers/pool'
+import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+
+import SharedImage from '../Pool/SharedImage'
+import ShareImageModal from '../Pool/ShareImageModal'
 
 import Header from '../../components/Header'
 import SelectTabs from '../../components/SelectTabs'
@@ -26,10 +29,7 @@ import brokers from '../../../public/assets/tabManage/brokers.svg'
 import info from '../../../public/assets/tabManage/info.svg'
 import gear from '../../../public/assets/icons/gear.svg'
 
-import { GET_POOL } from './graphql'
-
 import * as S from './styles'
-import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
 
 const tabs = [
   {
@@ -69,30 +69,22 @@ const tabs = [
   }
 ]
 
-const PoolManager = () => {
+interface IPoolManagerProps {
+  pool: IPoolSlice;
+}
+
+const PoolManager = ({ pool }: IPoolManagerProps) => {
   const [isManageAssets, setIsManageAssets] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
-  // const [openModal, setOpenModal] = React.useState(false)
+  const [openModal, setOpenModal] = React.useState(false)
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
   >('analytics')
 
-  const router = useRouter().query
-  const pool = router.pool
-  console.log(pool)
-
-  const { data } = useSWR([GET_POOL, pool], (query, pool) =>
-    request(BACKEND_KASSANDRA, query, { id: pool })
-  )
-  console.log(data)
-  // const { data } = useSWR(
-  //   [GET_POOL, router.query.pool],
-  //   (query, userWalletAddress) =>
-  //     request(SUBGRAPH_URL, query, { id: userWalletAddress })
-  // )
+  const { trackEventFunction } = useMatomoEcommerce()
 
   const PoolManagerComponents: { [key: string]: ReactElement } = {
-    analytics: <Analytics />,
+    analytics: <Analytics poolId={pool.id} />,
     allocations: <Allocations />,
     activity: <ComingSoon />,
     investors: <ComingSoon />,
@@ -201,7 +193,7 @@ const PoolManager = () => {
         </S.Content>
       </S.DashBoard>
       {isManageAssets && <ManageAssets />}
-      {/* <ShareImageModal
+      <ShareImageModal
         poolId={pool.id}
         setOpenModal={setOpenModal}
         openModal={openModal}
@@ -209,11 +201,11 @@ const PoolManager = () => {
       >
         <SharedImage
           crpPoolAddress={pool.id}
-          totalValueLocked={infoPool.tvl}
+          totalValueLocked={pool.total_value_locked_usd || ''}
           socialIndex={pool.symbol}
           productName={pool.name}
         />
-      </ShareImageModal> */}
+      </ShareImageModal>
     </S.PoolManager>
   )
 }
