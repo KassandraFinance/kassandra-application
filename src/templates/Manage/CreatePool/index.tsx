@@ -128,7 +128,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
             return {
               ...item,
-              status: 'APROVED'
+              status: 'APPROVED'
             }
         } else if (index === transactionIndex + 1) {
             return {
@@ -270,7 +270,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         const { data } = await response.json()
         if (data.savePool.ok) {
           setTransactions(prev => {
-            prev[prev.length - 1].status = 'APROVED'
+            prev[prev.length - 1].status = 'APPROVED'
             return prev
           })
           return

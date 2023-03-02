@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { StatusType } from './'
 
 export const ModalTransactions = styled.div`
   ${() => css`
@@ -42,7 +43,7 @@ export const Transaction = styled.div`
 `
 
 interface ITransactionTextProps {
-  status: 'WAITING' | 'APROVED' | 'APPROVING' | 'NEXT';
+  status: StatusType;
 }
 
 // prettier-ignore
@@ -56,7 +57,7 @@ export const TransactionText = styled.p<ITransactionTextProps>`
     letter-spacing: 0.05em;
   `}
   ${({ theme, status }) =>
-    status === 'APROVED' && css`
+    status === 'APPROVED' && css`
       color: ${theme.colors.snow};
   `}
   ${({ theme, status }) =>

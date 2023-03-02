@@ -71,8 +71,8 @@ const ManageAssets = () => {
     if (isAproved) {
       transactionsList.push({
         key: token.id,
-        transaction: `Aprove ${token.symbol}`,
-        status: 'APROVED'
+        transaction: `Approve ${token.symbol}`,
+        status: 'APPROVED'
       })
 
       transactionsList.push({
@@ -83,7 +83,7 @@ const ManageAssets = () => {
     } else {
       transactionsList.push({
         key: token.id,
-        transaction: `Aprove ${token.symbol}`,
+        transaction: `Approve ${token.symbol}`,
         status: 'NEXT'
       })
 
@@ -126,7 +126,7 @@ const ManageAssets = () => {
 
             return {
               ...item,
-              status: 'APROVED'
+              status: 'APPROVED'
             }
           } else if (index === transactionIndex + 1) {
             return {
