@@ -1,9 +1,13 @@
 import { gql } from 'graphql-request'
 
 export const GET_CHART = gql`
-  query ($id: [ID]!, $day: Int!, $month: Int!) {
+  query ($id: [ID!]!, $day: Int!, $month: Int!) {
     pools(where: { id_in: $id }) {
       id
+      address
+      name
+      symbol
+      logo
       price_usd # pool asset price
       total_value_locked_usd
       now: price_candles(

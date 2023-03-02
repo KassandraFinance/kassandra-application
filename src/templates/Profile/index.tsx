@@ -14,13 +14,10 @@ import useStakingContract from '../../hooks/useStakingContract'
 import useConnect from '../../hooks/useConnect'
 import usePriceLP from '../../hooks/usePriceLP'
 import useVotingPower from '../../hooks/useVotingPower'
-import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
-
 
 import { GET_PROFILE } from './graphql'
 import {
   LPDaiAvax,
-  products,
   Staking,
   SUBGRAPH_URL,
   chains
@@ -102,6 +99,15 @@ interface ImyFundsType {
   [key: string]: string;
 }
 
+type Response = {
+  pools: {
+    id: string
+    address: string
+    symbol: string
+    price_usd: string
+  }[]
+}
+
 const Profile = () => {
   const [assetsValueInWallet, setAssetsValueInWallet] =
     React.useState<IAssetsValueWalletProps>({ '': new BigNumber(-1) })
@@ -118,9 +124,7 @@ const Profile = () => {
     aHYPE: Big(0),
     K3C: Big(0)
   })
-  const [productAddress, setProductAddress] = React.useState<{ id: string[] }>({
-    id: []
-  })
+
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
   >('portfolio')
@@ -138,8 +142,6 @@ const Profile = () => {
   const { getPriceKacyAndLP } = usePriceLP()
   const { metamaskInstalled } = useConnect()
 
-  const { trackEventFunction } = useMatomoEcommerce()
-
   const profileAddress = router.query.profileAddress
   const isSelectQueryTab = router.query.tab
   const walletUserString = profileAddress
@@ -148,14 +150,7 @@ const Profile = () => {
       : profileAddress
     : ''
 
-  const { data } = useSWR(
-    [GET_PROFILE, productAddress],
-    (query, productAddress) =>
-      request(SUBGRAPH_URL, query, {
-        id: productAddress.id
-        // userVP: walletUserString
-      })
-  )
+  const { data } = useSWR<Response>([GET_PROFILE], query => request(SUBGRAPH_URL, query))
 
   const chain =
     process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
@@ -275,35 +270,20 @@ const Profile = () => {
       window.ethereum.on('accountsChanged', handleAccountChange)
     }
   }, [])
-
-  React.useEffect(() => {
-    const arr: string[] = []
-
-    products.forEach(asset => {
-      arr.push(asset.sipAddress)
-
-      setMyFunds(prevState => ({
-        ...prevState,
-        [asset.sipAddress]: asset.sipAddress
-      }))
-    })
-
-    setProductAddress({
-      id: arr
-    })
-  }, [products])
-
+  
   React.useEffect(() => {
     if (data?.pools) {
-      // setTotalVotingPower(data.user.votingPower)
-
-      data.pools.map(
-        (prod: { id: string, price_usd: string, symbol: string }) => {
-          const prodPrice = new Big(prod.price_usd)
+      data.pools.map(pool => {
+          const prodPrice = new Big(pool.price_usd)
 
           setPriceToken(prevState => ({
             ...prevState,
-            [prod.symbol]: prodPrice
+            [pool.symbol]: prodPrice
+          }))
+
+          setMyFunds(prevState => ({
+            ...prevState,
+            [pool.address]: pool.address
           }))
         }
       )
@@ -334,7 +314,7 @@ const Profile = () => {
 
   React.useEffect(() => {
     if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
-    (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ) {
+      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId)) {
       return
     }
 
@@ -346,7 +326,7 @@ const Profile = () => {
 
   React.useEffect(() => {
     if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
-    (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ) {
+      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId)) {
       return
     }
 
@@ -379,7 +359,7 @@ const Profile = () => {
 
   React.useEffect(() => {
     if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
-    (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ) {
+      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId)) {
       return
     }
 
@@ -413,7 +393,7 @@ const Profile = () => {
         <UserDescription userWalletUrl={profileAddress} />
 
         {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
-        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
+          (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
           <Web3Disabled
             textButton={`Connect to ${chain.chainName}`}
             textHeader="Your wallet is set to the wrong network."
@@ -446,19 +426,20 @@ const Profile = () => {
               setIsSelect={setIsSelectTab}
             />
             {isSelectTab === tabs[0].asPathText ? (
-              <Portfolio
+              data && <Portfolio
                 profileAddress={
                   typeof profileAddress === 'undefined'
                     ? ''
                     : typeof profileAddress === 'string'
-                    ? profileAddress
-                    : ''
+                      ? profileAddress
+                      : ''
                 }
                 assetsValueInWallet={assetsValueInWallet}
                 cardstakesPool={cardstakesPool}
                 priceToken={priceToken}
                 myFunds={myFunds}
                 priceInDolar={priceInDolar}
+                pools={data.pools.map(pool => pool.address)}
               />
             ) : isSelectTab === tabs[1].asPathText ? (
               <AnyCard text="Coming Soon..." />

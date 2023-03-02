@@ -138,6 +138,11 @@ export const ImageWrapper = styled.div`
     width: 1.8rem;
     height: 1.8rem;
   }
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
 `
 
 export const FundWrapper = styled.div`
