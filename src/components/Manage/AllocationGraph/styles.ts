@@ -14,12 +14,17 @@ export const AllocationGraph = styled.div<IAllocationGraphProps>`
     background: rgba(31, 31, 31, 0.72);
     border-radius: 4px;
     margin-top: 0;
+    opacity: 0;
+
+    overflow-y: hidden;
 
     .recharts-default-legend {
       display: none;
     }
 
-    transition: height 0.5s ease, margin-top 0.5s ease;
+    transition-duration: 600ms;
+    transition-timing-function: ease;
+    transition-property: height margin-top opacity;
   `}
 
   ${({ isOpen, height }) =>
@@ -28,6 +33,7 @@ export const AllocationGraph = styled.div<IAllocationGraphProps>`
       height: ${height}rem;
       padding: 2.4rem;
       margin-top: 2.4rem;
+      opacity: 1;
 
       @media (max-width: 576px) {
         padding: 1.6rem;

@@ -19,6 +19,7 @@ import tokenSelectReducer from './reducers/tokenSelect'
 import poolReducer from './reducers/pool'
 import tokenList1InchReducer from './reducers/tokenList1Inch'
 import modalWalletActiveReducer from './reducers/modalWalletActive'
+import addAssetReducer from './reducers/addAssetSlice'
 
 const persistConfig = {
   key: 'root',
@@ -42,7 +43,8 @@ export const rootReducer = combineReducers({
   tokenSelect: tokenSelectReducer,
   pool: poolReducer,
   tokenList1Inch: tokenList1InchReducer,
-  modalWalletActive: modalWalletActiveReducer
+  modalWalletActive: modalWalletActiveReducer,
+  addAsset: addAssetReducer
 })
 
 export type RootReducer = ReturnType<typeof rootReducer>

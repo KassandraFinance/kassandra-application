@@ -32,12 +32,11 @@ import AddLiquidity from './AddLiquidity'
 import ConfigureFee from './ConfigureFee'
 import Review from './Review'
 import PoolCreated from './PoolCreated'
-import ModalTransactions from '../../../components/Modals/ModalTransactions'
+import ModalTransactions, { TransactionsListType } from '../../../components/Modals/ModalTransactions'
 
 import * as S from './styles'
 
-import { mockTokens } from './SelectAssets'
-
+import { mockTokens } from '../../../constants/tokenAddresses'
 
 const WHITELIST_ADDRESS = '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57'
 const FACTORY_ADDRESS = '0x99bF9381EC974FC836Bb0221316F8157d77B57f2'
@@ -46,18 +45,12 @@ export const mockTokensList: string[] = [
   '0x841a91e3De1202b7b750f464680068aAa0d0EA35',
   '0xDcfcef36F438ec310d8a699e3D3729398547b2BF',
   '0xca813266889e0FD141dF48B85294855616015fA4',
-  '0xb22ED6ED220506E4757Bc90cbB05d41b6257b590',
+  '0xf22f05168508749fa42eDBddE10CB323D87c201d',
   '0x2f52C8ce1e5A064B4202762aD34E075E8826C252',
   '0x874a7CE88d933e6Edc24f4867923F1d09568b08B',
   '0xB0C30dDFAF159ce47097E4b08A3436fAE8f43a4d',
-  '0x07Fb45533CC34Cd88D69C57739ceFb77202733E9',
+  '0xBA1C32241Ac77b97C8573c3dbFDe4e1e2A8fc0DF',
 ]
-
-export type TransactionsListType = {
-  key: string,
-  transaction: string,
-  status: 'WAITING' | 'APROVED' | 'APPROVING' | 'NEXT'
-}
 
 interface ICreatePoolProps {
   setIsCreatePool: React.Dispatch<React.SetStateAction<boolean>>
@@ -83,7 +76,16 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     <AddLiquidity key="addLiquidity" />,
     <ConfigureFee key="configureFee" />,
     <Review key="review" />,
-    <ModalTransactions key="modalTransactions" isApproving={isApproving} isCompleted={isPoolCreated} transactions={transactions} onStart={deployPool} onCancel={() => {dispatch(setBackStepNumber())}} onComfirm={() => {dispatch(setNextStepNumber())}} />,
+    <ModalTransactions
+      title='To finish the creation of your pool you need to approve the following:' 
+      key="modalTransactions"
+      isApproving={isApproving}
+      isCompleted={isPoolCreated}
+      transactions={transactions}
+      onStart={deployPool}
+      onCancel={() => {dispatch(setBackStepNumber())}}
+      onComfirm={() => {dispatch(setNextStepNumber())}}
+    />,
     <PoolCreated key="poolCreated" />
   ]
 
@@ -135,7 +137,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
             return {
               ...item,
-              status: 'APROVED'
+              status: 'APPROVED'
             }
         } else if (index === transactionIndex + 1) {
             return {
@@ -277,7 +279,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         const { data } = await response.json()
         if (data.savePool.ok) {
           setTransactions(prev => {
-            prev[prev.length - 1].status = 'APROVED'
+            prev[prev.length - 1].status = 'APPROVED'
             return prev
           })
           return
@@ -364,15 +366,15 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       settingsParams: {
         tokens: tokens,
         normalizedWeights: normalizedWeights,
-        swapFeePercentage: Big(0.03).mul(Big(10).pow(18)).toString(),
+        swapFeePercentage: Big(0.03).mul(Big(10).pow(18)).toFixed(0),
         swapEnabledOnStart: true,
         mustAllowlistLPs: false,
-        managementAumFeePercentage: poolData.fees?.managementFee.isChecked ? Big(managementAumFeePercentage).mul(Big(10).pow(18)).round().toString() : Big(0).mul(Big(10).pow(18)).toString(),
+        managementAumFeePercentage: poolData.fees?.managementFee.isChecked ? Big(managementAumFeePercentage).mul(Big(10).pow(18)).toFixed(0) : Big(0).mul(Big(10).pow(18)).toFixed(0),
         aumFeeId: 3,
       },
       feesSettings: {
-        feesToManager: poolData.fees?.managementFee.isChecked ? Big(feesToManager).mul(Big(10).pow(18)).round().toString() : Big(0).mul(Big(10).pow(18)).toString(),
-        feesToReferral: poolData.fees?.refferalFee.isChecked ? Big(feesToReferral).mul(Big(10).pow(18)).round().toString() : Big(0).mul(Big(10).pow(18)).toString(),
+        feesToManager: poolData.fees?.managementFee.isChecked ? Big(feesToManager).mul(Big(10).pow(18)).toFixed(0) : Big(0).mul(Big(10).pow(18)).toFixed(0),
+        feesToReferral: poolData.fees?.refferalFee.isChecked ? Big(feesToReferral).mul(Big(10).pow(18)).toFixed(0) : Big(0).mul(Big(10).pow(18)).toFixed(0),
       },
     }
 
@@ -440,6 +442,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
           {stepNumber < 6 && (
             <ContainerButton
+              form='poolCreationForm'
               backButtonDisabled={stepNumber < 1}
               onBack={() => dispatch(setBackStepNumber())}
               onNext={() => {

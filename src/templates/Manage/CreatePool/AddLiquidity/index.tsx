@@ -6,6 +6,7 @@ import Big from 'big.js'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setLiquidity } from '../../../../store/reducers/poolCreationSlice'
 import { ERC20 } from '../../../../hooks/useERC20Contract'
+import { mockTokens } from '../../../../constants/tokenAddresses'
 
 import CreatePoolHeader from '../CreatePoolHeader'
 import Steps from '../../../../components/Steps'
@@ -14,7 +15,6 @@ import AddLiquidityTable from './AddLiquidityTable'
 
 import * as S from './styles'
 
-import { mockTokens } from '../SelectAssets'
 export type CoinGeckoResponseType = {
   [key: string]: {
     usd: number,

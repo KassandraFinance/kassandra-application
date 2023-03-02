@@ -7,9 +7,16 @@ import spinerIcon from '../../../../public/assets/iconGradient/spinner.png'
 
 import * as S from './styles'
 
-import { TransactionsListType } from '../../../templates/Manage/CreatePool'
+export type StatusType = 'WAITING' | 'APPROVED' | 'APPROVING' | 'NEXT'
+
+export type TransactionsListType = {
+  key: string,
+  transaction: string,
+  status: StatusType
+}
 
 interface IModalTransactionsProps {
+  title: string;
   transactions: TransactionsListType[];
   isCompleted: boolean;
   isApproving: boolean;
@@ -19,6 +26,7 @@ interface IModalTransactionsProps {
 }
 
 const ModalTransactions = ({
+  title,
   transactions,
   isCompleted,
   isApproving,
@@ -28,9 +36,7 @@ const ModalTransactions = ({
 }: IModalTransactionsProps) => {
   return (
     <S.ModalTransactions>
-      <S.Title>
-        To finish the creation of your pool you need to approve the following:
-      </S.Title>
+      <S.Title>{title}</S.Title>
 
       <S.TransactionContainer>
         {transactions?.map(transaction => {
@@ -41,7 +47,7 @@ const ModalTransactions = ({
               </S.TransactionText>
 
               <S.TransactionStatus>
-                {transaction.status === 'APROVED' && (
+                {transaction.status === 'APPROVED' && (
                   <Image src={executedIcon} width={20} height={20} />
                 )}
 

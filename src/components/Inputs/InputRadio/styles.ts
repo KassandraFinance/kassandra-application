@@ -10,8 +10,7 @@ export const InputRadioContainer = styled.span`
 
 export const InputRadio = styled.input`
   ${() => css`
-    display: none;
-    appearance: none;
+    opacity: 0;
   `}
 `
 

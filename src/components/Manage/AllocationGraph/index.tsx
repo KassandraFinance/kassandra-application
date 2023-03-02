@@ -26,8 +26,6 @@ interface IAllocationGraphProps {
 }
 
 const AllocationGraph = ({ data, isOpen }: IAllocationGraphProps) => {
-  const [isOpenGraph, setIsOpenGraph] = React.useState<boolean>(false)
-
   const customAxisTick = ({ x, y, payload }: any) => {
     return (
       <svg
@@ -87,73 +85,52 @@ const AllocationGraph = ({ data, isOpen }: IAllocationGraphProps) => {
     return null
   }
 
-  React.useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => {
-        setIsOpenGraph(isOpen)
-      }, 200)
-    } else {
-      setIsOpenGraph(isOpen)
-    }
-  }, [isOpen])
-
   return (
     <S.AllocationGraph isOpen={isOpen} height={((data.length + 1) * 90) / 10}>
-      {isOpenGraph && (
-        <>
-          <S.AllocationTitle>
-            <h4>Allocation Summary</h4>
-            <S.AllocationList>
-              <S.AllocationItem>
-                <span />
-                <p>Current Allocation</p>
-              </S.AllocationItem>
-              <S.AllocationItem>
-                <span />
-                <p>New allocation</p>
-              </S.AllocationItem>
-            </S.AllocationList>
-          </S.AllocationTitle>
+      <S.AllocationTitle>
+        <h4>Allocation Summary</h4>
+        <S.AllocationList>
+          <S.AllocationItem>
+            <span />
+            <p>Current Allocation</p>
+          </S.AllocationItem>
+          <S.AllocationItem>
+            <span />
+            <p>New allocation</p>
+          </S.AllocationItem>
+        </S.AllocationList>
+      </S.AllocationTitle>
 
-          <ResponsiveContainer width="100%" height={data.length * 90}>
-            <BarChart
-              data={data}
-              layout="vertical"
-              margin={{ top: 5, right: 2, left: -21, bottom: 5 }}
-              barCategoryGap={10}
-              barSize={20}
-            >
-              <XAxis type="number" domain={[0, 100]} stroke="#ccc" />
-              <YAxis
-                type="category"
-                dataKey="name"
-                tick={customAxisTick}
-                stroke="#ccc"
-              />
-              <CartesianGrid
-                strokeDasharray="0"
-                horizontal={false}
-                stroke="#ffffff30"
-              />
-              <Tooltip
-                cursor={{ fill: '#ffffff10' }}
-                content={<CustomTooltip />}
-              />
-              <Legend />
-              <Bar
-                dataKey="currentAllocation"
-                fill="#FFBF00"
-                label={customBarLabel}
-              />
-              <Bar
-                dataKey="newAllocation"
-                fill="#26DBDB"
-                label={customBarLabel}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </>
-      )}
+      <ResponsiveContainer width="99%" height={data.length * 90}>
+        <BarChart
+          data={data}
+          layout="vertical"
+          margin={{ top: 5, right: 2, left: -21, bottom: 5 }}
+          barCategoryGap={10}
+          barSize={20}
+        >
+          <XAxis type="number" domain={[0, 100]} stroke="#ccc" />
+          <YAxis
+            type="category"
+            dataKey="name"
+            tick={customAxisTick}
+            stroke="#ccc"
+          />
+          <CartesianGrid
+            strokeDasharray="0"
+            horizontal={false}
+            stroke="#ffffff30"
+          />
+          <Tooltip cursor={{ fill: '#ffffff10' }} content={<CustomTooltip />} />
+          <Legend />
+          <Bar
+            dataKey="currentAllocation"
+            fill="#FFBF00"
+            label={customBarLabel}
+          />
+          <Bar dataKey="newAllocation" fill="#26DBDB" label={customBarLabel} />
+        </BarChart>
+      </ResponsiveContainer>
     </S.AllocationGraph>
   )
 }

@@ -3,12 +3,14 @@ import Button from '../Button'
 import * as S from './styles'
 
 interface IContainerButtonProps {
+  form: string;
   backButtonDisabled: boolean;
   onBack: () => void;
   onNext: () => void;
 }
 
 const ContainerButton = ({
+  form,
   backButtonDisabled,
   onBack,
   onNext
@@ -26,7 +28,7 @@ const ContainerButton = ({
         />
 
         <Button
-          form="poolCreationForm"
+          form={form}
           type="submit"
           text="Next"
           backgroundPrimary
