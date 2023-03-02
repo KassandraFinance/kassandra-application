@@ -4,8 +4,6 @@ import { request } from 'graphql-request'
 
 import { BACKEND_KASSANDRA } from '../../../../constants/tokenAddresses'
 
-import { useAppSelector } from '../../../../store/hooks'
-
 import FundCard from '../../../../components/FundCard'
 import InputFilter from '../../../../components/Inputs/InputFilter'
 
@@ -35,7 +33,6 @@ const ManagedPools = () => {
     }
   }, [data])
 
-  console.log(data)
   return (
     <S.ManagedPools>
       <S.FilterContainer>

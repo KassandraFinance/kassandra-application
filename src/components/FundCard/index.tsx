@@ -6,7 +6,7 @@ import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-// import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
 
@@ -35,7 +35,7 @@ interface IFundCardProps {
 }
 
 const FundCard = ({ poolAddress }: IFundCardProps) => {
-  // const { trackEventFunction } = useMatomoEcommerce()
+  const { trackEventFunction } = useMatomoEcommerce()
 
   const dateNow = new Date()
 
@@ -148,13 +148,13 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
             passHref
           >
             <a
-            // onClick={() =>
-            //   trackEventFunction(
-            //     'click-on-link',
-            //     `${data.pool.symbol.toLocaleLowerCase()}`,
-            //     'feature-funds'
-            //   )
-            // }
+              onClick={() =>
+                trackEventFunction(
+                  'click-on-link',
+                  `${data.pool.symbol.toLocaleLowerCase()}`,
+                  'feature-funds'
+                )
+              }
             >
               <>
                 <S.CardHeader>
