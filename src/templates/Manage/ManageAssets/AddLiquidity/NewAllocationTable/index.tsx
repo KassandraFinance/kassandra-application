@@ -1,16 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Big from 'big.js'
 
-import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
-import { GET_POOL_TOKENS } from '../graphql'
-import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
-import {
-  setWeights,
-  AssetType
-} from '../../../../../store/reducers/addAssetSlice'
+import { AssetType } from '../../../../../store/reducers/addAssetSlice'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
@@ -19,61 +11,13 @@ import CoinSummary from '../../../CreatePool/SelectAssets/CoinSummary'
 import arrowRight from '../../../../../../public/assets/utilities/arrow-right.svg'
 import notFound from '../../../../../../public/assets/icons/coming-soon.svg'
 
-import { GetPoolTokensType } from '../AddLiquidityOperation'
-
 import * as S from './styles'
 
-const NewAllocationTable = () => {
-  const poolId = useAppSelector(state => state.addAsset.poolId)
-  const allocationTokenAdd = useAppSelector(
-    state => state.addAsset.liquidit.allocation
-  )
-  const assets = useAppSelector(state => state.addAsset.weights)
+interface INewAllocationTablePorps {
+  assets: (AssetType & { newWeight: string })[];
+}
 
-  const dispatch = useAppDispatch()
-
-  const params = {
-    id: poolId
-  }
-
-  function getNewAllocation(
-    tokensArr: AssetType[],
-    allocationTokenAdd: string
-  ) {
-    let teste = Big(0)
-    const newArr = tokensArr.map(token => {
-      const allocationAfter = Big(token.weight_normalized).mul(
-        Big(1).minus(Big(allocationTokenAdd || '0').div(100))
-      )
-      teste = teste.plus(allocationAfter)
-      return {
-        ...token,
-        newWeight: allocationAfter.toString()
-      }
-    })
-
-    return newArr
-  }
-
-  const { data } = useSWR<GetPoolTokensType>(
-    [GET_POOL_TOKENS, params],
-    (query, params) => request(BACKEND_KASSANDRA, query, params)
-  )
-
-  React.useEffect(() => {
-    if (data) {
-      getNewAllocation(data?.pool.weight_goals[0].weights, allocationTokenAdd)
-      dispatch(
-        setWeights(
-          getNewAllocation(
-            data?.pool.weight_goals[0].weights,
-            allocationTokenAdd
-          )
-        )
-      )
-    }
-  }, [data, allocationTokenAdd])
-
+const NewAllocationTable = ({ assets }: INewAllocationTablePorps) => {
   return (
     <S.NewAllocationTable>
       <S.Table>
@@ -87,7 +31,7 @@ const NewAllocationTable = () => {
         </S.THead>
 
         <S.TBody>
-          {data
+          {assets
             ? assets.map(asset => (
                 <S.Tr key={asset.token.id}>
                   <S.Td className="asset">
