@@ -9,7 +9,7 @@ import { ERC20 } from '../../../../hooks/useERC20Contract'
 import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
 import { useAppSelector } from '../../../../store/hooks'
 import {
-  KASSANDRA_BACKEND,
+  BACKEND_KASSANDRA,
   COINGECKO_API,
   networks,
   mockTokens,
@@ -57,7 +57,7 @@ const SelectAssets = () => {
   }
 
   const { data } = useSWR<({ tokensByIds: TokensInfoResponseType[], pool: {underlying_assets_addresses: string[]} })>([GET_INFO_TOKENS, params], (query, params) => 
-    request(KASSANDRA_BACKEND, query, params)
+    request(BACKEND_KASSANDRA, query, params)
   )
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
