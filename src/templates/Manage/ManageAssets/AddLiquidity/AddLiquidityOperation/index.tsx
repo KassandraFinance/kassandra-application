@@ -8,6 +8,7 @@ import BigNumber from 'bn.js'
 import {
   BACKEND_KASSANDRA,
   COINGECKO_API,
+  networks,
   mockTokensReverse
 } from '../../../../../constants/tokenAddresses'
 import { GET_POOL_TOKENS } from '../graphql'
@@ -60,6 +61,7 @@ const AddLiquidityOperation = () => {
 
   const token = useAppSelector(state => state.addAsset.token)
   const poolId = useAppSelector(state => state.addAsset.poolId)
+  const chainId = useAppSelector(state => state.addAsset.chainId)
   const liquidit = useAppSelector(state => state.addAsset.liquidit)
   const wallet = useAppSelector(state => state.userWalletAddress)
 
@@ -86,7 +88,7 @@ const AddLiquidityOperation = () => {
   )
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/polygon-pos?contract_addresses=${token.id}&vs_currencies=usd`
+    `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
   )
 
   React.useEffect(() => {

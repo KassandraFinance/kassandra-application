@@ -10,7 +10,6 @@ import { ERC20 } from '../../../hooks/useERC20Contract'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
 import {
-  mockTokens,
   mockTokensReverse
 } from '../../../constants/tokenAddresses'
 import Kacupe from '../../../constants/abi/Kacupe.json'
@@ -20,7 +19,8 @@ import waitTransaction, { MetamaskError } from '../../../utils/txWait'
 
 import {
   BACKEND_KASSANDRA,
-  COINGECKO_API
+  COINGECKO_API,
+  networks
 } from '../../../constants/tokenAddresses'
 import { GET_POOL_TOKENS } from './AddLiquidity/graphql'
 
@@ -72,6 +72,7 @@ const ManageAssets = () => {
   const controller = useAppSelector(state => state.addAsset.controller)
   const tokenLiquidity = useAppSelector(state => state.addAsset.liquidit)
   const poolId = useAppSelector(state => state.addAsset.poolId)
+  const chainId = useAppSelector(state => state.addAsset.chainId)
 
   const params = {
     id: poolId
@@ -83,7 +84,7 @@ const ManageAssets = () => {
   )
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/polygon-pos?contract_addresses=${token.id}&vs_currencies=usd`
+    `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
   )
 
   const addNewAsset = [
@@ -111,14 +112,14 @@ const ManageAssets = () => {
 
           <ValueContainer>
             <ValueWrapper>
-              <Value>{BNtoDecimal(Big(tokenLiquidity.amount), 2)}</Value>
+              <Value>{BNtoDecimal(Big(tokenLiquidity?.amount || 0), 2)}</Value>
 
               <SecondaryValue>
                 ~$
-                {priceData &&
+                {priceData && tokenLiquidity.amount &&
                   BNtoDecimal(
-                    Big(tokenLiquidity.amount).mul(
-                      priceData[token.id.toLowerCase()].usd
+                    Big(tokenLiquidity?.amount || 0).mul(
+                      priceData[token.id.toLowerCase()]?.usd
                     ),
                     2
                   )}
@@ -134,7 +135,7 @@ const ManageAssets = () => {
         <FlexContainer>
           <ContentTitle>LP received</ContentTitle>
 
-          {data && priceData && (
+          {data && priceData && tokenLiquidity.amount && (
             <ValueContainer>
               <ValueWrapper>
                 <Value>

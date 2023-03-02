@@ -25,6 +25,7 @@ interface IAddAssetsProps {
   poolId: string;
   tvl: string;
   controller: string;
+  chainId: number;
   liquidit: {
     amount: string,
     allocation: string,
@@ -44,6 +45,7 @@ const initialState: IAddAssetsProps = {
   poolId: '50x88c7b8479b0f95eaa5c97481a3dd2c8890a63bfb0001000000000000000005d4',
   tvl: '',
   controller: '',
+  chainId: 5,
   liquidit: {
     amount: '',
     allocation: '',

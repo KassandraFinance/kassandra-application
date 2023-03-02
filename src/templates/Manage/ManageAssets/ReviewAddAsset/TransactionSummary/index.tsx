@@ -6,7 +6,8 @@ import Big from 'big.js'
 
 import {
   BACKEND_KASSANDRA,
-  COINGECKO_API
+  COINGECKO_API,
+  networks
 } from '../../../../../constants/tokenAddresses'
 import { GET_POOL_TOKENS } from '../../AddLiquidity/graphql'
 
@@ -25,6 +26,7 @@ const TransactionSummary = () => {
   const newToken = useAppSelector(state => state.addAsset.token)
   const newTokenLiquidity = useAppSelector(state => state.addAsset.liquidit)
   const poolId = useAppSelector(state => state.addAsset.poolId)
+  const chainId = useAppSelector(state => state.addAsset.chainId)
 
   const params = {
     id: poolId
@@ -36,7 +38,7 @@ const TransactionSummary = () => {
   )
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/polygon-pos?contract_addresses=${token.id}&vs_currencies=usd`
+    `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
   )
 
   return (
