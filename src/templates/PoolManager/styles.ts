@@ -55,6 +55,7 @@ export const Content = styled.div`
   ${() => css`
     min-height: 100vh;
     padding-inline: 1.6rem;
+
     @media (min-width: 768px) {
       padding-inline: 2.4rem;
     }
