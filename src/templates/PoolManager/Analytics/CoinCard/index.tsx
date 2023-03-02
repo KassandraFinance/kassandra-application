@@ -8,6 +8,7 @@ import SparkLineChart, { sparkData } from '../SparkLineChart'
 import arrowAscendIcon from '../../../../../public/assets/notificationStatus/arrow-ascend.svg'
 import arrowDescendIcon from '../../../../../public/assets/notificationStatus/arrow-descend.svg'
 import heimdallLogo from '../../../../../public/assets/logos/heimdall-logo.svg'
+import comingSoon from '../../../../../public/assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 
@@ -94,7 +95,7 @@ const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
         <S.PoolAssetsCardName>
           <S.NameContainer>
             <S.ImageWrapper>
-              <Image src={image} width={26.67} height={26.67} />
+              <Image src={image || comingSoon} width={26.67} height={26.67} />
             </S.ImageWrapper>
 
             <S.TextWrapper>
@@ -143,7 +144,7 @@ const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
               <S.InfoValue>{symbol}</S.InfoValue>
 
               <S.InfoLogoWrapper>
-                <Image src={image} width={14} height={14} />
+                <Image src={image || comingSoon} width={14} height={14} />
               </S.InfoLogoWrapper>
             </S.InfoValueWrapper>
           </S.Info>
