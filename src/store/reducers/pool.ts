@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import Big from 'big.js'
 
 export interface TokenInfo {
   id: string;
@@ -58,6 +57,7 @@ export interface IPoolSlice {
   id: string;
   address: string;
   vault: string;
+  controller: string;
   chain_id: number;
   chainId: number;
   chain: ChainInfo;
@@ -71,6 +71,7 @@ export interface IPoolSlice {
   url: string;
   summary?: string;
   addresses: string[];
+  total_value_locked_usd?: string;
   partners?: Partners[];
   underlying_assets_addresses: string[];
   underlying_assets: underlyingAssetsInfo[];
@@ -81,6 +82,7 @@ const initialState: IPoolSlice = {
   id: '',
   address: '',
   vault: '',
+  controller: '',
   chain_id: 0,
   chainId: 0,
   strategy: '',

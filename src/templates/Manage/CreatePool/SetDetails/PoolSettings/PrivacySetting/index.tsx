@@ -134,35 +134,42 @@ const PoolSettings = ({
           >
             Invalid address.
           </S.Error>
-          <S.PrivateAddressList>
-            {poolData.privateAddressList &&
-              poolData.privateAddressList.map((wallet, index) => {
-                return (
-                  <S.PrivateAddress key={wallet.address + index}>
-                    <Tippy content={wallet.address}>
-                      <p>{substr(wallet.address)}</p>
-                    </Tippy>
-                    <span
-                      onClick={() =>
-                        dispatch(removePrivateAddress(wallet.address))
-                      }
-                    >
-                      <Image src={closeIcon} alt="" width={10} height={10} />
-                    </span>
-                  </S.PrivateAddress>
-                )
-              })}
-          </S.PrivateAddressList>
           {poolData.privateAddressList?.length !== 0 && (
-            <S.ClosePrivateAddress>
-              <button
-                onClick={() =>
-                  dispatch(setPoolData({ privateAddressList: [] }))
-                }
-              >
-                Clear All
-              </button>
-            </S.ClosePrivateAddress>
+            <>
+              <S.PrivateAddressList>
+                {poolData.privateAddressList &&
+                  poolData.privateAddressList.map((wallet, index) => {
+                    return (
+                      <S.PrivateAddress key={wallet.address + index}>
+                        <Tippy content={wallet.address}>
+                          <p>{substr(wallet.address)}</p>
+                        </Tippy>
+                        <span
+                          onClick={() =>
+                            dispatch(removePrivateAddress(wallet.address))
+                          }
+                        >
+                          <Image
+                            src={closeIcon}
+                            alt=""
+                            width={10}
+                            height={10}
+                          />
+                        </span>
+                      </S.PrivateAddress>
+                    )
+                  })}
+              </S.PrivateAddressList>
+              <S.ClosePrivateAddress>
+                <button
+                  onClick={() =>
+                    dispatch(setPoolData({ privateAddressList: [] }))
+                  }
+                >
+                  Clear All
+                </button>
+              </S.ClosePrivateAddress>
+            </>
           )}
         </S.PrivateAddressContainer>
       )}

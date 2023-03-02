@@ -21,6 +21,12 @@ export const TokenWithNetworkImage = styled.div<IwithoutBorderProps>`
     .poolIcon {
       border-radius: 50%;
     }
+
+    img {
+      border-radius: 50%;
+
+      overflow: hidden;
+    }
   `}
 `
 

@@ -70,7 +70,7 @@ export const PrivateAddressContainer = styled.div`
   ${({ theme }) => css`
     animation: ${privateAni} 0.8s ease;
 
-    > p {
+    p:first-child {
       margin-bottom: 0.8rem;
       margin-top: 0.6rem;
 
