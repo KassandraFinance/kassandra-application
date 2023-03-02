@@ -7,7 +7,8 @@ import BigNumber from 'bn.js'
 
 import {
   BACKEND_KASSANDRA,
-  COINGECKO_API
+  COINGECKO_API,
+  mockTokensReverse
 } from '../../../../../constants/tokenAddresses'
 import { GET_POOL_TOKENS } from '../graphql'
 import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
@@ -108,7 +109,7 @@ const AddLiquidityOperation = () => {
       setBalance(balanceValue)
     }
 
-    getBalances('0x841a91e3De1202b7b750f464680068aAa0d0EA35')
+    getBalances(mockTokensReverse[token.id.toLowerCase()])
   }, [wallet])
 
   return (
@@ -132,7 +133,7 @@ const AddLiquidityOperation = () => {
               buttonText="Max"
               button
               value={liquidit.amount}
-              min="0"
+              min={Big(1).div(Big(10).pow(token.decimals)).toString()}
               max={
                 balance
                   ? Big(balance.toString())
@@ -165,7 +166,7 @@ const AddLiquidityOperation = () => {
             button
             value={liquidit.allocation}
             min="0"
-            max="any"
+            max="95"
             lable="Token Allocation"
             placeholder=""
             onChange={handleTokenAllocatinChange}

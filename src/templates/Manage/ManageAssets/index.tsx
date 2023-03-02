@@ -1,4 +1,7 @@
 import React from 'react'
+import Image from 'next/image'
+import useSWR from 'swr'
+import { request } from 'graphql-request'
 import Big from 'big.js'
 import web3 from '../../../utils/web3'
 import { AbiItem } from 'web3-utils'
@@ -12,7 +15,14 @@ import {
 } from '../../../constants/tokenAddresses'
 import Kacupe from '../../../constants/abi/Kacupe.json'
 
+import { BNtoDecimal } from '../../../utils/numerals'
 import waitTransaction, { MetamaskError } from '../../../utils/txWait'
+
+import {
+  BACKEND_KASSANDRA,
+  COINGECKO_API
+} from '../../../constants/tokenAddresses'
+import { GET_POOL_TOKENS } from './AddLiquidity/graphql'
 
 import SelectAssets from './SelectAssets'
 import RemoveAssets from './RemoveAssets'
@@ -25,10 +35,25 @@ import ReviewAddAsset from './ReviewAddAsset'
 import ModalTransactions, {
   TransactionsListType
 } from '../../../components/Modals/ModalTransactions'
+import TransactionFinalized from './TransactionFinalized'
+
+import {
+  GetPoolTokensType,
+  CoinGeckoAssetsResponseType
+} from './AddLiquidity/AddLiquidityOperation'
+
+import addIcon from '../../../../public/assets/iconGradient/add.svg'
 
 import * as S from './styles'
-
-const FACTORY_ADDRESS = '0x99bF9381EC974FC836Bb0221316F8157d77B57f2'
+import {
+  FlexContainer,
+  ContentTitle,
+  ValueContainer,
+  ValueWrapper,
+  Value,
+  SecondaryValue,
+  ImageWrapper
+} from './ReviewAddAsset/TransactionSummary/styles'
 
 Big.RM = 0
 
@@ -46,6 +71,20 @@ const ManageAssets = () => {
   const token = useAppSelector(state => state.addAsset.token)
   const controller = useAppSelector(state => state.addAsset.controller)
   const tokenLiquidity = useAppSelector(state => state.addAsset.liquidit)
+  const poolId = useAppSelector(state => state.addAsset.poolId)
+
+  const params = {
+    id: poolId
+  }
+
+  const { data } = useSWR<GetPoolTokensType>(
+    [GET_POOL_TOKENS, params],
+    (query, params) => request(BACKEND_KASSANDRA, query, params)
+  )
+
+  const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
+    `${COINGECKO_API}/simple/token_price/polygon-pos?contract_addresses=${token.id}&vs_currencies=usd`
+  )
 
   const addNewAsset = [
     <SelectAssets key="selectAssets" />,
@@ -60,7 +99,72 @@ const ManageAssets = () => {
       onStart={handleAddToken}
       onCancel={() => setStep(prev => prev - 1)}
       onComfirm={() => setStep(prev => prev + 1)}
-    />
+    />,
+    <TransactionFinalized
+      key="transactionFinalized"
+      title='Asset addition has been approved'
+      image={addIcon}
+    >
+      <S.Container>
+        <FlexContainer>
+          <ContentTitle>token added</ContentTitle>
+
+          <ValueContainer>
+            <ValueWrapper>
+              <Value>{BNtoDecimal(Big(tokenLiquidity.amount), 2)}</Value>
+
+              <SecondaryValue>
+                ~$
+                {priceData &&
+                  BNtoDecimal(
+                    Big(tokenLiquidity.amount).mul(
+                      priceData[token.id.toLowerCase()].usd
+                    ),
+                    2
+                  )}
+              </SecondaryValue>
+            </ValueWrapper>
+
+            <ImageWrapper>
+              <Image src={token.image} layout="fill" />
+            </ImageWrapper>
+          </ValueContainer>
+        </FlexContainer>
+
+        <FlexContainer>
+          <ContentTitle>LP received</ContentTitle>
+
+          {data && priceData && (
+            <ValueContainer>
+              <ValueWrapper>
+                <Value>
+                  {BNtoDecimal(
+                    Big(tokenLiquidity.amount || 0)
+                      .mul(priceData[token.id.toLowerCase()].usd)
+                      .div(data.pool.price_usd),
+                    2
+                  )}
+                </Value>
+
+                <SecondaryValue>
+                  ~$
+                  {BNtoDecimal(
+                    Big(tokenLiquidity.amount || 0).mul(
+                      priceData[token.id.toLowerCase()].usd
+                    ),
+                    2
+                  )}
+                </SecondaryValue>
+              </ValueWrapper>
+
+              <ImageWrapper>
+                <Image src={data.pool.logo} layout="fill" />
+              </ImageWrapper>
+            </ValueContainer>
+          )}
+        </FlexContainer>
+      </S.Container>
+    </TransactionFinalized>
   ]
 
   async function getTransactionsList(tokenId: string) {
