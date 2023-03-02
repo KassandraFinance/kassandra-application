@@ -13,10 +13,16 @@ import Button from '../../Button'
 import { disconnectedIcon, avalancheIcon, polygonIcon } from './SvgButtons'
 
 import * as S from './styles'
-import { chains } from '../../../constants/tokenAddresses'
 
 interface IHeaderButtonsProps {
   setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+type styles = {
+  icon: any,
+  network: string,
+  color: string,
+  fillColor: string
 }
 
 const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
@@ -28,53 +34,45 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
 
   const { nickName, image } = useAppSelector(state => state.user)
 
-  const [network, setNetwork] = React.useState<{
-    icon: any,
-    network: string,
-    color: string,
-    fillColor: string
-  }>({
+  const [network, setNetwork] = React.useState<styles>({
     icon: disconnectedIcon,
     network: 'Disconnected',
     color: '#FFBF00',
     fillColor: '#1E1322'
   })
 
+  const chainStyle: Record<string, styles> = {
+    '43114': {
+      icon: avalancheIcon,
+      network: 'Avalanche',
+      color: '#E84142',
+      fillColor: '#E84142'
+    },
+    '137': {
+      icon: polygonIcon,
+      network: 'Polygon',
+      color: '#8247e5',
+      fillColor: '#8247e5'
+    },
+    notSuported: {
+      icon: disconnectedIcon,
+      network: 'Not Supported',
+      color: '#FFBF00',
+      fillColor: '#1E1322'
+    },
+    disconect: {
+      icon: disconnectedIcon,
+      network: 'Disconnected',
+      color: '#8F8F8F',
+      fillColor: '#1E1322'
+    }
+  }
+
   React.useEffect(() => {
     if (userWalletAddress.length <= 0) {
-      setNetwork({
-        icon: disconnectedIcon,
-        network: 'Disconnected',
-        color: '#8F8F8F',
-        fillColor: '#1E1322'
-      })
-    } else if (
-      chainId === chains.avalanche.chainId &&
-      userWalletAddress.length > 0
-    ) {
-      setNetwork({
-        icon: avalancheIcon,
-        network: 'Avalanche',
-        color: '#E84142',
-        fillColor: '#E84142'
-      })
-    } else if (
-      chainId === chains.polygon.chainId &&
-      userWalletAddress.length > 0
-    ) {
-      setNetwork({
-        icon: polygonIcon,
-        network: 'Polygon',
-        color: '#8247e5',
-        fillColor: '#8247e5'
-      })
+      setNetwork(chainStyle.disconect)
     } else {
-      setNetwork({
-        icon: disconnectedIcon,
-        network: 'Not Supported',
-        color: '#FFBF00',
-        fillColor: '#1E1322'
-      })
+      setNetwork(chainStyle[chainId] ?? chainStyle.notSuported)
     }
   }, [chainId, userWalletAddress])
 

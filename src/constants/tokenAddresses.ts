@@ -1,5 +1,3 @@
-import { ChainDetails } from '../utils/changeChain'
-
 export const LPDaiAvax =
   process.env.NEXT_PUBLIC_MASTER === '1'
     ? '0xbA09679Ab223C6bdaf44D45Ba2d7279959289AB0'
@@ -67,47 +65,33 @@ export const URL_1INCH = 'https://api.1inch.io/v5.0/'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 
-export const chains: { [key: string]: ChainDetails } = {
-  avalanche: {
-    chainId: 43114,
-    chainIdHex: '0xa86a',
-    chainName: 'Avalanche Mainnet',
-    nativeCurrency: {
-      name: 'Avalanche',
-      symbol: 'AVAX',
-      decimals: 18
-    },
-    rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
-    blockExplorerUrl: 'https://snowtrace.io/',
-    secondsPerBlock: 2,
-    wrapped: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
+type NetworkType = Record<
+  number,
+  {
+    chainName: string,
+    chainId: number,
+    rpc: string,
+    coingecko: string
+  }
+>
+
+export const networks: NetworkType = {
+  '5': {
+    chainName: 'Goerli Test Network',
+    chainId: 5,
+    rpc: 'https://rpc.ankr.com/eth_goerli',
+    coingecko: 'polygon-pos'
   },
-  fuji: {
-    chainId: 43113,
-    chainIdHex: '0xa869',
-    chainName: 'Avalanche Fuji Testnet',
-    nativeCurrency: {
-      name: 'Avalanche',
-      symbol: 'AVAX',
-      decimals: 18
-    },
-    rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
-    blockExplorerUrl: 'https://testnet.snowtrace.io/',
-    secondsPerBlock: 2,
-    wrapped: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c'
-  },
-  polygon: {
-    chainId: 137,
-    chainIdHex: '0x89',
+  '137': {
     chainName: 'Polygon',
-    nativeCurrency: {
-      name: 'Polygon',
-      symbol: 'MATIC',
-      decimals: 18
-    },
-    rpcUrls: ['https://polygon-rpc.com'],
-    blockExplorerUrl: 'https://polygonscan.com',
-    secondsPerBlock: 2,
-    wrapped: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
+    chainId: 137,
+    rpc: 'https://polygon-rpc.com/',
+    coingecko: 'polygon-pos'
+  },
+  '43114': {
+    chainId: 43114,
+    chainName: 'Avalanche Mainnet',
+    rpc: 'https://api.avax.network/ext/bc/C/rpc',
+    coingecko: 'avalanche'
   }
 }

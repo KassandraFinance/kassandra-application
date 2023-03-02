@@ -20,7 +20,7 @@ import {
   LPDaiAvax,
   Staking,
   SUBGRAPH_URL,
-  chains
+  networks
 } from '../../constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG, LP_KACY_AVAX_JOE, allPools } from '../../constants/pools'
 
@@ -152,8 +152,7 @@ const Profile = () => {
 
   const { data } = useSWR<Response>([GET_PROFILE], query => request(SUBGRAPH_URL, query))
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
+  const chain = networks[43114]
 
   async function getTokenAmountInPool(pid: number) {
     try {
@@ -192,7 +191,7 @@ const Profile = () => {
       }))
     }
 
-    if (priceLP && chains.avalanche.chainId === chainId) {
+    if (priceLP && chain.chainId === chainId) {
       const priceLPJoe = await getPriceKacyAndLP(LP_KACY_AVAX_JOE, LPDaiAvax, true)
 
       if (priceLPJoe.priceLP) {

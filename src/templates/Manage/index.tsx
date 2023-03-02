@@ -2,7 +2,6 @@ import React from 'react'
 import Image from 'next/image'
 
 import { useAppSelector } from '../../store/hooks'
-import { chains } from '../../constants/tokenAddresses'
 
 import Overlay from '../../components/Overlay'
 import Header from '../../components/Header'
@@ -28,12 +27,9 @@ const Manage = () => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   React.useEffect(() => {
-    if (chains.avalanche.chainId === chainId && userWalletAddress.length > 0) {
+    if (43114 === chainId && userWalletAddress.length > 0) {
       setNetworkIcon(avalancheIcon)
-    } else if (
-      chains.polygon.chainId === chainId &&
-      userWalletAddress.length > 0
-    ) {
+    } else if (137 === chainId && userWalletAddress.length > 0) {
       setNetworkIcon(polygonIcon)
     }
   }, [chainId, userWalletAddress])

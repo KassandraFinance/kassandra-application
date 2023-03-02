@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
 
-import { chains } from '../../constants/tokenAddresses'
+import { networks } from '../../constants/tokenAddresses'
 
 import { useAppDispatch } from '../../store/hooks'
 import { setModalWalletActive } from '../../store/reducers/modalWalletActive'
@@ -28,16 +28,17 @@ const Web3Disabled = ({
 }: IWeb3DisabledProps) => {
   const dispatch = useAppDispatch()
   function getFunction(type: string) {
+    const {chainId, chainName, rpc } = networks[43114]
     switch (type) {
       case 'connect':
         dispatch(setModalWalletActive(true))
         break
       case 'changeChain':
-        changeChain(
-          process.env.NEXT_PUBLIC_MASTER === '1'
-            ? chains.avalanche
-            : chains.fuji
-        )
+        changeChain({
+            chainId,
+            chainName,
+            rpcUrls: [rpc]
+          })
         break
       default:
         break
