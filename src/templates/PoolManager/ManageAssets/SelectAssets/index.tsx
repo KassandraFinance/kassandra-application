@@ -66,7 +66,7 @@ const SelectAssets = () => {
 
   React.useEffect(() => {
     if (data) {
-      setTokensList(data?.tokensByIds.filter(element => element && !data?.pool.underlying_assets_addresses.includes(mockTokensReverse[element?.id.toLowerCase()]))
+      setTokensList(data?.tokensByIds.filter(element => element && !data?.pool?.underlying_assets_addresses.includes(mockTokensReverse[element?.id.toLowerCase()]))
       )
     }
   }, [data])
