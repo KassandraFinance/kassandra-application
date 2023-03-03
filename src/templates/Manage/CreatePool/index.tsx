@@ -233,11 +233,13 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       })
     }
 
-    transactionsList.push({
-      key: 'sendToBackEnd',
-      transaction: 'Save metadata',
-      status: 'WAITING'
-    })
+    if (poolData.strategy || poolData.icon?.image_preview) {
+      transactionsList.push({
+        key: 'sendToBackEnd',
+        transaction: 'Save metadata',
+        status: 'WAITING'
+      })
+    }
 
     transactionsList[0] = {
       ...transactionsList[0],
@@ -250,8 +252,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   async function sendPoolData(controller: string, logo: string, summary: string, chainId: number) {
     try {
       const nonce = crypto.randomBytes(12).toString('base64')
-      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${keccak256(logo)}\nsummary: ${summary}`
-
+      const logoToSign = logo ? keccak256(logo) : '' 
+      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
       const signature = await web3.eth.personal.sign(
         message,
         userWalletAddress,
@@ -260,7 +262,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
       const body = {
         controller,
-        logo, 
+        logo: logo ? logo : undefined, 
         summary,
         chainId,
         signature,
@@ -274,10 +276,10 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         headers: { 'content-type': 'application/json' },
         method: 'POST'
       })
-      
+
       if(response.status === 200) {
         const { data } = await response.json()
-        if (data.savePool.ok) {
+        if (data?.savePool?.ok) {
           setTransactions(prev => {
             prev[prev.length - 1].status = 'APPROVED'
             return prev
@@ -327,21 +329,21 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const notAprovedTokens = await getIsAproved(tokens)
 
     if (transactions[0].status === 'NEXT') {
-    setTransactions(prev => prev.map((item, index) => {
-      if (index === 0) {
-        return {
-              ...item,
-              status: 'APPROVING'
+      setTransactions(prev => prev.map((item, index) => {
+        if (index === 0) {
+          return {
+                ...item,
+                status: 'APPROVING'
+          }
+        } else if (index === 1) {
+          return {
+                ...item,
+                status: 'NEXT'
+          }
+        } else {
+            return item
         }
-      } else if (index === 1) {
-        return {
-              ...item,
-              status: 'NEXT'
-        }
-      } else {
-          return item
-      }
-    }))
+      }))
     }
 
     if (notAprovedTokens.length > 0) {
@@ -409,8 +411,9 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         const addressList = poolData?.privateAddressList ? poolData.privateAddressList : []
         await handlePrivateInvestors(response.poolController, addressList)
       }
-      
-      await sendPoolData(response.poolController, poolData.icon?.image_preview || '', poolData.strategy || '', chainId)
+      if (poolData.strategy || poolData.icon?.image_preview) {
+        await sendPoolData(response.poolController, poolData.icon?.image_preview || '', poolData.strategy || '', chainId)
+      }
 
       dispatch(setClear())
       setIsApproving(false)
