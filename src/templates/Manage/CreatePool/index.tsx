@@ -32,7 +32,7 @@ import AddLiquidity from './AddLiquidity'
 import ConfigureFee from './ConfigureFee'
 import Review from './Review'
 import PoolCreated from './PoolCreated'
-import ModalTransactions, { TransactionsListType } from '../../../components/Modals/ModalTransactions'
+import ModalTransactions, { TransactionStatus, TransactionsListType } from '../../../components/Modals/ModalTransactions'
 
 import * as S from './styles'
 
@@ -61,7 +61,7 @@ Big.RM = 0
 const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   const [transactions, setTransactions] = React.useState<TransactionsListType[]>([])
   const [isPoolCreated, setIsPoolCreated] = React.useState<boolean>(false)
-  const [isApproving, setIsApproving] = React.useState<boolean>(false)
+  const [transactionButtonStatus, setTransactionButtonStatus] = React.useState(TransactionStatus.START)
 
   const dispatch = useAppDispatch()
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
@@ -79,7 +79,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     <ModalTransactions
       title='To finish the creation of your pool you need to approve the following:' 
       key="modalTransactions"
-      isApproving={isApproving}
+      transactionButtonStatus={transactionButtonStatus}
       isCompleted={isPoolCreated}
       transactions={transactions}
       onStart={deployPool}
@@ -108,10 +108,22 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
   async function callBack(error: MetamaskError, txHash: string) {
     if (error) {
+      setTransactions(prev => prev.map(item => {
+        if (item.status === 'APPROVING') {
+          item.status = 'ERROR'
+        } else if (item.status === 'NEXT') {
+          item.status = 'WAITING'
+        }
+        return item
+      }))
+
+      setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
       if (error.code === 4001) {
         dispatch(
           setModalAlertText({ errorText: `Approval cancelled` })
         )
+
         return
       }
 
@@ -160,6 +172,18 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       dispatch(setModalAlertText({
         errorText: 'Transaction reverted'
       }))
+
+      setTransactions(prev => prev.map(item => {
+        if (item.status === 'APPROVING') {
+          item.status = 'ERROR'
+        } else if (item.status === 'NEXT') {
+          item.status = 'WAITING'
+        }
+
+        return item
+      }))
+      setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
     }
   }
 
@@ -241,8 +265,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       })
     }
 
-    transactionsList[0] = {
-      ...transactionsList[0],
+    transactionsList[approvedList.length] = {
+      ...transactionsList[approvedList.length],
       status: 'NEXT'
     }
 
@@ -298,7 +322,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   }
 
   async function deployPool() {
-    setIsApproving(true)
+    setTransactionButtonStatus(TransactionStatus.WAITING)
     const maxAmountsIn: string[] = []
     const tokens: string[] = []
     const normalizedWeights: string[] = []
@@ -328,14 +352,13 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
     const notAprovedTokens = await getIsAproved(tokens)
 
-    if (transactions[0].status === 'NEXT') {
       setTransactions(prev => prev.map((item, index) => {
-        if (index === 0) {
+      if (index === tokens.length - notAprovedTokens.length) {
           return {
                 ...item,
                 status: 'APPROVING'
           }
-        } else if (index === 1) {
+      } else if (index === tokens.length - notAprovedTokens.length + 1) {
           return {
                 ...item,
                 status: 'NEXT'
@@ -344,7 +367,6 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
             return item
         }
       }))
-    }
 
     if (notAprovedTokens.length > 0) {
       await handleAproveTokens(notAprovedTokens)
@@ -416,7 +438,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }
 
       dispatch(setClear())
-      setIsApproving(false)
+      setTransactionButtonStatus(TransactionStatus.COMPLETED)
     } catch (error) {
       console.error('It was not possible to create pool', error)
     }
