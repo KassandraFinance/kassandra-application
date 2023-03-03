@@ -70,7 +70,9 @@ type NetworkType = Record<
     chainName: string,
     chainId: number,
     rpc: string,
-    coingecko: string
+    coingecko: string,
+    whiteList: string,
+    factory: string
   }
 >
 
@@ -79,19 +81,25 @@ export const networks: NetworkType = {
     chainName: 'Goerli Test Network',
     chainId: 5,
     rpc: 'https://rpc.ankr.com/eth_goerli',
-    coingecko: 'polygon-pos'
+    coingecko: 'polygon-pos',
+    whiteList: '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57',
+    factory: '0x99bF9381EC974FC836Bb0221316F8157d77B57f2'
   },
   '137': {
     chainName: 'Polygon',
     chainId: 137,
     rpc: 'https://polygon-rpc.com/',
-    coingecko: 'polygon-pos'
+    coingecko: 'polygon-pos',
+    whiteList: '',
+    factory: ''
   },
   '43114': {
     chainId: 43114,
     chainName: 'Avalanche Mainnet',
     rpc: 'https://api.avax.network/ext/bc/C/rpc',
-    coingecko: 'avalanche'
+    coingecko: 'avalanche',
+    whiteList: '',
+    factory: ''
   }
 }
 
