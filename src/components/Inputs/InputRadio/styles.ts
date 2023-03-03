@@ -2,6 +2,8 @@ import styled, { css } from 'styled-components'
 
 export const InputRadioContainer = styled.span`
   ${() => css`
+    position: relative;
+
     display: flex;
     align-items: center;
     gap: 1.2rem;
@@ -10,6 +12,7 @@ export const InputRadioContainer = styled.span`
 
 export const InputRadio = styled.input`
   ${() => css`
+    position: absolute;
     opacity: 0;
   `}
 `
