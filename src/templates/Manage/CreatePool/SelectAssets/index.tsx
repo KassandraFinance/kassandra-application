@@ -15,7 +15,7 @@ import {
   TokenType
 } from '../../../../store/reducers/poolCreationSlice'
 import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
-import { BACKEND_KASSANDRA, mockTokens } from '../../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA, mockTokens, networks, COINGECKO_API } from '../../../../constants/tokenAddresses'
 import { GET_INFO_TOKENS } from './graphql'
 
 import Steps from '../../../../components/Steps'
@@ -24,9 +24,6 @@ import PoolSummary from './PoolSummary'
 import AssetsTable from '../AssetsTable'
 
 import * as S from './styles'
-
-// whitelist vai ficar no subgraph
-const WHITELIST_ADDRESS = '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57'
 
 export type CoinGeckoAssetsResponseType = {
   [key: string]: {
@@ -54,20 +51,21 @@ const SelectAssets = () => {
   const tokensSummary = useAppSelector(
     state => state.poolCreation.createPoolData.tokens
   )
-  const network = useAppSelector(
-    state => state.poolCreation.createPoolData.network
+  const { network, networkId } = useAppSelector(
+    state => state.poolCreation.createPoolData
   )
-
   const wallet = useAppSelector(state => state.userWalletAddress)
 
   const tokensList = tokensSummary ? tokensSummary : []
+
+  const tokensListGoerli = networkId === 5 ? whitelist?.map((token: string) => toChecksumAddress(mockTokens[token])) : whitelist
 
   let totalAllocation = Big(0)
   for (const token of tokensList) {
     totalAllocation = totalAllocation.plus(token.allocation)
   }
 
-  const { data } = useSWR<{ tokensByIds: TokensInfoResponseType[] }>([GET_INFO_TOKENS, whitelist?.map((token: string) => toChecksumAddress(mockTokens[token]))], (query, whitelist) =>
+  const { data } = useSWR<{ tokensByIds: TokensInfoResponseType[] }>([GET_INFO_TOKENS, tokensListGoerli], (query, whitelist) =>
     request(BACKEND_KASSANDRA, query, {
       whitelist
     })
@@ -78,7 +76,7 @@ const SelectAssets = () => {
   })
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=${whitelist?.map((token: string) => toChecksumAddress(mockTokens[token])).toString()}&vs_currencies=usd&include_market_cap=true&include_24hr_change=true`
+    `${COINGECKO_API}/simple/token_price/${networks[networkId ?? 137].coingecko}?contract_addresses=${tokensListGoerli?.toString()}&vs_currencies=usd&include_market_cap=true&include_24hr_change=true`
   )
 
   async function getBalances(tokensList: string[]) {
@@ -122,12 +120,11 @@ const SelectAssets = () => {
   React.useEffect(() => {
     const getWhitelist = async () => {
       try {
-        const web3 = new Web3("https://rpc.ankr.com/eth_goerli");
+        const web3 = new Web3(networks[networkId ?? 137].rpc);
         // eslint-disable-next-line prettier/prettier
-        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, WHITELIST_ADDRESS);
+        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[networkId ?? 137].whiteList);
         const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
 
-        // setWhitelist(whitelist.map((token: string) => toChecksumAddress(mockTokens[token])));
         setWhitelist(whitelist);
       } catch (error) {
         console.error('It was not possible to get whitelist')
