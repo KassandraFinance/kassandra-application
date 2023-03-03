@@ -6,7 +6,8 @@ type colorDictType = {
 
 const colorDict: colorDictType = {
   avalanche: '#E84142',
-  polygon: '#8247E5'
+  polygon: '#8247E5',
+  goerli: '#0784c3'
 }
 
 export const StepGuide = styled.div`

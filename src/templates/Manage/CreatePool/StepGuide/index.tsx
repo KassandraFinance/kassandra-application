@@ -48,6 +48,10 @@ const stepGuide = [
 ]
 
 const StepGuide = () => {
+  const [chainInfo, setChainInfo] = React.useState({
+    chainName: '',
+    chainId: 0
+  })
   const dispatch = useAppDispatch()
   const network = useAppSelector(
     state => state.poolCreation.createPoolData.network
@@ -55,8 +59,13 @@ const StepGuide = () => {
 
   const [isAvailableAssets, setIsAvailableAssets] = React.useState(false)
 
-  function handleSelectNetwork(network: string) {
-    dispatch(setPoolData({ network: network }))
+  function handleSelectNetwork(network: string, networkId: number) {
+    dispatch(setPoolData({ network: network, networkId: networkId }))
+  }
+
+  function handleAvailableAssets(chainName: string, chainId: number) {
+    setIsAvailableAssets(true)
+    setChainInfo({ chainName: chainName, chainId: chainId })
   }
 
   return (
@@ -80,6 +89,7 @@ const StepGuide = () => {
                 type="button"
                 borderColor="avalanche"
                 selected={false}
+                onClick={() => handleSelectNetwork('avalanche', 43114)}
                 disabled
               >
                 <Image src={avalancheIcon} width={24} height={24} />
@@ -87,6 +97,10 @@ const StepGuide = () => {
               </S.ButtonNetwork>
 
               <S.LinkWrapper>
+                {/* <ExternalLink
+                  text="Available assets"
+                  onClick={() => handleAvailableAssets('Avalanche Mainnet', 43114)}
+                /> */}
                 <ExternalLink text="Coming soon..." />
               </S.LinkWrapper>
               <S.InputValidation
@@ -108,16 +122,18 @@ const StepGuide = () => {
                 type="button"
                 borderColor="polygon"
                 selected={network === 'polygon'}
-                onClick={() => handleSelectNetwork('polygon')}
+                onClick={() => handleSelectNetwork('polygon', 137)}
+                disabled
               >
                 <Image src={polygonIcon} width={24} height={24} /> Polygon
               </S.ButtonNetwork>
 
               <S.LinkWrapper>
-                <ExternalLink
+                {/* <ExternalLink
                   text="Available assets"
-                  onClick={() => setIsAvailableAssets(true)}
-                />
+                  onClick={() => handleAvailableAssets('Polygon Mainnet', 137)}
+                /> */}
+                <ExternalLink text="Coming soon..." />
               </S.LinkWrapper>
               <S.InputValidation
                 form="poolCreationForm"
@@ -126,6 +142,40 @@ const StepGuide = () => {
                 name="network"
                 value="polygon"
                 checked={network === 'polygon'}
+                onChange={() => {
+                  return
+                }}
+                required
+              />
+            </S.ButtonWrapper>
+            <S.ButtonWrapper>
+              <S.ButtonNetwork
+                type="button"
+                borderColor="goerli"
+                selected={network === 'goerli'}
+                onClick={() => handleSelectNetwork('goerli', 5)}
+              >
+                <Image
+                  src="https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880"
+                  width={24}
+                  height={24}
+                />{' '}
+                Goerli
+              </S.ButtonNetwork>
+
+              <S.LinkWrapper>
+                <ExternalLink
+                  text="Available assets"
+                  onClick={() => handleAvailableAssets('Goerli Testnet', 5)}
+                />
+              </S.LinkWrapper>
+              <S.InputValidation
+                form="poolCreationForm"
+                type="radio"
+                id="goerli"
+                name="network"
+                value="goerli"
+                checked={network === 'goerli'}
                 onChange={() => {
                   return
                 }}
@@ -150,9 +200,15 @@ const StepGuide = () => {
 
       {isAvailableAssets && (
         <ModalAvailableAssets
-          chainIcon={<Image src={polygonIcon} />}
-          chainName={'Polygon'}
-          chainId={0}
+          chainIcon={
+            <Image
+              src="https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880"
+              width={27}
+              height={27}
+            />
+          }
+          chainName={chainInfo.chainName}
+          chainId={chainInfo.chainId}
           setModalOpen={setIsAvailableAssets}
         />
       )}
