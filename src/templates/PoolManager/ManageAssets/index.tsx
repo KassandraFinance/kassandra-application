@@ -91,16 +91,16 @@ const ManageAssets = () => {
     <SelectAssets key="selectAssets" />,
     <AddLiquidity key="addLiquidity" />,
     <ReviewAddAsset key="reviewAddAsset" />,
-    <ModalTransactions
-      key="modalTransactions"
-      title='To finish the process of adding the asset to the pool do the following:'
-      isApproving={isApproving}
-      isCompleted={isTokenAdd}
-      transactions={transactions}
-      onStart={handleAddToken}
-      onCancel={() => setStep(prev => prev - 1)}
-      onComfirm={() => setStep(prev => prev + 1)}
-    />,
+    // <ModalTransactions
+    //   key="modalTransactions"
+    //   title='To finish the process of adding the asset to the pool do the following:'
+    //   isApproving={isApproving}
+    //   isCompleted={isTokenAdd}
+    //   transactions={transactions}
+    //   onStart={handleAddToken}
+    //   onCancel={() => setStep(prev => prev - 1)}
+    //   onComfirm={() => setStep(prev => prev + 1)}
+    // />,
     <TransactionFinalized
       key="transactionFinalized"
       title='Asset addition has been approved'
@@ -298,6 +298,7 @@ const ManageAssets = () => {
       const allocation = Big(tokenLiquidity.allocation).div(100).mul(Big(10).pow(18)).toFixed(0)
       const tokenToAddBalance = Big(tokenLiquidity.amount).mul(Big(10).pow(token.decimals)).toFixed(0)
 
+      // eslint-disable-next-line prettier/prettier
       const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, controller);
       const response = await poolController.methods.addToken(
         mockTokensReverse[token.id.toLowerCase()],
