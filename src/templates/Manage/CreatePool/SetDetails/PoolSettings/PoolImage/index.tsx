@@ -20,8 +20,8 @@ const PoolImage = () => {
       return
     }
 
-    if (event[0] && event[0].size > 300000) {
-      setErrorMessage('Image is too big (MAX: 300KB)')
+    if (event[0] && event[0].size > 63000) {
+      setErrorMessage('Image is too big (MAX: 60KB)')
       return
     }
 
