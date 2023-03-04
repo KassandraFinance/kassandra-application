@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Steps from '../../../../../components/Steps'
-import CreatePoolHeader from '../../../CreatePool/CreatePoolHeader'
+import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 import TransactionSummaryCard from './TransactionSummaryCard'
 import NewAllocationsTable from '../../../../../components/Manage/NewAllocationsTable'
 

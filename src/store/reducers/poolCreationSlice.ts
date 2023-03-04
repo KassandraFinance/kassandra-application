@@ -18,6 +18,7 @@ export type TokenType = {
 export type PoolData = {
   termsAndConditions?: boolean,
   network?: string,
+  networkId?: number,
   poolName?: string,
   poolSymbol?: string,
   icon?: {
@@ -152,6 +153,7 @@ const initialState: IPoolCreationDataState = {
   isValid: false,
   createPoolData: {
     network: '',
+    networkId: 0,
     poolName: '',
     termsAndConditions: false,
     poolSymbol: '',
@@ -424,6 +426,7 @@ export const poolCreationSlice = createSlice({
     setClear: state => {
       state.createPoolData = {
         network: '',
+        networkId: 0,
         poolName: '',
         termsAndConditions: false,
         poolSymbol: '',

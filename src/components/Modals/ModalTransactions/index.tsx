@@ -3,11 +3,19 @@ import Image from 'next/image'
 import Button from '../../Button'
 
 import executedIcon from '../../../../public/assets/notificationStatus/executed.svg'
+import failedIcon from '../../../../public/assets/notificationStatus/failed.svg'
 import spinerIcon from '../../../../public/assets/iconGradient/spinner.png'
 
 import * as S from './styles'
 
-export type StatusType = 'WAITING' | 'APPROVED' | 'APPROVING' | 'NEXT'
+export enum TransactionStatus {
+  START,
+  WAITING,
+  CONTINUE,
+  COMPLETED
+}
+
+export type StatusType = 'WAITING' | 'APPROVED' | 'APPROVING' | 'NEXT' | 'ERROR'
 
 export type TransactionsListType = {
   key: string,
@@ -19,7 +27,7 @@ interface IModalTransactionsProps {
   title: string;
   transactions: TransactionsListType[];
   isCompleted: boolean;
-  isApproving: boolean;
+  transactionButtonStatus: TransactionStatus;
   onStart: () => Promise<void>;
   onCancel: () => void;
   onComfirm: () => void;
@@ -29,11 +37,18 @@ const ModalTransactions = ({
   title,
   transactions,
   isCompleted,
-  isApproving,
+  transactionButtonStatus,
   onStart,
   onCancel,
   onComfirm
 }: IModalTransactionsProps) => {
+  const buttonText = {
+    [TransactionStatus.START]: 'Start pool creation',
+    [TransactionStatus.CONTINUE]: 'Continue pool creation',
+    [TransactionStatus.WAITING]: 'Waiting transaction',
+    [TransactionStatus.COMPLETED]: 'Pool created'
+  }
+
   return (
     <S.ModalTransactions>
       <S.Title>{title}</S.Title>
@@ -74,6 +89,7 @@ const ModalTransactions = ({
                     <Image src={spinerIcon} />
                   </S.Spinner>
                 )}
+                {transaction.status === 'ERROR' && <Image src={failedIcon} />}
               </S.TransactionStatus>
             </S.Transaction>
           )
@@ -83,19 +99,14 @@ const ModalTransactions = ({
       <S.ButtonsWrapper>
         {!isCompleted && (
           <Button
-            text={
-              !isApproving ? 'Start approval process' : 'Waiting for approval'
-            }
+            text={buttonText[transactionButtonStatus]}
             backgroundPrimary
             fullWidth
             type="button"
-            onClick={
-              !isApproving
-                ? onStart
-                : () => {
-                    return
-                  }
+            disabledNoEvent={
+              transactionButtonStatus === TransactionStatus.WAITING
             }
+            onClick={onStart}
           />
         )}
 

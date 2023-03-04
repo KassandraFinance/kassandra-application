@@ -29,7 +29,7 @@ const ShareImageModal = ({
   const [loading, setLoading] = React.useState(true)
   const printRef = React.useRef<HTMLInputElement>(null)
   const [url, setUrl] = React.useState(
-    `/shared/${v4()}-${productName.toLowerCase()}`
+    `/shared/${v4()}-${productName?.toLowerCase()}`
   )
 
   async function handleDownloadImage() {

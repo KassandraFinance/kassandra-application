@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import {
   Name,
   Symbol
-} from '../../../CreatePool/SelectAssets/CoinSummary/styles'
+} from '@/templates/Manage/CreatePool/SelectAssets/CoinSummary/styles'
 
 export const AddLiquidityOperation = styled.div`
   ${() => css`

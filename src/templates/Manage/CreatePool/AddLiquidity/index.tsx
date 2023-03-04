@@ -6,7 +6,11 @@ import Big from 'big.js'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setLiquidity } from '../../../../store/reducers/poolCreationSlice'
 import { ERC20 } from '../../../../hooks/useERC20Contract'
-import { mockTokens } from '../../../../constants/tokenAddresses'
+import {
+  COINGECKO_API,
+  mockTokens,
+  networks
+} from '../../../../constants/tokenAddresses'
 
 import CreatePoolHeader from '../CreatePoolHeader'
 import Steps from '../../../../components/Steps'
@@ -31,8 +35,8 @@ const AddLiquidity = () => {
   const tokensSummary = useAppSelector(
     state => state.poolCreation.createPoolData.tokens
   )
-  const network = useAppSelector(
-    state => state.poolCreation.createPoolData.network
+  const { network, networkId } = useAppSelector(
+    state => state.poolCreation.createPoolData
   )
   const wallet = useAppSelector(state => state.userWalletAddress)
 
@@ -117,7 +121,9 @@ const AddLiquidity = () => {
   }
 
   const { data } = useSWR<CoinGeckoResponseType>(
-    `https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=${addressesList.toString()}&vs_currencies=usd&include_24hr_change=true`
+    `${COINGECKO_API}/simple/token_price/${
+      networks[networkId ?? 137].coingecko
+    }?contract_addresses=${addressesList.toString()}&vs_currencies=usd&include_24hr_change=true`
   )
 
   React.useEffect(() => {

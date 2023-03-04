@@ -25,8 +25,8 @@ import { ERC20 } from '../../../../../hooks/useERC20Contract'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
-import CoinSummary from '../../../CreatePool/SelectAssets/CoinSummary'
 import InputNumberRight from '../../../../../components/Inputs/InputNumberRight'
+import CoinSummary from '../../../../Manage/CreatePool/SelectAssets/CoinSummary'
 
 import arrowDown from '../../../../../../public/assets/utilities/arrow-down.svg'
 

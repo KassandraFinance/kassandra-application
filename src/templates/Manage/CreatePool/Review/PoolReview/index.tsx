@@ -3,13 +3,15 @@ import useSWR from 'swr'
 import Link from 'next/link'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import Blockies from 'react-blockies'
-import { BNtoDecimal } from '../../../../../utils/numerals'
 import Big from 'big.js'
+
+import { COINGECKO_API, networks } from '@/constants/tokenAddresses'
 
 import { useAppSelector } from '../../../../../store/hooks'
 import { TokenType } from '../../../../../store/reducers/poolCreationSlice'
 
 import substr from '../../../../../utils/substr'
+import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import { ToastInfo } from '../../../../../components/Toastify/toast'
 import FeeBreakdown from '../../ConfigureFee/FeeBreakdown'
@@ -42,7 +44,9 @@ const PoolReview = () => {
   }
 
   const { data } = useSWR<CoinGeckoResponseType>(
-    `https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=${addressesList.toString()}&vs_currencies=usd&include_24hr_change=true`
+    `${COINGECKO_API}/simple/token_price/${
+      networks[poolData.networkId ?? 137].coingecko
+    }?contract_addresses=${addressesList.toString()}&vs_currencies=usd&include_24hr_change=true`
   )
 
   function handleCurrentViewTable(method: string, value: number) {

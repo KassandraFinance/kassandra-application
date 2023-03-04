@@ -17,10 +17,7 @@ import KassandraWhitelistAbi from "../../../constants/abi/KassandraWhitelist.jso
 
 import * as S from './styles'
 
-import { mockTokens } from '../../../constants/tokenAddresses'
-
-// whitelist vai ficar no subgraph
-const WHITELIST_ADDRESS = "0xe119DE3b0FDab34e9CE490FDAa562e6457126A57";
+import { mockTokens, networks } from '../../../constants/tokenAddresses'
 
 interface IModalAvailableAssetsProps {
   chainIcon: JSX.Element;
@@ -46,12 +43,16 @@ const ModalAvailableAssets = ({
   React.useEffect(() => {
     const getWhitelist = async () => {
       try {
-        const web3 = new Web3("https://rpc.ankr.com/eth_goerli");
+        const web3 = new Web3(networks[chainId].rpc);
         // eslint-disable-next-line prettier/prettier
-        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, WHITELIST_ADDRESS);
+        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[chainId].whiteList);
         const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
-        
-        setWhitelist(whitelist.map((token: string) => toChecksumAddress(mockTokens[token])));
+
+        if (chainId === 5) {
+          setWhitelist(whitelist.map((token: string) => toChecksumAddress(mockTokens[token])));
+        } else {
+          setWhitelist(whitelist)
+        }
       } catch (error) {
           console.error(Error)
       }

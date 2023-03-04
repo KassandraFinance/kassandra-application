@@ -3,7 +3,7 @@ import Big from 'big.js'
 
 import { useAppSelector } from '../../../../store/hooks'
 
-import CreatePoolHeader from '../../CreatePool/CreatePoolHeader'
+import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 import Steps from '../../../../components/Steps'
 import TransactionSummary from './TransactionSummary'
 import NewAllocationsTable, {

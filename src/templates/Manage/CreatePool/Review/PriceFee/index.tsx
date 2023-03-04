@@ -1,15 +1,18 @@
 import React from 'react'
 import BigNumber from 'bn.js'
+import useSWR from 'swr'
+
+import { COINGECKO_API } from '@/constants/tokenAddresses'
 
 import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
 import { setTermsAndConditions } from '../../../../../store/reducers/poolCreationSlice'
 
 import web3 from '../../../../../utils/web3'
+
 import Checkbox from '../../../../../components/Inputs/Checkbox'
 import TermsAndConditions from '../../../../../components/Modals/TermsAndConditions'
 
 import * as S from './styles'
-import useSWR from 'swr'
 
 const PriceFee = () => {
   const [isOpenTermsAndConditions, setOpenTermsAndConditions] =
@@ -29,7 +32,7 @@ const PriceFee = () => {
   }
 
   const { data } = useSWR(
-    'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd'
+    `${COINGECKO_API}/simple/price?ids=ethereum&vs_currencies=usd`
   )
 
   React.useEffect(() => {

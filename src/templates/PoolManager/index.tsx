@@ -1,9 +1,14 @@
 import React, { ReactElement } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import useSWR from 'swr'
+import request from 'graphql-request'
+import { useRouter } from 'next/router'
 
-import { IPoolSlice } from '../../store/reducers/pool'
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+
+import { GET_INFO_POOL } from './graphql'
+import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 
 import SharedImage from '../Pool/SharedImage'
 import ShareImageModal from '../Pool/ShareImageModal'
@@ -18,7 +23,7 @@ import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 import Analytics from './Analytics'
 import Allocations from './Allocations'
 import ComingSoon from './ComingSoon'
-import ManageAssets from '../Manage/ManageAssets'
+import ManageAssets from './ManageAssets'
 
 import analytics from '../../../public/assets/tabManage/analytics.svg'
 import allocations from '../../../public/assets/tabManage/allocations.svg'
@@ -69,11 +74,11 @@ const tabs = [
   }
 ]
 
-interface IPoolManagerProps {
-  pool: IPoolSlice;
-}
+// interface IPoolManagerProps {
+//   pool: IPoolSlice;
+// }
 
-const PoolManager = ({ pool }: IPoolManagerProps) => {
+const PoolManager = () => {
   const [isManageAssets, setIsManageAssets] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
   const [openModal, setOpenModal] = React.useState(false)
@@ -81,10 +86,22 @@ const PoolManager = ({ pool }: IPoolManagerProps) => {
     string | string[] | undefined
   >('analytics')
 
+  const router = useRouter()
+
+  const poolId = Array.isArray(router.query.pool)
+    ? router.query.pool[0]
+    : router.query.pool ?? ''
+
   const { trackEventFunction } = useMatomoEcommerce()
 
+  const { data } = useSWR([GET_INFO_POOL, poolId], (query, poolId) =>
+    request(BACKEND_KASSANDRA, query, {
+      id: poolId ?? ''
+    })
+  )
+
   const PoolManagerComponents: { [key: string]: ReactElement } = {
-    analytics: <Analytics poolId={pool.id} />,
+    analytics: <Analytics poolId={poolId} />,
     allocations: <Allocations />,
     activity: <ComingSoon />,
     investors: <ComingSoon />,
@@ -107,29 +124,29 @@ const PoolManager = ({ pool }: IPoolManagerProps) => {
             <S.GridIntro>
               <TokenWithNetworkImage
                 tokenImage={{
-                  url: pool.logo,
+                  url: data?.pool.logo,
                   height: 75,
                   width: 75,
                   withoutBorder: true
                 }}
                 networkImage={{
-                  url: pool.chain.logo,
+                  url: data?.pool.chain.logo,
                   height: 20,
                   width: 20
                 }}
                 blockies={{
                   size: 8,
                   scale: 9,
-                  seedName: pool.name
+                  seedName: data?.pool.name
                 }}
               />
               <S.NameIndex>
                 <S.NameAndSymbol>
-                  <h1>{pool.name}</h1>
+                  <h1>{data?.pool.name}</h1>
                 </S.NameAndSymbol>
                 <S.SymbolAndLink>
-                  <h3>${pool.symbol}</h3>
-                  <Link href={`/pool/${pool.id}`}>
+                  <h3>${data?.pool.symbol}</h3>
+                  <Link href={`/pool/${data?.pool.id}`}>
                     <button className="circle">
                       <Image
                         src="/assets/icons/website-with-bg.svg"
@@ -139,7 +156,7 @@ const PoolManager = ({ pool }: IPoolManagerProps) => {
                     </button>
                   </Link>
                   <a
-                    href={`${pool.chain.blockExplorerUrl}/address/${pool.address}`}
+                    href={`${data?.pool.chain.blockExplorerUrl}/address/${data?.pool.address}`}
                     className="circle"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -155,7 +172,7 @@ const PoolManager = ({ pool }: IPoolManagerProps) => {
                       setOpenModal(true)
                       trackEventFunction(
                         'click',
-                        `social-share-${pool.name}`,
+                        `social-share-${data?.pool.name}`,
                         'pool'
                       )
                     }}
@@ -194,16 +211,16 @@ const PoolManager = ({ pool }: IPoolManagerProps) => {
       </S.DashBoard>
       {isManageAssets && <ManageAssets />}
       <ShareImageModal
-        poolId={pool.id}
+        poolId={data?.pool.id}
         setOpenModal={setOpenModal}
         openModal={openModal}
-        productName={pool.symbol}
+        productName={data?.pool.symbol}
       >
         <SharedImage
-          crpPoolAddress={pool.id}
-          totalValueLocked={pool.total_value_locked_usd || ''}
-          socialIndex={pool.symbol}
-          productName={pool.name}
+          crpPoolAddress={data?.pool.id}
+          totalValueLocked={data?.pool.total_value_locked_usd || ''}
+          socialIndex={data?.pool.symbol}
+          productName={data?.pool.name}
         />
       </ShareImageModal>
     </S.PoolManager>

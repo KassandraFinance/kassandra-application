@@ -20,7 +20,7 @@ import waitTransaction, {
 
 import KassandraManagedControllerFactoryAbi from '../../../constants/abi/KassandraManagedControllerFactory.json'
 import KassandraControlerAbi from '../../../constants/abi/KassandraController.json'
-import { BACKEND_KASSANDRA } from '../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA, networks } from '../../../constants/tokenAddresses'
 import { SAVE_POOL } from './graphql'
 
 import ContainerButton from '../../../components/ContainerButton'
@@ -32,14 +32,11 @@ import AddLiquidity from './AddLiquidity'
 import ConfigureFee from './ConfigureFee'
 import Review from './Review'
 import PoolCreated from './PoolCreated'
-import ModalTransactions, { TransactionsListType } from '../../../components/Modals/ModalTransactions'
+import ModalTransactions, { TransactionStatus, TransactionsListType } from '../../../components/Modals/ModalTransactions'
 
 import * as S from './styles'
 
-import { mockTokens } from '../../../constants/tokenAddresses'
-
-const WHITELIST_ADDRESS = '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57'
-const FACTORY_ADDRESS = '0x99bF9381EC974FC836Bb0221316F8157d77B57f2'
+import { mockTokens, mockTokensReverse } from '../../../constants/tokenAddresses'
 
 export const mockTokensList: string[] = [
   '0x841a91e3De1202b7b750f464680068aAa0d0EA35',
@@ -61,7 +58,7 @@ Big.RM = 0
 const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   const [transactions, setTransactions] = React.useState<TransactionsListType[]>([])
   const [isPoolCreated, setIsPoolCreated] = React.useState<boolean>(false)
-  const [isApproving, setIsApproving] = React.useState<boolean>(false)
+  const [transactionButtonStatus, setTransactionButtonStatus] = React.useState(TransactionStatus.START)
 
   const dispatch = useAppDispatch()
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
@@ -77,9 +74,9 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     <ConfigureFee key="configureFee" />,
     <Review key="review" />,
     <ModalTransactions
-      title='To finish the creation of your pool you need to approve the following:' 
+      title='To finish the creation of your pool you need to approve the following:'
       key="modalTransactions"
-      isApproving={isApproving}
+      transactionButtonStatus={transactionButtonStatus}
       isCompleted={isPoolCreated}
       transactions={transactions}
       onStart={deployPool}
@@ -97,7 +94,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const tokensNotAproved: string[] = []
     for (const token of tokens) {
       const { allowance } = ERC20(token)
-      const isAproved = await allowance(FACTORY_ADDRESS, userWalletAddress)
+      const isAproved = await allowance(networks[poolData.networkId ?? 137].factory, userWalletAddress)
       if (isAproved === false) {
         tokensNotAproved.push(token)
       }
@@ -108,10 +105,22 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
   async function callBack(error: MetamaskError, txHash: string) {
     if (error) {
+      setTransactions(prev => prev.map(item => {
+        if (item.status === 'APPROVING') {
+          item.status = 'ERROR'
+        } else if (item.status === 'NEXT') {
+          item.status = 'WAITING'
+        }
+        return item
+      }))
+
+      setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
       if (error.code === 4001) {
         dispatch(
           setModalAlertText({ errorText: `Approval cancelled` })
         )
+
         return
       }
 
@@ -128,7 +137,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     if (txReceipt.status) {
       let transactionIndex = -100
       setTransactions(prev => prev.map((item, index) => {
-        
+
         if (item.status === 'APPROVING') {
           if (item.key === 'createPool') {
             setIsPoolCreated(true)
@@ -160,13 +169,25 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       dispatch(setModalAlertText({
         errorText: 'Transaction reverted'
       }))
+
+      setTransactions(prev => prev.map(item => {
+        if (item.status === 'APPROVING') {
+          item.status = 'ERROR'
+        } else if (item.status === 'NEXT') {
+          item.status = 'WAITING'
+        }
+
+        return item
+      }))
+      setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
     }
   }
 
   async function handleAproveTokens(notAprovedTokens: string[]) {
     for (const token of notAprovedTokens) {
       const { approve } = ERC20(token)
-      await approve(FACTORY_ADDRESS, userWalletAddress, callBack)
+      await approve(networks[poolData.networkId ?? 137].factory, userWalletAddress, callBack)
     }
   }
 
@@ -186,36 +207,46 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const tokensList = poolData.tokens ? poolData.tokens : []
     const transactionsList: TransactionsListType[] = []
 
-    // for testnet Goerli
-    const mockTokensListSorted = mockTokensList.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
-    for (const mockToken of mockTokensListSorted) {
-      if (mockTokens[mockToken]) {
-        for (const token of tokensList) {
-          if (token.address === mockTokens[mockToken].toLowerCase()) {
-            tokens.push(mockToken)
+    if (poolData.networkId === 5) {
+      const mockTokensListSorted = mockTokensList.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
+      for (const mockToken of mockTokensListSorted) {
+        if (mockTokens[mockToken]) {
+          for (const token of tokensList) {
+            if (token.address === mockTokens[mockToken].toLowerCase()) {
+              tokens.push(mockToken)
+            }
           }
         }
       }
+    } else {
+      const tokensArr = tokensList.sort((a, b) => a.address > b.address ? 1 : -1)
+      for (const token of tokensArr) {
+        tokens.push(token.address)
+      }
     }
-
-    // for production
-    // const tokensArr = tokensList.sort((a, b) => a.address > b.address ? 1 : -1)
-    // for (const token of tokensArr) {
-    //   tokens.push(token.address)
-    // }
 
     const notAprovedTokens = await getIsAproved(tokens)
 
-    for (const token of notAprovedTokens) {
-      const res = tokensList.find(item => item.address === mockTokens[token])
-      if (res) {
-        transactionsList.push({
-          key: res.address,
-          transaction: `Aprove ${res.symbol}`,
+    const notApprovedList: TransactionsListType[]  = []
+    const approvedList: TransactionsListType[] = []
+
+    for (const token of tokensList) {
+      if (notAprovedTokens.includes(mockTokensReverse[token.address] ?? token.address)) {
+        notApprovedList.push({
+          key: token.address,
+          transaction: `Aprove ${token.symbol}`,
           status: 'WAITING'
+        })
+      } else {
+        approvedList.push({
+          key: token.address,
+          transaction: `Aprove ${token.symbol}`,
+          status: 'APPROVED'
         })
       }
     }
+
+    transactionsList.push(...notApprovedList, ...approvedList)
 
     transactionsList.push({
       key: 'createPool',
@@ -241,8 +272,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       })
     }
 
-    transactionsList[0] = {
-      ...transactionsList[0],
+    transactionsList[approvedList.length] = {
+      ...transactionsList[approvedList.length],
       status: 'NEXT'
     }
 
@@ -252,7 +283,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   async function sendPoolData(controller: string, logo: string, summary: string, chainId: number) {
     try {
       const nonce = crypto.randomBytes(12).toString('base64')
-      const logoToSign = logo ? keccak256(logo) : '' 
+      const logoToSign = logo ? keccak256(logo) : ''
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
       const signature = await web3.eth.personal.sign(
         message,
@@ -262,7 +293,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
       const body = {
         controller,
-        logo: logo ? logo : undefined, 
+        logo: logo ? logo : undefined,
         summary,
         chainId,
         signature,
@@ -290,7 +321,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     } catch (error) {
       console.error(error)
     }
-    
+
     dispatch(setModalAlertText({
       errorText: "Could not save strategy and image, but the pool was created sucessfully",
       solutionText: "Please try adding them in the dashboard later"
@@ -298,53 +329,55 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   }
 
   async function deployPool() {
-    setIsApproving(true)
+    setTransactionButtonStatus(TransactionStatus.WAITING)
     const maxAmountsIn: string[] = []
     const tokens: string[] = []
     const normalizedWeights: string[] = []
     const tokensList = poolData.tokens ? poolData.tokens : []
 
     // for testnet Goerli
-    const mockTokensListSorted = mockTokensList.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
-    for (const mockToken of mockTokensListSorted) {
-      if (mockTokens[mockToken]) {
-        for (const token of tokensList) {
-          if (token.address === mockTokens[mockToken].toLowerCase()) {
-            maxAmountsIn.push(Big(token.amount).mul(Big(10).pow(token.decimals)).round().toString())
-            normalizedWeights.push(Big(token.allocation).div(100).mul(Big(10).pow(18)).round().toString())
-            tokens.push(mockToken)
+    if (poolData.networkId === 5) {
+      const mockTokensListSorted = mockTokensList.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
+      for (const mockToken of mockTokensListSorted) {
+        if (mockTokens[mockToken]) {
+          for (const token of tokensList) {
+            if (token.address === mockTokens[mockToken].toLowerCase()) {
+              maxAmountsIn.push(Big(token.amount).mul(Big(10).pow(token.decimals)).toFixed(0))
+              normalizedWeights.push(Big(token.allocation).div(100).mul(Big(10).pow(18)).toFixed(0))
+              tokens.push(mockToken)
+            }
           }
         }
       }
+    } else {
+
+      // for production
+      const tokensArr = tokensList.sort((a, b) => a.address > b.address ? 1 : -1)
+      for (const token of tokensArr) {
+        maxAmountsIn.push(Big(token.amount).mul(Big(10).pow(token.decimals)).toFixed(0))
+        normalizedWeights.push(Big(token.allocation).div(100).mul(Big(10).pow(18)).toFixed(0))
+        tokens.push(token.address)
+      }
     }
 
-    // for production
-    // const tokensArr = tokensList.sort((a, b) => a.address > b.address ? 1 : -1)
-    // for (const token of tokensArr) {
-    //   maxAmountsIn.push(token.amount.mul(Big(10).pow(token.decimals)).round().toString())
-    //   tokens.push(token.address)
-    //   normalizedWeights.push(Big(token.allocation).div(100).mul(Big(10).pow(18)).round().toString())
-    // }
 
     const notAprovedTokens = await getIsAproved(tokens)
 
-    if (transactions[0].status === 'NEXT') {
-      setTransactions(prev => prev.map((item, index) => {
-        if (index === 0) {
-          return {
-                ...item,
-                status: 'APPROVING'
-          }
-        } else if (index === 1) {
-          return {
-                ...item,
-                status: 'NEXT'
-          }
-        } else {
-            return item
+    setTransactions(prev => prev.map((item, index) => {
+      if (index === tokens.length - notAprovedTokens.length) {
+        return {
+              ...item,
+              status: 'APPROVING'
         }
-      }))
-    }
+      } else if (index === tokens.length - notAprovedTokens.length + 1) {
+        return {
+          ...item,
+          status: 'NEXT'
+        }
+      } else {
+          return item
+      }
+    }))
 
     if (notAprovedTokens.length > 0) {
       await handleAproveTokens(notAprovedTokens)
@@ -363,7 +396,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       name: poolData.poolName,
       symbol: poolData.poolSymbol,
       isPrivatePool: poolData.privacy !== 'public',
-      whitelist: WHITELIST_ADDRESS,
+      whitelist: networks[poolData.networkId ?? 137].whiteList,
       maxAmountsIn: maxAmountsIn,
       settingsParams: {
         tokens: tokens,
@@ -381,8 +414,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }
 
     try {
-      const factoryContract = new web3.eth.Contract((KassandraManagedControllerFactoryAbi as unknown) as AbiItem, FACTORY_ADDRESS);
-      
+      const factoryContract = new web3.eth.Contract((KassandraManagedControllerFactoryAbi as unknown) as AbiItem, networks[poolData.networkId ?? 137].factory);
+
       const response = await factoryContract.methods.create(
           pool.name,
           pool.symbol,
@@ -416,7 +449,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }
 
       dispatch(setClear())
-      setIsApproving(false)
+      setTransactionButtonStatus(TransactionStatus.COMPLETED)
     } catch (error) {
       console.error('It was not possible to create pool', error)
     }

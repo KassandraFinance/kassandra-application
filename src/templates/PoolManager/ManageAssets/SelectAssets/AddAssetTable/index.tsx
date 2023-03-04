@@ -10,7 +10,7 @@ import { setSelectedToken } from '../../../../../store/reducers/addAssetSlice'
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import InputSearch from '../../../../../components/Inputs/InputSearch'
-import CoinSummary from '../../../CreatePool/SelectAssets/CoinSummary'
+import CoinSummary from '@/templates/Manage/CreatePool/SelectAssets/CoinSummary'
 import InputRadio from '../../../../../components/Inputs/InputRadio'
 import ModalViewCoin from '../../../../../components/Modals/ModalViewCoin'
 

@@ -7,12 +7,12 @@ import {
   Th as TH,
   TBody as TB,
   Td as TD
-} from '../../../CreatePool/AssetsTable/styles'
+} from '@/templates/Manage/CreatePool/AssetsTable/styles'
 import {
   CoinSummary,
   Name,
   Symbol
-} from '../../../CreatePool/SelectAssets/CoinSummary/styles'
+} from '@/templates/Manage/CreatePool/SelectAssets/CoinSummary/styles'
 
 export const AddAssetTable = styled.div`
   ${({ theme }) => css`
