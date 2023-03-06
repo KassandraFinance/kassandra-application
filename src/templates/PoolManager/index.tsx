@@ -130,7 +130,7 @@ const PoolManager = () => {
                   withoutBorder: true
                 }}
                 networkImage={{
-                  url: data?.pool.chain.logo,
+                  url: data?.pool.chain?.logo,
                   height: 20,
                   width: 20
                 }}
@@ -156,7 +156,7 @@ const PoolManager = () => {
                     </button>
                   </Link>
                   <a
-                    href={`${data?.pool.chain.blockExplorerUrl}/address/${data?.pool.address}`}
+                    href={`${data?.pool.chain?.blockExplorerUrl}/address/${data?.pool.address}`}
                     className="circle"
                     target="_blank"
                     rel="noopener noreferrer"
