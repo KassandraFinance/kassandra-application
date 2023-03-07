@@ -14,7 +14,7 @@ import notFound from '../../../../../../public/assets/icons/coming-soon.svg'
 import * as S from './styles'
 
 interface INewAllocationTablePorps {
-  assets: (AssetType & { newWeight: string })[];
+  assets?: (AssetType & { newWeight: string })[];
 }
 
 const NewAllocationTable = ({ assets }: INewAllocationTablePorps) => {
@@ -30,32 +30,36 @@ const NewAllocationTable = ({ assets }: INewAllocationTablePorps) => {
           </S.Tr>
         </S.THead>
 
-        <S.TBody>
-          {assets
-            ? assets.map(asset => (
-                <S.Tr key={asset.token.id}>
-                  <S.Td className="asset">
-                    <CoinSummary
-                      coinImage={asset.token.logo || notFound}
-                      coinName={asset.token.name}
-                      coinSymbol={asset.token.symbol}
-                      price={0}
-                      url={`https://heimdall-frontend.vercel.app/coins/${'bitcoin'}`}
-                      table
-                    />
-                  </S.Td>
-                  <S.Td className="allocation">
-                    {BNtoDecimal(Big(asset.weight_normalized).mul(100), 2)}%
-                  </S.Td>
-                  <S.Td className="arrow">
-                    <Image src={arrowRight} />
-                  </S.Td>
-                  <S.Td className="newAllocation">
-                    {BNtoDecimal(Big(asset.newWeight).mul(100), 2)}%
-                  </S.Td>
-                </S.Tr>
-              ))
-            : null}
+        <S.TBody height={assets ? assets.length * 8.26 : 30.5}>
+          {assets ? (
+            assets.map(asset => (
+              <S.Tr key={asset.token.id}>
+                <S.Td className="asset">
+                  <CoinSummary
+                    coinImage={asset.token.logo || notFound}
+                    coinName={asset.token.name}
+                    coinSymbol={asset.token.symbol}
+                    price={0}
+                    url={`https://heimdall-frontend.vercel.app/coins/${asset.token.symbol}`}
+                    table
+                  />
+                </S.Td>
+                <S.Td className="allocation">
+                  {BNtoDecimal(Big(asset.weight_normalized).mul(100), 2)}%
+                </S.Td>
+                <S.Td className="arrow">
+                  <Image src={arrowRight} />
+                </S.Td>
+                <S.Td className="newAllocation">
+                  {BNtoDecimal(Big(asset.newWeight).mul(100), 2)}%
+                </S.Td>
+              </S.Tr>
+            ))
+          ) : (
+            <S.textContainer>
+              <S.text>Select asset to preview the allocations</S.text>
+            </S.textContainer>
+          )}
         </S.TBody>
       </S.Table>
     </S.NewAllocationTable>
