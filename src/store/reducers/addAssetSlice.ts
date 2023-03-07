@@ -42,7 +42,7 @@ const initialState: IAddAssetsProps = {
     image: '',
     decimals: 18
   },
-  poolId: '50x88c7b8479b0f95eaa5c97481a3dd2c8890a63bfb0001000000000000000005d4',
+  poolId: '50xf639bbe88770b044bf883700d0090c6a0d8018ef000100000000000000000654',
   tvl: '',
   controller: '',
   chainId: 5,

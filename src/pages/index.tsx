@@ -73,7 +73,8 @@ export const getStaticProps: GetStaticProps = async () => {
       props: {
         poolsCommunity: poolsId.poolsCommunity,
         poolsKassandra: poolsId.poolsKassandra
-      }
+      },
+      revalidate: 30
     }
   } catch (error) {
     console.log('error ', error)
@@ -81,7 +82,8 @@ export const getStaticProps: GetStaticProps = async () => {
       props: {
         poolsCommunity: [],
         poolsKassandra: []
-      }
+      },
+      revalidate: 30
     }
   }
 }
