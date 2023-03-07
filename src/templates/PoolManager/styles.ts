@@ -15,13 +15,12 @@ interface IDashBoardProps {
 export const DashBoard = styled.div<IDashBoardProps>`
   ${() => css`
     display: grid;
-    grid-template-columns: 0rem 100%;
-
-    transition-duration: 550ms;
-    transition-timing-function: ease;
-    transition-property: grid;
-
+    grid-template-columns: 0 100%;
     overflow-x: hidden;
+
+    transition-timing-function: ease;
+    transition-duration: 550ms;
+    transition-property: grid;
 
     > ${Overlay} {
       z-index: 1020;
@@ -32,7 +31,7 @@ export const DashBoard = styled.div<IDashBoardProps>`
 
       > ${Overlay} {
         background-color: rgba(0, 0, 0, 0);
-        backdrop-filter: blur(0rem);
+        backdrop-filter: blur(0);
       }
     }
 
@@ -66,8 +65,8 @@ export const Content = styled.div`
 
 export const Intro = styled.div`
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 
   margin: 3.2rem 0;
 
@@ -92,8 +91,8 @@ export const Intro = styled.div`
 export const GridIntro = styled.div`
   display: grid;
   grid-template-columns: 7.5rem auto;
-  align-items: center;
   gap: 2rem;
+  align-items: center;
 
   max-width: 45rem;
 
@@ -126,19 +125,19 @@ export const NameIndex = styled.div`
 export const SymbolAndLink = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     gap: 0.8rem;
+    align-items: center;
 
     margin-top: 0.8rem;
 
     h3 {
       padding: 0.8rem 1.2rem;
+      border-radius: 10px;
 
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font12};
 
       background-color: rgba(0, 0, 0, 0.19);
-      border-radius: 1rem;
 
       @media (max-width: 768px) {
         font-size: 1rem;
@@ -150,9 +149,10 @@ export const SymbolAndLink = styled.div`
       justify-content: center;
       align-items: center;
 
-      background: rgba(255, 255, 255, 0);
-      border-radius: 50%;
       border: none;
+      border-radius: 50%;
+
+      background: rgba(255, 255, 255, 0);
 
       cursor: pointer;
     }
@@ -162,12 +162,12 @@ export const SymbolAndLink = styled.div`
 export const NameAndSymbol = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     gap: 1.6rem;
+    align-items: center;
 
     h1 {
-      font-size: ${theme.font.sizes.font24};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font24};
 
       @media (max-width: 768px) {
         font-size: ${theme.font.sizes.font18};
