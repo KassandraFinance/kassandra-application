@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 
 export const PoolSummary = styled.div`
   ${() => css`
-    border-radius: 0.8rem;
+    border-radius: 8px;
   `}
 `
 
@@ -14,9 +14,9 @@ export const Header = styled.div`
 
     height: 6.2rem;
     padding: 2.4rem 1.6rem;
+    border-radius: 8px 8px 0 0;
 
-    background: rgba(0, 0, 0, 0.25);
-    border-radius: 0.8rem 0.8rem 0rem 0rem;
+    background: rgb(0 0 0 / 0.25);
 
     @media (min-width: 768px) {
       padding: 2.4rem;
@@ -37,9 +37,9 @@ export const HeaderTitle = styled.span`
 export const Body = styled.div`
   ${() => css`
     padding: 2.4rem 1.6rem;
+    border-radius: 0 0 8px 8px;
 
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 0rem 0rem 0.8rem 0.8rem;
+    background: rgb(255 255 255 / 0.04);
 
     @media (min-width: 768px) {
       padding: 2.4rem;
@@ -63,6 +63,7 @@ export const CoinContainer = styled.div`
     display: grid;
     grid-template-columns: auto 13.5rem;
     gap: 1.2rem;
+    align-items: center;
 
     ${ProgressBar} {
       grid-column: span 2;
@@ -75,8 +76,8 @@ export const AllocationContainer = styled.div`
     css`
       display: grid;
       grid-template-columns: 3.2rem auto 1rem;
-      align-items: center;
       gap: 1.2rem;
+      align-items: center;
     `}
 `
 
@@ -89,25 +90,25 @@ export const LockButton = styled.button<ILockButtonProps>`
   ${() => css`
     width: 3.2rem;
     height: 3.2rem;
-
-    background: rgba(255, 255, 255, 0);
-    border: 0.1rem solid rgba(255, 255, 255, 0);
+    border: 1px solid rgb(255 255 255 / 0);
     border-radius: 50%;
+
+    background: rgb(255 255 255 / 0);
 
     cursor: pointer;
 
-
-    transition-duration: 300ms;
     transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
     transition-property: background-color border;
 
     &:hover {
-      background-color: rgba(255, 255, 255, 0.08);
+      background-color: rgb(255 255 255 / 0.08);
     }
   `}
   ${({ active }) => active && css`
-    background-color: rgba(255, 255, 255, 0.08);
-    border: 0.1rem solid rgba(255, 255, 255, 0.1) ;
+    border: 1px solid rgb(255 255 255 / 0.1) ;
+
+    background-color: rgb(255 255 255 / 0.08);
   `}
 `
 
@@ -115,9 +116,9 @@ export const RemoveButton = styled.button`
   ${() => css`
     width: 1rem;
     height: 1rem;
+    border: none;
 
     background-color: transparent;
-    border: none;
 
     cursor: pointer;
   `}
@@ -127,10 +128,10 @@ export const ProgressBar = styled.div`
   ${({ theme }) => css`
     width: 100%;
     height: 0.4rem;
+    border: none;
+    border-radius: 4px;
 
     background-color: ${theme.colors.lightGray};
-    border-radius: 0.4rem;
-    border: none;
   `}
 `
 
@@ -142,29 +143,30 @@ interface IProgressValueProps {
 export const ProgressValue = styled.div<IProgressValueProps>`
   ${({ theme, value }) => css`
     position: relative;
+
     width: ${value}%;
     height: 0.4rem;
-
-    border-radius: 0.2rem;
+    border-radius: 2px;
 
     background-color: ${theme.colors.magenta};
 
-    transition-duration: 300ms;
     transition-timing-function: ease;
+    transition-duration: 300ms;
     transition-property: width;
 
     &::before {
       content: '';
       position: absolute;
-      height: 100%;
-      width: 100%;
+      z-index: -1;
 
-      border-radius: 0.2rem;
+      width: 100%;
+      height: 100%;
+      border-radius: 2px;
 
       background-color: inherit;
       background-image: inherit;
+
       filter: blur(5px);
-      z-index: -1;
     }
   `}
   ${({theme, value}) => value > 100 && css`
@@ -223,8 +225,8 @@ export const Text = styled.span`
 
 export const Error = styled.span`
   ${({ theme }) => css`
-    grid-column: span 2;
     display: block;
+    grid-column: span 2;
 
     margin-top: 0.8rem;
 
