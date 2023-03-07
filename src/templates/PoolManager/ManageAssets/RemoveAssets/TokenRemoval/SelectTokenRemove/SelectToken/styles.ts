@@ -153,6 +153,8 @@ export const SelectTokenContent = styled.li`
 
 export const TokenInfoContent = styled.div`
   ${({ theme }) => css`
+    position: relative;
+
     display: flex;
     align-items: center;
     gap: 0.8rem;
@@ -161,6 +163,11 @@ export const TokenInfoContent = styled.div`
       font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.medium};
       line-height: 1.6rem;
+    }
+
+    input {
+      position: absolute;
+      opacity: 0;
     }
   `}
 `

@@ -1,20 +1,17 @@
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { setTokenSelection } from '@/store/reducers/removeAssetSlice'
 import React from 'react'
 
 import * as S from './styles'
 
-type ITokenSelectedProps = {
-  logo: string,
-  name: string,
-  symbol: string
-}
-
-interface ISelectTokenProps {
-  tokensList: ITokenSelectedProps;
-}
-
 const SelectToken = () => {
-  const [selectToken, setSelectToken] = React.useState<ITokenSelectedProps>()
   const [IsOpenTokenList, setIsOpenTokenList] = React.useState(false)
+
+  const dispatch = useAppDispatch()
+
+  const { poolTokensList, tokenSelection } = useAppSelector(
+    state => state.removeAsset
+  )
 
   return (
     <S.SelectToken>
@@ -22,13 +19,23 @@ const SelectToken = () => {
         onClick={() => setIsOpenTokenList(!IsOpenTokenList)}
       >
         <S.TokenInfoContent>
-          {selectToken ? (
+          {tokenSelection.address !== '' ? (
             <>
-              <img src={selectToken.logo} alt="" width={20} height={20} />
-              <p>{selectToken.symbol}</p>
+              <img src={tokenSelection.logo} alt="" width={20} height={20} />
+              <p>{tokenSelection.symbol}</p>
             </>
           ) : (
-            <p>Choose asset</p>
+            <>
+              <p>Choose asset</p>
+              <input
+                form="manageAssetsForm"
+                id="inputSelectToken"
+                name="inputSelectToken"
+                type="radio"
+                value={tokenSelection.address}
+                required
+              />
+            </>
           )}
         </S.TokenInfoContent>
         <S.ArrowContent isOpen={IsOpenTokenList}>
@@ -42,18 +49,14 @@ const SelectToken = () => {
       </S.SelectedTokenContent>
       <S.SelectTokenContainer
         isOpen={IsOpenTokenList}
-        itemHeight={mockCoinsList.length * 63.3}
+        itemHeight={poolTokensList.length * 63.3}
       >
-        {mockCoinsList.map((token, index) => {
+        {poolTokensList.map((token, index) => {
           return (
             <S.SelectTokenContent
               key={token.symbol + index}
               onClick={() => {
-                setSelectToken({
-                  logo: token.logo,
-                  name: token.name,
-                  symbol: token.symbol
-                })
+                dispatch(setTokenSelection(token))
                 setIsOpenTokenList(!IsOpenTokenList)
               }}
             >
@@ -62,8 +65,8 @@ const SelectToken = () => {
                 <p>{token.symbol}</p>
               </S.TokenInfoContent>
               <S.BalanaceInfoContent>
-                <p>$200,00</p>
-                <span>0.0001</span>
+                <p>${token.balanceUSD && token.balanceUSD.toFixed(2)}</p>
+                <span>{Number(token.balance).toFixed(2)}</span>
               </S.BalanaceInfoContent>
             </S.SelectTokenContent>
           )
@@ -74,358 +77,3 @@ const SelectToken = () => {
 }
 
 export default SelectToken
-
-export const mockCoinsList = [
-  {
-    logo: 'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    name: 'Polygon ',
-    link: '',
-    symbol: 'MATIC',
-    currentWeight: 20,
-    NewWeight: 20
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png?1547034700',
-    name: 'Chainlink',
-    link: '',
-    symbol: 'LINK',
-    currentWeight: 60,
-    NewWeight: 60
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12504/small/uniswap-uni.png?1600306604',
-    name: 'Uniswap',
-    link: '',
-    symbol: 'UNI',
-    currentWeight: 20,
-    NewWeight: 20
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/22918/small/kacy.png?1643459818',
-    name: 'Kassandra',
-    link: '',
-    symbol: 'KACY',
-    currentWeight: 70,
-    NewWeight: 70
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png?1670992574',
-    name: 'Avalanche',
-    link: '',
-    symbol: 'AVAX',
-    currentWeight: 1,
-    NewWeight: 80
-  },
-  {
-    logo: 'https://assets.coingecko.com/coins/images/12504/small/uniswap-uni.png?1600306604',
-    name: 'Uniswap',
-    link: '',
-    symbol: 'UNI',
-    currentWeight: 20,
-    NewWeight: 20
-  }
-]
