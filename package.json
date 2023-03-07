@@ -84,7 +84,11 @@
     "git-commit-msg-linter": "^3.1.0",
     "jest": "^28.1.0",
     "node-mocks-http": "^1.11.0",
+    "postcss-styled-syntax": "^0.4.0",
     "prettier": "^2.8.4",
-    "prisma": "3.13.0"
+    "prisma": "3.13.0",
+    "stylelint": "^15.2.0",
+    "stylelint-config-standard-scss": "^7.0.1",
+    "stylelint-order": "^6.0.3"
   }
 }
