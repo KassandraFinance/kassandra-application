@@ -5,9 +5,13 @@ import SelectTokenRemove from './SelectTokenRemove'
 import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 import NewAllocationTable from '../../AddLiquidity/NewAllocationTable'
 
+import { useAppSelector } from '@/store/hooks'
+
 import * as S from './styles'
 
 const TokenRemoval = () => {
+  const { weights, tokenSelection } = useAppSelector(state => state.removeAsset)
+
   return (
     <S.TokenRemoval>
       <CreatePoolHeader title="remove asset from the pool" />
@@ -31,7 +35,9 @@ const TokenRemoval = () => {
 
         <S.SelectTokenAndTableAllocation>
           <SelectTokenRemove />
-          <NewAllocationTable assets={test} />
+          <NewAllocationTable
+            assets={tokenSelection.address === '' ? undefined : weights}
+          />
         </S.SelectTokenAndTableAllocation>
       </S.TokenRemovalsBody>
     </S.TokenRemoval>
@@ -39,20 +45,6 @@ const TokenRemoval = () => {
 }
 
 export default TokenRemoval
-
-export const test = [
-  {
-    newWeight: '12',
-    token: {
-      decimals: 18,
-      id: 'asd',
-      logo: '',
-      name: 'test123',
-      symbol: 'test'
-    },
-    weight_normalized: '12'
-  }
-]
 
 export const mockCoinsList = [
   {

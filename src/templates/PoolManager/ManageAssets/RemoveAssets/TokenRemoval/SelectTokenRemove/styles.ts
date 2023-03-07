@@ -113,16 +113,26 @@ export const TokenValueContainer = styled.div`
   `}
 `
 
-export const NotificationStatusContainer = styled.div`
+interface INotificationStatusProps {
+  showError: boolean;
+}
+
+// eslint-disable-next-line prettier/prettier
+export const NotificationStatusContainer = styled.div<INotificationStatusProps>`
   ${({ theme }) => css`
     display: flex;
     align-items: start;
     gap: 1rem;
     padding: 1.6rem 2.4rem;
+    opacity: 0;
 
     background: rgba(255, 255, 255, 0.04);
     border: 0.1rem solid rgba(255, 191, 0, 0.5);
     border-radius: 8px;
+
+    transition-duration: 600ms;
+    transition-timing-function: ease;
+    transition-property: opacity;
 
     img {
       margin-top: 0.1rem;
@@ -134,4 +144,10 @@ export const NotificationStatusContainer = styled.div`
       line-height: 160%;
     }
   `}
+
+  ${({ showError }) =>
+    showError &&
+    css`
+      opacity: 1;
+    `}
 `
