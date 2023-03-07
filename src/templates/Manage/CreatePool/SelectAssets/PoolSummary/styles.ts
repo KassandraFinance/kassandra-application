@@ -101,6 +101,15 @@ export const LockButton = styled.button<ILockButtonProps>`
     transition-duration: 300ms;
     transition-property: background-color border;
 
+    #lock-up-closed {
+      transition-timing-function: ease;
+      transition-duration: 300ms;
+      transition-property: stroke-dashoffset;
+
+      stroke-dasharray: 100%;
+      stroke-dashoffset: 30%;
+    }
+
     &:hover {
       background-color: rgb(255 255 255 / 0.08);
     }
@@ -109,6 +118,10 @@ export const LockButton = styled.button<ILockButtonProps>`
     border: 1px solid rgb(255 255 255 / 0.1) ;
 
     background-color: rgb(255 255 255 / 0.08);
+
+    #lock-up-closed {
+      stroke-dashoffset: 0%;
+    }
   `}
 `
 
