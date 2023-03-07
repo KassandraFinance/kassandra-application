@@ -38,6 +38,7 @@ export const AssetsTable = styled.div`
 
     .balance {
       align-items: flex-end;
+
       min-width: 10rem;
 
       text-align: right;
@@ -61,15 +62,11 @@ export const Table = styled.div`
   ${() => css`
     position: relative;
 
-    border-collapse: collapse;
+    overflow: hidden;
 
     width: 100%;
-
-    -webkit-border-radius: 2rem;
-    -moz-border-radius: 2rem;
-    border-radius: 0.8rem;
-
-    overflow: hidden;
+    border-collapse: collapse;
+    border-radius: 8px;
   `}
 `
 
@@ -84,20 +81,20 @@ export const THead = styled.div`
 export const TBody = styled.div`
   ${() =>
     css`
+      overflow-y: auto;
+
       max-height: 41.1rem;
 
       background: rgba(255, 255, 255, 0.04);
-
-      overflow-y: auto;
     `}
 `
 
 export const Tr = styled.div`
   ${() => css`
     display: flex;
+    gap: 1rem;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
 
     margin-inline: 1.6rem;
     padding-block: 2.4rem;
@@ -129,16 +126,16 @@ export const Tr = styled.div`
 export const Th = styled.div`
   ${({ theme }) => css`
     display: flex;
+    gap: 0.8rem;
     justify-content: flex-end;
     align-items: center;
-    gap: 0.8rem;
 
     color: ${theme.colors.snow};
     font-weight: ${theme.font.weight.light};
     font-size: ${theme.font.sizes.font14};
     line-height: 100%;
-    text-align: center;
     letter-spacing: 0.05em;
+    text-align: center;
 
     &:first-of-type {
       justify-content: flex-start;
@@ -167,18 +164,6 @@ export const SecondaryText = styled.span`
   `}
 `
 
-export const HeaderButton = styled.button`
-  ${() => css`
-    width: 1.2rem;
-    height: 1.2rem;
-
-    background-color: transparent;
-    border: none;
-
-    cursor: pointer;
-  `}
-`
-
 interface IShadowProps {
   inView: boolean;
 }
@@ -191,16 +176,16 @@ export const Shadow = styled.div<IShadowProps>`
 
     width: 100%;
     height: 10.9rem;
+    border-radius: 0 0 8px 8px;
 
     background: linear-gradient(180deg, rgba(31, 31, 31, 0) 0%, #1f1f1f 100%);
-    border-radius: 0px 0px 8px 8px;
 
     opacity: 1;
     visibility: visible;
     pointer-events: none;
 
-    transition-duration: 300ms;
     transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
     transition-property: opacity visibility;
   `}
   ${({ inView }) => inView && css`
@@ -222,7 +207,6 @@ export const InputValidation = styled.input`
     right: 0;
 
     opacity: 0;
-
     pointer-events: none;
   `}
 `

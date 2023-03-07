@@ -1,5 +1,4 @@
 import React from 'react'
-import Image from 'next/image'
 import { useInView } from 'react-intersection-observer'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
@@ -16,7 +15,6 @@ import InputSearch from '../../../../components/Inputs/InputSearch'
 
 import CoinSummary from '../SelectAssets/CoinSummary'
 import Checkbox from '../../../../components/Inputs/Checkbox'
-import arrowDownIcon from '../../../../../public/assets/utilities/arrow-down-thin.svg'
 
 import * as S from './styles'
 
@@ -106,18 +104,8 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
           <S.Tr>
             <S.Th className="asset">Asset</S.Th>
             <S.Th className="price">Price</S.Th>
-            <S.Th className="marketCap">
-              Market Cap
-              <S.HeaderButton>
-                <Image src={arrowDownIcon} />
-              </S.HeaderButton>
-            </S.Th>
-            <S.Th className="balance">
-              Balance
-              <S.HeaderButton>
-                <Image src={arrowDownIcon} />
-              </S.HeaderButton>
-            </S.Th>
+            <S.Th className="marketCap">Market Cap</S.Th>
+            <S.Th className="balance">Balance</S.Th>
             <S.Th className="add">Add</S.Th>
           </S.Tr>
         </S.THead>
