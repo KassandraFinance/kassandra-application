@@ -111,7 +111,11 @@ const AddLiquidityOperation = () => {
       setBalance(balanceValue)
     }
 
-    getBalances(mockTokensReverse[token.id.toLowerCase()])
+    if (chainId === 5) {
+      getBalances(mockTokensReverse[token.id.toLowerCase()])
+    } else {
+      getBalances(token.id)
+    }
   }, [wallet])
 
   return (

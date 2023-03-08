@@ -23,8 +23,6 @@ import Steps from '../../../../components/Steps'
 
 import * as S from './styles'
 
-const WHITELIST_ADDRESS = '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57'
-
 export type TokensInfoResponseType = {
   id: string,
   logo: string,
@@ -51,9 +49,10 @@ const SelectAssets = () => {
   const poolId = useAppSelector(state => state.addAsset.poolId)
   const chainId = useAppSelector(state => state.addAsset.chainId)
 
+  const tokensListGoerli = chainId === 5 ? whitelist?.map((token: string) => toChecksumAddress(mockTokens[token])) : whitelist
   const params = {
     id: poolId,
-    whitelist: whitelist?.map((token: string) => toChecksumAddress(mockTokens[token]))
+    whitelist: tokensListGoerli
   }
 
   const { data } = useSWR<({ tokensByIds: TokensInfoResponseType[], pool: {underlying_assets_addresses: string[]} })>([GET_INFO_TOKENS, params], (query, params) =>
@@ -61,12 +60,19 @@ const SelectAssets = () => {
   )
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${whitelist?.map((token: string) => toChecksumAddress(mockTokens[token])).toString()}&vs_currencies=usd&include_market_cap=true&include_24hr_change=true`
+    `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${tokensListGoerli?.toString()}&vs_currencies=usd&include_market_cap=true&include_24hr_change=true`
   )
 
   React.useEffect(() => {
-    if (data) {
+    if (!data) {
+      return
+    }
+
+    if (chainId === 5) {
       setTokensList(data?.tokensByIds.filter(element => element && !data?.pool?.underlying_assets_addresses.includes(mockTokensReverse[element?.id.toLowerCase()]))
+      )
+    } else {
+      setTokensList(data?.tokensByIds.filter(element => element && !data?.pool?.underlying_assets_addresses.includes(element?.id.toLowerCase()))
       )
     }
   }, [data])
@@ -75,10 +81,9 @@ const SelectAssets = () => {
     const getWhitelist = async () => {
       try {
         const web3 = new Web3(networks[chainId].rpc);
-        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, WHITELIST_ADDRESS);
+        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[chainId].whiteList);
         const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
 
-        // setWhitelist(whitelist.map((token: string) => toChecksumAddress(mockTokens[token])));
         setWhitelist(whitelist);
       } catch (error) {
         console.error('It was not possible to get whitelist')

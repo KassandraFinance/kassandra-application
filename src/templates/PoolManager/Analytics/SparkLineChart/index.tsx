@@ -25,7 +25,7 @@ const SparkLineChart = ({ data, color }: ISparkLineChartProps) => {
           margin={{ top: 0, right: 1, left: 0, bottom: 0 }}
         >
           <defs>
-            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id={color} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={color} stopOpacity={1} />
               <stop offset="175.59%" stopColor={color} stopOpacity={0} />
             </linearGradient>
@@ -43,7 +43,7 @@ const SparkLineChart = ({ data, color }: ISparkLineChartProps) => {
             dataKey="close"
             stroke={color}
             fillOpacity={1}
-            fill="url(#colorUv)"
+            fill={`url(#${color})`}
           />
         </AreaChart>
       </ResponsiveContainer>

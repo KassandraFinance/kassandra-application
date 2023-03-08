@@ -33,7 +33,8 @@ import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
 import AddLiquidity from './AddLiquidity'
 import ReviewAddAsset from './ReviewAddAsset'
 import ModalTransactions, {
-  TransactionsListType
+  TransactionsListType,
+  TransactionStatus
 } from '../../../components/Modals/ModalTransactions'
 import TransactionFinalized from './TransactionFinalized'
 
@@ -63,7 +64,7 @@ const ManageAssets = () => {
     TransactionsListType[]
   >([])
   const [isTokenAdd, setIsTokenAdd] = React.useState<boolean>(false)
-  const [isApproving, setIsApproving] = React.useState<boolean>(false)
+  const [transactionButtonStatus, setTransactionButtonStatus] = React.useState(TransactionStatus.START)
 
   const dispatch = useAppDispatch()
 
@@ -91,16 +92,16 @@ const ManageAssets = () => {
     <SelectAssets key="selectAssets" />,
     <AddLiquidity key="addLiquidity" />,
     <ReviewAddAsset key="reviewAddAsset" />,
-    // <ModalTransactions
-    //   key="modalTransactions"
-    //   title='To finish the process of adding the asset to the pool do the following:'
-    //   isApproving={isApproving}
-    //   isCompleted={isTokenAdd}
-    //   transactions={transactions}
-    //   onStart={handleAddToken}
-    //   onCancel={() => setStep(prev => prev - 1)}
-    //   onComfirm={() => setStep(prev => prev + 1)}
-    // />,
+    <ModalTransactions
+      key="modalTransactions"
+      title='To finish the process of adding the asset to the pool do the following:'
+      transactionButtonStatus={transactionButtonStatus}
+      isCompleted={isTokenAdd}
+      transactions={transactions}
+      onStart={handleAddToken}
+      onCancel={() => setStep(prev => prev - 1)}
+      onComfirm={() => setStep(prev => prev + 1)}
+    />,
     <TransactionFinalized
       key="transactionFinalized"
       title='Asset addition has been approved'
@@ -205,6 +206,17 @@ const ManageAssets = () => {
 
   async function callBack(error: MetamaskError, txHash: string) {
     if (error) {
+      setTransactions(prev => prev.map(item => {
+        if (item.status === 'APPROVING') {
+          item.status = 'ERROR'
+        } else if (item.status === 'NEXT') {
+          item.status = 'WAITING'
+        }
+        return item
+      }))
+
+      setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
       if (error.code === 4001) {
         dispatch(setModalAlertText({ errorText: `Approval cancelled` }))
         return
@@ -257,6 +269,18 @@ const ManageAssets = () => {
           errorText: 'Transaction reverted'
         })
       )
+
+      setTransactions(prev => prev.map(item => {
+        if (item.status === 'APPROVING') {
+          item.status = 'ERROR'
+        } else if (item.status === 'NEXT') {
+          item.status = 'WAITING'
+        }
+
+        return item
+      }))
+
+      setTransactionButtonStatus(TransactionStatus.CONTINUE)
     }
   }
 
@@ -266,9 +290,9 @@ const ManageAssets = () => {
   }
 
   async function handleAddToken() {
-    setIsApproving(true)
+    setTransactionButtonStatus(TransactionStatus.WAITING)
 
-    if (transactions[0].status === 'NEXT') {
+    if (transactions[0].status === 'NEXT' || transactions[0].status === 'ERROR') {
       setTransactions(prev =>
         prev.map((item, index) => {
           if (index === 0) {
@@ -280,7 +304,8 @@ const ManageAssets = () => {
           }
         })
       )
-      handleAproveTokens(mockTokensReverse[token.id.toLowerCase()])
+
+      await handleAproveTokens(mockTokensReverse[token.id.toLowerCase()])
     } else {
       setTransactions(prev =>
         prev.map((item, index) => {
@@ -292,6 +317,10 @@ const ManageAssets = () => {
           }
         })
       )
+    }
+
+    if (transactions[0].status === 'ERROR') {
+      return
     }
 
     try {
@@ -309,9 +338,6 @@ const ManageAssets = () => {
       ).send({
           from: userWalletAddress
         }, callBack)
-
-
-      console.log(response)
 
     } catch(error) {
       console.log('Error', error)
@@ -334,10 +360,12 @@ const ManageAssets = () => {
         handleCloseModal={() => {}}
       >
         <form id="manageAssetsForm" onSubmit={handleSubmit}>
-          <ChooseAction />
+          {
+            // <ChooseAction />
+          }
           {/* <RebalanceAssets /> */}
           {/* <RemoveAssets /> */}
-          {/* {addNewAsset[step]} */}
+          {addNewAsset[step]}
 
           <ContainerButton
             form="manageAssetsForm"

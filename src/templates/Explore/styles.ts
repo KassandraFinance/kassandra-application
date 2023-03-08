@@ -35,27 +35,21 @@ interface ICardContainerProps {
 }
 
 // eslint-disable-next-line prettier/prettier
-export const CardContainer = styled.div<ICardContainerProps>`
-  display: ${props => (props.loading ? 'none' : 'flex')};
-  flex-wrap: wrap;
+export const CardContainer =
+  styled.div <
+  ICardContainerProps >
+  `
+  display: ${props => (props.loading ? 'none' : 'grid')};
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2.4rem;
 
-  gap: 7.8rem;
-
+  max-width: 40rem;
   margin-top: 2.4rem;
+  margin-inline: auto;
 
-  @media (max-width: 960px) {
-    gap: 5.4rem;
-  }
-
-  @media (max-width: 768px) {
-    justify-content: space-between;
-    align-items: center;
-    gap: 3.2rem;
-  }
-
-  @media (max-width: 736px) {
-    flex-direction: column;
-  }
+   @media (min-width: 768px) {
+      max-width: 100%;
+    }
 `
 
 export const ComunitFundsContainer = styled.section`
