@@ -14,8 +14,8 @@ export const SideBarLink = styled.div`
 export const Wrapper = styled.div`
   ${() => css`
     display: flex;
-    align-items: center;
     gap: 0.8rem;
+    align-items: center;
 
     width: 100%;
 
@@ -50,8 +50,8 @@ export const Title = styled.p<ITitleProps>`
 
     opacity: 1;
 
-    transition-duration: 550ms;
     transition-timing-function: ease;
+    transition-duration: 550ms;
     transition-property: opacity;
   `}
   ${({ isOpen }) => !isOpen && css`
@@ -69,6 +69,7 @@ export const Tag = styled.span`
     height: 2rem;
     margin-left: auto;
     padding: 0.4rem 0.8rem;
+    border-radius: 4px;
 
     color: rgba(252, 252, 252, 0.5);
     font-weight: ${theme.font.weight.medium};
@@ -76,6 +77,5 @@ export const Tag = styled.span`
     line-height: 100%;
 
     background: rgba(255, 255, 255, 0.08);
-    border-radius: 0.4rem;
   `}
 `

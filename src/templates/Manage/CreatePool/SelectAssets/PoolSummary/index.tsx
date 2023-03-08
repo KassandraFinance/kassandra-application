@@ -7,7 +7,6 @@ import CoinSummary from '../CoinSummary'
 import InputNumberRight from '../../../../../components/Inputs/InputNumberRight'
 
 import closeIcon from '../../../../../../public/assets/utilities/close-icon.svg'
-import unlockIcon from '../../../../../../public/assets/utilities/unlock.svg'
 
 import { CoinGeckoResponseType } from '../../AddLiquidity'
 
@@ -69,7 +68,30 @@ const PoolSummary = ({
                       onClick={() => onLockToken(coin.symbol)}
                       active={coin.isLocked}
                     >
-                      <Image src={unlockIcon} />
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g id="lock">
+                          <path
+                            id="Lock Bottom"
+                            d="M12.6667 7.33203H3.33333C2.59695 7.33203 2 7.92898 2 8.66536V13.332C2 14.0684 2.59695 14.6654 3.33333 14.6654H12.6667C13.403 14.6654 14 14.0684 14 13.332V8.66536C14 7.92898 13.403 7.33203 12.6667 7.33203Z"
+                            stroke="#FCFCFC"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            id="lock-up-closed"
+                            d="M4.66666 7.33203V4.66536C4.66666 3.78131 5.01785 2.93346 5.64297 2.30834C6.26809 1.68322 7.11593 1.33203 7.99999 1.33203C8.88404 1.33203 9.73189 1.68322 10.357 2.30834C10.9821 2.93346 11.3333 3.78131 11.3333 4.66536V7.33203"
+                            stroke="#FCFCFC"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </g>
+                      </svg>
                     </S.LockButton>
 
                     <InputNumberRight

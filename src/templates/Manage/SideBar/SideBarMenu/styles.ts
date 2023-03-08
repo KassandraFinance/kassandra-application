@@ -3,17 +3,17 @@ import styled, { css } from 'styled-components'
 export const SideBarMenu = styled.div`
   ${() => css`
     padding: 1.6rem 2.4rem;
+    border-radius: 4px;
 
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 0.4rem;
+    background: rgb(255 255 255 / 5%);
   `}
 `
 
 export const Title = styled.div`
   ${() => css`
     display: flex;
-    align-items: center;
     gap: 0.8rem;
+    align-items: center;
 
     cursor: pointer;
   `}
@@ -46,8 +46,8 @@ export const TitleText = styled.p<ITitleTextProps>`
 
     opacity: 1;
 
-    transition-duration: 500ms;
     transition-timing-function: ease;
+    transition-duration: 500ms;
     transition-property: opacity;
   `}
   ${({ isSideBarOpen }) => !isSideBarOpen && css`
@@ -66,8 +66,6 @@ interface IOpenButtonProps {
 // prettier-ignore
 export const OpenButton = styled.div<IOpenButtonProps>`
   ${() => css`
-    transform: rotate(180deg);
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -78,12 +76,13 @@ export const OpenButton = styled.div<IOpenButtonProps>`
 
     background-color: transparent;
 
-    transition-duration: 500ms;
     transition-timing-function: ease;
+    transition-duration: 500ms;
     transition-property: transform;
+    transform: rotate(0deg);
   `}
   ${({ isOpen }) => isOpen && css`
-    transform: rotate(0deg);
+    transform: rotate(180deg);
   `}
 `
 
@@ -96,13 +95,14 @@ interface IPoolContainerProps {
 // prettier-ignore
 export const PoolContainer = styled.div<IPoolContainerProps>`
   ${() => css`
-    max-height: 0rem;
-
-    opacity: 0;
     overflow: hidden;
 
-    transition-duration: 500ms;
+    max-height: 0;
+
+    opacity: 0;
+
     transition-timing-function: ease;
+    transition-duration: 500ms;
     transition-property: max-height opacity;
   `}
   ${({ isOpen, isSideBarOpen, height }) => isOpen && isSideBarOpen && css`
@@ -123,6 +123,7 @@ export const PoolWrapper = styled.div`
   ${() => css`
     display: flex;
     align-items: center;
+
     height: 4rem;
     padding-inline: 3.2rem 0.4rem;
 
@@ -135,10 +136,11 @@ export const PoolWrapper = styled.div`
 export const Pool = styled.a`
   ${() => css`
     display: flex;
-    align-items: center;
     gap: 0.8rem;
+    align-items: center;
 
     text-decoration: none;
+
     cursor: pointer;
   `}
 `
@@ -148,13 +150,11 @@ export const PoolIcon = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 
     min-width: 1.6rem;
     min-height: 1.6rem;
-
     border-radius: 50%;
-
-    overflow: hidden;
   `}
 `
 
@@ -165,6 +165,8 @@ interface IPoolNameProps {
 // prettier-ignore
 export const PoolName = styled.div<IPoolNameProps>`
   ${({ theme }) => css`
+    overflow: hidden;
+
     width: 14.2rem;
 
     color: ${theme.colors.grayDisabled};
@@ -172,10 +174,8 @@ export const PoolName = styled.div<IPoolNameProps>`
     font-size: ${theme.font.sizes.font14};
     line-height: 100%;
     letter-spacing: 0.05em;
-
-    white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   `}
   ${({ theme, active }) => active && css`
       color: ${theme.colors.snow};
@@ -193,32 +193,34 @@ export const PoolStatus = styled.span<IPoolStatusProps>`
     position: relative;
 
     display: block;
+
     width: 0.6rem;
     height: 0.6rem;
-
-    border: 0.05rem solid ${theme.colors.grayDisabled};
+    border: 0.5px solid ${theme.colors.grayDisabled};
     border-radius: 50%;
   `}
   ${({ theme, active }) => active && css`
+      border: 0.5px solid ${theme.colors.snow};
+
       background-color: ${theme.colors.snow};
-      border: 0.05rem solid ${theme.colors.snow};
 
       &::before {
         content: '';
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
+        z-index: -1;
 
         width: 0.6rem;
         height: 0.6rem;
+        border: 0.5px solid ${theme.colors.snow};
+        border-radius: 50%;
 
         background-color: ${theme.colors.snow};
-        border: 0.05rem solid ${theme.colors.snow};
-        border-radius: 50%;
+
         filter: blur(0.5rem);
 
-        z-index: -1;
+        transform: translate(-50%, -50%);
       }
   `}
 `
