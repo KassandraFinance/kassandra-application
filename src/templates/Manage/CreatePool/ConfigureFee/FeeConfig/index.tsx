@@ -75,8 +75,8 @@ const FeeConfig = () => {
           Receive a percentage of each new deposit in the pool at the selected
           address.
         </S.CardWrapperParagraph>
-        {feesData?.depositFee?.isChecked && (
-          <>
+        {feesData?.depositFee && (
+          <S.FeeContainer isFeeChecked={feesData.depositFee.isChecked}>
             <S.WrapperInputFee
               className="depositFee"
               isAddress={isAddress(userWalletAddress)}
@@ -91,7 +91,7 @@ const FeeConfig = () => {
                 name="depositFee"
                 type="number"
                 placeholder=""
-                required
+                required={feesData.depositFee.isChecked}
                 value={
                   feesData.depositFee.feeRate
                     ? feesData.depositFee.feeRate.toString()
@@ -139,10 +139,10 @@ const FeeConfig = () => {
               complete a sale. If a deposit is made without a refferal, the
               deposit fee goes entirely to the manager.
             </S.CardWrapperParagraph>
-          </>
+          </S.FeeContainer>
         )}
-        {feesData?.refferalFee?.isChecked && (
-          <>
+        {feesData?.refferalFee && (
+          <S.FeeContainer isFeeChecked={feesData.refferalFee.isChecked}>
             <S.RefferalCommissionContainer>
               <S.WrapperInputRange>
                 <S.InputRangeContent>
@@ -212,7 +212,7 @@ const FeeConfig = () => {
                 {feesData.refferalFee.managerShare?.toFixed(2)}%
               </S.BrokerAndManagerPercentage>
             </S.TotalDepositFeeContainer>
-          </>
+          </S.FeeContainer>
         )}
       </S.CardWrapper>
 
@@ -229,8 +229,8 @@ const FeeConfig = () => {
           Receive a flat fee measured as an annual percent of total assets under
           management. The management fee accrues continuously.
         </S.CardWrapperParagraph>
-        {feesData?.managementFee?.isChecked && (
-          <>
+        {feesData?.managementFee && (
+          <S.FeeContainer isFeeChecked={feesData.managementFee.isChecked}>
             <S.WrapperInput
               isAddress={isAddress(userWalletAddress)}
               value={
@@ -244,7 +244,7 @@ const FeeConfig = () => {
                 name="managementFee"
                 type="number"
                 placeholder=""
-                required
+                required={feesData.managementFee.isChecked}
                 value={
                   feesData.managementFee.feeRate
                     ? feesData.managementFee.feeRate.toString()
@@ -278,7 +278,7 @@ const FeeConfig = () => {
                 }}
               />
             </S.WrapperInput>
-          </>
+          </S.FeeContainer>
         )}
       </S.CardWrapper>
 
