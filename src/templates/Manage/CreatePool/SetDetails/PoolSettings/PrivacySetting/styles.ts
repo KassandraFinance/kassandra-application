@@ -1,29 +1,45 @@
 import styled, { css, keyframes } from 'styled-components'
 
-export const PrivacySetting = styled.div`
+interface IPrivacySetting {
+  isOpen: boolean;
+  height: number;
+}
+
+// prettier-ignore
+export const PrivacySetting = styled.div<IPrivacySetting>`
   ${() => css`
     display: flex;
     flex-direction: column;
-    width: 100%;
     gap: 1rem;
-    padding: 2.4rem;
+    overflow: hidden;
+
+    width: 100%;
+    height: 27.8rem;
     margin-top: 2.4rem;
     margin-bottom: 12rem;
+    padding: 2.4rem;
+    border-radius: 8px;
 
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 0.8rem;
+    background: rgb(255 255 255 / 0.05);
+
+    transition: height 0.8s ease;
 
     @media (min-width: 576px) and (max-width: 992px) {
       margin-top: 0;
     }
   `}
+  ${({ isOpen, height }) =>
+    isOpen &&
+    css`
+      height: ${36.022 + height}rem;
+    `}
 `
 
 export const PoolSettingTitle = styled.h4`
   ${({ theme }) => css`
     color: ${theme.colors.white};
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.normal};
+    font-size: ${theme.font.sizes.font14};
     line-height: 1.6rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -33,8 +49,8 @@ export const PoolSettingTitle = styled.h4`
 export const PoolSettingParagraph = styled.p`
   ${({ theme }) => css`
     color: ${theme.colors.white};
-    font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font16};
     line-height: 135%;
 
     @media (max-width: 360px) {
@@ -52,6 +68,7 @@ export const InputsRadioContainer = styled.div`
 export const InputsRadioContent = styled.span`
   ${({ theme }) => css`
     display: block;
+
     margin-top: 1.6rem;
 
     p {
@@ -59,8 +76,8 @@ export const InputsRadioContent = styled.span`
       margin-left: 2rem;
 
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font16};
       line-height: 135%;
     }
   `}
@@ -68,15 +85,19 @@ export const InputsRadioContent = styled.span`
 
 export const PrivateAddressContainer = styled.div`
   ${({ theme }) => css`
-    animation: ${privateAni} 0.8s ease;
+    animation: ${Opacity} 1000ms ease;
+
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: opacity;
 
     p:first-child {
-      margin-bottom: 0.8rem;
       margin-top: 0.6rem;
+      margin-bottom: 0.8rem;
 
       color: #c4c4c4;
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font12};
       line-height: 1.4rem;
       text-transform: uppercase;
     }
@@ -93,24 +114,25 @@ export const InputAddressContainer = styled.div<IInputAddressContainerProps>`
   ${({ theme }) => css`
     position: relative;
 
-    background: #1b1d22;
-    border: 0.1rem solid rgba(255, 255, 255, 0.15);
+    border: 0.1rem solid rgb(255 255 255 / 0.15);
     border-radius: 0.8rem;
 
-    transition-duration: 300ms;
+    background: #1b1d22;
+
     transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
     transition-property: border;
 
     input {
       width: 100%;
       padding: 1.6rem;
+      border: none;
 
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font12};
 
       background-color: transparent;
-      border: none;
       outline: none;
     }
   `}
@@ -126,6 +148,7 @@ export const PrivateAddressList = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.8rem;
+
     width: 100%;
     margin-top: 0.8rem;
 
@@ -138,21 +161,22 @@ export const PrivateAddressList = styled.div`
 export const HasAddress = styled.div`
   ${({ theme }) => css`
     position: absolute;
-    left: 0;
     bottom: -5rem;
-    width: 100%;
+    left: 0;
+    z-index: 20;
 
     display: flex;
-    align-items: center;
     justify-content: center;
-    z-index: 20;
+    align-items: center;
+
+    width: 100%;
 
     button,
     strong,
     p {
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font12};
       text-align: center;
     }
 
@@ -162,6 +186,7 @@ export const HasAddress = styled.div`
       border-radius: 0.8rem;
 
       background-color: #26282d;
+
       transition: outline 0.2s ease;
 
       &:focus {
@@ -172,13 +197,16 @@ export const HasAddress = styled.div`
     button {
       display: flex;
       gap: 0.4rem;
+
       padding: 1.6rem 1.2rem;
       border: none;
       border-radius: 0.8rem;
 
       background-color: #26282d;
-      transition: outline 0.2s ease;
+
       cursor: pointer;
+
+      transition: outline 0.2s ease;
 
       &:focus {
         outline: 0.2rem solid #ffffff30;
@@ -190,40 +218,43 @@ export const HasAddress = styled.div`
 export const PrivateAddress = styled.li`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
-    justify-content: space-between;
     gap: 1rem;
-    padding: 0.8rem 1.6rem;
-    width: 100%;
+    justify-content: space-between;
+    align-items: center;
 
-    background: rgba(255, 255, 255, 0.05);
+    width: 100%;
+    padding: 0.8rem 1.6rem;
     border-radius: 0.4rem;
+
+    background: rgb(255 255 255 / 0.05);
 
     animation: ${PrivateAddressAni} 0.6s ease;
 
-    @media (max-width: 360px) {
-      justify-content: center;
-      gap: 4rem;
-    }
-
     > p {
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font14};
       line-height: 100%;
     }
 
     span {
       display: flex;
-      width: 1rem;
 
+      width: 1rem;
       border-radius: 0.8rem;
+
       transition: background-color 0.2s ease;
 
       :hover {
-        background-color: rgba(255, 255, 255, 0.15);
+        background-color: rgb(255 255 255 / 0.15);
+
         cursor: pointer;
       }
+    }
+
+    @media (max-width: 360px) {
+      gap: 4rem;
+      justify-content: center;
     }
   `}
 `
@@ -231,20 +262,23 @@ export const PrivateAddress = styled.li`
 export const ClosePrivateAddress = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 
     button {
-      background-color: transparent;
-      border: none;
       margin-top: 1.6rem;
+      border: none;
+
       color: #c4c4c4;
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font12};
+
+      background-color: transparent;
+
       cursor: pointer;
 
       :hover {
-        color: #ffffff;
+        color: #fff;
       }
     }
   `}
@@ -266,8 +300,8 @@ export const Error = styled.p<IErrorProps>`
     font-size: ${theme.font.sizes.font14};
     line-height: 100%;
 
-    transition-duration: 300ms;
     transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
     transition-property: opacity;
   `}
 `
@@ -282,13 +316,12 @@ const PrivateAddressAni = keyframes`
     opacity: 1;
   }
 `
-const privateAni = keyframes`
+
+const Opacity = keyframes`
   from {
-    transform: translateY(-2.5rem);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
     opacity: 1;
   }
 `
