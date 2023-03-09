@@ -26,18 +26,24 @@ export type AssetType = {
 
 export type ILpNeededProps = {
   value: Big,
-  balance: Big
+  valueInDollar: Big,
+  balanceInWallet: Big
 }
 
 export type IPoolInfoProps = {
-  address: string,
-  poolPrice: number,
-  tvl: number
+  id: string,
+  name: string,
+  controller: string,
+  chainLogo: string,
+  logo: string,
+  chainId: number,
+  address: string
 }
 
 interface IRemoveAssetProps {
   poolTokensList: TokenType[];
   weights: AssetType[];
+  poolInfo: IPoolInfoProps;
   tokenSelection: TokenType;
   lpNeeded: ILpNeededProps;
 }
@@ -45,6 +51,15 @@ interface IRemoveAssetProps {
 const initialState: IRemoveAssetProps = {
   poolTokensList: [],
   weights: [],
+  poolInfo: {
+    id: '',
+    name: '',
+    controller: '',
+    chainLogo: '',
+    logo: '',
+    chainId: 0,
+    address: ''
+  },
   tokenSelection: {
     address: '',
     name: '',
@@ -57,7 +72,8 @@ const initialState: IRemoveAssetProps = {
   },
   lpNeeded: {
     value: Big(0),
-    balance: Big(0)
+    valueInDollar: Big(0),
+    balanceInWallet: Big(0)
   }
 }
 
@@ -71,6 +87,9 @@ export const poolCreationSlice = createSlice({
     setPoolTokensList: (state, action: PayloadAction<TokenType[]>) => {
       state.poolTokensList = action.payload
     },
+    setPoolInfo: (state, action: PayloadAction<IPoolInfoProps>) => {
+      state.poolInfo = action.payload
+    },
     setWeight: (state, action: PayloadAction<AssetType[]>) => {
       state.weights = action.payload
     },
@@ -80,7 +99,12 @@ export const poolCreationSlice = createSlice({
   }
 })
 
-export const { setTokenSelection, setPoolTokensList, setWeight, setLpNeeded } =
-  poolCreationSlice.actions
+export const {
+  setTokenSelection,
+  setPoolTokensList,
+  setWeight,
+  setLpNeeded,
+  setPoolInfo
+} = poolCreationSlice.actions
 
 export default poolCreationSlice.reducer
