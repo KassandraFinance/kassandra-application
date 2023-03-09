@@ -1,14 +1,7 @@
 import styled, { css } from 'styled-components'
 
-// interface IProps {
-//   isActive: boolean;
-// }
-// eslint-disable-next-line prettier/prettier
-
 export const TransactionSummaryCard = styled.div`
   ${({ theme }) => css`
-    /* display: flex;
-    flex-direction: column; */
     width: 100%;
     padding: 2.4rem;
 

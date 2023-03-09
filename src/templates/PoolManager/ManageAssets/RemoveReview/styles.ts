@@ -1,15 +1,11 @@
 import styled, { css } from 'styled-components'
+import { TransactionSummaryCard } from './TransactionSummaryCard/styles'
 
-// interface IProps {
-//   isActive: boolean;
-// }
-// eslint-disable-next-line prettier/prettier
-
-export const TokenRemoval = styled.span`
+export const RemoveReview = styled.div`
   ${() => css``}
 `
 
-export const TokenRemovalsBody = styled.div`
+export const RemoveReviewBody = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
@@ -34,19 +30,33 @@ export const TokenRemovalsBody = styled.div`
   `}
 `
 
-export const SelectTokenAndTableAllocation = styled.div`
+export const ReviewCardAndTable = styled.div`
   ${() => css`
-    display: grid;
-    grid-template-columns: 36.1rem 1fr;
+    /* display: grid;
+    grid-template-columns: minmax(40rem, 45.7rem) 1fr; */
+    display: flex;
+    align-items: flex-start;
     gap: 2.4rem;
+    width: 100%;
     margin-bottom: 10rem;
 
+    ${TransactionSummaryCard} {
+      min-width: 40rem;
+      max-width: 45.7rem;
+
+      @media (max-width: 992px) {
+        min-width: 100%;
+      }
+    }
+
     @media (max-width: 992px) {
-      grid-template-columns: 1fr;
+      /* grid-template-columns: 1fr; */
+      flex-direction: column;
+      margin-bottom: 15rem;
     }
   `}
 `
 
-// export const RemoveAssets = styled.span`
+// export const ReviewCardAndTable = styled.span`
 //   ${() => css``}
 // `

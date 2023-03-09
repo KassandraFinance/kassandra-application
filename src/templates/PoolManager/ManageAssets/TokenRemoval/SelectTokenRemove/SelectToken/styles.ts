@@ -1,9 +1,16 @@
 import styled, { css } from 'styled-components'
 
-// interface IProps {
-//   isActive: boolean;
-// }
-// eslint-disable-next-line prettier/prettier
+export const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
+
+  width: 100vw;
+  height: 100vh;
+
+  background-color: transparent;
+`
 
 interface ISelectTokenProps {
   isOpen: boolean;
@@ -58,6 +65,8 @@ export const SelectTokenContainer = styled.ul<ISelectTokenProps>`
     transition-duration: 500ms;
     transition-timing-function: ease;
     transition-property: height max-height border;
+
+    z-index: 22;
   `}
 
   ${({ isOpen, itemHeight }) =>
@@ -107,6 +116,7 @@ export const SelectedTokenContent = styled.div`
     border-radius: 8px;
 
     padding: 1.6rem;
+    z-index: 21;
   `}
 `
 
@@ -153,6 +163,8 @@ export const SelectTokenContent = styled.li`
 
 export const TokenInfoContent = styled.div`
   ${({ theme }) => css`
+    position: relative;
+
     display: flex;
     align-items: center;
     gap: 0.8rem;
@@ -161,6 +173,11 @@ export const TokenInfoContent = styled.div`
       font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.medium};
       line-height: 1.6rem;
+    }
+
+    input {
+      position: absolute;
+      opacity: 0;
     }
   `}
 `

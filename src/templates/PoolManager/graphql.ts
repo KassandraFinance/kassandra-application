@@ -11,6 +11,8 @@ export const GET_INFO_POOL = gql`
       logo
       pool_version
       strategy
+      price_usd
+      controller
       chain {
         id
         logo
