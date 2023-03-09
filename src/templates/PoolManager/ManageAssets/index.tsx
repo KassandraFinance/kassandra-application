@@ -24,6 +24,9 @@ import {
 } from '../../../constants/tokenAddresses'
 import { GET_POOL_TOKENS } from './AddLiquidity/graphql'
 
+import TokenRemoval from './RemoveAssets/TokenRemoval'
+import RemoveReview from './RemoveAssets/RemoveReview'
+import AssetRemovelCard from './RemoveAssets/AssetRemovelCard'
 import SelectAssets from './SelectAssets'
 import RemoveAssets from './RemoveAssets'
 import ChooseAction from './ChooseAction'
@@ -63,8 +66,9 @@ const ManageAssets = () => {
   const [transactions, setTransactions] = React.useState<
     TransactionsListType[]
   >([])
-  const [isTokenAdd, setIsTokenAdd] = React.useState<boolean>(false)
-  const [transactionButtonStatus, setTransactionButtonStatus] = React.useState(TransactionStatus.START)
+  const [transactionButtonStatus, setTransactionButtonStatus] = React.useState(
+    TransactionStatus.START
+  )
 
   const dispatch = useAppDispatch()
 
@@ -88,15 +92,30 @@ const ManageAssets = () => {
     `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
   )
 
+  const buttonTextActionAdd = {
+    [TransactionStatus.START]: `Start ${token.symbol} Addition`,
+    [TransactionStatus.CONTINUE]: `Continue ${token.symbol} Addition`,
+    [TransactionStatus.WAITING]: 'Waiting transaction',
+    [TransactionStatus.COMPLETED]: `${token.symbol} added`
+  }
+
+  const buttonTextActionRemove = {
+    [TransactionStatus.START]: `Start ${tokenSelection.symbol} Removal`,
+    [TransactionStatus.CONTINUE]: `Continue ${token.symbol} Removal`,
+    [TransactionStatus.WAITING]: 'Waiting transaction',
+    [TransactionStatus.COMPLETED]: `${token.symbol} removed`
+  }
+
   const addNewAsset = [
     <SelectAssets key="selectAssets" />,
     <AddLiquidity key="addLiquidity" />,
     <ReviewAddAsset key="reviewAddAsset" />,
     <ModalTransactions
       key="modalTransactions"
-      title='To finish the process of adding the asset to the pool do the following:'
+      title="To finish the process of adding the asset to the pool do the following:"
       transactionButtonStatus={transactionButtonStatus}
-      isCompleted={isTokenAdd}
+      buttonText={buttonTextActionAdd}
+      isCompleted={isCompleted}
       transactions={transactions}
       onStart={handleAddToken}
       onCancel={() => setStep(prev => prev - 1)}
@@ -104,7 +123,7 @@ const ManageAssets = () => {
     />,
     <TransactionFinalized
       key="transactionFinalized"
-      title='Asset addition has been approved'
+      title="Asset addition has been approved"
       image={addIcon}
     >
       <S.Container>
@@ -117,7 +136,8 @@ const ManageAssets = () => {
 
               <SecondaryValue>
                 ~$
-                {priceData && tokenLiquidity.amount &&
+                {priceData &&
+                  tokenLiquidity.amount &&
                   BNtoDecimal(
                     Big(tokenLiquidity?.amount || 0).mul(
                       priceData[token.id.toLowerCase()]?.usd
@@ -169,7 +189,23 @@ const ManageAssets = () => {
     </TransactionFinalized>
   ]
 
-  async function getTransactionsList(tokenId: string) {
+  const RemoveAsset = [
+    <TokenRemoval key="TokenRemoval" />,
+    <RemoveReview key="RemoveReview" />,
+    <ModalTransactions
+      key="modalTransactions"
+      title="To finish the process of removing a token from the pool you must complete the following"
+      transactionButtonStatus={transactionButtonStatus}
+      buttonText={buttonTextActionRemove}
+      isCompleted={isCompleted}
+      transactions={transactions}
+      onStart={handleRemoveToken}
+      onCancel={() => setStep(prev => prev - 1)}
+      onComfirm={() => setStep(prev => prev + 1)}
+    />,
+    <AssetRemovelCard key="AssetRemovelCard" />
+  ]
+
     const transactionsList: TransactionsListType[] = []
 
     const { allowance } = ERC20(tokenId)
