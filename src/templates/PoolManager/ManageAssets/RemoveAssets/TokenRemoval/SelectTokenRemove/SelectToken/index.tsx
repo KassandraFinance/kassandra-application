@@ -1,6 +1,7 @@
+import React from 'react'
+
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setTokenSelection } from '@/store/reducers/removeAssetSlice'
-import React from 'react'
 
 import * as S from './styles'
 
@@ -8,34 +9,39 @@ const SelectToken = () => {
   const [IsOpenTokenList, setIsOpenTokenList] = React.useState(false)
 
   const dispatch = useAppDispatch()
-
   const { poolTokensList, tokenSelection } = useAppSelector(
     state => state.removeAsset
   )
 
   return (
     <S.SelectToken>
+      <S.Backdrop
+        onClick={() => setIsOpenTokenList(!IsOpenTokenList)}
+        style={{ display: IsOpenTokenList ? 'block' : 'none' }}
+      />
       <S.SelectedTokenContent
         onClick={() => setIsOpenTokenList(!IsOpenTokenList)}
       >
         <S.TokenInfoContent>
+          <input
+            form="manageAssetsForm"
+            id="inputSelectToken"
+            name="inputSelectToken"
+            type="radio"
+            value={tokenSelection.address}
+            required
+            checked={tokenSelection.address !== ''}
+            onChange={() => {
+              return
+            }}
+          />
           {tokenSelection.address !== '' ? (
             <>
               <img src={tokenSelection.logo} alt="" width={20} height={20} />
               <p>{tokenSelection.symbol}</p>
             </>
           ) : (
-            <>
-              <p>Choose asset</p>
-              <input
-                form="manageAssetsForm"
-                id="inputSelectToken"
-                name="inputSelectToken"
-                type="radio"
-                value={tokenSelection.address}
-                required
-              />
-            </>
+            <p>Choose asset</p>
           )}
         </S.TokenInfoContent>
         <S.ArrowContent isOpen={IsOpenTokenList}>
