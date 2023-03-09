@@ -481,7 +481,7 @@ const ManageAssets = () => {
         'Remove',
         'RemoveToken',
         tokenSelection.symbol,
-        data?.pool.symbol
+        poolInfo.symbol
       )
       // getTransactionsList(
       //   mockTokensReverse[token.id.toLowerCase()],

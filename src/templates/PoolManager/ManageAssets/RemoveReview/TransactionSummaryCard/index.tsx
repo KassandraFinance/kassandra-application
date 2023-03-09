@@ -20,7 +20,7 @@ const TransactionSummaryCard = () => {
 
       <S.TransactionSummaryCardBody>
         <S.LpSendWrapper>
-          <p>LP Sent</p>
+          <p>{poolInfo.symbol} Sent</p>
 
           <S.LpSendValueWrapper>
             <S.LpSendValue>

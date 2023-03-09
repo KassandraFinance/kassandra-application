@@ -33,6 +33,7 @@ export type ILpNeededProps = {
 export type IPoolInfoProps = {
   id: string,
   name: string,
+  symbol: string,
   controller: string,
   chainLogo: string,
   logo: string,
@@ -54,6 +55,7 @@ const initialState: IRemoveAssetProps = {
   poolInfo: {
     id: '',
     name: '',
+    symbol: '',
     controller: '',
     chainLogo: '',
     logo: '',

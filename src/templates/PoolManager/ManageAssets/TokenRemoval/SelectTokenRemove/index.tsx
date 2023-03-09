@@ -15,7 +15,7 @@ enum colorType {
 }
 
 const SelectTokenRemove = () => {
-  const { tokenSelection, lpNeeded } = useAppSelector(
+  const { tokenSelection, lpNeeded, poolInfo } = useAppSelector(
     state => state.removeAsset
   )
 
@@ -83,7 +83,7 @@ const SelectTokenRemove = () => {
         </S.LineRemovedTokenReview>
         <S.LineRemovedTokenReview>
           <S.ValueText color={color[handleCheckLpNeeded()]}>
-            Lp needed for removal
+            {poolInfo.symbol} needed for removal
           </S.ValueText>
           <S.TokenValueContainer>
             {!lpNeeded.value.lte(0) ? (
@@ -129,8 +129,8 @@ const SelectTokenRemove = () => {
         <img src="/assets/notificationStatus/queued.svg" alt="" />
         <p>
           You still need{' '}
-          {BNtoDecimal(lpNeeded.value, tokenSelection.decimals, 2)} LP to remove{' '}
-          {tokenSelection.symbol} from this pool
+          {BNtoDecimal(lpNeeded.value, tokenSelection.decimals, 2)}{' '}
+          {poolInfo.symbol} to remove {tokenSelection.symbol} from this pool
         </p>
       </S.NotificationStatusContainer>
     </S.SelectTokenRemove>

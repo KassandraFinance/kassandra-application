@@ -38,7 +38,7 @@ const TokenRemoval = () => {
 
   const dispatch = useAppDispatch()
   const { weights, tokenSelection, poolInfo } = useAppSelector(state => state.removeAsset)
-  const { userWalletAddress } = useAppSelector(state => state)
+  const userWalletAddress  = useAppSelector(state => state.userWalletAddress)
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -75,9 +75,9 @@ const TokenRemoval = () => {
     try {
       // eslint-disable-next-line prettier/prettier
       const managedPool = new web3.eth.Contract((ManagedPool as unknown) as AbiItem, poolInfo.address);
-      const actualSupply = await managedPool.methods.getActualSupply().call()
+      const currentPoolSupply = await managedPool.methods.getActualSupply().call()
 
-      totalSupply = Big(actualSupply).div(Big(10).pow(18))
+      totalSupply = Big(currentPoolSupply).div(Big(10).pow(18))
     } catch (error) {
       console.log(error)
     }
@@ -123,6 +123,7 @@ const TokenRemoval = () => {
       setPoolInfo({
         id: data.pool.id,
         name: data.pool.name,
+        symbol: data.pool.symbol,
         controller: data.pool.controller,
         chainLogo: data.pool.chain.logo,
         address: data.pool.address,
