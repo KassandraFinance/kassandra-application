@@ -1,10 +1,5 @@
 import styled, { css } from 'styled-components'
 
-// interface IProps {
-//   isActive: boolean;
-// }
-// eslint-disable-next-line prettier/prettier
-
 export const TokenRemoval = styled.span`
   ${() => css``}
 `
@@ -46,7 +41,3 @@ export const SelectTokenAndTableAllocation = styled.div`
     }
   `}
 `
-
-// export const RemoveAssets = styled.span`
-//   ${() => css``}
-// `
