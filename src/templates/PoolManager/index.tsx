@@ -124,29 +124,29 @@ const PoolManager = () => {
             <S.GridIntro>
               <TokenWithNetworkImage
                 tokenImage={{
-                  url: data?.pool.logo,
+                  url: data?.pool?.logo,
                   height: 75,
                   width: 75,
                   withoutBorder: true
                 }}
                 networkImage={{
-                  url: data?.pool.chain?.logo,
+                  url: data?.pool?.chain?.logo,
                   height: 20,
                   width: 20
                 }}
                 blockies={{
                   size: 8,
                   scale: 9,
-                  seedName: data?.pool.name
+                  seedName: data?.pool?.name
                 }}
               />
               <S.NameIndex>
                 <S.NameAndSymbol>
-                  <h1>{data?.pool.name}</h1>
+                  <h1>{data?.pool?.name}</h1>
                 </S.NameAndSymbol>
                 <S.SymbolAndLink>
-                  <h3>${data?.pool.symbol}</h3>
-                  <Link href={`/pool/${data?.pool.id}`}>
+                  <h3>${data?.pool?.symbol}</h3>
+                  <Link href={`/pool/${data?.pool?.id}`}>
                     <button className="circle">
                       <Image
                         src="/assets/icons/website-with-bg.svg"
@@ -156,7 +156,7 @@ const PoolManager = () => {
                     </button>
                   </Link>
                   <a
-                    href={`${data?.pool.chain?.blockExplorerUrl}/address/${data?.pool.address}`}
+                    href={`${data?.pool?.chain?.blockExplorerUrl}/address/${data?.pool.address}`}
                     className="circle"
                     target="_blank"
                     rel="noopener noreferrer"
