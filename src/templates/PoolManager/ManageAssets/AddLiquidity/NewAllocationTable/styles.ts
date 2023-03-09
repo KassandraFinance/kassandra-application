@@ -106,6 +106,7 @@ interface ITBodyProps {
 export const TBody = styled(TB)<ITBodyProps>`
   ${({ height }) => css`
     height: ${height}rem;
+    max-height: 41.4rem;
 
     transition-duration: 600ms;
     transition-timing-function: ease;
@@ -117,7 +118,7 @@ export const Td = styled(TD)`
   ${() => css``}
 `
 // eslint-disable-next-line prettier/prettier
-export const textContainer = styled.tr`
+export const textContainer = styled.span`
   ${() => css`
     display: flex;
     align-items: center;

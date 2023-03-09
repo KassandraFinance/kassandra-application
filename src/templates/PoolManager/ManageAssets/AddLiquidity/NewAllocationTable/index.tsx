@@ -30,7 +30,7 @@ const NewAllocationTable = ({ assets }: INewAllocationTablePorps) => {
           </S.Tr>
         </S.THead>
 
-        <S.TBody height={assets ? assets.length * 8.26 : 30.5}>
+        <S.TBody height={assets ? assets.length * 8.28 : 30.5}>
           {assets ? (
             assets.map(asset => (
               <S.Tr key={asset.token.id}>
