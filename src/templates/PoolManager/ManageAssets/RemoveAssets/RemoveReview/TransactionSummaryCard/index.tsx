@@ -1,12 +1,19 @@
 import React from 'react'
+import Big from 'big.js'
+
+import { useAppSelector } from '@/store/hooks'
+
+import { BNtoDecimal } from '@/utils/numerals'
+
+import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
 import * as S from './styles'
 
-// interface ITransactionSummaryCardProps {
-//   test: string;
-// }
-
 const TransactionSummaryCard = () => {
+  const { tokenSelection, poolInfo, lpNeeded } = useAppSelector(
+    state => state.removeAsset
+  )
+
   return (
     <S.TransactionSummaryCard>
       <h3>Transaction summary</h3>
@@ -17,10 +24,27 @@ const TransactionSummaryCard = () => {
 
           <S.LpSendValueWrapper>
             <S.LpSendValue>
-              <p>500</p>
-              <span>~$500.00</span>
+              <p>{BNtoDecimal(lpNeeded.value, 2)}</p>
+              <span>~${BNtoDecimal(lpNeeded.valueInDollar, 2)}</span>
             </S.LpSendValue>
-            <img src="" alt="" width={20} height={20} />
+            <TokenWithNetworkImage
+              tokenImage={{
+                url: poolInfo.logo,
+                height: 20,
+                width: 20,
+                withoutBorder: true
+              }}
+              networkImage={{
+                url: poolInfo.chainLogo,
+                height: 10,
+                width: 10
+              }}
+              blockies={{
+                size: 4,
+                scale: 7,
+                seedName: poolInfo.name
+              }}
+            />
           </S.LpSendValueWrapper>
         </S.LpSendWrapper>
 
@@ -29,8 +53,8 @@ const TransactionSummaryCard = () => {
             <p>Asset removed</p>
 
             <S.SymbolAndImgWrapper>
-              <p>wBTC</p>
-              <img src="" alt="" width={20} height={20} />
+              <p>{tokenSelection.symbol}</p>
+              <img src={tokenSelection.logo} alt="" width={20} height={20} />
             </S.SymbolAndImgWrapper>
           </S.RemovalInformation>
 
@@ -38,14 +62,23 @@ const TransactionSummaryCard = () => {
             <p>Received (est.)</p>
 
             <S.ReceivedInfo>
-              <p>$ 3,4567</p>
-              <span>3,4567 WBTC</span>
+              <p>$ {tokenSelection.balanceUSD?.toFixed(2)}</p>
+              <span>
+                {BNtoDecimal(
+                  Big(tokenSelection.balance),
+                  tokenSelection.decimals,
+                  2
+                )}{' '}
+                {tokenSelection.symbol}
+              </span>
             </S.ReceivedInfo>
           </S.RemovalInformation>
 
           <S.RemovalInformation>
             <p>Allocation</p>
-            <S.AllocationValue>37%</S.AllocationValue>
+            <S.AllocationValue>
+              {(Number(tokenSelection.weight) * 100).toFixed(2)}%
+            </S.AllocationValue>
           </S.RemovalInformation>
         </S.RemovalInformationList>
       </S.TransactionSummaryCardBody>
