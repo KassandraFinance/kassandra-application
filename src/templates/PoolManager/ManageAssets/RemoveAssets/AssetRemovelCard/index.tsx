@@ -1,13 +1,19 @@
 import React from 'react'
+import Link from 'next/link'
+
+import { useAppSelector } from '@/store/hooks'
+import { BNtoDecimal } from '@/utils/numerals'
+
 import Button from '../../../../../components/Button'
+import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
 import * as S from './styles'
 
-// interface IAssetRemovelCardProps {
-//   test: string;
-// }
-
 const AssetRemovelCard = () => {
+  const { tokenSelection, lpNeeded, poolInfo } = useAppSelector(
+    state => state.removeAsset
+  )
+
   return (
     <S.AssetRemovelCard>
       <img
@@ -22,8 +28,8 @@ const AssetRemovelCard = () => {
         <p>Asset removed</p>
 
         <S.SymbolAndImgWrapper>
-          <p>wBTC</p>
-          <img src="" alt="" width={20} height={20} />
+          <p>{tokenSelection.symbol}</p>
+          <img src={tokenSelection.logo} alt="" width={20} height={20} />
         </S.SymbolAndImgWrapper>
       </S.RemovalInformation>
 
@@ -32,14 +38,33 @@ const AssetRemovelCard = () => {
 
         <S.LpSendValueWrapper>
           <S.LpSendValue>
-            <p>500</p>
-            <span>~$500.00</span>
+            <p>{BNtoDecimal(lpNeeded.value, 2)}</p>
+            <span>~${BNtoDecimal(lpNeeded.valueInDollar, 2)}</span>
           </S.LpSendValue>
-          <img src="" alt="" width={20} height={20} />
+          <TokenWithNetworkImage
+            tokenImage={{
+              url: poolInfo.logo,
+              height: 20,
+              width: 20,
+              withoutBorder: true
+            }}
+            networkImage={{
+              url: poolInfo.chainLogo,
+              height: 10,
+              width: 10
+            }}
+            blockies={{
+              size: 4,
+              scale: 7,
+              seedName: poolInfo.name
+            }}
+          />
         </S.LpSendValueWrapper>
       </S.LpSendWrapper>
 
-      <Button text="Done" backgroundPrimary fullWidth type="button" />
+      <Link href={`/manage/${poolInfo.id}`}>
+        <Button text="Done" backgroundPrimary fullWidth as="a" />
+      </Link>
     </S.AssetRemovelCard>
   )
 }
