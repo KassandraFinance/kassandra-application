@@ -9,9 +9,7 @@ import { AbiItem } from 'web3-utils'
 import { ERC20 } from '../../../hooks/useERC20Contract'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
-import {
-  mockTokensReverse
-} from '../../../constants/tokenAddresses'
+import { mockTokensReverse } from '../../../constants/tokenAddresses'
 import Kacupe from '../../../constants/abi/Kacupe.json'
 
 import { BNtoDecimal } from '../../../utils/numerals'
@@ -28,7 +26,6 @@ import TokenRemoval from './RemoveAssets/TokenRemoval'
 import RemoveReview from './RemoveAssets/RemoveReview'
 import AssetRemovelCard from './RemoveAssets/AssetRemovelCard'
 import SelectAssets from './SelectAssets'
-import RemoveAssets from './RemoveAssets'
 import ChooseAction from './ChooseAction'
 import RebalanceAssets from './RebalanceAssets'
 import ContainerButton from '../../../components/ContainerButton'
@@ -58,6 +55,7 @@ import {
   SecondaryValue,
   ImageWrapper
 } from './ReviewAddAsset/TransactionSummary/styles'
+import { useRouter } from 'next/router'
 
 Big.RM = 0
 
@@ -66,6 +64,7 @@ const ManageAssets = () => {
   const [transactions, setTransactions] = React.useState<
     TransactionsListType[]
   >([])
+  const [isCompleted, setIsCompleted] = React.useState<boolean>(false)
   const [transactionButtonStatus, setTransactionButtonStatus] = React.useState(
     TransactionStatus.START
   )
@@ -76,8 +75,19 @@ const ManageAssets = () => {
   const token = useAppSelector(state => state.addAsset.token)
   const controller = useAppSelector(state => state.addAsset.controller)
   const tokenLiquidity = useAppSelector(state => state.addAsset.liquidit)
-  const poolId = useAppSelector(state => state.addAsset.poolId)
+  const poolAddId = useAppSelector(state => state.addAsset.poolId)
   const chainId = useAppSelector(state => state.addAsset.chainId)
+
+  const { poolInfo, tokenSelection } = useAppSelector(
+    state => state.removeAsset
+  )
+
+  const router = useRouter()
+
+  const poolId = Array.isArray(router.query.pool)
+  ? router.query.pool[0]
+  : router.query.pool ?? ''
+
 
   const params = {
     id: poolId
@@ -206,6 +216,14 @@ const ManageAssets = () => {
     <AssetRemovelCard key="AssetRemovelCard" />
   ]
 
+  async function getTransactionsList(
+    tokenId: string,
+    controller: string,
+    transactionAction: string,
+    keyAction: string,
+    tokenSymbol: string,
+    poolSymbol?: string
+  ) {
     const transactionsList: TransactionsListType[] = []
 
     const { allowance } = ERC20(tokenId)
@@ -213,26 +231,26 @@ const ManageAssets = () => {
 
     if (isAproved) {
       transactionsList.push({
-        key: token.id,
-        transaction: `Approve ${token.symbol}`,
+        key: tokenId,
+        transaction: `Approve ${poolSymbol ? poolSymbol : tokenSymbol}`,
         status: 'APPROVED'
       })
 
       transactionsList.push({
-        key: 'addToken',
-        transaction: `Add ${token.symbol}`,
+        key: keyAction,
+        transaction: `${transactionAction} ${tokenSymbol}`,
         status: 'NEXT'
       })
     } else {
       transactionsList.push({
-        key: token.id,
-        transaction: `Approve ${token.symbol}`,
+        key: tokenId,
+        transaction: `Approve ${poolSymbol ? poolSymbol : tokenSymbol}`,
         status: 'NEXT'
       })
 
       transactionsList.push({
-        key: 'addToken',
-        transaction: `Add ${token.symbol}`,
+        key: keyAction,
+        transaction: `${transactionAction} ${tokenSymbol}`,
         status: 'WAITING'
       })
     }
@@ -240,16 +258,76 @@ const ManageAssets = () => {
     setTransactions(transactionsList)
   }
 
+  async function handleRemoveToken() {
+    setTransactionButtonStatus(TransactionStatus.WAITING)
+
+    if (
+      transactions[0].status === 'NEXT' ||
+      transactions[0].status === 'ERROR'
+    ) {
+      setTransactions(prev =>
+        prev.map((item, index) => {
+          if (index === 0) {
+            item.status = 'APPROVING'
+            return item
+          } else {
+            item.status = 'NEXT'
+            return item
+          }
+        })
+      )
+
+      const { approve } = ERC20(poolInfo.address)
+      await approve(poolInfo.controller, userWalletAddress, callBack)
+    } else {
+      setTransactions(prev =>
+        prev.map((item, index) => {
+          if (index === 1) {
+            item.status = 'APPROVING'
+            return item
+          } else {
+            return item
+          }
+        })
+      )
+    }
+
+    if (transactions[0].status === 'ERROR') {
+      return
+    }
+
+    try {
+      // eslint-disable-next-line prettier/prettier
+      const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, poolInfo.controller);
+      await poolController.methods
+        .removeToken(
+          tokenSelection.address,
+          userWalletAddress,
+          userWalletAddress
+        )
+        .send(
+          {
+            from: userWalletAddress
+          },
+          callBack
+        )
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   async function callBack(error: MetamaskError, txHash: string) {
     if (error) {
-      setTransactions(prev => prev.map(item => {
-        if (item.status === 'APPROVING') {
-          item.status = 'ERROR'
-        } else if (item.status === 'NEXT') {
-          item.status = 'WAITING'
-        }
-        return item
-      }))
+      setTransactions(prev =>
+        prev.map(item => {
+          if (item.status === 'APPROVING') {
+            item.status = 'ERROR'
+          } else if (item.status === 'NEXT') {
+            item.status = 'WAITING'
+          }
+          return item
+        })
+      )
 
       setTransactionButtonStatus(TransactionStatus.CONTINUE)
 
@@ -273,8 +351,8 @@ const ManageAssets = () => {
       setTransactions(prev =>
         prev.map((item, index) => {
           if (item.status === 'APPROVING') {
-            if (item.key === 'addToken') {
-              setIsTokenAdd(true)
+            if (item.key === 'addToken' || item.key === 'removeToken') {
+              setIsCompleted(true)
             }
             transactionIndex = index
 
@@ -306,15 +384,17 @@ const ManageAssets = () => {
         })
       )
 
-      setTransactions(prev => prev.map(item => {
-        if (item.status === 'APPROVING') {
-          item.status = 'ERROR'
-        } else if (item.status === 'NEXT') {
-          item.status = 'WAITING'
-        }
+      setTransactions(prev =>
+        prev.map(item => {
+          if (item.status === 'APPROVING') {
+            item.status = 'ERROR'
+          } else if (item.status === 'NEXT') {
+            item.status = 'WAITING'
+          }
 
-        return item
-      }))
+          return item
+        })
+      )
 
       setTransactionButtonStatus(TransactionStatus.CONTINUE)
     }
@@ -328,7 +408,10 @@ const ManageAssets = () => {
   async function handleAddToken() {
     setTransactionButtonStatus(TransactionStatus.WAITING)
 
-    if (transactions[0].status === 'NEXT' || transactions[0].status === 'ERROR') {
+    if (
+      transactions[0].status === 'NEXT' ||
+      transactions[0].status === 'ERROR'
+    ) {
       setTransactions(prev =>
         prev.map((item, index) => {
           if (index === 0) {
@@ -360,30 +443,54 @@ const ManageAssets = () => {
     }
 
     try {
-      const allocation = Big(tokenLiquidity.allocation).div(100).mul(Big(10).pow(18)).toFixed(0)
-      const tokenToAddBalance = Big(tokenLiquidity.amount).mul(Big(10).pow(token.decimals)).toFixed(0)
+      const allocation = Big(tokenLiquidity.allocation)
+        .div(100)
+        .mul(Big(10).pow(18))
+        .toFixed(0)
+      const tokenToAddBalance = Big(tokenLiquidity.amount)
+        .mul(Big(10).pow(token.decimals))
+        .toFixed(0)
 
       // eslint-disable-next-line prettier/prettier
       const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, controller);
-      const response = await poolController.methods.addToken(
-        mockTokensReverse[token.id.toLowerCase()],
-        allocation,
-        tokenToAddBalance,
-        userWalletAddress,
-        userWalletAddress
-      ).send({
-          from: userWalletAddress
-        }, callBack)
-
-    } catch(error) {
+      const response = await poolController.methods
+        .addToken(
+          mockTokensReverse[token.id.toLowerCase()],
+          allocation,
+          tokenToAddBalance,
+          userWalletAddress,
+          userWalletAddress
+        )
+        .send(
+          {
+            from: userWalletAddress
+          },
+          callBack
+        )
+    } catch (error) {
       console.log('Error', error)
     }
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (step === 2) {
-      getTransactionsList(mockTokensReverse[token.id.toLowerCase()])
+    if (step === 1) {
+      getTransactionsList(
+        poolInfo.address,
+        poolInfo.controller,
+        'Remove',
+        'RemoveToken',
+        tokenSelection.symbol,
+        data?.pool.symbol
+      )
+      // getTransactionsList(
+      //   mockTokensReverse[token.id.toLowerCase()],
+      //   controller,
+      //   'Add',
+      //   'addToken',
+      //   token.symbol
+      // )
+      // getTransactionsList(mockTokensReverse[token.id.toLowerCase()])
     }
 
     setStep(prev => prev + 1)
@@ -400,8 +507,8 @@ const ManageAssets = () => {
             // <ChooseAction />
           }
           {/* <RebalanceAssets /> */}
-          {/* <RemoveAssets /> */}
-          {addNewAsset[step]}
+          {RemoveAsset[step]}
+          {/* {addNewAsset[step]} */}
 
           <ContainerButton
             form="manageAssetsForm"
