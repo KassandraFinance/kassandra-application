@@ -19,12 +19,14 @@ const SelectTokenRemove = () => {
     state => state.removeAsset
   )
 
+  const inputRef = React.useRef<HTMLInputElement>(null)
+
   function handleCheckLpNeeded() {
-    const { balance, value } = lpNeeded
+    const { balanceInWallet, value } = lpNeeded
 
-    if (balance.lte(0)) return colorType.NEUTRAL
+    if (tokenSelection.address === '') return colorType.NEUTRAL
 
-    if (balance.gte(value)) {
+    if (balanceInWallet.gte(value)) {
       return colorType.POSITIVE
     } else {
       return colorType.NEGATIVE
@@ -37,6 +39,14 @@ const SelectTokenRemove = () => {
     2: '#E8372C'
   }
 
+  function handleInvalid(event: any) {
+    if (!lpNeeded.balanceInWallet.gte(lpNeeded.value)) {
+      return event.target.setCustomValidity(
+        "you don't have enough LP to remove that asset!"
+      )
+    }
+  }
+
   return (
     <S.SelectTokenRemove>
       <SelectToken />
@@ -45,7 +55,7 @@ const SelectTokenRemove = () => {
           <S.ValueText>Allocation</S.ValueText>
           {tokenSelection.weight !== '' ? (
             <S.AllocationAndHoldingValue>
-              {(Number(tokenSelection.weight) * 100).toFixed(2)}%
+              {(Number(tokenSelection.weight ?? 0) * 100).toFixed(2)}%
             </S.AllocationAndHoldingValue>
           ) : (
             <S.AllocationAndHoldingValue>---</S.AllocationAndHoldingValue>
@@ -54,21 +64,20 @@ const SelectTokenRemove = () => {
         <S.LineRemovedTokenReview>
           <S.ValueText>Holding</S.ValueText>
           <S.TokenValueContainer>
-            {tokenSelection ? (
-              <>
-                <S.AllocationAndHoldingValue>
-                  ${Number(tokenSelection.balanceUSD).toFixed(2)}
-                </S.AllocationAndHoldingValue>
-                <S.TextBalance>
-                  {Number(tokenSelection.balance).toFixed(2)}{' '}
-                  {tokenSelection.symbol}
-                </S.TextBalance>
-              </>
+            {tokenSelection.balanceUSD !== 0 ? (
+              <S.AllocationAndHoldingValue>
+                ${Number(tokenSelection.balanceUSD).toFixed(2)}
+              </S.AllocationAndHoldingValue>
             ) : (
-              <>
-                <S.AllocationAndHoldingValue>---</S.AllocationAndHoldingValue>
-                <S.TextBalance>---</S.TextBalance>
-              </>
+              <S.AllocationAndHoldingValue>---</S.AllocationAndHoldingValue>
+            )}
+            {tokenSelection.balance !== 0 ? (
+              <S.TextBalance>
+                {Number(tokenSelection.balance).toFixed(2)}{' '}
+                {tokenSelection.symbol}
+              </S.TextBalance>
+            ) : (
+              <S.TextBalance>---</S.TextBalance>
             )}
           </S.TokenValueContainer>
         </S.LineRemovedTokenReview>
@@ -77,9 +86,8 @@ const SelectTokenRemove = () => {
             Lp needed for removal
           </S.ValueText>
           <S.TokenValueContainer>
-            {lpNeeded ? (
+            {!lpNeeded.value.lte(0) ? (
               <S.AllocationAndHoldingValue>
-                {/* {(Number(assetSelectionInfo.allocation) * 100).toFixed(2)}% */}
                 {BNtoDecimal(lpNeeded.value, tokenSelection.decimals, 2)}
               </S.AllocationAndHoldingValue>
             ) : (
@@ -93,16 +101,30 @@ const SelectTokenRemove = () => {
                 height={10}
               />{' '}
               <strong>Balance:</strong>
-              {/* --- */}
-              {lpNeeded ? BNtoDecimal(lpNeeded.balance, 18, 2) : '---'}
-              {/* 14000 LP */}
+              {tokenSelection.address !== ''
+                ? BNtoDecimal(lpNeeded.balanceInWallet, 18, 2)
+                : '---'}
+              <input
+                form="manageAssetsForm"
+                id="inputBalanceValue"
+                name="inputBalanceValue"
+                type="radio"
+                value={BNtoDecimal(lpNeeded.balanceInWallet, 18, 2)}
+                onInvalid={handleInvalid}
+                ref={inputRef}
+                required
+                checked={lpNeeded.balanceInWallet.gte(lpNeeded.value)}
+                onChange={() => {
+                  return
+                }}
+              />
             </S.TextBalance>
           </S.TokenValueContainer>
         </S.LineRemovedTokenReview>
       </S.RemovedTokenReviewCard>
 
       <S.NotificationStatusContainer
-        showError={!lpNeeded.balance.gte(lpNeeded.value)}
+        showError={!lpNeeded.balanceInWallet.gte(lpNeeded.value)}
       >
         <img src="/assets/notificationStatus/queued.svg" alt="" />
         <p>
