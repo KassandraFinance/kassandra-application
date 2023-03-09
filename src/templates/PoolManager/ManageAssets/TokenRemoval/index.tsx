@@ -26,11 +26,10 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks'
 
 import web3 from '@/utils/web3'
 
-import Steps from '../../../../../components/Steps'
+import Steps from '@/components/Steps'
 import SelectTokenRemove from './SelectTokenRemove'
-import NewAllocationTable from '../../AddLiquidity/NewAllocationTable'
+import NewAllocationTable from '../AddLiquidity/NewAllocationTable'
 import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
-
 
 import * as S from './styles'
 
@@ -56,8 +55,6 @@ const TokenRemoval = () => {
     data?.pool.chain.addressWrapped,
     handleMockToken(data?.pool.underlying_assets_addresses ?? [])
   )
-
-  console.log(coingeckoData)
 
   function handleMockToken(tokenList: any) {
     const mockTokensList = tokenList?.map((item: string) => {

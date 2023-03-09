@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useAppSelector } from '@/store/hooks'
 import { BNtoDecimal } from '@/utils/numerals'
 
-import Button from '../../../../../components/Button'
+import Button from '../../../../components/Button'
 import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
 import * as S from './styles'

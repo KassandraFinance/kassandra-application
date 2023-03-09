@@ -22,9 +22,9 @@ import {
 } from '../../../constants/tokenAddresses'
 import { GET_POOL_TOKENS } from './AddLiquidity/graphql'
 
-import TokenRemoval from './RemoveAssets/TokenRemoval'
-import RemoveReview from './RemoveAssets/RemoveReview'
-import AssetRemovelCard from './RemoveAssets/AssetRemovelCard'
+import TokenRemoval from './TokenRemoval'
+import RemoveReview from './RemoveReview'
+import AssetRemovelCard from './AssetRemovelCard'
 import SelectAssets from './SelectAssets'
 import ChooseAction from './ChooseAction'
 import RebalanceAssets from './RebalanceAssets'

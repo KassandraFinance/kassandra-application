@@ -3,10 +3,10 @@ import Big from 'big.js'
 
 import { useAppSelector } from '@/store/hooks'
 
-import Steps from '../../../../../components/Steps'
+import Steps from '@/components/Steps'
 import TransactionSummaryCard from './TransactionSummaryCard'
+import NewAllocationsTable from '@/components/Manage/NewAllocationsTable'
 import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
-import NewAllocationsTable from '../../../../../components/Manage/NewAllocationsTable'
 
 import * as S from './styles'
 
