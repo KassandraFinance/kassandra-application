@@ -141,22 +141,22 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
           </S.TH>
 
           <S.TH isView={inViewCollum === 1}>
-            <S.ColumnTitle type="number">Price</S.ColumnTitle>
+            <S.ColumnTitle align="right">Price</S.ColumnTitle>
           </S.TH>
           <S.TH isView={inViewCollum === 2}>
-            <S.ColumnTitle type="number">TVL</S.ColumnTitle>
+            <S.ColumnTitle align="right">TVL</S.ColumnTitle>
           </S.TH>
           <S.TH isView={inViewCollum === 3}>
-            <S.ColumnTitle type="geral">Asset</S.ColumnTitle>
+            <S.ColumnTitle align="center">Asset</S.ColumnTitle>
           </S.TH>
           <S.TH isView={inViewCollum === 4}>
-            <S.ColumnTitle type="number">Volume (24h)</S.ColumnTitle>
+            <S.ColumnTitle align="right">Volume (24h)</S.ColumnTitle>
           </S.TH>
           <S.TH isView={inViewCollum === 5}>
-            <S.ColumnTitle type="number">Monthly</S.ColumnTitle>
+            <S.ColumnTitle align="right">Monthly</S.ColumnTitle>
           </S.TH>
           <S.TH isView={inViewCollum === 6}>
-            <S.ColumnTitle type="number">24h</S.ColumnTitle>
+            <S.ColumnTitle align="right">24h</S.ColumnTitle>
           </S.TH>
 
           <S.TH>

@@ -53,7 +53,7 @@ interface ITHProps {
 }
 
 // prettier-ignore
-export const TH = styled.div < ITHProps > `
+export const TH = styled.div<ITHProps>`
   ${() => css`
     display: grid;
     grid-template-columns: 1fr;
@@ -107,17 +107,18 @@ export const TD = styled.div<ITDProps>`
 `
 
 interface IColumnTitleProps {
-  type?: 'number' | 'geral';
+  align?: 'right' | 'left' | 'center';
 }
 
 // prettier-ignore
 export const ColumnTitle = styled.div<IColumnTitleProps>`
-  ${({ theme }) => css`
+  ${({ theme, align = 'left' }) => css`
     color: ${theme.colors.snow};
     font-weight: ${theme.font.weight.normal};
     font-size: ${theme.font.sizes.font12};
     line-height: ${theme.font.sizes.font12};
     letter-spacing: 0.22em;
+    text-align: ${align};
     text-transform: uppercase;
 
     @media (min-width: 768px) {
@@ -128,27 +129,22 @@ export const ColumnTitle = styled.div<IColumnTitleProps>`
       text-transform: capitalize;
     }
   `}
-  ${({ type }) => type === 'number' && css`
-      text-align: right;
-  `}
-  ${({ type }) => type === 'geral' && css`
-      text-align: center;
-  `}
 `
 
 interface IValueProps {
   value?: number;
+  align?: 'right' | 'left' | 'center';
 }
 
 // prettier-ignore
 export const Value = styled.span<IValueProps>`
-  ${({ theme }) => css`
+  ${({ theme, align = 'right' }) => css`
     color: ${theme.colors.white};
     font-weight: ${theme.font.weight.normal};
     font-size: ${theme.font.sizes.font14};
     line-height: 135%;
     letter-spacing: 0.05em;
-    text-align: right;
+    text-align: ${align};
   `}
   ${({ theme, value = 0 }) => value > 0 && css`
     color: ${theme.colors.green};
