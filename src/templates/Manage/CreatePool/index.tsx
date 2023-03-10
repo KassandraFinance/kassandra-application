@@ -66,6 +66,13 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
 
+  const buttonText = {
+    [TransactionStatus.START]: 'Start pool creation',
+    [TransactionStatus.CONTINUE]: 'Continue pool creation',
+    [TransactionStatus.WAITING]: 'Waiting transaction',
+    [TransactionStatus.COMPLETED]: 'Pool created'
+  }
+
   const poolCreationSteps = [
     <StepGuide key="stepGuide" />,
     <SetDetails key="setDetails" />,
@@ -77,6 +84,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       title='To finish the creation of your pool you need to approve the following:'
       key="modalTransactions"
       transactionButtonStatus={transactionButtonStatus}
+      buttonText={buttonText}
       isCompleted={isPoolCreated}
       transactions={transactions}
       onStart={deployPool}

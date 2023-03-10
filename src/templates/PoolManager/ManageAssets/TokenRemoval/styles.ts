@@ -1,15 +1,10 @@
 import styled, { css } from 'styled-components'
 
-// interface IProps {
-//   isActive: boolean;
-// }
-// eslint-disable-next-line prettier/prettier
-
-export const RemoveReview = styled.div`
+export const TokenRemoval = styled.span`
   ${() => css``}
 `
 
-export const RemoveReviewBody = styled.div`
+export const TokenRemovalsBody = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
@@ -34,11 +29,10 @@ export const RemoveReviewBody = styled.div`
   `}
 `
 
-export const ReviewCardAndTable = styled.div`
+export const SelectTokenAndTableAllocation = styled.div`
   ${() => css`
     display: grid;
-    grid-template-columns: minmax(40rem, 45.7rem) 1fr;
-    align-items: flex-start;
+    grid-template-columns: 36.1rem 1fr;
     gap: 2.4rem;
     margin-bottom: 10rem;
 
@@ -47,7 +41,3 @@ export const ReviewCardAndTable = styled.div`
     }
   `}
 `
-
-// export const ReviewCardAndTable = styled.span`
-//   ${() => css``}
-// `
