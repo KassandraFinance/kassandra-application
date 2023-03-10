@@ -1,5 +1,4 @@
 import React from 'react'
-import Link from 'next/link'
 
 import Button from '../../../../../components/Button'
 
@@ -7,10 +6,13 @@ import * as S from './styles'
 
 interface IRebalanceSuccessProps {
   time: number;
-  pool?: string;
+  setIsOpenManageAssets: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const RebalanceSuccess = ({ time, pool }: IRebalanceSuccessProps) => {
+const RebalanceSuccess = ({
+  time,
+  setIsOpenManageAssets
+}: IRebalanceSuccessProps) => {
   return (
     <S.RebalanceSuccess>
       <S.RebalanceSuccessCard>
@@ -27,15 +29,13 @@ const RebalanceSuccess = ({ time, pool }: IRebalanceSuccessProps) => {
           The rebalancing will end in
         </S.RebalanceSuccessdParagraph>
         <S.TimeParagraph>{time} hours</S.TimeParagraph>
-        <Link href={`/manage/${pool ?? ''}`} passHref>
-          <Button
-            as="a"
-            fullWidth
-            backgroundPrimary
-            text="Done"
-            className="doneButton"
-          />
-        </Link>
+        <Button
+          fullWidth
+          backgroundPrimary
+          text="Done"
+          className="doneButton"
+          onClick={() => setIsOpenManageAssets(false)}
+        />
       </S.RebalanceSuccessCard>
     </S.RebalanceSuccess>
   )

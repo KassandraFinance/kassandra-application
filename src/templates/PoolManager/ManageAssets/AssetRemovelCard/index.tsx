@@ -9,7 +9,13 @@ import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
 import * as S from './styles'
 
-const AssetRemovelCard = () => {
+interface IAssetsRemovelCardProps {
+  setIsOpenManageAssets: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const AssetRemovelCard = ({
+  setIsOpenManageAssets
+}: IAssetsRemovelCardProps) => {
   const { tokenSelection, lpNeeded, poolInfo } = useAppSelector(
     state => state.removeAsset
   )
@@ -63,7 +69,13 @@ const AssetRemovelCard = () => {
       </S.LpSendWrapper>
 
       <Link href={`/manage/${poolInfo.id}`}>
-        <Button text="Done" backgroundPrimary fullWidth as="a" />
+        <Button
+          text="Done"
+          backgroundPrimary
+          fullWidth
+          as="a"
+          onClick={() => setIsOpenManageAssets(false)}
+        />
       </Link>
     </S.AssetRemovelCard>
   )
