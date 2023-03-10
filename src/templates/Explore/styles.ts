@@ -19,7 +19,6 @@ export const Explore = styled.section`
 
 export const ExploreContainer = styled.div`
   padding-top: 3.2rem;
-  border-top: 0.1rem solid rgba(255, 255, 255, 0.1);
 `
 
 export const TitleContainer = styled.div`

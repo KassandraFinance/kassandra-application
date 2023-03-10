@@ -16,8 +16,25 @@ import CommunityPoolsTable from './CommunityPoolsTable'
 import sectionTitleEye from '../../../public/assets/iconGradient/section-title-eye.svg'
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
 import communityFunds from '../../../public/assets/iconGradient/community.svg'
+import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
+import managerIcon from '../../../public/assets/iconGradient/manager.svg'
 
 import * as S from './styles'
+import ManagersPoolTable from './ManagersPoolTable'
+import SelectTabs from '@/components/SelectTabs'
+
+const tabs = [
+  {
+    asPathText: 'pools',
+    text: 'Investment Pools',
+    icon: inexpensiveIcon
+  },
+  {
+    asPathText: 'managers',
+    text: 'Pool Managers',
+    icon: managerIcon
+  }
+]
 
 type GetCommunityPoolsType = {
   pools: {
@@ -61,6 +78,9 @@ export default function Explore({
   poolsCommunity
 }: IIndexProps) {
   const [loading, setLoading] = React.useState(true)
+  const [isSelectTab, setIsSelectTab] = React.useState<
+    string | string[] | undefined
+  >('pools')
 
   const params = {
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
@@ -99,32 +119,50 @@ export default function Explore({
           />
         </S.TitleContainer>
 
-        <S.ExploreContainer>
-          <TitleSection image={featuredFunds} title="Featured Pools" text="" />
+        <SelectTabs
+          tabs={tabs}
+          isSelect={isSelectTab}
+          setIsSelect={setIsSelectTab}
+        />
 
-          {loading && (
-            <S.LoadingContainer>
-              <Loading marginTop={0} />
-            </S.LoadingContainer>
-          )}
+        {isSelectTab === 'pools' && (
+          <S.ExploreContainer>
+            <TitleSection
+              image={featuredFunds}
+              title="Featured Pools"
+              text=""
+            />
 
-          <S.CardContainer loading={loading}>
-            {poolsKassandra.map(pool => (
-              <FundCard key={pool.id} poolAddress={pool.id} />
-            ))}
-          </S.CardContainer>
+            {loading && (
+              <S.LoadingContainer>
+                <Loading marginTop={0} />
+              </S.LoadingContainer>
+            )}
 
-          <S.ComunitFundsContainer>
-            <S.TitleWrapper>
-              <TitleSection
-                image={communityFunds}
-                title="Community Pools"
-                text=""
-              />
-            </S.TitleWrapper>
-            {data && <CommunityPoolsTable pools={data?.pools} />}
-          </S.ComunitFundsContainer>
-        </S.ExploreContainer>
+            <S.CardContainer loading={loading}>
+              {poolsKassandra.map(pool => (
+                <FundCard key={pool.id} poolAddress={pool.id} />
+              ))}
+            </S.CardContainer>
+
+            <S.ComunitFundsContainer>
+              <S.TitleWrapper>
+                <TitleSection
+                  image={communityFunds}
+                  title="Community Pools"
+                  text=""
+                />
+              </S.TitleWrapper>
+              {data && <CommunityPoolsTable pools={data?.pools} />}
+            </S.ComunitFundsContainer>
+          </S.ExploreContainer>
+        )}
+
+        {isSelectTab === 'managers' && (
+          <S.ExploreContainer>
+            <ManagersPoolTable />
+          </S.ExploreContainer>
+        )}
       </S.Explore>
     </>
   )
