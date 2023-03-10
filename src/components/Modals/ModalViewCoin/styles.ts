@@ -53,7 +53,13 @@ export const ModalHeader = styled.div`
 `
 
 export const ImageWrapper = styled.div`
-  ${() => css``}
+  ${() => css`
+    overflow: hidden;
+
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+  `}
 `
 
 export const Title = styled.p`

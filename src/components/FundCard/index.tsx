@@ -11,7 +11,7 @@ import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
 
 import { getWeightsNormalizedV2 } from '../../utils/updateAssetsToV2'
-import { BNtoDecimal } from '../../utils/numerals'
+import { BNtoDecimal, calcChange } from '../../utils/numerals'
 
 import FundAreaChart from './FundAreaChart'
 import FundBarChart from './FundBarChart'
@@ -67,11 +67,6 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
 
   const getPercentage = (weight: number) => {
     return Number((weight * 100).toFixed(2))
-  }
-
-  function calcChange(newPrice: number, oldPrice: number) {
-    const calc = ((newPrice - oldPrice) / oldPrice) * 100
-    return calc ? calc.toFixed(2) : '0'
   }
 
   React.useEffect(() => {

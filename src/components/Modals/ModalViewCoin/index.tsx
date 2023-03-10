@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
 import Image from 'next/image'
+import Blockies from 'react-blockies'
 
 import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
 import Overlay from '../../Overlay'
@@ -12,6 +13,7 @@ interface IModalViewCoinProps {
     name: string
   };
   isOpen: boolean;
+  isBlockies?: boolean;
   onClick: () => void;
   children: ReactNode;
 }
@@ -19,6 +21,7 @@ interface IModalViewCoinProps {
 const ModalViewCoin = ({
   title,
   isOpen,
+  isBlockies = false,
   onClick,
   children
 }: IModalViewCoinProps) => {
@@ -29,11 +32,13 @@ const ModalViewCoin = ({
       <S.ModalCoin isOpen={isOpen}>
         <S.ModalHeader>
           <S.ImageWrapper>
-            {title.logo.length > 0 && (
+            {title?.logo?.length > 0 ? (
               <Image src={title.logo} width={24} height={24} />
-            )}
+            ) : isBlockies ? (
+              <Blockies seed={title.name} size={8} scale={3} />
+            ) : null}
           </S.ImageWrapper>
-          <S.Title>{title.name}</S.Title>
+          <S.Title>{title?.name}</S.Title>
 
           <S.CloseButton type="button" onClick={onClick}>
             <Image src={closeIcon} />
