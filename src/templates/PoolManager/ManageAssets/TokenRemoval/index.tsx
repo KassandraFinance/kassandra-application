@@ -10,7 +10,7 @@ import {
   mockTokens,
   networks
 } from '@/constants/tokenAddresses'
-import ManagedPool from '@/constants/abi/managedPool.json'
+import ManagedPool from '@/constants/abi/ManagedPool.json'
 import { GET_INFO_POOL } from '@/templates/PoolManager/graphql'
 
 import {
