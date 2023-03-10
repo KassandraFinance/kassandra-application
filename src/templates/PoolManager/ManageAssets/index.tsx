@@ -5,6 +5,7 @@ import { request } from 'graphql-request'
 import Big from 'big.js'
 import web3 from '../../../utils/web3'
 import { AbiItem } from 'web3-utils'
+import { useRouter } from 'next/router'
 
 import { ERC20 } from '../../../hooks/useERC20Contract'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
@@ -26,7 +27,7 @@ import TokenRemoval from './TokenRemoval'
 import RemoveReview from './RemoveReview'
 import AssetRemovelCard from './AssetRemovelCard'
 import SelectAssets from './SelectAssets'
-import ChooseAction from './ChooseAction'
+import ChooseAction, { chooseActionStep } from './ChooseAction'
 import RebalanceAssets from './RebalanceAssets'
 import ContainerButton from '../../../components/ContainerButton'
 import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
@@ -37,6 +38,9 @@ import ModalTransactions, {
   TransactionStatus
 } from '../../../components/Modals/ModalTransactions'
 import TransactionFinalized from './TransactionFinalized'
+import SetNewWeights from './RebalanceAssets/SetNewWeights'
+import RebalanceReview from './RebalanceAssets/RebalanceReview'
+import RebalanceSuccess from './RebalanceAssets/RebalanceSuccess'
 
 import {
   GetPoolTokensType,
@@ -45,7 +49,6 @@ import {
 
 import addIcon from '../../../../public/assets/iconGradient/add.svg'
 
-import * as S from './styles'
 import {
   FlexContainer,
   ContentTitle,
@@ -55,7 +58,8 @@ import {
   SecondaryValue,
   ImageWrapper
 } from './ReviewAddAsset/TransactionSummary/styles'
-import { useRouter } from 'next/router'
+import * as S from './styles'
+
 
 Big.RM = 0
 
@@ -65,6 +69,7 @@ interface IManageAssetsProps {
 
 const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const [step, setStep] = React.useState(0)
+  const [actionSelected, setActionSelected] = React.useState(chooseActionStep.Default)
   const [transactions, setTransactions] = React.useState<
     TransactionsListType[]
   >([])
@@ -120,7 +125,15 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     [TransactionStatus.COMPLETED]: `${token.symbol} removed`
   }
 
+  const buttonTextActionRebalance = {
+    [TransactionStatus.START]: `Start Rebalance`,
+    [TransactionStatus.CONTINUE]: `Continue Rebalance`,
+    [TransactionStatus.WAITING]: 'Waiting transaction',
+    [TransactionStatus.COMPLETED]: `Rebalance`
+  }
+
   const addNewAsset = [
+    null,
     <SelectAssets key="selectAssets" />,
     <AddLiquidity key="addLiquidity" />,
     <ReviewAddAsset key="reviewAddAsset" />,
@@ -204,6 +217,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   ]
 
   const RemoveAsset = [
+    null,
     <TokenRemoval key="TokenRemoval" />,
     <RemoveReview key="RemoveReview" />,
     <ModalTransactions
@@ -217,8 +231,33 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       onCancel={() => setStep(prev => prev - 1)}
       onComfirm={() => setStep(prev => prev + 1)}
     />,
-    <AssetRemovelCard key="AssetRemovelCard" />
+    <AssetRemovelCard key="AssetRemovelCard" setIsOpenManageAssets={setIsOpenManageAssets} />
   ]
+
+  const RebalanceAssets = [
+    null,
+    <SetNewWeights key="SetNewWeights" />,
+    <RebalanceReview key="RebalanceReview" />,
+    <ModalTransactions
+      key="modalTransactions"
+      title="Asset rebalance has been approved"
+      transactionButtonStatus={transactionButtonStatus}
+      buttonText={buttonTextActionRebalance}
+      isCompleted={isCompleted}
+      transactions={[]}
+      onStart={async () => {console.log('get')}}
+      onCancel={() => setStep(prev => prev - 1)}
+      onComfirm={() => setStep(prev => prev + 1)}
+    />,
+    <RebalanceSuccess key="RebalanceSuccess" time={30} setIsOpenManageAssets={setIsOpenManageAssets} />
+  ]
+
+  const chosenAction = {
+    [chooseActionStep.Default]: null,
+    [chooseActionStep.Add]: addNewAsset[step],
+    [chooseActionStep.Remove]: RemoveAsset[step],
+    [chooseActionStep.Rebalance]: RebalanceAssets[step]
+  }
 
   async function getTransactionsList(
     tokenId: string,
@@ -478,7 +517,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (step === 1) {
+
+    if (actionSelected === chooseActionStep.Remove && step === 1) {
       getTransactionsList(
         poolInfo.address,
         poolInfo.controller,
@@ -487,17 +527,22 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         tokenSelection.symbol,
         poolInfo.symbol
       )
-      // getTransactionsList(
-      //   mockTokensReverse[token.id.toLowerCase()],
-      //   controller,
-      //   'Add',
-      //   'addToken',
-      //   token.symbol
-      // )
+    }
+    if (actionSelected === chooseActionStep.Add && step === 2) {
+      getTransactionsList(
+        mockTokensReverse[token.id.toLowerCase()],
+        controller,
+        'Add',
+        'addToken',
+        token.symbol
+      )
       // getTransactionsList(mockTokensReverse[token.id.toLowerCase()])
     }
 
-    setStep(prev => prev + 1)
+    if (actionSelected > 0 && step < 4  || (actionSelected === chooseActionStep.Add && step < 5)) {
+      setStep(prev => prev + 1)
+    }
+
   }
 
   return (
@@ -506,21 +551,25 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         handleCloseModal={() => setIsOpenManageAssets(false)}
       >
         <form id="manageAssetsForm" onSubmit={handleSubmit}>
-          {
-            // <ChooseAction />
-          }
-          {/* <RebalanceAssets /> */}
-          {RemoveAsset[step]}
-          {/* {addNewAsset[step]} */}
-
-          <ContainerButton
-            form="manageAssetsForm"
-            backButtonDisabled={step < 1}
-            onBack={() => setStep(prev => prev - 1)}
-            onNext={() => {
-              return
-            }}
-          />
+          {step === 0 ? (
+             <ChooseAction
+              poolId={poolId}
+              actionSelected={actionSelected}
+              setActionSelected={setActionSelected}
+            />
+          ) : (
+            chosenAction[actionSelected]
+          )}
+          {step < 4 && (
+            <ContainerButton
+              form="manageAssetsForm"
+              backButtonDisabled={step < 1}
+              onBack={() => setStep(prev => prev - 1)}
+              onNext={() => {
+                return
+              }}
+            />
+          )}
         </form>
       </ModalFullWindow>
     </S.ManageAssets>
