@@ -79,7 +79,7 @@ const tabs = [
 // }
 
 const PoolManager = () => {
-  const [isManageAssets, setIsManageAssets] = React.useState(false)
+  const [isOpenManageAssets, setIsOpenManageAssets] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
   const [openModal, setOpenModal] = React.useState(false)
   const [isSelectTab, setIsSelectTab] = React.useState<
@@ -194,7 +194,7 @@ const PoolManager = () => {
               size="large"
               text="Manage Assets"
               image={gear.src}
-              onClick={() => setIsManageAssets(true)}
+              onClick={() => setIsOpenManageAssets(true)}
             />
           </S.Intro>
           <SelectTabs
@@ -209,7 +209,9 @@ const PoolManager = () => {
           }
         </S.Content>
       </S.DashBoard>
-      {isManageAssets && <ManageAssets />}
+      {isOpenManageAssets && (
+        <ManageAssets setIsOpenManageAssets={setIsOpenManageAssets} />
+      )}
       <ShareImageModal
         poolId={data?.pool.id}
         setOpenModal={setOpenModal}
