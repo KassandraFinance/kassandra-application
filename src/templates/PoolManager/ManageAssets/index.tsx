@@ -59,7 +59,11 @@ import { useRouter } from 'next/router'
 
 Big.RM = 0
 
-const ManageAssets = () => {
+interface IManageAssetsProps {
+  setIsOpenManageAssets: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const [step, setStep] = React.useState(0)
   const [transactions, setTransactions] = React.useState<
     TransactionsListType[]
@@ -499,8 +503,7 @@ const ManageAssets = () => {
   return (
     <S.ManageAssets>
       <ModalFullWindow
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        handleCloseModal={() => {}}
+        handleCloseModal={() => setIsOpenManageAssets(false)}
       >
         <form id="manageAssetsForm" onSubmit={handleSubmit}>
           {
