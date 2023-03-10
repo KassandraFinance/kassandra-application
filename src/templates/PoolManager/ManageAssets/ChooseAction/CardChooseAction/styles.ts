@@ -6,6 +6,8 @@ interface ICardChooseActionProps {
 // eslint-disable-next-line prettier/prettier
 export const CardChooseAction = styled.button<ICardChooseActionProps>`
   ${({ theme, isActive }) => css`
+    position: relative;
+
     display: flex;
     align-items: center;
     gap: 2.4rem;
@@ -31,6 +33,13 @@ export const CardChooseAction = styled.button<ICardChooseActionProps>`
 
     @media (max-width: 576px) {
       gap: 1.6rem;
+    }
+
+    input {
+      position: absolute;
+      opacity: 0;
+      right: 0;
+      bottom: 0;
     }
   `}
 `
