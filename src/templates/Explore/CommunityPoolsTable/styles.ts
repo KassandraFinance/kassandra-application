@@ -195,6 +195,15 @@ export const ValueContainer = styled.div`
   `}
 `
 
+export const Imagecontainer = styled.div`
+  ${() => css`
+    position: relative;
+
+    width: 2.4rem;
+    height: 2.4rem;
+  `}
+`
+
 export const ImageWrapper = styled.div`
   ${() => css`
     position: relative;
@@ -204,6 +213,22 @@ export const ImageWrapper = styled.div`
     width: 2.4rem;
     height: 2.4rem;
     border-radius: 50%;
+  `}
+`
+
+export const ChainLogoWrapper = styled.div`
+  ${({ theme }) => css`
+    position: absolute;
+    right: -0.5rem;
+    bottom: 0;
+
+    overflow: hidden;
+
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+
+    background-color: ${theme.colors.white};
   `}
 `
 

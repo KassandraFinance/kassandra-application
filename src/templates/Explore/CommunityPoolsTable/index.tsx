@@ -182,20 +182,29 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
               <S.TD>
                 <Link href={`/pool/${pool.id}`} passHref>
                   <S.Link>
-                <S.ValueContainer>
-                  <S.ImageWrapper>
-                    {pool.logo ? (
-                      <Image src={pool.logo} layout="fill" />
-                    ) : (
-                      <Blockies seed={pool.name} size={8} scale={3} />
-                    )}
-                  </S.ImageWrapper>
-                  <S.ValueWrapper>
-                    <S.TextValue>{pool.name}</S.TextValue>
+                    <S.ValueContainer>
+                      <S.Imagecontainer>
+                        <S.ImageWrapper>
+                          {pool.logo ? (
+                            <Image src={pool.logo} layout="fill" />
+                          ) : (
+                            <Blockies seed={pool.name} size={8} scale={3} />
+                          )}
+                        </S.ImageWrapper>
 
-                    <S.SecondaryTextValue>{pool.symbol}</S.SecondaryTextValue>
-                  </S.ValueWrapper>
-                </S.ValueContainer>
+                        <S.ChainLogoWrapper>
+                          <Image src={pool.chain.logo} layout="fill" />
+                        </S.ChainLogoWrapper>
+                      </S.Imagecontainer>
+
+                      <S.ValueWrapper>
+                        <S.TextValue>{pool.name}</S.TextValue>
+
+                        <S.SecondaryTextValue>
+                          {pool.symbol}
+                        </S.SecondaryTextValue>
+                      </S.ValueWrapper>
+                    </S.ValueContainer>
                   </S.Link>
                 </Link>
               </S.TD>
