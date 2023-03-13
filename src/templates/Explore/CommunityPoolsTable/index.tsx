@@ -62,7 +62,7 @@ interface ICommunityPoolsTableProps {
 const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
   const [inViewCollum, setInViewCollum] = React.useState(1)
   const [isOpen, setIsOpen] = React.useState(false)
-  const [token, setToken] = React.useState({
+  const [pool, setPool] = React.useState({
     logo: '',
     name: ''
   })
@@ -119,7 +119,7 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
     monthly: string,
     day: string
   ) {
-    setToken({
+    setPool({
       logo: logo || '',
       name: token
     })
@@ -305,7 +305,7 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
 
       <ModalViewCoin
         isOpen={isOpen}
-        title={token}
+        title={pool}
         isBlockies
         onClick={() => setIsOpen(false)}
       >

@@ -31,7 +31,7 @@ import {
 const ManagersPoolTable = () => {
   const [inViewCollum, setInViewCollum] = React.useState(1)
   const [isOpen, setIsOpen] = React.useState(false)
-  const [titleData, setTitleData] = React.useState({
+  const [managerData, setManagerData] = React.useState({
     logo: '',
     name: '',
     address: ''
@@ -69,7 +69,7 @@ const ManagersPoolTable = () => {
     day: number,
     voteWeight: number
   ) {
-    setTitleData({
+    setManagerData({
       logo: logo || '',
       name: token,
       address: address
@@ -180,7 +180,7 @@ const ManagersPoolTable = () => {
 
       <ModalViewCoin
         isOpen={isOpen}
-        title={titleData}
+        title={managerData}
         isJazzicon
         onClick={() => setIsOpen(false)}
       >

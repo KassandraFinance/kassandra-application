@@ -12,6 +12,8 @@ import TitleSection from '../../components/TitleSection'
 import FundCard from '../../components/FundCard'
 import Loading from '../../components/Loading'
 import CommunityPoolsTable from './CommunityPoolsTable'
+import ManagersPoolTable from './ManagersPoolTable'
+import SelectTabs from '@/components/SelectTabs'
 
 import sectionTitleEye from '../../../public/assets/iconGradient/section-title-eye.svg'
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
@@ -20,8 +22,6 @@ import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg
 import managerIcon from '../../../public/assets/iconGradient/manager.svg'
 
 import * as S from './styles'
-import ManagersPoolTable from './ManagersPoolTable'
-import SelectTabs from '@/components/SelectTabs'
 
 const tabs = [
   {
