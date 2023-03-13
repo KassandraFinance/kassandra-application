@@ -5,6 +5,7 @@ export const GET_COMMUNITYPOOLS = gql`
     pools(
       where: { manager_not: "0xFF56b00bDaEEf52C3EBb81B0efA6e28497305175" }
     ) {
+      id
       name
       symbol
       logo

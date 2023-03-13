@@ -38,6 +38,7 @@ const tabs = [
 
 type GetCommunityPoolsType = {
   pools: {
+    id: string,
     address: string,
     chainId: number,
     logo: string | null,
@@ -73,10 +74,7 @@ type GetCommunityPoolsType = {
   }[]
 }
 
-export default function Explore({
-  poolsKassandra,
-  poolsCommunity
-}: IIndexProps) {
+export default function Explore({ poolsKassandra }: IIndexProps) {
   const [loading, setLoading] = React.useState(true)
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
