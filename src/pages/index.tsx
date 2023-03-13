@@ -9,11 +9,10 @@ export interface IPoolAddress {
   id: string;
 }
 export interface IIndexProps {
-  poolsCommunity: IPoolAddress[];
   poolsKassandra: IPoolAddress[];
 }
 
-export default function Index({ poolsKassandra, poolsCommunity }: IIndexProps) {
+export default function Index({ poolsKassandra }: IIndexProps) {
   return (
     <>
       <Head>
@@ -25,7 +24,8 @@ export default function Index({ poolsKassandra, poolsCommunity }: IIndexProps) {
         <meta property="og:image:height" content="506" />
         <meta property="og:url" content="https://kassandra.finance/" />
       </Head>
-      <Explore poolsCommunity={poolsCommunity} poolsKassandra={poolsKassandra} />
+
+      <Explore poolsKassandra={poolsKassandra} />
     </>
   )
 }
@@ -59,19 +59,15 @@ export const getStaticProps: GetStaticProps = async () => {
     const poolsId = pools.reduce((acc, { featured, id }) => {
       if (featured) {
         acc.poolsKassandra.push({ id })
-      } else {
-        acc.poolsCommunity.push({ id })
       }
       return acc
     }, {
       // eslint-disable-next-line prettier/prettier
       poolsKassandra: [] as Array<{ id: string }>,
-      poolsCommunity: [] as Array<{ id: string }>
     })
 
     return {
       props: {
-        poolsCommunity: poolsId.poolsCommunity,
         poolsKassandra: poolsId.poolsKassandra
       },
       revalidate: 30
@@ -80,7 +76,6 @@ export const getStaticProps: GetStaticProps = async () => {
     console.log('error ', error)
     return {
       props: {
-        poolsCommunity: [],
         poolsKassandra: []
       },
       revalidate: 30
