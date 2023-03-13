@@ -12,6 +12,9 @@ export const GET_POOL_TOKENS = gql`
       supply
       total_value_locked_usd
       controller
+      chain {
+        logo
+      }
       weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 1) {
         weights(orderBy: weight_normalized, orderDirection: desc) {
           token {
