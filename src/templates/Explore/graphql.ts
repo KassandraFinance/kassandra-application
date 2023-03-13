@@ -1,10 +1,8 @@
 import { gql } from 'graphql-request'
 
 export const GET_COMMUNITYPOOLS = gql`
-  query ($day: Int, $month: Int) {
-    pools(
-      where: { manager_not: "0xFF56b00bDaEEf52C3EBb81B0efA6e28497305175" }
-    ) {
+  query ($day: Int, $month: Int, $multisig: String) {
+    pools(where: { manager_not: $multisig }) {
       id
       name
       symbol

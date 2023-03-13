@@ -3,7 +3,7 @@ import useSWR from 'swr'
 import request from 'graphql-request'
 
 import { IIndexProps } from '../../pages'
-import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA, multisig } from '../../constants/tokenAddresses'
 import { GET_COMMUNITYPOOLS } from './graphql'
 
 import Breadcrumb from '../../components/Breadcrumb'
@@ -82,7 +82,8 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
 
   const params = {
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30)
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    multisig: multisig
   }
 
   const { data } = useSWR<GetCommunityPoolsType>(
@@ -90,7 +91,8 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
     (query, { day, month }) =>
       request(BACKEND_KASSANDRA, query, {
         day,
-        month
+        month,
+        multisig
       })
   )
 
