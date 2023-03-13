@@ -18,6 +18,7 @@ import {
   GetPoolTokensType,
   CoinGeckoAssetsResponseType
 } from '../../AddLiquidity/AddLiquidityOperation'
+import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
 import * as S from './styles'
 
@@ -108,7 +109,28 @@ const TransactionSummary = () => {
               </S.ValueWrapper>
 
               <S.ImageWrapper>
-                <Image src={data.pool.logo} layout="fill" />
+                {data?.pool.logo ? (
+                  <Image src={data.pool.logo} width={24} height={24} />
+                ) : (
+                  <TokenWithNetworkImage
+                    tokenImage={{
+                      url: data.pool.logo,
+                      height: 24,
+                      width: 24,
+                      withoutBorder: true
+                    }}
+                    networkImage={{
+                      url: data.pool.chain.logo,
+                      height: 12,
+                      width: 12
+                    }}
+                    blockies={{
+                      size: 5,
+                      scale: 6,
+                      seedName: data.pool.name
+                    }}
+                  />
+                )}
               </S.ImageWrapper>
             </S.ValueContainer>
           )}
