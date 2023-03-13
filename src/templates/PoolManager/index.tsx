@@ -79,7 +79,7 @@ const tabs = [
 // }
 
 const PoolManager = () => {
-  const [isManageAssets, setIsManageAssets] = React.useState(false)
+  const [isOpenManageAssets, setIsOpenManageAssets] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
   const [openModal, setOpenModal] = React.useState(false)
   const [isSelectTab, setIsSelectTab] = React.useState<
@@ -124,29 +124,29 @@ const PoolManager = () => {
             <S.GridIntro>
               <TokenWithNetworkImage
                 tokenImage={{
-                  url: data?.pool.logo,
+                  url: data?.pool?.logo,
                   height: 75,
                   width: 75,
                   withoutBorder: true
                 }}
                 networkImage={{
-                  url: data?.pool.chain?.logo,
+                  url: data?.pool?.chain?.logo,
                   height: 20,
                   width: 20
                 }}
                 blockies={{
                   size: 8,
                   scale: 9,
-                  seedName: data?.pool.name
+                  seedName: data?.pool?.name
                 }}
               />
               <S.NameIndex>
                 <S.NameAndSymbol>
-                  <h1>{data?.pool.name}</h1>
+                  <h1>{data?.pool?.name}</h1>
                 </S.NameAndSymbol>
                 <S.SymbolAndLink>
-                  <h3>${data?.pool.symbol}</h3>
-                  <Link href={`/pool/${data?.pool.id}`}>
+                  <h3>${data?.pool?.symbol}</h3>
+                  <Link href={`/pool/${data?.pool?.id}`}>
                     <button className="circle">
                       <Image
                         src="/assets/icons/website-with-bg.svg"
@@ -156,7 +156,7 @@ const PoolManager = () => {
                     </button>
                   </Link>
                   <a
-                    href={`${data?.pool.chain?.blockExplorerUrl}/address/${data?.pool.address}`}
+                    href={`${data?.pool?.chain?.blockExplorerUrl}/address/${data?.pool.address}`}
                     className="circle"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -194,7 +194,7 @@ const PoolManager = () => {
               size="large"
               text="Manage Assets"
               image={gear.src}
-              onClick={() => setIsManageAssets(true)}
+              onClick={() => setIsOpenManageAssets(true)}
             />
           </S.Intro>
           <SelectTabs
@@ -209,7 +209,9 @@ const PoolManager = () => {
           }
         </S.Content>
       </S.DashBoard>
-      {isManageAssets && <ManageAssets />}
+      {isOpenManageAssets && (
+        <ManageAssets setIsOpenManageAssets={setIsOpenManageAssets} />
+      )}
       <ShareImageModal
         poolId={data?.pool.id}
         setOpenModal={setOpenModal}

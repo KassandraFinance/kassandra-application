@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 import {
   Table as T,
@@ -90,6 +90,8 @@ export const THead = styled(THD)`
 export const Tr = styled(TR)`
   ${() => css`
     gap: 1.8rem;
+
+    animation: ${animateOpacity} 600ms ease;
   `}
 `
 
@@ -97,10 +99,52 @@ export const Th = styled(TH)`
   ${() => css``}
 `
 
-export const TBody = styled(TB)`
-  ${() => css``}
+interface ITBodyProps {
+  height: number;
+}
+// eslint-disable-next-line prettier/prettier
+export const TBody = styled(TB)<ITBodyProps>`
+  ${({ height }) => css`
+    height: ${height}rem;
+    max-height: 41.4rem;
+
+    transition-duration: 600ms;
+    transition-timing-function: ease;
+    transition-property: height max-height opacity;
+  `}
 `
 
 export const Td = styled(TD)`
   ${() => css``}
+`
+// eslint-disable-next-line prettier/prettier
+export const textContainer = styled.span`
+  ${() => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 30.5rem;
+
+    animation: ${animateOpacity} 600ms ease;
+  `}
+`
+
+export const text = styled.p`
+  ${({ theme }) => css`
+    max-width: 30rem;
+
+    font-weight: ${theme.font.weight.normal};
+    font-size: ${theme.font.sizes.font12};
+    line-height: 1.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-align: center;
+  `}
+`
+
+const animateOpacity = keyframes`
+  0% { opacity: 0 }
+  100% { opacity: 1 }
 `

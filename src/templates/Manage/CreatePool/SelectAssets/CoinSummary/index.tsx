@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
+
 import link from '../../../../../../public/assets/utilities/external-link.svg'
 import walletIcon from '../../../../../../public/assets/utilities/wallet.svg'
 
@@ -10,6 +12,7 @@ interface ICoinSummaryProps {
   coinName: string;
   coinSymbol: string;
   coinImage: string;
+  chainImage?: string;
   price: number | null;
   url?: string | null;
   balance?: number | null;
@@ -21,6 +24,7 @@ const CoinSummary = ({
   coinName,
   coinSymbol,
   price,
+  chainImage,
   url = null,
   balance = null,
   table = false
@@ -28,7 +32,28 @@ const CoinSummary = ({
   return (
     <S.CoinSummary>
       <S.ImageWrapper>
-        <Image src={coinImage} width={24} height={24} />
+        {coinImage ? (
+          <Image src={coinImage} width={24} height={24} />
+        ) : (
+          <TokenWithNetworkImage
+            tokenImage={{
+              url: coinImage,
+              height: 24,
+              width: 24,
+              withoutBorder: true
+            }}
+            networkImage={{
+              url: chainImage,
+              height: 12,
+              width: 12
+            }}
+            blockies={{
+              size: 5,
+              scale: 6,
+              seedName: coinName
+            }}
+          />
+        )}
       </S.ImageWrapper>
 
       <S.TextWrapper>

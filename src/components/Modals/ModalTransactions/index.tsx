@@ -23,11 +23,14 @@ export type TransactionsListType = {
   status: StatusType
 }
 
+export type ButtonTextProps = Record<TransactionStatus, string>
+
 interface IModalTransactionsProps {
   title: string;
   transactions: TransactionsListType[];
   isCompleted: boolean;
   transactionButtonStatus: TransactionStatus;
+  buttonText: ButtonTextProps;
   onStart: () => Promise<void>;
   onCancel: () => void;
   onComfirm: () => void;
@@ -38,17 +41,11 @@ const ModalTransactions = ({
   transactions,
   isCompleted,
   transactionButtonStatus,
+  buttonText,
   onStart,
   onCancel,
   onComfirm
 }: IModalTransactionsProps) => {
-  const buttonText = {
-    [TransactionStatus.START]: 'Start pool creation',
-    [TransactionStatus.CONTINUE]: 'Continue pool creation',
-    [TransactionStatus.WAITING]: 'Waiting transaction',
-    [TransactionStatus.COMPLETED]: 'Pool created'
-  }
-
   return (
     <S.ModalTransactions>
       <S.Title>{title}</S.Title>

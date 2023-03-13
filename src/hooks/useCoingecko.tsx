@@ -34,7 +34,7 @@ const useCoingecko = (
   )
 
   const data = !dataOne
-    ? {}
+    ? null
     : dataTwo
     ? Object.assign(dataOne, dataTwo)
     : dataOne
