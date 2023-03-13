@@ -287,3 +287,28 @@ export const CoinModalContainer = styled.div`
     padding-right: 1.6rem;
   `}
 `
+
+export const Link = styled.a`
+  ${({ theme }) => css`
+    text-decoration: none;
+
+    cursor: pointer;
+
+    ${TextValue},
+    ${SecondaryTextValue} {
+      transition-timing-function: ease-in-out;
+      transition-duration: 300ms;
+      transition-property: color;
+    }
+
+    &:hover {
+      ${TextValue} {
+        color: ${theme.colors.cyan};
+      }
+
+      ${SecondaryTextValue} {
+        color: ${theme.colors.cyan};
+      }
+    }
+  `}
+`

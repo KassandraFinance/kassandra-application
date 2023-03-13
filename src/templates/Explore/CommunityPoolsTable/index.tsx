@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
 
@@ -22,6 +23,7 @@ import {
 
 interface ICommunityPoolsTableProps {
   pools: {
+    id: string,
     address: string,
     chainId: number,
     logo: string | null,
@@ -178,6 +180,8 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
           return (
             <S.TR key={pool.address}>
               <S.TD>
+                <Link href={`/pool/${pool.id}`} passHref>
+                  <S.Link>
                 <S.ValueContainer>
                   <S.ImageWrapper>
                     {pool.logo ? (
@@ -192,6 +196,8 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
                     <S.SecondaryTextValue>{pool.symbol}</S.SecondaryTextValue>
                   </S.ValueWrapper>
                 </S.ValueContainer>
+                  </S.Link>
+                </Link>
               </S.TD>
               <S.TD isView={inViewCollum === 1}>
                 <S.Value>${Big(pool?.price_usd || 0).toFixed(2)}</S.Value>
