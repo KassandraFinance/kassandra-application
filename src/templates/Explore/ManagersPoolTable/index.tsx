@@ -33,15 +33,16 @@ const ManagersPoolTable = () => {
   const [isOpen, setIsOpen] = React.useState(false)
   const [titleData, setTitleData] = React.useState({
     logo: '',
-    name: ''
+    name: '',
+    address: ''
   })
   const [lineData, setLineData] = React.useState({
-      rank: 0,
-      valueManaged: 0,
-      fundsManaged: 0,
-      monthly: 0,
-      day: 0,
-      voteWeight: 0 
+    rank: 0,
+    valueManaged: 0,
+    fundsManaged: 0,
+    monthly: 0,
+    day: 0,
+    voteWeight: 0
   })
 
   function handleCurrentInView(n: number) {
@@ -60,16 +61,18 @@ const ManagersPoolTable = () => {
   function handleView(
     token: string,
     logo: string | null,
-    rank,
-    valueManaged,
-    fundsManaged,
-    monthly,
-    day,
-    voteWeight
+    address: string,
+    rank: number,
+    valueManaged: number,
+    fundsManaged: number,
+    monthly: number,
+    day: number,
+    voteWeight: number
   ) {
     setTitleData({
       logo: logo || '',
-      name: token
+      name: token,
+      address: address
     })
     setLineData({
       rank: rank,
@@ -87,10 +90,10 @@ const ManagersPoolTable = () => {
       <THead>
         <TR>
           <TH>
-            <ColumnTitle>Rank</ColumnTitle>
+            <ColumnTitle>#</ColumnTitle>
           </TH>
           <TH>
-            <ColumnTitle align="center">Manager</ColumnTitle>
+            <ColumnTitle align="left">Manager</ColumnTitle>
           </TH>
           <TH isView={inViewCollum === 1}>
             <ColumnTitle align="right">Value Managed</ColumnTitle>
@@ -125,14 +128,15 @@ const ManagersPoolTable = () => {
       <TBody>
         <TR>
           <TD>
-            <Value align="center">1</Value>
+            <Value align="left">1</Value>
           </TD>
           <TD>
             <ImageProfile
               address="0x4097B714eCD64bE697e61D4f04925B666c8e4369"
               diameter={24}
               hasAddress={true}
-              isLink={false}
+              isLink={true}
+              tab="?tab=portfolio"
             />
           </TD>
           <TD isView={inViewCollum === 1}>
@@ -158,6 +162,7 @@ const ManagersPoolTable = () => {
                 handleView(
                   '0x4097B714eCD64bE697e61D4f04925B666c8e4369',
                   '',
+                  '0x4097B714eCD64bE697e61D4f04925B666c8e4369',
                   1,
                   394.34,
                   3,
@@ -176,6 +181,7 @@ const ManagersPoolTable = () => {
       <ModalViewCoin
         isOpen={isOpen}
         title={titleData}
+        isJazzicon
         onClick={() => setIsOpen(false)}
       >
         <TableLine>
