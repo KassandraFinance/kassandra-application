@@ -66,10 +66,6 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
 
-  if (poolData && poolData?.networkId === 0 && stepNumber > 0) {
-    dispatch(setToFirstStep())
-  }
-
   const buttonText = {
     [TransactionStatus.START]: 'Start pool creation',
     [TransactionStatus.CONTINUE]: 'Continue pool creation',
