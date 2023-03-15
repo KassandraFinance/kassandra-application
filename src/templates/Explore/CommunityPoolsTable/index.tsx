@@ -12,6 +12,7 @@ import notFoundIcon from '../../../../public/assets/icons/coming-soon.svg'
 import arrowLeftBoldIcon from '../../../../public/assets/utilities/arrow-left-bold.svg'
 import arrowRightBoldIcon from '../../../../public/assets/utilities/arrow-right-bold.svg'
 import eyeShowIcon from '../../../../public/assets/utilities/eye-show.svg'
+import comingSoonIcon from '../../../../public/assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 import {
@@ -193,7 +194,10 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
                         </S.ImageWrapper>
 
                         <S.ChainLogoWrapper>
-                          <Image src={pool.chain.logo} layout="fill" />
+                          <Image
+                            src={pool.chain?.logo || comingSoonIcon}
+                            layout="fill"
+                          />
                         </S.ChainLogoWrapper>
                       </S.Imagecontainer>
 

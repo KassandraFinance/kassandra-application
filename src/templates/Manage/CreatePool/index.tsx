@@ -254,7 +254,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }
     }
 
-    transactionsList.push(...notApprovedList, ...approvedList)
+    transactionsList.push(...approvedList, ...notApprovedList)
 
     transactionsList.push({
       key: 'createPool',
@@ -325,6 +325,12 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           })
           return
         }
+      } else {
+          setTransactions(prev => {
+            prev[prev.length - 1].status = 'ERROR'
+            return prev
+          })
+          return
       }
     } catch (error) {
       console.error(error)

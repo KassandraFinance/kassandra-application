@@ -1,27 +1,30 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import Blockies from 'react-blockies'
+
+import { useAppSelector } from '@/store/hooks'
+import useManagerPools from '@/hooks/useManagerPools'
 
 import arrowIcon from '../../../../../public/assets/utilities/arrow-select-down.svg'
 
 import * as S from './styles'
 
-import { PoolType } from '../index'
-
 interface ISideBarMenuProps {
   title: string;
   icon: any;
-  itemsList: PoolType[];
   isSideBarOpen: boolean;
 }
 
-const SideBarMenu = ({
-  title,
-  icon,
-  itemsList,
-  isSideBarOpen
-}: ISideBarMenuProps) => {
+const SideBarMenu = ({ title, icon, isSideBarOpen }: ISideBarMenuProps) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false)
+
+  const router = useRouter()
+  const poolQuery = router.query.pool
+
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const { managerPools } = useManagerPools(userWalletAddress)
 
   function handleOpenMenu() {
     setIsOpen(prev => !prev)
@@ -44,26 +47,25 @@ const SideBarMenu = ({
       <S.PoolContainer
         isOpen={isOpen}
         isSideBarOpen={isSideBarOpen}
-        height={itemsList.length}
+        height={managerPools ? managerPools?.pools.length : 0}
       >
-        {itemsList.map(item => {
+        {managerPools?.pools.map(pool => {
+          const isPoolPage = pool.id === poolQuery
           return (
-            <S.PoolWrapper key={item.poolSymbol}>
-              <Link href={`/manage`} passHref>
-                <S.Pool key={item.poolSymbol}>
+            <S.PoolWrapper key={pool.id}>
+              <Link href={`/manage/${pool.id}`} passHref>
+                <S.Pool>
                   <S.PoolIcon>
-                    <Image src={item.poolLogo} width={16} height={16} />
+                    {pool.logo ? (
+                      <Image src={pool?.logo} width={16} height={16} />
+                    ) : (
+                      <Blockies seed={pool.name} size={8} scale={2} />
+                    )}
                   </S.PoolIcon>
 
-                  <S.PoolName
-                    active={item.poolSymbol.toLowerCase() === 'ahype'}
-                  >
-                    {item.poolName}
-                  </S.PoolName>
+                  <S.PoolName active={isPoolPage}>{pool.name}</S.PoolName>
 
-                  <S.PoolStatus
-                    active={item.poolSymbol.toLowerCase() === 'ahype'}
-                  />
+                  <S.PoolStatus active={isPoolPage} />
                 </S.Pool>
               </Link>
             </S.PoolWrapper>
