@@ -20,7 +20,7 @@ import waitTransaction, {
 
 import KassandraManagedControllerFactoryAbi from '../../../constants/abi/KassandraManagedControllerFactory.json'
 import KassandraControlerAbi from '../../../constants/abi/KassandraController.json'
-import { BACKEND_KASSANDRA, networks, kassandraManagementFee } from '@/constants/tokenAddresses'
+import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { SAVE_POOL } from './graphql'
 
 import ContainerButton from '../../../components/ContainerButton'
@@ -405,7 +405,6 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const managementAumFeePercentage = poolData.fees?.managementFee?.feeRate ? Number(managementFeeRate) / 100 : 0 / 100
     const feesToManager = poolData.fees?.depositFee.isChecked ? poolData.fees.refferalFee.isChecked ? managerShare / 100 : Number(depositFeeRate) / 100 : 0 / 100
     const feesToReferral = poolData.fees?.refferalFee.brokerCommision ? brokerCommision / 100 : 0 / 100
-    const kassandraFee = Big(kassandraManagementFee).div(100)
 
     const pool = {
       name: poolData.poolName,
@@ -419,7 +418,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         swapFeePercentage: Big(0.03).mul(Big(10).pow(18)).toFixed(0),
         swapEnabledOnStart: true,
         mustAllowlistLPs: false,
-        managementAumFeePercentage: poolData.fees?.managementFee.isChecked ? Big(managementAumFeePercentage).add(kassandraFee).mul(Big(10).pow(18)).toFixed(0) : Big(kassandraFee).mul(Big(10).pow(18)).toFixed(0),
+        managementAumFeePercentage: poolData.fees?.managementFee.isChecked ? Big(managementAumFeePercentage).mul(Big(10).pow(18)).toFixed(0) : Big(0).mul(Big(10).pow(18)).toFixed(0),
         aumFeeId: 3,
       },
       feesSettings: {
