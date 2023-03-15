@@ -95,7 +95,7 @@ interface IPoolContainerProps {
 // prettier-ignore
 export const PoolContainer = styled.div<IPoolContainerProps>`
   ${() => css`
-    overflow: hidden;
+    overflow-y: hidden;
 
     max-height: 0;
 

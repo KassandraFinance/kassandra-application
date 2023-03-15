@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
+import useManagerPools from '@/hooks/useManagerPools'
 import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 
 import substr from '../../../utils/substr'
@@ -28,27 +29,6 @@ interface ISideBarProps {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export type PoolType = {
-  poolLogo: string,
-  poolName: string,
-  poolSymbol: string
-}
-
-const mockPools: PoolType[] = [
-  {
-    poolLogo:
-      'https://app.kassandra.finance/_next/static/media/ahype.5b1acc28.svg',
-    poolName: 'Avalanche Social Index',
-    poolSymbol: 'aHYPE'
-  },
-  {
-    poolLogo:
-      'https://app.kassandra.finance/_next/static/media/tricrypto.b6b82cd9.svg',
-    poolName: 'Kassandra Tricrypto Index',
-    poolSymbol: 'K3C'
-  }
-]
-
 const links = [
   {
     name: 'Analytics',
@@ -73,6 +53,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
   const { nickName, image } = useAppSelector(state => state.user)
 
   const dispatch = useAppDispatch()
+
+  const { managerPools } = useManagerPools(userWalletAddress)
 
   return (
     <S.SideBar isOpen={isOpen}>
@@ -341,7 +323,9 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
       <S.Line isOpen={isOpen} />
 
       <S.SideBarBody>
-        {userWalletAddress.length === 42 && (
+        {userWalletAddress.length === 42 &&
+        managerPools &&
+        managerPools.pools.length > 0 ? (
           <>
             <S.LinksContainer>
               <SideBarLink name="My Profile" icon={profile} isOpen={isOpen} />
@@ -350,7 +334,6 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             <SideBarMenu
               title="My managed pool"
               icon={poolIcon}
-              itemsList={mockPools}
               isSideBarOpen={isOpen}
             />
 
@@ -365,6 +348,18 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
               ))}
             </S.LinksContainer>
           </>
+        ) : (
+          <S.LinksContainer>
+            <S.Text isOpen={isOpen}>
+              Start your journey as an asset pool manager in kassandra's
+              ecosystem.
+              <br />
+              <br />
+              Bring your strategy or develop one as you begin a streamlined
+              process for creating managed pools that utilize digital assets
+              that you can choose from.
+            </S.Text>
+          </S.LinksContainer>
         )}
         <S.SideBarContainer>
           <S.ButtonWrapper isOpen={isOpen}>

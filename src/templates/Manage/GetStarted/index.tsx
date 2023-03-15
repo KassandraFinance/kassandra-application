@@ -87,13 +87,6 @@ const GetStarted = () => {
               fullWidth
               onClick={() => dispatch(setModalWalletActive(true))}
             />
-          ) : chainId !== 5 ? (
-            <Button
-              text="Connect to GoerliETH"
-              backgroundSecondary
-              fullWidth
-              onClick={() => changeChain(goerliNetwork)}
-            />
           ) : (
             <Button
               text="Create New Pool"
