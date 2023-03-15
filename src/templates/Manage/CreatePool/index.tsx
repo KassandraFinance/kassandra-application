@@ -254,7 +254,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }
     }
 
-    transactionsList.push(...notApprovedList, ...approvedList)
+    transactionsList.push(...approvedList, ...notApprovedList)
 
     transactionsList.push({
       key: 'createPool',
