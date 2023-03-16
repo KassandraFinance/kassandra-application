@@ -6,6 +6,8 @@ import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
+import { useAppSelector } from '@/store/hooks'
+
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
@@ -59,7 +61,15 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30)
   })
+
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+
   const router = useRouter()
+  const profileAddress = !router.query.profileAddress
+    ? ''
+    : Array.isArray(router.query.profileAddress)
+    ? ''
+    : router.query.profileAddress
 
   const { data } = useSWR([GET_POOL, params], (query, params) =>
     request(BACKEND_KASSANDRA, query, params)
@@ -137,6 +147,8 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
           <Link
             href={
               router.asPath === '/manage'
+                ? `/manage/${poolAddress}`
+                : userWalletAddress === profileAddress
                 ? `/manage/${poolAddress}`
                 : `/pool/${poolAddress}`
             }

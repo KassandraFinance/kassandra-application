@@ -31,9 +31,9 @@ import Portfolio from './Portfolio'
 import GovernanceData from './GovernanceData'
 import Web3Disabled from '../../components/Web3Disabled'
 import SelectTabs from '../../components/SelectTabs'
-import AnyCard from '../../components/AnyCard'
 import Loading from '../../components/Loading'
 import AnyCardTotal from '../../components/Governance/AnyCardTotal'
+import ManagedFunds from './ManagedFunds'
 
 import profileIcon from '../../../public/assets/iconGradient/profile.svg'
 import walletIcon from '../../../public/assets/iconGradient/wallet-gradient.svg'
@@ -269,7 +269,7 @@ const Profile = () => {
       window.ethereum.on('accountsChanged', handleAccountChange)
     }
   }, [])
-  
+
   React.useEffect(() => {
     if (data?.pools) {
       data.pools.map(pool => {
@@ -441,7 +441,7 @@ const Profile = () => {
                 pools={data.pools.map(pool => pool.address)}
               />
             ) : isSelectTab === tabs[1].asPathText ? (
-              <AnyCard text="Coming Soon..." />
+              <ManagedFunds />
             ) : isSelectTab === tabs[2].asPathText ? (
               <>
                 <GovernanceData address={profileAddress} />

@@ -2,9 +2,10 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import useManagerPools from '@/hooks/useManagerPools'
-import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setToFirstStep } from '@/store/reducers/poolCreationSlice'
+import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
 
 import substr from '../../../utils/substr'
 
@@ -51,10 +52,21 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const { nickName, image } = useAppSelector(state => state.user)
+  const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
+  const poolCreattionChainId = useAppSelector(
+    state => state.poolCreation.createPoolData.networkId
+  )
 
   const dispatch = useAppDispatch()
 
   const { managerPools } = useManagerPools(userWalletAddress)
+
+  function handleCreatePool() {
+    if (poolCreattionChainId === 0 && stepNumber > 0) {
+      dispatch(setToFirstStep())
+    }
+    setIsCreatePool(true)
+  }
 
   return (
     <S.SideBar isOpen={isOpen}>
@@ -385,7 +397,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
                     <Image src={plusIcon} width={12} height={12} />
                   </S.PlusIconWrapper>
                 }
-                onClick={() => setIsCreatePool(true)}
+                onClick={handleCreatePool}
               />
             )}
           </S.ButtonWrapper>
