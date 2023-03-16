@@ -104,6 +104,7 @@ export const networks: NetworkType = {
 }
 
 export const multisig = '0xFF56b00bDaEEf52C3EBb81B0efA6e28497305175'
+export const kassandraManagementFee = '0.5'
 
 export const mockTokens: { [key: string]: string } = {
   '0x841a91e3De1202b7b750f464680068aAa0d0EA35':

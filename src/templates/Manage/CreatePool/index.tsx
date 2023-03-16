@@ -20,7 +20,7 @@ import waitTransaction, {
 
 import KassandraManagedControllerFactoryAbi from '../../../constants/abi/KassandraManagedControllerFactory.json'
 import KassandraControlerAbi from '../../../constants/abi/KassandraController.json'
-import { BACKEND_KASSANDRA, networks } from '../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { SAVE_POOL } from './graphql'
 
 import ContainerButton from '../../../components/ContainerButton'

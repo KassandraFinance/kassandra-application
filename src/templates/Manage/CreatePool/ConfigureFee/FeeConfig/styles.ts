@@ -318,7 +318,7 @@ export const WithdrawFeeParagraph = styled.h3`
 `
 
 interface IFeeContainerProps {
-  isFeeChecked: boolean;
+  isFeeChecked?: boolean;
 }
 
 // prettier-ignore
@@ -327,6 +327,7 @@ export const FeeContainer = styled.div<IFeeContainerProps>`
     overflow: hidden;
 
     max-height: 0;
+    padding: 0.1rem;
 
     opacity: 0;
     pointer-events: none;
@@ -335,7 +336,7 @@ export const FeeContainer = styled.div<IFeeContainerProps>`
     transition-duration: 700ms;
     transition-property: max-height opacity;
   `}
-  ${({ isFeeChecked }) => isFeeChecked && css`
+  ${({ isFeeChecked = true }) => isFeeChecked && css`
     max-height: 500px;
 
     opacity: 1;
@@ -344,5 +345,49 @@ export const FeeContainer = styled.div<IFeeContainerProps>`
     transition-timing-function: ease-in;
     transition-duration: 700ms;
     transition-property: max-height opacity;
+  `}
+`
+
+export const ManagementFeeWrapper = styled.div`
+  ${() => css`
+    display: grid;
+    grid-template-columns: 75px 1fr;
+    gap: 1.2rem;
+    align-items: end;
+
+    ${Input} {
+      text-align: center;
+    }
+  `}
+`
+
+export const Wrapper = styled.div`
+  ${() => css`
+    display: grid;
+    grid-template-columns: 31px 1fr;
+    align-items: center;
+  `}
+`
+
+export const LimiterWrapper = styled.div`
+  ${() => css`
+    height: 1.119rem;
+  `}
+`
+
+export const FeeTitleContainer = styled.div`
+  ${() => css`
+    display: flex;
+    justify-content: space-between;
+  `}
+`
+
+export const FeeTitle = styled.span`
+  ${({ theme }) => css`
+    color: #c4c4c4;
+    font-weight: ${theme.font.weight.normal};
+    font-size: ${theme.font.sizes.font12};
+    line-height: ${theme.font.sizes.font14};
+    text-transform: uppercase;
   `}
 `
