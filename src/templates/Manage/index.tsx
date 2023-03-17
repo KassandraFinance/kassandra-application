@@ -2,7 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 
 import useManagerPools from '@/hooks/useManagerPools'
-import { useAppSelector } from '../../store/hooks'
+import { useAppSelector } from '@/store/hooks'
 
 import Overlay from '../../components/Overlay'
 import Header from '../../components/Header'
