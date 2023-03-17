@@ -3,6 +3,9 @@ import { request } from 'graphql-request'
 import { gql } from 'graphql-request'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
+import { underlyingAssetsInfo } from '@/store/reducers/pool'
+
+import { getWeightsNormalizedV2 } from '@/utils/updateAssetsToV2'
 
 export type GetPoolAssetsType = {
   pool: {
@@ -18,7 +21,14 @@ export type GetPoolAssetsType = {
         name: string,
         price_usd: string,
         symbol: string,
-        wraps: null
+        wraps: {
+          id: string,
+          decimals: number,
+          price_usd: string,
+          symbol: string,
+          name: string,
+          logo: string
+        }
       }
     }[],
     weight_goals: {
@@ -89,8 +99,17 @@ function usePoolAssets(poolId: string) {
         id: poolId
       })
   )
+
+  let underlying_assets: underlyingAssetsInfo[] | undefined
+  if (data?.pool) {
+    underlying_assets = getWeightsNormalizedV2(
+      data.pool.weight_goals,
+      data.pool.underlying_assets
+    )
+  }
+
   return {
-    poolAssets: data,
+    poolAssets: underlying_assets,
     isValidating,
     isError: error
   }

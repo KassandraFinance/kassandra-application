@@ -16,10 +16,10 @@ const PoolAssets = (props: IPoolAssetsProps) => {
   return (
     <S.PoolAssets>
       <S.CoinCardContainer>
-        {poolAssets?.pool?.underlying_assets?.map(asset => (
+        {poolAssets?.map(asset => (
           <CoinCard
             key={asset.token.id}
-            image={asset.token.logo}
+            image={asset?.token?.logo ?? ''}
             name={asset.token.name}
             symbol={asset.token.symbol}
           />
