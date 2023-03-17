@@ -89,7 +89,7 @@ const PoolManager = () => {
 
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
+  const { poolInfo, isManager } = usePoolInfo(userWalletAddress, poolId)
 
   const PoolManagerComponents: { [key: string]: ReactElement } = {
     analytics: <Analytics poolId={poolId} />,
@@ -102,11 +102,11 @@ const PoolManager = () => {
   }
 
   React.useEffect(() => {
-    if (poolInfo?.pools?.length === 0) {
+    if (isManager) {
       router.push(`/pool/${poolId}`)
     }
     return
-  }, [poolInfo])
+  }, [isManager])
 
   return (
     <S.PoolManager>
@@ -117,35 +117,35 @@ const PoolManager = () => {
         <div></div>
 
         <Header />
-        {poolInfo?.pools[0] ? (
+        {poolInfo ? (
           <S.Content>
             <S.Intro>
               <S.GridIntro>
                 <TokenWithNetworkImage
                   tokenImage={{
-                    url: poolInfo.pools[0]?.logo,
+                    url: poolInfo?.logo,
                     height: 75,
                     width: 75,
                     withoutBorder: true
                   }}
                   networkImage={{
-                    url: poolInfo.pools[0]?.chain?.logo,
+                    url: poolInfo?.chain?.logo,
                     height: 20,
                     width: 20
                   }}
                   blockies={{
                     size: 8,
                     scale: 9,
-                    seedName: poolInfo.pools[0]?.name
+                    seedName: poolInfo?.name
                   }}
                 />
                 <S.NameIndex>
                   <S.NameAndSymbol>
-                    <h1>{poolInfo.pools[0]?.name}</h1>
+                    <h1>{poolInfo?.name}</h1>
                   </S.NameAndSymbol>
                   <S.SymbolAndLink>
-                    <h3>${poolInfo.pools[0]?.symbol}</h3>
-                    <Link href={`/pool/${poolInfo.pools[0]?.id}`}>
+                    <h3>${poolInfo?.symbol}</h3>
+                    <Link href={`/pool/${poolInfo?.id}`}>
                       <button className="circle">
                         <Image
                           src="/assets/icons/website-with-bg.svg"
@@ -155,7 +155,7 @@ const PoolManager = () => {
                       </button>
                     </Link>
                     <a
-                      href={`${poolInfo.pools[0]?.chain?.blockExplorerUrl}/address/${poolInfo.pools[0].address}`}
+                      href={`${poolInfo?.chain?.blockExplorerUrl}/address/${poolInfo?.address}`}
                       className="circle"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -171,7 +171,7 @@ const PoolManager = () => {
                         setOpenModal(true)
                         trackEventFunction(
                           'click',
-                          `social-share-${poolInfo.pools[0].name}`,
+                          `social-share-${poolInfo?.name}`,
                           'pool'
                         )
                       }}
@@ -216,18 +216,18 @@ const PoolManager = () => {
       {isOpenManageAssets && (
         <ManageAssets setIsOpenManageAssets={setIsOpenManageAssets} />
       )}
-      {poolInfo?.pools[0] && (
+      {poolInfo && (
         <ShareImageModal
-          poolId={poolInfo.pools[0].id}
+          poolId={poolInfo?.id}
           setOpenModal={setOpenModal}
           openModal={openModal}
-          productName={poolInfo.pools[0].symbol}
+          productName={poolInfo?.symbol}
         >
           <SharedImage
-            crpPoolAddress={poolInfo.pools[0].id}
-            totalValueLocked={poolInfo.pools[0].total_value_locked_usd || ''}
-            socialIndex={poolInfo.pools[0].symbol}
-            productName={poolInfo.pools[0].name}
+            crpPoolAddress={poolInfo?.id}
+            totalValueLocked={poolInfo?.total_value_locked_usd || ''}
+            socialIndex={poolInfo?.symbol}
+            productName={poolInfo?.name}
           />
         </ShareImageModal>
       )}

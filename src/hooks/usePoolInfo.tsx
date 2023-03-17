@@ -12,7 +12,7 @@ export type GetPoolInfoType = {
     id: string,
     logo: string,
     name: string,
-    poolId: null,
+    poolId: number | null,
     pool_version: number,
     symbol: string,
     total_value_locked_usd: string,
@@ -74,10 +74,12 @@ function usePoolInfo(userWalletAddress: string, poolId: string) {
         id: poolId
       })
   )
+
   return {
-    poolInfo: data,
+    poolInfo: data?.pools[0],
     isValidating,
-    isError: error
+    isError: error,
+    isManager: data?.pools.length === 0 ? true : false
   }
 }
 
