@@ -6,7 +6,7 @@ import { Contract } from 'web3-eth-contract';
 
 import ProxyInvestV2 from "../constants/abi/ProxyInvestV2.json"
 import BalancerHelpers from "../constants/abi/BalancerHelpers.json"
-import ManagedPoolController from "../constants/abi/ManagedPoolController.json"
+import KassandraController from "../constants/abi/KassandraController.json"
 import VaultBalancer from "../constants/abi/VaultBalancer.json"
 
 import { CalcAllOutGivenPoolInParams, CalcAmountOutParams, CalcSingleOutGivenPoolInParams, EstimatedGasParams, ExitSwapPoolAllTokenAmountInParams, ExitSwapPoolAmountInParams, IPoolInfoProps, JoinSwapAmountInParams } from './IOperation';
@@ -34,7 +34,7 @@ export default class operationV2 {
     // eslint-disable-next-line prettier/prettier
     this.contract = new web3.eth.Contract((ProxyInvestV2 as unknown) as AbiItem, proxyAddress)
     this.balancerHelpersContract = new web3.eth.Contract((BalancerHelpers as unknown) as AbiItem, balancerHelpers)
-    this.managedPoolController = new web3.eth.Contract((ManagedPoolController as unknown) as AbiItem, _poolInfo.controller)
+    this.managedPoolController = new web3.eth.Contract((KassandraController as unknown) as AbiItem, _poolInfo.controller)
     this.vaultBalancer = new web3.eth.Contract((VaultBalancer as unknown) as AbiItem, _poolInfo.vault)
     this.poolInfo = _poolInfo
     this.contractAddress = proxyAddress
