@@ -1,11 +1,12 @@
 import React from 'react'
 import Link from 'next/link'
 
-import { mockCoinsList } from '../..'
+import { useAppSelector } from '@/store/hooks'
 
 import AllocationGraph, {
   IDataProps
 } from '../../../../../../components/Manage/AllocationGraph'
+import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
 import * as S from './styles'
 
@@ -16,6 +17,14 @@ const ReviewTable = () => {
     IDataProps[]
   >([])
 
+  const poolTokensList = useAppSelector(
+    state => state.rebalanceAssets.poolTokensList
+  )
+  const newTokensWights = useAppSelector(
+    state => state.rebalanceAssets.newTokensWights
+  )
+  const poolInfo = useAppSelector(state => state.rebalanceAssets.poolInfo)
+
   function handleCurrentViewTable(method: string, value: number) {
     if (method === 'next') {
       setViewColumnInTable(value === 4 ? 1 : viewColumnInTable + 1)
@@ -25,12 +34,18 @@ const ReviewTable = () => {
   }
 
   React.useEffect(() => {
-    const dataAllocation = mockCoinsList.map(item => {
+    const dataAllocation = poolTokensList.map(item => {
       return {
-        imageUrl: item.imageUrl,
-        name: item.name,
-        currentAllocation: item.allocation,
-        newAllocation: item.allocation + 5
+        imageUrl: item.token.logo,
+        name: item.token.name,
+        currentAllocation: Number(
+          item.currentWeight.mul(100).toFixed(2, 2) ?? 0
+        ),
+        newAllocation: Number(
+          newTokensWights[item.token.address].newWeight
+            .mul(100)
+            .toFixed(2, 2) ?? 0
+        )
       }
     })
 
@@ -40,10 +55,27 @@ const ReviewTable = () => {
   return (
     <S.ReviewTable>
       <S.PoolInfoContainer>
-        <img src="/assets/logos/tricrypto.svg" alt="" width={64} height={64} />
+        <TokenWithNetworkImage
+          tokenImage={{
+            url: poolInfo.logo,
+            height: 64,
+            width: 64,
+            withoutBorder: true
+          }}
+          networkImage={{
+            url: poolInfo.chainLogo,
+            height: 16,
+            width: 16
+          }}
+          blockies={{
+            size: 8,
+            scale: 8,
+            seedName: poolInfo.name
+          }}
+        />
         <S.PoolInfo>
-          <p>Pool Name</p>
-          <span>SYMBOL</span>
+          <p>{poolInfo.name}</p>
+          <span>{poolInfo.symbol}</span>
         </S.PoolInfo>
       </S.PoolInfoContainer>
       <S.TableContainer>
@@ -88,15 +120,15 @@ const ReviewTable = () => {
           </S.TrHead>
         </S.Thead>
         <S.Tbody>
-          {mockCoinsList.map((item, index) => {
+          {poolTokensList.map(item => {
             return (
-              <S.TrBody key={item.name + index}>
+              <S.TrBody key={item.token.address}>
                 <S.TokenNameContainer>
-                  <img src={item.imageUrl} alt="" width={24} height={24} />
+                  <img src={item.token.logo} alt="" width={24} height={24} />
                   <span>
                     <Link href="#" passHref>
                       <S.TokenName>
-                        {item.name}
+                        {item.token.name}
                         <img
                           src="/assets/utilities/external-link.svg"
                           alt=""
@@ -105,13 +137,13 @@ const ReviewTable = () => {
                         />
                       </S.TokenName>
                     </Link>
-                    <p>{item.symbol}</p>
+                    <p>{item.token.symbol}</p>
                   </span>
                 </S.TokenNameContainer>
                 <S.CurrentWeightContainer isView={viewColumnInTable}>
-                  <p>{item.allocation}%</p>
+                  <p>{item.currentWeight.mul(100).toFixed(2, 2)}%</p>
                   <S.CurrentWeight>
-                    <p>{item.currentAmount}</p>
+                    <p>{item.currentAmount.toFixed(2, 2)}</p>
                   </S.CurrentWeight>
                 </S.CurrentWeightContainer>
                 <S.Arrow>
@@ -123,9 +155,19 @@ const ReviewTable = () => {
                   />
                 </S.Arrow>
                 <S.NewWeightContainer isView={viewColumnInTable}>
-                  <p>{item.allocation}%</p>
+                  <p>
+                    {newTokensWights[item.token.address]?.newWeight
+                      .mul(100)
+                      .toFixed(2, 2)}
+                    %
+                  </p>
                   <S.NewWeight>
-                    <p>{item.newAmount}</p>
+                    <p>
+                      {newTokensWights[item.token.address]?.newAmount.toFixed(
+                        2,
+                        2
+                      )}
+                    </p>
                   </S.NewWeight>
                 </S.NewWeightContainer>
                 <S.MobileEyeContainer
