@@ -22,6 +22,8 @@ import {
   networks
 } from '../../../constants/tokenAddresses'
 import { GET_POOL_TOKENS } from './AddLiquidity/graphql'
+import { GET_INFO_POOL } from '../graphql'
+import { AssetType } from '@/store/reducers/addAssetSlice'
 
 import TokenRemoval from './TokenRemoval'
 import RemoveReview from './RemoveReview'
@@ -63,6 +65,23 @@ import * as S from './styles'
 
 Big.RM = 0
 
+interface IGetPoolTokenTypeProps {
+  pool: {
+    address: string,
+    chainId: number,
+    logo: string,
+    name: string,
+    price_usd: string,
+    symbol: string,
+    total_value_locked_usd: string,
+    controller: string,
+    weight_goals: {
+      weights: AssetType[]
+    }[],
+    underlying_assets_addresses: string[]
+  }
+}
+
 interface IManageAssetsProps {
   setIsOpenManageAssets: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -90,6 +109,9 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const { poolInfo, tokenSelection } = useAppSelector(
     state => state.removeAsset
   )
+  const { periodSelect, poolTokensList, newTokensWights } = useAppSelector(
+    state => state.rebalanceAssets
+  )
 
   const router = useRouter()
 
@@ -102,8 +124,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     id: poolId
   }
 
-  const { data } = useSWR<GetPoolTokensType>(
-    [GET_POOL_TOKENS, params],
+  const { data } = useSWR<IGetPoolTokenTypeProps>(
+    [GET_INFO_POOL, params],
     (query, params) => request(BACKEND_KASSANDRA, query, params)
   )
 
@@ -244,12 +266,12 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       transactionButtonStatus={transactionButtonStatus}
       buttonText={buttonTextActionRebalance}
       isCompleted={isCompleted}
-      transactions={[]}
-      onStart={async () => {console.log('get')}}
+      transactions={transactions}
+      onStart={async () => handleRebalancesPool()}
       onCancel={() => setStep(prev => prev - 1)}
       onComfirm={() => setStep(prev => prev + 1)}
     />,
-    <RebalanceSuccess key="RebalanceSuccess" time={30} setIsOpenManageAssets={setIsOpenManageAssets} />
+    <RebalanceSuccess key="RebalanceSuccess" time={periodSelect} setIsOpenManageAssets={setIsOpenManageAssets} />
   ]
 
   const chosenAction = {
@@ -299,6 +321,49 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     }
 
     setTransactions(transactionsList)
+  }
+
+  async function handleRebalancesPool() {
+    if (!data) return
+    setTransactionButtonStatus(TransactionStatus.WAITING)
+
+    setTransactions([{
+      key: 'Rebalance',
+      transaction: 'Rebalance Pool',
+      status: 'APPROVING'
+    }])
+
+    const getPoolAddress = [data.pool.address, ...data.pool.underlying_assets_addresses]
+    const poolWeightsArray = poolTokensList.map(item => {
+      return newTokensWights[item.token.address].newWeight.mul(Big(10).pow(18)).toFixed(0)
+    })
+
+    try {
+      const currentDate = new Date().getTime()
+      const threeMinutesInTimestamp = 180000
+      const oneHourInTimestamp = 3600000
+
+      const currentDateAdded = currentDate + threeMinutesInTimestamp
+      const periodSelectedFormatted = new Date(currentDateAdded + (oneHourInTimestamp * periodSelect)).getTime()
+
+      // eslint-disable-next-line prettier/prettier
+      const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, data.pool.controller);
+      await poolController.methods.updateWeightsGradually(
+        Math.floor(currentDateAdded / 1000),
+        Math.floor(periodSelectedFormatted / 1000),
+        getPoolAddress,
+        poolWeightsArray
+      ).send(
+        {
+          from: userWalletAddress
+        },
+        callBack
+      )
+
+    } catch (error) {
+      console.log(error)
+    }
+
   }
 
   async function handleRemoveToken() {
@@ -394,7 +459,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       setTransactions(prev =>
         prev.map((item, index) => {
           if (item.status === 'APPROVING') {
-            if (item.key === 'addToken' || item.key === 'removeToken') {
+            if (item.key === 'addToken' || item.key === 'removeToken' || item.key === 'Rebalance') {
               setIsCompleted(true)
             }
             transactionIndex = index
@@ -518,6 +583,13 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
+    if (actionSelected === chooseActionStep.Rebalance && step === 2) {
+      setTransactions([{
+        key: 'Rebalance',
+        transaction: 'Rebalance Pool',
+        status: 'NEXT'
+      }])
+    }
     if (actionSelected === chooseActionStep.Remove && step === 1) {
       getTransactionsList(
         poolInfo.address,
