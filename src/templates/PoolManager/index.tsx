@@ -74,10 +74,6 @@ const tabs = [
   }
 ]
 
-// interface IPoolManagerProps {
-//   pool: IPoolSlice;
-// }
-
 const PoolManager = () => {
   const [isManageAssets, setIsManageAssets] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
@@ -102,7 +98,12 @@ const PoolManager = () => {
 
   const PoolManagerComponents: { [key: string]: ReactElement } = {
     analytics: <Analytics poolId={poolId} />,
-    allocations: <Allocations />,
+    allocations: (
+      <Allocations
+        weightGoals={data?.pool?.weight_goals}
+        underlyingAssets={data?.pool.underlying_assets}
+      />
+    ),
     activity: <ComingSoon />,
     investors: <ComingSoon />,
     feeRewards: <ComingSoon />,
