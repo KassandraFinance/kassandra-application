@@ -1,10 +1,5 @@
 import styled, { css } from 'styled-components'
-import { Label } from '../../../../../../components/Inputs/InputRadio/styles'
-
-// interface IProps {
-//   isActive: boolean;
-// }
-// eslint-disable-next-line prettier/prettier
+import { Label } from '../../../../../components/Inputs/InputRadio/styles'
 
 export const ExecutionPeriod = styled.div`
   ${({ theme }) => css`

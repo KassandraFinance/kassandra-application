@@ -30,7 +30,6 @@ import RemoveReview from './RemoveReview'
 import AssetRemovelCard from './AssetRemovelCard'
 import SelectAssets from './SelectAssets'
 import ChooseAction, { chooseActionStep } from './ChooseAction'
-import RebalanceAssets from './RebalanceAssets'
 import ContainerButton from '../../../components/ContainerButton'
 import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
 import AddLiquidity from './AddLiquidity'
@@ -40,9 +39,9 @@ import ModalTransactions, {
   TransactionStatus
 } from '../../../components/Modals/ModalTransactions'
 import TransactionFinalized from './TransactionFinalized'
-import SetNewWeights from './RebalanceAssets/SetNewWeights'
-import RebalanceReview from './RebalanceAssets/RebalanceReview'
-import RebalanceSuccess from './RebalanceAssets/RebalanceSuccess'
+import SetNewWeights from './SetNewWeights'
+import RebalanceReview from './RebalanceReview'
+import RebalanceSuccess from './RebalanceSuccess'
 
 import {
   GetPoolTokensType,

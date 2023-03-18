@@ -4,8 +4,8 @@ import Tippy from '@tippyjs/react'
 import { useAppDispatch } from '@/store/hooks'
 import { setPeriodSelect } from '@/store/reducers/rebalanceAssetsSlice'
 
-import InputRadio from '../../../../../../components/Inputs/InputRadio'
-import InputTime from '../../../../../../components/Inputs/InputTime'
+import InputRadio from '../../../../../components/Inputs/InputRadio'
+import InputTime from '../../../../../components/Inputs/InputTime'
 
 import * as S from './styles'
 

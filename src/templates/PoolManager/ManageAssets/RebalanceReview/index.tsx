@@ -3,7 +3,7 @@ import React from 'react'
 import { useAppSelector } from '@/store/hooks'
 
 import ReviewTable from './ReviewTable'
-import Steps from '../../../../../components/Steps'
+import Steps from '../../../../components/Steps'
 import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 
 import * as S from './styles'

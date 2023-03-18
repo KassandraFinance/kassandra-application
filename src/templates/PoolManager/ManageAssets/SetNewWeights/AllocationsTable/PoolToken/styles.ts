@@ -1,9 +1,4 @@
-import styled, { css, keyframes } from 'styled-components'
-
-// interface IProps {
-//   isActive: boolean;
-// }
-// eslint-disable-next-line prettier/prettier
+import styled, { css } from 'styled-components'
 
 export const TokenInfo = styled.td`
   ${() => css`

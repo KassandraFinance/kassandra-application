@@ -5,7 +5,7 @@ import { useAppSelector } from '@/store/hooks'
 
 import AllocationGraph, {
   IDataProps
-} from '../../../../../../components/Manage/AllocationGraph'
+} from '../../../../../components/Manage/AllocationGraph'
 import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
 import * as S from './styles'

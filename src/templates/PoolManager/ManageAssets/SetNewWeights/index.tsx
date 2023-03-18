@@ -22,8 +22,8 @@ import {
 } from '@/store/reducers/rebalanceAssetsSlice'
 
 import ExecutionPeriod from './ExecutionPeriod'
+import Steps from '../../../../components/Steps'
 import AllocationsTable from './AllocationsTable'
-import Steps from '../../../../../components/Steps'
 import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 
 import * as S from './styles'

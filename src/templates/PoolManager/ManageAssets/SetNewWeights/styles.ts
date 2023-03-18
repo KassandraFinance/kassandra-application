@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
-import { Line } from '../../../../../components/Steps/Step/styles'
-import { Steps } from '../../../../../components/Steps/styles'
+import { Line } from '../../../../components/Steps/Step/styles'
+import { Steps } from '../../../../components/Steps/styles'
 
 export const SetNewWeights = styled.div`
   ${() => css`
