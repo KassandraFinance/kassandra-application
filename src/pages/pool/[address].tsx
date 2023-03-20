@@ -118,8 +118,10 @@ const queryPool = `{
     start_timestamp
     end_timestamp
     weights(orderBy: weight_normalized orderDirection: desc) {
-      token {
-        id
+      asset {
+        token {
+          id
+        }
       }
       weight_normalized
     }
