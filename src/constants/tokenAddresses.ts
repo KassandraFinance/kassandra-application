@@ -38,7 +38,7 @@ export const ProxyContract =
     ? '0xCf734790E7D25f4E366b7d2F9710D3Eb1DB62036'
     : '0x97e33051B09092C1301A90b964a74cA51C0b068B'
 
-export const ProxyInvestV2 = '0xFADd38F6DFa4057c62C2e92C4FaFB4c3AC198e06' // Goerli
+export const ProxyInvestV2 = '0x2CA2CF9624c4b0c5d87a3204780408cDA9EB9BfD' // Goerli
 export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Goerli
 
 export const addressNativeToken1Inch =
@@ -83,7 +83,7 @@ export const networks: NetworkType = {
     rpc: 'https://rpc.ankr.com/eth_goerli',
     coingecko: 'polygon-pos',
     whiteList: '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57',
-    factory: '0x99bF9381EC974FC836Bb0221316F8157d77B57f2'
+    factory: '0x7d15eb9d04cc280926634456210ce5ef2afa401c'
   },
   '137': {
     chainName: 'Polygon',
