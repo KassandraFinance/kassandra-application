@@ -66,8 +66,10 @@ type GetCommunityPoolsType = {
     }[],
     weight_goals: {
       weights: {
-        token: {
-          logo: string
+        asset: {
+          token: {
+            logo: string
+          }
         }
       }[]
     }[]

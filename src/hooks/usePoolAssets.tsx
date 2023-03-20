@@ -36,12 +36,14 @@ export type GetPoolAssetsType = {
       start_timestamp: number,
       weights: {
         weight_normalized: string,
-        token: {
-          decimals: number,
-          id: string,
-          name: string,
-          price_usd: string,
-          symbol: string
+        asset: {
+          token: {
+            decimals: number,
+            id: string,
+            name: string,
+            price_usd: string,
+            symbol: string
+          }
         }
       }[]
     }[]
@@ -78,12 +80,14 @@ function usePoolAssets(poolId: string) {
           start_timestamp
           end_timestamp
           weights(orderBy: weight_normalized, orderDirection: desc) {
-            token {
-              id
-              name
-              symbol
-              decimals
-              price_usd
+            asset {
+              token {
+                id
+                name
+                symbol
+                decimals
+                price_usd
+              }
             }
             weight_normalized
           }

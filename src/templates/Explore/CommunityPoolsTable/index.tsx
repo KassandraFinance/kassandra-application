@@ -52,8 +52,10 @@ interface ICommunityPoolsTableProps {
     }[],
     weight_goals: {
       weights: {
-        token: {
-          logo: string
+        asset: {
+          token: {
+            logo: string
+          }
         }
       }[]
     }[]
@@ -71,8 +73,10 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
     price: string,
     tvl: string,
     assets: {
-      token: {
-        logo: string | null
+      asset: {
+        token: {
+          logo: string | null
+        }
       }
     }[],
     volume: string,
@@ -83,8 +87,10 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
     tvl: '',
     assets: [
       {
-        token: {
-          logo: ''
+        asset: {
+          token: {
+            logo: ''
+          }
         }
       }
     ],
@@ -112,8 +118,10 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
     price: string,
     tvl: string,
     assets: {
-      token: {
-        logo: string | null
+      asset: {
+        token: {
+          logo: string | null
+        }
       }
     }[],
     volume: string,
@@ -226,11 +234,11 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
                     {pool.weight_goals[0].weights.map((coin, index) => {
                       return (
                         <S.CoinImageWrapper
-                          key={coin.token?.logo}
+                          key={coin.asset?.token?.logo}
                           position={index}
                         >
                           <Image
-                            src={coin.token?.logo || notFoundIcon}
+                            src={coin.asset?.token?.logo || notFoundIcon}
                             layout="fill"
                           />
                         </S.CoinImageWrapper>
@@ -334,11 +342,11 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
                 {viewPool.assets.map((coin, index) => {
                   return (
                     <S.CoinImageWrapper
-                      key={coin.token?.logo || index}
+                      key={coin.asset?.token?.logo || index}
                       position={index}
                     >
                       <Image
-                        src={coin.token?.logo || notFoundIcon}
+                        src={coin.asset?.token?.logo || notFoundIcon}
                         layout="fill"
                       />
                     </S.CoinImageWrapper>

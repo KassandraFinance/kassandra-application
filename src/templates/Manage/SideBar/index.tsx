@@ -392,6 +392,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
                 text="Create New Pool"
                 backgroundSecondary
                 fullWidth
+                type="button"
                 icon={
                   <S.PlusIconWrapper>
                     <Image src={plusIcon} width={12} height={12} />

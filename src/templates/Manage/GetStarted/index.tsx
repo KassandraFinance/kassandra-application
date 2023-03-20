@@ -50,6 +50,7 @@ const GetStarted = () => {
       dispatch(setToFirstStep())
     }
     setIsCreatePool(true)
+    return
   }
   // const { data } = useSWR<UserResponse>([GET_PROFILE], query =>
   //   request(SUBGRAPH_URL, query, {
@@ -102,6 +103,7 @@ const GetStarted = () => {
               text="Create New Pool"
               backgroundSecondary
               fullWidth
+              type="button"
               onClick={handleCreatePool}
             />
           )}
