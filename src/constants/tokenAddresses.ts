@@ -86,7 +86,7 @@ export const networks: NetworkType = {
     factory: '0x7d15eb9d04cc280926634456210ce5ef2afa401c'
   },
   '137': {
-    chainName: 'Polygon',
+    chainName: 'Polygon Mainnet',
     chainId: 137,
     rpc: 'https://polygon-rpc.com/',
     coingecko: 'polygon-pos',

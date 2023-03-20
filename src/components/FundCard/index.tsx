@@ -54,13 +54,13 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
     Array(2).fill('')
   )
 
-  const params = {
+  const [params] = React.useState({
     id: poolAddress,
     price_period: 86400,
     period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 30),
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30)
-  }
+  })
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
