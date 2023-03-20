@@ -66,6 +66,8 @@ export const getStaticProps: GetStaticProps = async () => {
       poolsKassandra: [] as Array<{ id: string }>,
     })
 
+    console.log(poolsId)
+
     return {
       props: {
         poolsKassandra: poolsId.poolsKassandra

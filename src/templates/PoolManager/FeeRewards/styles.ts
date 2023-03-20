@@ -2,38 +2,55 @@ import styled, { css, keyframes } from 'styled-components'
 
 export const FeeRewards = styled.div`
   ${() => css`
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    justify-content: center;
+
     margin-top: 2.4rem;
 
     @media (min-width: 992px) {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      gap: 2.4rem;
+      gap: 6.1rem;
 
       margin-top: 4.4rem;
+    }
+  `}
+`
+export const FeesContainer = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+
+    @media (min-width: 992px) {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
     }
   `}
 `
 
 export const FeeBreakdownContainer = styled.div`
   ${({ theme }) => css`
-    width: 100%;
     display: flex;
     flex-direction: column;
-    padding: 2.4rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 0.8rem;
     gap: 1.4rem;
+
+    width: 100%;
+    padding: 2.4rem;
+    border-radius: 8px;
+
+    background: rgb(255 255 255 / 0.05);
 
     hr {
       border: none;
-      border-top: 0.1rem solid rgba(139, 139, 139, 0.5);
+      border-top: 0.1rem solid rgb(139 139 139 / 0.5);
     }
 
     > h3 {
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font14};
       line-height: 1.6rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -45,8 +62,9 @@ export const ReviewListContainer = styled.ul`
   ${() => css`
     display: flex;
     flex-direction: column;
-    width: 100%;
     gap: 1rem;
+
+    width: 100%;
   `}
 `
 
@@ -54,6 +72,7 @@ export const ListContent = styled.li`
   ${() => css`
     display: flex;
     justify-content: space-between;
+
     width: 100%;
 
     animation: ${translateY} 0.3s ease;
@@ -74,12 +93,12 @@ const translateY = keyframes`
 export const FeeBreakdownTitle = styled.p`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     gap: 0.4rem;
+    align-items: center;
 
     color: ${theme.colors.snow};
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font14};
     line-height: 1.4rem;
     letter-spacing: 0.025em;
     text-transform: uppercase;
@@ -89,10 +108,10 @@ export const FeeBreakdownTitle = styled.p`
 export const FeeBreakdownPorcentage = styled.p`
   ${({ theme }) => css`
     color: ${theme.colors.white};
-    font-size: ${theme.font.sizes.font18};
     font-weight: ${theme.font.weight.medium};
-    letter-spacing: 0.05em;
+    font-size: ${theme.font.sizes.font18};
     line-height: 2rem;
+    letter-spacing: 0.05em;
   `}
 `
 
@@ -100,9 +119,10 @@ export const FeeBreakdownParagraph = styled.p`
   ${({ theme }) => css`
     display: flex;
     align-items: center;
+
     color: #c4c4c4;
-    font-size: ${theme.font.sizes.font12};
     font-weight: ${theme.font.weight.normal};
+    font-size: ${theme.font.sizes.font12};
     line-height: 1.6rem;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -112,8 +132,8 @@ export const FeeBreakdownParagraph = styled.p`
 export const FeeBreakdownParagraphAmount = styled.p`
   ${({ theme }) => css`
     color: #fcfcfc;
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font14};
     line-height: 135%;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -123,8 +143,8 @@ export const FeeBreakdownParagraphAmount = styled.p`
 export const FeeBreakdownParagraphTotalAMount = styled.p`
   ${({ theme }) => css`
     color: #fcfcfc;
-    font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font16};
     line-height: 135%;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -137,28 +157,27 @@ export const FeeBreakdownAdress = styled.a`
     gap: 0.4rem;
 
     color: #c4c4c4;
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
     line-height: 1.6rem;
-
     text-decoration: none;
   `}
 `
 
 export const AumFees = styled.div`
   ${({ theme }) => css`
-    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
 
+    width: 100%;
+
     p {
-      font-size: ${theme.font.sizes.font14};
+      color: #c4c4c4;
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font14};
       line-height: 1.6rem;
       letter-spacing: 0.22rem;
-
-      color: #c4c4c4;
     }
   `}
 `
@@ -169,21 +188,23 @@ export const AvailableAumFees = styled.div`
       display: flex;
       flex-direction: column;
       gap: 1.6rem;
-      background-color: rgba(255, 255, 255, 0.05);
-      border-radius: 0.4rem;
+
       padding: 2.4rem;
+      border-radius: 4px;
+
+      background-color: rgb(255 255 255 / 0.05);
+
+      h3 {
+        font-weight: ${theme.font.weight.medium};
+        font-size: ${theme.font.sizes.font16};
+        line-height: 104%;
+      }
 
       @media (min-width: 576px) {
         display: flex;
         flex-direction: column;
-        justify-content: center;
         gap: 2.4rem;
-      }
-
-      h3 {
-        font-size: ${theme.font.sizes.font16};
-        font-weight: ${theme.font.weight.medium};
-        line-height: 104%;
+        justify-content: center;
       }
     `}
 `
@@ -196,9 +217,9 @@ export const ManagerFee = styled.div`
 
     @media (min-width: 576px) {
       display: flex;
-      align-items: center;
       flex-direction: row;
       justify-content: space-between;
+      align-items: center;
     }
   `}
 `
@@ -208,18 +229,18 @@ export const AmountFees = styled.div`
     display: flex;
     flex-direction: column;
 
-    span:first-child {
-      font-size: ${theme.font.sizes.font24};
-      font-weight: ${theme.font.weight.medium};
-      line-height: 104%;
-      color: ${theme.colors.white};
-    }
-
     span {
       color: #bdbdbd;
+      font-weight: ${theme.font.weight.normal};
       font-size: ${theme.font.sizes.font16};
       line-height: 135%;
-      font-weight: ${theme.font.weight.normal};
+    }
+
+    span:first-child {
+      color: ${theme.colors.white};
+      font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font24};
+      line-height: 104%;
     }
 
     @media (min-width: 576px) {
@@ -235,17 +256,18 @@ export const Harvest = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1.6rem;
-    @media (min-width: 576px) {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-    }
 
     span {
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font16};
+    }
+
+    @media (min-width: 576px) {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
     }
   `}
 `
@@ -253,17 +275,31 @@ export const Harvest = styled.div`
 export const ClaimedRewards = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
 
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 0.4rem;
     padding: 2.4rem;
+    border-radius: 4px;
+
+    background-color: rgb(255 255 255 / 0.05);
 
     span {
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font16};
     }
+  `}
+`
+
+export const FeesGeaphContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`
+
+export const TitleWrapper = styled.div`
+  ${() => css`
+    margin-bottom: 2.4rem;
+    padding-bottom: 1.6rem;
+    border-bottom: 0.1rem solid rgb(255 255 255 / 0.1);
   `}
 `

@@ -17,6 +17,7 @@ import SideBar from '../Manage/SideBar'
 import Button from '../../components/Button'
 import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 import Loading from '@ui/Loading'
+import FeeRewards from './FeeRewards'
 
 import Analytics from './Analytics'
 import Allocations from './Allocations'
@@ -96,7 +97,7 @@ const PoolManager = () => {
     allocations: <Allocations />,
     activity: <ComingSoon />,
     investors: <ComingSoon />,
-    feeRewards: <ComingSoon />,
+    feeRewards: <FeeRewards />,
     brokers: <ComingSoon />,
     info: <ComingSoon />
   }

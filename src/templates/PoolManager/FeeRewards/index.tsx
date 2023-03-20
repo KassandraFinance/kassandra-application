@@ -11,6 +11,11 @@ import { GET_FEES } from './graphql'
 
 import { useAppSelector } from '@/store/hooks'
 
+import TitleSection from '@/components/TitleSection'
+import FeesGraph from './FeesGraph'
+
+import poolsAssetsIcon from '../../../../public/assets/iconGradient/assets-distribution.svg'
+
 import { BNtoDecimal } from '@/utils/numerals'
 import web3 from '@/utils/web3'
 
@@ -40,7 +45,7 @@ type Result = {
 }
 
 const FeeRewards = () => {
-  const [feesAum, setFeesAum] = React.useState({ kassandra: '0', manager: '0'})
+  const [feesAum, setFeesAum] = React.useState({ kassandra: '0', manager: '0' })
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -60,7 +65,7 @@ const FeeRewards = () => {
       try {
         // eslint-disable-next-line prettier/prettier
         const controllerContract = new web3.eth.Contract((KassandraController as unknown) as AbiItem, controller)
-        const {feesToManager, feesToKassandra } = await controllerContract.methods.withdrawCollectedManagementFees().call({ from: userWalletAddress })
+        const { feesToManager, feesToKassandra } = await controllerContract.methods.withdrawCollectedManagementFees().call({ from: userWalletAddress })
         setFeesAum({ kassandra: feesToKassandra, manager: feesToManager })
       } catch (error) {
         console.error(error)
@@ -80,111 +85,120 @@ const FeeRewards = () => {
 
   return pool ? (
     <S.FeeRewards>
-      <S.AumFees>
-        <S.AvailableAumFees>
-          <h3>Available Rewards</h3>
-          <S.ManagerFee>
-            <p>MANAGEMENT FEE ({BNtoDecimal(Big(pool.fee_aum), 4)}%)</p>
-            <S.AmountFees>
-              <span>${Big(pool.price_usd).mul(feesAum.manager).toFixed(2)}</span>
-              <span>{`${BNtoDecimal(Big(feesAum.manager), 4)} ${pool.symbol}`}</span>
-            </S.AmountFees>
-          </S.ManagerFee>
-          <S.Harvest>
-            <p>LAST HARVEST</p>
-            <span>27 days agoo</span>
-          </S.Harvest>
-          <Button
-            disabledNoEvent={Big(feesAum.manager).lte(0)}
-            backgroundSecondary
-            size="large"
-            text="Claim Rewards"
-            onClick={() => {handleClaimRewards(pool.controller)}}
-          />
-        </S.AvailableAumFees>
-        <S.ClaimedRewards>
-          <p>ALL TIME REWARDS</p>
-          <span>${Big(pool.total_fees_aum_usd).add(pool.total_fees_join_manager_usd).toFixed(2)}</span>
-        </S.ClaimedRewards>
-      </S.AumFees>
+      <S.FeesContainer>
+        <S.AumFees>
+          <S.AvailableAumFees>
+            <h3>Available Rewards</h3>
+            <S.ManagerFee>
+              <p>MANAGEMENT FEE ({BNtoDecimal(Big(pool.fee_aum), 4)}%)</p>
+              <S.AmountFees>
+                <span>${Big(pool.price_usd).mul(feesAum.manager).toFixed(2)}</span>
+                <span>{`${BNtoDecimal(Big(feesAum.manager), 4)} ${pool.symbol}`}</span>
+              </S.AmountFees>
+            </S.ManagerFee>
+            <S.Harvest>
+              <p>LAST HARVEST</p>
+              <span>27 days agoo</span>
+            </S.Harvest>
+            <Button
+              disabledNoEvent={Big(feesAum.manager).lte(0)}
+              backgroundSecondary
+              size="large"
+              text="Claim Rewards"
+              onClick={() => { handleClaimRewards(pool.controller) }}
+            />
+          </S.AvailableAumFees>
+          <S.ClaimedRewards>
+            <p>ALL TIME REWARDS</p>
+            <span>${Big(pool.total_fees_aum_usd).add(pool.total_fees_join_manager_usd).toFixed(2)}</span>
+          </S.ClaimedRewards>
+        </S.AumFees>
 
-      <S.FeeBreakdownContainer>
-        <h3>Fee Breakdown</h3>
-        <hr />
-        <S.ReviewListContainer>
-          <S.ListContent>
-            <S.FeeBreakdownTitle>Deposit fee</S.FeeBreakdownTitle>
-            <S.FeeBreakdownPorcentage>
-              {BNtoDecimal(
-                Big(pool.fee_join_manager).add(pool.fee_join_broker),
-                4
-              )}
-              %
-            </S.FeeBreakdownPorcentage>
-          </S.ListContent>
-          <S.ListContent>
-            <S.FeeBreakdownParagraph>
-              Broker commission ({BNtoDecimal(Big(pool.fee_join_broker), 4)}%)
-            </S.FeeBreakdownParagraph>
-            <S.FeeBreakdownParagraphAmount>
-              ${Big(pool.total_fees_join_broker_usd).toFixed(2)}
-            </S.FeeBreakdownParagraphAmount>
-          </S.ListContent>
-          <S.ListContent>
-            <S.FeeBreakdownParagraph>
-              Manager share ({BNtoDecimal(Big(pool.fee_join_manager), 4)}%)
-            </S.FeeBreakdownParagraph>
-            <S.FeeBreakdownParagraphAmount>
-              ${Big(pool.total_fees_join_manager_usd).toFixed(2)}
-            </S.FeeBreakdownParagraphAmount>
-          </S.ListContent>
-          <S.ListContent>
-            <S.FeeBreakdownParagraph>All time</S.FeeBreakdownParagraph>
-            <S.FeeBreakdownParagraphTotalAMount>
-              $
-              {Big(pool.total_fees_join_manager_usd)
-                .add(pool.total_fees_join_broker_usd)
-                .toFixed(2)}
-            </S.FeeBreakdownParagraphTotalAMount>
-          </S.ListContent>
-        </S.ReviewListContainer>
-        <hr />
-        <S.ReviewListContainer>
-          <S.ListContent>
-            <S.FeeBreakdownTitle>Management Fee</S.FeeBreakdownTitle>
-            <S.FeeBreakdownPorcentage>
-              {BNtoDecimal(Big(pool.fee_aum).add(pool.fee_aum), 4)}%
-            </S.FeeBreakdownPorcentage>
-          </S.ListContent>
+        <S.FeeBreakdownContainer>
+          <h3>Fee Breakdown</h3>
+          <hr />
+          <S.ReviewListContainer>
+            <S.ListContent>
+              <S.FeeBreakdownTitle>Deposit fee</S.FeeBreakdownTitle>
+              <S.FeeBreakdownPorcentage>
+                {BNtoDecimal(
+                  Big(pool.fee_join_manager).add(pool.fee_join_broker),
+                  4
+                )}
+                %
+              </S.FeeBreakdownPorcentage>
+            </S.ListContent>
+            <S.ListContent>
+              <S.FeeBreakdownParagraph>
+                Broker commission ({BNtoDecimal(Big(pool.fee_join_broker), 4)}%)
+              </S.FeeBreakdownParagraph>
+              <S.FeeBreakdownParagraphAmount>
+                ${Big(pool.total_fees_join_broker_usd).toFixed(2)}
+              </S.FeeBreakdownParagraphAmount>
+            </S.ListContent>
+            <S.ListContent>
+              <S.FeeBreakdownParagraph>
+                Manager share ({BNtoDecimal(Big(pool.fee_join_manager), 4)}%)
+              </S.FeeBreakdownParagraph>
+              <S.FeeBreakdownParagraphAmount>
+                ${Big(pool.total_fees_join_manager_usd).toFixed(2)}
+              </S.FeeBreakdownParagraphAmount>
+            </S.ListContent>
+            <S.ListContent>
+              <S.FeeBreakdownParagraph>All time</S.FeeBreakdownParagraph>
+              <S.FeeBreakdownParagraphTotalAMount>
+                $
+                {Big(pool.total_fees_join_manager_usd)
+                  .add(pool.total_fees_join_broker_usd)
+                  .toFixed(2)}
+              </S.FeeBreakdownParagraphTotalAMount>
+            </S.ListContent>
+          </S.ReviewListContainer>
+          <hr />
+          <S.ReviewListContainer>
+            <S.ListContent>
+              <S.FeeBreakdownTitle>Management Fee</S.FeeBreakdownTitle>
+              <S.FeeBreakdownPorcentage>
+                {BNtoDecimal(Big(pool.fee_aum).add(pool.fee_aum), 4)}%
+              </S.FeeBreakdownPorcentage>
+            </S.ListContent>
 
-          <S.ListContent>
-            <S.FeeBreakdownParagraph>
-              Kassandra Share ({BNtoDecimal(Big(pool.fee_aum), 4)}%)
-            </S.FeeBreakdownParagraph>
-            <S.FeeBreakdownParagraphAmount>
-              ${Big(pool.total_fees_aum_usd).toFixed(2)}
-            </S.FeeBreakdownParagraphAmount>
-          </S.ListContent>
-          <S.ListContent>
-            <S.FeeBreakdownParagraph>
-              Manager Share ({BNtoDecimal(Big(pool.fee_aum), 4)}%)
-            </S.FeeBreakdownParagraph>
-            <S.FeeBreakdownParagraphAmount>
-              ${Big(pool.total_fees_aum_usd).toFixed(2)}
-            </S.FeeBreakdownParagraphAmount>
-          </S.ListContent>
-          <S.ListContent>
-            <S.FeeBreakdownParagraph>All time</S.FeeBreakdownParagraph>
-            <S.FeeBreakdownParagraphTotalAMount>
-              $
-              {Big(pool.total_fees_aum_usd)
-                .add(pool.total_fees_aum_usd)
-                .toFixed(2)}
-            </S.FeeBreakdownParagraphTotalAMount>
-          </S.ListContent>
-        </S.ReviewListContainer>
-        <hr />
-      </S.FeeBreakdownContainer>
+            <S.ListContent>
+              <S.FeeBreakdownParagraph>
+                Kassandra Share ({BNtoDecimal(Big(pool.fee_aum), 4)}%)
+              </S.FeeBreakdownParagraph>
+              <S.FeeBreakdownParagraphAmount>
+                ${Big(pool.total_fees_aum_usd).toFixed(2)}
+              </S.FeeBreakdownParagraphAmount>
+            </S.ListContent>
+            <S.ListContent>
+              <S.FeeBreakdownParagraph>
+                Manager Share ({BNtoDecimal(Big(pool.fee_aum), 4)}%)
+              </S.FeeBreakdownParagraph>
+              <S.FeeBreakdownParagraphAmount>
+                ${Big(pool.total_fees_aum_usd).toFixed(2)}
+              </S.FeeBreakdownParagraphAmount>
+            </S.ListContent>
+            <S.ListContent>
+              <S.FeeBreakdownParagraph>All time</S.FeeBreakdownParagraph>
+              <S.FeeBreakdownParagraphTotalAMount>
+                $
+                {Big(pool.total_fees_aum_usd)
+                  .add(pool.total_fees_aum_usd)
+                  .toFixed(2)}
+              </S.FeeBreakdownParagraphTotalAMount>
+            </S.ListContent>
+          </S.ReviewListContainer>
+          <hr />
+        </S.FeeBreakdownContainer>
+      </S.FeesContainer>
+
+      <S.FeesGeaphContainer>
+        <S.TitleWrapper>
+          <TitleSection title="Pool Assets" image={poolsAssetsIcon} />
+        </S.TitleWrapper>
+        <FeesGraph />
+      </S.FeesGeaphContainer>
     </S.FeeRewards>
   ) : (
     <Loading marginTop={10} />
