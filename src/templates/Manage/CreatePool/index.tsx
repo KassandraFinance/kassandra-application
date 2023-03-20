@@ -241,7 +241,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     for (const token of tokensList) {
       if (notAprovedTokens.includes(mockTokensReverse[token.address] ?? token.address)) {
         notApprovedList.push({
-          key: token.address,
+          key: mockTokensReverse[token.address] ?? token.address,
           transaction: `Aprove ${token.symbol}`,
           status: 'WAITING'
         })
@@ -394,7 +394,13 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }))
 
     if (notAprovedTokens.length > 0) {
-      await handleAproveTokens(notAprovedTokens)
+      const arr = []
+      for (const token of transactions) {
+        if (notAprovedTokens.includes(token.key)) {
+          arr.push(token.key)
+        }
+      }
+      await handleAproveTokens(arr)
     }
 
     const managementFeeRate = poolData.fees?.managementFee.feeRate ? poolData.fees.managementFee.feeRate : 0
