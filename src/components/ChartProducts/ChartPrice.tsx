@@ -90,7 +90,8 @@ const ChartPrice = ({ data, color }: IChartPriceProps) => {
         />
         <Tooltip
           wrapperStyle={{
-            visibility: 'visible'
+            visibility: 'visible',
+            outline: 'none'
           }}
           cursor={{ stroke: color }}
           position={position}

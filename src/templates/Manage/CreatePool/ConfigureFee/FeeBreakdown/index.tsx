@@ -2,8 +2,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { isAddress } from 'web3-utils'
 import Tippy from '@tippyjs/react'
+import Big from 'big.js'
 
 import { useAppSelector } from '../../../../../store/hooks'
+import { kassandraManagementFee } from '@/constants/tokenAddresses'
 
 import substr from '../../../../../utils/substr'
 
@@ -76,7 +78,10 @@ const FeeBreakdown = () => {
           <S.ReviewListContent>
             <S.FeeBreakdownTitle>Management Fee</S.FeeBreakdownTitle>
             <S.FeeBreakdownPorcentage>
-              {feesData?.managementFee.feeRate}%
+              {Big(feesData?.managementFee.feeRate || 0)
+                .add(kassandraManagementFee)
+                .toFixed(2)}
+              %
             </S.FeeBreakdownPorcentage>
           </S.ReviewListContent>
           {feesData?.managementFee && (

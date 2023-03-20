@@ -30,3 +30,8 @@ export function BNtoDecimal(
 }
 
 export const wei = new BigNumber('10').pow(new BigNumber('18'))
+
+export function calcChange(newPrice: number, oldPrice: number) {
+  const calc = ((newPrice - oldPrice) / oldPrice) * 100
+  return calc ? calc.toFixed(2) : '0'
+}

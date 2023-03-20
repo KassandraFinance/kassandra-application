@@ -175,3 +175,12 @@ export const NameAndSymbol = styled.div`
     }
   `}
 `
+
+export const LoadingWrapper = styled.div`
+  ${() => css`
+    display: flex;
+    justify-content: center;
+
+    height: calc(100vh - 10.8rem);
+  `}
+`

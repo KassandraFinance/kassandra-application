@@ -1,14 +1,11 @@
 import React, { ReactElement } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import { useRouter } from 'next/router'
 
-import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
-
-import { GET_INFO_POOL } from './graphql'
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
+import usePoolInfo from '@/hooks/usePoolInfo'
+import { useAppSelector } from '@/store/hooks'
 
 import SharedImage from '../Pool/SharedImage'
 import ShareImageModal from '../Pool/ShareImageModal'
@@ -19,6 +16,7 @@ import Overlay from '../../components/Overlay'
 import SideBar from '../Manage/SideBar'
 import Button from '../../components/Button'
 import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
+import Loading from '@ui/Loading'
 
 import Analytics from './Analytics'
 import Allocations from './Allocations'
@@ -74,10 +72,6 @@ const tabs = [
   }
 ]
 
-// interface IPoolManagerProps {
-//   pool: IPoolSlice;
-// }
-
 const PoolManager = () => {
   const [isOpenManageAssets, setIsOpenManageAssets] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
@@ -87,6 +81,7 @@ const PoolManager = () => {
   >('analytics')
 
   const router = useRouter()
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -94,11 +89,7 @@ const PoolManager = () => {
 
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const { data } = useSWR([GET_INFO_POOL, poolId], (query, poolId) =>
-    request(BACKEND_KASSANDRA, query, {
-      id: poolId ?? ''
-    })
-  )
+  const { poolInfo, isManager } = usePoolInfo(userWalletAddress, poolId)
 
   const PoolManagerComponents: { [key: string]: ReactElement } = {
     analytics: <Analytics poolId={poolId} />,
@@ -110,6 +101,13 @@ const PoolManager = () => {
     info: <ComingSoon />
   }
 
+  React.useEffect(() => {
+    if (isManager) {
+      router.push(`/pool/${poolId}`)
+    }
+    return
+  }, [isManager])
+
   return (
     <S.PoolManager>
       <S.DashBoard isOpen={isOpen}>
@@ -119,112 +117,120 @@ const PoolManager = () => {
         <div></div>
 
         <Header />
-        <S.Content>
-          <S.Intro>
-            <S.GridIntro>
-              <TokenWithNetworkImage
-                tokenImage={{
-                  url: data?.pool?.logo,
-                  height: 75,
-                  width: 75,
-                  withoutBorder: true
-                }}
-                networkImage={{
-                  url: data?.pool?.chain?.logo,
-                  height: 20,
-                  width: 20
-                }}
-                blockies={{
-                  size: 8,
-                  scale: 9,
-                  seedName: data?.pool?.name
-                }}
-              />
-              <S.NameIndex>
-                <S.NameAndSymbol>
-                  <h1>{data?.pool?.name}</h1>
-                </S.NameAndSymbol>
-                <S.SymbolAndLink>
-                  <h3>${data?.pool?.symbol}</h3>
-                  <Link href={`/pool/${data?.pool?.id}`}>
-                    <button className="circle">
+        {poolInfo ? (
+          <S.Content>
+            <S.Intro>
+              <S.GridIntro>
+                <TokenWithNetworkImage
+                  tokenImage={{
+                    url: poolInfo?.logo,
+                    height: 75,
+                    width: 75,
+                    withoutBorder: true
+                  }}
+                  networkImage={{
+                    url: poolInfo?.chain?.logo,
+                    height: 20,
+                    width: 20
+                  }}
+                  blockies={{
+                    size: 8,
+                    scale: 9,
+                    seedName: poolInfo?.name
+                  }}
+                />
+                <S.NameIndex>
+                  <S.NameAndSymbol>
+                    <h1>{poolInfo?.name}</h1>
+                  </S.NameAndSymbol>
+                  <S.SymbolAndLink>
+                    <h3>${poolInfo?.symbol}</h3>
+                    <Link href={`/pool/${poolInfo?.id}`}>
+                      <button className="circle">
+                        <Image
+                          src="/assets/icons/website-with-bg.svg"
+                          width={32}
+                          height={32}
+                        />
+                      </button>
+                    </Link>
+                    <a
+                      href={`${poolInfo?.chain?.blockExplorerUrl}/address/${poolInfo?.address}`}
+                      className="circle"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Image
-                        src="/assets/icons/website-with-bg.svg"
+                        src="/assets/icons/go-to-site-with-bg.svg"
+                        width={32}
+                        height={32}
+                      />
+                    </a>
+                    <button
+                      onClick={() => {
+                        setOpenModal(true)
+                        trackEventFunction(
+                          'click',
+                          `social-share-${poolInfo?.name}`,
+                          'pool'
+                        )
+                      }}
+                      className="circle"
+                    >
+                      <Image
+                        src="/assets/icons/share-with-bg.svg"
                         width={32}
                         height={32}
                       />
                     </button>
-                  </Link>
-                  <a
-                    href={`${data?.pool?.chain?.blockExplorerUrl}/address/${data?.pool.address}`}
-                    className="circle"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Image
-                      src="/assets/icons/go-to-site-with-bg.svg"
-                      width={32}
-                      height={32}
-                    />
-                  </a>
-                  <button
-                    onClick={() => {
-                      setOpenModal(true)
-                      trackEventFunction(
-                        'click',
-                        `social-share-${data?.pool.name}`,
-                        'pool'
-                      )
-                    }}
-                    className="circle"
-                  >
-                    <Image
-                      src="/assets/icons/share-with-bg.svg"
-                      width={32}
-                      height={32}
-                    />
-                  </button>
-                </S.SymbolAndLink>
-              </S.NameIndex>
-            </S.GridIntro>
+                  </S.SymbolAndLink>
+                </S.NameIndex>
+              </S.GridIntro>
 
-            <Button
-              className="btn-manage-assets"
-              backgroundSecondary
-              size="large"
-              text="Manage Assets"
-              image={gear.src}
-              onClick={() => setIsOpenManageAssets(true)}
+              <Button
+                className="btn-manage-assets"
+                backgroundSecondary
+                size="large"
+                text="Manage Assets"
+                image={gear.src}
+                onClick={() => setIsOpenManageAssets(true)}
+              />
+            </S.Intro>
+            <SelectTabs
+              tabs={tabs}
+              isSelect={isSelectTab}
+              setIsSelect={setIsSelectTab}
             />
-          </S.Intro>
-          <SelectTabs
-            tabs={tabs}
-            isSelect={isSelectTab}
-            setIsSelect={setIsSelectTab}
-          />
-          {
-            PoolManagerComponents[
-              `${isSelectTab === 'fee-rewards' ? 'feeRewards' : isSelectTab}`
-            ]
-          }
-        </S.Content>
+            {
+              PoolManagerComponents[
+                `${isSelectTab === 'fee-rewards' ? 'feeRewards' : isSelectTab}`
+              ]
+            }
+          </S.Content>
+        ) : (
+          <S.LoadingWrapper>
+            <Loading marginTop={0} />
+          </S.LoadingWrapper>
+        )}
       </S.DashBoard>
       {isOpenManageAssets && (
         <ManageAssets setIsOpenManageAssets={setIsOpenManageAssets} />
       )}
-      <ShareImageModal
-        poolId={data?.pool.id}
-        setOpenModal={setOpenModal}
-        openModal={openModal}
-        productName={data?.pool.symbol}
-      >
-        <SharedImage
-          crpPoolAddress={data?.pool.id}
-          totalValueLocked={data?.pool.total_value_locked_usd || ''}
-          socialIndex={data?.pool.symbol}
-          productName={data?.pool.name}
-        />
-      </ShareImageModal>
+      {poolInfo && (
+        <ShareImageModal
+          poolId={poolInfo?.id}
+          setOpenModal={setOpenModal}
+          openModal={openModal}
+          productName={poolInfo?.symbol}
+        >
+          <SharedImage
+            crpPoolAddress={poolInfo?.id}
+            totalValueLocked={poolInfo?.total_value_locked_usd || ''}
+            socialIndex={poolInfo?.symbol}
+            productName={poolInfo?.name}
+          />
+        </ShareImageModal>
+      )}
     </S.PoolManager>
   )
 }

@@ -36,8 +36,10 @@ export interface WeightsV2 {
   end_timestamp: number;
   weights: {
     weight_normalized: string,
-    token: {
-      id: string
+    asset: {
+      token: {
+        id: string
+      }
     }
   }[];
 }
@@ -140,8 +142,10 @@ const initialState: IPoolSlice = {
       weights: [
         {
           weight_normalized: '',
-          token: {
-            id: ''
+          asset: {
+            token: {
+              id: ''
+            }
           }
         }
       ]

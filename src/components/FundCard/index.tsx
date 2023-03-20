@@ -6,12 +6,14 @@ import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
+import { useAppSelector } from '@/store/hooks'
+
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
 
 import { getWeightsNormalizedV2 } from '../../utils/updateAssetsToV2'
-import { BNtoDecimal } from '../../utils/numerals'
+import { BNtoDecimal, calcChange } from '../../utils/numerals'
 
 import FundAreaChart from './FundAreaChart'
 import FundBarChart from './FundBarChart'
@@ -52,14 +54,22 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
     Array(2).fill('')
   )
 
-  const [params] = React.useState({
+  const params = {
     id: poolAddress,
     price_period: 86400,
     period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 30),
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30)
-  })
+  }
+
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+
   const router = useRouter()
+  const profileAddress = !router.query.profileAddress
+    ? ''
+    : Array.isArray(router.query.profileAddress)
+    ? ''
+    : router.query.profileAddress
 
   const { data } = useSWR([GET_POOL, params], (query, params) =>
     request(BACKEND_KASSANDRA, query, params)
@@ -67,11 +77,6 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
 
   const getPercentage = (weight: number) => {
     return Number((weight * 100).toFixed(2))
-  }
-
-  function calcChange(newPrice: number, oldPrice: number) {
-    const calc = ((newPrice - oldPrice) / oldPrice) * 100
-    return calc ? calc.toFixed(2) : '0'
   }
 
   React.useEffect(() => {
@@ -142,6 +147,8 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
           <Link
             href={
               router.asPath === '/manage'
+                ? `/manage/${poolAddress}`
+                : userWalletAddress === profileAddress
                 ? `/manage/${poolAddress}`
                 : `/pool/${poolAddress}`
             }
