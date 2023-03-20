@@ -83,7 +83,7 @@ export const networks: NetworkType = {
     rpc: 'https://rpc.ankr.com/eth_goerli',
     coingecko: 'polygon-pos',
     whiteList: '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57',
-    factory: '0x7d15eb9d04cc280926634456210ce5ef2afa401c'
+    factory: '0x4722b1d02c0bEBb60D426e9999BB9921d29C2956'
   },
   '137': {
     chainName: 'Polygon',
