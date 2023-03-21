@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react'
 import BigNumber from 'bn.js'
+import Web3 from 'web3'
 
 import { AbiItem } from "web3-utils"
 import { Contract } from "web3-eth-contract"
@@ -109,8 +110,8 @@ const useERC20Contract = (address: string) => {
   }, [contract])
 }
 
-export const ERC20 = (address: string) => {
-  const contract = new web3.eth.Contract((ERC20ABI as unknown) as AbiItem, address)
+export const ERC20 = (address: string, _web3: Web3 = web3) => {
+  const contract = new _web3.eth.Contract((ERC20ABI as unknown) as AbiItem, address)
   return ERC20Contract(contract)
 }
 

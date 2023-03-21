@@ -155,7 +155,6 @@ const AddLiquidityTable = ({
                       2
                     )
                   : 0}{' '}
-                {coin.symbol}
                 <S.SecondaryText>
                   ~$
                   {tokensBalance[coin.address] && priceList

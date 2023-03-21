@@ -82,7 +82,7 @@ const SelectAssets = () => {
   async function getBalances(tokensList: string[]) {
     let balanceArr = {}
     for (const token of tokensList) {
-      const { balance } = ERC20(token)
+      const { balance } = ERC20(token, new Web3(networks[networkId ?? 137].rpc))
       const balanceValue = await balance(wallet)
       balanceArr = {
         ...balanceArr,
@@ -121,6 +121,7 @@ const SelectAssets = () => {
     const getWhitelist = async () => {
       try {
         const web3 = new Web3(networks[networkId ?? 137].rpc);
+        
         // eslint-disable-next-line prettier/prettier
         const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[networkId ?? 137].whiteList);
         const whitelist = await whitelistContract.methods.getTokens(0, 50).call();

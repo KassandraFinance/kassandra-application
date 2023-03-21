@@ -48,6 +48,9 @@ export type GetPoolTokensType = {
     symbol: string,
     total_value_locked_usd: string,
     controller: string,
+    chain: {
+      logo: string
+    },
     weight_goals: {
       weights: AssetType[]
     }[]
@@ -191,6 +194,7 @@ const AddLiquidityOperation = () => {
               coinName={data?.pool.name}
               coinSymbol={data?.pool.symbol}
               coinImage={data?.pool.logo}
+              chainImage={data?.pool.chain.logo}
               price={0}
             />
 

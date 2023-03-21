@@ -90,7 +90,8 @@ const ChartTVL = ({ data, color }: IChartTVLProps) => {
         />
         <Tooltip
           wrapperStyle={{
-            visibility: 'visible'
+            visibility: 'visible',
+            outline: 'none'
           }}
           cursor={{ stroke: color }}
           position={position}

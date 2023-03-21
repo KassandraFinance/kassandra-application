@@ -35,6 +35,7 @@ const Nav = ({
   const { trackEventFunction } = useMatomoEcommerce()
 
   const router = useRouter()
+  const path = router.asPath.split('/')
 
   function handleClickOverlay() {
     setIsShowMenu(false)
@@ -90,7 +91,7 @@ const Nav = ({
             onClick={() => {
               trackEventFunction('click-on-link', 'manage', 'header')
             }}
-            active={router.asPath === '/manage'}
+            active={path[1] === 'manage'}
           >
             Manage
           </S.MenuLink>

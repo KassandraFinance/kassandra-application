@@ -20,7 +20,7 @@ import waitTransaction, {
 
 import KassandraManagedControllerFactoryAbi from '../../../constants/abi/KassandraManagedControllerFactory.json'
 import KassandraControlerAbi from '../../../constants/abi/KassandraController.json'
-import { BACKEND_KASSANDRA, networks } from '../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { SAVE_POOL } from './graphql'
 
 import ContainerButton from '../../../components/ContainerButton'
@@ -90,6 +90,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       onStart={deployPool}
       onCancel={() => {dispatch(setBackStepNumber())}}
       onComfirm={() => {dispatch(setNextStepNumber())}}
+      networkId={poolData.networkId}
     />,
     <PoolCreated key="poolCreated" />
   ]
@@ -241,7 +242,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     for (const token of tokensList) {
       if (notAprovedTokens.includes(mockTokensReverse[token.address] ?? token.address)) {
         notApprovedList.push({
-          key: token.address,
+          key: mockTokensReverse[token.address] ?? token.address,
           transaction: `Aprove ${token.symbol}`,
           status: 'WAITING'
         })
@@ -254,7 +255,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }
     }
 
-    transactionsList.push(...notApprovedList, ...approvedList)
+    transactionsList.push(...approvedList, ...notApprovedList)
 
     transactionsList.push({
       key: 'createPool',
@@ -325,6 +326,12 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           })
           return
         }
+      } else {
+          setTransactions(prev => {
+            prev[prev.length - 1].status = 'ERROR'
+            return prev
+          })
+          return
       }
     } catch (error) {
       console.error(error)
@@ -388,7 +395,13 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }))
 
     if (notAprovedTokens.length > 0) {
-      await handleAproveTokens(notAprovedTokens)
+      const arr = []
+      for (const token of transactions) {
+        if (notAprovedTokens.includes(token.key)) {
+          arr.push(token.key)
+        }
+      }
+      await handleAproveTokens(arr)
     }
 
     const managementFeeRate = poolData.fees?.managementFee.feeRate ? poolData.fees.managementFee.feeRate : 0

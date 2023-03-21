@@ -1,23 +1,19 @@
 import React from 'react'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 
-import { BACKEND_KASSANDRA } from '../../../../constants/tokenAddresses'
+import { useAppSelector } from '@/store/hooks'
+import useManagerPools, { GetManagerPoolsType } from '@/hooks/useManagerPools'
 
-import FundCard from '../../../../components/FundCard'
-import InputFilter from '../../../../components/Inputs/InputFilter'
-
-import { GET_POOLS } from './graphql'
+import FundCard from '@ui/FundCard'
+import InputFilter from '@ui/Inputs/InputFilter'
 
 import * as S from './styles'
 
 const ManagedPools = () => {
   const [filter, setFilter] = React.useState('')
-  const [pools, setPools] = React.useState([])
 
-  const { data } = useSWR([GET_POOLS], query =>
-    request(BACKEND_KASSANDRA, query)
-  )
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+
+  const { managerPools } = useManagerPools(userWalletAddress)
 
   function handleFilter(e: React.ChangeEvent<HTMLInputElement>) {
     setFilter(e.target.value)
@@ -27,11 +23,11 @@ const ManagedPools = () => {
     setFilter('')
   }
 
-  React.useEffect(() => {
-    if (data?.pools) {
-      setPools(data.pools)
-    }
-  }, [data])
+  function searchPool(search: string, managerPools: GetManagerPoolsType) {
+    const expressao = new RegExp(search, 'i')
+    const arr = managerPools.pools.filter(pool => expressao.test(pool.name))
+    return arr
+  }
 
   return (
     <S.ManagedPools>
@@ -49,9 +45,10 @@ const ManagedPools = () => {
 
       <S.ManagedPoolsWrapper>
         <S.ManagedPoolsContainer>
-          {pools.map((pool: { id: string, address: string }) => (
-            <FundCard key={pool.id} poolAddress={pool.id} />
-          ))}
+          {managerPools &&
+            searchPool(filter, managerPools).map(pool => (
+              <FundCard key={pool.id} poolAddress={pool.id} />
+            ))}
         </S.ManagedPoolsContainer>
       </S.ManagedPoolsWrapper>
     </S.ManagedPools>

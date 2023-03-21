@@ -106,8 +106,10 @@ export const GET_POOL = gql`
         end_timestamp
         weights(orderBy: weight_normalized, orderDirection: desc) {
           weight_normalized
-          token {
-            id
+          asset {
+            token {
+              id
+            }
           }
         }
       }

@@ -20,15 +20,15 @@
     "incremental": true,
     "plugins": [
       {
-        "name": "@styled/typescript-styled-plugin",
+        "name": "@styled/typescript-styled-plugin"
       }
     ],
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "@ui/*": ["./components/*"],
+      "@/*": ["./src/*"],
+      "@ui/*": ["./src/components/*"],
       "@assets/*": ["./public/assets/*"]
-    },
+    }
   },
   "include": [
     "next-env.d.ts",

@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 import { ERC20 } from '../../../hooks/useERC20Contract'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
+import { setPoolId } from '../../../store/reducers/addAssetSlice'
 import { mockTokensReverse } from '../../../constants/tokenAddresses'
 import Kacupe from '../../../constants/abi/Kacupe.json'
 
@@ -613,8 +614,15 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     if (actionSelected > 0 && step < 4  || (actionSelected === chooseActionStep.Add && step < 5)) {
       setStep(prev => prev + 1)
     }
-
   }
+
+  React.useEffect(() => {
+    if (!data) return
+
+    dispatch(
+      setPoolId({ poolId: poolId, chainId: data?.pool.chainId })
+    )
+  }, [data])
 
   return (
     <S.ManageAssets>

@@ -6,8 +6,9 @@ import Image from 'next/image'
 // import Big from 'big.js'
 
 import changeChain, { ChainDetails } from '../../../utils/changeChain'
-import { useAppSelector, useAppDispatch } from '../../../store/hooks'
-import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
+import { setToFirstStep } from '@/store/reducers/poolCreationSlice'
 
 // import { GET_PROFILE } from './graphql'
 // import { SUBGRAPH_URL } from '../../../constants/tokenAddresses'
@@ -15,9 +16,8 @@ import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 // import { BNtoDecimal } from '../../../utils/numerals'
 
 import Button from '../../../components/Button'
-// import ExternalLink from '../../../components/ExternalLink'
-
 import CreatePool from '../CreatePool'
+// import ExternalLink from '../../../components/ExternalLink'
 
 import kacyLogoShadow from '../../../../public/assets/images/kacy-logo-shadow.png'
 
@@ -40,7 +40,18 @@ const GetStarted = () => {
   const dispatch = useAppDispatch()
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
+  const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
+  const poolCreattionChainId = useAppSelector(
+    state => state.poolCreation.createPoolData.networkId
+  )
 
+  function handleCreatePool() {
+    if (poolCreattionChainId === 0 && stepNumber > 0) {
+      dispatch(setToFirstStep())
+    }
+    setIsCreatePool(true)
+    return
+  }
   // const { data } = useSWR<UserResponse>([GET_PROFILE], query =>
   //   request(SUBGRAPH_URL, query, {
   //     userVP: userWalletAddress
@@ -87,19 +98,13 @@ const GetStarted = () => {
               fullWidth
               onClick={() => dispatch(setModalWalletActive(true))}
             />
-          ) : chainId !== 5 ? (
-            <Button
-              text="Connect to GoerliETH"
-              backgroundSecondary
-              fullWidth
-              onClick={() => changeChain(goerliNetwork)}
-            />
           ) : (
             <Button
               text="Create New Pool"
               backgroundSecondary
               fullWidth
-              onClick={() => setIsCreatePool(true)}
+              type="button"
+              onClick={handleCreatePool}
             />
           )}
         </S.ButtonWrapper>

@@ -2,6 +2,7 @@ import React from 'react'
 import useSWR from 'swr'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
+import Web3 from 'web3'
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setLiquidity } from '../../../../store/reducers/poolCreationSlice'
@@ -53,7 +54,7 @@ const AddLiquidity = () => {
   async function getBalances() {
     let balancesList = {}
     for (const token of Object.keys(mockTokens)) {
-      const { balance } = ERC20(token)
+      const { balance } = ERC20(token, new Web3(networks[networkId ?? 137].rpc))
       const balanceValue = await balance(wallet)
       balancesList = {
         ...balancesList,
