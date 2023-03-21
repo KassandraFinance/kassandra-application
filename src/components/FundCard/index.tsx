@@ -75,8 +75,6 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
     request(BACKEND_KASSANDRA, query, params)
   )
 
-  console.log(data)
-
   const getPercentage = (weight: number) => {
     return Number((weight * 100).toFixed(2))
   }
