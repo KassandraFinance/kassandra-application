@@ -76,8 +76,8 @@ export default class operationV2 {
     try {
       let response = await this.balancerHelpersContract.methods.queryJoin(
         this.poolInfo.id,
-        this.poolInfo.controller,
-        this.poolInfo.controller,
+        this.contractAddress,
+        this.contractAddress,
         request
       ).call({ from: userWalletAddress });
 
