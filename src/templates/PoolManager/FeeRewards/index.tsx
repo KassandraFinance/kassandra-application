@@ -16,7 +16,7 @@ import { getDateDiff } from '@/utils/date'
 import web3 from '@/utils/web3'
 
 import TitleSection from '@/components/TitleSection'
-import FeesChart, { FeeGraph } from './FeesGraph'
+import FeesChart, { FeeGraph } from './FeesChart'
 
 import Button from '@ui/Button'
 import Loading from '@ui/Loading'
