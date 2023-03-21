@@ -7,8 +7,6 @@ import useSWR from 'swr'
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 import { GET_FEES } from './graphql'
 
-import { BNtoDecimal } from '@/utils/numerals'
-
 import TitleSection from '@/components/TitleSection'
 import FeesChart, { FeeGraph } from './FeesChart'
 import AvailableRewards from './AvailableRewards'
@@ -18,6 +16,7 @@ import Loading from '@ui/Loading'
 import poolsAssetsIcon from '../../../../public/assets/iconGradient/assets-distribution.svg'
 
 import * as S from './styles'
+import FeeBreakDown from './FeeBreakDown'
 
 const dataMock: Fees[] = [
   {
@@ -796,83 +795,7 @@ const FeeRewards = () => {
     <S.FeeRewards>
       <S.FeesContainer>
         <AvailableRewards pool={pool} />
-        <S.FeeBreakdownContainer>
-          <h3>Fee Breakdown</h3>
-          <hr />
-          <S.ReviewListContainer>
-            <S.ListContent>
-              <S.FeeBreakdownTitle>Deposit fee</S.FeeBreakdownTitle>
-              <S.FeeBreakdownPorcentage>
-                {BNtoDecimal(
-                  Big(pool.fee_join_manager).add(pool.fee_join_broker),
-                  4
-                )}
-                %
-              </S.FeeBreakdownPorcentage>
-            </S.ListContent>
-            <S.ListContent>
-              <S.FeeBreakdownParagraph>
-                Broker commission ({BNtoDecimal(Big(pool.fee_join_broker), 4)}%)
-              </S.FeeBreakdownParagraph>
-              <S.FeeBreakdownParagraphAmount>
-                ${Big(pool.total_fees_join_broker_usd).toFixed(2)}
-              </S.FeeBreakdownParagraphAmount>
-            </S.ListContent>
-            <S.ListContent>
-              <S.FeeBreakdownParagraph>
-                Manager share ({BNtoDecimal(Big(pool.fee_join_manager), 4)}%)
-              </S.FeeBreakdownParagraph>
-              <S.FeeBreakdownParagraphAmount>
-                ${Big(pool.total_fees_join_manager_usd).toFixed(2)}
-              </S.FeeBreakdownParagraphAmount>
-            </S.ListContent>
-            <S.ListContent>
-              <S.FeeBreakdownParagraph>All time</S.FeeBreakdownParagraph>
-              <S.FeeBreakdownParagraphTotalAMount>
-                $
-                {Big(pool.total_fees_join_manager_usd)
-                  .add(pool.total_fees_join_broker_usd)
-                  .toFixed(2)}
-              </S.FeeBreakdownParagraphTotalAMount>
-            </S.ListContent>
-          </S.ReviewListContainer>
-          <hr />
-          <S.ReviewListContainer>
-            <S.ListContent>
-              <S.FeeBreakdownTitle>Management Fee</S.FeeBreakdownTitle>
-              <S.FeeBreakdownPorcentage>
-                {BNtoDecimal(Big(pool.fee_aum).add(pool.fee_aum), 4)}%
-              </S.FeeBreakdownPorcentage>
-            </S.ListContent>
-
-            <S.ListContent>
-              <S.FeeBreakdownParagraph>
-                Kassandra Share ({BNtoDecimal(Big(pool.fee_aum), 4)}%)
-              </S.FeeBreakdownParagraph>
-              <S.FeeBreakdownParagraphAmount>
-                ${Big(pool.total_fees_aum_usd).toFixed(2)}
-              </S.FeeBreakdownParagraphAmount>
-            </S.ListContent>
-            <S.ListContent>
-              <S.FeeBreakdownParagraph>
-                Manager Share ({BNtoDecimal(Big(pool.fee_aum), 4)}%)
-              </S.FeeBreakdownParagraph>
-              <S.FeeBreakdownParagraphAmount>
-                ${Big(pool.total_fees_aum_usd).toFixed(2)}
-              </S.FeeBreakdownParagraphAmount>
-            </S.ListContent>
-            <S.ListContent>
-              <S.FeeBreakdownParagraph>All time</S.FeeBreakdownParagraph>
-              <S.FeeBreakdownParagraphTotalAMount>
-                $
-                {Big(pool.total_fees_aum_usd)
-                  .add(pool.total_fees_aum_usd)
-                  .toFixed(2)}
-              </S.FeeBreakdownParagraphTotalAMount>
-            </S.ListContent>
-          </S.ReviewListContainer>
-          <hr />
-        </S.FeeBreakdownContainer>
+        <FeeBreakDown pool={pool} />
       </S.FeesContainer>
 
       <S.FeesChartContainer>
