@@ -5,9 +5,9 @@ type TokenType = {
   address: string,
   name: string,
   symbol: string,
-  logo: string,
-  balance: number,
-  balanceUSD?: number,
+  logo: string | undefined,
+  balance: string,
+  balanceUSD?: string,
   weight: string,
   decimals: number
 }
@@ -18,7 +18,7 @@ export type AssetType = {
   token: {
     decimals: number,
     id: string,
-    logo: string,
+    logo: string | undefined,
     name: string,
     symbol: string
   }
@@ -30,21 +30,9 @@ export type ILpNeededProps = {
   balanceInWallet: Big
 }
 
-export type IPoolInfoProps = {
-  id: string,
-  name: string,
-  symbol: string,
-  controller: string,
-  chainLogo: string,
-  logo: string,
-  chainId: number,
-  address: string
-}
-
 interface IRemoveAssetProps {
   poolTokensList: TokenType[];
   weights: AssetType[];
-  poolInfo: IPoolInfoProps;
   tokenSelection: TokenType;
   lpNeeded: ILpNeededProps;
 }
@@ -52,24 +40,14 @@ interface IRemoveAssetProps {
 const initialState: IRemoveAssetProps = {
   poolTokensList: [],
   weights: [],
-  poolInfo: {
-    id: '',
-    name: '',
-    symbol: '',
-    controller: '',
-    chainLogo: '',
-    logo: '',
-    chainId: 0,
-    address: ''
-  },
   tokenSelection: {
     address: '',
     name: '',
     symbol: '',
     logo: '',
-    balance: 0,
-    balanceUSD: 0,
-    weight: '',
+    balance: '',
+    balanceUSD: '0',
+    weight: '0',
     decimals: 0
   },
   lpNeeded: {
@@ -89,9 +67,6 @@ export const poolCreationSlice = createSlice({
     setPoolTokensList: (state, action: PayloadAction<TokenType[]>) => {
       state.poolTokensList = action.payload
     },
-    setPoolInfo: (state, action: PayloadAction<IPoolInfoProps>) => {
-      state.poolInfo = action.payload
-    },
     setWeight: (state, action: PayloadAction<AssetType[]>) => {
       state.weights = action.payload
     },
@@ -101,12 +76,7 @@ export const poolCreationSlice = createSlice({
   }
 })
 
-export const {
-  setTokenSelection,
-  setPoolTokensList,
-  setWeight,
-  setLpNeeded,
-  setPoolInfo
-} = poolCreationSlice.actions
+export const { setTokenSelection, setPoolTokensList, setWeight, setLpNeeded } =
+  poolCreationSlice.actions
 
 export default poolCreationSlice.reducer
