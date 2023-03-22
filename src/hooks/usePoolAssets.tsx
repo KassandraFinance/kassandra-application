@@ -9,6 +9,7 @@ import { getWeightsNormalizedV2 } from '@/utils/updateAssetsToV2'
 
 export type GetPoolAssetsType = {
   pool: {
+    pool_version: number,
     underlying_assets: {
       balance: string,
       weight_goal_normalized: string,
@@ -54,6 +55,7 @@ function usePoolAssets(poolId: string) {
   const GET_POOL_ASSETS = gql`
     query ($id: ID!) {
       pool(id: $id) {
+        pool_version
         underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
           balance
           weight_normalized
@@ -106,10 +108,14 @@ function usePoolAssets(poolId: string) {
 
   let underlying_assets: underlyingAssetsInfo[] | undefined
   if (data?.pool) {
-    underlying_assets = getWeightsNormalizedV2(
-      data.pool.weight_goals,
-      data.pool.underlying_assets
-    )
+    if (data.pool.pool_version === 2) {
+      underlying_assets = getWeightsNormalizedV2(
+        data.pool.weight_goals,
+        data.pool.underlying_assets
+      )
+    } else {
+      underlying_assets = data.pool.underlying_assets
+    }
   }
 
   return {

@@ -1,9 +1,4 @@
-import styled, { css, keyframes } from 'styled-components'
-
-// interface IProps {
-//   isActive: boolean;
-// }
-// eslint-disable-next-line prettier/prettier
+import styled, { css } from 'styled-components'
 
 export const TokenInfo = styled.td`
   ${() => css`
@@ -64,6 +59,8 @@ export const TokenName = styled.a`
     line-height: 104%;
 
     text-decoration: none;
+
+    cursor: pointer;
   `}
 `
 
@@ -218,6 +215,50 @@ export const ImageContent = styled.span`
 
     @media (max-width: 745px) {
       width: 1.6rem;
+    }
+  `}
+`
+
+interface ILockButtonProps {
+  active: boolean;
+}
+
+// prettier-ignore
+export const LockButton = styled.button<ILockButtonProps>`
+  ${() => css`
+    width: 3.2rem;
+    height: 3.2rem;
+    border: 1px solid rgb(255 255 255 / 0);
+    border-radius: 50%;
+
+    background: rgb(255 255 255 / 0);
+
+    cursor: pointer;
+
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: background-color border;
+
+    #lock-up-closed {
+      transition-timing-function: ease;
+      transition-duration: 300ms;
+      transition-property: stroke-dashoffset;
+
+      stroke-dasharray: 100%;
+      stroke-dashoffset: 30%;
+    }
+
+    &:hover {
+      background-color: rgb(255 255 255 / 0.08);
+    }
+  `}
+  ${({ active }) => active && css`
+    border: 1px solid rgb(255 255 255 / 0.1) ;
+
+    background-color: rgb(255 255 255 / 0.08);
+
+    #lock-up-closed {
+      stroke-dashoffset: 0%;
     }
   `}
 `

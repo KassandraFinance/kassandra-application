@@ -71,7 +71,7 @@ const SelectToken = () => {
                 <p>{token.symbol}</p>
               </S.TokenInfoContent>
               <S.BalanaceInfoContent>
-                <p>${token.balanceUSD && token.balanceUSD.toFixed(2)}</p>
+                <p>${token.balanceUSD && token.balanceUSD}</p>
                 <span>{Number(token.balance).toFixed(2)}</span>
               </S.BalanaceInfoContent>
             </S.SelectTokenContent>

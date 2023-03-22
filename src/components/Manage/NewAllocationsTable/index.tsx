@@ -32,7 +32,7 @@ const NewAllocationsTable = ({ AllocationList }: INewAllocationsTableProps) => {
     return {
       imageUrl: item.logo,
       name: item.name,
-      currentAllocation: item.currentWeight,
+      currentAllocation: item.currentWeight === 0 ? 0.0001 : item.currentWeight,
       newAllocation: item.NewWeight === 0 ? 0.0001 : item.NewWeight
     }
   })

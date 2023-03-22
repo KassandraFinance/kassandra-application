@@ -85,6 +85,7 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
         dispatch(
           setSelectedToken({
             id: event.target.id,
+            logo: item.logo,
             name: item.name,
             symbol: item.symbol,
             image: item.logo,

@@ -1,10 +1,5 @@
 import styled, { css } from 'styled-components'
 
-// interface IProps {
-//   isActive: boolean;
-// }
-// eslint-disable-next-line prettier/prettier
-
 export const AllocationsTable = styled.table`
   ${() => css`
     border-collapse: collapse;
@@ -81,9 +76,18 @@ export const ThHead = styled.th`
 
 export const TBodyAllocations = styled.tbody`
   ${() => css`
+    position: relative;
+
     max-width: 74.6rem;
     background: rgba(255, 255, 255, 0.04);
     border-radius: 8px;
+
+    #inputBalanceValue {
+      position: absolute;
+      bottom: 10%;
+      right: 28%;
+      opacity: 0;
+    }
   `}
 `
 

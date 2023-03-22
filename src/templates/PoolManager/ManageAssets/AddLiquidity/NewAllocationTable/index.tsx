@@ -51,7 +51,7 @@ const NewAllocationTable = ({ assets }: INewAllocationTablePorps) => {
                   <Image src={arrowRight} />
                 </S.Td>
                 <S.Td className="newAllocation">
-                  {BNtoDecimal(Big(asset.newWeight).mul(100), 2)}%
+                  {BNtoDecimal(Big(asset.newWeight ?? '0').mul(100), 2)}%
                 </S.Td>
               </S.Tr>
             ))

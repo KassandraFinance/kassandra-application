@@ -1,23 +1,20 @@
 import React from 'react'
 import Image from 'next/image'
 import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Big from 'big.js'
+import { useRouter } from 'next/router'
 
 import {
-  BACKEND_KASSANDRA,
   COINGECKO_API,
   networks
 } from '../../../../../constants/tokenAddresses'
-import { GET_POOL_TOKENS } from '../../AddLiquidity/graphql'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import { useAppSelector } from '../../../../../store/hooks'
-import {
-  GetPoolTokensType,
-  CoinGeckoAssetsResponseType
-} from '../../AddLiquidity/AddLiquidityOperation'
+import usePoolInfo from '@/hooks/usePoolInfo'
+
+import { CoinGeckoAssetsResponseType } from '../../AddLiquidity/AddLiquidityOperation'
 import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
 import * as S from './styles'
@@ -26,20 +23,20 @@ const TransactionSummary = () => {
   const token = useAppSelector(state => state.addAsset.token)
   const newToken = useAppSelector(state => state.addAsset.token)
   const newTokenLiquidity = useAppSelector(state => state.addAsset.liquidit)
-  const poolId = useAppSelector(state => state.addAsset.poolId)
-  const chainId = useAppSelector(state => state.addAsset.chainId)
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
-  const params = {
-    id: poolId
-  }
+  const router = useRouter()
 
-  const { data } = useSWR<GetPoolTokensType>(
-    [GET_POOL_TOKENS, params],
-    (query, params) => request(BACKEND_KASSANDRA, query, params)
-  )
+  const poolId = Array.isArray(router.query.pool)
+    ? router.query.pool[0]
+    : router.query.pool ?? ''
+
+  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
+    `${COINGECKO_API}/simple/token_price/${
+      networks[poolInfo?.chainId ?? 137].coingecko
+    }?contract_addresses=${token.id}&vs_currencies=usd`
   )
 
   return (
@@ -59,7 +56,7 @@ const TransactionSummary = () => {
                 {priceData &&
                   BNtoDecimal(
                     Big(newTokenLiquidity.amount).mul(
-                      priceData[token.id.toLowerCase()].usd
+                      priceData[token.id.toLowerCase()]?.usd ?? 0
                     ),
                     2
                   )}
@@ -85,14 +82,14 @@ const TransactionSummary = () => {
         <S.FlexContainer>
           <S.ContentTitle>received LP (EST.)</S.ContentTitle>
 
-          {data && priceData && (
+          {poolInfo && priceData && (
             <S.ValueContainer>
               <S.ValueWrapper>
                 <S.Value>
                   {BNtoDecimal(
                     Big(newTokenLiquidity.amount || 0)
-                      .mul(priceData[token.id.toLowerCase()].usd)
-                      .div(data.pool.price_usd),
+                      .mul(priceData[token.id.toLowerCase()]?.usd ?? 0)
+                      .div(poolInfo.price_usd),
                     2
                   )}
                 </S.Value>
@@ -101,7 +98,7 @@ const TransactionSummary = () => {
                   ~$
                   {BNtoDecimal(
                     Big(newTokenLiquidity.amount || 0).mul(
-                      priceData[token.id.toLowerCase()].usd
+                      priceData[token.id.toLowerCase()]?.usd ?? 0
                     ),
                     2
                   )}
@@ -109,25 +106,25 @@ const TransactionSummary = () => {
               </S.ValueWrapper>
 
               <S.ImageWrapper>
-                {data?.pool.logo ? (
-                  <Image src={data.pool.logo} width={24} height={24} />
+                {poolInfo.logo ? (
+                  <Image src={poolInfo.logo} width={24} height={24} />
                 ) : (
                   <TokenWithNetworkImage
                     tokenImage={{
-                      url: data.pool.logo,
+                      url: poolInfo.logo,
                       height: 24,
                       width: 24,
                       withoutBorder: true
                     }}
                     networkImage={{
-                      url: data.pool.chain.logo,
+                      url: poolInfo.chain.logo,
                       height: 12,
                       width: 12
                     }}
                     blockies={{
                       size: 5,
                       scale: 6,
-                      seedName: data.pool.name
+                      seedName: poolInfo.name
                     }}
                   />
                 )}

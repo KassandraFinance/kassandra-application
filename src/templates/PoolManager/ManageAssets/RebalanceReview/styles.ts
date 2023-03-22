@@ -1,11 +1,7 @@
 import styled, { css } from 'styled-components'
-import { Line } from '../../../../../components/Steps/Step/styles'
-import { Steps } from '../../../../../components/Steps/styles'
 
-// interface IProps {
-//   isActive: boolean;
-// }
-// eslint-disable-next-line prettier/prettier
+import { Steps } from '@/components/Steps/styles'
+import { Line } from '@/components/Steps/Step/styles'
 
 export const RebalanceReview = styled.div`
   ${() => css`

@@ -5,13 +5,9 @@ type TokenType = {
   id: string,
   name: string,
   symbol: string,
+  logo: string,
   image: string,
   decimals: number
-}
-
-type PoolType = {
-  poolId: string,
-  chainId: number
 }
 
 export type AssetType = {
@@ -19,7 +15,7 @@ export type AssetType = {
   token: {
     decimals: number,
     id: string,
-    logo: string,
+    logo?: string,
     name: string,
     symbol: string
   }
@@ -43,6 +39,7 @@ const initialState: IAddAssetsProps = {
   token: {
     id: '',
     name: '',
+    logo: '',
     symbol: '',
     image: '',
     decimals: 18
@@ -65,10 +62,6 @@ export const poolCreationSlice = createSlice({
   reducers: {
     setSelectedToken: (state, action: PayloadAction<TokenType>) => {
       state.token = action.payload
-    },
-    setPoolId: (state, action: PayloadAction<PoolType>) => {
-      state.poolId = action.payload.poolId
-      state.chainId = action.payload.chainId
     },
     setAmount: (state, action: PayloadAction<string>) => {
       const balanceInUsd = Big(action.payload).mul(state.liquidit.price)
@@ -110,7 +103,6 @@ export const poolCreationSlice = createSlice({
 
 export const {
   setSelectedToken,
-  setPoolId,
   setAmount,
   setAllocation,
   setTVL,
