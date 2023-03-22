@@ -12,7 +12,7 @@ import { setModalAlertText } from '../../../store/reducers/modalAlertText'
 import usePoolAssets from '@/hooks/usePoolAssets'
 import usePoolInfo from '@/hooks/usePoolInfo'
 import { mockTokensReverse } from '../../../constants/tokenAddresses'
-import Kacupe from '../../../constants/abi/Kacupe.json'
+import Kacupe from '@/constants/abi/KassandraController.json'
 
 import { BNtoDecimal } from '../../../utils/numerals'
 import waitTransaction, { MetamaskError } from '../../../utils/txWait'
