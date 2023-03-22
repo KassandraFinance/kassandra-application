@@ -10,11 +10,6 @@ type TokenType = {
   decimals: number
 }
 
-type PoolType = {
-  poolId: string,
-  chainId: number
-}
-
 export type AssetType = {
   weight_normalized: string,
   token: {
@@ -68,10 +63,6 @@ export const poolCreationSlice = createSlice({
     setSelectedToken: (state, action: PayloadAction<TokenType>) => {
       state.token = action.payload
     },
-    setPoolId: (state, action: PayloadAction<PoolType>) => {
-      state.poolId = action.payload.poolId
-      state.chainId = action.payload.chainId
-    },
     setAmount: (state, action: PayloadAction<string>) => {
       const balanceInUsd = Big(action.payload).mul(state.liquidit.price)
 
@@ -112,7 +103,6 @@ export const poolCreationSlice = createSlice({
 
 export const {
   setSelectedToken,
-  setPoolId,
   setAmount,
   setAllocation,
   setTVL,

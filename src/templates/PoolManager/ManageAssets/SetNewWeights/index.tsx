@@ -57,7 +57,9 @@ const SetNewWeights = () => {
       return {
         currentAmount: Big(item.balance),
         currentAmountUSD: Big(
-          Big(item.balance).mul(priceToken(mockTokens[item.token.id]) ?? 0)
+          Big(item.balance).mul(
+            priceToken(mockTokens[item.token.id] ?? item.token.id) ?? 0
+          )
         ),
         currentWeight: Big(item.weight_normalized ?? 0),
         token: {

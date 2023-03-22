@@ -1,7 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
 import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Big from 'big.js'
 import web3 from '../../../utils/web3'
 import { AbiItem } from 'web3-utils'
@@ -10,7 +9,8 @@ import { useRouter } from 'next/router'
 import { ERC20 } from '../../../hooks/useERC20Contract'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
-import { setPoolId } from '../../../store/reducers/addAssetSlice'
+import usePoolAssets from '@/hooks/usePoolAssets'
+import usePoolInfo from '@/hooks/usePoolInfo'
 import { mockTokensReverse } from '../../../constants/tokenAddresses'
 import Kacupe from '../../../constants/abi/Kacupe.json'
 
@@ -18,13 +18,9 @@ import { BNtoDecimal } from '../../../utils/numerals'
 import waitTransaction, { MetamaskError } from '../../../utils/txWait'
 
 import {
-  BACKEND_KASSANDRA,
   COINGECKO_API,
   networks
 } from '../../../constants/tokenAddresses'
-import { GET_POOL_TOKENS } from './AddLiquidity/graphql'
-import { GET_INFO_POOL } from '../graphql'
-import { AssetType } from '@/store/reducers/addAssetSlice'
 
 import TokenRemoval from './TokenRemoval'
 import RemoveReview from './RemoveReview'
@@ -44,10 +40,7 @@ import SetNewWeights from './SetNewWeights'
 import RebalanceReview from './RebalanceReview'
 import RebalanceSuccess from './RebalanceSuccess'
 
-import {
-  GetPoolTokensType,
-  CoinGeckoAssetsResponseType
-} from './AddLiquidity/AddLiquidityOperation'
+import { CoinGeckoAssetsResponseType } from './AddLiquidity/AddLiquidityOperation'
 
 import addIcon from '../../../../public/assets/iconGradient/add.svg'
 
@@ -60,29 +53,10 @@ import {
   SecondaryValue,
   ImageWrapper
 } from './ReviewAddAsset/TransactionSummary/styles'
-import * as S from './styles'
-import usePoolAssets from '@/hooks/usePoolAssets'
-import usePoolInfo from '@/hooks/usePoolInfo'
 
+import * as S from './styles'
 
 Big.RM = 0
-
-interface IGetPoolTokenTypeProps {
-  pool: {
-    address: string,
-    chainId: number,
-    logo: string,
-    name: string,
-    price_usd: string,
-    symbol: string,
-    total_value_locked_usd: string,
-    controller: string,
-    weight_goals: {
-      weights: AssetType[]
-    }[],
-    underlying_assets_addresses: string[]
-  }
-}
 
 interface IManageAssetsProps {
   setIsOpenManageAssets: React.Dispatch<React.SetStateAction<boolean>>
@@ -103,10 +77,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const token = useAppSelector(state => state.addAsset.token)
-  // const controller = useAppSelector(state => state.addAsset.controller)
   const tokenLiquidity = useAppSelector(state => state.addAsset.liquidit)
-  // const poolAddId = useAppSelector(state => state.addAsset.poolId)
-  // const chainId = useAppSelector(state => state.addAsset.chainId)
 
   const { tokenSelection } = useAppSelector(
     state => state.removeAsset
@@ -118,28 +89,18 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const router = useRouter()
 
   const poolId = Array.isArray(router.query.pool)
-  ? router.query.pool[0]
-  : router.query.pool ?? ''
+    ? router.query.pool[0]
+    : router.query.pool ?? ''
 
-
-  const params = {
-    id: poolId
-  }
 
   const { poolAssets } = usePoolAssets(poolId)
   const { poolInfo } = usePoolInfo(
-    // userWalletAddress,
-    '0xb602db4ddaa85b2f8495dbA4Fe6a9950178047cA',
+    userWalletAddress,
     poolId
   )
 
-  // const { data } = useSWR<IGetPoolTokenTypeProps>(
-  //   [GET_INFO_POOL, params],
-  //   (query, params) => request(BACKEND_KASSANDRA, query, params)
-  // )
-
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
+    `${COINGECKO_API}/simple/token_price/${networks[poolInfo?.chainId ?? 137].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
   )
 
   const buttonTextActionAdd = {
@@ -198,7 +159,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
                   tokenLiquidity.amount &&
                   BNtoDecimal(
                     Big(tokenLiquidity?.amount || 0).mul(
-                      priceData[token.id.toLowerCase()]?.usd
+                      priceData[token.id.toLowerCase()]?.usd ?? 0
                     ),
                     2
                   )}
@@ -220,7 +181,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
                 <Value>
                   {BNtoDecimal(
                     Big(tokenLiquidity.amount || 0)
-                      .mul(priceData[token.id.toLowerCase()].usd)
+                      .mul(priceData[token.id.toLowerCase()]?.usd ?? 0)
                       .div(poolInfo.price_usd),
                     2
                   )}
@@ -230,7 +191,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
                   ~$
                   {BNtoDecimal(
                     Big(tokenLiquidity.amount || 0).mul(
-                      priceData[token.id.toLowerCase()].usd
+                      priceData[token.id.toLowerCase()]?.usd ?? 0
                     ),
                     2
                   )}
@@ -264,7 +225,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     />,
     <AssetRemovelCard
       key="AssetRemovelCard"
-      poolInfo={{name: poolInfo?.name ?? '', chainLogo: poolInfo?.chain.logo ?? '', logo: poolInfo?.logo ?? ''}}
+      poolInfo={{ name: poolInfo?.name ?? '', chainLogo: poolInfo?.chain.logo ?? '', logo: poolInfo?.logo ?? '' }}
       setIsOpenManageAssets={setIsOpenManageAssets}
     />
   ]
@@ -346,12 +307,9 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       status: 'APPROVING'
     }])
 
-    const getPoolAddress = [poolInfo.address, ...poolInfo.underlying_assets_addresses]
     const poolWeightsArray = poolTokensList.map(item => {
       return newTokensWights[item.token.address].newWeight.mul(Big(10).pow(18)).toFixed(0)
     })
-
-    console.log(getPoolAddress)
 
     try {
       const currentDate = new Date().getTime()
@@ -366,7 +324,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       await poolController.methods.updateWeightsGradually(
         Math.floor(currentDateAdded / 1000),
         Math.floor(periodSelectedFormatted / 1000),
-        getPoolAddress,
+        poolInfo.underlying_assets_addresses,
         poolWeightsArray
       ).send(
         {
@@ -526,11 +484,14 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   }
 
   async function handleAproveTokens(notAprovedToken: string) {
+    if (!poolInfo) return
     const { approve } = ERC20(notAprovedToken)
-    await approve(controller, userWalletAddress, callBack)
+    await approve(poolInfo?.controller, userWalletAddress, callBack)
   }
 
   async function handleAddToken() {
+    if (!poolInfo) return
+
     setTransactionButtonStatus(TransactionStatus.WAITING)
 
     if (
@@ -577,7 +538,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         .toFixed(0)
 
       // eslint-disable-next-line prettier/prettier
-      const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, controller);
+      const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, poolInfo.controller);
       const response = await poolController.methods
         .addToken(
           mockTokensReverse[token.id.toLowerCase()],
@@ -598,6 +559,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    if (!poolInfo) return
     event.preventDefault()
 
     if (actionSelected === chooseActionStep.Rebalance && step === 2) {
@@ -622,7 +584,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     if (actionSelected === chooseActionStep.Add && step === 2) {
       getTransactionsList(
         mockTokensReverse[token.id.toLowerCase()],
-        controller,
+        poolInfo.controller,
         'Add',
         'addToken',
         token.symbol
@@ -630,7 +592,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       // getTransactionsList(mockTokensReverse[token.id.toLowerCase()])
     }
 
-    if (actionSelected > 0 && step < 4  || (actionSelected === chooseActionStep.Add && step < 5)) {
+    if (actionSelected > 0 && step < 4 || (actionSelected === chooseActionStep.Add && step < 5)) {
       setStep(prev => prev + 1)
     }
   }
@@ -642,7 +604,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       >
         <form id="manageAssetsForm" onSubmit={handleSubmit}>
           {step === 0 ? (
-             <ChooseAction
+            <ChooseAction
               poolId={poolId}
               actionSelected={actionSelected}
               setActionSelected={setActionSelected}
@@ -650,7 +612,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
           ) : (
             chosenAction[actionSelected]
           )}
-          {step < 4 && (
+          {((step < 4 && actionSelected === chooseActionStep.Add) || step < 3) && (
             <ContainerButton
               form="manageAssetsForm"
               backButtonDisabled={step < 1}

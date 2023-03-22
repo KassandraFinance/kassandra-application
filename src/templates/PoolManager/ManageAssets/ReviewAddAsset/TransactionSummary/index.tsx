@@ -56,7 +56,7 @@ const TransactionSummary = () => {
                 {priceData &&
                   BNtoDecimal(
                     Big(newTokenLiquidity.amount).mul(
-                      priceData[token.id.toLowerCase()].usd
+                      priceData[token.id.toLowerCase()]?.usd ?? 0
                     ),
                     2
                   )}
@@ -88,7 +88,7 @@ const TransactionSummary = () => {
                 <S.Value>
                   {BNtoDecimal(
                     Big(newTokenLiquidity.amount || 0)
-                      .mul(priceData[token.id.toLowerCase()].usd)
+                      .mul(priceData[token.id.toLowerCase()]?.usd ?? 0)
                       .div(poolInfo.price_usd),
                     2
                   )}
@@ -98,7 +98,7 @@ const TransactionSummary = () => {
                   ~$
                   {BNtoDecimal(
                     Big(newTokenLiquidity.amount || 0).mul(
-                      priceData[token.id.toLowerCase()].usd
+                      priceData[token.id.toLowerCase()]?.usd ?? 0
                     ),
                     2
                   )}

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import Web3 from 'web3'
 import { AbiItem, toChecksumAddress } from 'web3-utils'
@@ -22,9 +23,6 @@ import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 import Steps from '../../../../components/Steps'
 
 import * as S from './styles'
-import usePoolAssets from '@/hooks/usePoolAssets'
-import usePoolInfo from '@/hooks/usePoolInfo'
-import { useRouter } from 'next/router'
 
 export type TokensInfoResponseType = {
   id: string,
@@ -48,23 +46,16 @@ const SelectAssets = () => {
   const [whitelist, setWhitelist] = React.useState<string[]>();
   const [tokensList, setTokensList] = React.useState<TokensListType[]>([])
 
-  // const router = useRouter()
+  const router = useRouter()
 
   const wallet = useAppSelector(state => state.userWalletAddress)
-  // const poolId = useAppSelector(state => state.addAsset.poolId)
-  // const chainId = useAppSelector(state => state.addAsset.chainId)
   const chainId = useAppSelector(state => state.chainId)
 
   const tokensListGoerli = chainId === 5 ? whitelist?.map((token: string) => toChecksumAddress(mockTokens[token])) : whitelist
 
-  // const poolId = Array.isArray(router.query.pool)
-  //   ? router.query.pool[0]
-  //   : router.query.pool ?? ''
-
-
-  // const { poolAssets } = usePoolAssets(poolId)
-  // const { poolInfo } = usePoolInfo('0xb602db4ddaa85b2f8495dbA4Fe6a9950178047cA', poolId)
-
+  const poolId = Array.isArray(router.query.pool)
+    ? router.query.pool[0]
+    : router.query.pool ?? ''
 
   const params = {
     id: poolId,
@@ -85,7 +76,6 @@ const SelectAssets = () => {
     }
 
     if (chainId === 5) {
-      console.log(data?.tokensByIds)
       setTokensList(data?.tokensByIds.filter(element => element && !data?.pool?.underlying_assets_addresses.includes(mockTokensReverse[element?.id.toLowerCase()]))
       )
     } else {
