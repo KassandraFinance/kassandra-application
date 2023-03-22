@@ -90,6 +90,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       onStart={deployPool}
       onCancel={() => {dispatch(setBackStepNumber())}}
       onComfirm={() => {dispatch(setNextStepNumber())}}
+      networkId={poolData.networkId}
     />,
     <PoolCreated key="poolCreated" />
   ]
