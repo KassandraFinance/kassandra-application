@@ -19,11 +19,12 @@ import {
 
 const ReviewAddAsset = () => {
   const tokens = useAppSelector(state => state.addAsset.weights)
+
   const tokensList: IAllocationListProps[] = tokens.map(token => {
     return {
       name: token.token.name,
       symbol: token.token.symbol,
-      logo: token.token.logo,
+      logo: token.token.logo ?? '',
       link: token.token.symbol,
       currentWeight: Number(Big(token.weight_normalized).mul(100).toFixed(2)),
       NewWeight: Number(Big(token.newWeight).mul(100).toFixed(2))

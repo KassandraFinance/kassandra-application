@@ -5,6 +5,7 @@ type TokenType = {
   id: string,
   name: string,
   symbol: string,
+  logo: string,
   image: string,
   decimals: number
 }
@@ -19,7 +20,7 @@ export type AssetType = {
   token: {
     decimals: number,
     id: string,
-    logo: string,
+    logo?: string,
     name: string,
     symbol: string
   }
@@ -43,6 +44,7 @@ const initialState: IAddAssetsProps = {
   token: {
     id: '',
     name: '',
+    logo: '',
     symbol: '',
     image: '',
     decimals: 18
