@@ -1,5 +1,7 @@
 import React from 'react'
 
+import useDeposits from '@/hooks/useDeposits'
+
 import TitleSection from '../../../components/TitleSection'
 import StatusCard from '../../../components/Manage/StatusCard'
 import TVMChart from '../../../components/Manage/TVMChart'
@@ -16,6 +18,12 @@ const Overview = () => {
   const [depostiPeriod, setDepositPeriod] = React.useState<string>('1D')
   const [withdrawalPeriod, setWithdrawalPeriod] = React.useState<string>('1D')
 
+  const { deposits } = useDeposits(
+    '0xb602db4ddaa85b2f8495dbA4Fe6a9950178047cA',
+    depostiPeriod,
+    withdrawalPeriod
+  )
+
   return (
     <S.Overview>
       <S.TitleWrapper>
@@ -30,7 +38,7 @@ const Overview = () => {
         <S.StatsContainer>
           <StatusCard
             title="Total Deposits"
-            value="+$251,360.00"
+            value={`+${deposits.totalDeposits.toFixed(2)}`}
             status="POSITIVE"
             dataList={dataList}
             selected={depostiPeriod}
@@ -38,13 +46,16 @@ const Overview = () => {
           />
           <StatusCard
             title="Total Withdrawals"
-            value="-$2,204.21"
+            value={`-${deposits.totalWithdraws.toFixed(2)}`}
             status="NEGATIVE"
             dataList={dataList}
             selected={withdrawalPeriod}
             onClick={(period: string) => setWithdrawalPeriod(period)}
           />
-          <StatusCard title="Unique Depositors" value="362" />
+          <StatusCard
+            title="Unique Depositors"
+            value={deposits.uniqueDeposits.toString()}
+          />
         </S.StatsContainer>
       </S.ManagerOverviewContainer>
 
