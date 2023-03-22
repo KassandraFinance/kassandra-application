@@ -253,7 +253,11 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       onCancel={() => setStep(prev => prev - 1)}
       onComfirm={() => setStep(prev => prev + 1)}
     />,
-    <AssetRemovelCard key="AssetRemovelCard" setIsOpenManageAssets={setIsOpenManageAssets} />
+    <AssetRemovelCard
+      key="AssetRemovelCard"
+      poolInfo={{name: poolInfo?.name ?? '', chainLogo: poolInfo?.chain.logo ?? '', logo: poolInfo?.logo ?? ''}}
+      setIsOpenManageAssets={setIsOpenManageAssets}
+    />
   ]
 
   const RebalanceAssets = [
