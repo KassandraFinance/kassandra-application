@@ -5,21 +5,37 @@ import { useRouter } from 'next/router'
 import { useAppSelector } from '@/store/hooks'
 import usePoolInfo from '@/hooks/usePoolInfo'
 
+import { AssetType } from '@/store/reducers/rebalanceAssetsSlice'
+
 import AllocationGraph, {
   IDataProps
 } from '../../../../../components/Manage/AllocationGraph'
 import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
+import ModalViewCoin from '@/components/Modals/ModalViewCoin'
+import {
+  TableLine,
+  TableLineTitle,
+  ValueContainer,
+  Value
+} from '@/components/Modals/ModalViewCoin/styles'
 
 import * as S from './styles'
 
 const ReviewTable = () => {
   const router = useRouter()
 
+  const [viewToken, setViewToken] = React.useState<AssetType>()
+  const [isOpenModalMobile, setIsOpenModalMobile] = React.useState(false)
   const [viewColumnInTable, setViewColumnInTable] = React.useState(1)
   const [openAllocationGraph, setOpenAllocationGraph] = React.useState(false)
   const [dataAllocationGraph, setDataAllocationGraph] = React.useState<
     IDataProps[]
   >([])
+
+  const [token, setToken] = React.useState({
+    logo: '',
+    name: ''
+  })
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -41,6 +57,15 @@ const ReviewTable = () => {
     } else {
       setViewColumnInTable(value === 1 ? 2 : viewColumnInTable - 1)
     }
+  }
+
+  function handleViewTokenMobile(token: AssetType) {
+    setToken({
+      logo: token.token.logo ?? '',
+      name: token.token.symbol
+    })
+    setViewToken(token)
+    setIsOpenModalMobile(true)
   }
 
   React.useEffect(() => {
@@ -184,7 +209,7 @@ const ReviewTable = () => {
                 </S.NewWeightContainer>
                 <S.MobileEyeContainer
                   id="eyeIcon"
-                  // onClick={() => ()}
+                  onClick={() => handleViewTokenMobile(item)}
                 >
                   <img
                     src="/assets/utilities/eye-show.svg"
@@ -217,6 +242,47 @@ const ReviewTable = () => {
         isOpen={openAllocationGraph}
         data={dataAllocationGraph}
       />
+
+      <ModalViewCoin
+        title={token}
+        isOpen={isOpenModalMobile}
+        onClick={() => setIsOpenModalMobile(false)}
+      >
+        <TableLine>
+          <TableLineTitle>current weight</TableLineTitle>
+
+          <ValueContainer>
+            <Value>{viewToken?.currentWeight.mul(100).toFixed(2, 2)}%</Value>
+          </ValueContainer>
+        </TableLine>
+        <TableLine>
+          <TableLineTitle>new weight</TableLineTitle>
+          <ValueContainer>
+            <Value>
+              {newTokensWights[viewToken?.token.address ?? '']?.newWeight
+                .mul(100)
+                .toFixed(2, 2)}
+              %
+            </Value>
+          </ValueContainer>
+        </TableLine>
+        <TableLine>
+          <TableLineTitle>Current amount</TableLineTitle>
+          <ValueContainer>
+            <Value>{viewToken?.currentAmount.toFixed(2, 2)}</Value>
+          </ValueContainer>
+        </TableLine>
+        <TableLine>
+          <TableLineTitle>new amount</TableLineTitle>
+          <ValueContainer>
+            <Value>
+              {newTokensWights[
+                viewToken?.token.address ?? ''
+              ]?.newAmount.toFixed(2, 2)}
+            </Value>
+          </ValueContainer>
+        </TableLine>
+      </ModalViewCoin>
     </S.ReviewTable>
   )
 }
