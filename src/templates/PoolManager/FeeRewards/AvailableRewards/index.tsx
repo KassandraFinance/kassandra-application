@@ -3,7 +3,7 @@ import Big from 'big.js'
 
 import Button from '@/components/Button'
 
-import useManage from '@/hooks/useManage'
+import useManagePool from '@/hooks/useManagePool'
 import { useAppSelector } from '@/store/hooks'
 
 import { getDateDiff } from '@/utils/date'
@@ -24,11 +24,11 @@ const AvailableRewards = ({ pool }: Props) => {
   )
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const controller = useManage(pool.controller)
+  const managePool = useManagePool(pool.controller)
 
   async function handleClaimRewards() {
     try {
-      await controller.withdrawAumFees(userWalletAddress)
+      await managePool.withdrawAumFees(userWalletAddress)
       setFeesAum({ kassandra: '0', manager: '0' })
     } catch (error) {
       console.log(error)
@@ -40,7 +40,7 @@ const AvailableRewards = ({ pool }: Props) => {
     const getAvailableAumFee = async () => {
       try {
         const { feesToManager, feesToKassandra } =
-          await controller.getAumFeesToManagerAndKassandra(userWalletAddress)
+          await managePool.getAumFeesToManagerAndKassandra(userWalletAddress)
         setFeesAum({ kassandra: feesToKassandra, manager: feesToManager })
       } catch (error) {
         console.log(error)

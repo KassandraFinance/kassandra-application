@@ -5,7 +5,7 @@ import KassandraController from '@/constants/abi/KassandraController.json'
 import web3 from "@/utils/web3"
 import { AbiItem } from "web3-utils"
 
-const useManage = (controllerAddress: string) => {
+const useManagePool = (controllerAddress: string) => {
     const [controller, setController] = React.useState(
         new web3.eth.Contract((KassandraController as unknown) as AbiItem, controllerAddress)
     )
@@ -28,4 +28,4 @@ const useManage = (controllerAddress: string) => {
     }
 }
 
-export default useManage
+export default useManagePool
