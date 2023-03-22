@@ -12,7 +12,7 @@ import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
 import { setPoolId } from '../../../store/reducers/addAssetSlice'
 import { mockTokensReverse } from '../../../constants/tokenAddresses'
-import Kacupe from '../../../constants/abi/Kacupe.json'
+import Kacupe from '@/constants/abi/KassandraController.json'
 
 import { BNtoDecimal } from '../../../utils/numerals'
 import waitTransaction, { MetamaskError } from '../../../utils/txWait'
