@@ -22,7 +22,7 @@ export const GET_FEES = gql`
         where: { period: 604800, type_in: ["join", "aum"] }
         orderBy: timestamp
         orderDirection: desc
-        first: 48
+        first: 96
       ) {
         type
         period
