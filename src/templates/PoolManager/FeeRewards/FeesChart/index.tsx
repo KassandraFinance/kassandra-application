@@ -54,13 +54,26 @@ const FeesChart = ({ fees }: Props) => {
           barSize={10}
         >
           <XAxis
+            xAxisId="0"
             type="category"
             dataKey="timestamp"
             tickLine={false}
+            height={21}
             tickFormatter={item => {
               const date = new Date(Number(item) * 1000)
               return monthShort[date.getUTCMonth()]
             }}
+            reversed={true}
+            stroke="#c4c4c4"
+            axisLine={false}
+          />
+          <XAxis
+            xAxisId="1"
+            type="category"
+            dataKey="totalFeesToManager"
+            allowDuplicatedCategory={true}
+            tickLine={false}
+            tickFormatter={item => `$${Big(item).toFixed(2)}`}
             reversed={true}
             stroke="#c4c4c4"
             axisLine={false}
