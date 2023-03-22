@@ -20,6 +20,7 @@ import Loading from '@ui/Loading'
 
 import Analytics from './Analytics'
 import Allocations from './Allocations'
+import Investors from './Investors'
 import ComingSoon from './ComingSoon'
 import ManageAssets from './ManageAssets'
 
@@ -95,7 +96,7 @@ const PoolManager = () => {
     analytics: <Analytics poolId={poolId} />,
     allocations: <Allocations />,
     activity: <ComingSoon />,
-    investors: <ComingSoon />,
+    investors: <Investors />,
     feeRewards: <ComingSoon />,
     brokers: <ComingSoon />,
     info: <ComingSoon />
