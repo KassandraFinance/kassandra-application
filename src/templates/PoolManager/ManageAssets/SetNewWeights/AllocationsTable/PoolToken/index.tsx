@@ -17,8 +17,7 @@ export type AssetType = {
   token: {
     address: string,
     decimals: number,
-    id: string,
-    logo: string,
+    logo: string | undefined,
     name: string,
     symbol: string
   }

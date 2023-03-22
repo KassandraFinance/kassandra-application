@@ -31,8 +31,6 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
     state => state.rebalanceAssets.newTokensWights
   )
 
-  const inputRef = React.useRef<HTMLInputElement>(null)
-
   function handleCalcNewWeights(value: number, tokenInfo: AssetType) {
     let totalWeight = Big(0)
     const poolWeightsRebalanced = {}
@@ -195,7 +193,6 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
               type="radio"
               value={totalWeight.toFixed(2, 2)}
               onInvalid={handleInvalid}
-              ref={inputRef}
               required
               checked={totalWeight.toFixed(2, 2) === '1.00'}
               onChange={() => {

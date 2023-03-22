@@ -1,7 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import { useAppSelector } from '@/store/hooks'
+import usePoolInfo from '@/hooks/usePoolInfo'
 
 import AllocationGraph, {
   IDataProps
@@ -11,11 +13,17 @@ import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 import * as S from './styles'
 
 const ReviewTable = () => {
+  const router = useRouter()
+
   const [viewColumnInTable, setViewColumnInTable] = React.useState(1)
   const [openAllocationGraph, setOpenAllocationGraph] = React.useState(false)
   const [dataAllocationGraph, setDataAllocationGraph] = React.useState<
     IDataProps[]
   >([])
+
+  const poolId = Array.isArray(router.query.pool)
+    ? router.query.pool[0]
+    : router.query.pool ?? ''
 
   const poolTokensList = useAppSelector(
     state => state.rebalanceAssets.poolTokensList
@@ -23,7 +31,9 @@ const ReviewTable = () => {
   const newTokensWights = useAppSelector(
     state => state.rebalanceAssets.newTokensWights
   )
-  const poolInfo = useAppSelector(state => state.rebalanceAssets.poolInfo)
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+
+  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
   function handleCurrentViewTable(method: string, value: number) {
     if (method === 'next') {
@@ -34,9 +44,11 @@ const ReviewTable = () => {
   }
 
   React.useEffect(() => {
+    if (!poolInfo) return
+
     const dataAllocation = poolTokensList.map(item => {
       return {
-        imageUrl: item.token.logo,
+        imageUrl: item.token.logo ?? '',
         name: item.token.name,
         currentAllocation: Number(
           item.currentWeight.mul(100).toFixed(2, 2) ?? 0
@@ -57,25 +69,25 @@ const ReviewTable = () => {
       <S.PoolInfoContainer>
         <TokenWithNetworkImage
           tokenImage={{
-            url: poolInfo.logo,
+            url: poolInfo?.logo ?? '',
             height: 64,
             width: 64,
             withoutBorder: true
           }}
           networkImage={{
-            url: poolInfo.chainLogo,
+            url: poolInfo?.chain.logo,
             height: 16,
             width: 16
           }}
           blockies={{
             size: 8,
             scale: 8,
-            seedName: poolInfo.name
+            seedName: poolInfo?.name ?? ''
           }}
         />
         <S.PoolInfo>
-          <p>{poolInfo.name}</p>
-          <span>{poolInfo.symbol}</span>
+          <p>{poolInfo?.name ?? ''}</p>
+          <span>{poolInfo?.symbol ?? ''}</span>
         </S.PoolInfo>
       </S.PoolInfoContainer>
       <S.TableContainer>

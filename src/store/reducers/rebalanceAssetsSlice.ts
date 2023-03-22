@@ -21,22 +21,10 @@ export type AssetType = {
   token: {
     address: string,
     decimals: number,
-    id: string,
-    logo: string,
+    logo: string | undefined,
     name: string,
     symbol: string
   }
-}
-
-export type IPoolInfoProps = {
-  id: string,
-  name: string,
-  symbol: string,
-  controller: string,
-  chainLogo: string,
-  logo: string,
-  chainId: number,
-  address: string
 }
 
 export type IPeriodProps = {
@@ -45,7 +33,6 @@ export type IPeriodProps = {
 
 interface IRebalanceAssetsProps {
   poolTokensList: AssetType[];
-  poolInfo: IPoolInfoProps;
   periodSelect: number;
   totalWeight: Big;
   newTokensWights: Record<string, INewTokensWeights>;
@@ -53,16 +40,6 @@ interface IRebalanceAssetsProps {
 
 const initialState: IRebalanceAssetsProps = {
   poolTokensList: [],
-  poolInfo: {
-    id: '',
-    name: '',
-    symbol: '',
-    controller: '',
-    chainLogo: '',
-    logo: '',
-    chainId: 0,
-    address: ''
-  },
   newTokensWights: {
     ['']: {
       newWeight: Big(0),
@@ -80,9 +57,6 @@ export const rebalanceAssetsSlice = createSlice({
   name: 'rebalanceAssets',
   initialState,
   reducers: {
-    setPoolInfo: (state, action: PayloadAction<IPoolInfoProps>) => {
-      state.poolInfo = action.payload
-    },
     setPoolTokensList: (state, action: PayloadAction<AssetType[]>) => {
       state.poolTokensList = action.payload
     },
@@ -102,7 +76,6 @@ export const rebalanceAssetsSlice = createSlice({
 })
 
 export const {
-  setPoolInfo,
   setPoolTokensList,
   setPeriodSelect,
   setNewTokensWights,

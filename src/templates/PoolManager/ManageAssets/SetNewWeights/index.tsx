@@ -1,25 +1,19 @@
 import React from 'react'
-import useSWR from 'swr'
 import Big from 'big.js'
-import request from 'graphql-request'
 import { useRouter } from 'next/router'
 
-import { GET_INFO_POOL } from '@/templates/PoolManager/graphql'
-import {
-  BACKEND_KASSANDRA,
-  mockTokens,
-  networks
-} from '@/constants/tokenAddresses'
+import { mockTokens, networks } from '@/constants/tokenAddresses'
 
 import useCoingecko from '@/hooks/useCoingecko'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   lockToken,
   setNewTokensWights,
-  setPoolInfo,
   setPoolTokensList,
   setTotalWeight
 } from '@/store/reducers/rebalanceAssetsSlice'
+import usePoolInfo from '@/hooks/usePoolInfo'
+import usePoolAssets from '@/hooks/usePoolAssets'
 
 import ExecutionPeriod from './ExecutionPeriod'
 import Steps from '../../../../components/Steps'
@@ -37,17 +31,15 @@ const SetNewWeights = () => {
 
   const dispatch = useAppDispatch()
   const { newTokensWights } = useAppSelector(state => state.rebalanceAssets)
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
-  const { data } = useSWR([GET_INFO_POOL, poolId], (query, poolId) =>
-    request(BACKEND_KASSANDRA, query, {
-      id: poolId
-    })
-  )
+  const { poolAssets } = usePoolAssets(poolId)
+  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
   const { data: coingeckoData, priceToken } = useCoingecko(
-    networks[data?.pool.chain.id]?.coingecko,
-    data?.pool.chain.addressWrapped,
-    handleMockToken(data?.pool.underlying_assets_addresses ?? [])
+    networks[poolInfo?.chainId ?? 137]?.coingecko,
+    poolInfo?.chain.addressWrapped ?? '',
+    handleMockToken(poolAssets ?? [])
   )
 
   function handleMockToken(tokenList: any) {
@@ -59,50 +51,35 @@ const SetNewWeights = () => {
   }
 
   React.useEffect(() => {
-    if (!data) return
+    if (!poolAssets || !poolInfo) return
 
-    const response = data.pool.underlying_assets.map(
-      (item: any, index: number) => {
-        return {
-          currentAmount: Big(item.balance),
-          currentAmountUSD: Big(
-            Big(item.balance).mul(priceToken(mockTokens[item.token.id]) ?? 0)
-          ),
-          currentWeight: Big(
-            data.pool.weight_goals[0].weights[index].weight_normalized ?? 0
-          ),
-          token: {
-            decimals: item.token.decimals,
-            address: item.token.id,
-            logo: item.token.logo,
-            name: item.token.name,
-            symbol: item.token.symbol
-          }
+    const poolTokensList = poolAssets.map(item => {
+      return {
+        currentAmount: Big(item.balance),
+        currentAmountUSD: Big(
+          Big(item.balance).mul(priceToken(mockTokens[item.token.id]) ?? 0)
+        ),
+        currentWeight: Big(item.weight_normalized ?? 0),
+        token: {
+          decimals: item.token.decimals,
+          address: item.token.id,
+          logo: item.token.logo,
+          name: item.token.name,
+          symbol: item.token.symbol
         }
       }
-    )
+    })
 
-    dispatch(setPoolTokensList(response))
-    dispatch(
-      setPoolInfo({
-        id: data.pool.id,
-        name: data.pool.name,
-        symbol: data.pool.symbol,
-        controller: data.pool.controller,
-        chainLogo: data.pool.chain.logo,
-        address: data.pool.address,
-        chainId: data.pool.chain_id,
-        logo: data.pool.logo
-      })
-    )
-  }, [data, coingeckoData])
+    dispatch(setPoolTokensList(poolTokensList))
+  }, [coingeckoData])
 
   React.useEffect(() => {
-    if (!data) return
+    if (!poolAssets) return
 
     let totalWeight = Big(0)
     const newWeights = {}
-    data.pool.underlying_assets.forEach((item: any) => {
+
+    poolAssets.forEach(item => {
       const address = item.token.id
       totalWeight = totalWeight.add(newTokensWights[address]?.newWeight ?? 0)
 
@@ -121,7 +98,7 @@ const SetNewWeights = () => {
 
     dispatch(setTotalWeight(totalWeight))
     dispatch(setNewTokensWights(newWeights))
-  }, [data])
+  }, [coingeckoData])
 
   return (
     <S.SetNewWeights>
