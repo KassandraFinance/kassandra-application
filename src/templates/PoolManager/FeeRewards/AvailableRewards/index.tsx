@@ -1,16 +1,13 @@
 import React from 'react'
 import Big from 'big.js'
-import { AbiItem } from 'web3-utils'
 
 import Button from '@/components/Button'
 
-import KassandraController from '@/constants/abi/KassandraController.json'
-
+import useManage from '@/hooks/useManage'
 import { useAppSelector } from '@/store/hooks'
 
 import { getDateDiff } from '@/utils/date'
 import { BNtoDecimal } from '@/utils/numerals'
-import web3 from '@/utils/web3'
 
 import { Pool } from '../index'
 
@@ -27,12 +24,12 @@ const AvailableRewards = ({ pool }: Props) => {
   )
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const controller = useManage(pool.controller)
 
-    
-  async function handleClaimRewards(controller: string) {
+  async function handleClaimRewards() {
     try {
-      const controllerContract = new web3.eth.Contract((KassandraController as unknown) as AbiItem, controller)
-      await controllerContract.methods.withdrawCollectedManagementFees().send({ from: userWalletAddress })
+      await controller.withdrawAumFees(userWalletAddress)
+      setFeesAum({ kassandra: '0', manager: '0' })
     } catch (error) {
       console.log(error)
     }
@@ -40,16 +37,16 @@ const AvailableRewards = ({ pool }: Props) => {
 
   React.useEffect(() => {
     if (!pool) return
-    const getAvailableAumFee = async (controller: string) => {
+    const getAvailableAumFee = async () => {
       try {
-        const controllerContract = new web3.eth.Contract((KassandraController as unknown) as AbiItem, controller)
-        const { feesToManager, feesToKassandra } = await controllerContract.methods.withdrawCollectedManagementFees().call({ from: userWalletAddress })
+        const { feesToManager, feesToKassandra } =
+          await controller.getAumFeesToManagerAndKassandra(userWalletAddress)
         setFeesAum({ kassandra: feesToKassandra, manager: feesToManager })
       } catch (error) {
         console.log(error)
       }
     }
-    getAvailableAumFee(pool.controller)
+    getAvailableAumFee()
   }, [pool])
 
   return (
@@ -82,7 +79,7 @@ const AvailableRewards = ({ pool }: Props) => {
           size="large"
           text="Claim Rewards"
           onClick={() => {
-            handleClaimRewards(pool.controller)
+            handleClaimRewards()
           }}
         />
       </S.AvailableAumFees>
