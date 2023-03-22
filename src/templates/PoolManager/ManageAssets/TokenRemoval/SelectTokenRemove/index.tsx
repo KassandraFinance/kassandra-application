@@ -14,8 +14,12 @@ enum colorType {
   NEGATIVE
 }
 
-const SelectTokenRemove = () => {
-  const { tokenSelection, lpNeeded, poolInfo } = useAppSelector(
+interface ISelectTokenRemoveProps {
+  poolSymbol: string;
+}
+
+const SelectTokenRemove = ({ poolSymbol }: ISelectTokenRemoveProps) => {
+  const { tokenSelection, lpNeeded } = useAppSelector(
     state => state.removeAsset
   )
 
@@ -64,14 +68,14 @@ const SelectTokenRemove = () => {
         <S.LineRemovedTokenReview>
           <S.ValueText>Holding</S.ValueText>
           <S.TokenValueContainer>
-            {tokenSelection.balanceUSD !== 0 ? (
+            {tokenSelection.balanceUSD !== '0' ? (
               <S.AllocationAndHoldingValue>
                 ${Number(tokenSelection.balanceUSD).toFixed(2)}
               </S.AllocationAndHoldingValue>
             ) : (
               <S.AllocationAndHoldingValue>---</S.AllocationAndHoldingValue>
             )}
-            {tokenSelection.balance !== 0 ? (
+            {tokenSelection.balance !== '0' ? (
               <S.TextBalance>
                 {Number(tokenSelection.balance).toFixed(2)}{' '}
                 {tokenSelection.symbol}
@@ -83,7 +87,7 @@ const SelectTokenRemove = () => {
         </S.LineRemovedTokenReview>
         <S.LineRemovedTokenReview>
           <S.ValueText color={color[handleCheckLpNeeded()]}>
-            {poolInfo.symbol} needed for removal
+            {poolSymbol} needed for removal
           </S.ValueText>
           <S.TokenValueContainer>
             {!lpNeeded.value.lte(0) ? (
@@ -129,8 +133,8 @@ const SelectTokenRemove = () => {
         <img src="/assets/notificationStatus/queued.svg" alt="" />
         <p>
           You still need{' '}
-          {BNtoDecimal(lpNeeded.value, tokenSelection.decimals, 2)}{' '}
-          {poolInfo.symbol} to remove {tokenSelection.symbol} from this pool
+          {BNtoDecimal(lpNeeded.value, tokenSelection.decimals, 2)} {poolSymbol}{' '}
+          to remove {tokenSelection.symbol} from this pool
         </p>
       </S.NotificationStatusContainer>
     </S.SelectTokenRemove>
