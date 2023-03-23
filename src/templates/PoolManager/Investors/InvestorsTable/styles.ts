@@ -4,14 +4,14 @@ import { Image } from '@ui/Governance/ImageProfile/styles'
 import { Value as V } from '@ui/Modals/ModalViewCoin/styles'
 
 export const InvestorsTable = styled.div`
-  ${() => css`
+  ${({ theme }) => css`
     ${TR} {
       grid-template-columns: 1fr 1fr 8rem;
       gap: 0.5rem;
 
       @media (min-width: 768px) {
         grid-template-columns:
-          1fr 1fr 1fr 1fr 1fr
+          minmax(13.8rem, 1fr) 1fr 1fr 1fr 1fr
           1fr
           1fr;
       }
@@ -23,6 +23,19 @@ export const InvestorsTable = styled.div`
       span,
       a {
         margin-left: 0.8rem;
+
+        color: ${theme.colors.white};
+        font-weight: ${theme.font.weight.normal};
+        font-size: ${theme.font.sizes.font14};
+        line-height: 135%;
+        letter-spacing: 0.05em;
+      }
+
+      &:hover {
+        span,
+        a {
+          color: ${theme.colors.cyan};
+        }
       }
     }
   `}
