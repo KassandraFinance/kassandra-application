@@ -1,18 +1,17 @@
 import styled, { css } from 'styled-components'
 
 export const ActivityCard = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     width: 100%;
-    padding: 2.4rem;
+    padding: 2.4rem 3.2rem;
 
     background: rgba(255, 255, 255, 0.04);
     border-radius: 8px;
-    // color: ${theme.colors.blue};
   `}
 `
 
 export const ActivityActionTitle = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     justify-content: space-between;
     margin-bottom: 2.4rem;
@@ -32,8 +31,8 @@ export const ActionTitle = styled.div`
       line-height: 80%;
 
       @media (max-width: 576px) {
-        font-size: ${theme.font.sizes.font14};
         margin-bottom: 0.2rem;
+        font-size: ${theme.font.sizes.font14};
       }
     }
   `}
@@ -100,7 +99,7 @@ export const TitleInfoContainer = styled.div`
 `
 
 export const TitleInfoContent = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     align-items: center;
     gap: 1.2rem;
@@ -112,36 +111,8 @@ export const TitleInfoContent = styled.div`
   `}
 `
 
-export const TitleInfo = styled.div`
-  ${({ theme }) => css`
-    p {
-      font-size: ${theme.font.sizes.font16};
-      font-weight: ${theme.font.weight.medium};
-      line-height: 1.6rem;
-      letter-spacing: 0.05em;
-    }
-
-    span {
-      color: ${theme.colors.grayDisabled};
-      font-size: ${theme.font.sizes.font16};
-      font-weight: ${theme.font.weight.light};
-      line-height: 135%;
-    }
-
-    @media (max-width: 576px) {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-  `}
-`
-
 export const ActivityBodyContainer = styled.div`
-  ${({ theme }) => css`
-    /* display: flex;
-    flex-direction: column;
-    gap: 1.2rem; */
-
+  ${() => css`
     display: grid;
     grid-template-columns: 1fr 1fr;
 
@@ -151,11 +122,11 @@ export const ActivityBodyContainer = styled.div`
   `}
 `
 export const PoolAndUserWrapper = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     flex-direction: column;
     gap: 3.2rem;
-    padding-left: 4.6rem;
+    padding-left: 3.4rem;
     /* padding-left: 3.2rem; */
 
     border-right: 1.2px solid rgba(255, 255, 255, 0.15);
@@ -168,7 +139,7 @@ export const PoolAndUserWrapper = styled.div`
 `
 
 export const TokenWrapper = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     padding-left: 2.4rem;
 
     @media (max-width: 576px) {
@@ -222,96 +193,5 @@ export const WeightChangeAssetList = styled.div`
       letter-spacing: 0.22em;
       text-transform: uppercase;
     }
-  `}
-`
-
-export const AssetList = styled.ul`
-  ${({ theme }) => css`
-    display: flex;
-    flex-wrap: wrap;
-    row-gap: 1rem;
-    margin-top: 0.8rem;
-    column-gap: 2.4rem;
-    /* display: grid;
-    grid-template-columns: min-content 1fr;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 25rem));
-    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-
-    align-items: flex-start;
-
-
-    @media (max-width: 660px) {
-      grid-template-columns: 1fr;
-    }
-
-    @media (max-width: 576px) {
-      grid-template-columns: repeat(2, 1fr);
-
-      li:nth-child(even) {
-        justify-content: flex-end;
-      }
-    }
-
-    @media (max-width: 360px) {
-      grid-template-columns: 1fr;
-
-      li:nth-child(even) {
-        justify-content: flex-start;
-      }
-    } */
-  `}
-`
-
-export const AssetContent = styled.li`
-  ${({ theme }) => css`
-    display: flex;
-    align-items: center;
-    min-width: min-content;
-  `}
-`
-
-export const AssetInfo = styled.div`
-  ${({ theme }) => css`
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding-right: 0.4rem;
-    border-right: 1px solid rgba(255, 255, 255, 0.3);
-
-    > p {
-      color: ${theme.colors.snow};
-      font-size: ${theme.font.sizes.font14};
-      font-weight: ${theme.font.weight.normal};
-      line-height: 100%;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-  `}
-`
-
-export const WeightsValues = styled.div`
-  ${({ theme }) => css`
-    display: flex;
-    align-items: center;
-    padding-left: 0.4rem;
-    gap: 0.6rem;
-
-    > span {
-      color: ${theme.colors.snow};
-      font-size: ${theme.font.sizes.font14};
-      font-weight: ${theme.font.weight.light};
-      line-height: 100%;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-  `}
-`
-
-export const WrapperExternalLink = styled.div`
-  ${({ theme }) => css`
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin-top: 1.5rem;
   `}
 `

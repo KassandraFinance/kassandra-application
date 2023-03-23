@@ -1,17 +1,15 @@
 import Pagination from '@/components/Pagination'
 import TitleSection from '@/components/TitleSection'
-import Big from 'big.js'
 
 import assetDistribution from '../../../../../public/assets/iconGradient/assets-distribution.svg'
 import ActivityCard, { actionsType } from '../../ActivityCard'
 
 import * as S from './styles'
 
-interface IAllocationHistoryProps {
-  test?: string;
-}
+// interface IAllocationHistoryProps {
+// }
 
-const AllocationHistory = (props: IAllocationHistoryProps) => {
+const AllocationHistory = () => {
   return (
     <S.AllocationHistory>
       <TitleSection title="Allocation History" image={assetDistribution} />

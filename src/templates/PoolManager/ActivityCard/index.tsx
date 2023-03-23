@@ -36,8 +36,8 @@ const ActivityCard = ({
           <img
             src="/assets/icons/rebalance.svg"
             alt=""
-            width={24}
-            height={24}
+            width={26}
+            height={26}
           />
           <p>{actionTitle}</p>
         </S.ActionTitle>
@@ -101,14 +101,14 @@ export default ActivityCard
 
 const MockPoolTokenList = [
   {
-    symbol: 'WBC',
+    symbol: 'WBTCWTBC',
     imageUrl:
       'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
     weight: 5,
     newWeight: 10
   },
   {
-    symbol: 'WBCPOAFSD',
+    symbol: 'WBCPOA',
     imageUrl:
       'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
     weight: 5,
@@ -122,7 +122,70 @@ const MockPoolTokenList = [
     newWeight: 10
   },
   {
-    symbol: 'WBTCWBTCWBTCWBTC',
+    symbol: 'WBTCWTBC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBTCWTBC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBTCWTBC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBTCWTBC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBTCWTBC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBTCWTBC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBTCWTBC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBTCWTBC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBTCWTBC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBTCWTBC',
     imageUrl:
       'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
     weight: 5,

@@ -2,7 +2,7 @@ import { Title } from '@/components/TitleSection/styles'
 import styled, { css } from 'styled-components'
 
 export const AllocationHistory = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
@@ -16,7 +16,7 @@ export const AllocationHistory = styled.div`
 `
 
 export const ActivityCardContainer = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     flex-direction: column;
     gap: 2.4rem;

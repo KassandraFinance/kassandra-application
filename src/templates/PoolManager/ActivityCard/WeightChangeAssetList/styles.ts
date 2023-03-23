@@ -4,7 +4,7 @@ export const WeightChangeAssetList = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     height: 100%;
 
     > p {
@@ -19,47 +19,40 @@ export const WeightChangeAssetList = styled.div`
 `
 
 export const AssetList = styled.ul`
-  ${({ theme }) => css`
-    display: flex;
-    flex-wrap: wrap;
+  ${() => css`
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     row-gap: 1rem;
-    margin-top: 0.8rem;
     column-gap: 2.4rem;
+    margin-top: 1rem;
+
     max-width: 48rem;
-    /* display: grid; */
-    /* grid-template-columns: max-content 1fr; */
-    /* grid-template-columns: repeat(auto-fit, minmax(15rem, 25rem)); */
-    /* grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); */
 
-    align-items: flex-start;
-
-    @media (max-width: 660px) {
-      grid-template-columns: 1fr;
+    @media (max-width: 1200px) {
+      max-width: 100%;
     }
+  `}
+`
+
+export const AssetListMobile = styled.ul`
+  ${() => css`
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    row-gap: 2rem;
+    column-gap: 2.4rem;
+    margin-top: 1rem;
+    min-width: 50rem;
 
     @media (max-width: 576px) {
-      grid-template-columns: repeat(2, 1fr);
-
-      /* li:nth-child(even) {
-        justify-content: flex-end;
-      } */
-    }
-
-    @media (max-width: 360px) {
-      grid-template-columns: 1fr;
-
-      /* li:nth-child(even) {
-        justify-content: flex-start;
-      } */
+      min-width: auto;
     }
   `}
 `
 
 export const AssetContent = styled.li`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     align-items: center;
-    min-width: min-content;
   `}
 `
 
@@ -69,6 +62,7 @@ export const AssetInfo = styled.div`
     align-items: center;
     gap: 0.4rem;
     padding-right: 0.4rem;
+
     border-right: 1px solid rgba(255, 255, 255, 0.3);
 
     > p {
@@ -100,8 +94,17 @@ export const WeightsValues = styled.div`
   `}
 `
 
-export const WrapperExternalLink = styled.div`
-  ${({ theme }) => css`
+export const WrapperCheckAllWeights = styled.div`
+  ${() => css`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 1.5rem;
+  `}
+`
+
+export const WrapperAllWeightsModal = styled.div`
+  ${() => css`
     display: flex;
     align-items: center;
     justify-content: flex-start;

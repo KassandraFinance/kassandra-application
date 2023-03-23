@@ -1,4 +1,8 @@
+import React from 'react'
+
 import ExternalLink from '@/components/ExternalLink'
+import ModalWithMobile from '@/components/Modals/ModalWithMobile'
+import Overlay from '@/components/Overlay'
 
 import * as S from './styles'
 
@@ -18,14 +22,14 @@ const WeightChangeAssetList = ({
   AssetInfoList,
   link
 }: IWeightChangeAssetListProps) => {
-  return (
-    <S.WeightChangeAssetList>
-      <p>Assets</p>
+  const [isOpenModal, setisOpenModal] = React.useState(false)
 
-      <S.AssetList>
-        {AssetInfoList.map(item => {
+  const WeightsList = (allWeightsList: AssetInfoList[]) => {
+    return (
+      <>
+        {allWeightsList.map((item, index) => {
           return (
-            <S.AssetContent key={item.symbol}>
+            <S.AssetContent key={item.symbol + index}>
               <S.AssetInfo>
                 <img src={item.imageUrl} alt="" width={16} height={16} />
                 <p>{item.symbol}</p>
@@ -42,10 +46,37 @@ const WeightChangeAssetList = ({
             </S.AssetContent>
           )
         })}
-      </S.AssetList>
-      <S.WrapperExternalLink>
-        <ExternalLink text="Check all Weight Changes" hrefLink={link} />
-      </S.WrapperExternalLink>
+      </>
+    )
+  }
+
+  return (
+    <S.WeightChangeAssetList>
+      <p>Assets</p>
+
+      <S.AssetList>{WeightsList(AssetInfoList.slice(0, 10))}</S.AssetList>
+
+      {AssetInfoList.length >= 10 && (
+        <S.WrapperCheckAllWeights>
+          <ExternalLink
+            text="Check all Weight Changes"
+            onClick={() => setisOpenModal(true)}
+          />
+        </S.WrapperCheckAllWeights>
+      )}
+
+      {isOpenModal && (
+        <>
+          <Overlay onClick={() => setisOpenModal(false)} isOpen={isOpenModal} />
+
+          <ModalWithMobile
+            title="Weight Changes"
+            onCloseModal={() => setisOpenModal(false)}
+          >
+            <S.AssetListMobile>{WeightsList(AssetInfoList)}</S.AssetListMobile>
+          </ModalWithMobile>
+        </>
+      )}
     </S.WeightChangeAssetList>
   )
 }
