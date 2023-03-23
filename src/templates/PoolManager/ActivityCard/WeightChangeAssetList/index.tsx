@@ -28,7 +28,7 @@ const WeightChangeAssetList = ({
             <S.AssetContent key={item.symbol}>
               <S.AssetInfo>
                 <img src={item.imageUrl} alt="" width={16} height={16} />
-                <p>WBTC</p>
+                <p>{item.symbol}</p>
               </S.AssetInfo>
               <S.WeightsValues>
                 <span>{item.weight}%</span>

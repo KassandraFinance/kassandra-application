@@ -1,3 +1,4 @@
+import Pagination from '@/components/Pagination'
 import TitleSection from '@/components/TitleSection'
 import Big from 'big.js'
 
@@ -19,7 +20,7 @@ const AllocationHistory = (props: IAllocationHistoryProps) => {
         <ActivityCard
           actionTitle="Weight Change"
           actionType={actionsType.ADDITION}
-          // sharesRedeemed={0.56}
+          sharesRedeemed={0.56}
         />
         <ActivityCard
           actionTitle="Asset Addition"
@@ -30,6 +31,15 @@ const AllocationHistory = (props: IAllocationHistoryProps) => {
           actionType={actionsType.REMOVAL}
         />
       </S.ActivityCardContainer>
+
+      <S.PaginationContainer>
+        <Pagination
+          skip={0}
+          totalItems={100}
+          take={10}
+          handlePageClick={() => console.log('')}
+        />
+      </S.PaginationContainer>
     </S.AllocationHistory>
   )
 }

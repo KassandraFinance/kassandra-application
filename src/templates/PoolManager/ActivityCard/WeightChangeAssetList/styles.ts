@@ -20,13 +20,14 @@ export const WeightChangeAssetList = styled.div`
 
 export const AssetList = styled.ul`
   ${({ theme }) => css`
-    /* display: flex;
-    flex-wrap: wrap; */
+    display: flex;
+    flex-wrap: wrap;
     row-gap: 1rem;
     margin-top: 0.8rem;
     column-gap: 2.4rem;
-    display: grid;
-    grid-template-columns: min-content 1fr;
+    max-width: 48rem;
+    /* display: grid; */
+    /* grid-template-columns: max-content 1fr; */
     /* grid-template-columns: repeat(auto-fit, minmax(15rem, 25rem)); */
     /* grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); */
 

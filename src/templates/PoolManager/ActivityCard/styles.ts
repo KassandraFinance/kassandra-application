@@ -29,23 +29,46 @@ export const ActionTitle = styled.div`
       color: ${theme.colors.snow};
       font-size: ${theme.font.sizes.font18};
       font-weight: ${theme.font.weight.medium};
-      line-height: 104%;
+      line-height: 80%;
+
+      @media (max-width: 576px) {
+        font-size: ${theme.font.sizes.font14};
+        margin-bottom: 0.2rem;
+      }
     }
   `}
 `
 
-export const ActionTimeContent = styled.div`
+export const ActionTimeContent = styled.a`
   ${({ theme }) => css`
     display: flex;
     align-items: center;
     gap: 0.4rem;
+
+    text-decoration: none;
 
     p,
     span {
       color: ${theme.colors.grayDisabled};
       font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.normal};
-      line-height: 104%;
+      line-height: 80%;
+    }
+
+    P {
+      border-right: 1px solid #ccc;
+      padding-right: 0.4rem;
+    }
+
+    @media (max-width: 576px) {
+      p,
+      span {
+        font-size: ${theme.font.sizes.font12};
+      }
+
+      img {
+        margin-bottom: 0.35rem;
+      }
     }
   `}
 `
@@ -127,12 +150,13 @@ export const ActivityBodyContainer = styled.div`
     }
   `}
 `
-export const LeftContainer = styled.div`
+export const PoolAndUserWrapper = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    gap: 3.2rem;
     padding-left: 4.6rem;
+    /* padding-left: 3.2rem; */
 
     border-right: 1.2px solid rgba(255, 255, 255, 0.15);
 
@@ -143,7 +167,7 @@ export const LeftContainer = styled.div`
   `}
 `
 
-export const RightContainer = styled.div`
+export const TokenWrapper = styled.div`
   ${({ theme }) => css`
     padding-left: 2.4rem;
 

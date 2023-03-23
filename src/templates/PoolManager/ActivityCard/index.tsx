@@ -1,5 +1,9 @@
+import Link from 'next/link'
+
 import ItemInformation from './ItemInformation'
 import WeightChangeAssetList from './WeightChangeAssetList'
+
+import substr from '@/utils/substr'
 
 import * as S from './styles'
 
@@ -25,15 +29,6 @@ const ActivityCard = ({
   // timestamp,
   sharesRedeemed
 }: IActivityCardProps) => {
-  const assetInfo = {
-    symbol: 'WBTC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  }
-  const assetInfoList = new Array<typeof assetInfo>(7).fill(assetInfo)
-
   return (
     <S.ActivityCard>
       <S.ActivityActionTitle>
@@ -46,24 +41,26 @@ const ActivityCard = ({
           />
           <p>{actionTitle}</p>
         </S.ActionTitle>
-        <S.ActionTimeContent>
-          <p>17:04</p>
-          <span>22/12/2022</span>
-          <img
-            src="/assets/utilities/external-link.svg"
-            alt=""
-            width={16}
-            height={16}
-          />
-        </S.ActionTimeContent>
+        <Link href="#" passHref>
+          <S.ActionTimeContent target="_blank">
+            <p>17:04</p>
+            <span>22/12/2022</span>
+            <img
+              src="/assets/utilities/external-link.svg"
+              alt=""
+              width={16}
+              height={16}
+            />
+          </S.ActionTimeContent>
+        </Link>
       </S.ActivityActionTitle>
 
       <S.ActivityBodyContainer>
-        <S.LeftContainer>
+        <S.PoolAndUserWrapper>
           <ItemInformation
             title="Investor"
             name="The Dude"
-            description="0xakivrv0-2-oevapodjvlskll4f8oo"
+            description={substr('0xD581d597dBc574A458d469A62Fb5a07A625Edf73')}
             userWalletAddress="0xD581d597dBc574A458d469A62Fb5a07A625Edf73"
           />
 
@@ -72,9 +69,9 @@ const ActivityCard = ({
             name="Awesome Pool"
             description="$AWES"
           />
-        </S.LeftContainer>
+        </S.PoolAndUserWrapper>
 
-        <S.RightContainer>
+        <S.TokenWrapper>
           {actionType !== actionsType.REBALANCE ? (
             <>
               <ItemInformation
@@ -92,12 +89,43 @@ const ActivityCard = ({
               )}
             </>
           ) : (
-            <WeightChangeAssetList AssetInfoList={assetInfoList} link="#" />
+            <WeightChangeAssetList AssetInfoList={MockPoolTokenList} link="#" />
           )}
-        </S.RightContainer>
+        </S.TokenWrapper>
       </S.ActivityBodyContainer>
     </S.ActivityCard>
   )
 }
 
 export default ActivityCard
+
+const MockPoolTokenList = [
+  {
+    symbol: 'WBC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBCPOAFSD',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBTC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  },
+  {
+    symbol: 'WBTCWBTCWBTCWBTC',
+    imageUrl:
+      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
+    weight: 5,
+    newWeight: 10
+  }
+]
