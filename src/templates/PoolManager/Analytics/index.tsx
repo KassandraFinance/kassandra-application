@@ -6,7 +6,7 @@ import StatusCard from '../../../components/Manage/StatusCard'
 
 import PoolAssets from './PoolAssets'
 
-import poolsAssetsIcon from '../../../../public/assets/iconGradient/assets-distribution.svg'
+import poolsAssetsIcon from '@assets/iconGradient/assets-distribution.svg'
 
 import * as S from './styles'
 
