@@ -1,17 +1,15 @@
 import React from 'react'
 import Image from 'next/image'
 import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
+import { useRouter } from 'next/router'
 
 import {
-  BACKEND_KASSANDRA,
   COINGECKO_API,
   networks,
   mockTokensReverse
 } from '../../../../../constants/tokenAddresses'
-import { GET_POOL_TOKENS } from '../graphql'
 import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
 import {
   setAmount,
@@ -22,6 +20,7 @@ import {
   AssetType
 } from '../../../../../store/reducers/addAssetSlice'
 import { ERC20 } from '../../../../../hooks/useERC20Contract'
+import usePoolInfo from '@/hooks/usePoolInfo'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
@@ -48,6 +47,9 @@ export type GetPoolTokensType = {
     symbol: string,
     total_value_locked_usd: string,
     controller: string,
+    chain: {
+      logo: string
+    },
     weight_goals: {
       weights: AssetType[]
     }[]
@@ -55,19 +57,20 @@ export type GetPoolTokensType = {
 }
 
 const AddLiquidityOperation = () => {
-  const dispatch = useAppDispatch()
-
   const [balance, setBalance] = React.useState<BigNumber>(new BigNumber(0))
 
+  const router = useRouter()
+
+  const poolId = Array.isArray(router.query.pool)
+    ? router.query.pool[0]
+    : router.query.pool ?? ''
+
+  const dispatch = useAppDispatch()
+
   const token = useAppSelector(state => state.addAsset.token)
-  const poolId = useAppSelector(state => state.addAsset.poolId)
   const chainId = useAppSelector(state => state.addAsset.chainId)
   const liquidit = useAppSelector(state => state.addAsset.liquidit)
   const wallet = useAppSelector(state => state.userWalletAddress)
-
-  const params = {
-    id: poolId
-  }
 
   function handleTokenAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
     dispatch(setAmount(e.target.value.length > 0 ? e.target.value : '0'))
@@ -82,21 +85,18 @@ const AddLiquidityOperation = () => {
     dispatch(setAmount(amount.toString()))
   }
 
-  const { data } = useSWR<GetPoolTokensType>(
-    [GET_POOL_TOKENS, params],
-    (query, params) => request(BACKEND_KASSANDRA, query, params)
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
     `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
   )
 
   React.useEffect(() => {
-    if (data) {
-      dispatch(setTVL(data.pool.total_value_locked_usd))
-      dispatch(setController(data.pool.controller))
+    if (poolInfo) {
+      dispatch(setTVL(poolInfo.total_value_locked_usd))
+      dispatch(setController(poolInfo.controller))
     }
-  }, [data])
+  }, [])
 
   React.useEffect(() => {
     if (priceData) {
@@ -185,27 +185,28 @@ const AddLiquidityOperation = () => {
       <S.Title>Receive (est.)</S.Title>
 
       <S.Container>
-        {data && priceData && (
+        {poolInfo && priceData && (
           <S.InputContainer>
             <CoinSummary
-              coinName={data?.pool.name}
-              coinSymbol={data?.pool.symbol}
-              coinImage={data?.pool.logo}
+              coinName={poolInfo.name}
+              coinSymbol={poolInfo.symbol}
+              coinImage={poolInfo.logo}
+              chainImage={poolInfo.chain.logo}
               price={0}
             />
 
             <S.InputWrapper>
               <S.Value>
                 {Big(liquidit.amount || 0)
-                  .mul(priceData[token.id.toLowerCase()].usd)
-                  .div(data.pool.price_usd)
+                  .mul(priceData[token.id.toLowerCase()].usd ?? 0)
+                  .div(poolInfo.price_usd)
                   .toFixed(2)}
               </S.Value>
 
               <S.SecondaryValue>
                 ~$
                 {Big(liquidit.amount || 0)
-                  .mul(priceData[token.id.toLowerCase()].usd)
+                  .mul(priceData[token.id.toLowerCase()].usd ?? 0)
                   .toFixed(2)}
               </S.SecondaryValue>
             </S.InputWrapper>

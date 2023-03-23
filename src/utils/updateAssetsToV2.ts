@@ -17,7 +17,7 @@ export function getWeightsNormalizedV2(
       const endWeight = weight.weight_normalized
 
       const asset = underlying_assets.find(
-        asset => asset.token.id === weight.token.id
+        asset => asset.token.id === weight.asset.token.id
       )
 
       if (asset) {
@@ -45,7 +45,7 @@ export function getWeightsNormalizedV2(
 
     const assetsV2 = weights[weigthsIndex].weights.map(weight => {
       const asset = underlying_assets.find(
-        asset => asset.token.id === weight.token.id
+        asset => asset.token.id === weight.asset.token.id
       )
       if (asset) {
         asset.weight_normalized = weight.weight_normalized

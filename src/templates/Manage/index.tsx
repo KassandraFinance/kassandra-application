@@ -1,7 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { useAppSelector } from '../../store/hooks'
+import useManagerPools from '@/hooks/useManagerPools'
+import { useAppSelector } from '@/store/hooks'
 
 import Overlay from '../../components/Overlay'
 import Header from '../../components/Header'
@@ -26,11 +27,15 @@ const Manage = () => {
   const chainId = useAppSelector(state => state.chainId)
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
+  const { managerPools } = useManagerPools(userWalletAddress)
+
   React.useEffect(() => {
     if (43114 === chainId && userWalletAddress.length > 0) {
       setNetworkIcon(avalancheIcon)
     } else if (137 === chainId && userWalletAddress.length > 0) {
       setNetworkIcon(polygonIcon)
+    } else {
+      return
     }
   }, [chainId, userWalletAddress])
 
@@ -69,8 +74,13 @@ const Manage = () => {
 
         <S.Content>
           <Header />
-
-          {userWalletAddress.length !== 42 ? <GetStarted /> : <Overview />}
+          {userWalletAddress.length === 42 &&
+          managerPools &&
+          managerPools.pools.length > 0 ? (
+            <Overview />
+          ) : (
+            <GetStarted />
+          )}
         </S.Content>
       </S.DashBoard>
     </S.Manage>

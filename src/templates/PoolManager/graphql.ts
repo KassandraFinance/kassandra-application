@@ -1,8 +1,8 @@
 import { gql } from 'graphql-request'
 
 export const GET_INFO_POOL = gql`
-  query ($id: ID!) {
-    pool(id: $id) {
+  query ($manager: String, $id: ID) {
+    pools(where: { manager: $manager, id: $id }) {
       id
       address
       vault
@@ -11,6 +11,8 @@ export const GET_INFO_POOL = gql`
       logo
       pool_version
       strategy
+      price_usd
+      controller
       chain {
         id
         logo

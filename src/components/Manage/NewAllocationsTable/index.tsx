@@ -27,21 +27,15 @@ interface INewAllocationsTableProps {
 
 const NewAllocationsTable = ({ AllocationList }: INewAllocationsTableProps) => {
   const [openAllocationGraph, setOpenAllocationGraph] = React.useState(false)
-  const [dataAllocationGraph, setDataAllocationGraph] =
-    React.useState<IDataAllocationGraphProps[]>()
 
-  React.useEffect(() => {
-    const dataAllocation = AllocationList?.map(item => {
-      return {
-        imageUrl: item.logo,
-        name: item.name,
-        currentAllocation: item.currentWeight,
-        newAllocation: item.NewWeight
-      }
-    })
-
-    setDataAllocationGraph(dataAllocation)
-  }, [])
+  const dataAllocationGraph = AllocationList?.map(item => {
+    return {
+      imageUrl: item.logo,
+      name: item.name,
+      currentAllocation: item.currentWeight === 0 ? 0.0001 : item.currentWeight,
+      newAllocation: item.NewWeight === 0 ? 0.0001 : item.NewWeight
+    }
+  })
 
   return (
     <S.NewAllocationsTable>

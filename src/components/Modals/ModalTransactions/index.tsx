@@ -1,10 +1,15 @@
 import Image from 'next/image'
 
+import { useAppSelector } from '@/store/hooks'
+
+import { networks } from '@/constants/tokenAddresses'
+import changeChain from '@/utils/changeChain'
+
 import Button from '../../Button'
 
-import executedIcon from '../../../../public/assets/notificationStatus/executed.svg'
-import failedIcon from '../../../../public/assets/notificationStatus/failed.svg'
-import spinerIcon from '../../../../public/assets/iconGradient/spinner.png'
+import executedIcon from '@assets/notificationStatus/executed.svg'
+import failedIcon from '@assets/notificationStatus/failed.svg'
+import spinerIcon from '@assets/iconGradient/spinner.png'
 
 import * as S from './styles'
 
@@ -23,14 +28,18 @@ export type TransactionsListType = {
   status: StatusType
 }
 
+export type ButtonTextProps = Record<TransactionStatus, string>
+
 interface IModalTransactionsProps {
   title: string;
   transactions: TransactionsListType[];
   isCompleted: boolean;
   transactionButtonStatus: TransactionStatus;
+  buttonText: ButtonTextProps;
   onStart: () => Promise<void>;
   onCancel: () => void;
   onComfirm: () => void;
+  networkId?: number | null;
 }
 
 const ModalTransactions = ({
@@ -38,16 +47,13 @@ const ModalTransactions = ({
   transactions,
   isCompleted,
   transactionButtonStatus,
+  buttonText,
   onStart,
   onCancel,
-  onComfirm
+  onComfirm,
+  networkId = null
 }: IModalTransactionsProps) => {
-  const buttonText = {
-    [TransactionStatus.START]: 'Start pool creation',
-    [TransactionStatus.CONTINUE]: 'Continue pool creation',
-    [TransactionStatus.WAITING]: 'Waiting transaction',
-    [TransactionStatus.COMPLETED]: 'Pool created'
-  }
+  const chainId = useAppSelector(state => state.chainId)
 
   return (
     <S.ModalTransactions>
@@ -97,17 +103,35 @@ const ModalTransactions = ({
       </S.TransactionContainer>
 
       <S.ButtonsWrapper>
-        {!isCompleted && (
+        {networkId && networkId !== chainId ? (
           <Button
-            text={buttonText[transactionButtonStatus]}
+            text={`Connect to ${networks[networkId].chainName}`}
             backgroundPrimary
             fullWidth
             type="button"
-            disabledNoEvent={
-              transactionButtonStatus === TransactionStatus.WAITING
+            onClick={() =>
+              changeChain({
+                chainId: networks[networkId].chainId,
+                chainName: networks[networkId].chainName,
+                rpcUrls: [networks[networkId].rpc]
+              })
             }
-            onClick={onStart}
           />
+        ) : (
+          <>
+            {!isCompleted && (
+              <Button
+                text={buttonText[transactionButtonStatus]}
+                backgroundPrimary
+                fullWidth
+                type="button"
+                disabledNoEvent={
+                  transactionButtonStatus === TransactionStatus.WAITING
+                }
+                onClick={onStart}
+              />
+            )}
+          </>
         )}
 
         {isCompleted && (

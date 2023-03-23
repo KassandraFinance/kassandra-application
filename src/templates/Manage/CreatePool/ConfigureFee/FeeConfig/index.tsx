@@ -1,6 +1,8 @@
-import Tippy from '@tippyjs/react'
 import React from 'react'
+import Image from 'next/image'
+import Tippy from '@tippyjs/react'
 import { isAddress } from 'web3-utils'
+import Big from 'big.js'
 
 import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
 import {
@@ -8,10 +10,13 @@ import {
   setFee,
   setRefferalFee
 } from '../../../../../store/reducers/poolCreationSlice'
+import { kassandraManagementFee } from '@/constants/tokenAddresses'
 
 import InputRange from '../../../../../components/Inputs/InputRange'
 import InputText from '../../../../../components/Inputs/InputText'
 import InputToggle from '../../../../../components/Inputs/InputToggle'
+
+import limiterIcon from '../../../../../../public/assets/utilities/limiter.svg'
 
 import * as S from './styles'
 
@@ -52,6 +57,24 @@ const FeeConfig = () => {
         inputValue: value
       })
     )
+  }
+
+  function handleManagementFee(event: React.ChangeEvent<HTMLInputElement>) {
+    const inputName = event.target.name
+    let inputValue = event.target.value
+
+    if (inputValue.length > 0) {
+      inputValue = inputValue.replace(/^0+/, '')
+
+      const [value, decimals] = inputValue.split('.')
+      if (decimals && decimals.length > 1) {
+        inputValue = `${value}.${decimals.slice(0, 1)}`
+      }
+
+      if (Number(inputValue) > 100) inputValue = '100'
+    }
+
+    dispatch(setFee({ inputName: inputName, inputValue: inputValue }))
   }
 
   function handleClickToggle(event: React.ChangeEvent<HTMLInputElement>) {
@@ -219,18 +242,20 @@ const FeeConfig = () => {
       <S.CardWrapper>
         <S.ManagementHeader>
           <S.CardWrapperTitle>Management fee</S.CardWrapperTitle>
-          <InputToggle
-            toggleName="managementFee"
-            isChecked={feesData?.managementFee?.isChecked ?? false}
-            handleToggleChange={handleClickToggle}
-          />
+          {
+            // <InputToggle
+            //   toggleName="managementFee"
+            //   isChecked={feesData?.managementFee?.isChecked ?? false}
+            //   handleToggleChange={handleClickToggle}
+            // />
+          }
         </S.ManagementHeader>
         <S.CardWrapperParagraph>
           Receive a flat fee measured as an annual percent of total assets under
           management. The management fee accrues continuously.
         </S.CardWrapperParagraph>
         {feesData?.managementFee && (
-          <S.FeeContainer isFeeChecked={feesData.managementFee.isChecked}>
+          <S.FeeContainer>
             <S.WrapperInput
               isAddress={isAddress(userWalletAddress)}
               value={
@@ -239,29 +264,48 @@ const FeeConfig = () => {
                   : 0
               }
             >
-              <InputText
-                form="poolCreationForm"
-                name="managementFee"
-                type="number"
-                placeholder=""
-                required={feesData.managementFee.isChecked}
-                value={
-                  feesData.managementFee.feeRate
-                    ? feesData.managementFee.feeRate.toString()
-                    : '0'
-                }
-                minLength={0}
-                maxLength={95}
-                lable="recipient address"
-                error={
-                  feesData.managementFee.feeRate &&
-                  Number(feesData.managementFee.feeRate) > 50 &&
-                  Number(feesData.managementFee.feeRate) < 95
-                    ? '50% is higher than average and may prevent potential investors. Consider setting a lower fee.'
-                    : 'The rate must be less than 95%'
-                }
-                onChange={event => handleFeeChange(event)}
-              />
+              <div>
+                <S.FeeTitleContainer>
+                  <S.FeeTitle>Kassandra Share</S.FeeTitle>
+                  <S.FeeTitle>Manager Share</S.FeeTitle>
+                </S.FeeTitleContainer>
+                <S.ManagementFeeWrapper>
+                  <InputText
+                    name="kassandraShare"
+                    type="text"
+                    placeholder="Kassandra Share"
+                    required
+                    value={kassandraManagementFee}
+                    minLength={42}
+                    maxLength={42}
+                    lable=""
+                    error="Invalid address"
+                    readonly
+                    onChange={() => {
+                      return
+                    }}
+                  />
+
+                  <S.Wrapper>
+                    <S.LimiterWrapper>
+                      <Image src={limiterIcon} />
+                    </S.LimiterWrapper>
+                    <InputRange
+                      form="poolCreationForm"
+                      name="managementFee"
+                      min={0}
+                      max={94.5}
+                      step={0.01}
+                      InputRangeValue={
+                        feesData.managementFee.feeRate
+                          ? Number(feesData.managementFee.feeRate)
+                          : 0
+                      }
+                      handleInputRate={handleManagementFee}
+                    />
+                  </S.Wrapper>
+                </S.ManagementFeeWrapper>
+              </div>
               <InputText
                 name="address"
                 type="text"
@@ -278,6 +322,46 @@ const FeeConfig = () => {
                 }}
               />
             </S.WrapperInput>
+
+            <hr />
+
+            <S.TotalDepositFeeContainer>
+              <S.TotalDepositFeeTitle>
+                Total Management Fee
+              </S.TotalDepositFeeTitle>
+              <S.TotalDepositFeePercentage>
+                {Big(feesData?.managementFee?.feeRate || 0)
+                  .add(kassandraManagementFee)
+                  .toFixed(2)}
+                %
+              </S.TotalDepositFeePercentage>
+              <S.BrokerAndManagerTitle>
+                Kassandra Share
+                <Tippy content="#">
+                  <img
+                    src="/assets/utilities/tooltip.svg"
+                    width={15}
+                    height={15}
+                  />
+                </Tippy>
+              </S.BrokerAndManagerTitle>
+              <S.BrokerAndManagerPercentage>
+                {Big(kassandraManagementFee).toFixed(2)}%
+              </S.BrokerAndManagerPercentage>
+              <S.BrokerAndManagerTitle>
+                Manager share
+                <Tippy content="#">
+                  <img
+                    src="/assets/utilities/tooltip.svg"
+                    width={15}
+                    height={15}
+                  />
+                </Tippy>
+              </S.BrokerAndManagerTitle>
+              <S.BrokerAndManagerPercentage>
+                {Big(feesData?.managementFee?.feeRate || 0).toFixed(2)}%
+              </S.BrokerAndManagerPercentage>
+            </S.TotalDepositFeeContainer>
           </S.FeeContainer>
         )}
       </S.CardWrapper>

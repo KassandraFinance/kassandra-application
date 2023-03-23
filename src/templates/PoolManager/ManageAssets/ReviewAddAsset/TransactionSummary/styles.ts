@@ -113,8 +113,5 @@ export const ImageWrapper = styled.div`
 
     width: 3.2rem;
     height: 3.2rem;
-
-    border-radius: 50%;
-    overflow: hidden;
   `}
 `

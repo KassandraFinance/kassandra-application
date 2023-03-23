@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react'
 import BigNumber from 'bn.js'
+import Web3 from 'web3'
+import Big from 'big.js'
 
 import { AbiItem } from "web3-utils"
 import { Contract } from "web3-eth-contract"
@@ -56,10 +58,10 @@ function ERC20Contract(contract: Contract) {
     return new BigNumber(value)
   }
 
-  const allowance = async (addressCRP: string, userWalletAddress: string): Promise<boolean> => {
+  const allowance = async (contractAddress: string, userWalletAddress: string, amount = '1'): Promise<boolean> => {
     try {
-      const allowance: string = await contract.methods.allowance(userWalletAddress, addressCRP).call()
-      return allowance !== "0"
+      const allowance: string = await contract.methods.allowance(userWalletAddress, contractAddress).call()
+      return Big(allowance).gte(amount)
     } catch (e) {
       return false
     }
@@ -109,8 +111,8 @@ const useERC20Contract = (address: string) => {
   }, [contract])
 }
 
-export const ERC20 = (address: string) => {
-  const contract = new web3.eth.Contract((ERC20ABI as unknown) as AbiItem, address)
+export const ERC20 = (address: string, _web3: Web3 = web3) => {
+  const contract = new _web3.eth.Contract((ERC20ABI as unknown) as AbiItem, address)
   return ERC20Contract(contract)
 }
 

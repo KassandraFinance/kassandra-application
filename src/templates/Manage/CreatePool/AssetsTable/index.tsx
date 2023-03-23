@@ -151,7 +151,6 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                           2
                         )
                       : 0}{' '}
-                    {coin.symbol}
                     <S.SecondaryText>
                       ~$
                       {tokenBalance[coin.id.toLowerCase()] && priceList

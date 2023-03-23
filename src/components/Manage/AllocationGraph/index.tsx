@@ -52,7 +52,7 @@ const AllocationGraph = ({ data, isOpen }: IAllocationGraphProps) => {
         fontWeight={300}
         fontFamily="Rubik"
         dy={-6}
-      >{`${value}%`}</text>
+      >{`${value === 0.0001 ? 0 : value}%`}</text>
     )
   }
 
@@ -72,11 +72,19 @@ const AllocationGraph = ({ data, isOpen }: IAllocationGraphProps) => {
           <S.CustomTooltipContent>
             <S.CustomTooltipItens textColor={payload[0].fill}>
               <p>Current Allocation: </p>
-              <strong>{payload[0].payload.currentAllocation || 0}</strong>
+              <strong>
+                {(payload[0].payload.currentAllocation || 0) === 0.0001
+                  ? 0
+                  : payload[0].payload.currentAllocation}
+              </strong>
             </S.CustomTooltipItens>
             <S.CustomTooltipItens textColor={payload[1].fill}>
               <p>New allocation: </p>
-              <strong>{payload[0].payload.currentAllocation || 0}</strong>
+              <strong>
+                {(payload[1].payload.newAllocation || 0) === 0.0001
+                  ? 0
+                  : payload[1].payload.newAllocation}
+              </strong>
             </S.CustomTooltipItens>
           </S.CustomTooltipContent>
         </S.CustomTooltipContainer>

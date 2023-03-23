@@ -1,5 +1,6 @@
 import React from 'react'
-import { chooseAction } from '..'
+
+import { chooseActionStep } from '..'
 
 import * as S from './styles'
 
@@ -8,8 +9,8 @@ interface ICardChooseActionProps {
   title: string;
   paragraph: string;
   NumberActive: number;
-  isActive: chooseAction;
-  setChooseActionSelect: React.Dispatch<React.SetStateAction<chooseAction>>;
+  isActive: chooseActionStep;
+  setChooseActionSelect: React.Dispatch<React.SetStateAction<chooseActionStep>>;
 }
 
 const CardChooseAction = ({
@@ -22,7 +23,7 @@ const CardChooseAction = ({
 }: ICardChooseActionProps) => {
   function handleClickChoseCard() {
     if (isActive === NumberActive) {
-      setChooseActionSelect(chooseAction.Default)
+      setChooseActionSelect(chooseActionStep.Default)
     } else {
       setChooseActionSelect(NumberActive)
     }
@@ -32,7 +33,7 @@ const CardChooseAction = ({
     <S.CardChooseAction
       isActive={isActive === NumberActive}
       onClick={() => handleClickChoseCard()}
-      form="poolCreationForm"
+      type="button"
     >
       <S.imageContent>
         <img src={ImageUrl} alt="" />
@@ -41,6 +42,18 @@ const CardChooseAction = ({
         <span>{title}</span>
         <p>{paragraph}</p>
       </S.TitleAndParagraph>
+      <input
+        form="manageAssetsForm"
+        id="selectAction"
+        name="selectAction"
+        type="radio"
+        value={NumberActive}
+        required
+        checked={isActive === NumberActive}
+        onChange={() => {
+          return
+        }}
+      />
     </S.CardChooseAction>
   )
 }

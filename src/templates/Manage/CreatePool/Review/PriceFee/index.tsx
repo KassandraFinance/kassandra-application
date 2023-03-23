@@ -1,13 +1,13 @@
 import React from 'react'
 import BigNumber from 'bn.js'
 import useSWR from 'swr'
+import Web3 from 'web3'
 
 import { COINGECKO_API } from '@/constants/tokenAddresses'
 
 import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
 import { setTermsAndConditions } from '../../../../../store/reducers/poolCreationSlice'
-
-import web3 from '../../../../../utils/web3'
+import { networks } from '@/constants/tokenAddresses'
 
 import Checkbox from '../../../../../components/Inputs/Checkbox'
 import TermsAndConditions from '../../../../../components/Modals/TermsAndConditions'
@@ -27,6 +27,10 @@ const PriceFee = () => {
     state => state.poolCreation.createPoolData.termsAndConditions
   )
 
+  const networkId = useAppSelector(
+    state => state.poolCreation.createPoolData.networkId
+  )
+
   function handleClick() {
     dispatch(setTermsAndConditions())
   }
@@ -36,6 +40,7 @@ const PriceFee = () => {
   )
 
   React.useEffect(() => {
+    const web3 = new Web3(networks[networkId ?? 137].rpc)
     const getGasFee = async () => {
       try {
         const estimateGasUsed = new BigNumber(7_805_975)

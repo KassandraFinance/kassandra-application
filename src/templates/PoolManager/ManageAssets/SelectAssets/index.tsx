@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import Web3 from 'web3'
 import { AbiItem, toChecksumAddress } from 'web3-utils'
@@ -45,11 +46,17 @@ const SelectAssets = () => {
   const [whitelist, setWhitelist] = React.useState<string[]>();
   const [tokensList, setTokensList] = React.useState<TokensListType[]>([])
 
+  const router = useRouter()
+
   const wallet = useAppSelector(state => state.userWalletAddress)
-  const poolId = useAppSelector(state => state.addAsset.poolId)
-  const chainId = useAppSelector(state => state.addAsset.chainId)
+  const chainId = useAppSelector(state => state.chainId)
 
   const tokensListGoerli = chainId === 5 ? whitelist?.map((token: string) => toChecksumAddress(mockTokens[token])) : whitelist
+
+  const poolId = Array.isArray(router.query.pool)
+    ? router.query.pool[0]
+    : router.query.pool ?? ''
+
   const params = {
     id: poolId,
     whitelist: tokensListGoerli
