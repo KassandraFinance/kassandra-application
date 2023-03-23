@@ -8,7 +8,7 @@ interface IInputTimeProps {
   min?: number;
   max?: number;
   step?: number;
-  InputTimeValue: number | undefined;
+  InputTimeValue?: number;
   handleInputTime: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

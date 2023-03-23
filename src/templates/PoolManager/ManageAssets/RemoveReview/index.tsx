@@ -17,7 +17,7 @@ const RemoveReview = () => {
     return {
       name: item.token.name,
       symbol: item.token.symbol,
-      logo: item.token.logo,
+      logo: item.token.logo ?? '',
       link: item.token.symbol,
       currentWeight: Number(Big(item.weight_normalized).mul(100).toFixed(2)),
       NewWeight: Number(Big(item.newWeight).mul(100).toFixed(2))

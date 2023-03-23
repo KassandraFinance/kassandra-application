@@ -1,7 +1,9 @@
 import React from 'react'
 import Big from 'big.js'
+import { useRouter } from 'next/router'
 
 import { useAppSelector } from '@/store/hooks'
+import usePoolInfo from '@/hooks/usePoolInfo'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
@@ -10,9 +12,18 @@ import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 import * as S from './styles'
 
 const TransactionSummaryCard = () => {
-  const { tokenSelection, poolInfo, lpNeeded } = useAppSelector(
+  const router = useRouter()
+
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const { tokenSelection, lpNeeded } = useAppSelector(
     state => state.removeAsset
   )
+
+  const poolId = Array.isArray(router.query.pool)
+    ? router.query.pool[0]
+    : router.query.pool ?? ''
+
+  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
   return (
     <S.TransactionSummaryCard>
@@ -20,7 +31,7 @@ const TransactionSummaryCard = () => {
 
       <S.TransactionSummaryCardBody>
         <S.LpSendWrapper>
-          <p>{poolInfo.symbol} Sent</p>
+          <p>{poolInfo?.symbol} Sent</p>
 
           <S.LpSendValueWrapper>
             <S.LpSendValue>
@@ -29,20 +40,20 @@ const TransactionSummaryCard = () => {
             </S.LpSendValue>
             <TokenWithNetworkImage
               tokenImage={{
-                url: poolInfo.logo,
+                url: poolInfo?.logo ?? '',
                 height: 20,
                 width: 20,
                 withoutBorder: true
               }}
               networkImage={{
-                url: poolInfo.chainLogo,
+                url: poolInfo?.chain.logo ?? '',
                 height: 10,
                 width: 10
               }}
               blockies={{
                 size: 4,
                 scale: 7,
-                seedName: poolInfo.name
+                seedName: poolInfo?.name ?? ''
               }}
             />
           </S.LpSendValueWrapper>
@@ -62,7 +73,7 @@ const TransactionSummaryCard = () => {
             <p>Received (est.)</p>
 
             <S.ReceivedInfo>
-              <p>$ {tokenSelection.balanceUSD?.toFixed(2)}</p>
+              <p>$ {tokenSelection.balanceUSD}</p>
               <span>
                 {BNtoDecimal(
                   Big(tokenSelection.balance),

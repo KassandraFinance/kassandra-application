@@ -1,7 +1,11 @@
-import Tippy from '@tippyjs/react'
 import React from 'react'
-import InputRadio from '../../../../../../components/Inputs/InputRadio'
-import InputTime from '../../../../../../components/Inputs/InputTime'
+import Tippy from '@tippyjs/react'
+
+import { useAppDispatch } from '@/store/hooks'
+import { setPeriodSelect } from '@/store/reducers/rebalanceAssetsSlice'
+
+import InputRadio from '../../../../../components/Inputs/InputRadio'
+import InputTime from '../../../../../components/Inputs/InputTime'
 
 import * as S from './styles'
 
@@ -9,10 +13,28 @@ const ExecutionPeriod = () => {
   const [timeValue, setTimeValue] = React.useState<number>()
   const [timePeriodSelect, setTimePeriodSelect] = React.useState('optimized')
 
+  const dispatch = useAppDispatch()
+
   function handleClickInput(event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value
 
     setTimePeriodSelect(value)
+    switch (value) {
+      case 'optimized':
+        dispatch(setPeriodSelect(72))
+        return
+
+      case 'average':
+        dispatch(setPeriodSelect(48))
+        return
+
+      case 'fast':
+        dispatch(setPeriodSelect(24))
+        return
+
+      default:
+        return
+    }
   }
 
   function handleInputTime(event: React.ChangeEvent<HTMLInputElement>) {
@@ -22,12 +44,17 @@ const ExecutionPeriod = () => {
     if (valueNumber !== 0) {
       setTimeValue(Number(value))
       setTimePeriodSelect('')
+      dispatch(setPeriodSelect(Number(value)))
     } else {
       setTimeValue(undefined)
 
       timePeriodSelect === '' && setTimePeriodSelect('optimized')
     }
   }
+
+  React.useEffect(() => {
+    dispatch(setPeriodSelect(72))
+  }, [])
 
   return (
     <S.ExecutionPeriod>
@@ -42,6 +69,7 @@ const ExecutionPeriod = () => {
               value="optimized"
               inputChecked={timePeriodSelect === 'optimized'}
               handleClickInput={handleClickInput}
+              required={false}
             />
 
             <S.SelectPeriodContent>
@@ -58,6 +86,7 @@ const ExecutionPeriod = () => {
               value="average"
               inputChecked={timePeriodSelect === 'average'}
               handleClickInput={handleClickInput}
+              required={false}
             />
 
             <S.SelectPeriodContent>
@@ -74,6 +103,7 @@ const ExecutionPeriod = () => {
               value="fast"
               inputChecked={timePeriodSelect === 'fast'}
               handleClickInput={handleClickInput}
+              required={false}
             />
 
             <S.SelectPeriodContent>

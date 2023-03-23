@@ -43,7 +43,7 @@ export const Label = styled.label<ILabelProps>`
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 6.1rem;
+    min-width: 7.8rem;
     padding-block: 0.8rem;
 
     background: rgba(255, 255, 255, 0.15);
