@@ -5,6 +5,7 @@ import { underlyingAssetsInfo, WeightsV2 } from '@/store/reducers/pool'
 
 import PieChart from './PieChart'
 import AllocationTable from './AllocationTable'
+import AllocationHistory from './AllocationHistory'
 
 import * as S from './styles'
 
@@ -27,6 +28,7 @@ const Allocations = (props: IAllocationsProps) => {
         <S.GridRebalancing>asdasd</S.GridRebalancing>
       </S.Intro>
       <AllocationTable allocationData={mockTokens} />
+      <AllocationHistory />
     </S.Allocations>
   )
 }
