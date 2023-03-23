@@ -3,6 +3,7 @@
 import React from 'react'
 import BigNumber from 'bn.js'
 import Web3 from 'web3'
+import Big from 'big.js'
 
 import { AbiItem } from "web3-utils"
 import { Contract } from "web3-eth-contract"
@@ -57,10 +58,10 @@ function ERC20Contract(contract: Contract) {
     return new BigNumber(value)
   }
 
-  const allowance = async (addressCRP: string, userWalletAddress: string): Promise<boolean> => {
+  const allowance = async (contractAddress: string, userWalletAddress: string, amount = '1'): Promise<boolean> => {
     try {
-      const allowance: string = await contract.methods.allowance(userWalletAddress, addressCRP).call()
-      return allowance !== "0"
+      const allowance: string = await contract.methods.allowance(userWalletAddress, contractAddress).call()
+      return Big(allowance).gte(amount)
     } catch (e) {
       return false
     }
