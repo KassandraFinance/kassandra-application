@@ -10,8 +10,7 @@ export function getWeightsNormalizedV2(
   const currentTime = new Date().getTime() / 1000
   const startTime = weights[0].start_timestamp
   const endTime = weights[0].end_timestamp
-
-  if (startTime >= currentTime && endTime > currentTime && weights.length > 1) {
+  if (startTime <= currentTime && endTime > currentTime && weights.length > 1) {
     const assetsV2 = weights[0].weights.map((weight, i) => {
       const startWeight = weights[1].weights[i].weight_normalized
       const endWeight = weight.weight_normalized
@@ -36,7 +35,7 @@ export function getWeightsNormalizedV2(
   } else if (weights.length >= 1) {
     let weigthsIndex = 0
     if (
-      startTime < currentTime &&
+      startTime > currentTime &&
       endTime > currentTime &&
       weights.length > 1
     ) {
