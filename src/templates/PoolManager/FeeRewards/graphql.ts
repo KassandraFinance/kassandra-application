@@ -17,6 +17,7 @@ export const GET_FEES = gql`
 
       total_fees_aum_usd
       fee_aum
+      fee_aum_kassandra
 
       fees(
         where: { period: 604800, type_in: ["join", "aum"] }
