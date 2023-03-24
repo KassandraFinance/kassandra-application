@@ -18,9 +18,9 @@ const CustomizedTooltip = ({
 }: ICustomizedTooltip & TooltipProps) => {
   let value = '0'
   if (active && payload && payload.length) {
-    value = payload[0].value.toString()
+    value = payload[0]?.value?.toString()
   } else {
-    value = currentValue.close
+    value = currentValue?.close
   }
 
   return (
@@ -28,7 +28,7 @@ const CustomizedTooltip = ({
       <S.Title>Total Value Managed</S.Title>
 
       <S.ValueContainer>
-        <S.Value>${BNtoDecimal(Big(value), 2)}</S.Value>
+        <S.Value>${BNtoDecimal(Big(value || 0), 2)}</S.Value>
       </S.ValueContainer>
     </S.CustomizedTooltip>
   )

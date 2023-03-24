@@ -8,14 +8,17 @@ import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 
 type PoolDepositsType = {
   manager: {
-    pools: {
-      unique_investors: number,
-      withdraws: {
-        volume_usd: string
-      }[],
-      deposits: {
-        volume_usd: string
-      }[]
+    unique_investors: number,
+    total_value_locked_usd: string,
+    total_value_locked: {
+      close: string,
+      timestamp: number
+    }[],
+    withdraws: {
+      volume_usd: string
+    }[],
+    deposits: {
+      volume_usd: string
     }[]
   }
 }
@@ -23,38 +26,46 @@ type PoolDepositsType = {
 function useDeposits(
   manager: string,
   depositsPeriod: string,
-  withdrawPeriod: string
+  withdrawPeriod: string,
+  tvlPeriod: string
 ) {
   const GET_POOL_DEPOSITS = gql`
     query (
-      $id: ID!
-      $deposits_period: Int
+      $manager: ID!
+      $tvl_timestamp: Int
       $deposits_timestamp: Int
-      $withdraws_period: Int
       $withdraws_timestamp: Int
     ) {
-      manager(id: $id) {
-        pools {
-          unique_investors
-          deposits: volumes(
-            where: {
-              period: $deposits_period
-              type: "join"
-              swap_pair_in: ["manager", "broker"]
-              timestamp_gt: $deposits_timestamp
-            }
-          ) {
-            volume_usd
+      manager(id: $manager) {
+        unique_investors
+        total_value_locked_usd
+        total_value_locked(
+          where: { base: "usd", timestamp_gt: $tvl_timestamp }
+          orderBy: timestamp
+        ) {
+          close
+          timestamp
+        }
+        deposits: volumes(
+          where: {
+            period: 86400
+            type: "join"
+            swap_pair_in: ["manager", "broker"]
+            timestamp_gt: $deposits_timestamp
           }
-          withdraws: volumes(
-            where: {
-              period: $withdraws_period
-              type: "exit"
-              timestamp_gt: $withdraws_timestamp
-            }
-          ) {
-            volume_usd
+        ) {
+          volume_usd
+          timestamp
+        }
+        withdraws: volumes(
+          where: {
+            period: 86400
+            type: "exit"
+            timestamp_gt: $withdraws_timestamp
           }
+        ) {
+          volume_usd
+          timestamp
         }
       }
     }
@@ -62,73 +73,89 @@ function useDeposits(
 
   const dateNow = new Date()
   const [depositsParams, setDepositsParams] = React.useState({
-    period: 3600,
     timestamp: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24)
   })
 
   const [withdrawParams, setWithdrawParams] = React.useState({
-    period: 3600,
     timestamp: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24)
   })
 
+  const [tvlParams, setTvlParams] = React.useState({
+    timestamp: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24)
+  })
+
+  console.log(tvlParams)
+
   const periodList: {
     [key: string]: {
-      period: number,
       timestamp: number
     }
   } = {
     '1D': {
-      period: 3600,
       timestamp: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24)
     },
     '1M': {
-      period: 86400,
       timestamp: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 30)
     },
     '3M': {
-      period: 86400,
       timestamp: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 90)
     },
     '6M': {
-      period: 86400,
       timestamp: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 180)
     },
 
     '1Y': {
-      period: 86400,
       timestamp: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 365)
     }
   }
 
   const { data, error, isValidating } = useSWR<PoolDepositsType>(
     manager.length > 0
-      ? [GET_POOL_DEPOSITS, manager, depositsParams, withdrawParams]
+      ? [GET_POOL_DEPOSITS, manager, tvlParams, depositsParams, withdrawParams]
       : null,
-    (query, manager, depositsParams, withdrawParams) =>
-      request(BACKEND_KASSANDRA, query, {
-        id: manager,
-        withdraws_period: withdrawParams.period,
-        withdraws_timestamp: withdrawParams.timestamp,
-        deposits_period: depositsParams.period,
-        deposits_timestamp: depositsParams.timestamp
-      })
+    (query, manager, tvlParams, depositsParams, withdrawParams) =>
+      request(
+        'https://graph.kassandra.finance/subgraphs/name/KassandraGoerli',
+        query,
+        {
+          manager: manager,
+          tvl_timestamp: tvlParams.timestamp,
+          deposits_timestamp: depositsParams.timestamp,
+          withdraws_timestamp: withdrawParams.timestamp
+        }
+      )
   )
+  console.log(data)
 
   let uniqueDeposits = 0
   let totalWithdraws = Big(0)
   let totalDeposits = Big(0)
+  const finalGraph = []
+  let last_timestamp = 0
   if (data) {
-    for (const pool of data.manager.pools) {
-      uniqueDeposits += pool.unique_investors
+    uniqueDeposits = data.manager.unique_investors - 1
 
-      for (const withdraw of pool.withdraws) {
-        totalWithdraws = totalWithdraws.add(withdraw.volume_usd)
-      }
+    for (const withdraw of data.manager.withdraws) {
+      totalWithdraws = totalWithdraws.add(withdraw.volume_usd)
+    }
 
-      for (const deposits of pool.deposits) {
-        totalDeposits = totalDeposits.add(deposits.volume_usd)
+    for (const deposits of data.manager.deposits) {
+      totalDeposits = totalDeposits.add(deposits.volume_usd)
+    }
+
+    for (const item of data.manager.total_value_locked) {
+      if (item.timestamp > last_timestamp) {
+        finalGraph.push(item)
+        last_timestamp = item.timestamp
+      } else {
+        finalGraph[finalGraph.length - 1].close = Big(
+          finalGraph[finalGraph.length - 1].close
+        )
+          .add(item.close)
+          .toString()
       }
     }
+    last_timestamp = 0
   }
 
   React.useEffect(() => {
@@ -150,12 +177,23 @@ function useDeposits(
     }
   }, [withdrawPeriod])
 
+  React.useEffect(() => {
+    const withdraw = periodList[tvlPeriod]
+    if (withdraw) {
+      setTvlParams(withdraw)
+      return
+    } else {
+      setTvlParams(periodList['1Y'])
+    }
+  }, [tvlPeriod])
+
   return {
     deposits: {
       uniqueDeposits,
       totalDeposits,
       totalWithdraws
     },
+    tvlGraph: finalGraph,
     error: error,
     isValidating: isValidating
   }

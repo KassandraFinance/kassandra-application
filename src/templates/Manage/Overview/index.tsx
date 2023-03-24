@@ -1,6 +1,7 @@
 import React from 'react'
 
 import useDeposits from '@/hooks/useDeposits'
+import { useAppSelector } from '@/store/hooks'
 
 import TitleSection from '../../../components/TitleSection'
 import StatusCard from '../../../components/Manage/StatusCard'
@@ -17,11 +18,20 @@ const dataList = ['1D', '1M', '3M', '6M', '1Y', 'ALL']
 const Overview = () => {
   const [depostiPeriod, setDepositPeriod] = React.useState<string>('1D')
   const [withdrawalPeriod, setWithdrawalPeriod] = React.useState<string>('1D')
+  const [tvlPeriod, setTvlPeriod] = React.useState<string>('1D')
 
-  const { deposits } = useDeposits(
-    '0xb602db4ddaa85b2f8495dbA4Fe6a9950178047cA',
+  function handleGraphPeriod(period: string) {
+    setTvlPeriod(period)
+  }
+
+  // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const userWalletAddress = '0xb602db4ddaa85b2f8495dbA4Fe6a9950178047cA'
+
+  const { deposits, tvlGraph } = useDeposits(
+    userWalletAddress,
     depostiPeriod,
-    withdrawalPeriod
+    withdrawalPeriod,
+    tvlPeriod
   )
 
   return (
@@ -32,7 +42,13 @@ const Overview = () => {
 
       <S.ManagerOverviewContainer>
         <S.ChartWrapper>
-          <TVMChart />
+          {tvlGraph && (
+            <TVMChart
+              graphData={tvlGraph}
+              selectedPeriod={tvlPeriod}
+              onClick={handleGraphPeriod}
+            />
+          )}
         </S.ChartWrapper>
 
         <S.StatsContainer>

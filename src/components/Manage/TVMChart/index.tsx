@@ -3,9 +3,9 @@ import React from 'react'
 import Chart from './Chart'
 import Change from './Change'
 import InputList from '../../Inputs/InputList'
+import SegmentedControls from '../../Inputs/SegmentedControls'
 
 import * as S from './styles'
-import SegmentedControls from '../../Inputs/SegmentedControls'
 
 const dataList = ['1D', '1M', '3M', '6M']
 
@@ -60,16 +60,23 @@ const tvlMock = [
   }
 ]
 
-const TVMChart = () => {
-  const [selectedPeriod, setSelectedPeriod] = React.useState<string>('1D')
+interface ITVMChartProps {
+  graphData: {
+    close: string,
+    timestamp: number
+  }[];
+  selectedPeriod: string;
+  onClick: (period: string) => void;
+}
 
+const TVMChart = ({ graphData, selectedPeriod, onClick }: ITVMChartProps) => {
   return (
     <S.TVMChart>
       <S.SegmentedControlsContainer>
         <SegmentedControls
           dataList={dataList}
           selected={selectedPeriod}
-          onClick={(period: string) => setSelectedPeriod(period)}
+          onClick={(period: string) => onClick(period)}
         />
       </S.SegmentedControlsContainer>
 
@@ -77,11 +84,11 @@ const TVMChart = () => {
         <InputList
           dataList={dataList}
           selected={selectedPeriod}
-          onClick={(period: string) => setSelectedPeriod(period)}
+          onClick={(period: string) => onClick(period)}
         />
       </S.InputListContainer>
 
-      <Chart data={tvlMock} color="#E843C4" />
+      <Chart data={graphData || tvlMock} color="#E843C4" />
 
       <S.ChangeContainer>
         {changeList.map(change => (
