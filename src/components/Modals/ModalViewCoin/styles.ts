@@ -97,8 +97,9 @@ export const ModalBody = styled.div`
 
 export const TableLine = styled.div`
   ${() => css`
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
     align-items: center;
 
     height: 6rem;
