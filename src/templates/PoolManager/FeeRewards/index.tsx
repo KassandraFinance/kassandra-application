@@ -42,6 +42,7 @@ export type Pool = {
 
   total_fees_aum_usd: string,
   fee_aum: string,
+  fee_aum_kassandra: string,
 
   fees: Fees[],
 
@@ -93,13 +94,9 @@ const FeeRewards = () => {
       const index = periods.findIndex(period => fee.timestamp > period)
       const feeBroker = Big(fee.volume_broker_usd ?? 0)
       if (index !== -1) {
-        const feesToManager = Big(fee.volume_usd).sub(feeBroker)
-        aggFees[index].totalFeesToManager = Big(
-          aggFees[index].totalFeesToManager
-        )
-          .add(feesToManager)
-          .toFixed()
+        let feesToManager = Big(fee.volume_usd).sub(feeBroker)
         if (fee.type === 'aum') {
+          feesToManager = Big(fee.volume_usd)
           const feeManager = aggFees[index].feesAumManager
           aggFees[index].feesAumManager = Big(feeManager)
             .add(feesToManager)
@@ -110,6 +107,11 @@ const FeeRewards = () => {
             .add(feesToManager)
             .toFixed()
         }
+        aggFees[index].totalFeesToManager = Big(
+          aggFees[index].totalFeesToManager
+        )
+          .add(feesToManager)
+          .toFixed()
       }
     }
 

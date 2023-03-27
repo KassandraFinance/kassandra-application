@@ -14,18 +14,20 @@ const useManagePool = (controllerAddress: string) => {
         setController(new web3.eth.Contract((KassandraController as unknown) as AbiItem, controllerAddress))
     }, [controllerAddress])
 
-    const getAumFeesToManagerAndKassandra = async (userWalletAddress: string): Promise<{ feesToManager: string, feesToKassandra: string }> => {
+    return React.useMemo(() => {
+      const getAumFeesToManagerAndKassandra = async (userWalletAddress: string): Promise<{ feesToManager: string, feesToKassandra: string }> => {
         return controller.methods.withdrawCollectedManagementFees().call({ from: userWalletAddress })
-    }
+      }
 
-    const withdrawAumFees = async (userWalletAddress: string): Promise<void> => {
+      const withdrawAumFees = async (userWalletAddress: string): Promise<void> => {
         return controller.methods.withdrawCollectedManagementFees().send({ from: userWalletAddress })
-    }
+      }
 
-    return {
+      return {
         getAumFeesToManagerAndKassandra,
         withdrawAumFees
-    }
+      }
+    }, [controller])
 }
 
 export default useManagePool

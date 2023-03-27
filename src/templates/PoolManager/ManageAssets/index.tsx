@@ -82,6 +82,9 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const { tokenSelection } = useAppSelector(
     state => state.removeAsset
   )
+  const lpNeeded = useAppSelector(
+    state => state.removeAsset.lpNeeded
+  )
   const { periodSelect, poolTokensList, newTokensWights } = useAppSelector(
     state => state.rebalanceAssets
   )
@@ -261,12 +264,13 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     transactionAction: string,
     keyAction: string,
     tokenSymbol: string,
+    amountToAprove: string,
     poolSymbol?: string
   ) {
     const transactionsList: TransactionsListType[] = []
 
     const { allowance } = ERC20(tokenId)
-    const isAproved = await allowance(controller, userWalletAddress)
+    const isAproved = await allowance(controller, userWalletAddress, amountToAprove)
 
     if (isAproved) {
       transactionsList.push({
@@ -360,9 +364,15 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         })
       )
 
-      const { approve } = ERC20(poolInfo.address)
-      await approve(poolInfo.controller, userWalletAddress, callBack)
-    } else {
+      let amount = BNtoDecimal(lpNeeded.value, 4)
+      amount = `${amount.slice(0, amount.length - 1)}${Number(amount[amount.length - 1]) + 1}`
+      await handleApproveToken({
+        address: poolInfo.address,
+        amount: lpNeeded.value.mul(Big(10).pow(18)).toFixed(0),
+        normalizedAmount: amount,
+        symbol: poolInfo.symbol
+      })
+      } else {
       setTransactions(prev =>
         prev.map((item, index) => {
           if (index === 1) {
@@ -399,7 +409,14 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     }
   }
 
-  async function callBack(error: MetamaskError, txHash: string) {
+  async function callBack(
+    error: MetamaskError, txHash: string,
+    approve?: {
+      token: { amount: string, normalizedAmount: string, symbol: string },
+      contractApprove: string,
+      allowance: (_to: string, _from: string, amount?: string) => Promise<boolean>
+    }
+  ): Promise<boolean> {
     if (error) {
       setTransactions(prev =>
         prev.map(item => {
@@ -416,7 +433,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
       if (error.code === 4001) {
         dispatch(setModalAlertText({ errorText: `Approval cancelled` }))
-        return
+        return false
       }
 
       dispatch(
@@ -424,12 +441,37 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
           errorText: error.message
         })
       )
-      return
+      return false
     }
 
     const txReceipt = await waitTransaction(txHash)
 
     if (txReceipt.status) {
+      if (approve) {
+        const isApproved = await approve.allowance(approve.contractApprove, txReceipt.from, approve.token.amount)
+        if (!isApproved) {
+          setTransactions(prev => prev.map(item => {
+            if (item.status === 'APPROVING') {
+              item.status = 'ERROR'
+            } else if (item.status === 'NEXT') {
+              item.status = 'WAITING'
+            }
+            return item
+          }))
+
+          setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
+          dispatch(
+            setModalAlertText({
+              errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue operation.`,
+              solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
+            })
+          )
+
+          return false
+        }
+      }
+
       let transactionIndex = -100
       setTransactions(prev =>
         prev.map((item, index) => {
@@ -459,7 +501,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         })
       )
 
-      return
+      return true
     } else {
       dispatch(
         setModalAlertText({
@@ -480,13 +522,19 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       )
 
       setTransactionButtonStatus(TransactionStatus.CONTINUE)
+      return false
     }
   }
 
-  async function handleAproveTokens(notAprovedToken: string) {
-    if (!poolInfo) return
-    const { approve } = ERC20(notAprovedToken)
-    await approve(poolInfo?.controller, userWalletAddress, callBack)
+  async function handleApproveToken(token: { address: string, amount: string, symbol: string, normalizedAmount: string }) {
+    if (!poolInfo) return false
+    const { approve, allowance } = ERC20(token.address)
+    await new Promise<boolean>(resolve => {
+      approve(poolInfo?.controller, userWalletAddress,
+        (error: MetamaskError, txHash: string) => callBack(error, txHash, { allowance, contractApprove: poolInfo?.controller, token }).then(result => {
+          resolve(result)
+        }))
+      })
   }
 
   async function handleAddToken() {
@@ -510,7 +558,14 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         })
       )
 
-      await handleAproveTokens(mockTokensReverse[token.id.toLowerCase()])
+      await handleApproveToken({
+        address: mockTokensReverse[token.id.toLowerCase()],
+        amount: Big(tokenLiquidity.amount)
+          .mul(Big(10).pow(token.decimals))
+          .toFixed(0),
+        normalizedAmount: tokenLiquidity.amount,
+        symbol: token.symbol
+      })
     } else {
       setTransactions(prev =>
         prev.map((item, index) => {
@@ -578,6 +633,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         'Remove',
         'RemoveToken',
         tokenSelection.symbol,
+        lpNeeded.value.mul(Big(10).pow(18)).toFixed(0),
         poolInfo.symbol
       )
     }
@@ -587,7 +643,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         poolInfo.controller,
         'Add',
         'addToken',
-        token.symbol
+        token.symbol,
+        Big(tokenLiquidity.amount).mul(Big(10).pow(token.decimals)).toFixed(0)
       )
       // getTransactionsList(mockTokensReverse[token.id.toLowerCase()])
     }
