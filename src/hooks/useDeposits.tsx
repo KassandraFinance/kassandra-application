@@ -145,7 +145,7 @@ function useDeposits(
 
     for (const item of data.manager.total_value_locked) {
       if (item.timestamp > last_timestamp) {
-        finalGraph.push(item)
+        finalGraph.push({ close: item.close, timestamp: item.timestamp })
         last_timestamp = item.timestamp
       } else {
         finalGraph[finalGraph.length - 1].close = Big(
@@ -155,7 +155,6 @@ function useDeposits(
           .toString()
       }
     }
-    last_timestamp = 0
   }
 
   React.useEffect(() => {
