@@ -12,7 +12,7 @@ import {
 
 import { BNtoDecimal } from '@/utils/numerals'
 
-import CustomLegend, { legend } from './CustomLegend'
+import CustomLegend from './CustomLegend'
 
 import * as S from './styles'
 
@@ -24,7 +24,9 @@ export type FeeGraph = {
 }[]
 
 type Props = {
-  fees: FeeGraph
+  fees: FeeGraph,
+  title: string,
+  legend: Record<string, string>
 }
 
 const monthShort = [
@@ -42,7 +44,7 @@ const monthShort = [
   'Dec'
 ]
 
-const FeesChart = ({ fees }: Props) => {
+const FeesChart = ({ fees, title, legend }: Props) => {
   return (
     <S.FeesGraph>
       <ResponsiveContainer width="99%" height={322} minWidth={768}>
@@ -106,7 +108,11 @@ const FeesChart = ({ fees }: Props) => {
               return [' $' + BNtoDecimal(_value, 2), legend[name]]
             }}
           />
-          <Legend content={<CustomLegend />} align="left" verticalAlign="top" />
+          <Legend
+            content={<CustomLegend title={title} legend={legend} />}
+            align="left"
+            verticalAlign="top"
+          />
           <Bar dataKey="feesJoinManager" fill="#fcfcfc" />
           <Bar dataKey="feesAumManager" fill="#FFBF00" />
         </BarChart>
