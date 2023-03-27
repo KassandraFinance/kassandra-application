@@ -30,7 +30,7 @@ export const DashBoard = styled.div<IDashBoardProps>`
       grid-template-columns: 7.4rem calc(100% - 7.4rem);
 
       > ${Overlay} {
-        background-color: rgba(0, 0, 0, 0);
+        background-color: rgb(0 0 0 / 0);
         backdrop-filter: blur(0);
       }
     }
@@ -137,7 +137,7 @@ export const SymbolAndLink = styled.div`
       font-weight: ${theme.font.weight.light};
       font-size: ${theme.font.sizes.font12};
 
-      background-color: rgba(0, 0, 0, 0.19);
+      background-color: rgb(0 0 0 / 0.19);
 
       @media (max-width: 768px) {
         font-size: 1rem;
@@ -152,7 +152,7 @@ export const SymbolAndLink = styled.div`
       border: none;
       border-radius: 50%;
 
-      background: rgba(255, 255, 255, 0);
+      background: rgb(255 255 255 / 0);
 
       cursor: pointer;
     }

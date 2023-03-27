@@ -1,8 +1,8 @@
 import React from 'react'
 
-import TitleSection from '../../../components/TitleSection'
-import TVMChart from '../../../components/Manage/TVMChart'
-import StatusCard from '../../../components/Manage/StatusCard'
+import TitleSection from '@/components/TitleSection'
+import TVMChart from '@/components/Manage/TVMChart'
+import StatusCard from '@/components/Manage/StatusCard'
 
 import PoolAssets from './PoolAssets'
 
