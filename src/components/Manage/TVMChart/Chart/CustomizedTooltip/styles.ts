@@ -5,7 +5,7 @@ export const CustomizedTooltip = styled.div`
 `
 export const ValueContainer = styled.div`
   ${() => css`
-    margin-top: 2.7rem;
+    margin-top: 4rem;
   `}
 `
 

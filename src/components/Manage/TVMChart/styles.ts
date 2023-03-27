@@ -45,7 +45,7 @@ export const ChartTypeButton = styled.button<IControlProps>`
     margin-top: 0.4rem;
     padding-bottom: 0.4rem;
     border: none;
-    border-bottom: 0.2rem solid ${props.selected ? theme.colors.cyan : 'transparent'};
+    border-bottom: 0.1rem solid ${props.selected ? theme.colors.cyan : 'transparent'};
 
     color: ${theme.colors.grayDisabled};
     font-weight: ${theme.font.weight.light};

@@ -30,7 +30,9 @@ const periods: Record<string, number> = {
   '1D': 60 * 60 * 24,
   '1M': 60 * 60 * 24 * 30,
   '3M': 60 * 60 * 24 * 30 * 3,
-  '6M': 60 * 60 * 24 * 30 * 6
+  '6M': 60 * 60 * 24 * 30 * 6,
+  '1Y': 60 * 60 * 24 * 30 * 12,
+  ALL: new Date().getTime() / 1000
 }
 
 const changeList = [
@@ -82,6 +84,8 @@ const Analytics = (props: IAnalyticsProps) => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
+  console.log('periods', periods[selectedPeriod], selectedPeriod)
+
   const { data } = useSWR<Result>(
     [
       selectedType === 'price' ? GET_PRICE_CHART : GET_TVM_CHART,
@@ -96,6 +100,8 @@ const Analytics = (props: IAnalyticsProps) => {
         )
       })
   )
+
+  console.log('data test', data)
 
   const { data: dataChange } = useSWR(
     [

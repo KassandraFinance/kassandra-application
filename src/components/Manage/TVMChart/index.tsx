@@ -7,7 +7,7 @@ import SegmentedControls from '../../Inputs/SegmentedControls'
 
 import * as S from './styles'
 
-const dataList = ['1D', '1M', '3M', '6M']
+const dataList = ['1D', '1M', '3M', '6M', '1Y', 'ALL']
 
 type Change = {
   name: string,
