@@ -143,3 +143,27 @@ export const GET_CHANGE_TVL = gql`
     }
   }
 `
+
+export const GET_VOLATILITY = gql`
+  query ($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      value: price_candles(
+        where: { period: 86400, base: "usd", timestamp_gt: $timestamp }
+        orderBy: timestamp
+        orderDirection: desc
+      ) {
+        close
+      }
+    }
+  }
+`
+
+export const GET_WITHDRAWS = gql`
+  query ($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      volumes(where: { period: 3600, type: "exit", timestamp_gt: $timestamp }) {
+        volume_usd
+      }
+    }
+  }
+`

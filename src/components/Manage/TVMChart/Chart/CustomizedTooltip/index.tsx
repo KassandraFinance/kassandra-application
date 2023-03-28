@@ -20,7 +20,7 @@ const CustomizedTooltip = ({
   if (active && payload && payload.length) {
     value = payload[0].value.toString()
   } else {
-    value = currentValue.close
+    value = currentValue?.close ?? '0'
   }
 
   return (
