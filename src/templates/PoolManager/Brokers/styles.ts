@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 
 export const Brokers = styled.div`
   ${() => css`
-    /* No empty */
+    margin-bottom: 5rem;
   `}
 `
 

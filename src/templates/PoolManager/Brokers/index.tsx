@@ -4,6 +4,7 @@ import TitleSection from '@/components/TitleSection'
 import BrokersOverview from './BrokersOverview'
 import RewardsOvertime from './RewardsOvertime'
 import BrokersTable from './BrokersTable'
+import ComissionRates from './ComissionRates'
 
 import overviewIcon from '@assets/iconGradient/product-bar.svg'
 
@@ -33,6 +34,8 @@ const Brokers = () => {
       <S.TitleWrapper>
         <TitleSection title="Broker comission rates" image={overviewIcon} />
       </S.TitleWrapper>
+
+      <ComissionRates />
     </S.Brokers>
   )
 }
