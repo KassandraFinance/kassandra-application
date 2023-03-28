@@ -65,6 +65,10 @@ export const GET_INFO_POOL = gql`
         weights(orderBy: weight_normalized, orderDirection: desc) {
           token {
             id
+            name
+            symbol
+            decimals
+            price_usd
           }
           weight_normalized
         }

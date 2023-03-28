@@ -95,7 +95,12 @@ const PoolManager = () => {
 
   const PoolManagerComponents: { [key: string]: ReactElement } = {
     analytics: <Analytics poolId={poolId} />,
-    allocations: <Allocations />,
+    allocations: (
+      <Allocations
+        weightGoals={data?.pool?.weight_goals}
+        underlyingAssets={data?.pool.underlying_assets}
+      />
+    ),
     activity: <ComingSoon />,
     investors: <Investors />,
     feeRewards: <FeeRewards />,
