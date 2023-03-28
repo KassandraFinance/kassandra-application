@@ -45,6 +45,7 @@ export const AddressContainer = styled.div`
   ${({ theme }) => css`
     display: grid;
     grid-template-columns: 1fr 12px;
+    gap: 0.5rem;
 
     cursor: pointer;
 
@@ -52,7 +53,6 @@ export const AddressContainer = styled.div`
       overflow: hidden;
 
       line-height: 110%;
-      text-overflow: ellipsis;
       white-space: nowrap;
 
       transition-timing-function: ease-in-out;

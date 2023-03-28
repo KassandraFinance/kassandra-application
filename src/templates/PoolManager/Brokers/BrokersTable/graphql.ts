@@ -1,14 +1,15 @@
 import { gql } from 'graphql-request'
 
-export const GET_JOIN_FESS = gql`
+export const GET_BROKERS = gql`
   query ($id: ID!, $poolId: ID!) {
     manager(id: $id) {
       pools(where: { id: $poolId }) {
-        fees(where: { type: "join" }) {
-          type
-          volume_usd
-          volume_broker_usd
-          timestamp
+        brokers {
+          wallet
+          num_deposits
+          unique_investors
+          deposits_usd
+          fees_usd
         }
       }
     }

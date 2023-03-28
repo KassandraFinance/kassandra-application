@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Big from 'big.js'
@@ -43,6 +44,11 @@ const depositsLegend: Record<string, string> = {
 
 const RewardsOvertime = () => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+
+  const router = useRouter()
+  const poolId = Array.isArray(router.query.pool)
+    ? router.query.pool[0]
+    : router.query.pool ?? ''
 
   function createIntervalTime(months = 12): Array<number> {
     const date = new Date()
@@ -146,10 +152,11 @@ const RewardsOvertime = () => {
   }
 
   const { data } = useSWR<GetJoinFeesType>(
-    [GET_JOIN_FESS, userWalletAddress],
-    (query, userWalletAddress) =>
+    [GET_JOIN_FESS, userWalletAddress, poolId],
+    (query, userWalletAddress, poolId) =>
       request(BACKEND_KASSANDRA, query, {
-        id: userWalletAddress
+        id: userWalletAddress,
+        poolId: poolId
       })
   )
 
