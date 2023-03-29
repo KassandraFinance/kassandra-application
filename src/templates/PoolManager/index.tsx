@@ -24,6 +24,7 @@ import Allocations from './Allocations'
 import Investors from './Investors'
 import ComingSoon from './ComingSoon'
 import ManageAssets from './ManageAssets'
+import Brokers from './Brokers'
 
 import analytics from '../../../public/assets/tabManage/analytics.svg'
 import allocations from '../../../public/assets/tabManage/allocations.svg'
@@ -99,7 +100,7 @@ const PoolManager = () => {
     activity: <ComingSoon />,
     investors: <Investors />,
     feeRewards: <FeeRewards />,
-    brokers: <ComingSoon />,
+    brokers: <Brokers />,
     info: <ComingSoon />
   }
 

@@ -53,6 +53,11 @@ type Result = {
   pool: Pool
 }
 
+const legend: Record<string, string> = {
+  feesJoinManager: 'MANAGED FEE',
+  feesAumManager: 'DEPOSIT FEE'
+}
+
 const FeeRewards = () => {
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -139,7 +144,11 @@ const FeeRewards = () => {
         <S.TitleWrapper>
           <TitleSection title="Pool Assets" image={poolsAssetsIcon} />
         </S.TitleWrapper>
-        <FeesChart fees={addTotalOnFees(pool.fees)} />
+        <FeesChart
+          fees={addTotalOnFees(pool.fees)}
+          title="Rewards History"
+          legend={legend}
+        />
       </S.FeesChartContainer>
     </S.FeeRewards>
   ) : (
