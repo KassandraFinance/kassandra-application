@@ -10,6 +10,17 @@ export const GET_JOIN_FESS = gql`
           volume_broker_usd
           timestamp
         }
+        volumes(
+          where: {
+            period: 86400
+            type: "join"
+            swap_pair_in: ["broker", "manager"]
+          }
+        ) {
+          volume_usd
+          swap_pair
+          timestamp
+        }
       }
     }
   }

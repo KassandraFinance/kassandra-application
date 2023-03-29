@@ -24,16 +24,23 @@ type Fees = {
   timestamp: number
 }
 
+type VolumesType = {
+  volume_usd: string,
+  swap_pair: string,
+  timestamp: number
+}
+
 type GetJoinFeesType = {
   manager: {
     pools: {
-      fees: Fees[]
+      fees: Fees[],
+      volumes: VolumesType[]
     }[]
   }
 }
 
 const rewardsLegend: Record<string, string> = {
-  feesJoinManager: 'MANATGER REWARDS',
+  feesJoinManager: 'MANAGER REWARDS',
   feesAumManager: 'BROKER REWARDS'
 }
 
@@ -68,16 +75,8 @@ const RewardsOvertime = () => {
     const periods = createIntervalTime()
     const size = periods.length
     const aggFees: FeeGraph = new Array(periods.length)
-    const aggDepositsFees: FeeGraph = new Array(periods.length)
     for (let index = 0; index < size; index++) {
       aggFees[index] = {
-        feesAumManager: '0',
-        feesJoinManager: '0',
-        totalFeesToManager: '0',
-        timestamp: periods[index]
-      }
-
-      aggDepositsFees[index] = {
         feesAumManager: '0',
         feesJoinManager: '0',
         totalFeesToManager: '0',
@@ -106,27 +105,54 @@ const RewardsOvertime = () => {
         )
           .add(feesToManager)
           .toFixed()
+      }
+    }
 
-        // feesAumManager is Brokered
-        // feesJoinManager is nonBrokered
-        if (feeBroker.eq(0)) {
-          aggDepositsFees[index].feesJoinManager = Big(
-            aggDepositsFees[index].feesJoinManager
-          )
-            .add(fee.volume_usd)
+    for (let index = 0; index < size; index++) {
+      const firstAgg = aggFees.at(-1)
+      if (
+        firstAgg?.feesAumManager === '0' &&
+        firstAgg?.feesJoinManager === '0'
+      ) {
+        aggFees.pop()
+      }
+    }
+
+    return aggFees
+  }
+
+  function addTotalOnVolumes(volumes: VolumesType[]) {
+    const periods = createIntervalTime()
+    const size = periods.length
+    const aggFees: FeeGraph = new Array(periods.length)
+    for (let index = 0; index < size; index++) {
+      aggFees[index] = {
+        feesAumManager: '0',
+        feesJoinManager: '0',
+        totalFeesToManager: '0',
+        timestamp: periods[index]
+      }
+    }
+
+    for (const volume of volumes) {
+      const index = periods.findIndex(period => volume.timestamp > period)
+      if (index !== -1) {
+        // feesJoinManager is manager volume
+        // feesAumManager is broker volume
+        if (volume.swap_pair === 'manager') {
+          aggFees[index].feesJoinManager = Big(aggFees[index].feesJoinManager)
+            .add(volume.volume_usd)
             .toFixed()
         } else {
-          aggDepositsFees[index].feesAumManager = Big(
-            aggDepositsFees[index].feesAumManager
-          )
-            .add(fee.volume_usd)
+          aggFees[index].feesAumManager = Big(aggFees[index].feesAumManager)
+            .add(volume.volume_usd)
             .toFixed()
         }
 
-        aggDepositsFees[index].totalFeesToManager = Big(
-          aggDepositsFees[index].totalFeesToManager
+        aggFees[index].totalFeesToManager = Big(
+          aggFees[index].totalFeesToManager
         )
-          .add(feesToManager)
+          .add(volume.volume_usd)
           .toFixed()
       }
     }
@@ -139,16 +165,9 @@ const RewardsOvertime = () => {
       ) {
         aggFees.pop()
       }
-      const firstAggDeposit = aggDepositsFees.at(-1)
-      if (
-        firstAggDeposit?.feesAumManager === '0' &&
-        firstAggDeposit.feesJoinManager === '0'
-      ) {
-        aggDepositsFees.pop()
-      }
     }
 
-    return { aggFees, aggDepositsFees }
+    return aggFees
   }
 
   const { data } = useSWR<GetJoinFeesType>(
@@ -161,20 +180,16 @@ const RewardsOvertime = () => {
   )
 
   if (data?.manager?.pools) {
-    const { aggFees, aggDepositsFees } = addTotalOnFees(
-      data?.manager.pools[0].fees
-    )
-
     return (
       <S.RewardsOvertime>
         <FeesChart
-          fees={aggFees}
+          fees={addTotalOnFees(data?.manager?.pools[0]?.fees || [])}
           title="Rewards History"
           legend={rewardsLegend}
         />
 
         <FeesChart
-          fees={aggDepositsFees}
+          fees={addTotalOnVolumes(data?.manager?.pools[0]?.volumes || [])}
           title="Deposits comparisson"
           legend={depositsLegend}
         />
