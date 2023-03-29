@@ -9,6 +9,7 @@ import Big from 'big.js'
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 import { GET_INVESTORS } from './graphql'
 import { useAppSelector } from '@/store/hooks'
+import substr from '@/utils/substr'
 
 import { getDateDiff } from '@/utils/date'
 
@@ -237,7 +238,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
               <TD isView={inViewCollum === 6}>
                 <CopyToClipboard text={investor.wallet}>
                   <S.AddressContainer>
-                    <Value>{investor.wallet}</Value>
+                    <Value>{substr(investor.wallet)}</Value>
 
                     <svg
                       width="12"
