@@ -48,6 +48,7 @@ const Chart = ({ data, color }: IChartProps) => {
             scale="time"
             type="number"
             domain={['auto', 'auto']}
+            minTickGap={10}
             tickFormatter={item => {
               const date = new Date(item * 1000)
               return date.toLocaleDateString('en-us', {
@@ -58,7 +59,7 @@ const Chart = ({ data, color }: IChartProps) => {
           />
           <YAxis
             mirror
-            domain={['auto', 'auto']}
+            domain={[0, 'auto']}
             tickLine={false}
             axisLine={false}
             hide

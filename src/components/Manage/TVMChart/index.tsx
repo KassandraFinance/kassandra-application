@@ -18,7 +18,7 @@ type Props = {
   data: DataType[],
   selectedPeriod: string,
   setSelectedPeriod: React.Dispatch<React.SetStateAction<string>>,
-  selectedType: string,
+  selectedType?: string,
   setSelectedType?: React.Dispatch<React.SetStateAction<string>>,
   changeList: Change[]
 }
@@ -73,7 +73,7 @@ const TVMChart = ({
       <Chart data={data} color="#E843C4" />
 
       <S.ChangeContainer>
-        {changeList.map(change => (
+        {changeList?.map(change => (
           <Change key={change.name} title={change.name} value={change.value} />
         ))}
       </S.ChangeContainer>
