@@ -72,7 +72,11 @@ const AllocationGraph = ({ data, isOpen }: IAllocationGraphProps) => {
           <S.CustomTooltipContent>
             <S.CustomTooltipItens textColor={payload[0].fill}>
               <p>Current Allocation: </p>
-              <strong>{payload[0].payload.currentAllocation || 0}</strong>
+              <strong>
+                {(payload[0].payload.currentAllocation || 0) === 0.0001
+                  ? 0
+                  : payload[0].payload.currentAllocation}
+              </strong>
             </S.CustomTooltipItens>
             <S.CustomTooltipItens textColor={payload[1].fill}>
               <p>New allocation: </p>

@@ -1,28 +1,24 @@
 import React from 'react'
-import useSWR from 'swr'
 import { AbiItem } from 'web3-utils'
-import request from 'graphql-request'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
 
 import {
-  BACKEND_KASSANDRA,
   mockTokens,
   networks
 } from '@/constants/tokenAddresses'
 import ManagedPool from '@/constants/abi/ManagedPool.json'
-import { GET_INFO_POOL } from '@/templates/PoolManager/graphql'
 
 import {
-  AssetType,
   setLpNeeded,
   setPoolTokensList,
-  setWeight,
-  setPoolInfo
+  setWeight
 } from '@/store/reducers/removeAssetSlice'
 import useCoingecko from '@/hooks/useCoingecko'
 import { ERC20 } from '@/hooks/useERC20Contract'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import usePoolInfo from '@/hooks/usePoolInfo'
+import usePoolAssets from '@/hooks/usePoolAssets'
 
 import web3 from '@/utils/web3'
 
@@ -37,27 +33,24 @@ const TokenRemoval = () => {
   const router = useRouter()
 
   const dispatch = useAppDispatch()
-  const { weights, tokenSelection, poolInfo } = useAppSelector(state => state.removeAsset)
+  const { weights, tokenSelection } = useAppSelector(state => state.removeAsset)
   const userWalletAddress  = useAppSelector(state => state.userWalletAddress)
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { data } = useSWR([GET_INFO_POOL, poolId], (query, poolId) =>
-    request(BACKEND_KASSANDRA, query, {
-      id: poolId ?? ''
-    })
-  )
+  const { poolAssets } = usePoolAssets(poolId)
+  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
   const { data: coingeckoData, priceToken } = useCoingecko(
-    networks[data?.pool.chain.id]?.coingecko,
-    data?.pool.chain.addressWrapped,
-    handleMockToken(data?.pool.underlying_assets_addresses ?? [])
+    networks[poolInfo?.chainId ?? 137]?.coingecko,
+    poolInfo?.chain.addressWrapped ?? '',
+    handleMockToken(poolInfo?.underlying_assets_addresses ?? [])
   )
 
-  function handleMockToken(tokenList: any) {
-    const mockTokensList = tokenList?.map((item: string) => {
+  function handleMockToken(tokenList: string[]) {
+    const mockTokensList = tokenList?.map(item => {
       return mockTokens[item]
     })
 
@@ -65,9 +58,9 @@ const TokenRemoval = () => {
   }
 
   async function handleCheckLpNeeded(allocation: string, poolPrice: string) {
-    if (tokenSelection.address === '') return
+    if (tokenSelection.address === '' || !poolInfo) return
 
-    const userBalance = await ERC20(data.pool.address).balance(
+    const userBalance = await ERC20(poolInfo.address).balance(
       userWalletAddress
     )
 
@@ -100,56 +93,43 @@ const TokenRemoval = () => {
   }
 
   React.useEffect(() => {
-    if (!data) return
+    if (!poolAssets) return
 
-    const poolInfo = data?.pool.underlying_assets.map(
-      (item: any, index: number) => {
+    const poolInfo = poolAssets.map(item => {
         return {
           address: item.token.id,
+          name: item.token.name,
           symbol: item.token.symbol,
           logo: item.token.logo,
           decimals: item.token.decimals,
           balance: item.balance,
-          weight:
-            data?.pool?.weight_goals[0]?.weights[index].weight_normalized ?? 0,
-          balanceUSD:
-            item.balance * (priceToken(mockTokens[item.token.id]) ?? 0)
+          weight: item.weight_normalized ?? 0,
+          balanceUSD: Big(item.balance).mul(priceToken(mockTokens[item.token.id] ?? 0) ?? 0).toFixed(2)
         }
       }
     )
 
     dispatch(setPoolTokensList(poolInfo))
-    dispatch(
-      setPoolInfo({
-        id: data.pool.id,
-        name: data.pool.name,
-        symbol: data.pool.symbol,
-        controller: data.pool.controller,
-        chainLogo: data.pool.chain.logo,
-        address: data.pool.address,
-        chainId: data.pool.chain_id,
-        logo: data.pool.logo
-      })
-    )
-  }, [data, coingeckoData])
+  }, [coingeckoData])
 
   React.useEffect(() => {
-    handleCheckLpNeeded(tokenSelection?.weight, data?.pool.price_usd)
+    if (!poolInfo) return
+
+    handleCheckLpNeeded(tokenSelection?.weight, poolInfo?.price_usd)
   }, [tokenSelection])
 
   React.useEffect(() => {
-    if (tokenSelection.address === '') return
+    if (tokenSelection.address === '' || !poolAssets) return
 
-    const poolWeightInfo: AssetType[] = data?.pool.underlying_assets.map(
-      (item: any, index: number) => {
+    const poolWeightInfo = poolAssets.map(item => {
         // eslint-disable-next-line prettier/prettier
-        const currentWeight = data?.pool?.weight_goals[0]?.weights[index].weight_normalized ?? 0
+        const currentWeight = item.weight_normalized ?? '0'
         const isSelectedToken = tokenSelection.address === item.token.id
 
         return {
           weight_normalized: currentWeight,
           newWeight: isSelectedToken
-            ? 0
+            ? '0'
             : handleCalcNewWeight(currentWeight, tokenSelection.weight),
           token: {
             decimals: item.token.decimals,
@@ -195,7 +175,7 @@ const TokenRemoval = () => {
         <p>Select the token you wish to be removed from the pool</p>
 
         <S.SelectTokenAndTableAllocation>
-          <SelectTokenRemove />
+          <SelectTokenRemove poolSymbol={poolInfo?.symbol ?? ''} />
           <NewAllocationTable
             assets={tokenSelection.address === '' ? undefined : weights}
           />

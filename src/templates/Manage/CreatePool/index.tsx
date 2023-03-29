@@ -1,6 +1,6 @@
 import React from 'react'
 import Big from 'big.js'
-import { AbiItem, keccak256 } from 'web3-utils'
+import { AbiItem, keccak256, toChecksumAddress } from 'web3-utils'
 import web3 from '../../../utils/web3'
 import crypto from 'crypto'
 
@@ -53,6 +53,13 @@ interface ICreatePoolProps {
   setIsCreatePool: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+type Token = {
+  address: string,
+  amount: string,
+  normalizedAmount: string,
+  symbol: string
+}
+
 Big.RM = 0
 
 const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
@@ -88,8 +95,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       isCompleted={isPoolCreated}
       transactions={transactions}
       onStart={deployPool}
-      onCancel={() => {dispatch(setBackStepNumber())}}
-      onComfirm={() => {dispatch(setNextStepNumber())}}
+      onCancel={() => { dispatch(setBackStepNumber()) }}
+      onComfirm={() => { dispatch(setNextStepNumber()) }}
       networkId={poolData.networkId}
     />,
     <PoolCreated key="poolCreated" />
@@ -99,11 +106,11 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     dispatch(setNextStepNumber())
   }
 
-  async function getIsAproved(tokens: string[]) {
-    const tokensNotAproved: string[] = []
+  async function getIsAproved(tokens: Array<Token>) {
+    const tokensNotAproved: Array<Token> = []
     for (const token of tokens) {
-      const { allowance } = ERC20(token)
-      const isAproved = await allowance(networks[poolData.networkId ?? 137].factory, userWalletAddress)
+      const { allowance } = ERC20(token.address)
+      const isAproved = await allowance(networks[poolData.networkId ?? 137].factory, userWalletAddress, token.amount)
       if (isAproved === false) {
         tokensNotAproved.push(token)
       }
@@ -112,7 +119,15 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     return tokensNotAproved
   }
 
-  async function callBack(error: MetamaskError, txHash: string) {
+  async function callBack(
+    error: MetamaskError,
+    txHash: string,
+    approve?: {
+      token: { amount: string, normalizedAmount: string, symbol: string },
+      contractApprove: string,
+      allowance: (_to: string, _from: string, amount?: string) => Promise<boolean>
+    }
+  ) {
     if (error) {
       setTransactions(prev => prev.map(item => {
         if (item.status === 'APPROVING') {
@@ -130,7 +145,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           setModalAlertText({ errorText: `Approval cancelled` })
         )
 
-        return
+        return false
       }
 
       dispatch(
@@ -138,12 +153,36 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           errorText: error.message
         })
       )
-      return
+      return false
     }
 
     const txReceipt = await waitTransaction(txHash)
 
     if (txReceipt.status) {
+      if (approve) {
+        const isApproved = await approve.allowance(approve.contractApprove, txReceipt.from, approve.token.amount)
+        if (!isApproved) {
+          setTransactions(prev => prev.map(item => {
+            if (item.status === 'APPROVING') {
+              item.status = 'ERROR'
+            } else if (item.status === 'NEXT') {
+              item.status = 'WAITING'
+            }
+            return item
+          }))
+
+          setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
+          dispatch(
+            setModalAlertText({
+              errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
+              solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
+            })
+          )
+
+          return false
+        }
+      }
       let transactionIndex = -100
       setTransactions(prev => prev.map((item, index) => {
 
@@ -153,27 +192,27 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           }
           transactionIndex = index
 
-            return {
-              ...item,
-              status: 'APPROVED'
-            }
-        } else if (index === transactionIndex + 1) {
-            return {
-              ...item,
-              status: 'APPROVING'
-            }
-        } else if (index === transactionIndex + 2) {
-            return {
-              ...item,
-              status: 'NEXT'
-            }
-        } else {
-            return item
+          return {
+            ...item,
+            status: 'APPROVED'
           }
-        })
+        } else if (index === transactionIndex + 1) {
+          return {
+            ...item,
+            status: 'APPROVING'
+          }
+        } else if (index === transactionIndex + 2) {
+          return {
+            ...item,
+            status: 'NEXT'
+          }
+        } else {
+          return item
+        }
+      })
       )
 
-      return
+      return true
     } else {
       dispatch(setModalAlertText({
         errorText: 'Transaction reverted'
@@ -190,13 +229,21 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }))
       setTransactionButtonStatus(TransactionStatus.CONTINUE)
 
+      return false
     }
   }
 
-  async function handleAproveTokens(notAprovedTokens: string[]) {
+  async function handleApproveTokens(notAprovedTokens: Array<Token>) {
     for (const token of notAprovedTokens) {
-      const { approve } = ERC20(token)
-      await approve(networks[poolData.networkId ?? 137].factory, userWalletAddress, callBack)
+      const { approve, allowance } = ERC20(token.address)
+      const factory = networks[poolData.networkId ?? 137].factory
+      const approved = await new Promise<boolean>(resolve => {
+        approve(factory, userWalletAddress, (error: MetamaskError, txHash: string) =>
+        callBack(error, txHash, { token, contractApprove: factory, allowance }).then(result => {
+          resolve(result)
+        }))
+      })
+      if (!approved) break
     }
   }
 
@@ -212,7 +259,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   }
 
   async function getTransactionsList() {
-    const tokens: string[] = []
+    const tokens: Array<Token> = []
     const tokensList = poolData.tokens ? poolData.tokens : []
     const transactionsList: TransactionsListType[] = []
 
@@ -222,7 +269,12 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         if (mockTokens[mockToken]) {
           for (const token of tokensList) {
             if (token.address === mockTokens[mockToken].toLowerCase()) {
-              tokens.push(mockToken)
+              tokens.push({
+                address: mockToken,
+                amount: Big(token.amount).mul(Big(10).pow(token.decimals)).toFixed(0),
+                normalizedAmount: token.amount,
+                symbol: token.amount
+              })
             }
           }
         }
@@ -230,17 +282,23 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     } else {
       const tokensArr = tokensList.sort((a, b) => a.address > b.address ? 1 : -1)
       for (const token of tokensArr) {
-        tokens.push(token.address)
+        tokens.push({
+          address: token.address,
+          amount: Big(token.amount).mul(Big(10).pow(token.decimals)).toFixed(0),
+          normalizedAmount: token.amount,
+          symbol: token.symbol
+        })
       }
     }
 
     const notAprovedTokens = await getIsAproved(tokens)
 
-    const notApprovedList: TransactionsListType[]  = []
+    const notApprovedList: TransactionsListType[] = []
     const approvedList: TransactionsListType[] = []
 
     for (const token of tokensList) {
-      if (notAprovedTokens.includes(mockTokensReverse[token.address] ?? token.address)) {
+      const notApprovedToken = notAprovedTokens.find(_token => _token.address === mockTokensReverse[token.address] ?? token.address)
+      if (notApprovedToken) {
         notApprovedList.push({
           key: mockTokensReverse[token.address] ?? token.address,
           transaction: `Aprove ${token.symbol}`,
@@ -317,7 +375,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         method: 'POST'
       })
 
-      if(response.status === 200) {
+      if (response.status === 200) {
         const { data } = await response.json()
         if (data?.savePool?.ok) {
           setTransactions(prev => {
@@ -327,11 +385,11 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           return
         }
       } else {
-          setTransactions(prev => {
-            prev[prev.length - 1].status = 'ERROR'
-            return prev
-          })
-          return
+        setTransactions(prev => {
+          prev[prev.length - 1].status = 'ERROR'
+          return prev
+        })
+        return
       }
     } catch (error) {
       console.error(error)
@@ -346,7 +404,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   async function deployPool() {
     setTransactionButtonStatus(TransactionStatus.WAITING)
     const maxAmountsIn: string[] = []
-    const tokens: string[] = []
+    const tokens: Array<Token> = []
     const normalizedWeights: string[] = []
     const tokensList = poolData.tokens ? poolData.tokens : []
 
@@ -357,9 +415,15 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         if (mockTokens[mockToken]) {
           for (const token of tokensList) {
             if (token.address === mockTokens[mockToken].toLowerCase()) {
-              maxAmountsIn.push(Big(token.amount).mul(Big(10).pow(token.decimals)).toFixed(0))
+              const maxAmountIn = Big(token.amount).mul(Big(10).pow(token.decimals)).toFixed(0)
+              maxAmountsIn.push(maxAmountIn)
               normalizedWeights.push(Big(token.allocation).div(100).mul(Big(10).pow(18)).toFixed(0))
-              tokens.push(mockToken)
+              tokens.push({
+                address: mockToken,
+                amount: maxAmountIn,
+                normalizedAmount: token.amount,
+                symbol: token.symbol
+              })
             }
           }
         }
@@ -369,9 +433,15 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       // for production
       const tokensArr = tokensList.sort((a, b) => a.address > b.address ? 1 : -1)
       for (const token of tokensArr) {
-        maxAmountsIn.push(Big(token.amount).mul(Big(10).pow(token.decimals)).toFixed(0))
+        const maxAmountIn = Big(token.amount).mul(Big(10).pow(token.decimals)).toFixed(0)
+        maxAmountsIn.push(maxAmountIn)
         normalizedWeights.push(Big(token.allocation).div(100).mul(Big(10).pow(18)).toFixed(0))
-        tokens.push(token.address)
+        tokens.push({
+          address: token.address,
+          amount: maxAmountIn,
+          normalizedAmount: token.amount,
+          symbol: token.symbol
+        })
       }
     }
 
@@ -381,8 +451,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     setTransactions(prev => prev.map((item, index) => {
       if (index === tokens.length - notAprovedTokens.length) {
         return {
-              ...item,
-              status: 'APPROVING'
+          ...item,
+          status: 'APPROVING'
         }
       } else if (index === tokens.length - notAprovedTokens.length + 1) {
         return {
@@ -390,18 +460,19 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           status: 'NEXT'
         }
       } else {
-          return item
+        return item
       }
     }))
 
     if (notAprovedTokens.length > 0) {
-      const arr = []
+      const arr: Array<Token> = []
       for (const token of transactions) {
-        if (notAprovedTokens.includes(token.key)) {
-          arr.push(token.key)
+        const notApprovedToken = notAprovedTokens.find(_token => _token.address === token.key)
+        if (notApprovedToken) {
+          arr.push(notApprovedToken)
         }
       }
-      await handleAproveTokens(arr)
+      await handleApproveTokens(arr)
     }
 
     const managementFeeRate = poolData.fees?.managementFee.feeRate ? poolData.fees.managementFee.feeRate : 0
@@ -420,7 +491,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       whitelist: networks[poolData.networkId ?? 137].whiteList,
       maxAmountsIn: maxAmountsIn,
       settingsParams: {
-        tokens: tokens,
+        tokens: tokens.map(token => token.address),
         normalizedWeights: normalizedWeights,
         swapFeePercentage: Big(0.03).mul(Big(10).pow(18)).toFixed(0),
         swapEnabledOnStart: true,
@@ -438,27 +509,27 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       const factoryContract = new web3.eth.Contract((KassandraManagedControllerFactoryAbi as unknown) as AbiItem, networks[poolData.networkId ?? 137].factory);
 
       const response = await factoryContract.methods.create(
-          pool.name,
-          pool.symbol,
-          pool.isPrivatePool,
-          pool.whitelist,
-          pool.maxAmountsIn,
-          pool.settingsParams,
-          pool.feesSettings,
+        pool.name,
+        pool.symbol,
+        pool.isPrivatePool,
+        pool.whitelist,
+        pool.maxAmountsIn,
+        pool.settingsParams,
+        pool.feesSettings,
       ).call({
         from: userWalletAddress
       })
 
       const tx = await factoryContract.methods.create(
-          pool.name,
-          pool.symbol,
-          pool.isPrivatePool,
-          pool.whitelist,
-          pool.maxAmountsIn,
-          pool.settingsParams,
-          pool.feesSettings,
+        pool.name,
+        pool.symbol,
+        pool.isPrivatePool,
+        pool.whitelist,
+        pool.maxAmountsIn,
+        pool.settingsParams,
+        pool.feesSettings,
       ).send({
-          from: userWalletAddress
+        from: userWalletAddress
       }, callBack)
 
       if (pool.isPrivatePool) {
@@ -488,11 +559,11 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   return (
     <S.CreatePool>
       <ModalFullWindow handleCloseModal={() => {
-          if (stepNumber === 7) {
-            dispatch(setToFirstStep())
-          }
-          setIsCreatePool(false)
+        if (stepNumber === 7) {
+          dispatch(setToFirstStep())
         }
+        setIsCreatePool(false)
+      }
       }>
         <form id="poolCreationForm" onSubmit={handleSubmit}>
           {poolCreationSteps[stepNumber]}

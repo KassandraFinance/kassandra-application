@@ -49,8 +49,11 @@ const Chart = ({ data, color }: IChartProps) => {
             type="number"
             domain={['auto', 'auto']}
             tickFormatter={item => {
-              const date = new Date(item)
-              return date.toLocaleDateString('en-us', { month: 'short' })
+              const date = new Date(item * 1000)
+              return date.toLocaleDateString('en-us', {
+                month: 'short',
+                day: '2-digit'
+              })
             }}
           />
           <YAxis
@@ -60,20 +63,22 @@ const Chart = ({ data, color }: IChartProps) => {
             axisLine={false}
             hide
           />
-          <Tooltip
-            wrapperStyle={{
-              visibility: 'visible',
-              outline: 'none'
-            }}
-            cursor={{ stroke: color }}
-            position={{ x: 0, y: 0 }}
-            content={
-              <CustomizedTooltip
-                payload={[]}
-                currentValue={data[data.length - 1]}
-              />
-            }
-          />
+          {data && (
+            <Tooltip
+              wrapperStyle={{
+                visibility: 'visible',
+                outline: 'none'
+              }}
+              cursor={{ stroke: color }}
+              position={{ x: 0, y: 0 }}
+              content={
+                <CustomizedTooltip
+                  payload={[]}
+                  currentValue={data[data.length - 1]}
+                />
+              }
+            />
+          )}
           <Area
             type="monotone"
             dataKey="close"

@@ -32,14 +32,16 @@ const Index = ({ pool }: IPoolProps) => {
     }
   }
   let underlying_assets = [...pool.underlying_assets].sort((a, b) => a.token.id > b.token.id ? 1 : -1)
-  
+
   if (pool.pool_version === 2) {
     try {
       const assetsV2 = getWeightsNormalizedV2(pool.weight_goals, underlying_assets)
       if (assetsV2) {
         underlying_assets = assetsV2
       }
-    } catch { /* empty */ }
+    } catch (error) {
+      console.log(error)
+     }
   }
 
   const poolWithSortedTokens = {...pool, underlying_assets}

@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+// import Link from 'next/link'
 
 import { useAppSelector } from '@/store/hooks'
 import { BNtoDecimal } from '@/utils/numerals'
@@ -9,14 +9,21 @@ import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
 import * as S from './styles'
 
+type IPoolDataProps = {
+  logo: string,
+  name: string,
+  chainLogo: string
+}
 interface IAssetsRemovelCardProps {
+  poolInfo: IPoolDataProps;
   setIsOpenManageAssets: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AssetRemovelCard = ({
+  poolInfo,
   setIsOpenManageAssets
 }: IAssetsRemovelCardProps) => {
-  const { tokenSelection, lpNeeded, poolInfo } = useAppSelector(
+  const { tokenSelection, lpNeeded } = useAppSelector(
     state => state.removeAsset
   )
 
@@ -68,15 +75,15 @@ const AssetRemovelCard = ({
         </S.LpSendValueWrapper>
       </S.LpSendWrapper>
 
-      <Link href={`/manage/${poolInfo.id}`}>
-        <Button
-          text="Done"
-          backgroundPrimary
-          fullWidth
-          as="a"
-          onClick={() => setIsOpenManageAssets(false)}
-        />
-      </Link>
+      {/* <Link href={`/manage/${poolInfo.id}`}> */}
+      <Button
+        text="Done"
+        backgroundPrimary
+        fullWidth
+        as="a"
+        onClick={() => setIsOpenManageAssets(false)}
+      />
+      {/* </Link> */}
     </S.AssetRemovelCard>
   )
 }
