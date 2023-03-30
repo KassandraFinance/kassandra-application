@@ -21,8 +21,6 @@ export const ItemInformation = styled.div`
       align-items: center;
 
       padding-left: 0;
-
-      text-align: right;
     }
   `}
 `
