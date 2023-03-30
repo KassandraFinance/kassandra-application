@@ -25,6 +25,7 @@ import Investors from './Investors'
 import ComingSoon from './ComingSoon'
 import ManageAssets from './ManageAssets'
 import Brokers from './Brokers'
+import Details from './Details'
 
 import analytics from '../../../public/assets/tabManage/analytics.svg'
 import allocations from '../../../public/assets/tabManage/allocations.svg'
@@ -101,7 +102,7 @@ const PoolManager = () => {
     investors: <Investors />,
     feeRewards: <FeeRewards />,
     brokers: <Brokers />,
-    info: <ComingSoon />
+    info: <Details />
   }
 
   React.useEffect(() => {
