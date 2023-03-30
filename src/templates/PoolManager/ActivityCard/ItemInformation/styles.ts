@@ -8,8 +8,8 @@ export const ItemInformation = styled.div`
 
     > p {
       color: ${theme.colors.grayDisabled};
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font12};
       line-height: 1.2rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -17,8 +17,9 @@ export const ItemInformation = styled.div`
 
     @media (max-width: 576px) {
       flex-direction: row;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+
       padding-left: 0;
 
       text-align: right;
@@ -26,37 +27,54 @@ export const ItemInformation = styled.div`
   `}
 `
 
-export const TitleInfoContent = styled.div`
+export const TitleInfoContainer = styled.div`
   ${({ theme }) => css`
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 1.2rem;
 
-    @media (max-width: 576px) {
-      flex-direction: row-reverse;
-      align-items: center;
+    p {
+      font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font16};
+      line-height: 1.6rem;
+      letter-spacing: 0.05em;
     }
+  `}
+`
+
+export const WeightsWrapper = styled.div`
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  align-items: center;
+`
+
+export const TitleInfoContent = styled.div`
+  ${() => css`
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
 
     .poolIcon,
     img {
       border-radius: 50%;
+    }
+
+    @media (max-width: 576px) {
+      flex-direction: row-reverse;
+      align-items: center;
+
+      text-align: right;
     }
   `}
 `
 
 export const TitleInfo = styled.div`
   ${({ theme }) => css`
-    p {
-      font-size: ${theme.font.sizes.font16};
-      font-weight: ${theme.font.weight.medium};
-      line-height: 1.6rem;
-      letter-spacing: 0.05em;
-    }
-
     span {
       color: ${theme.colors.grayDisabled};
-      font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font16};
       line-height: 135%;
     }
 
@@ -67,7 +85,3 @@ export const TitleInfo = styled.div`
     }
   `}
 `
-
-// export const ItemInformation = styled.div`
-//   ${({ theme }) => css``}
-// `

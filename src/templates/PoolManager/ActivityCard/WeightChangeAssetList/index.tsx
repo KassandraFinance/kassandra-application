@@ -8,19 +8,19 @@ import * as S from './styles'
 
 export type AssetInfoList = {
   symbol: string,
-  imageUrl: string,
-  weight: number,
-  newWeight: number
+  logo: string,
+  weight?: string,
+  newWeight?: string
 }
 
 interface IWeightChangeAssetListProps {
-  AssetInfoList: AssetInfoList[];
-  link: string;
+  assetInfoList: AssetInfoList[];
+  take?: number;
 }
 
 const WeightChangeAssetList = ({
-  AssetInfoList,
-  link
+  assetInfoList,
+  take = 10
 }: IWeightChangeAssetListProps) => {
   const [isOpenModal, setisOpenModal] = React.useState(false)
 
@@ -31,7 +31,7 @@ const WeightChangeAssetList = ({
           return (
             <S.AssetContent key={item.symbol + index}>
               <S.AssetInfo>
-                <img src={item.imageUrl} alt="" width={16} height={16} />
+                <img src={item.logo} alt="" width={16} height={16} />
                 <p>{item.symbol}</p>
               </S.AssetInfo>
               <S.WeightsValues>
@@ -54,9 +54,9 @@ const WeightChangeAssetList = ({
     <S.WeightChangeAssetList>
       <p>Assets</p>
 
-      <S.AssetList>{WeightsList(AssetInfoList.slice(0, 10))}</S.AssetList>
+      <S.AssetList>{WeightsList(assetInfoList.slice(0, take))}</S.AssetList>
 
-      {AssetInfoList.length >= 10 && (
+      {assetInfoList.length >= take && (
         <S.WrapperCheckAllWeights>
           <ExternalLink
             text="Check all Weight Changes"
@@ -73,7 +73,7 @@ const WeightChangeAssetList = ({
             title="Weight Changes"
             onCloseModal={() => setisOpenModal(false)}
           >
-            <S.AssetListMobile>{WeightsList(AssetInfoList)}</S.AssetListMobile>
+            <S.AssetListMobile>{WeightsList(assetInfoList)}</S.AssetListMobile>
           </ModalWithMobile>
         </>
       )}

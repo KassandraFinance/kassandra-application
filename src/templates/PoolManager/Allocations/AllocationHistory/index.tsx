@@ -15,10 +15,10 @@ const AllocationHistory = () => {
       <TitleSection title="Allocation History" image={assetDistribution} />
 
       <S.ActivityCardContainer>
-        <ActivityCard
+        {/* <ActivityCard
           actionTitle="Weight Change"
           actionType={actionsType.ADDITION}
-          sharesRedeemed={0.56}
+          sharesRedeemed={'0.56'}
         />
         <ActivityCard
           actionTitle="Asset Addition"
@@ -27,7 +27,7 @@ const AllocationHistory = () => {
         <ActivityCard
           actionTitle="Weight Change"
           actionType={actionsType.REMOVAL}
-        />
+        /> */}
       </S.ActivityCardContainer>
 
       <S.PaginationContainer>
