@@ -57,13 +57,13 @@ const FeeBreakDown = ({ pool }: Props) => {
         <S.ListContent>
           <S.FeeBreakdownTitle>Management Fee</S.FeeBreakdownTitle>
           <S.FeeBreakdownPorcentage>
-            {BNtoDecimal(Big(pool.fee_aum).add(pool.fee_aum), 4)}%
+            {BNtoDecimal(Big(pool.fee_aum).add(pool.fee_aum_kassandra), 4)}%
           </S.FeeBreakdownPorcentage>
         </S.ListContent>
 
         <S.ListContent>
           <S.FeeBreakdownParagraph>
-            Kassandra Share ({BNtoDecimal(Big(pool.fee_aum), 4)}%)
+            Kassandra Share ({BNtoDecimal(Big(pool.fee_aum_kassandra), 4)}%)
           </S.FeeBreakdownParagraph>
           <S.FeeBreakdownParagraphAmount>
             ${Big(pool.total_fees_aum_usd).toFixed(2)}

@@ -5,12 +5,13 @@ export const WeightChangeAssetList = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+
     height: 100%;
 
     > p {
       color: ${theme.colors.grayDisabled};
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font12};
       line-height: 1.2rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -21,12 +22,13 @@ export const WeightChangeAssetList = styled.div`
 export const AssetList = styled.ul`
   ${() => css`
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(1fr, 1fr));
     row-gap: 1rem;
-    column-gap: 2.4rem;
-    margin-top: 1rem;
 
     max-width: 48rem;
+    margin-top: 0.8rem;
+
+    column-gap: 2.4rem;
 
     @media (max-width: 1200px) {
       max-width: 100%;
@@ -39,9 +41,11 @@ export const AssetListMobile = styled.ul`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     row-gap: 2rem;
-    column-gap: 2.4rem;
-    margin-top: 1rem;
+
     min-width: 50rem;
+    margin-top: 1rem;
+
+    column-gap: 2.4rem;
 
     @media (max-width: 576px) {
       min-width: auto;
@@ -59,16 +63,16 @@ export const AssetContent = styled.li`
 export const AssetInfo = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     gap: 0.4rem;
-    padding-right: 0.4rem;
+    align-items: center;
 
-    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    padding-right: 0.4rem;
+    border-right: 1px solid rgb(255 255 255 / 0.3);
 
     > p {
       color: ${theme.colors.snow};
-      font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font14};
       line-height: 100%;
       letter-spacing: 0.05em;
       text-transform: uppercase;
@@ -79,14 +83,15 @@ export const AssetInfo = styled.div`
 export const WeightsValues = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
-    padding-left: 0.4rem;
     gap: 0.6rem;
+    align-items: center;
+
+    padding-left: 0.4rem;
 
     > span {
       color: ${theme.colors.snow};
-      font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font14};
       line-height: 100%;
       letter-spacing: 0.05em;
       text-transform: uppercase;
@@ -97,8 +102,9 @@ export const WeightsValues = styled.div`
 export const WrapperCheckAllWeights = styled.div`
   ${() => css`
     display: flex;
-    align-items: center;
     justify-content: flex-start;
+    align-items: center;
+
     margin-top: 1.5rem;
   `}
 `
@@ -106,8 +112,9 @@ export const WrapperCheckAllWeights = styled.div`
 export const WrapperAllWeightsModal = styled.div`
   ${() => css`
     display: flex;
-    align-items: center;
     justify-content: flex-start;
+    align-items: center;
+
     margin-top: 1.5rem;
   `}
 `

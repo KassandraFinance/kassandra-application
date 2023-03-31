@@ -1,18 +1,44 @@
 import Link from 'next/link'
 
+import useSWR from 'swr'
+import Big from 'big.js'
+
+import { BNtoDecimal } from '@/utils/numerals'
+import substr from '@/utils/substr'
+
 import ItemInformation from './ItemInformation'
 import WeightChangeAssetList from './WeightChangeAssetList'
 
-import substr from '@/utils/substr'
-
 import * as S from './styles'
 
-interface IActivityCardProps {
-  actionTitle: string;
-  // actionLogo: string;
+export type ActivityInfo = {
+  amount: string,
+  symbol: string,
+  value: string,
+  logo: string,
+  weight?: string,
+  newWeight?: string
+}
+
+export interface IActivityCardProps {
   actionType: actionsType;
-  // timestamp: number;
-  sharesRedeemed?: number;
+  date: Date;
+  scan: string;
+  wallet: string;
+  activityInfo: ActivityInfo[];
+  txHash: string;
+  pool: {
+    name: string,
+    symbol: string,
+    logo: string
+  };
+
+  sharesRedeemed?: {
+    amount: string,
+    value: string
+  };
+
+  newBalancePool?: ActivityInfo[];
 }
 
 export enum actionsType {
@@ -23,31 +49,80 @@ export enum actionsType {
   REMOVAL
 }
 
+const activityProps: Record<
+  actionsType,
+  { title: string, icon: string, subTitle?: string, titleShares?: string }
+> = {
+  [actionsType.DEPOSIT]: {
+    title: 'Deposit',
+    icon: '/assets/icons/deposit.svg',
+    subTitle: 'Amount',
+    titleShares: 'Shares Received'
+  },
+  [actionsType.WITHDRAWAL]: {
+    title: 'Withdrawal',
+    icon: '/assets/icons/withdraw.svg',
+    subTitle: 'Amount',
+    titleShares: 'Shares Redeemed '
+  },
+  [actionsType.REBALANCE]: {
+    title: 'Weight Change',
+    icon: '/assets/icons/rebalance.svg'
+  },
+  [actionsType.ADDITION]: {
+    title: 'Asset Addition',
+    icon: '/assets/icons/addition.svg',
+    subTitle: 'Asset added'
+  },
+  [actionsType.REMOVAL]: {
+    title: 'Asset Removal',
+    icon: '/assets/icons/removal.svg',
+    subTitle: 'Asset removed'
+  }
+}
+
 const ActivityCard = ({
-  actionTitle,
   actionType,
-  // timestamp,
+  date,
+  scan,
+  activityInfo,
+  wallet,
+  pool,
+  txHash,
+  newBalancePool,
   sharesRedeemed
 }: IActivityCardProps) => {
+  const { data } = useSWR(`/api/profile/${wallet}`, {
+    refreshInterval: 60 * 60 * 5 * 1000
+  })
+
+  const userImage = data?.image
+  const nickname = data?.nickname
+
   return (
     <S.ActivityCard>
       <S.ActivityActionTitle>
         <S.ActionTitle>
           <img
-            src="/assets/icons/rebalance.svg"
+            src={activityProps[actionType].icon}
             alt=""
-            width={26}
-            height={26}
+            width={24}
+            height={24}
           />
-          <p>{actionTitle}</p>
+          <p>{activityProps[actionType].title}</p>
         </S.ActionTitle>
-        <Link href="#" passHref>
+        <Link href={`${scan}tx/${txHash}`} passHref>
           <S.ActionTimeContent target="_blank">
-            <p>17:04</p>
-            <span>22/12/2022</span>
+            <p>
+              {date.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </p>
+            <span>{date.toLocaleDateString('pt-BR')}</span>
             <img
               src="/assets/utilities/external-link.svg"
-              alt=""
+              alt="external-link"
               width={16}
               height={16}
             />
@@ -59,37 +134,58 @@ const ActivityCard = ({
         <S.PoolAndUserWrapper>
           <ItemInformation
             title="Investor"
-            name="The Dude"
-            description={substr('0xD581d597dBc574A458d469A62Fb5a07A625Edf73')}
-            userWalletAddress="0xD581d597dBc574A458d469A62Fb5a07A625Edf73"
+            name={nickname}
+            description={substr(wallet)}
+            userWalletAddress={wallet}
+            ImageUrl={userImage}
           />
 
           <ItemInformation
             title="Pool"
-            name="Awesome Pool"
-            description="$AWES"
+            name={pool.name}
+            description={pool.symbol}
+            ImageUrl={pool.logo}
           />
         </S.PoolAndUserWrapper>
 
         <S.TokenWrapper>
           {actionType !== actionsType.REBALANCE ? (
             <>
-              <ItemInformation
-                title="Amount"
-                name="530.125 MATIC"
-                description="$424,10"
-                ImageUrl="https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912"
-              />
-
+              {activityInfo.map((activity, i) => (
+                <ItemInformation
+                  key={activity.logo}
+                  title={
+                    i === 0 ? activityProps[actionType].subTitle : undefined
+                  }
+                  name={`${BNtoDecimal(Big(activity.amount), 4)} ${
+                    activity.symbol
+                  }`}
+                  description={`$${activity.value}`}
+                  ImageUrl={activity.logo}
+                  newWeight={activity.newWeight}
+                  weight={activity.weight}
+                />
+              ))}
+              {newBalancePool && (
+                <WeightChangeAssetList
+                  assetInfoList={newBalancePool}
+                  take={4}
+                />
+              )}
               {sharesRedeemed && (
-                <S.SharesRedeemedContent>
-                  <p>Shares Redeemed</p>
-                  <span>{sharesRedeemed}</span>
-                </S.SharesRedeemedContent>
+                <ItemInformation
+                  title={activityProps[actionType].titleShares ?? 'Shares'}
+                  name={`${BNtoDecimal(Big(sharesRedeemed.amount), 4)} ${
+                    pool.symbol
+                  }`}
+                  tokenName={pool.name}
+                  description={`$${sharesRedeemed.value}`}
+                  ImageUrl={pool.logo}
+                />
               )}
             </>
           ) : (
-            <WeightChangeAssetList AssetInfoList={MockPoolTokenList} link="#" />
+            <WeightChangeAssetList assetInfoList={activityInfo} />
           )}
         </S.TokenWrapper>
       </S.ActivityBodyContainer>
@@ -98,97 +194,3 @@ const ActivityCard = ({
 }
 
 export default ActivityCard
-
-const MockPoolTokenList = [
-  {
-    symbol: 'WBTCWTBC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBCPOA',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBTC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBTCWTBC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBTCWTBC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBTCWTBC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBTCWTBC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBTCWTBC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBTCWTBC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBTCWTBC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBTCWTBC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBTCWTBC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  },
-  {
-    symbol: 'WBTCWTBC',
-    imageUrl:
-      'https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912',
-    weight: 5,
-    newWeight: 10
-  }
-]

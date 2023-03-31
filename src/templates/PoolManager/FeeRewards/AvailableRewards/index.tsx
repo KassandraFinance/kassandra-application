@@ -19,9 +19,9 @@ type Props = {
 
 const AvailableRewards = ({ pool }: Props) => {
   const [feesAum, setFeesAum] = React.useState({ kassandra: '0', manager: '0' })
-  const dateDiff = getDateDiff(
-    pool ? pool?.lasCollectedAum[0].timestamp * 1000 : 1
-  )
+  const dateDiff = pool?.lasCollectedAum[0]?.timestamp
+    ? getDateDiff(pool?.lasCollectedAum[0]?.timestamp * 1000)
+    : { string: 'day', value: 0 }
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const managePool = useManagePool(pool.controller)
@@ -47,7 +47,7 @@ const AvailableRewards = ({ pool }: Props) => {
       }
     }
     getAvailableAumFee()
-  }, [pool])
+  }, [managePool])
 
   return (
     <S.AvailableRewards>

@@ -233,15 +233,16 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }
   }
 
-  async function handleAproveTokens(notAprovedTokens: Array<Token>) {
+  async function handleApproveTokens(notAprovedTokens: Array<Token>) {
     for (const token of notAprovedTokens) {
       const { approve, allowance } = ERC20(token.address)
       const factory = networks[poolData.networkId ?? 137].factory
-      let approved = false
-      await approve(factory, userWalletAddress, (error: MetamaskError, txHash: string) =>
+      const approved = await new Promise<boolean>(resolve => {
+        approve(factory, userWalletAddress, (error: MetamaskError, txHash: string) =>
         callBack(error, txHash, { token, contractApprove: factory, allowance }).then(result => {
-          approved = result
+          resolve(result)
         }))
+      })
       if (!approved) break
     }
   }
@@ -471,7 +472,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           arr.push(notApprovedToken)
         }
       }
-      await handleAproveTokens(arr)
+      await handleApproveTokens(arr)
     }
 
     const managementFeeRate = poolData.fees?.managementFee.feeRate ? poolData.fees.managementFee.feeRate : 0
