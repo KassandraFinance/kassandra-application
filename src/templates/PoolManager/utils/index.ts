@@ -1,14 +1,59 @@
-import { BNtoDecimal } from '@/utils/numerals'
 import Big from 'big.js'
-import { ActivityCardProps, activityProps, Result } from '../Activity'
+import { BNtoDecimal } from '@/utils/numerals'
+import { ActivityCardProps, activityProps } from '../Activity'
+
+type IActivityProps = {
+  id: string,
+  type: 'join' | 'exit',
+  symbol: string[],
+  amount: string[],
+  price_usd: string[],
+  txHash: string,
+  timestamp: number,
+  address: string
+}
+
+type IUnderlyingAssetsProps = {
+  token: {
+    logo: string,
+    symbol: string,
+    wraps: {
+      symbol: string,
+      logo: string
+    }
+  }
+}
+
+type IWeightGoalsProps = {
+  id: string,
+  type: 'rebalance' | 'add' | 'removed',
+  end_timestamp: number,
+  token: {
+    symbol: string,
+    logo: string,
+    price_usd: string
+  },
+  weights: {
+    weight_normalized: string,
+    asset: {
+      balance: string,
+      token: {
+        symbol: string,
+        logo: string
+      }
+    }
+  }[]
+}
 
 export function getActivityInfo(
-  data: Result,
+  activityData: IActivityProps[],
+  underlyingAssets: IUnderlyingAssetsProps[],
   filters: Record<string, boolean> = { join: true, exit: true }
 ): Array<ActivityCardProps> {
   const activityInfo: ActivityCardProps[] = []
-  const assets = data.pool.underlying_assets
-  for (const activity of data.pool.activities) {
+  const assets = underlyingAssets
+
+  for (const activity of activityData) {
     if (filters[activity.type]) {
       activityInfo.push({
         key: activity.id,
@@ -27,6 +72,7 @@ export function getActivityInfo(
           )
         }
       })
+
       const indexOfActivityInfo = activityInfo.length - 1
       const size = activity.symbol.length - 1
       for (let index = 0; index < size; index++) {
@@ -50,7 +96,7 @@ export function getActivityInfo(
 }
 
 export function getManagerActivity(
-  data: Result,
+  weightGoals: IWeightGoalsProps[],
   userWalletAddress: string,
   filters: Record<string, boolean> = {
     rebalance: true,
@@ -60,11 +106,11 @@ export function getManagerActivity(
 ): Array<ActivityCardProps> {
   const activityInfo: ActivityCardProps[] = []
   let countRebalance = 0
-  for (const [i, activity] of data.pool.weight_goals.entries()) {
+  for (const [i, activity] of weightGoals.entries()) {
     if (activity.type === 'rebalance' && filters[activity.type]) {
       if (
-        data.pool.weight_goals[i + 1] &&
-        data.pool.weight_goals[i + 1].type === 'rebalance' &&
+        weightGoals[i + 1] &&
+        weightGoals[i + 1].type === 'rebalance' &&
         countRebalance === 0
       ) {
         activityInfo.push({
@@ -83,9 +129,7 @@ export function getManagerActivity(
             logo: operation.asset.token.logo ?? '',
             newWeight: Big(operation.weight_normalized).mul(100).toFixed(2),
             symbol: operation.asset.token.symbol,
-            weight: Big(
-              data.pool.weight_goals[i + 1].weights[_i].weight_normalized
-            )
+            weight: Big(weightGoals[i + 1].weights[_i].weight_normalized)
               .mul(100)
               .toFixed(2),
             value: '0'
@@ -95,7 +139,7 @@ export function getManagerActivity(
         countRebalance = 0
       }
     } else {
-      if (filters[activity.type] && data.pool.weight_goals[i + 1]) {
+      if (filters[activity.type] && weightGoals[i + 1]) {
         activityInfo.push({
           key: activity.id,
           actionType: activityProps[activity.type],
@@ -111,7 +155,7 @@ export function getManagerActivity(
         let newWeight = '0'
         if (activity.type === 'removed') {
           weightNormalized =
-            data.pool.weight_goals[i + 1].weights.find(
+            weightGoals[i + 1].weights.find(
               weight => weight.asset.token.symbol === symbol
             )?.weight_normalized ?? '0'
         } else {
@@ -130,9 +174,7 @@ export function getManagerActivity(
               logo: operation.asset.token.logo ?? '',
               newWeight: Big(operation.weight_normalized).mul(100).toFixed(2),
               symbol: operation.asset.token.symbol,
-              weight: Big(
-                data.pool.weight_goals[i + 1].weights[_i].weight_normalized
-              )
+              weight: Big(weightGoals[i + 1].weights[_i].weight_normalized)
                 .mul(100)
                 .toFixed(2),
               value: '0'

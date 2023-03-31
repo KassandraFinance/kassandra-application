@@ -6,28 +6,64 @@ import ActivityCard, { actionsType } from '../../ActivityCard'
 
 import * as S from './styles'
 
-// interface IAllocationHistoryProps {
-// }
+export type ActivityInfo = {
+  amount: string,
+  symbol: string,
+  value: string,
+  logo: string,
+  weight?: string,
+  newWeight?: string
+}
 
-const AllocationHistory = () => {
+export type IPoolInfo = {
+  name: string,
+  symbol: string,
+  logo: string,
+  blockExplorerUrl: string
+}
+
+export type ActivityCardProps = {
+  key: string,
+  actionType: actionsType,
+  date: Date,
+  wallet: string,
+  txHash: string,
+  activityInfo: ActivityInfo[],
+  newBalancePool?: ActivityInfo[],
+  sharesRedeemed?: {
+    amount: string,
+    value: string
+  }
+}
+interface IAllocationHistoryProps {
+  allocationHistory: ActivityCardProps[];
+  poolInfo: IPoolInfo;
+}
+
+const AllocationHistory = ({
+  allocationHistory,
+  poolInfo
+}: IAllocationHistoryProps) => {
   return (
     <S.AllocationHistory>
       <TitleSection title="Allocation History" image={assetDistribution} />
 
       <S.ActivityCardContainer>
-        {/* <ActivityCard
-          actionTitle="Weight Change"
-          actionType={actionsType.ADDITION}
-          sharesRedeemed={'0.56'}
-        />
-        <ActivityCard
-          actionTitle="Asset Addition"
-          actionType={actionsType.REBALANCE}
-        />
-        <ActivityCard
-          actionTitle="Weight Change"
-          actionType={actionsType.REMOVAL}
-        /> */}
+        {allocationHistory &&
+          allocationHistory.map(activity => (
+            <ActivityCard
+              key={activity.key}
+              actionType={activity.actionType}
+              date={activity.date}
+              scan={poolInfo.blockExplorerUrl}
+              wallet={activity.wallet}
+              txHash={activity.txHash}
+              activityInfo={activity.activityInfo}
+              pool={poolInfo}
+              sharesRedeemed={activity.sharesRedeemed}
+              newBalancePool={activity.newBalancePool}
+            />
+          ))}
       </S.ActivityCardContainer>
 
       <S.PaginationContainer>

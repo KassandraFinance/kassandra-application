@@ -178,9 +178,13 @@ const Activity = () => {
         filters[option] = true
       }
     }
-    const activitiesInvestors = getActivityInfo(data, filters)
+    const activitiesInvestors = getActivityInfo(
+      data.pool.activities,
+      data.pool.underlying_assets,
+      filters
+    )
     const managerActivities = getManagerActivity(
-      data,
+      data.pool.weight_goals,
       userWalletAddress,
       filters
     )

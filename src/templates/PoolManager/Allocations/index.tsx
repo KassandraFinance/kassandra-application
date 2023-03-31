@@ -13,11 +13,14 @@ import {
 
 import useCoingecko from '@/hooks/useCoingecko'
 import usePoolAssets from '@/hooks/usePoolAssets'
+import { useAppSelector } from '@/store/hooks'
+import { underlyingAssetsInfo } from '@/store/reducers/pool'
 
 import { getDateDiff } from '@/utils/date'
+import { getActivityInfo, getManagerActivity } from '../utils'
 
 import AllocationTable from './AllocationTable'
-import AllocationHistory from './AllocationHistory'
+import AllocationHistory, { ActivityCardProps } from './AllocationHistory'
 import IntroReview, {
   IlistTokenWeightsProps,
   IRebalanceWeightsProps,
@@ -25,6 +28,62 @@ import IntroReview, {
 } from './IntroReview'
 
 import * as S from './styles'
+
+type Activity = {
+  id: string,
+  type: 'join' | 'exit',
+  symbol: string[],
+  amount: string[],
+  price_usd: string[],
+  txHash: string,
+  timestamp: number,
+  address: string
+}
+
+type IWeightGoalsProps = {
+  id: string,
+  type: 'add' | 'rebalance' | 'removed',
+  end_timestamp: number,
+  start_timestamp: number,
+  token: {
+    symbol: string,
+    logo: string,
+    price_usd: string
+  },
+  weights: {
+    weight_normalized: string,
+    asset: {
+      balance: string,
+      token: {
+        symbol: string,
+        logo: string
+      }
+    }
+  }[]
+}
+
+interface IAllocationProps {
+  pool: {
+    logo: string,
+    name: string,
+    symbol: string,
+    price_usd: string,
+    chainId: number,
+    activities: Activity[],
+    weight_goals: IWeightGoalsProps[],
+    chain: {
+      blockExplorerUrl: string,
+      addressWrapped: string
+    }
+  };
+}
+
+type CoinGeckoResponseType = {
+  [key: string]: {
+    usd: number,
+    usd_24h_change: number
+  }
+}
 
 const Allocations = () => {
   const [RebalancingProgress, setRebalancingProgress] =
@@ -34,28 +93,42 @@ const Allocations = () => {
   >([])
   const [rebalanceWeights, setRebalanceWeights] =
     React.useState<IRebalanceWeightsProps>(null)
+  const [allocationHistory, setAllocationHistory] = React.useState<
+    ActivityCardProps[]
+  >([])
 
   const router = useRouter()
+
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
   const { poolAssets } = usePoolAssets(poolId)
-  const { data } = useSWR([GET_TOKENS_POOL, poolId], (query, poolId) =>
+  const { data } = useSWR<IAllocationProps>(
+    [GET_TOKENS_POOL, poolId],
+    (query, poolId) =>
     request(BACKEND_KASSANDRA, query, {
       id: poolId
     })
   )
 
-  const isRebalancing =
-    data.pool.weight_goals[0].end_timestamp * 1000 > new Date().getTime()
-
   const { data: coingeckoData } = useCoingecko(
-    networks[137]?.coingecko,
-    '',
+    networks[data?.pool.chainId ?? 137]?.coingecko,
+    data?.pool?.chain?.addressWrapped ?? '',
     handleMockToken(poolAssets ?? [])
   )
+
+  const poolInfo = {
+    name: data?.pool.name ?? '',
+    symbol: data?.pool.symbol ?? '',
+    logo: data?.pool?.logo ?? '',
+    blockExplorerUrl: data?.pool?.chain?.blockExplorerUrl ?? ''
+  }
+  const isRebalancing =
+    (data?.pool?.weight_goals[0].end_timestamp ?? 0) * 1000 >
+    new Date().getTime()
 
   function handleMockToken(tokenList: any) {
     const mockTokensList = tokenList?.map((item: any) => {
@@ -165,6 +238,39 @@ const Allocations = () => {
     }
   }, [data, coingeckoData])
 
+  React.useEffect(() => {
+    if (!data || !poolAssets) return setAllocationHistory([])
+
+    const underlyingAssets = poolAssets?.map(item => {
+      const { logo, symbol } = item.token
+
+      return {
+        token: {
+          logo: logo ?? '',
+          symbol: symbol,
+          wraps: {
+            symbol: symbol,
+            logo: logo ?? ''
+          }
+        }
+      }
+    })
+
+    const activitiesInvestors = getActivityInfo(
+      data.pool.activities,
+      underlyingAssets
+    )
+    const managerActivities = getManagerActivity(
+      data.pool.weight_goals,
+      userWalletAddress
+    )
+    const activities = [...activitiesInvestors, ...managerActivities]
+
+    setAllocationHistory(
+      activities.sort((a, b) => b.date.getTime() - a.date.getTime())
+    )
+  }, [data])
+
   return (
     <S.Allocations>
       <IntroReview
@@ -176,7 +282,10 @@ const Allocations = () => {
         allocationData={listTokenWeights}
         isRebalance={isRebalancing}
       />
-      <AllocationHistory />
+      <AllocationHistory
+        allocationHistory={allocationHistory}
+        poolInfo={poolInfo}
+      />
     </S.Allocations>
   )
 }
