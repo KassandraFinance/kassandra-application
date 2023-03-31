@@ -206,6 +206,7 @@ const Analytics = (props: IAnalyticsProps) => {
   const sharpRatio = React.useMemo(() => {
     if (!dataSharpRatio?.pool?.value?.length) return '0'
     const volatility = calcVolatility(dataSharpRatio)
+    if (volatility === '0') return '0'
     const total = dataSharpRatio.pool.value.reduce((acc, value, i) => {
       const oldClose = dataSharpRatio.pool.value[i + 1]?.close
       if (!oldClose) return acc
