@@ -24,6 +24,7 @@ import Allocations from './Allocations'
 import Investors from './Investors'
 import ComingSoon from './ComingSoon'
 import ManageAssets from './ManageAssets'
+import Activity from './Activity'
 
 import analytics from '../../../public/assets/tabManage/analytics.svg'
 import allocations from '../../../public/assets/tabManage/allocations.svg'
@@ -96,7 +97,7 @@ const PoolManager = () => {
   const PoolManagerComponents: { [key: string]: ReactElement } = {
     analytics: <Analytics poolId={poolId} />,
     allocations: <Allocations />,
-    activity: <ComingSoon />,
+    activity: <Activity />,
     investors: <Investors />,
     feeRewards: <FeeRewards />,
     brokers: <ComingSoon />,
