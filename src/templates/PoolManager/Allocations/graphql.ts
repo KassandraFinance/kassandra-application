@@ -3,13 +3,24 @@ import { gql } from 'graphql-request'
 export const GET_TOKENS_POOL = gql`
   query ($id: ID!) {
     pool(id: $id) {
+      id
+      name
+      price_usd
       weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 2) {
+        id
         start_timestamp
         end_timestamp
-        weights(orderBy: weight_normalized, orderDirection: desc) {
+        type
+        weights {
+          id
           weight_normalized
-          token {
-            id
+          asset {
+            balance
+
+            token {
+              id
+              symbol
+            }
           }
         }
       }
