@@ -3,10 +3,18 @@ import Link from 'next/link'
 
 import * as S from './styles'
 
-// interface ITokenWeightInfoProps {
-// }
+import { ITokenProps } from '..'
 
-const TokenWeightInfo = () => {
+interface ITokenWeightInfoProps {
+  token: {
+    token: Omit<ITokenProps, 'decimals'>,
+    previous: string,
+    current: string,
+    final: string
+  };
+}
+
+const TokenWeightInfo = ({ token }: ITokenWeightInfoProps) => {
   // eslint-disable-next-line prettier/prettier
   const [isOpenTokenInfoMobile, setIsOpenTokenInfoMobile] = React.useState(false)
 
@@ -16,16 +24,11 @@ const TokenWeightInfo = () => {
       onClick={() => setIsOpenTokenInfoMobile(!isOpenTokenInfoMobile)}
     >
       <S.TokenInfoContainer>
-        <img
-          src="https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png"
-          alt=""
-          width={24}
-          height={24}
-        />
+        <img src={token.token.logo} alt="" width={24} height={24} />
         <S.TokenInfoContent>
           <Link href="#" passHref>
             <S.TokenNameContent target="_blank">
-              <p>MATIC</p>
+              <p>{token.token.name}</p>
               <img
                 src="/assets/utilities/external-link.svg"
                 alt=""
@@ -34,7 +37,7 @@ const TokenWeightInfo = () => {
               />
             </S.TokenNameContent>
           </Link>
-          <p>MATIC</p>
+          <p>{token.token.symbol}</p>
         </S.TokenInfoContent>
 
         <S.ArrowDownContainer isOpenTokenInfo={isOpenTokenInfoMobile}>
@@ -50,15 +53,15 @@ const TokenWeightInfo = () => {
 
       <S.WeightContent>
         <span>previous weight</span>
-        <p>20%</p>
+        <p>{token.previous}%</p>
       </S.WeightContent>
       <S.WeightContent>
         <span>current weight</span>
-        <p>30%</p>
+        <p>{token.current}%</p>
       </S.WeightContent>
       <S.WeightContent>
         <span>final weight</span>
-        <p>50%</p>
+        <p>{token.final}%</p>
       </S.WeightContent>
     </S.TokenWeightInfo>
   )

@@ -4,25 +4,23 @@ import { PieChart, Pie, Cell, Label } from 'recharts'
 
 import * as S from './styles'
 
-const Chart = (props: any) => {
-  const [activeIndex, setActiveIndex] = React.useState(0)
+type IDataProps = {
+  image: string,
+  symbol: string,
+  value: number
+}
 
-  const data01 = [
-    {
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png',
-      name: 'WTBC',
-      value: 50,
-      porcentage: '60%'
-    },
-    {
-      image:
-        'https://assets.coingecko.com/coins/images/21490/thumb/Add-a-heading-26.png',
-      name: 'LYRA',
-      value: 50,
-      porcentage: '60%'
-    }
-  ]
+interface IPieChartAllocationsProps {
+  data: IDataProps[];
+  activeIndex: number;
+  setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
+}
 
+const Chart = ({
+  data,
+  activeIndex,
+  setActiveIndex
+}: IPieChartAllocationsProps) => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
 
   const CustomLabel = ({ viewBox, labelText, value }: any) => {
@@ -37,7 +35,7 @@ const Chart = (props: any) => {
             height={16}
             xmlns="http://www.w3.org/2000/svg"
           >
-            <image href={data01[activeIndex].image} width={16} height={16} />
+            <image href={data[activeIndex].image} width={16} height={16} />
           </svg>
           <text
             x={cx + 10}
@@ -95,7 +93,7 @@ const Chart = (props: any) => {
     <S.PieChartsContainer>
       <PieChart width={210} height={210}>
         <Pie
-          data={data01}
+          data={data}
           dataKey="value"
           cx={100}
           cy={100}
@@ -104,25 +102,25 @@ const Chart = (props: any) => {
           outerRadius={100}
           stroke="transparent"
         >
-          {data01.map((entry, index) => (
+          {data.map((entry, index) => (
             <Cell
               key={`cell-${index}`}
               fill={COLORS[index % COLORS.length]}
-              className={entry.name}
+              className={entry.symbol}
               stroke={
-                entry.name === data01[activeIndex].name
+                entry.symbol === data[activeIndex].symbol
                   ? '#ffff'
                   : 'transparent'
               }
-              strokeWidth={entry.name === data01[activeIndex].name ? 2 : 0}
+              strokeWidth={entry.symbol === data[activeIndex].symbol ? 2 : 0}
               style={{ outline: 'none' }}
             />
           ))}
           <Label
             content={
               <CustomLabel
-                labelText={data01[activeIndex].name}
-                value={data01[activeIndex].value}
+                labelText={data[activeIndex]?.symbol}
+                value={data[activeIndex]?.value}
               />
             }
             position="center"

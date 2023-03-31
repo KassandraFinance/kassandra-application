@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 export const IntroReview = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -9,43 +9,32 @@ export const IntroReview = styled.div`
     width: 100%;
     gap: 3.2rem;
     padding: 3.2rem;
-    // color: ${theme.colors.blue};
 
     @media (max-width: 1400px) {
       flex-direction: column;
       align-items: flex-start;
     }
-    /* @media (max-width: 992px) {
-      flex-direction: column;
-    } */
+
     @media (max-width: 576px) {
+      align-items: center;
       padding: 1.6rem;
     }
   `}
 `
 
-export const Intro = styled.section``
-
-export const GridChart = styled.div`
-  /* max-width: 24rem; */
-`
+export const GridChart = styled.div``
 
 export const TokenInfoContainer = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     gap: 5rem;
     width: 100%;
     align-items: center;
 
     @media (max-width: 1400px) {
-      /* gap: 2rem; */
       justify-content: space-between;
       max-width: 32rem;
     }
-
-    /* @media (max-width: 992px) {
-      justify-content: space-between;
-    } */
 
     @media (max-width: 576px) {
       flex-direction: column;
@@ -54,7 +43,7 @@ export const TokenInfoContainer = styled.div`
 `
 
 export const TokenInfoContent = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -82,7 +71,7 @@ export const ImgAndSymbolWrapper = styled.span`
 `
 
 export const HoldingAndPriceContainer = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
@@ -132,22 +121,14 @@ export const ValueHoldingAndPrice = styled.span`
 `
 
 export const PriceDayWrapper = styled.div`
-  ${({ theme }) => css``}
+  ${() => css``}
 `
 
 export const PriceDayValue = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     align-items: flex-end;
     gap: 0.4rem;
-
-    p {
-      color: ${theme.colors.red};
-      font-size: ${theme.font.sizes.font14};
-      font-weight: ${theme.font.weight.light};
-      line-height: 135%;
-      letter-spacing: 0.05em;
-    }
 
     img {
       margin-bottom: 0.2rem;
@@ -160,16 +141,37 @@ export const PriceDayValue = styled.div`
   `}
 `
 
-export const ChangeDayValue = styled.span`
+interface IPriceChangeProps {
+  changePrice: number;
+}
+
+// eslint-disable-next-line prettier/prettier
+export const ChangeDayValue = styled.span<IPriceChangeProps>`
   ${({ theme }) => css`
     display: flex;
     align-items: center;
     gap: 0.4rem;
+
+    font-size: ${theme.font.sizes.font14};
+    font-weight: ${theme.font.weight.light};
+    line-height: 135%;
+    letter-spacing: 0.05em;
   `}
+
+  ${({ theme, changePrice }) =>
+    changePrice > 0 &&
+    css`
+      color: ${theme.colors.success};
+    `}
+  ${({ theme, changePrice }) =>
+    changePrice < 0 &&
+    css`
+      color: ${theme.colors.error};
+    `}
 `
 
 export const RebalancingFundCard = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -189,7 +191,7 @@ export const RebalancingFundCard = styled.div`
 `
 
 export const FundInfoBody = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     width: 100%;
   `}
 `
@@ -210,7 +212,7 @@ export const TitleWrapper = styled.span`
 `
 
 export const RebalancingInfoList = styled.ul`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     flex-direction: column;
     gap: 1.6rem;
@@ -234,6 +236,10 @@ export const RebalancingInfo = styled.li`
       letter-spacing: 0.22em;
       text-transform: uppercase;
     }
+
+    #remaning {
+      text-transform: lowercase;
+    }
   `}
 `
 
@@ -247,17 +253,12 @@ export const HoursAgoWrapper = styled.span`
       font-weight: ${theme.font.weight.normal};
       line-height: 135%;
       letter-spacing: 0.22em;
-      text-transform: uppercase;
     }
   `}
 `
 
-// export const RebalancingFundCard = styled.`
-//   ${({ theme }) => css``}
-// `
-
 export const GraphAllocationWrapper = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     align-items: center;
     justify-content: center;

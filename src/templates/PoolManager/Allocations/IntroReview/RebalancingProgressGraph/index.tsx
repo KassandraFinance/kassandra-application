@@ -4,15 +4,16 @@ import { Cell, Label, Pie, PieChart } from 'recharts'
 
 import * as S from './styles'
 
-// interface IRebalancingProgressGraphProps {
+interface IRebalancingProgressGraphProps {
+  ProgressValue: number;
+}
 
-// }
-
-const RebalancingProgressGraph = () => {
-  const value = 16
+const RebalancingProgressGraph = ({
+  ProgressValue
+}: IRebalancingProgressGraphProps) => {
   const data = [
-    { name: 'progress', value: value },
-    { name: 'remaining-progress', value: 100 - value }
+    { name: 'progress', value: ProgressValue },
+    { name: 'remaining-progress', value: 100 - ProgressValue }
   ]
 
   return (
@@ -40,10 +41,9 @@ const RebalancingProgressGraph = () => {
             fontSize="12px"
             fontWeight={400}
             letterSpacing="0.22em"
-            style={{ textTransform: 'uppercase' }}
           />
           <Label
-            value={String(data[0].value) + '%'}
+            value={String(data[0].value?.toFixed(0)) + '%'}
             position="centerTop"
             className="label-test"
             fill="#fcfcfc"

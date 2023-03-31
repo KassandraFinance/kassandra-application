@@ -3,16 +3,43 @@ import React from 'react'
 import Modal from '../Modal'
 import Overlay from '../../Overlay'
 import TokenWeightInfo from './TokenWeightInfo'
-import ExternalLink from '@/components/ExternalLink'
 
 import * as S from './styles'
 
+export type ITokenProps = {
+  address: string,
+  logo: string,
+  name: string,
+  symbol: string,
+  decimals: number
+}
+
+export type IRebalanceWeightsProps = {
+  poolName: string,
+  poolPrice: number,
+  listTokenWeights: {
+    token: Omit<ITokenProps, 'decimals'>,
+    previous: string,
+    current: string,
+    final: string
+  }[]
+} | null
+
+export type IRebancingProgressProps = {
+  started: string,
+  remaning: string,
+  progress: number
+}
 interface IWeightRebalanceProgressModalProps {
   handleCloseModal: () => void;
+  rebalanceWeights: IRebalanceWeightsProps;
+  RebalancingProgress: IRebancingProgressProps | null;
 }
 
 const WeightRebalanceProgressModal = ({
-  handleCloseModal
+  handleCloseModal,
+  rebalanceWeights,
+  RebalancingProgress
 }: IWeightRebalanceProgressModalProps) => {
   return (
     <S.WeightRebalanceProgressModal>
@@ -20,23 +47,30 @@ const WeightRebalanceProgressModal = ({
 
       <Modal
         title="Token Weight Rebalance Progress"
-        onCloseModal={() => handleCloseModal}
+        onCloseModal={handleCloseModal}
       >
         <S.WeightRebalanceProgressBody>
           <S.IntroInfoPoolContainer>
             <S.PoolInfoContent>
-              <p>Awesome Pool</p>
-              <span>$price</span>
+              <p>{rebalanceWeights?.poolName}</p>
+              <span>
+                ${Number(rebalanceWeights?.poolPrice ?? 0).toFixed(2)}
+              </span>
             </S.PoolInfoContent>
             <S.TimeProgressContainer>
               <S.TimeContent>
                 <p>Time for complete rebalance</p>
-                <p>03:00:00</p>
+                <p>{RebalancingProgress?.remaning}</p>
               </S.TimeContent>
               <S.ProgressContent>
-                <S.PogressBar value={30} max={100} />
+                <S.PogressBar
+                  value={RebalancingProgress?.progress ?? 0}
+                  max={100}
+                />
               </S.ProgressContent>
-              <S.TimeToFinalize>300</S.TimeToFinalize>
+              <S.TimeToFinalize>
+                {RebalancingProgress?.started}
+              </S.TimeToFinalize>
             </S.TimeProgressContainer>
           </S.IntroInfoPoolContainer>
 
@@ -48,142 +82,22 @@ const WeightRebalanceProgressModal = ({
               <p>Final Weight</p>
             </S.Tablehead>
             <S.TableBody>
-              {rebalanceTokensMock.slice(0, 3).map((token, index) => {
-                return <TokenWeightInfo key={token.token.symbol + index} />
-              })}
+              {rebalanceWeights
+                ? rebalanceWeights.listTokenWeights.map(token => {
+                    return (
+                      <TokenWeightInfo
+                        key={token.token.address}
+                        token={token}
+                      />
+                    )
+                  })
+                : null}
             </S.TableBody>
           </S.TableRebalanceWeightsContainer>
-
-          <S.ShowAssetsContainer>
-            <ExternalLink text="Show assets that are not rebalancing" />
-          </S.ShowAssetsContainer>
         </S.WeightRebalanceProgressBody>
       </Modal>
     </S.WeightRebalanceProgressModal>
   )
 }
-
-const rebalanceTokensMock = [
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  },
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  },
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  },
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  },
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  },
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  },
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  },
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  },
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  },
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  },
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  },
-  {
-    token: {
-      name: 'bitcoin',
-      symbol: 'BTC',
-      image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png'
-    },
-    PreviusWeight: 10,
-    CurrentWeight: 20,
-    FInalWeight: 30
-  }
-]
 
 export default WeightRebalanceProgressModal

@@ -2,6 +2,8 @@ import styled, { css } from 'styled-components'
 import { ModalBody } from '../Modal/styles'
 
 export const WeightRebalanceProgressModal = styled.div`
+  position: absolute;
+
   ${ModalBody} {
     background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
 
@@ -106,6 +108,7 @@ export const TimeToFinalize = styled.p`
   ${({ theme }) => css`
     width: 100%;
     text-align: right;
+    margin-top: 0.8rem;
 
     font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.light};
@@ -139,6 +142,10 @@ export const Tablehead = styled.div`
       :first-child {
         text-align: left;
       }
+
+      :last-child {
+        padding-right: 2.4rem;
+      }
     }
 
     @media (max-width: 576px) {
@@ -154,7 +161,6 @@ export const TableBody = styled.div`
     width: 100%;
     max-height: 40rem;
     padding: 0.6rem;
-    margin-bottom: 1.2rem;
 
     overflow-y: scroll;
   `}
