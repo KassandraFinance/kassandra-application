@@ -251,11 +251,9 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     // eslint-disable-next-line prettier/prettier
     const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
 
-    for (const address of investorsList) {
-      await controller.methods.addAllowedAddress(address.address).send({
+      await controller.methods.addAllowedAddresses(investorsList.map(investor => investor.address)).send({
         from: userWalletAddress
       }, callBack)
-    }
   }
 
   async function getTransactionsList() {
