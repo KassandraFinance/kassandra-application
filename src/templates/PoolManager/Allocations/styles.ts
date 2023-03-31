@@ -2,6 +2,8 @@ import styled, { css } from 'styled-components'
 
 export const Allocations = styled.div`
   ${({ theme }) => css`
-    color: ${theme.colors.blue};
+    display: flex;
+    flex-direction: column;
+    gap: 3.2rem;
   `}
 `

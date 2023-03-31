@@ -67,9 +67,10 @@ export function dateRequestUnstake(withdrawDelay: number) {
   return `${day} / ${allMonth[month]} / ${year}`
 }
 
-export function getDateDiff(timestamp: string | number | Date) {
-  const now = new Date().getTime()
-
+export function getDateDiff(
+  timestamp: string | number | Date,
+  now = new Date().getTime()
+) {
   const distance = now - Number(timestamp)
 
   const years = Math.floor(distance / (1000 * 60 * 60 * 24 * 31 * 12))
