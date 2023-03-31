@@ -3,7 +3,7 @@ import { TR, Value } from '@/templates/Explore/CommunityPoolsTable/styles'
 import { Image } from '@ui/Governance/ImageProfile/styles'
 import { Value as V } from '@ui/Modals/ModalViewCoin/styles'
 
-export const InvestorsTable = styled.div`
+export const BrokersTable = styled.div`
   ${({ theme }) => css`
     ${TR} {
       grid-template-columns: 1fr 1fr 8rem;
@@ -11,8 +11,7 @@ export const InvestorsTable = styled.div`
 
       @media (min-width: 768px) {
         grid-template-columns:
-          minmax(13.8rem, 1fr) 1fr 1fr 1fr 1fr
-          1fr
+          minmax(13.8rem, 1fr) 5.5rem 1fr 1fr 1fr
           1fr;
       }
     }

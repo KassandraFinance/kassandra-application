@@ -9,7 +9,6 @@ export const GET_INVESTORS = gql`
         price_usd
         unique_investors
         investors(
-          where: { wallet_not: "0x0000000000000000000000000000000000000000" }
           orderBy: last_deposit_timestamp
           orderDirection: desc
           skip: $skip
