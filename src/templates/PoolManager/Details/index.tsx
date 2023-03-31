@@ -12,6 +12,7 @@ import { registerToken } from '../../../utils/registerToken'
 import TitleSection from '@/components/TitleSection'
 import Strategy from './Strategy'
 import PoolImage from './PoolImage'
+import PrivacySettings from './PrivacySettings'
 
 import privacyIcon from '@assets/iconGradient/product-bar.svg'
 
@@ -87,9 +88,15 @@ const Details = () => {
       <S.Wrapper2>
         <PoolImage />
 
-        <S.TitleWrapper>
-          <TitleSection title="Privacy settings" image={privacyIcon} />
-        </S.TitleWrapper>
+        {poolInfo?.is_private_pool && (
+          <>
+            <S.TitleWrapper>
+              <TitleSection title="Privacy settings" image={privacyIcon} />
+            </S.TitleWrapper>
+
+            <PrivacySettings />
+          </>
+        )}
       </S.Wrapper2>
     </S.Details>
   )
