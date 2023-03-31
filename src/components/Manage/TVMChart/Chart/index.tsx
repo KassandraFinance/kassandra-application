@@ -56,6 +56,7 @@ const Chart = ({ data, color }: IChartProps) => {
                 day: '2-digit'
               })
             }}
+            hide
           />
           <YAxis
             mirror

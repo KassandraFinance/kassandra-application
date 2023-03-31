@@ -13,11 +13,12 @@ import { DataType } from '@/components/Manage/TVMChart/Chart'
 import PoolAssets from './PoolAssets'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { calcChange } from '@/utils/numerals'
+import { BNtoDecimal, calcChange } from '@/utils/numerals'
 import {
   GET_CHANGE_PRICE,
   GET_CHANGE_TVL,
   GET_PRICE_CHART,
+  GET_SHARPRATIO,
   GET_TVM_CHART,
   GET_VOLATILITY,
   GET_WITHDRAWS
@@ -27,10 +28,9 @@ import poolsAssetsIcon from '@assets/iconGradient/assets-distribution.svg'
 
 import * as S from './styles'
 
-const dataList = ['1D', '1M', '3M', '6M', '1Y', 'ALL']
-
 const periods: Record<string, number> = {
   '1D': 60 * 60 * 24,
+  '1W': 60 * 60 * 24 * 7,
   '1M': 60 * 60 * 24 * 30,
   '3M': 60 * 60 * 24 * 30 * 3,
   '6M': 60 * 60 * 24 * 30 * 6,
@@ -39,11 +39,6 @@ const periods: Record<string, number> = {
 }
 
 const changeList = [
-  {
-    name: '1 Day',
-    key: 'day',
-    value: 0
-  },
   {
     name: '1 Week',
     key: 'week',
@@ -85,17 +80,37 @@ type ResultWitdraw = {
   }
 }
 
+function calcVolatility(dataVolatility: Result) {
+  const points = dataVolatility?.pool.value
+  const size = points.length
+  if (size < 2) return '0'
+  const dayVolatility = new Array(size - 1).fill('0')
+  let total = '0'
+  for (let index = 0; index < size - 1; index++) {
+    dayVolatility[index] = Big(points[index + 1].close)
+      .sub(points[index].close)
+      .div(points[index].close)
+      .toFixed()
+    total = Big(total).add(dayVolatility[index]).toFixed()
+  }
+  const average = Big(total)
+    .div(size - 1)
+    .toFixed()
+
+  return Big(average)
+    .mul(Big(size - 1).sqrt())
+    .toFixed(2)
+}
+
 const Analytics = (props: IAnalyticsProps) => {
-  const [volatilityPeriod, setVolatilityPeriod] = React.useState<string>('1D')
+  const [volatilityPeriod, setVolatilityPeriod] = React.useState<string>('1W')
   const [withdrawalPeriod, setWithdrawalPeriod] = React.useState<string>('1D')
-  const [selectedPeriod, setSelectedPeriod] = React.useState<string>('1D')
+  const [selectedPeriod, setSelectedPeriod] = React.useState<string>('1W')
   const [selectedType, setSelectedType] = React.useState<string>('price')
 
   const id = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
-
-  console.log('periods', periods[selectedPeriod], selectedPeriod)
 
   const { data } = useSWR<Result>(
     [
@@ -121,7 +136,6 @@ const Analytics = (props: IAnalyticsProps) => {
     (query, id) =>
       request(BACKEND_KASSANDRA, query, {
         id,
-        day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
         week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
         month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
         year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365)
@@ -150,6 +164,15 @@ const Analytics = (props: IAnalyticsProps) => {
       })
   )
 
+  const { data: dataSharpRatio } = useSWR<Result>(
+    [GET_SHARPRATIO, id, volatilityPeriod],
+    (query, id) =>
+      request(BACKEND_KASSANDRA, query, {
+        id,
+        timestamp: Math.trunc(new Date().getTime() / 1000 - 60 * 60 * 24 * 365)
+      })
+  )
+
   const withdraws = React.useMemo(() => {
     if (!dataWithdraws?.pool) return '0'
     return dataWithdraws.pool.volumes
@@ -159,26 +182,7 @@ const Analytics = (props: IAnalyticsProps) => {
 
   const volatility = React.useMemo(() => {
     if (dataVolatility?.pool?.value?.length) {
-      const points = dataVolatility?.pool.value
-      const size = points.length
-      if (size < 2) return '0'
-      const dayVolatility = new Array(size - 1).fill('0')
-      let total = '0'
-      for (let index = 0; index < size - 1; index++) {
-        console.log(points)
-        dayVolatility[index] = Big(points[index + 1].close)
-          .sub(points[index].close)
-          .div(points[index].close)
-          .toFixed()
-        total = Big(total).add(dayVolatility[index]).toFixed()
-      }
-      const average = Big(total)
-        .div(size - 1)
-        .toFixed()
-
-      return Big(average)
-        .mul(Big(size - 1).sqrt())
-        .toFixed(4)
+      return calcVolatility(dataVolatility)
     }
     return '0'
   }, [dataVolatility])
@@ -199,6 +203,21 @@ const Analytics = (props: IAnalyticsProps) => {
     return calcChangeList
   }, [dataChange])
 
+  const sharpRatio = React.useMemo(() => {
+    if (!dataSharpRatio?.pool?.value?.length) return '0'
+    const volatility = calcVolatility(dataSharpRatio)
+    const total = dataSharpRatio.pool.value.reduce((acc, value, i) => {
+      const oldClose = dataSharpRatio.pool.value[i + 1]?.close
+      if (!oldClose) return acc
+      return acc.add(calcChange(Number(value.close), Number(oldClose)))
+    }, Big(0))
+
+    return total
+      .div(dataSharpRatio.pool.value.length)
+      .div(volatility)
+      .toFixed(2)
+  }, [dataSharpRatio])
+
   return (
     <S.Analytics>
       <S.ManagerOverviewContainer>
@@ -211,6 +230,7 @@ const Analytics = (props: IAnalyticsProps) => {
               selectedType={selectedType}
               setSelectedType={setSelectedType}
               changeList={change}
+              dataList={['1W', '1M', '3M', '6M', '1Y', 'ALL']}
             />
           ) : (
             <Loading marginTop={15} />
@@ -221,20 +241,27 @@ const Analytics = (props: IAnalyticsProps) => {
           <StatusCard
             title="Volatility"
             value={volatility}
-            status="POSITIVE"
-            dataList={dataList}
+            status={Big(volatility).gt(0) ? 'POSITIVE' : 'NEGATIVE'}
+            dataList={['1W', '1M', '3M', '6M', '1Y', 'ALL']}
             selected={volatilityPeriod}
             onClick={(period: string) => setVolatilityPeriod(period)}
           />
           <StatusCard
             title="Total Withdrawals"
-            value={`${Big(withdraws).eq(0) ? '$' : '-$'}${withdraws}`}
-            status="NEGATIVE"
-            dataList={dataList}
+            value={`${Big(withdraws).eq(0) ? '$' : '-$'}${BNtoDecimal(
+              Big(withdraws),
+              2
+            )}`}
+            status={Big(withdraws).gt(0) ? 'NEGATIVE' : 'NEUTRAL'}
+            dataList={['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL']}
             selected={withdrawalPeriod}
             onClick={(period: string) => setWithdrawalPeriod(period)}
           />
-          <StatusCard title="Risk Factor" value="362" />
+          <StatusCard
+            title="Sharp ratio"
+            value={sharpRatio}
+            status={Big(sharpRatio).lt(-1) ? 'NEGATIVE' : 'NEUTRAL'}
+          />
         </S.StatsContainer>
       </S.ManagerOverviewContainer>
       <S.TitleWrapper>
