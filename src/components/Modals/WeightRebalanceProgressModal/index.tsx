@@ -16,7 +16,7 @@ export type ITokenProps = {
 
 export type IRebalanceWeightsProps = {
   poolName: string,
-  poolPrice: number,
+  poolPrice: string,
   listTokenWeights: {
     token: Omit<ITokenProps, 'decimals'>,
     previous: string,
@@ -53,9 +53,7 @@ const WeightRebalanceProgressModal = ({
           <S.IntroInfoPoolContainer>
             <S.PoolInfoContent>
               <p>{rebalanceWeights?.poolName}</p>
-              <span>
-                ${Number(rebalanceWeights?.poolPrice ?? 0).toFixed(2)}
-              </span>
+              <span>${rebalanceWeights?.poolPrice}</span>
             </S.PoolInfoContent>
             <S.TimeProgressContainer>
               <S.TimeContent>

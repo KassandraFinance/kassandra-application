@@ -14,15 +14,15 @@ interface IPieChartAllocationsProps {
   data: IDataProps[];
   activeIndex: number;
   setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
+  isRebalancing?: boolean;
 }
 
 const Chart = ({
   data,
   activeIndex,
-  setActiveIndex
+  setActiveIndex,
+  isRebalancing
 }: IPieChartAllocationsProps) => {
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
-
   const CustomLabel = ({ viewBox, labelText, value }: any) => {
     const { cx, cy } = viewBox
     return (
@@ -65,19 +65,21 @@ const Chart = ({
           {value}%
         </text>
 
-        <text
-          x={cx}
-          y={cy + 30}
-          className="recharts-text recharts-label"
-          textAnchor="middle"
-          dominantBaseline="central"
-          alignmentBaseline="middle"
-          fill="#fcfcfc"
-          fontSize="12"
-          fontWeight="400"
-        >
-          REBALANCING
-        </text>
+        {isRebalancing && (
+          <text
+            x={cx}
+            y={cy + 30}
+            className="recharts-text recharts-label"
+            textAnchor="middle"
+            dominantBaseline="central"
+            alignmentBaseline="middle"
+            fill="#fcfcfc"
+            fontSize="12"
+            fontWeight="400"
+          >
+            REBALANCING
+          </text>
+        )}
       </g>
     )
   }
@@ -105,7 +107,7 @@ const Chart = ({
           {data.map((entry, index) => (
             <Cell
               key={`cell-${index}`}
-              fill={COLORS[index % COLORS.length]}
+              fill={COLORS[index]}
               className={entry.symbol}
               stroke={
                 entry.symbol === data[activeIndex].symbol
@@ -132,3 +134,27 @@ const Chart = ({
 }
 
 export default Chart
+
+const COLORS: { [key: number]: string } = {
+  0: '#E8983D',
+  1: '#63698C',
+  2: '#B7372D',
+  3: '#3D6ECC',
+  4: '#E9BC50',
+  5: '#AB40E1',
+  6: '#CF498D',
+  7: '#D54F49',
+  8: '#4517AB',
+  9: '#72EEE4',
+  10: '#4B81EF',
+  11: '#e8983d65',
+  12: '#18db11',
+  13: '#cc24bef7',
+  14: '#68d410d6',
+  15: '#e9bb5067',
+  16: '#ab40e149',
+  17: '#cf498c42',
+  18: '#d5504949',
+  19: '#10e72299',
+  20: '#d4e442b0'
+}

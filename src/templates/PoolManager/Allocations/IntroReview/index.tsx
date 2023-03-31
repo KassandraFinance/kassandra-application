@@ -27,7 +27,7 @@ export type ITokenProps = {
 
 export type IRebalanceWeightsProps = {
   poolName: string,
-  poolPrice: number,
+  poolPrice: string,
   listTokenWeights: {
     token: Omit<ITokenProps, 'decimals'>,
     previous: string,
@@ -78,6 +78,7 @@ const IntroReview = ({
             data={allocationsDataChart}
             activeIndex={activeIndex}
             setActiveIndex={setActiveIndex}
+            isRebalancing={!!RebalancingProgress}
           />
         </S.GridChart>
 
@@ -95,10 +96,10 @@ const IntroReview = ({
             <S.HoldingWrapper>
               <S.TitleHoldingAndPrice>holding</S.TitleHoldingAndPrice>
               <S.ValueHoldingAndPrice>
-                ${tokenSeleted?.holding.valueUSD?.toFixed(2)}
+                ${tokenSeleted?.holding.valueUSD?.toFixed(2) ?? 0}
               </S.ValueHoldingAndPrice>
               <p>
-                {tokenSeleted?.holding.value.toFixed(2, 2)}{' '}
+                {tokenSeleted?.holding.value.toFixed(2, 2) ?? 0}{' '}
                 {tokenSeleted?.token.symbol}
               </p>
             </S.HoldingWrapper>
@@ -108,8 +109,10 @@ const IntroReview = ({
                 <S.ValueHoldingAndPrice>
                   ${tokenSeleted?.price.value?.toFixed(2)}
                 </S.ValueHoldingAndPrice>
-                <S.ChangeDayValue changePrice={tokenSeleted?.price.changeValue}>
-                  <p>{tokenSeleted?.price.changeValue?.toFixed(2)}%</p>
+                <S.ChangeDayValue
+                  changePrice={tokenSeleted?.price.changeValue ?? 0}
+                >
+                  <p>{tokenSeleted?.price.changeValue?.toFixed(2) ?? 0}%</p>
                   <img
                     src={
                       tokenSeleted?.price.changeValue >= 0
@@ -139,42 +142,44 @@ const IntroReview = ({
             <p>Rebalancing Fund</p>
           </S.TitleWrapper>
           {RebalancingProgress ? (
-            <>
-              <S.RebalancingInfoList>
-                <S.RebalancingInfo>
-                  <p>Started</p>
-                  <S.HoursAgoWrapper>
-                    <p>{RebalancingProgress?.started ?? 0}</p>
-                    <img
-                      src="/assets/utilities/external-link.svg"
-                      alt=""
-                      width={16}
-                      height={16}
-                    />
-                  </S.HoursAgoWrapper>
-                </S.RebalancingInfo>
-                <S.RebalancingInfo>
-                  <p>Remaining</p>
-                  <p id="remaning">{RebalancingProgress?.remaning ?? 0}</p>
-                </S.RebalancingInfo>
-                <S.RebalancingInfo>
-                  <p>ASSETS</p>
-                  <ExternalLink
-                    text={`${rebalanceWeights?.listTokenWeights.length} new weights`}
-                    onClick={() => setIsOpenTokenInfoMobile(true)}
+            <S.RebalancingInfoList>
+              <S.RebalancingInfo>
+                <p>Started</p>
+                <S.HoursAgoWrapper>
+                  <p>{RebalancingProgress?.started ?? 0} ago</p>
+                  <img
+                    src="/assets/utilities/external-link.svg"
+                    alt=""
+                    width={16}
+                    height={16}
                   />
-                </S.RebalancingInfo>
-              </S.RebalancingInfoList>
-            </>
+                </S.HoursAgoWrapper>
+              </S.RebalancingInfo>
+              <S.RebalancingInfo>
+                <p>Remaining</p>
+                <p id="remaning">{RebalancingProgress?.remaning ?? 0}</p>
+              </S.RebalancingInfo>
+              <S.RebalancingInfo>
+                <p>ASSETS</p>
+                <ExternalLink
+                  text={`${rebalanceWeights?.listTokenWeights.length} new weights`}
+                  onClick={() => setIsOpenTokenInfoMobile(true)}
+                />
+              </S.RebalancingInfo>
+            </S.RebalancingInfoList>
           ) : (
-            <p>there is no rebalancing of asset weights at the moment</p>
+            <S.NotRebalancingProgress>
+              there is no rebalancing of asset weights at the moment
+            </S.NotRebalancingProgress>
           )}
         </S.FundInfoBody>
-        <S.GraphAllocationWrapper>
-          <RadialProcentageBar
-            ProgressValue={RebalancingProgress?.progress ?? 0}
-          />
-        </S.GraphAllocationWrapper>
+        {RebalancingProgress && (
+          <S.GraphAllocationWrapper>
+            <RadialProcentageBar
+              ProgressValue={RebalancingProgress?.progress ?? 0}
+            />
+          </S.GraphAllocationWrapper>
+        )}
       </S.RebalancingFundCard>
 
       {isOpenTokenInfoMobile && (

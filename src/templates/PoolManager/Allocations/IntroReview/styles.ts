@@ -176,6 +176,7 @@ export const RebalancingFundCard = styled.div`
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    height: 18rem;
     padding: 2.4rem;
     gap: 2.4rem;
 
@@ -185,6 +186,7 @@ export const RebalancingFundCard = styled.div`
     max-width: 65rem;
 
     @media (max-width: 576px) {
+      height: auto;
       flex-direction: column;
     }
   `}
@@ -192,6 +194,9 @@ export const RebalancingFundCard = styled.div`
 
 export const FundInfoBody = styled.div`
   ${() => css`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     width: 100%;
   `}
 `
@@ -262,5 +267,27 @@ export const GraphAllocationWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+  `}
+`
+
+export const NotRebalancingProgress = styled.p`
+  ${({ theme }) => css`
+    max-width: 40rem;
+    margin: 0 auto;
+    margin-top: 2rem;
+
+    color: ${theme.colors.grayDisabled};
+    font-size: ${theme.font.sizes.font16};
+    font-weight: ${theme.font.weight.normal};
+    line-height: 2rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-align: center;
+  `}
+`
+
+export const RebalancingProgressContent = styled.div`
+  ${() => css`
+    display: flex;
   `}
 `

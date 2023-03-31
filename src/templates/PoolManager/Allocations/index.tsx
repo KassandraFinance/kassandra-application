@@ -109,9 +109,9 @@ const Allocations = () => {
   const { data } = useSWR<IAllocationProps>(
     [GET_TOKENS_POOL, poolId],
     (query, poolId) =>
-    request(BACKEND_KASSANDRA, query, {
-      id: poolId
-    })
+      request(BACKEND_KASSANDRA, query, {
+        id: poolId
+      })
   )
 
   const { data: coingeckoData } = useCoingecko(
@@ -138,11 +138,17 @@ const Allocations = () => {
     return mockTokensList
   }
 
-  React.useEffect(() => {
-    if (!data || !coingeckoData) return
+  function tokenWeightFormatted(value: string) {
+    return Big(value).mul(100).toFixed(2, 2)
+  }
 
-    const tokenList = poolAssets?.map(item => {
-      const tokenPrice = coingeckoData[mockTokens[item.token.id]]
+  function handleCurrentAllocationInfo(
+    poolAssets: underlyingAssetsInfo[],
+    coingeckoData: CoinGeckoResponseType
+  ) {
+    const tokenList = poolAssets.map(item => {
+      const tokenPrice =
+        coingeckoData && coingeckoData[mockTokens[item.token.id]]
 
       return {
         token: {
@@ -152,7 +158,7 @@ const Allocations = () => {
           symbol: item.token.symbol,
           decimals: item.token.decimals
         },
-        allocation: Big(item.weight_normalized).mul(100).toFixed(2, 2),
+        allocation: tokenWeightFormatted(item.weight_normalized),
         holding: {
           value: Big(item.balance),
           valueUSD: Big(item.balance).mul(Big(tokenPrice.usd ?? 0))
@@ -164,79 +170,110 @@ const Allocations = () => {
       }
     })
 
+    return tokenList
+  }
+
+  function handleRebalancingTimeProgress(weightGoals: IWeightGoalsProps[]) {
+    const currentTime = new Date().getTime()
+    const endTime = weightGoals[0].end_timestamp * 1000
+
+    if (currentTime < endTime) {
+      const oneHourInTimestamp = 3600000
+      const startTime: number = weightGoals[0].start_timestamp * 1000
+      const timeSelected = (endTime - startTime) / oneHourInTimestamp
+
+      const started = getDateDiff(startTime)
+      const remaining = getDateDiff(currentTime, endTime)
+      const hoursLeft = (endTime - currentTime) / oneHourInTimestamp
+      const datePorcentage = ((timeSelected - hoursLeft) * 100) / timeSelected
+
+      return {
+        started: started ? String(started.value) + ' ' + started.string : '0',
+        remaning: remaining
+          ? String(remaining.value) + ' ' + remaining.string
+          : '0',
+        progress: datePorcentage > 0 ? datePorcentage : 0
+      }
+    } else {
+      return null
+    }
+  }
+
+  function handleRebalanceWeights(
+    name: string,
+    price: string,
+    weightGoals: IWeightGoalsProps[],
+    poolAssets: underlyingAssetsInfo[]
+  ) {
+    const targetWeights = weightGoals[0]
+    const previousWeights = weightGoals[1]
+    const currentTime = new Date().getTime()
+    const endTime = targetWeights.end_timestamp * 1000
+
+    if (currentTime < endTime) {
+      const listTokenWeightsSorted = poolAssets.sort((a, b) =>
+        a.token.id.toLowerCase() > b.token.id.toLowerCase() ? 1 : -1
+      )
+
+      const listTokenWeights = listTokenWeightsSorted.map((item, index) => {
+        return {
+          token: {
+            address: item.token.id,
+            logo: item.token.logo ?? '',
+            name: item.token.name,
+            symbol: item.token.symbol
+          },
+          previous: tokenWeightFormatted(
+            previousWeights.weights[index].weight_normalized
+          ),
+          current: tokenWeightFormatted(item.weight_normalized),
+          final: tokenWeightFormatted(
+            targetWeights.weights[index].weight_normalized
+          )
+        }
+      })
+
+      return {
+        poolName: name,
+        poolPrice: Big(price).toFixed(2, 2),
+        listTokenWeights
+      }
+    } else {
+      return null
+    }
+  }
+
+  React.useEffect(() => {
+    if (!data || !coingeckoData) return
+
+    const tokenList =
+      poolAssets && handleCurrentAllocationInfo(poolAssets, coingeckoData)
+
     setlistTokenWeights(tokenList ?? [])
   }, [data, coingeckoData])
 
   React.useEffect(() => {
     if (!data) return
 
-    const currentTime = new Date().getTime()
-    const endTime = data.pool.weight_goals[0].end_timestamp * 1000
-    const startTime: number = data.pool.weight_goals[0].start_timestamp * 1000
-    const oneHourInTimestamp = 3600000
+    const rebalancingTimeProgress = handleRebalancingTimeProgress(
+      data.pool.weight_goals
+    )
 
-    if (currentTime < endTime) {
-      const started = getDateDiff(startTime)
-      const remaining = getDateDiff(currentTime, endTime)
-      const timeSelected = (endTime - startTime) / oneHourInTimestamp
-      const hoursLeft = (endTime - currentTime) / oneHourInTimestamp
-      const datePorcentage = ((timeSelected - hoursLeft) * 100) / timeSelected
-
-      setRebalancingProgress({
-        started: started ? String(started.value) + '' + started.string : '0',
-        remaning: remaining
-          ? String(remaining.value) + '' + remaining.string
-          : '0',
-        progress: datePorcentage > 0 ? datePorcentage : 0
-      })
-    } else {
-      setRebalancingProgress(null)
-    }
+    setRebalancingProgress(rebalancingTimeProgress)
   }, [data])
 
   React.useEffect(() => {
     if (!data || !poolAssets) return
 
-    console.log(data)
-    const currentTime = new Date().getTime()
-    const endTime = data.pool.weight_goals[0].end_timestamp * 1000
+    const rebalanceWeights = handleRebalanceWeights(
+      data.pool.name,
+      Big(data.pool.price_usd).toFixed(2, 2),
+      data.pool.weight_goals,
+      poolAssets
+    )
 
-    if (currentTime < endTime) {
-      const listTokenWeights = poolAssets
-        .sort((a, b) =>
-          a.token.id.toLowerCase() > b.token.id.toLowerCase() ? 1 : -1
-        )
-        .map((item, index) => {
-          return {
-            token: {
-              address: item.token.id,
-              logo: item.token.logo ?? '',
-              name: item.token.name,
-              symbol: item.token.symbol
-            },
-            previous: Big(
-              data.pool.weight_goals[1].weights[index].weight_normalized
-            )
-              .mul(Big(100))
-              .toFixed(2, 2),
-            current: Big(item.weight_normalized).mul(100).toFixed(2, 2),
-            final: Big(
-              data.pool.weight_goals[0].weights[index].weight_normalized
-            )
-              .mul(100)
-              .toFixed(2, 2)
-          }
-        })
-
-      setRebalanceWeights({
-        poolName: data.pool.name,
-        poolPrice: data.pool.price_usd,
-        listTokenWeights
-      })
-    } else {
-      setRebalanceWeights(null)
-    }
-  }, [data, coingeckoData])
+    setRebalanceWeights(rebalanceWeights)
+  }, [data])
 
   React.useEffect(() => {
     if (!data || !poolAssets) return setAllocationHistory([])
