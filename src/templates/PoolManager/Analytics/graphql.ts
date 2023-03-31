@@ -33,20 +33,12 @@ export const GET_PRICE_CHART = gql`
 `
 
 export const GET_CHANGE_PRICE = gql`
-  query ($id: ID!, $day: Int!, $week: Int!, $month: Int!, $year: Int!) {
+  query ($id: ID!, $week: Int!, $month: Int!, $year: Int!) {
     pool(id: $id) {
       now: price_candles(
         where: { base: "usd", period: 3600 }
         orderBy: timestamp
         orderDirection: desc
-        first: 1
-      ) {
-        timestamp
-        close
-      }
-      day: price_candles(
-        where: { base: "usd", period: 3600, timestamp_gt: $day }
-        orderBy: timestamp
         first: 1
       ) {
         timestamp
@@ -89,20 +81,12 @@ export const GET_CHANGE_PRICE = gql`
 `
 
 export const GET_CHANGE_TVL = gql`
-  query ($id: ID!, $day: Int!, $week: Int!, $month: Int!, $year: Int!) {
+  query ($id: ID!, $week: Int!, $month: Int!, $year: Int!) {
     pool(id: $id) {
       now: total_value_locked(
         where: { base: "usd" }
         orderBy: timestamp
         orderDirection: desc
-        first: 1
-      ) {
-        timestamp
-        close
-      }
-      day: total_value_locked(
-        where: { base: "usd", timestamp_gt: $day }
-        orderBy: timestamp
         first: 1
       ) {
         timestamp
@@ -163,6 +147,20 @@ export const GET_WITHDRAWS = gql`
     pool(id: $id) {
       volumes(where: { period: 3600, type: "exit", timestamp_gt: $timestamp }) {
         volume_usd
+      }
+    }
+  }
+`
+
+export const GET_SHARPRATIO = gql`
+  query ($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      value: price_candles(
+        where: { period: 604800, base: "usd", timestamp_gt: $timestamp }
+        orderBy: timestamp
+        orderDirection: desc
+      ) {
+        close
       }
     }
   }

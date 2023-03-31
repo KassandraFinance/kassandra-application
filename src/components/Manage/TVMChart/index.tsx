@@ -7,8 +7,6 @@ import SegmentedControls from '../../Inputs/SegmentedControls'
 
 import * as S from './styles'
 
-const dataList = ['1D', '1M', '3M', '6M', '1Y', 'ALL']
-
 type Change = {
   name: string,
   value: number
@@ -20,7 +18,8 @@ type Props = {
   setSelectedPeriod: React.Dispatch<React.SetStateAction<string>>,
   selectedType?: string,
   setSelectedType?: React.Dispatch<React.SetStateAction<string>>,
-  changeList: Change[]
+  changeList: Change[],
+  dataList?: string[]
 }
 
 const TVMChart = ({
@@ -29,7 +28,8 @@ const TVMChart = ({
   setSelectedPeriod,
   setSelectedType,
   selectedType,
-  changeList
+  changeList,
+  dataList = ['1D', '1M', '3M', '6M', '1Y', 'ALL']
 }: Props) => {
   return (
     <S.TVMChart>
