@@ -18,6 +18,7 @@ export type ButtonProps = {
     voteState: 'against' | 'favor' | 'vote-open' | 'disable',
     type: string
   },
+  backgroundTransparent?: boolean,
   disabledNoEvent?: boolean,
   icon?: JSX.Element,
   as?: React.ElementType,
@@ -37,6 +38,7 @@ const ButtonBase: React.ForwardRefRenderFunction<
     backgroundSecondary = false,
     backgroundVote = { voteState: undefined, type: undefined },
     backgroundBlack = false,
+    backgroundTransparent = false,
     disabledNoEvent = false,
     text,
     image = '',
@@ -56,6 +58,7 @@ const ButtonBase: React.ForwardRefRenderFunction<
     disabledNoEvent={disabledNoEvent}
     disabled={disabledNoEvent}
     backgroundVote={backgroundVote}
+    backgroundTransparent={backgroundTransparent}
     {...props}
   >
     {image.length > 0 ? (
