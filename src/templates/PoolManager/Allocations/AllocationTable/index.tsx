@@ -3,6 +3,7 @@ import Big from 'big.js'
 import Tippy from '@tippyjs/react'
 
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
+import Loading from '@/components/Loading'
 
 import {
   TableLine,
@@ -108,39 +109,40 @@ const AllocationTable = ({
           </S.TrHead>
         </S.TheadWrapper>
         <S.TbodyWrapper>
-          {allocationData.map((item, index) => {
-            return (
-              <S.TrWrapper key={item.token.address + index}>
-                <S.TokenInfo>
-                  <img src={item.token.logo} alt="" width={24} height={24} />
-                  <p>{item.token.symbol}</p>
-                </S.TokenInfo>
-                <S.Allocation className="weight">
-                  {isRebalance && (
-                    <Tippy content="REBALANCING">
-                      <img
-                        src="/assets/icons/rebalance.svg"
-                        alt=""
-                        width={16}
-                        height={16}
-                      />
-                    </Tippy>
-                  )}
-                  <p>{item.allocation}%</p>
-                </S.Allocation>
-                <S.Holding className="holding">
-                  <p>$ {item.holding.valueUSD.toFixed(2, 2)}</p>
-                  <span>
-                    {item.holding.value.toFixed(2, 2)} {item.token.symbol}
-                  </span>
-                </S.Holding>
-                <S.PriceContent className="price">
-                  <p>$ {item.price.value?.toFixed(2)}</p>
-                  <S.PriceChange changePrice={item.price.changeValue}>
-                    {item.price.changeValue?.toFixed(2)}%
-                  </S.PriceChange>
-                </S.PriceContent>
-                {/* <S.YieldContent className="yield">
+          {allocationData.length > 0 ? (
+            allocationData.map((item, index) => {
+              return (
+                <S.TrWrapper key={item.token.address + index}>
+                  <S.TokenInfo>
+                    <img src={item.token.logo} alt="" width={24} height={24} />
+                    <p>{item.token.symbol}</p>
+                  </S.TokenInfo>
+                  <S.Allocation className="weight">
+                    {isRebalance && (
+                      <Tippy content="REBALANCING">
+                        <img
+                          src="/assets/icons/rebalance.svg"
+                          alt=""
+                          width={16}
+                          height={16}
+                        />
+                      </Tippy>
+                    )}
+                    <p>{item.allocation}%</p>
+                  </S.Allocation>
+                  <S.Holding className="holding">
+                    <p>$ {item.holding.valueUSD.toFixed(2, 2)}</p>
+                    <span>
+                      {item.holding.value.toFixed(2, 2)} {item.token.symbol}
+                    </span>
+                  </S.Holding>
+                  <S.PriceContent className="price">
+                    <p>$ {item.price.value?.toFixed(2)}</p>
+                    <S.PriceChange changePrice={item.price.changeValue}>
+                      {item.price.changeValue?.toFixed(2)}%
+                    </S.PriceChange>
+                  </S.PriceContent>
+                  {/* <S.YieldContent className="yield">
                   {Number(item.yields.apy) === 0 ? (
                     <strong>No Yield</strong>
                   ) : (
@@ -160,19 +162,24 @@ const AllocationTable = ({
                     </>
                   )}
                 </S.YieldContent> */}
-                <S.MobileEyeContainer
-                  onClick={() => handleViewTokenMobile(item)}
-                >
-                  <img
-                    src="/assets/utilities/eye-show.svg"
-                    alt=""
-                    width={20}
-                    height={20}
-                  />
-                </S.MobileEyeContainer>
-              </S.TrWrapper>
-            )
-          })}
+                  <S.MobileEyeContainer
+                    onClick={() => handleViewTokenMobile(item)}
+                  >
+                    <img
+                      src="/assets/utilities/eye-show.svg"
+                      alt=""
+                      width={20}
+                      height={20}
+                    />
+                  </S.MobileEyeContainer>
+                </S.TrWrapper>
+              )
+            })
+          ) : (
+            <S.LoadingContent>
+              <Loading marginTop={0} />
+            </S.LoadingContent>
+          )}
         </S.TbodyWrapper>
       </S.AllocationTable>
       <ModalViewCoin
@@ -202,7 +209,7 @@ const AllocationTable = ({
             <Value>$ {viewToken?.price.value.toFixed(2)}</Value>
             <SecondaryValue>
               <S.PriceChange changePrice={viewToken?.price.changeValue ?? 0}>
-                {viewToken?.price.changeValue}%
+                {viewToken?.price.changeValue.toFixed(2)}%
               </S.PriceChange>
             </SecondaryValue>
           </ValueContainer>

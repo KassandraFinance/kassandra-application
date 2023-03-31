@@ -321,6 +321,11 @@ export const ArrowsWrapper = styled.th`
   `}
 `
 
+export const LoadingContent = styled.div`
+  ${() => css`
+    padding-block: 5rem;
+  `}
+`
 const tableAnim = keyframes`
   from {
     transform: translateX(-1rem);
