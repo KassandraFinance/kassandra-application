@@ -50,7 +50,8 @@ export const TheadWrapper = styled.thead`
 export const TrHead = styled.tr`
   ${() => css`
     display: grid;
-    grid-template-columns: 1fr 4rem repeat(3, 1fr);
+    /* grid-template-columns: 1fr 4rem repeat(3, 1fr); */
+    grid-template-columns: 1fr 4rem repeat(2, 1fr);
     width: 100%;
 
     th:first-child {
@@ -105,7 +106,8 @@ export const TbodyWrapper = styled.tbody`
 export const TrWrapper = styled.tr`
   ${({ theme }) => css`
     display: grid;
-    grid-template-columns: 1fr 4rem 1fr 1fr 1fr;
+    grid-template-columns: 1fr 4rem 1fr 1fr;
+    /* grid-template-columns: 1fr 4rem 1fr 1fr 1fr; */
     width: 100%;
 
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);

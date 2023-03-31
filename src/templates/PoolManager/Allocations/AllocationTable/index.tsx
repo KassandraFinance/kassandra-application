@@ -1,7 +1,8 @@
 import React from 'react'
 import Big from 'big.js'
-import Link from 'next/link'
 import Tippy from '@tippyjs/react'
+
+import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 
 import {
   TableLine,
@@ -10,8 +11,6 @@ import {
   Value,
   SecondaryValue
 } from '../../../../components/Modals/ModalViewCoin/styles'
-import ModalViewCoin from '@/components/Modals/ModalViewCoin'
-
 import * as S from './styles'
 
 type IAllocationDataProps = {
@@ -20,7 +19,7 @@ type IAllocationDataProps = {
     logo: string,
     symbol: string
   },
-  allocation: number,
+  allocation: string,
   holding: {
     value: Big,
     valueUSD: Big
@@ -28,18 +27,22 @@ type IAllocationDataProps = {
   price: {
     value: number,
     changeValue: number
-  },
-  yields: {
-    apy: string,
-    url: string
   }
+  // yields: {
+  //   apy: string,
+  //   url: string
+  // }
 }
 
 interface IAllocationTableProps {
   allocationData: IAllocationDataProps[];
+  isRebalance: boolean;
 }
 
-const AllocationTable = ({ allocationData }: IAllocationTableProps) => {
+const AllocationTable = ({
+  allocationData,
+  isRebalance
+}: IAllocationTableProps) => {
   const [viewToken, setViewToken] = React.useState<IAllocationDataProps>()
   const [viewColumnInTable, setViewColumnInTable] = React.useState(1)
   const [isOpen, setIsOpen] = React.useState(false)
@@ -74,7 +77,7 @@ const AllocationTable = ({ allocationData }: IAllocationTableProps) => {
             <S.ThHead className="weight">Weight</S.ThHead>
             <S.ThHead className="holding">Holding</S.ThHead>
             <S.ThHead className="price">Price 24h</S.ThHead>
-            <S.ThHead className="yield">Yield 24h</S.ThHead>
+            {/* <S.ThHead className="yield">Yield 24h</S.ThHead> */}
             <S.ArrowsWrapper>
               <span
                 onClick={() =>
@@ -105,15 +108,15 @@ const AllocationTable = ({ allocationData }: IAllocationTableProps) => {
           </S.TrHead>
         </S.TheadWrapper>
         <S.TbodyWrapper>
-          {allocationData.map(item => {
+          {allocationData.map((item, index) => {
             return (
-              <S.TrWrapper key={item.token.address}>
+              <S.TrWrapper key={item.token.address + index}>
                 <S.TokenInfo>
                   <img src={item.token.logo} alt="" width={24} height={24} />
                   <p>{item.token.symbol}</p>
                 </S.TokenInfo>
                 <S.Allocation className="weight">
-                  {item.allocation && (
+                  {isRebalance && (
                     <Tippy content="REBALANCING">
                       <img
                         src="/assets/icons/rebalance.svg"
@@ -123,7 +126,7 @@ const AllocationTable = ({ allocationData }: IAllocationTableProps) => {
                       />
                     </Tippy>
                   )}
-                  <p>{item.allocation * 100}%</p>
+                  <p>{item.allocation}%</p>
                 </S.Allocation>
                 <S.Holding className="holding">
                   <p>$ {item.holding.valueUSD.toFixed(2, 2)}</p>
@@ -132,12 +135,12 @@ const AllocationTable = ({ allocationData }: IAllocationTableProps) => {
                   </span>
                 </S.Holding>
                 <S.PriceContent className="price">
-                  <p>$ {item.price.value}</p>
+                  <p>$ {item.price.value?.toFixed(2)}</p>
                   <S.PriceChange changePrice={item.price.changeValue}>
-                    {item.price.changeValue}%
+                    {item.price.changeValue?.toFixed(2)}%
                   </S.PriceChange>
                 </S.PriceContent>
-                <S.YieldContent className="yield">
+                {/* <S.YieldContent className="yield">
                   {Number(item.yields.apy) === 0 ? (
                     <strong>No Yield</strong>
                   ) : (
@@ -156,7 +159,7 @@ const AllocationTable = ({ allocationData }: IAllocationTableProps) => {
                       </Link>
                     </>
                   )}
-                </S.YieldContent>
+                </S.YieldContent> */}
                 <S.MobileEyeContainer
                   onClick={() => handleViewTokenMobile(item)}
                 >
@@ -181,7 +184,7 @@ const AllocationTable = ({ allocationData }: IAllocationTableProps) => {
           <TableLineTitle>Allocation</TableLineTitle>
 
           <ValueContainer>
-            <Value>{viewToken && viewToken?.allocation * 100}%</Value>
+            <Value>{viewToken && viewToken?.allocation}%</Value>
           </ValueContainer>
         </TableLine>
         <TableLine>
@@ -204,7 +207,7 @@ const AllocationTable = ({ allocationData }: IAllocationTableProps) => {
             </SecondaryValue>
           </ValueContainer>
         </TableLine>
-        <TableLine>
+        {/* <TableLine>
           <TableLineTitle>Yield 24H</TableLineTitle>
           <ValueContainer>
             {viewToken && Number(viewToken.yields.apy) === 0 ? (
@@ -228,7 +231,7 @@ const AllocationTable = ({ allocationData }: IAllocationTableProps) => {
               </>
             )}
           </ValueContainer>
-        </TableLine>
+        </TableLine> */}
       </ModalViewCoin>
     </>
   )
