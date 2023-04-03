@@ -42,6 +42,7 @@ export const TokenSelectionHeader = styled.div`
 
     > span {
       cursor: pointer;
+      display: flex;
     }
   `}
 `
