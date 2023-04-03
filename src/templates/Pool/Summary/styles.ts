@@ -12,7 +12,6 @@ export const Summary = styled.div`
     display: flex;
     align-items: flex-end;
     max-width: 100%;
-    padding: 1.5rem;
 
     font-family: ${theme.font.family};
     color: ${theme.colors.snow};
@@ -29,6 +28,11 @@ export const Summary = styled.div`
 
     svg {
       margin-left: ${theme.spacings.space8};
+
+      path {
+        color: white;
+        transition: fill 0.15s ease;
+      }
     }
 
     &:hover {
@@ -67,8 +71,6 @@ export const LinkContent = styled.div`
   display: flex;
   justify-content: space-between;
   max-width: 25rem;
-  /* margin-top: 1.2rem; */
-  /* margin-bottom: 2.4rem; */
 `
 
 export const ContractsName = styled.p`
@@ -171,7 +173,7 @@ export const CopyContract = styled.div`
 export const Blockchain = styled.div`
   display: flex;
   align-items: center;
-  max-height: 2.4rem;
+  gap: 1rem;
 
   .poolIcon {
     border-radius: 50%;
@@ -182,17 +184,16 @@ export const Blockchain = styled.div`
     max-height: 2.4rem;
   }
 
-  span {
-    padding: 0.38rem 0;
+  svg {
+    margin-bottom: 0.2rem;
+  }
 
+  span {
     font-size: ${theme.font.sizes.font14};
-    line-height: ${theme.font.sizes.font14};
     text-transform: uppercase;
   }
 
   a {
-    align-items: center;
-
     background-color: inherit;
   }
 

@@ -14,7 +14,7 @@ export const Product = styled.section`
   margin-top: ${theme.spacings.space32};
 
   @media (min-width: 960px) {
-    align-items: baseline;
+    align-items: flex-start;
   }
 
   @media (max-width: 1200px) {

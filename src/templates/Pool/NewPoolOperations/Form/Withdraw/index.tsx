@@ -358,8 +358,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       pool.id.length === 0 ||
       userWalletAddress.length === 0 ||
       chainId.toString().length === 0 ||
-      chainId !== pool.chainId ||
-      !Big(amountTokenIn).lte(Big(0))
+      chainId !== pool.chainId
     ) {
       return setSelectedTokenInBalance(Big(0))
     }
