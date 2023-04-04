@@ -78,15 +78,15 @@ const Summary = () => {
             {pool.logo ? (
               <img
                 src={pool.logo || comingSoon}
-                width={20}
-                height={20}
+                width={24}
+                height={24}
                 alt=""
               />
             ) : (
               <Blockies
                 seed={pool.name}
                 className="poolIcon"
-                size={7}
+                size={6}
                 scale={4}
               />
             )}
@@ -98,8 +98,8 @@ const Summary = () => {
           >
             <span>CONTROLLER/{pool.symbol} TOKEN</span>
             <svg
-              width="17"
-              height="17"
+              width="16"
+              height="16"
               viewBox="0 0 17 17"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -169,15 +169,15 @@ const Summary = () => {
             {pool.logo ? (
               <img
                 src={pool.logo || comingSoon}
-                width={20}
-                height={20}
+                width={24}
+                height={24}
                 alt=""
               />
             ) : (
               <Blockies
                 seed={pool.name}
                 className="poolIcon"
-                size={7}
+                size={6}
                 scale={4}
               />
             )}
@@ -189,8 +189,8 @@ const Summary = () => {
           >
             <span>POOL CONTRACT</span>
             <svg
-              width="17"
-              height="17"
+              width="16"
+              height="16"
               viewBox="0 0 17 17"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -238,15 +238,15 @@ const Summary = () => {
             {pool.logo ? (
               <img
                 src={pool.logo || comingSoon}
-                width={20}
-                height={20}
+                width={24}
+                height={24}
                 alt=""
               />
             ) : (
               <Blockies
                 seed={pool.name}
                 className="poolIcon"
-                size={7}
+                size={6}
                 scale={4}
               />
             )}
@@ -258,8 +258,8 @@ const Summary = () => {
           >
             <span>STRATEGY CONTRACT</span>
             <svg
-              width="17"
-              height="17"
+              width="16"
+              height="16"
               viewBox="0 0 17 17"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
