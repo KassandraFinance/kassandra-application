@@ -146,7 +146,7 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
   return (
     <S.CommunityPoolsTable>
       <S.THead>
-        <S.TR>
+        <S.TRHead>
           <S.TH>
             <S.ColumnTitle>Pool Name</S.ColumnTitle>
           </S.TH>
@@ -181,16 +181,16 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
               </S.TableViewButton>
             </S.TableViewButtonContainer>
           </S.TH>
-        </S.TR>
+        </S.TRHead>
       </S.THead>
 
       <S.TBody>
         {pools?.map(pool => {
           return (
             <S.TR key={pool.address}>
-              <S.TD>
-                <Link href={`/pool/${pool.id}`} passHref>
-                  <S.Link>
+              <Link href={`/pool/${pool.id}`} passHref>
+                <S.TRLink>
+                  <S.TD>
                     <S.ValueContainer>
                       <S.Imagecontainer>
                         <S.ImageWrapper>
@@ -217,99 +217,99 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
                         </S.SecondaryTextValue>
                       </S.ValueWrapper>
                     </S.ValueContainer>
-                  </S.Link>
-                </Link>
-              </S.TD>
-              <S.TD isView={inViewCollum === 1}>
-                <S.Value>${Big(pool?.price_usd || 0).toFixed(2)}</S.Value>
-              </S.TD>
-              <S.TD isView={inViewCollum === 2}>
-                <S.Value>
-                  ${Big(pool?.total_value_locked_usd || 0).toFixed(2)}
-                </S.Value>
-              </S.TD>
-              <S.TD isView={inViewCollum === 3}>
-                <S.Container>
-                  <S.CoinImageContainer>
-                    {pool.weight_goals[0].weights.map((coin, index) => {
-                      return (
-                        <S.CoinImageWrapper
-                          key={coin.asset?.token?.logo}
-                          position={index}
-                        >
-                          <Image
-                            src={coin.asset?.token?.logo || notFoundIcon}
-                            layout="fill"
-                          />
-                        </S.CoinImageWrapper>
-                      )
-                    })}
-                  </S.CoinImageContainer>
-                </S.Container>
-              </S.TD>
-              <S.TD isView={inViewCollum === 4}>
-                <S.Value>
-                  ${Big(pool.volumes[0]?.volume_usd || 0).toFixed(2)}
-                </S.Value>
-              </S.TD>
-              <S.TD isView={inViewCollum === 5}>
-                <S.Value
-                  value={Number(
-                    calcChange(
-                      Number(pool.now[0]?.close || 0),
-                      Number(pool.month[0]?.close || 0)
-                    )
-                  )}
-                >
-                  {calcChange(
-                    Number(pool.now[0]?.close || 0),
-                    Number(pool.month[0]?.close || 0)
-                  )}
-                  %
-                </S.Value>
-              </S.TD>
-              <S.TD isView={inViewCollum === 6}>
-                <S.Value
-                  value={Number(
-                    calcChange(
-                      Number(pool.now[0]?.close || 0),
-                      Number(pool.month[0]?.close || 0)
-                    )
-                  )}
-                >
-                  {calcChange(
-                    Number(pool.now[0]?.close || 0),
-                    Number(pool.month[0]?.close || 0)
-                  )}
-                  %
-                </S.Value>
-              </S.TD>
+                  </S.TD>
+                  <S.TD isView={inViewCollum === 1}>
+                    <S.Value>${Big(pool?.price_usd || 0).toFixed(2)}</S.Value>
+                  </S.TD>
+                  <S.TD isView={inViewCollum === 2}>
+                    <S.Value>
+                      ${Big(pool?.total_value_locked_usd || 0).toFixed(2)}
+                    </S.Value>
+                  </S.TD>
+                  <S.TD isView={inViewCollum === 3}>
+                    <S.Container>
+                      <S.CoinImageContainer>
+                        {pool.weight_goals[0].weights.map((coin, index) => {
+                          return (
+                            <S.CoinImageWrapper
+                              key={coin.asset?.token?.logo}
+                              position={index}
+                            >
+                              <Image
+                                src={coin.asset?.token?.logo || notFoundIcon}
+                                layout="fill"
+                              />
+                            </S.CoinImageWrapper>
+                          )
+                        })}
+                      </S.CoinImageContainer>
+                    </S.Container>
+                  </S.TD>
+                  <S.TD isView={inViewCollum === 4}>
+                    <S.Value>
+                      ${Big(pool.volumes[0]?.volume_usd || 0).toFixed(2)}
+                    </S.Value>
+                  </S.TD>
+                  <S.TD isView={inViewCollum === 5}>
+                    <S.Value
+                      value={Number(
+                        calcChange(
+                          Number(pool.now[0]?.close || 0),
+                          Number(pool.month[0]?.close || 0)
+                        )
+                      )}
+                    >
+                      {calcChange(
+                        Number(pool.now[0]?.close || 0),
+                        Number(pool.month[0]?.close || 0)
+                      )}
+                      %
+                    </S.Value>
+                  </S.TD>
+                  <S.TD isView={inViewCollum === 6}>
+                    <S.Value
+                      value={Number(
+                        calcChange(
+                          Number(pool.now[0]?.close || 0),
+                          Number(pool.month[0]?.close || 0)
+                        )
+                      )}
+                    >
+                      {calcChange(
+                        Number(pool.now[0]?.close || 0),
+                        Number(pool.month[0]?.close || 0)
+                      )}
+                      %
+                    </S.Value>
+                  </S.TD>
 
-              <S.TD>
-                <S.ViewButton
-                  type="button"
-                  onClick={() =>
-                    handleView(
-                      pool.name,
-                      pool.logo,
-                      pool.price_usd,
-                      pool.total_value_locked_usd,
-                      pool.weight_goals[0].weights,
-                      pool.volumes[0].volume_usd,
-                      calcChange(
-                        Number(pool.now[0].close),
-                        Number(pool.month[0].close)
-                      ),
-                      calcChange(
-                        Number(pool.now[0].close),
-                        Number(pool.month[0].close)
-                      )
-                    )
-                  }
-                >
-                  <Image src={eyeShowIcon} />
-                </S.ViewButton>
-              </S.TD>
+                  <S.TD>
+                    <S.ViewButton
+                      type="button"
+                      onClick={() =>
+                        handleView(
+                          pool.name,
+                          pool.logo,
+                          pool.price_usd,
+                          pool.total_value_locked_usd,
+                          pool.weight_goals[0].weights,
+                          pool.volumes[0].volume_usd,
+                          calcChange(
+                            Number(pool.now[0].close),
+                            Number(pool.month[0].close)
+                          ),
+                          calcChange(
+                            Number(pool.now[0].close),
+                            Number(pool.month[0].close)
+                          )
+                        )
+                      }
+                    >
+                      <Image src={eyeShowIcon} />
+                    </S.ViewButton>
+                  </S.TD>
+                </S.TRLink>
+              </Link>
             </S.TR>
           )
         })}

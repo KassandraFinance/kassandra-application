@@ -17,6 +17,23 @@ export const THead = styled.div`
   `}
 `
 
+export const TRHead = styled.div`
+  display: grid;
+  grid-template-columns: minmax(10rem, 1.5fr) 1fr 8rem;
+  gap: 1rem;
+  margin-inline: 1.6rem;
+
+  @media (min-width: 768px) {
+    margin-inline: 2.4rem;
+    grid-template-columns:
+      minmax(13.9rem, 1.5fr) repeat(3, 1fr) minmax(9rem, 1fr) minmax(
+        6.3rem,
+        1fr
+      )
+      minmax(6.3rem, 1fr);
+  }
+`
+
 export const TBody = styled.div`
   ${() => css`
     border-radius: 0 0 8px 8px;
@@ -26,16 +43,50 @@ export const TBody = styled.div`
 `
 
 export const TR = styled.div`
+  ${({ theme }) => css`
+    margin-inline: 1.6rem;
+
+    border-top: 1px solid transparent;
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: background-color border;
+
+    &:not(:last-of-type) {
+      border-bottom: 1px solid rgba(255 255 255 / 0.3);
+    }
+
+    &:hover {
+      margin: 0;
+      padding-inline: 1.6rem;
+
+      background-color: ${theme.colors.darkPurple};
+
+      &:not(:first-of-type) {
+        margin-top: -1px;
+        padding-top: 1px;
+        border-top: 1px solid rgba(255 255 255 / 0.3);
+      }
+
+      @media (min-width: 768px) {
+        padding-inline: 2.4rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      margin-inline: 2.4rem;
+    }
+  `}
+`
+
+export const TRLink = styled.a`
   ${() => css`
     display: grid;
     grid-template-columns: minmax(10rem, 1.5fr) 1fr 8rem;
     gap: 1rem;
 
-    margin-inline: 1.6rem;
-
-    &:not(:last-of-type) {
-      border-bottom: 1px solid rgba(255 255 255 / 0.3);
-    }
+    text-decoration: none;
+    cursor: pointer;
 
     @media (min-width: 768px) {
       grid-template-columns:
@@ -159,7 +210,7 @@ export const TextValue = styled.span`
     overflow: hidden;
 
     color: ${theme.colors.snow};
-    font-weight: ${theme.font.weight.normal};
+    font-weight: ${theme.font.weight.medium};
     font-size: ${theme.font.sizes.font14};
     line-height: 110%;
     letter-spacing: 0.05em;
@@ -190,7 +241,7 @@ export const ValueContainer = styled.div`
   ${() => css`
     display: grid;
     grid-template-columns: 2.4rem 1fr;
-    gap: 1rem;
+    gap: 1.6rem;
     align-items: center;
   `}
 `
@@ -310,30 +361,5 @@ export const ViewButton = styled.button`
 export const CoinModalContainer = styled.div`
   ${() => css`
     padding-right: 1.6rem;
-  `}
-`
-
-export const Link = styled.a`
-  ${({ theme }) => css`
-    text-decoration: none;
-
-    cursor: pointer;
-
-    ${TextValue},
-    ${SecondaryTextValue} {
-      transition-timing-function: ease-in-out;
-      transition-duration: 300ms;
-      transition-property: color;
-    }
-
-    &:hover {
-      ${TextValue} {
-        color: ${theme.colors.cyan};
-      }
-
-      ${SecondaryTextValue} {
-        color: ${theme.colors.cyan};
-      }
-    }
   `}
 `
