@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import theme from '../../styles/theme'
+import Link from 'next/link'
 
 export const CardContainer = styled.div`
   max-width: 40rem;
@@ -22,6 +23,12 @@ export const CardContainer = styled.div`
     z-index: 1;
   }
 `
+
+export const CardContent = styled.div`
+  cursor: auto;
+`
+export const CardLinkContainer = styled(Link)``
+export const CardLinkContent = styled.a``
 
 export const CardHeader = styled.div`
   display: flex;
