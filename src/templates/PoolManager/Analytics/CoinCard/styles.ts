@@ -12,12 +12,13 @@ export const CoinCard = styled.article<ICoinCardProps>`
     max-width: 48rem;
     height: fit-content;
 
+    transition-timing-function: ease;
+
     /* perspective: 500px; */
 
     /* transform-style: preserve-3d; */
 
     transition-duration: 300ms;
-    transition-timing-function: ease;
     transition-property: transform;
   `}
   ${({ isShowMore }) => isShowMore && css`
@@ -35,26 +36,25 @@ export const CoinCardFront = styled.div<ICoinCardFrontProps>`
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
+    overflow: hidden;
 
     max-width: 48rem;
     min-height: 28.5rem;
-    padding-top: 1.6rem;
     padding-inline: 1.6rem;
-
-    background-color: rgba(255, 255, 255, 0.05);
+    padding-top: 1.6rem;
+    border: 1px solid rgb(255 255 255 / 0);
     border-radius: 0.8rem;
-    border: 1px solid rgba(255, 255, 255, 0);
+
+    background-color: rgb(255 255 255 / 0.05);
 
     opacity: 1;
 
-    transition-duration: 300ms;
     transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
     transition-property: border opacity;
 
-    overflow: hidden;
-
     ${ShowMore}:hover ~ & {
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgb(255 255 255 / 0.08);
     }
   `}
   ${({ isShowMore }) => isShowMore && css`
@@ -81,8 +81,17 @@ export const InputListWrapper = styled.div`
   ${() => css`
     position: absolute;
     right: 0;
-
     z-index: 2;
+  `}
+`
+
+export const PeriodSpan = styled.span`
+  ${({ theme }) => css`
+    padding: 0.4rem 1rem;
+
+    font-weight: ${theme.font.weight.normal};
+    font-size: ${theme.font.sizes.font12};
+    line-height: ${theme.font.sizes.font12};
   `}
 `
 
@@ -91,15 +100,14 @@ export const ImageWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 
     width: 3.979rem;
     height: 3.979rem;
-
-    background-color: rgba(189, 189, 189, 0.1);
-    mix-blend-mode: normal;
-
     border-radius: 50%;
-    overflow: hidden;
+
+    background-color: rgb(189 189 189 / 0.1);
+    mix-blend-mode: normal;
   `}
 `
 
@@ -160,8 +168,8 @@ export const Volume = styled.span`
 export const ChangeWrapper = styled.div`
   ${() => css`
     display: flex;
-    align-items: center;
     gap: 0.4rem;
+    align-items: center;
   `}
 `
 
@@ -185,14 +193,15 @@ export const ShowMore = styled.button<IShowMoreProps>`
     position: absolute;
     bottom: 0;
     left: 50%;
-    transform: translateX(-50%);
+    z-index: 2;
 
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 0.4rem;
+    align-items: center;
 
     width: 7.4rem;
+    border: none;
 
     color: ${theme.colors.grayDisabled};
     font-weight: ${theme.font.weight.normal};
@@ -202,15 +211,13 @@ export const ShowMore = styled.button<IShowMoreProps>`
     white-space: nowrap;
 
     background-color: transparent;
-    border: none;
 
     cursor: pointer;
 
-    transition-duration: 300ms;
     transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
     transition-property: color;
-
-    z-index: 2;
+    transform: translateX(-50%);
 
     &:hover {
       color: ${theme.colors.snow};
@@ -227,9 +234,9 @@ export const Line = styled.span`
 
     width: 7.4rem;
     height: 0.3rem;
+    border-radius: 8px 8px 0 0;
 
     background: ${theme.colors.cyan};
-    border-radius: 8px 8px 0px 0px;
   `}
 `
 
@@ -262,8 +269,8 @@ export const InfoName = styled.span`
 export const InfoValueWrapper = styled.span`
   ${() => css`
     display: flex;
-    align-items: center;
     gap: 0.4rem;
+    align-items: center;
   `}
 `
 
@@ -278,9 +285,9 @@ export const InfoValue = styled.span<IInfoValueProps>`
     font-weight: ${theme.font.weight.medium};
     font-size: ${theme.font.sizes.font14};
     line-height: ${theme.font.sizes.font14};
-    text-transform: uppercase;
     letter-spacing: 0.025em;
     text-align: right;
+    text-transform: uppercase;
   `}
   ${({ theme, value = 0 }) => value > 0 && css`
     color: ${theme.colors.green};
@@ -299,37 +306,36 @@ export const CoinCardBack = styled.div<ICoinCardBackProps>`
   ${() => css`
     position: absolute;
     top: 0;
-    transform: rotateY(180deg);
     z-index: 1;
-    opacity: 0;
 
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
+    overflow: hidden;
 
     width: 100%;
     min-height: 28.5rem;
-    padding-top: 1.6rem;
     padding-inline: 1.6rem;
-
-    background-color: rgba(255, 255, 255, 0.05);
+    padding-top: 1.6rem;
+    border: 1px solid rgb(255 255 255 / 0);
     border-radius: 0.8rem;
-    border: 1px solid rgba(255, 255, 255, 0);
 
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-    transition-property: border opacity;
+    background-color: rgb(255 255 255 / 0.05);
 
-    overflow: hidden;
+    opacity: 0;
     pointer-events: none;
 
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: border opacity;
+    transform: rotateY(180deg);
+
     ${ShowMore}:hover ~ & {
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgb(255 255 255 / 0.08);
     }
   `}
   ${({ isShowMore }) => isShowMore && css`
       opacity: 1;
-
       pointer-events: auto;
   `}
 `

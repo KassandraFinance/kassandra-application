@@ -3,8 +3,7 @@ import { XAxis, YAxis, AreaChart, Area, ResponsiveContainer } from 'recharts'
 import * as S from './styles'
 
 export type sparkData = {
-  close: string,
-  timestamp: number
+  close: string
 }
 
 interface ISparkLineChartProps {
@@ -30,7 +29,6 @@ const SparkLineChart = ({ data, color }: ISparkLineChartProps) => {
               <stop offset="175.59%" stopColor={color} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <XAxis dataKey="timestamp" domain={['auto', 'auto']} hide />
           <YAxis
             mirror
             axisLine={false}

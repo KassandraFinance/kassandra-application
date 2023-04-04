@@ -15,6 +15,7 @@ import PoolAssets from './PoolAssets'
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 import { BNtoDecimal, calcChange } from '@/utils/numerals'
 import {
+  GET_CHAINID,
   GET_CHANGE_PRICE,
   GET_CHANGE_TVL,
   GET_PRICE_CHART,
@@ -27,6 +28,7 @@ import {
 import poolsAssetsIcon from '@assets/iconGradient/assets-distribution.svg'
 
 import * as S from './styles'
+import { calcVolatility } from '../utils'
 
 const periods: Record<string, number> = {
   '1D': 60 * 60 * 24,
@@ -80,28 +82,6 @@ type ResultWitdraw = {
   }
 }
 
-function calcVolatility(dataVolatility: Result) {
-  const points = dataVolatility?.pool.value
-  const size = points.length
-  if (size < 2) return '0'
-  const dayVolatility = new Array(size - 1).fill('0')
-  let total = '0'
-  for (let index = 0; index < size - 1; index++) {
-    dayVolatility[index] = Big(points[index + 1].close)
-      .sub(points[index].close)
-      .div(points[index].close)
-      .toFixed()
-    total = Big(total).add(dayVolatility[index]).toFixed()
-  }
-  const average = Big(total)
-    .div(size - 1)
-    .toFixed()
-
-  return Big(average)
-    .mul(Big(size - 1).sqrt())
-    .toFixed(2)
-}
-
 const Analytics = (props: IAnalyticsProps) => {
   const [volatilityPeriod, setVolatilityPeriod] = React.useState<string>('1W')
   const [withdrawalPeriod, setWithdrawalPeriod] = React.useState<string>('1D')
@@ -125,6 +105,17 @@ const Analytics = (props: IAnalyticsProps) => {
           new Date().getTime() / 1000 - periods[selectedPeriod]
         )
       })
+  )
+
+  const { data: dataChainId } = useSWR(
+    [GET_CHAINID, id],
+    (query, id) =>
+      request(BACKEND_KASSANDRA, query, {
+        id
+      }),
+    {
+      refreshInterval: 60 * 60 * 24
+    }
   )
 
   const { data: dataChange } = useSWR(
@@ -182,7 +173,7 @@ const Analytics = (props: IAnalyticsProps) => {
 
   const volatility = React.useMemo(() => {
     if (dataVolatility?.pool?.value?.length) {
-      return calcVolatility(dataVolatility)
+      return calcVolatility(dataVolatility.pool.value)
     }
     return '0'
   }, [dataVolatility])
@@ -205,7 +196,7 @@ const Analytics = (props: IAnalyticsProps) => {
 
   const sharpRatio = React.useMemo(() => {
     if (!dataSharpRatio?.pool?.value?.length) return '0'
-    const volatility = calcVolatility(dataSharpRatio)
+    const volatility = calcVolatility(dataSharpRatio.pool.value)
     if (volatility === '0') return '0'
     const total = dataSharpRatio.pool.value.reduce((acc, value, i) => {
       const oldClose = dataSharpRatio.pool.value[i + 1]?.close
@@ -259,7 +250,7 @@ const Analytics = (props: IAnalyticsProps) => {
             onClick={(period: string) => setWithdrawalPeriod(period)}
           />
           <StatusCard
-            title="Sharp ratio"
+            title="Sharpe ratio"
             value={sharpRatio}
             status={Big(sharpRatio).lt(-1) ? 'NEGATIVE' : 'NEUTRAL'}
           />
@@ -268,7 +259,9 @@ const Analytics = (props: IAnalyticsProps) => {
       <S.TitleWrapper>
         <TitleSection title="Pool Assets" image={poolsAssetsIcon} />
       </S.TitleWrapper>
-      <PoolAssets poolId={props.poolId} />
+      {dataChainId?.pool && (
+        <PoolAssets poolId={props.poolId} chainId={dataChainId.pool.chainId} />
+      )}
     </S.Analytics>
   )
 }
