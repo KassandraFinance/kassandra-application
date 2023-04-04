@@ -8,13 +8,19 @@ import usePoolInfo from '@/hooks/usePoolInfo'
 
 import Button from '@/components/Button'
 import ImageProfile from '@/components/Governance/ImageProfile'
+import AddInvestorModal from './AddInvestorModal'
+import RemoveInvestorModal from './RemoveInvestorModal'
+import PrivacySettingsModal from './PrivacySettingsModal'
 
 import editIcon from '@assets/utilities/edit-icon.svg'
 
 import * as S from './styles'
 
 const PrivacySettings = () => {
-  const [isEdit, setIsEdit] = React.useState(false)
+  const [isPrivacyModal, setIsPrivacyModal] = React.useState(false)
+  const [isAddInvestorModal, setIsAddInvestorModal] = React.useState(false)
+  const [isRemoveInvestorModal, setIsRemoveInvestorModal] =
+    React.useState(false)
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
@@ -24,7 +30,7 @@ const PrivacySettings = () => {
     : router.query.pool ?? ''
 
   function handleEditClick() {
-    setIsEdit(true)
+    setIsPrivacyModal(true)
   }
 
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
@@ -95,10 +101,28 @@ const PrivacySettings = () => {
       </S.AddressesContainer>
 
       <S.ButtonContainer>
-        <Button text="Add Investor" />
+        <Button
+          text="Add Investor"
+          onClick={() => setIsAddInvestorModal(true)}
+        />
 
-        <Button text="Remove Investor" />
+        <Button
+          text="Remove Investor"
+          onClick={() => setIsRemoveInvestorModal(true)}
+        />
       </S.ButtonContainer>
+
+      {isAddInvestorModal && (
+        <AddInvestorModal onClose={() => setIsAddInvestorModal(false)} />
+      )}
+
+      {isRemoveInvestorModal && (
+        <RemoveInvestorModal onClose={() => setIsRemoveInvestorModal(false)} />
+      )}
+
+      {isPrivacyModal && (
+        <PrivacySettingsModal onClose={() => setIsPrivacyModal(false)} />
+      )}
     </S.PrivacySettings>
   )
 }
