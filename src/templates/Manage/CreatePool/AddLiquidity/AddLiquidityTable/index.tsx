@@ -129,15 +129,21 @@ const AddLiquidityTable = ({
                   }
                   table
                 />
-                {Big(coin.amount).lte(Big(0)) && (
-                  <S.Error>Must be greater than 0</S.Error>
-                )}
-                {tokensBalance[coin.address] &&
-                  Big(coin.amount).gt(
-                    Big(tokensBalance[coin.address].toString()).div(
-                      Big(10).pow(coin.decimals)
+                <S.Error isError={Big(coin.amount).lte(Big(0))}>
+                  Must be greater than 0
+                </S.Error>
+                <S.Error
+                  isError={
+                    tokensBalance[coin.address] &&
+                    Big(coin.amount).gt(
+                      Big(tokensBalance[coin.address].toString()).div(
+                        Big(10).pow(coin.decimals)
+                      )
                     )
-                  ) && <S.Error>Exceeds wallet balance</S.Error>}
+                  }
+                >
+                  Exceeds wallet balance
+                </S.Error>
               </Td>
 
               <Td className="price">
