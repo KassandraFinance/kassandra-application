@@ -65,6 +65,7 @@ const queryPool = `{
   id
   address
   vault
+  vault_id
   controller
   chain_id
   chainId

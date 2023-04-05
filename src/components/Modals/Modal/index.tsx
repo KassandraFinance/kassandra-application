@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import Image from 'next/image'
 
 import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
@@ -7,7 +8,7 @@ import * as S from './styles'
 interface IModalProps {
   title: string;
   titleIcon?: JSX.Element | null;
-  children: JSX.Element;
+  children: ReactNode;
   onCloseModal: () => void;
 }
 

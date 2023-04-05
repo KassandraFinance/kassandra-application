@@ -26,41 +26,43 @@ export const InputContainer = styled.div`
 
 export const Input = styled.input`
   ${({ theme }) => css`
-    padding: 1.6rem;
-
     width: 100%;
     height: 4.8rem;
-
-    background: #1b1d22;
-    border: 0.1rem solid rgba(255, 255, 255, 0.15);
-    border-radius: 0.8rem;
+    padding: 1.6rem;
+    border: 1px solid rgb(255 255 255 / 0.15);
+    border-radius: 8px;
 
     color: ${theme.colors.grayDisabled};
-    font-family: 'Rubik';
-    font-style: normal;
     font-weight: ${theme.font.weight.light};
+    font-style: normal;
     font-size: ${theme.font.sizes.font16};
+    font-family: Rubik;
     line-height: 100%;
     letter-spacing: normal;
 
+    background: #1b1d22;
     outline: none;
 
-    &:valid {
-      border: 0.1rem solid ${theme.colors.success};
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: border;
+
+    &:valid:not([value='']) {
+      border: 1px solid ${theme.colors.success};
     }
 
     &:invalid:not([value='']) {
-      border: 0.1rem solid ${theme.colors.error};
+      border: 1px solid ${theme.colors.error};
     }
 
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-    transition-property: border;
+    &:read-only {
+      background-color: transparent;
+    }
 
     ::-webkit-inner-spin-button,
     ::-webkit-outer-spin-button {
-      -webkit-appearance: none;
       margin: 0;
+      appearance: none;
     }
   `}
 `
@@ -74,20 +76,19 @@ export const PlaceholderWrapper = styled.span`
     display: inline-block;
 
     height: 4.8rem;
+    border: 1px solid rgb(255 255 255 / 0);
 
-    border: 0.1rem solid rgba(255, 255, 255, 0);
     opacity: 1;
-
     pointer-events: none;
+
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: opacity;
 
     ${Input}:not([value='']) ~ &,
     ${Input}:focus ~ & {
       opacity: 0;
     }
-
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-    transition-property: opacity;
   `}
 `
 
@@ -117,12 +118,12 @@ export const Error = styled.p`
     font-size: ${theme.font.sizes.font14};
     line-height: 100%;
 
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: opacity;
+
     ${Input}:invalid:not([value='']) ~ & {
       display: block;
     }
-
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-    transition-property: opacity;
   `}
 `
