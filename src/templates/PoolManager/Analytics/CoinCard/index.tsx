@@ -20,9 +20,10 @@ interface ICoinCardProps {
   name: string;
   symbol: string;
   sparkLine: sparkData[];
-  priceChangeIn24h: string;
-  volume: number;
+  priceChangeIn7d: string;
+  marketCap: number;
   score24h: string;
+  price: string;
   dataList?: string[];
   period?: {
     time: number,
@@ -36,9 +37,10 @@ const CoinCard = ({
   name,
   symbol,
   sparkLine,
-  priceChangeIn24h,
-  volume,
+  priceChangeIn7d,
+  marketCap,
   score24h,
+  price,
   dataList,
   period
 }: ICoinCardProps) => {
@@ -60,7 +62,27 @@ const CoinCard = ({
     changeIcon = arrowAscendIcon
   }
 
-  const volatility = calcVolatility(sparkLine)
+  const volatility = React.useMemo(() => {
+    const size = (sparkLine.length / 7)
+    let aggIndex = 0
+    let index = 0
+    const data = sparkLine.reduce((acc, _value, i) => {
+      if (!acc[index]) {
+        acc.push({close: '0'})
+      }
+
+      if (i === aggIndex) {
+        acc[index].close = _value.close
+        index++
+        aggIndex += size
+      } else if (i > aggIndex) {
+        acc.push({ close: _value.close })
+      }
+      return acc
+    // eslint-disable-next-line prettier/prettier
+    }, [] as sparkData[])
+    return calcVolatility(data)
+  }, [])
 
   const sharpRatio = React.useMemo(() => {
     if (!sparkLine.length) return '0'
@@ -117,10 +139,10 @@ const CoinCard = ({
         </S.ChartWrapper>
 
         <S.ChartData>
-          <S.Volume>${BNtoDecimal(Big(volume), 2)}</S.Volume>
+          <S.Volume>${BNtoDecimal(Big(price), 2, 2, 2)}</S.Volume>
 
           <S.ChangeWrapper>
-            <S.Change>{priceChangeIn24h}%</S.Change>
+            <S.Change>{priceChangeIn7d}%</S.Change>
 
             <Image src={changeIcon} width={20} height={20} />
           </S.ChangeWrapper>
@@ -155,17 +177,17 @@ const CoinCard = ({
             </S.InfoValueWrapper>
           </S.Info>
           <S.Info>
-            <S.InfoName>Volume</S.InfoName>
+            <S.InfoName>Market Cap.</S.InfoName>
 
-            <S.InfoValue>${BNtoDecimal(Big(volume), 2)}</S.InfoValue>
+            <S.InfoValue>${BNtoDecimal(Big(marketCap), 2)}</S.InfoValue>
           </S.Info>
 
           <S.Info>
             <S.InfoName>Change</S.InfoName>
 
             <S.InfoValueWrapper>
-              <S.InfoValue value={Number(priceChangeIn24h)}>
-                {priceChangeIn24h}%
+              <S.InfoValue value={Number(priceChangeIn7d)}>
+                {priceChangeIn7d}%
               </S.InfoValue>
 
               <Image src={changeIcon} width={16} height={16} />

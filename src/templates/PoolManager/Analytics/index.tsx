@@ -83,7 +83,7 @@ type ResultWitdraw = {
 }
 
 const Analytics = (props: IAnalyticsProps) => {
-  const [volatilityPeriod, setVolatilityPeriod] = React.useState<string>('1W')
+  const [volatilityPeriod, setVolatilityPeriod] = React.useState<string>('1M')
   const [withdrawalPeriod, setWithdrawalPeriod] = React.useState<string>('1D')
   const [selectedPeriod, setSelectedPeriod] = React.useState<string>('1W')
   const [selectedType, setSelectedType] = React.useState<string>('price')
@@ -104,7 +104,10 @@ const Analytics = (props: IAnalyticsProps) => {
         timestamp: Math.trunc(
           new Date().getTime() / 1000 - periods[selectedPeriod]
         )
-      })
+      }),
+    {
+      refreshInterval: 60 * 1000
+    }
   )
 
   const { data: dataChainId } = useSWR(
@@ -114,7 +117,7 @@ const Analytics = (props: IAnalyticsProps) => {
         id
       }),
     {
-      refreshInterval: 60 * 60 * 24
+      refreshInterval: 60 * 60 * 1000
     }
   )
 
@@ -130,7 +133,10 @@ const Analytics = (props: IAnalyticsProps) => {
         week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
         month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
         year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365)
-      })
+      }),
+    {
+      refreshInterval: 60 * 1000
+    }
   )
 
   const { data: dataVolatility } = useSWR<Result>(
@@ -141,7 +147,10 @@ const Analytics = (props: IAnalyticsProps) => {
         timestamp: Math.trunc(
           new Date().getTime() / 1000 - periods[volatilityPeriod]
         )
-      })
+      }),
+    {
+      refreshInterval: 60 * 1000
+    }
   )
 
   const { data: dataWithdraws } = useSWR<ResultWitdraw>(
@@ -152,7 +161,10 @@ const Analytics = (props: IAnalyticsProps) => {
         timestamp: Math.trunc(
           new Date().getTime() / 1000 - periods[withdrawalPeriod]
         )
-      })
+      }),
+    {
+      refreshInterval: 60 * 1000
+    }
   )
 
   const { data: dataSharpRatio } = useSWR<Result>(
@@ -161,7 +173,10 @@ const Analytics = (props: IAnalyticsProps) => {
       request(BACKEND_KASSANDRA, query, {
         id,
         timestamp: Math.trunc(new Date().getTime() / 1000 - 60 * 60 * 24 * 365)
-      })
+      }),
+    {
+      refreshInterval: 60 * 1000
+    }
   )
 
   const withdraws = React.useMemo(() => {
@@ -233,8 +248,8 @@ const Analytics = (props: IAnalyticsProps) => {
           <StatusCard
             title="Volatility"
             value={volatility}
-            status={Big(volatility).gt(0) ? 'POSITIVE' : 'NEGATIVE'}
-            dataList={['1W', '1M', '3M', '6M', '1Y', 'ALL']}
+            status={'NEUTRAL'}
+            dataList={['1M', '3M', '6M', '1Y', 'ALL']}
             selected={volatilityPeriod}
             onClick={(period: string) => setVolatilityPeriod(period)}
           />
@@ -252,7 +267,13 @@ const Analytics = (props: IAnalyticsProps) => {
           <StatusCard
             title="Sharpe ratio"
             value={sharpRatio}
-            status={Big(sharpRatio).lt(-1) ? 'NEGATIVE' : 'NEUTRAL'}
+            status={
+              Big(sharpRatio).lt(1)
+                ? 'NEGATIVE'
+                : Big(sharpRatio).lt(2)
+                ? 'NEUTRAL'
+                : 'POSITIVE'
+            }
           />
         </S.StatsContainer>
       </S.ManagerOverviewContainer>

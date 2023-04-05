@@ -20,9 +20,9 @@ type Result = {
   contractName: string,
   name: string,
   symbol: string,
-  price: number,
+  price: string,
   image: string,
-  priceChangeIn24h: number,
+  priceChangePercentage7d: number,
   volume: number,
   marketCap: number,
   socialScore24h: number,
@@ -42,7 +42,9 @@ const PoolAssets = (props: IPoolAssetsProps) => {
       addresses
     : undefined
 
-  const { data } = useSWR<Result[]>(url)
+  const { data } = useSWR<Result[]>(url, {
+    refreshInterval: 60 * 5 * 1000
+  })
 
   return (
     <S.PoolAssets>
@@ -55,9 +57,10 @@ const PoolAssets = (props: IPoolAssetsProps) => {
               name={token.name}
               symbol={token.symbol}
               sparkLine={token.sparkline.map(line => ({ close: line }))}
-              priceChangeIn24h={token.priceChangeIn24h.toFixed(4)}
-              volume={token.volume}
+              priceChangeIn7d={token.priceChangePercentage7d.toFixed(4)}
+              marketCap={token.marketCap}
               score24h={token.socialScore24h.toFixed(2)}
+              price={token.price}
               period={{ time: 7, frame: 'days', abvFrame: 'D' }}
             />
           ))
