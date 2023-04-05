@@ -3,12 +3,13 @@ import Tippy from '@tippyjs/react'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 
-import { BNtoDecimal } from '../../../../../utils/numerals'
+import { BNtoDecimal } from '@/utils/numerals'
+import { abbreviateNumber } from '@/utils/abbreviateNumber'
 
 import CoinSummary from '../../SelectAssets/CoinSummary'
-import InputNumberRight from '../../../../../components/Inputs/InputNumberRight'
+import InputNumberRight from '@/components/Inputs/InputNumberRight'
 
-import tooltip from '../../../../../../public/assets/utilities/tooltip.svg'
+import tooltip from '@assets/utilities/tooltip.svg'
 
 import * as S from './styles'
 import { Table, THead, Tr, Th, TBody, Td } from '../../AssetsTable/styles'
@@ -148,21 +149,20 @@ const AddLiquidityTable = ({
 
               <Td className="balance">
                 {tokensBalance[coin.address]
-                  ? BNtoDecimal(
-                      Big(tokensBalance[coin.address].toString()).div(
-                        Big(10).pow(coin.decimals)
-                      ),
-                      2
+                  ? abbreviateNumber(
+                      Big(tokensBalance[coin.address].toString())
+                        .div(Big(10).pow(coin.decimals))
+                        .toString()
                     )
                   : 0}{' '}
                 <S.SecondaryText>
                   ~$
                   {tokensBalance[coin.address] && priceList
-                    ? BNtoDecimal(
+                    ? abbreviateNumber(
                         Big(tokensBalance[coin.address].toString())
                           .div(Big(10).pow(coin.decimals))
-                          .mul(Big(priceList[coin.address].usd)),
-                        2
+                          .mul(Big(priceList[coin.address].usd))
+                          .toString()
                       )
                     : 0}
                 </S.SecondaryText>
