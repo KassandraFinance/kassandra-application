@@ -3,34 +3,36 @@ import theme from '../../../styles/theme'
 
 export const Summary = styled.div`
   p {
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
     line-height: 1.5rem;
   }
 
   a {
     display: flex;
     align-items: flex-end;
+
     max-width: 100%;
-
-    font-family: ${theme.font.family};
-    color: ${theme.colors.snow};
-    font-size: ${theme.font.sizes.font14};
-    font-weight: ${theme.font.weight.light};
-    text-decoration: none;
-
-    background-color: rgba(255, 255, 255, 0.04);
     border: none;
     border-radius: 0.75rem;
 
-    transition: 0.15s;
+    color: ${theme.colors.snow};
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
+    font-family: ${theme.font.family};
+    text-decoration: none;
+
+    background-color: rgb(255 255 255 / 0.04);
     outline: none;
+
+    transition: 0.15s;
 
     svg {
       margin-left: ${theme.spacings.space8};
 
       path {
         color: white;
+
         transition: fill 0.15s ease;
       }
     }
@@ -48,11 +50,11 @@ export const Summary = styled.div`
 `
 
 export const Line = styled.div`
-  background-color: rgba(255, 255, 255, 0.1);
-
   width: 100%;
   height: 0.06rem;
   margin: ${theme.spacings.space24} 0;
+
+  background-color: rgb(255 255 255 / 0.1);
 `
 
 export const Title = styled.div`
@@ -62,42 +64,44 @@ export const Title = styled.div`
   h2 {
     margin-left: ${theme.spacings.space16};
 
-    font-size: ${theme.font.sizes.font18};
     font-weight: ${theme.font.weight.bold};
+    font-size: ${theme.font.sizes.font18};
   }
 `
 
 export const LinkContent = styled.div`
   display: flex;
   justify-content: space-between;
+
   max-width: 25rem;
 `
 
 export const ContractsName = styled.p`
   margin-bottom: 1.2rem;
+
   /* margin-top: 1.25rem; */
 
   font-weight: ${theme.font.weight.normal} !important;
-
   text-transform: uppercase;
 `
 
 export const CopyContract = styled.div`
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+
   max-width: 100%;
-  padding: 1.38rem;
   margin: 1rem 0;
-
-  font-family: ${theme.font.family};
-  font-size: ${theme.font.sizes.font14};
-  color: #fff;
-  text-decoration: none;
-
-  background-color: rgba(255, 255, 255, 0.04);
+  padding: 1.38rem;
   border: none;
   border-radius: 0.75rem;
+
+  color: #fff;
+  font-size: ${theme.font.sizes.font14};
+  font-family: ${theme.font.family};
+  text-decoration: none;
+
+  background-color: rgb(255 255 255 / 0.04);
 
   .metamask {
     margin-right: 0.5rem;
@@ -115,26 +119,20 @@ export const CopyContract = styled.div`
     display: flex;
     align-items: center;
 
+    border: none;
+
     color: ${theme.colors.snow};
-    font-family: ${theme.font.family};
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
+    font-family: ${theme.font.family};
     text-decoration: none;
 
     background-color: transparent;
-    border: none;
-
-    transition: 0.15s;
     outline: none;
+
     cursor: pointer;
 
-    @media (max-width: 1060px) {
-      margin-top: 6px;
-    }
-
-    @media (max-width: 538px) {
-      display: none;
-    }
+    transition: 0.15s;
 
     svg {
       margin-left: ${theme.spacings.space8};
@@ -149,11 +147,20 @@ export const CopyContract = styled.div`
         }
       }
     }
+
+    @media (max-width: 1060px) {
+      margin-top: 6px;
+    }
+
+    @media (max-width: 538px) {
+      display: none;
+    }
   }
 
   @media (max-width: 1060px) {
     flex-wrap: wrap;
     align-items: flex-start;
+
     padding: 1rem;
 
     > button {
@@ -172,16 +179,19 @@ export const CopyContract = styled.div`
 
 export const Blockchain = styled.div`
   display: flex;
-  align-items: center;
   gap: 1rem;
+  align-items: center;
 
   .poolIcon {
     border-radius: 50%;
   }
 
   .image {
+    overflow: hidden;
+
     max-width: 2.4rem;
     max-height: 2.4rem;
+    border-radius: 50%;
   }
 
   svg {
