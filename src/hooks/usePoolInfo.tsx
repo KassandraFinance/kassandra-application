@@ -19,6 +19,8 @@ export type GetPoolInfoType = {
     symbol: string,
     total_value_locked_usd: string,
     vault: string,
+    is_private_pool: boolean,
+    decimals: number,
     chain: {
       addressWrapped: string,
       blockExplorerUrl: string,
@@ -46,6 +48,8 @@ function usePoolInfo(userWalletAddress: string, poolId: string) {
         chainId
         logo
         pool_version
+        is_private_pool
+        decimals
         chain {
           id
           logo
