@@ -34,7 +34,7 @@ import activity from '../../../public/assets/tabManage/activity.svg'
 import investors from '../../../public/assets/tabManage/investors.svg'
 import rewards from '../../../public/assets/tabManage/rewards.svg'
 import brokers from '../../../public/assets/tabManage/brokers.svg'
-import info from '../../../public/assets/tabManage/info.svg'
+import details from '../../../public/assets/tabManage/info.svg'
 import gear from '../../../public/assets/icons/gear.svg'
 
 import * as S from './styles'
@@ -71,9 +71,9 @@ const tabs = [
     icon: brokers
   },
   {
-    asPathText: 'info',
-    text: 'Info',
-    icon: info
+    asPathText: 'Details',
+    text: 'Details',
+    icon: details
   }
 ]
 
@@ -103,7 +103,7 @@ const PoolManager = () => {
     investors: <Investors />,
     feeRewards: <FeeRewards />,
     brokers: <Brokers />,
-    info: <Details />
+    Details: <Details />
   }
 
   React.useEffect(() => {

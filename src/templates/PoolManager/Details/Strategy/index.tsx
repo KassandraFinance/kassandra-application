@@ -70,7 +70,7 @@ const Strategy = () => {
   ) {
     try {
       const nonce = crypto.randomBytes(12).toString('base64')
-      const logoToSign = logo ? keccak256(logo) : ''
+      const logoToSign = ''
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
       const signature = await web3.eth.personal.sign(
         message,
@@ -80,7 +80,6 @@ const Strategy = () => {
 
       const body = {
         controller,
-        logo: logo ? logo : undefined,
         summary,
         chainId,
         signature
