@@ -557,6 +557,10 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   return (
     <S.CreatePool>
       <ModalFullWindow handleCloseModal={() => {
+        if (stepNumber === 6) {
+          dispatch(setBackStepNumber())
+        }
+
         if (stepNumber === 7) {
           dispatch(setToFirstStep())
         }
