@@ -59,6 +59,7 @@ export interface IPoolSlice {
   id: string;
   address: string;
   vault: string;
+  vault_id: string;
   controller: string;
   chain_id: number;
   chainId: number;
@@ -84,6 +85,7 @@ const initialState: IPoolSlice = {
   id: '',
   address: '',
   vault: '',
+  vault_id: '',
   controller: '',
   chain_id: 0,
   chainId: 0,
