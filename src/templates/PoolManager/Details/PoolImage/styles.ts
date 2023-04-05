@@ -102,6 +102,7 @@ export const Label = styled.label`
   ${({ theme }) => css`
     width: 100%;
     padding: 1.6rem 3.2rem;
+    border: 1px solid rgb(255 255 255 / 0);
     border-radius: 4px;
 
     color: ${theme.colors.snow};
@@ -113,5 +114,11 @@ export const Label = styled.label`
     background: rgb(255 255 255 / 0.05);
 
     cursor: pointer;
+
+    transition: border 300ms ease-in-out;
+
+    &:hover {
+      border: 1px solid rgb(255 255 255 / 0.1);
+    }
   `}
 `
