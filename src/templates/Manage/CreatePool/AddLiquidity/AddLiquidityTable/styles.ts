@@ -1,9 +1,6 @@
 import styled, { css } from 'styled-components'
 import { Tr, Td, TBody } from '../../AssetsTable/styles'
-import {
-  Input,
-  InputButton
-} from '../../../../../components/Inputs/InputNumberRight/styles'
+import { Input, InputButton } from '@/components/Inputs/InputNumberRight/styles'
 
 export const AddLiquidityTable = styled.div`
   ${({ theme }) => css`
@@ -56,6 +53,8 @@ export const AddLiquidityTable = styled.div`
     }
 
     ${Td} {
+      position: relative;
+
       font-weight: ${theme.font.weight.medium};
     }
 
@@ -74,9 +73,8 @@ export const AddLiquidityTable = styled.div`
 `
 
 export const Tooltip = styled.div`
-  width: 15px;
-  height: 15px;
-
+  width: 1.5rem;
+  height: 1.5rem;
   margin-bottom: 0.1rem;
 `
 
@@ -89,10 +87,10 @@ export const SecondaryText = styled.span`
 
 export const Footer = styled.div`
   ${() => css`
-    background: rgba(255, 255, 255, 0.04);
+    background: rgb(255 255 255 / 0.04);
 
     ${Tr} {
-      border-top: 0.1rem solid rgba(255, 255, 255, 0.3);
+      border-top: 0.1rem solid rgb(255 255 255 / 0.3);
     }
   `}
 `
@@ -116,22 +114,22 @@ export const TotalContainer = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
     gap: 0.4rem;
+    align-items: flex-end;
   `}
 `
 
 export const Total = styled.span`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     gap: 0.4rem;
+    align-items: center;
 
     color: ${theme.colors.white};
     font-weight: ${theme.font.weight.medium};
     font-size: ${theme.font.sizes.font16};
-    text-align: right;
     letter-spacing: 0.02em;
+    text-align: right;
 
     @media (min-width: 768px) {
       font-size: ${theme.font.sizes.font20};
@@ -145,8 +143,8 @@ export const Available = styled.span`
     font-weight: ${theme.font.weight.normal};
     font-size: ${theme.font.sizes.font12};
     line-height: ${theme.font.sizes.font16};
-    text-align: right;
     letter-spacing: 0.05em;
+    text-align: right;
 
     @media (min-width: 768px) {
       font-size: ${theme.font.sizes.font14};
@@ -167,14 +165,14 @@ export const InputWrapper = styled.div<IInputWrapperProps>`
   ${({ theme, isBiggerThanZero, isBiggerThanBalance }) =>
     (isBiggerThanZero || isBiggerThanBalance) && css`
       ${Input} {
-        border-block: 0.1rem solid ${theme.colors.error};
         border-left: 0.1rem solid ${theme.colors.error};
+        border-block: 0.1rem solid ${theme.colors.error};
       }
 
       ${InputButton} {
-        border-block: 0.1rem solid ${theme.colors.error} !important;
         border-right: 0.1rem solid ${theme.colors.error} !important;
         border-left: none !inportant;
+        border-block: 0.1rem solid ${theme.colors.error} !important;
       }
   `}
 `
@@ -183,6 +181,8 @@ export const MaxButton = styled.button`
   ${({ theme }) => css`
     width: 3.9rem;
     height: 2rem;
+    border: 1px solid rgb(255 255 255 / 0.3);
+    border-radius: 3px;
 
     color: ${theme.colors.snow};
     font-weight: ${theme.font.weight.light};
@@ -191,13 +191,11 @@ export const MaxButton = styled.button`
     letter-spacing: 0.01em;
 
     background-color: transparent;
-    border: 0.1rem solid rgba(255, 255, 255, 0.3);
-    border-radius: 0.3rem;
 
     cursor: pointer;
 
-    transition-duration: 300ms;
     transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
     transition-property: color background-color;
 
     &:hover {
@@ -208,19 +206,28 @@ export const MaxButton = styled.button`
   `}
 `
 
-export const Error = styled.p`
-  ${({ theme }) => css`
-    /* display: none; */
+interface IErrorProps {
+  isError: boolean;
+}
 
-    margin-top: 0.8rem;
+// prettier-ignore
+export const Error = styled.p<IErrorProps>`
+  ${({ theme }) => css`
+    position: absolute;
+    bottom: -2rem;
 
     color: ${theme.colors.error};
     font-weight: ${theme.font.weight.light};
     font-size: ${theme.font.sizes.font14};
     line-height: 100%;
 
-    transition-duration: 300ms;
+    opacity: 0;
+
     transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
     transition-property: opacity;
+  `}
+  ${({ isError }) => isError && css`
+      opacity: 1;
   `}
 `

@@ -3,18 +3,15 @@ import { useInView } from 'react-intersection-observer'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 
-import { BNtoDecimal } from '../../../../utils/numerals'
+import { BNtoDecimal } from '@/utils/numerals'
+import { abbreviateNumber } from '@/utils/abbreviateNumber'
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import {
-  setTokens,
-  TokenType
-} from '../../../../store/reducers/poolCreationSlice'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setTokens, TokenType } from '@/store/reducers/poolCreationSlice'
 
-import InputSearch from '../../../../components/Inputs/InputSearch'
-
+import InputSearch from '@/components/Inputs/InputSearch'
+import Checkbox from '@/components/Inputs/Checkbox'
 import CoinSummary from '../SelectAssets/CoinSummary'
-import Checkbox from '../../../../components/Inputs/Checkbox'
 
 import * as S from './styles'
 
@@ -144,21 +141,20 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                   </S.Td>
                   <S.Td className="balance">
                     {tokenBalance[coin.id.toLowerCase()]
-                      ? BNtoDecimal(
-                          Big(
-                            tokenBalance[coin.id.toLowerCase()].toString()
-                          ).div(Big(10).pow(coin.decimals)),
-                          2
+                      ? abbreviateNumber(
+                          Big(tokenBalance[coin.id.toLowerCase()].toString())
+                            .div(Big(10).pow(coin.decimals))
+                            .toString()
                         )
                       : 0}{' '}
                     <S.SecondaryText>
                       ~$
                       {tokenBalance[coin.id.toLowerCase()] && priceList
-                        ? BNtoDecimal(
+                        ? abbreviateNumber(
                             Big(tokenBalance[coin.id.toLowerCase()].toString())
                               .div(Big(10).pow(coin.decimals))
-                              .mul(Big(priceList[coin.id.toLowerCase()].usd)),
-                            2
+                              .mul(Big(priceList[coin.id.toLowerCase()].usd))
+                              .toString()
                           )
                         : 0}
                     </S.SecondaryText>
