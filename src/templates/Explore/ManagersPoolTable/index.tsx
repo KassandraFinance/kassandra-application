@@ -1,25 +1,31 @@
 import React from 'react'
 import Image from 'next/image'
+import Big from 'big.js'
+import Link from 'next/link'
+import useSWR from 'swr'
+import request from 'graphql-request'
 
-import ImageProfile from '@/components/Governance/ImageProfile'
-import ModalViewCoin from '@/components/Modals/ModalViewCoin'
+import { GET_MANAGERS_POOLS, GET_USERS_VOTEWEIGHTS } from './graphql'
+import { BACKEND_KASSANDRA, SUBGRAPH_URL } from '@/constants/tokenAddresses'
+
+import { calcChange } from '@/utils/numerals'
+
+import Loading from '@/components/Loading'
+import ManagerInfo from './ManagerInfo'
 
 import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
 import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
-import eyeShowIcon from '@assets/utilities/eye-show.svg'
 
 import * as S from './styles'
 import {
   THead,
-  TR,
   TH,
   ColumnTitle,
   TableViewButtonContainer,
   TableViewButton,
   TBody,
-  TD,
-  Value,
-  ViewButton
+  TRHead,
+  Value
 } from '@/templates/Explore/CommunityPoolsTable/styles'
 import {
   TableLine,
@@ -27,8 +33,47 @@ import {
   ValueContainer,
   Value as V
 } from '@ui/Modals/ModalViewCoin/styles'
+import ModalViewCoin from '@/components/Modals/ModalViewCoin'
+
+type ITvlProps = {
+  close: string
+}
+
+type IManagerAddress = {
+  managers: {
+    id: string,
+    pool_count: number,
+    unique_investors: number,
+    total_value_locked_usd: string,
+    TVLDay: ITvlProps[],
+    TVLMonthly: ITvlProps[]
+  }[]
+}
+
+type IVoteWeightsProps = {
+  governances: {
+    totalVotingPower: string
+  }[],
+  users: {
+    id: string,
+    votingPower: string
+  }[]
+}
+
+type IManagerListProps = {
+  rank: number,
+  address: string,
+  poolCount: number,
+  valueManaged: string,
+  changeMonthly: string,
+  changeDay: string,
+  voteWeight: string
+}
 
 const ManagersPoolTable = () => {
+  const [ManagersList, setManagersList] = React.useState<IManagerListProps[]>(
+    []
+  )
   const [inViewCollum, setInViewCollum] = React.useState(1)
   const [isOpen, setIsOpen] = React.useState(false)
   const [managerData, setManagerData] = React.useState({
@@ -36,14 +81,87 @@ const ManagersPoolTable = () => {
     name: '',
     address: ''
   })
-  const [lineData, setLineData] = React.useState({
+  const [managerMobile, setManagerMobile] = React.useState({
     rank: 0,
-    valueManaged: 0,
-    fundsManaged: 0,
-    monthly: 0,
-    day: 0,
-    voteWeight: 0
+    address: '',
+    poolCount: 0,
+    valueManaged: '',
+    changeMonthly: '',
+    changeDay: '',
+    voteWeight: ''
   })
+
+  const params = {
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30)
+  }
+
+  const { data } = useSWR<IManagerAddress>(
+    [GET_MANAGERS_POOLS, params],
+    (query, { day, month }) =>
+      request(BACKEND_KASSANDRA, query, {
+        day,
+        month
+      })
+  )
+
+  const usersWalletAddresses = data && data.managers.map(manager => manager.id)
+
+  const { data: voteWeights } = useSWR<IVoteWeightsProps>(
+    [GET_USERS_VOTEWEIGHTS, usersWalletAddresses],
+    (query, usersWalletAddresses) =>
+      request(SUBGRAPH_URL, query, {
+        id_in: usersWalletAddresses
+      })
+  )
+
+  function handleGetManagers(data: IManagerAddress | undefined) {
+    if (!data || !voteWeights) return
+
+    const voteWeightsList: Record<string, string> = {}
+    voteWeights &&
+      voteWeights.users.forEach(user =>
+        Object.assign(voteWeightsList, { [user.id]: user.votingPower })
+      )
+
+    const managerList = data.managers.map((manage, index) => {
+      console.log(manage.TVLDay[0]?.close)
+      return {
+        rank: index + 1,
+        address: manage.id,
+        poolCount: manage.pool_count,
+        valueManaged: Big(manage.total_value_locked_usd).toFixed(2, 2),
+        changeMonthly: manage.TVLMonthly[0]?.close
+          ? calcChange(
+              Number(manage.total_value_locked_usd || 0),
+              Number(manage.TVLMonthly[0].close)
+            )
+          : '0',
+        changeDay: manage.TVLDay[0]?.close
+          ? calcChange(
+              Number(manage.total_value_locked_usd || 0),
+              Number(manage.TVLDay[0].close)
+            )
+          : '0',
+        voteWeight: Big(voteWeightsList[manage.id] ?? 0)
+          .mul(100)
+          .div(Big(voteWeights.governances[0].totalVotingPower ?? 0))
+          .toFixed(2, 2)
+      }
+    })
+
+    setManagersList(managerList)
+  }
+
+  function handleView(managerInfo: IManagerListProps) {
+    setManagerData({
+      logo: '',
+      name: managerInfo.address,
+      address: managerInfo.address
+    })
+    setManagerMobile(managerInfo)
+    setIsOpen(true)
+  }
 
   function handleCurrentInView(n: number) {
     setInViewCollum(prev => {
@@ -58,42 +176,21 @@ const ManagersPoolTable = () => {
     })
   }
 
-  function handleView(
-    token: string,
-    logo: string | null,
-    address: string,
-    rank: number,
-    valueManaged: number,
-    fundsManaged: number,
-    monthly: number,
-    day: number,
-    voteWeight: number
-  ) {
-    setManagerData({
-      logo: logo || '',
-      name: token,
-      address: address
-    })
-    setLineData({
-      rank: rank,
-      valueManaged: valueManaged,
-      fundsManaged: fundsManaged,
-      monthly: monthly,
-      day: day,
-      voteWeight: voteWeight
-    })
-    setIsOpen(true)
-  }
+  React.useEffect(() => {
+    handleGetManagers(data)
+  }, [data, voteWeights])
 
   return (
     <S.ManagersPoolTable>
       <THead>
-        <TR>
+        <TRHead>
           <TH>
             <ColumnTitle>#</ColumnTitle>
           </TH>
           <TH>
-            <ColumnTitle align="left">Manager</ColumnTitle>
+            <ColumnTitle align="left" id="manager">
+              Manager
+            </ColumnTitle>
           </TH>
           <TH isView={inViewCollum === 1}>
             <ColumnTitle align="right">Value Managed</ColumnTitle>
@@ -122,60 +219,42 @@ const ManagersPoolTable = () => {
               </TableViewButton>
             </TableViewButtonContainer>
           </TH>
-        </TR>
+        </TRHead>
       </THead>
 
       <TBody>
-        <TR>
-          <TD>
-            <Value align="left">1</Value>
-          </TD>
-          <TD>
-            <ImageProfile
-              address="0x4097B714eCD64bE697e61D4f04925B666c8e4369"
-              diameter={24}
-              hasAddress={true}
-              isLink={true}
-              tab="?tab=portfolio"
-            />
-          </TD>
-          <TD isView={inViewCollum === 1}>
-            <Value>$394,34</Value>
-          </TD>
-          <TD isView={inViewCollum === 2}>
-            <Value>3</Value>
-          </TD>
-          <TD isView={inViewCollum === 3}>
-            <Value value={28}>28%</Value>
-          </TD>
-          <TD isView={inViewCollum === 4}>
-            <Value value={8}>8%</Value>
-          </TD>
-          <TD isView={inViewCollum === 5}>
-            <Value>10,21%</Value>
-          </TD>
-
-          <TD>
-            <ViewButton
-              type="button"
-              onClick={() =>
-                handleView(
-                  '0x4097B714eCD64bE697e61D4f04925B666c8e4369',
-                  '',
-                  '0x4097B714eCD64bE697e61D4f04925B666c8e4369',
-                  1,
-                  394.34,
-                  3,
-                  28,
-                  8,
-                  10.21
-                )
-              }
-            >
-              <Image src={eyeShowIcon} />
-            </ViewButton>
-          </TD>
-        </TR>
+        {ManagersList.length > 0 ? (
+          ManagersList.map(manager => {
+            return (
+              <S.ManagerInfoConainer key={manager.address}>
+                <Link
+                  href={`/profile/${manager.address}?tab=managed-funds`}
+                  passHref
+                >
+                  <S.ManagerInfoDesktop>
+                    <ManagerInfo
+                      managerInfo={manager}
+                      inViewCollum={inViewCollum}
+                      handleView={handleView}
+                    />
+                  </S.ManagerInfoDesktop>
+                </Link>
+                <S.ManagerInfoMobile>
+                  <ManagerInfo
+                    managerInfo={manager}
+                    inViewCollum={inViewCollum}
+                    isLinkAddress={true}
+                    handleView={handleView}
+                  />
+                </S.ManagerInfoMobile>
+              </S.ManagerInfoConainer>
+            )
+          })
+        ) : (
+          <S.LoadingContainer>
+            <Loading marginTop={0} />
+          </S.LoadingContainer>
+        )}
       </TBody>
 
       <ModalViewCoin
@@ -188,37 +267,41 @@ const ManagersPoolTable = () => {
           <TableLineTitle>Rank</TableLineTitle>
 
           <ValueContainer>
-            <V>{lineData.rank}</V>
+            <V>{managerMobile.rank}</V>
           </ValueContainer>
         </TableLine>
         <TableLine>
           <TableLineTitle>Value Managed</TableLineTitle>
           <ValueContainer>
-            <V>${lineData.valueManaged}</V>
+            <V>${managerMobile.valueManaged}</V>
           </ValueContainer>
         </TableLine>
         <TableLine>
-          <TableLineTitle>Funds Managed</TableLineTitle>
+          <TableLineTitle>Pools Managed</TableLineTitle>
           <ValueContainer>
-            <V>{lineData.fundsManaged}</V>
+            <V>{managerMobile.poolCount}</V>
           </ValueContainer>
         </TableLine>
         <TableLine>
           <TableLineTitle>Monthly</TableLineTitle>
           <ValueContainer>
-            <V>{lineData.monthly}%</V>
+            <Value value={Number(managerMobile.changeMonthly)}>
+              {managerMobile.changeMonthly}%
+            </Value>
           </ValueContainer>
         </TableLine>
         <TableLine>
           <TableLineTitle>24h</TableLineTitle>
           <ValueContainer>
-            <V>{lineData.day}%</V>
+            <Value value={Number(managerMobile.changeDay)}>
+              {managerMobile.changeDay}%
+            </Value>
           </ValueContainer>
         </TableLine>
         <TableLine>
           <TableLineTitle>Vote Weight</TableLineTitle>
           <ValueContainer>
-            <V>{lineData.voteWeight}%</V>
+            <V>{managerMobile.voteWeight}%</V>
           </ValueContainer>
         </TableLine>
       </ModalViewCoin>

@@ -39,10 +39,33 @@ export const TBody = styled.div`
     border-radius: 0 0 8px 8px;
 
     background: rgba(255 255 255 / 0.05);
+
+    div:first-child {
+      border-top: none;
+    }
+    div:last-child {
+      border-bottom: none;
+    }
   `}
 `
 
 export const TR = styled.div`
+  ${() => css`
+    display: grid;
+    grid-template-columns: minmax(10rem, 1.5fr) 1fr 8rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns:
+        minmax(13.9rem, 1.5fr) repeat(3, 1fr) minmax(9rem, 1fr) minmax(
+          6.3rem,
+          1fr
+        )
+        minmax(6.3rem, 1fr);
+    }
+  `}
+`
+
+export const PoolInfoContainer = styled.div`
   ${({ theme }) => css`
     margin-inline: 1.6rem;
 
@@ -52,9 +75,7 @@ export const TR = styled.div`
     transition-timing-function: ease-in-out;
     transition-property: background-color border;
 
-    &:not(:last-of-type) {
-      border-bottom: 1px solid rgba(255 255 255 / 0.3);
-    }
+    border-bottom: 1px solid rgba(255 255 255 / 0.3);
 
     &:hover {
       margin: 0;
@@ -62,11 +83,9 @@ export const TR = styled.div`
 
       background-color: ${theme.colors.darkPurple};
 
-      &:not(:first-of-type) {
-        margin-top: -1px;
-        padding-top: 1px;
-        border-top: 1px solid rgba(255 255 255 / 0.3);
-      }
+      margin-top: -1px;
+      padding-top: 1px;
+      border-top: 1px solid rgba(255 255 255 / 0.3);
 
       @media (min-width: 768px) {
         padding-inline: 2.4rem;
@@ -75,26 +94,6 @@ export const TR = styled.div`
 
     @media (min-width: 768px) {
       margin-inline: 2.4rem;
-    }
-  `}
-`
-
-export const TRLink = styled.a`
-  ${() => css`
-    display: grid;
-    grid-template-columns: minmax(10rem, 1.5fr) 1fr 8rem;
-    gap: 1rem;
-
-    text-decoration: none;
-    cursor: pointer;
-
-    @media (min-width: 768px) {
-      grid-template-columns:
-        minmax(13.9rem, 1.5fr) repeat(3, 1fr) minmax(9rem, 1fr) minmax(
-          6.3rem,
-          1fr
-        )
-        minmax(6.3rem, 1fr);
     }
   `}
 `
@@ -361,5 +360,27 @@ export const ViewButton = styled.button`
 export const CoinModalContainer = styled.div`
   ${() => css`
     padding-right: 1.6rem;
+  `}
+`
+
+export const PoolInfoDesktop = styled.a`
+  ${() => css`
+    display: none;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    @media (min-width: 768px) {
+      display: block;
+    }
+  `}
+`
+
+export const PoolInfoMobile = styled.div`
+  ${() => css`
+    display: block;
+    @media (min-width: 768px) {
+      display: none;
+    }
   `}
 `
