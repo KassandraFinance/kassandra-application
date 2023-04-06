@@ -2,6 +2,9 @@ import React from 'react'
 import Image from 'next/image'
 import Big from 'big.js'
 
+import { BNtoDecimal, calcChange } from '@/utils/numerals'
+import { calcVolatility } from '../../utils'
+
 import InputList from '../../../../components/Inputs/InputList'
 import SparkLineChart, { sparkData } from '../SparkLineChart'
 
@@ -12,67 +15,45 @@ import comingSoon from '../../../../../public/assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 
-const dataList = ['1D', '1M', '3M', '6M', '1Y', 'ALL']
-
-const sparkDataMock: sparkData[] = [
-  {
-    close: '94318.37054523511140168523952945796',
-    timestamp: 1675728000
-  },
-  {
-    close: '95091.74746429377807836123162616105',
-    timestamp: 1675814400
-  },
-  {
-    close: '85241.17251719990223997877332444707',
-    timestamp: 1675900800
-  },
-  {
-    close: '85045.29234618072344962470317197355',
-    timestamp: 1675987200
-  },
-  {
-    close: '85257.29515923262661250333474590629',
-    timestamp: 1676073600
-  },
-  {
-    close: '83021.6322759742165446435973994729',
-    timestamp: 1676246400
-  },
-  {
-    close: '83021.6322759742165446435973994729',
-    // close: '94318.37054523511140168523952945796',
-    // close: '95091.74746429377807836123162616105',
-    timestamp: 1675814400
-  }
-]
-
 interface ICoinCardProps {
   image: string;
   name: string;
   symbol: string;
+  sparkLine: sparkData[];
+  priceChangeIn7d: string;
+  marketCap: number;
+  score24h: string;
+  price: string;
+  dataList?: string[];
+  period?: {
+    time: number,
+    frame: string,
+    abvFrame: string
+  };
 }
 
-const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
+const CoinCard = ({
+  image,
+  name,
+  symbol,
+  sparkLine,
+  priceChangeIn7d,
+  marketCap,
+  score24h,
+  price,
+  dataList,
+  period
+}: ICoinCardProps) => {
   const [dataPeriod, setDataPeriod] = React.useState<string>('1D')
   const [isShowMore, setIsShowMore] = React.useState<boolean>(false)
 
-  const change = Big(sparkDataMock[sparkDataMock.length - 1].close).sub(
-    sparkDataMock[0].close
-  )
   let color = '#FCFCFC'
   let changeIcon = null
-  if (
-    Big(sparkDataMock[sparkDataMock.length - 1].close).gt(
-      Big(sparkDataMock[0].close)
-    )
-  ) {
+  if (Big(sparkLine[sparkLine.length - 1].close).gt(Big(sparkLine[0].close))) {
     color = '#2CE878'
     changeIcon = arrowAscendIcon
   } else if (
-    Big(sparkDataMock[sparkDataMock.length - 1].close).lt(
-      Big(sparkDataMock[0].close)
-    )
+    Big(sparkLine[sparkLine.length - 1].close).lt(Big(sparkLine[0].close))
   ) {
     color = '#E8372C'
     changeIcon = arrowDescendIcon
@@ -80,6 +61,40 @@ const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
     color = '#FCFCFC'
     changeIcon = arrowAscendIcon
   }
+
+  const volatility = React.useMemo(() => {
+    const size = (sparkLine.length / 7)
+    let aggIndex = 0
+    let index = 0
+    const data = sparkLine.reduce((acc, _value, i) => {
+      if (!acc[index]) {
+        acc.push({close: '0'})
+      }
+
+      if (i === aggIndex) {
+        acc[index].close = _value.close
+        index++
+        aggIndex += size
+      } else if (i > aggIndex) {
+        acc.push({ close: _value.close })
+      }
+      return acc
+    // eslint-disable-next-line prettier/prettier
+    }, [] as sparkData[])
+    return calcVolatility(data)
+  }, [])
+
+  const sharpRatio = React.useMemo(() => {
+    if (!sparkLine.length) return '0'
+    if (Big(volatility).lte(0)) return '0'
+    const total = sparkLine.reduce((acc, value, i) => {
+      const oldClose = sparkLine[i + 1]?.close
+      if (!oldClose) return acc
+      return acc.add(calcChange(Number(value.close), Number(oldClose)))
+    }, Big(0))
+
+    return total.div(sparkLine.length).div(volatility).toFixed(2)
+  }, [sparkLine])
 
   return (
     <S.CoinCard isShowMore={isShowMore}>
@@ -106,23 +121,28 @@ const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
           </S.NameContainer>
 
           <S.InputListWrapper>
-            <InputList
-              dataList={dataList}
-              selected={dataPeriod}
-              onClick={(period: string) => setDataPeriod(period)}
-            />
+            {period && (
+              <S.PeriodSpan>{`${period.time}${period.abvFrame}`}</S.PeriodSpan>
+            )}
+            {dataList && (
+              <InputList
+                dataList={dataList}
+                selected={dataPeriod}
+                onClick={(period: string) => setDataPeriod(period)}
+              />
+            )}
           </S.InputListWrapper>
         </S.PoolAssetsCardName>
 
         <S.ChartWrapper>
-          <SparkLineChart data={sparkDataMock} color={color} />
+          <SparkLineChart data={sparkLine} color={color} />
         </S.ChartWrapper>
 
         <S.ChartData>
-          <S.Volume>$21,326.28</S.Volume>
+          <S.Volume>${BNtoDecimal(Big(price), 2, 2, 2)}</S.Volume>
 
           <S.ChangeWrapper>
-            <S.Change>{change.toFixed(2)}%</S.Change>
+            <S.Change>{priceChangeIn7d}%</S.Change>
 
             <Image src={changeIcon} width={20} height={20} />
           </S.ChangeWrapper>
@@ -131,6 +151,14 @@ const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
 
       <S.CoinCardBack isShowMore={isShowMore}>
         <S.MoreInfoContainer>
+          {period && (
+            <S.Info>
+              <S.InfoName>Time Frame</S.InfoName>
+
+              <S.InfoValue>{`${period.time} ${period.frame}`}</S.InfoValue>
+            </S.Info>
+          )}
+
           <S.Info>
             <S.InfoName>Asset</S.InfoName>
 
@@ -149,17 +177,17 @@ const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
             </S.InfoValueWrapper>
           </S.Info>
           <S.Info>
-            <S.InfoName>Volume</S.InfoName>
+            <S.InfoName>Market Cap.</S.InfoName>
 
-            <S.InfoValue>$21,326.28</S.InfoValue>
+            <S.InfoValue>${BNtoDecimal(Big(marketCap), 2)}</S.InfoValue>
           </S.Info>
 
           <S.Info>
             <S.InfoName>Change</S.InfoName>
 
             <S.InfoValueWrapper>
-              <S.InfoValue value={change.toNumber()}>
-                {change.toFixed(2)}%
+              <S.InfoValue value={Number(priceChangeIn7d)}>
+                {priceChangeIn7d}%
               </S.InfoValue>
 
               <Image src={changeIcon} width={16} height={16} />
@@ -168,23 +196,23 @@ const CoinCard = ({ image, name, symbol }: ICoinCardProps) => {
           <S.Info>
             <S.InfoName>Volatility</S.InfoName>
 
-            <S.InfoValue>500%</S.InfoValue>
+            <S.InfoValue>{volatility}%</S.InfoValue>
           </S.Info>
           <S.Info>
-            <S.InfoName>Sharper ratio</S.InfoName>
-            <S.InfoValue>0.8</S.InfoValue>
+            <S.InfoName>Sharpe ratio</S.InfoName>
+            <S.InfoValue>{sharpRatio}</S.InfoValue>
           </S.Info>
-          <S.Info>
+          {/* <S.Info>
             <S.InfoName>Risk factor</S.InfoName>
-            <S.InfoValue value={0.3}>0.3%</S.InfoValue>
-          </S.Info>
+            <S.InfoValue value={0.3}>?%</S.InfoValue>
+          </S.Info> */}
           <S.Info>
             <S.InfoName>Social score</S.InfoName>
 
             <S.InfoValueWrapper>
               <Image src={heimdallLogo} />
 
-              <S.InfoValue>0.8</S.InfoValue>
+              <S.InfoValue>{score24h}</S.InfoValue>
             </S.InfoValueWrapper>
           </S.Info>
         </S.MoreInfoContainer>

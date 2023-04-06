@@ -165,3 +165,10 @@ export const GET_SHARPRATIO = gql`
     }
   }
 `
+export const GET_CHAINID = gql`
+  query ($id: ID!) {
+    pool(id: $id) {
+      chainId
+    }
+  }
+`

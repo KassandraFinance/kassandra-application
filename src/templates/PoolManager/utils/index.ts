@@ -1,5 +1,7 @@
 import Big from 'big.js'
+
 import { BNtoDecimal } from '@/utils/numerals'
+
 import { ActivityCardProps, activityProps } from '../Activity'
 
 type IActivityProps = {
@@ -195,4 +197,31 @@ export function getManagerActivity(
   }
 
   return activityInfo
+}
+
+type DataVolatility = {
+  close: string
+}
+
+export function calcVolatility(dataVolatility: DataVolatility[]) {
+  const size = dataVolatility.length
+  if (size < 2) return '0'
+  const dayVolatility = new Array(size - 1).fill('0')
+  let total = '0'
+  for (let index = 0; index < size - 1; index++) {
+    dayVolatility[index] = Big(dataVolatility[index + 1].close)
+      .sub(dataVolatility[index].close)
+      .div(dataVolatility[index].close)
+      .toFixed()
+    total = Big(total).add(dayVolatility[index]).toFixed()
+  }
+  let average = Big(total).div(dayVolatility.length).toFixed()
+  total = '0'
+  for (let index = 0; index < size - 1; index++) {
+    total = Big(total).add(dayVolatility[index]).sub(average).pow(2).toFixed()
+  }
+
+  average = Big(total).div(dayVolatility.length).toFixed()
+
+  return Big(average).sqrt().toFixed(2)
 }
