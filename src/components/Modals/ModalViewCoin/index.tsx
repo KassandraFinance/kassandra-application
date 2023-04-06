@@ -5,6 +5,7 @@ import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
 import Overlay from '../../Overlay'
+import substr from '@/utils/substr'
 
 import * as S from './styles'
 
@@ -51,7 +52,9 @@ const ModalViewCoin = ({
               />
             )}
           </S.ImageWrapper>
-          <S.Title>{title?.name}</S.Title>
+          <S.Title>
+            {title?.address ? substr(title.address) : title.name}
+          </S.Title>
 
           <S.CloseButton type="button" onClick={onClick}>
             <Image src={closeIcon} />

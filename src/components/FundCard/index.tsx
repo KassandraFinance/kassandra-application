@@ -34,9 +34,10 @@ interface InfoPool {
 
 interface IFundCardProps {
   poolAddress: string;
+  link?: string;
 }
 
-const FundCard = ({ poolAddress }: IFundCardProps) => {
+const FundCard = ({ poolAddress, link }: IFundCardProps) => {
   const { trackEventFunction } = useMatomoEcommerce()
 
   const dateNow = new Date()
@@ -144,17 +145,13 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
     <>
       {infoPool.price > '0.1' ? (
         <S.CardContainer>
-          <Link
-            href={
-              router.asPath === '/manage'
-                ? `/manage/${poolAddress}`
-                : userWalletAddress === profileAddress
-                ? `/manage/${poolAddress}`
-                : `/pool/${poolAddress}`
-            }
+          <S.CardLinkContainer
+            as={link ? S.CardLinkContainer : S.CardContent}
+            href={link ?? ''}
             passHref
           >
-            <a
+            <S.CardLinkContent
+              as={link ? S.CardLinkContent : S.CardContent}
               onClick={() =>
                 trackEventFunction(
                   'click-on-link',
@@ -163,120 +160,118 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
                 )
               }
             >
-              <>
-                <S.CardHeader>
-                  <S.ImageContainer>
-                    <TokenWithNetworkImage
-                      tokenImage={{
-                        url: data.pool?.logo,
-                        height: 36,
-                        width: 36
-                      }}
-                      networkImage={{
-                        url: data.pool.chain?.logo,
-                        height: 16,
-                        width: 16
-                      }}
-                      blockies={{
-                        size: 8,
-                        scale: 5,
-                        seedName: data.pool.name ?? ''
-                      }}
-                    />
-                  </S.ImageContainer>
+              <S.CardHeader>
+                <S.ImageContainer>
+                  <TokenWithNetworkImage
+                    tokenImage={{
+                      url: data.pool?.logo,
+                      height: 36,
+                      width: 36
+                    }}
+                    networkImage={{
+                      url: data.pool.chain?.logo,
+                      height: 16,
+                      width: 16
+                    }}
+                    blockies={{
+                      size: 8,
+                      scale: 5,
+                      seedName: data.pool.name ?? ''
+                    }}
+                  />
+                </S.ImageContainer>
 
-                  <S.FundPrice>
-                    <h3>Price</h3>
-                    <span>
-                      {data?.pool
-                        ? `$${parseFloat(infoPool.price).toFixed(2)}`
-                        : '...'}
-                    </span>
-                  </S.FundPrice>
-                </S.CardHeader>
+                <S.FundPrice>
+                  <h3>Price</h3>
+                  <span>
+                    {data?.pool
+                      ? `$${parseFloat(infoPool.price).toFixed(2)}`
+                      : '...'}
+                  </span>
+                </S.FundPrice>
+              </S.CardHeader>
 
-                <S.CardBody>
-                  <S.FundName>
-                    <h3>{data?.pool?.name}</h3>
-                    <span>by {data?.pool?.foundedBy ?? 'Community'}</span>
-                  </S.FundName>
+              <S.CardBody>
+                <S.FundName>
+                  <h3>{data?.pool?.name}</h3>
+                  <span>by {data?.pool?.foundedBy ?? 'Community'}</span>
+                </S.FundName>
 
-                  <S.FundStatusContainer>
-                    <S.FundStatus>
-                      <span>${parseInt(infoPool.tvl)}K</span>
-                      <h4>Tvl</h4>
-                    </S.FundStatus>
+                <S.FundStatusContainer>
+                  <S.FundStatus>
+                    <span>${parseInt(infoPool.tvl)}K</span>
+                    <h4>Tvl</h4>
+                  </S.FundStatus>
 
-                    <S.FundStatus>
-                      <div>
-                        <span
-                          style={{
-                            color:
-                              parseFloat(changeWeek[1]) >= 0
-                                ? '#5EE56B'
-                                : '#EA3224'
-                          }}
-                        >
-                          {changeWeek[1]}%
-                        </span>
-                        <Image
-                          src={
+                  <S.FundStatus>
+                    <div>
+                      <span
+                        style={{
+                          color:
                             parseFloat(changeWeek[1]) >= 0
-                              ? arrowAscend
-                              : arrowDescend
-                          }
-                          width={16}
-                          height={16}
-                        />
-                      </div>
-                      <h4>monthly</h4>
-                    </S.FundStatus>
+                              ? '#5EE56B'
+                              : '#EA3224'
+                        }}
+                      >
+                        {changeWeek[1]}%
+                      </span>
+                      <Image
+                        src={
+                          parseFloat(changeWeek[1]) >= 0
+                            ? arrowAscend
+                            : arrowDescend
+                        }
+                        width={16}
+                        height={16}
+                      />
+                    </div>
+                    <h4>monthly</h4>
+                  </S.FundStatus>
 
-                    <S.FundStatus>
-                      <div>
-                        <span
-                          style={{
-                            color:
-                              parseFloat(changeWeek[0]) >= 0
-                                ? '#5EE56B'
-                                : '#EA3224'
-                          }}
-                        >
-                          {changeWeek[0]}%
-                        </span>
-                        <Image
-                          src={
+                  <S.FundStatus>
+                    <div>
+                      <span
+                        style={{
+                          color:
                             parseFloat(changeWeek[0]) >= 0
-                              ? arrowAscend
-                              : arrowDescend
-                          }
-                          width={16}
-                          height={16}
-                        />
-                      </div>
-                      <h4>24h</h4>
-                    </S.FundStatus>
-                  </S.FundStatusContainer>
+                              ? '#5EE56B'
+                              : '#EA3224'
+                        }}
+                      >
+                        {changeWeek[0]}%
+                      </span>
+                      <Image
+                        src={
+                          parseFloat(changeWeek[0]) >= 0
+                            ? arrowAscend
+                            : arrowDescend
+                        }
+                        width={16}
+                        height={16}
+                      />
+                    </div>
+                    <h4>24h</h4>
+                  </S.FundStatus>
+                </S.FundStatusContainer>
 
-                  <FundAreaChart areaChartData={price} color="#E843C4" />
+                <FundAreaChart areaChartData={price} color="#E843C4" />
 
-                  <S.TokenIconsContainer>
-                    <FundTokenIcons poolInfo={poolInfo ?? []} />
-                    {poolInfo.length > 3 && (
-                      <p>
-                        +{poolInfo.length - 3}
-                        <span> more</span>
-                      </p>
-                    )}
-                  </S.TokenIconsContainer>
-
-                  {data && (
-                    <FundBarChart poolObject={poolObject} poolInfo={poolInfo} />
+                <S.TokenIconsContainer>
+                  <FundTokenIcons poolInfo={poolInfo ?? []} />
+                  {poolInfo.length > 3 && (
+                    <p>
+                      +{poolInfo.length - 3}
+                      <span> more</span>
+                    </p>
                   )}
-                </S.CardBody>
-              </>
-            </a>
-          </Link>
+                </S.TokenIconsContainer>
+
+                {data && (
+                  <FundBarChart poolObject={poolObject} poolInfo={poolInfo} />
+                )}
+              </S.CardBody>
+            </S.CardLinkContent>
+          </S.CardLinkContainer>
         </S.CardContainer>
       ) : null}
     </>

@@ -47,7 +47,11 @@ const ManagedPools = () => {
         <S.ManagedPoolsContainer>
           {managerPools &&
             searchPool(filter, managerPools).map(pool => (
-              <FundCard key={pool.id} poolAddress={pool.id} />
+              <FundCard
+                key={pool.id}
+                poolAddress={pool.id}
+                link={`/manage/${pool.id}`}
+              />
             ))}
         </S.ManagedPoolsContainer>
       </S.ManagedPoolsWrapper>

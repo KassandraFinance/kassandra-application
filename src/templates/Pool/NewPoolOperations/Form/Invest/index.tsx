@@ -303,7 +303,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         operation.joinswapExternAmountIn({
           tokenInAddress: tokenSelect.address,
           tokenAmountIn: new BigNumber(Big(amountTokenIn).toFixed()),
-          minPoolAmountOut: new BigNumber(amountTokenOut.toFixed()).mul(slippageBase).div(slippageExp),
+          minPoolAmountOut: new BigNumber(amountTokenOut.toFixed(0)).mul(slippageBase).div(slippageExp),
           userWalletAddress,
           data: trasactionData,
           hasTokenInPool: !!checkTokenInThePool(pool.underlying_assets, tokenSelect.address),

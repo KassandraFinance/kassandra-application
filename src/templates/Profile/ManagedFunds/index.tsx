@@ -29,6 +29,9 @@ const ManagedFunds = () => {
     : Array.isArray(profileAddress)
     ? ''
     : profileAddress
+
+  const isPoolOwner = userWalletAddress === profileWalletAddress
+
   const { managerPools } = useManagerPools(profileWalletAddress)
 
   function handleCreatePool() {
@@ -43,12 +46,16 @@ const ManagedFunds = () => {
       {managerPools && managerPools.pools.length > 0 ? (
         <S.ManagedPoolsContainer>
           {managerPools?.pools.map(pool => (
-            <FundCard key={pool.id} poolAddress={pool.id} />
+            <FundCard
+              key={pool.id}
+              poolAddress={pool.id}
+              link={isPoolOwner ? `/manage/${pool.id}` : `/pool/${pool.id}`}
+            />
           ))}
         </S.ManagedPoolsContainer>
       ) : (
         <>
-          {userWalletAddress === profileWalletAddress ? (
+          {isPoolOwner ? (
             <AnyCard
               text="Looks like you aren’t managing any Pool."
               button2
