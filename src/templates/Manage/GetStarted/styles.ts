@@ -5,11 +5,10 @@ export const GetStarted = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 1rem;
+    align-items: center;
 
     width: 100%;
-
     padding-inline: 1.6rem;
 
     @media (min-width: 768px) {
@@ -36,6 +35,8 @@ export const ImageWrapper = styled.div`
 
 export const Content = styled.div`
   ${() => css`
+    margin-bottom: 2rem;
+
     @media (min-width: 992px) {
       max-width: 63.2rem;
     }
@@ -83,18 +84,18 @@ export const Text = styled.p`
 export const Help = styled.div`
   ${({ theme }) => css`
     width: 100%;
-    padding: 1.6rem;
     margin-bottom: 1.6rem;
-
-    background: rgba(255, 255, 255, 0.04);
-    border: 0.1rem solid rgba(255, 191, 0, 0.5);
-    border-radius: 0.8rem;
+    padding: 1.6rem;
+    border: 1px solid rgb(255 191 0 / 0.5);
+    border-radius: 8px;
 
     color: ${theme.colors.white};
     font-weight: ${theme.font.weight.light};
     font-size: ${theme.font.sizes.font14};
     line-height: ${theme.font.sizes.font24};
     letter-spacing: 0.05em;
+
+    background: rgb(255 255 255 / 0.04);
 
     @media (min-width: 768px) {
       margin-bottom: 3.2rem;
@@ -129,17 +130,17 @@ export const VotingPowerWrapper = styled.span`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.6rem;
 
     width: 100%;
+    padding: 1.6rem;
+    border-radius: 12px;
 
     color: ${theme.colors.white};
     font-weight: ${theme.font.weight.medium};
     font-size: ${theme.font.sizes.font14};
     line-height: 100%;
 
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 1.2rem;
+    background: rgb(255 255 255 / 0.04);
 
     @media (min-width: 768px) {
       font-size: ${theme.font.sizes.font16};
