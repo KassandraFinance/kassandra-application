@@ -287,7 +287,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
         </Link>
         <S.UserInfoContainer isOpen={isOpen}>
           {userWalletAddress.length > 0 ? (
-            <Link href={`/profile/${userWalletAddress}`}>
+            <Link href={`/manage`}>
               <S.UserHeader>
                 <S.UserImage>
                   <img
@@ -375,32 +375,22 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
         )}
         <S.SideBarContainer>
           <S.ButtonWrapper isOpen={isOpen}>
-            {userWalletAddress.length !== 42 ? (
-              <Button
-                text="Connect Wallet"
-                backgroundSecondary
-                fullWidth
-                icon={
-                  <S.PlusIconWrapper>
-                    <Image src={walletIcon} />
-                  </S.PlusIconWrapper>
-                }
-                onClick={() => dispatch(setModalWalletActive(true))}
-              />
-            ) : (
-              <Button
-                text="Create New Pool"
-                backgroundSecondary
-                fullWidth
-                type="button"
-                icon={
-                  <S.PlusIconWrapper>
-                    <Image src={plusIcon} width={12} height={12} />
-                  </S.PlusIconWrapper>
-                }
-                onClick={handleCreatePool}
-              />
-            )}
+            {userWalletAddress.length === 42 &&
+              managerPools &&
+              managerPools.pools.length > 0 && (
+                <Button
+                  text="Create New Pool"
+                  backgroundSecondary
+                  fullWidth
+                  type="button"
+                  icon={
+                    <S.PlusIconWrapper>
+                      <Image src={plusIcon} width={12} height={12} />
+                    </S.PlusIconWrapper>
+                  }
+                  onClick={handleCreatePool}
+                />
+              )}
           </S.ButtonWrapper>
         </S.SideBarContainer>
       </S.SideBarBody>
