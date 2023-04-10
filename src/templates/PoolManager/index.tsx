@@ -22,7 +22,6 @@ import FeeRewards from './FeeRewards'
 import Analytics from './Analytics'
 import Allocations from './Allocations'
 import Investors from './Investors'
-import ComingSoon from './ComingSoon'
 import ManageAssets from './ManageAssets'
 import Activity from './Activity'
 import Brokers from './Brokers'
@@ -112,6 +111,18 @@ const PoolManager = () => {
     }
     return
   }, [isManager])
+
+  React.useEffect(() => {
+    if (!router.isReady) {
+      return
+    }
+
+    if (!router.query.tab) {
+      return
+    }
+
+    setIsSelectTab(router.query.tab)
+  }, [router])
 
   return (
     <S.PoolManager>
