@@ -287,7 +287,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
         </Link>
         <S.UserInfoContainer isOpen={isOpen}>
           {userWalletAddress.length > 0 ? (
-            <Link href={`/profile/${userWalletAddress}`}>
+            <Link href={`/manage`}>
               <S.UserHeader>
                 <S.UserImage>
                   <img
