@@ -348,7 +348,8 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
                     >
                       <Image
                         src={coin.asset?.token?.logo || notFoundIcon}
-                        layout="fill"
+                        width={18}
+                        height={18}
                       />
                     </S.CoinImageWrapper>
                   )
