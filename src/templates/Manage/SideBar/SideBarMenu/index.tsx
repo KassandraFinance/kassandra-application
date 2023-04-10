@@ -18,7 +18,7 @@ interface ISideBarMenuProps {
 }
 
 const SideBarMenu = ({ title, icon, isSideBarOpen }: ISideBarMenuProps) => {
-  const [isOpen, setIsOpen] = React.useState<boolean>(false)
+  const [isOpen, setIsOpen] = React.useState<boolean>(true)
 
   const router = useRouter()
   const poolQuery = router.query.pool
