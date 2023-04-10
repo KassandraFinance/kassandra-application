@@ -1,7 +1,9 @@
 import styled, { css } from 'styled-components'
 
 export const SelectAssets = styled.div`
-  ${() => css``}
+  ${() => css`
+    margin-bottom: 12rem;
+  `}
 `
 
 export const TextContainer = styled.div`

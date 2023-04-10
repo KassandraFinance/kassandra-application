@@ -83,13 +83,19 @@ export const InputsRadioContent = styled.span`
   `}
 `
 
-export const PrivateAddressContainer = styled.div`
+interface IPrivateAddressContainerProps {
+  isShow: boolean;
+}
+
+// prettier-ignore
+export const PrivateAddressContainer = styled.div<IPrivateAddressContainerProps>`
   ${({ theme }) => css`
-    animation: ${Opacity} 1000ms ease;
+    opacity: 0;
+    visibility: hidden;
 
     transition-timing-function: ease-in-out;
     transition-duration: 300ms;
-    transition-property: opacity;
+    transition-property: opacity visibility;
 
     p:first-child {
       margin-top: 0.6rem;
@@ -101,6 +107,10 @@ export const PrivateAddressContainer = styled.div`
       line-height: 1.4rem;
       text-transform: uppercase;
     }
+  `}
+  ${({ isShow }) => isShow && css`
+      opacity: 1;
+      visibility: visible;
   `}
 `
 
@@ -114,8 +124,8 @@ export const InputAddressContainer = styled.div<IInputAddressContainerProps>`
   ${({ theme }) => css`
     position: relative;
 
-    border: 0.1rem solid rgb(255 255 255 / 0.15);
-    border-radius: 0.8rem;
+    border: 1px solid rgb(255 255 255 / 0.15);
+    border-radius: 8px;
 
     background: #1b1d22;
 
@@ -138,7 +148,7 @@ export const InputAddressContainer = styled.div<IInputAddressContainerProps>`
   `}
   ${({ theme, hasValue, isValid }) =>
     hasValue && css`
-      border: 0.1rem solid
+      border: 1px solid
         ${isValid ? theme.colors.success : theme.colors.error};
   `}
 `
@@ -183,7 +193,7 @@ export const HasAddress = styled.div`
     p {
       width: 100%;
       padding: 1.6rem 1.2rem;
-      border-radius: 0.8rem;
+      border-radius: 8px;
 
       background-color: #26282d;
 
@@ -200,7 +210,7 @@ export const HasAddress = styled.div`
 
       padding: 1.6rem 1.2rem;
       border: none;
-      border-radius: 0.8rem;
+      border-radius: 8px;
 
       background-color: #26282d;
 
@@ -224,7 +234,7 @@ export const PrivateAddress = styled.li`
 
     width: 100%;
     padding: 0.8rem 1.6rem;
-    border-radius: 0.4rem;
+    border-radius: 4px;
 
     background: rgb(255 255 255 / 0.05);
 
@@ -241,7 +251,7 @@ export const PrivateAddress = styled.li`
       display: flex;
 
       width: 1rem;
-      border-radius: 0.8rem;
+      border-radius: 8px;
 
       transition: background-color 0.2s ease;
 
@@ -313,15 +323,6 @@ const PrivateAddressAni = keyframes`
   }
   to {
     transform: translateX(0);
-    opacity: 1;
-  }
-`
-
-const Opacity = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
     opacity: 1;
   }
 `
