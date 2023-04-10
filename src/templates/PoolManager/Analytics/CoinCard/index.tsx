@@ -49,11 +49,11 @@ const CoinCard = ({
 
   let color = '#FCFCFC'
   let changeIcon = null
-  if (Big(sparkLine[sparkLine.length - 1].close).gt(Big(sparkLine[0].close))) {
+  if (Big(priceChangeIn7d).gt(0)) {
     color = '#2CE878'
     changeIcon = arrowAscendIcon
   } else if (
-    Big(sparkLine[sparkLine.length - 1].close).lt(Big(sparkLine[0].close))
+    Big(priceChangeIn7d).lt(0)
   ) {
     color = '#E8372C'
     changeIcon = arrowDescendIcon
