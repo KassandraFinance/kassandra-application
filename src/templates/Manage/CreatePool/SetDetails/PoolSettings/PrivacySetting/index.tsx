@@ -110,7 +110,8 @@ const PoolSettings = ({
             ref={InputRef}
             required={
               poolData.privateAddressList &&
-              poolData?.privateAddressList?.length < 1 === true
+              poolData?.privateAddressList?.length < 1 === true &&
+              poolData.privacy === 'private'
             }
           />
 

@@ -22,6 +22,7 @@ import KassandraManagedControllerFactoryAbi from '../../../constants/abi/Kassand
 import KassandraControlerAbi from '../../../constants/abi/KassandraController.json'
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { SAVE_POOL } from './graphql'
+import Web3 from 'web3'
 
 import ContainerButton from '../../../components/ContainerButton'
 import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
@@ -109,7 +110,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   async function getIsAproved(tokens: Array<Token>) {
     const tokensNotAproved: Array<Token> = []
     for (const token of tokens) {
-      const { allowance } = ERC20(token.address)
+      const { allowance } = ERC20(token.address, new Web3(networks[poolData.networkId ?? 137].rpc))
       const isAproved = await allowance(networks[poolData.networkId ?? 137].factory, userWalletAddress, token.amount)
       if (isAproved === false) {
         tokensNotAproved.push(token)
@@ -239,9 +240,9 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       const factory = networks[poolData.networkId ?? 137].factory
       const approved = await new Promise<boolean>(resolve => {
         approve(factory, userWalletAddress, (error: MetamaskError, txHash: string) =>
-        callBack(error, txHash, { token, contractApprove: factory, allowance }).then(result => {
-          resolve(result)
-        }))
+          callBack(error, txHash, { token, contractApprove: factory, allowance }).then(result => {
+            resolve(result)
+          }))
       })
       if (!approved) break
     }
@@ -251,9 +252,9 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     // eslint-disable-next-line prettier/prettier
     const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
 
-      await controller.methods.addAllowedAddresses(investorsList.map(investor => investor.address)).send({
-        from: userWalletAddress
-      }, callBack)
+    await controller.methods.addAllowedAddresses(investorsList.map(investor => investor.address)).send({
+      from: userWalletAddress
+    }, callBack)
   }
 
   async function getTransactionsList() {
