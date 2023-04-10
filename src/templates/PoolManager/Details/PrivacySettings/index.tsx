@@ -43,17 +43,17 @@ const PrivacySettings = () => {
 
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
+  const setAddressesOfPrivateInvestors = async () => {
+    const privateInvestorsContract = new web3.eth.Contract((PrivateInvestors as unknown) as AbiItem, networks[poolInfo?.chainId ?? 137].privateInvestor)
+    const addresses = await privateInvestorsContract.methods.getInvestors( poolInfo?.address, 0, 100).call()
+    setPrivateInvestors(addresses)
+  }
+
   React.useEffect(() => {
     if (!poolInfo) return
-    const setAddressesOfPrivateInvestors = async (privateInvestorAddr: string, pool: string) => {
-      const privateInvestorsContract = new web3.eth.Contract((PrivateInvestors as unknown) as AbiItem, privateInvestorAddr)
-      const addresses = await privateInvestorsContract.methods.getInvestors(pool, 0, 100).call()
-      if (addresses) {
-        setPrivateInvestors(addresses)
-      }
-    }
-
-    setAddressesOfPrivateInvestors(networks[poolInfo.chainId].privateInvestor, poolInfo.address)
+    ;(async () => {
+      await setAddressesOfPrivateInvestors()
+    })()
   }, [userWalletAddress, poolInfo])
 
   return (
@@ -136,11 +136,11 @@ const PrivacySettings = () => {
       </S.ButtonContainer>
 
       {isAddInvestorModal && (
-        <AddInvestorModal onClose={() => setIsAddInvestorModal(false)} />
+        <AddInvestorModal onClose={() => setIsAddInvestorModal(false)} setAddressesOfPrivateInvestors={setAddressesOfPrivateInvestors} />
       )}
 
       {isRemoveInvestorModal && (
-        <RemoveInvestorModal onClose={() => setIsRemoveInvestorModal(false)} />
+        <RemoveInvestorModal onClose={() => setIsRemoveInvestorModal(false)} addressesList={privateInvestors} setAddressesOfPrivateInvestors={setAddressesOfPrivateInvestors}/>
       )}
 
       {isPrivacyModal && (
