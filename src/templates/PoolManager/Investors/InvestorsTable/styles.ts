@@ -19,6 +19,7 @@ export const InvestorsTable = styled.div`
 
     ${Image} {
       justify-content: flex-start;
+      pointer-events: none;
 
       span,
       a {
@@ -29,13 +30,6 @@ export const InvestorsTable = styled.div`
         font-size: ${theme.font.sizes.font14};
         line-height: 135%;
         letter-spacing: 0.05em;
-      }
-
-      &:hover {
-        span,
-        a {
-          color: ${theme.colors.cyan};
-        }
       }
     }
   `}
