@@ -29,7 +29,7 @@ const Page = ({ id }: Props) => {
         <meta
           property="og:image"
           key="ogImage"
-          content={`https://dev.kassandra.finance/api/funds/shared?id=${id}`}
+          content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
         <meta property="og:url" content={`/shared/${id}`} />
         <meta
@@ -40,7 +40,7 @@ const Page = ({ id }: Props) => {
         <meta
           name="twitter:image"
           key="twitterImage"
-          content={`https://dev.kassandra.finance/api/funds/shared?id=${id}`}
+          content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
         <meta property="og:image:width" content="1000" />
         <meta property="og:image:height" content="500" />
@@ -48,7 +48,7 @@ const Page = ({ id }: Props) => {
 
       <div>
         <img
-          src={`https://dev.kassandra.fianance/api/funds/shared?id=${id}`}
+          src={`https://app.kassandra.fianance/api/funds/shared?id=${id}`}
           alt=""
         />
       </div>
