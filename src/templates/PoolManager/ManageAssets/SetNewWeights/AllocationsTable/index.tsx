@@ -32,6 +32,8 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
   )
 
   function handleCalcNewWeights(value: number, tokenInfo: AssetType) {
+    if (value > 100 || value < 0) return
+
     let totalWeight = Big(0)
     const poolWeightsRebalanced = {}
     const formattedValue = Big(value).div(100)
