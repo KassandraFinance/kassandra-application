@@ -1,7 +1,7 @@
 import React from 'react'
 import Tippy from '@tippyjs/react'
 
-import { useAppDispatch } from '@/store/hooks'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setPeriodSelect } from '@/store/reducers/rebalanceAssetsSlice'
 
 import InputRadio from '../../../../../components/Inputs/InputRadio'
@@ -13,12 +13,14 @@ const ExecutionPeriod = () => {
   const [timeValue, setTimeValue] = React.useState<number>()
   const [timePeriodSelect, setTimePeriodSelect] = React.useState('optimized')
 
+  const { periodSelect } = useAppSelector(state => state.rebalanceAssets)
   const dispatch = useAppDispatch()
 
   function handleClickInput(event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value
 
     setTimePeriodSelect(value)
+    setTimeValue(0)
     switch (value) {
       case 'optimized':
         dispatch(setPeriodSelect(72))
@@ -53,7 +55,29 @@ const ExecutionPeriod = () => {
   }
 
   React.useEffect(() => {
-    dispatch(setPeriodSelect(72))
+    if (periodSelect > 0) {
+      switch (periodSelect) {
+        case 72:
+          setTimePeriodSelect('optimized')
+          return
+
+        case 48:
+          setTimePeriodSelect('average')
+          return
+
+        case 24:
+          setTimePeriodSelect('fast')
+          return
+
+        default:
+          setTimePeriodSelect('')
+          setTimeValue(periodSelect)
+          return
+      }
+    } else {
+      setTimePeriodSelect('optimized')
+      dispatch(setPeriodSelect(72))
+    }
   }, [])
 
   return (
@@ -116,7 +140,7 @@ const ExecutionPeriod = () => {
         </S.SelectPeriodCotainer>
 
         <S.PersonalizePeriodContainer>
-          <span>Personalize</span>
+          <span>Customize</span>
           <S.PersonalizePeriod>
             <p>
               The period for executing the rebalance must be between 24 and 72
@@ -131,12 +155,14 @@ const ExecutionPeriod = () => {
               step={1}
             />
           </S.PersonalizePeriod>
-          {timeValue && (timeValue > 72 || timeValue < 24) && (
-            <S.ErrorPeriod>
-              The amount of time for the rebalancing process must be higher than
-              24 and lower than 72 hours
-            </S.ErrorPeriod>
-          )}
+          {timeValue
+            ? (timeValue > 72 || timeValue < 24) && (
+                <S.ErrorPeriod>
+                  The amount of time for the rebalancing process must be higher
+                  than 24 and lower than 72 hours
+                </S.ErrorPeriod>
+              )
+            : null}
         </S.PersonalizePeriodContainer>
       </S.ExecutionPeriodBody>
     </S.ExecutionPeriod>
