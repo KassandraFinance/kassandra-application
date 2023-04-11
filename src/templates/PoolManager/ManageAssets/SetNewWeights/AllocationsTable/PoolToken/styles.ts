@@ -52,6 +52,7 @@ export const TokenName = styled.a`
     display: flex;
     align-items: center;
     gap: 0.4rem;
+    max-width: 10rem;
 
     color: #fcfcfc;
     font-size: ${theme.font.sizes.font14};
@@ -59,6 +60,7 @@ export const TokenName = styled.a`
     line-height: 104%;
 
     text-decoration: none;
+    white-space: nowrap;
 
     cursor: pointer;
   `}
@@ -166,8 +168,18 @@ export const Allocation = styled.td`
     font-weight: ${theme.font.weight.medium};
     line-height: 100%;
 
+    p {
+      width: 7.5rem;
+      text-align: right;
+    }
+
     @media (max-width: 745px) {
       grid-area: porcentage;
+
+      p {
+        width: 100%;
+        text-align: center;
+      }
     }
   `}
 `
