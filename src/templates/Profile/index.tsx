@@ -6,6 +6,7 @@ import useSWR from 'swr'
 import request from 'graphql-request'
 import Big from 'big.js'
 import { toChecksumAddress } from 'web3-utils'
+import Web3 from 'web3'
 
 import { useAppSelector } from '../../store/hooks'
 
@@ -136,11 +137,11 @@ const Profile = () => {
 
   const router = useRouter()
   const { chainId, userWalletAddress } = useAppSelector(state => state)
+  const chain = networks[43114]
 
   const votingPower = useVotingPower(Staking)
-  const { userInfo } = useStakingContract(Staking)
+  const { userInfo } = useStakingContract(Staking, new Web3(chain.rpc))
   const { getPriceKacyAndLP } = usePriceLP()
-  const { metamaskInstalled } = useConnect()
 
   const profileAddress = router.query.profileAddress
   const isSelectQueryTab = router.query.tab
@@ -152,8 +153,6 @@ const Profile = () => {
 
   const { data } = useSWR<Response>([GET_PROFILE], query => request(SUBGRAPH_URL, query))
 
-  const chain = networks[43114]
-
   async function getTokenAmountInPool(pid: number) {
     try {
       const userInfoResponse = await userInfo(pid, profileAddress)
@@ -164,21 +163,24 @@ const Profile = () => {
     }
   }
 
-  async function getBalanceInWallet(id: string) {
-    try {
-      const ERC20Contract = ERC20(id)
-      const balanceToken = await ERC20Contract.balance(walletUserString)
+  async function getBalanceInWallet(ids: Array<string>) {
+    const valueInWallet: IAssetsValueWalletProps = {}
+    for (const id of ids) {
+      try {
+        const ERC20Contract = ERC20(id, new Web3(chain.rpc))
+        const balanceToken = await ERC20Contract.balance(walletUserString)
 
-      setAssetsValueInWallet(prevState => ({
-        ...prevState,
-        [id]: balanceToken
-      }))
-    } catch (error) {
-      setAssetsValueInWallet(prevState => ({
-        ...prevState,
-        [id]: new BigNumber(0)
-      }))
+        Object.assign(valueInWallet, {
+          [id]: balanceToken
+        })
+      } catch (error) {
+        Object.assign(valueInWallet, {
+          [id]: new BigNumber(0)
+        })
+      }
     }
+
+    setAssetsValueInWallet(valueInWallet)
   }
 
   async function getLiquidityPoolPriceInDollar() {
@@ -191,9 +193,8 @@ const Profile = () => {
       }))
     }
 
-    if (priceLP && chain.chainId === chainId) {
+    if (priceLP) {
       const priceLPJoe = await getPriceKacyAndLP(LP_KACY_AVAX_JOE, LPDaiAvax, true)
-
       if (priceLPJoe.priceLP) {
         setPriceToken(prevState => ({
           ...prevState,
@@ -212,12 +213,13 @@ const Profile = () => {
       amount: new BigNumber(0)
     }
 
-    setCardStakesPool([])
+    const stakeObject: Array<IKacyLpPool> = []
 
+    const ids: Array<string> = []
     await Promise.all(
       allPools.map(async pool => {
         const tokenAmountInPool = await getTokenAmountInPool(pool.pid)
-        getBalanceInWallet(pool.address)
+        ids.push(pool.address)
 
         if (pool.symbol === 'KACY') {
           const kacyAmount = kacyObject.amount
@@ -231,24 +233,22 @@ const Profile = () => {
             amount: kacyAmount.add(tokenAmountInPool)
           }
         } else {
-          setCardStakesPool(prevState => [
-            ...prevState,
-            {
-              amount: tokenAmountInPool,
-              address: pool.address,
-              pid: pool.pid,
-              poolName: pool.properties.title
-                ? pool.properties.title
-                : pool.symbol,
-              properties: pool.properties,
-              symbol: pool.symbol
-            }
-          ])
+          stakeObject.push({
+            amount: tokenAmountInPool,
+            address: pool.address,
+            pid: pool.pid,
+            poolName: pool.properties.title
+              ? pool.properties.title
+              : pool.symbol,
+            properties: pool.properties,
+            symbol: pool.symbol
+          })
         }
       })
     )
 
-    setCardStakesPool(prevState => [...prevState, kacyObject])
+    setCardStakesPool([...stakeObject, kacyObject])
+    getBalanceInWallet(ids)
   }
 
   const handleAccountChange = ((account: string[]) => {
@@ -273,18 +273,18 @@ const Profile = () => {
   React.useEffect(() => {
     if (data?.pools) {
       data.pools.map(pool => {
-          const prodPrice = new Big(pool.price_usd)
+        const prodPrice = new Big(pool.price_usd)
 
-          setPriceToken(prevState => ({
-            ...prevState,
-            [pool.symbol]: prodPrice
-          }))
+        setPriceToken(prevState => ({
+          ...prevState,
+          [pool.symbol]: prodPrice
+        }))
 
-          setMyFunds(prevState => ({
-            ...prevState,
-            [pool.address]: pool.address
-          }))
-        }
+        setMyFunds(prevState => ({
+          ...prevState,
+          [pool.address]: pool.address
+        }))
+      }
       )
     }
   }, [data, walletUserString])
@@ -312,11 +312,6 @@ const Profile = () => {
   }, [router])
 
   React.useEffect(() => {
-    if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
-      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId)) {
-      return
-    }
-
     if (profileAddress) {
       getAmountToken()
       getLiquidityPoolPriceInDollar()
@@ -324,11 +319,6 @@ const Profile = () => {
   }, [profileAddress, chainId])
 
   React.useEffect(() => {
-    if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
-      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId)) {
-      return
-    }
-
     let tokenAmountInTokenizedFunds = new Big(0)
     let tokenAmountInAssetsToken = new Big(0)
 
@@ -354,13 +344,9 @@ const Profile = () => {
       tokenizedFunds: tokenAmountInAssetsToken,
       totalInvestmented: tokenAmountInTokenizedFunds.add(tokenAmountInAssetsToken)
     })
-  }, [profileAddress, priceToken, assetsValueInWallet, data, chainId])
+  }, [profileAddress, priceToken, assetsValueInWallet, chainId])
 
   React.useEffect(() => {
-    if ((metamaskInstalled && Number(chainId) !== chain.chainId) ||
-      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId)) {
-      return
-    }
 
     async function getVotingPower() {
       const currentVotes = await votingPower.currentVotes(profileAddress)
@@ -391,15 +377,7 @@ const Profile = () => {
       <S.ProfileContainer>
         <UserDescription userWalletUrl={profileAddress} />
 
-        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
-          (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
-          <Web3Disabled
-            textButton={`Connect to ${chain.chainName}`}
-            textHeader="Your wallet is set to the wrong network."
-            bodyText={`Please switch to the ${chain.chainName} network to have access to user profile`}
-            type="changeChain"
-          />
-        ) : (
+        {(
           <>
             <S.TotalValuesCardsContainer>
               <AnyCardTotal
