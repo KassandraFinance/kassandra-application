@@ -39,11 +39,18 @@ const Page = ({ id }: Props) => {
           property="og:url"
           content={`https://app.kassandra.finance/shared/${id}`}
         />
+
         <meta
           name="twitter:card"
           key="twitterCard"
           content="summary_large_image"
         />
+        <meta name="twitter:site" key="twitterSite" content="@dao_kassandra" />
+
+        <meta name="twitter:title" content="Kassandra" />
+
+        <meta name="twitter:description" content="Kassandra DAO" />
+
         <meta
           name="twitter:image"
           key="twitterImage"
