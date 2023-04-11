@@ -20,7 +20,7 @@ const RebalanceReview = () => {
         steps={[
           {
             stepNumber: 1,
-            stepeTitle: 'Set new token weights and rebalance execution period',
+            stepeTitle: 'Set new token weights',
             state: 'PREVIOUS'
           },
           {
@@ -41,9 +41,10 @@ const RebalanceReview = () => {
             <h3>Execution period</h3>
             <span>{String(periodSelect) ?? 0} hours</span>
             <p>
-              The weight rebalance will be completed in 30 hours. Explanation
-              about how will the rebalance go, with percentages and what/why it
-              happens how it happens
+              The weight rebalance will be completed in{' '}
+              {String(periodSelect) ?? 0} hours. Explanation about how will the
+              rebalance go, with percentages and what/why it happens how it
+              happens
             </p>
           </S.ExecutionPeriodCard>
         </S.ReviewTableAndExecutionPeriod>
