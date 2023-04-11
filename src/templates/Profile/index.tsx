@@ -12,7 +12,6 @@ import { useAppSelector } from '../../store/hooks'
 
 import { ERC20 } from '../../hooks/useERC20Contract'
 import useStakingContract from '../../hooks/useStakingContract'
-import useConnect from '../../hooks/useConnect'
 import usePriceLP from '../../hooks/usePriceLP'
 import useVotingPower from '../../hooks/useVotingPower'
 
@@ -30,7 +29,6 @@ import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import UserDescription from '../../components/Governance/UserDescription'
 import Portfolio from './Portfolio'
 import GovernanceData from './GovernanceData'
-import Web3Disabled from '../../components/Web3Disabled'
 import SelectTabs from '../../components/SelectTabs'
 import Loading from '../../components/Loading'
 import AnyCardTotal from '../../components/Governance/AnyCardTotal'
@@ -140,7 +138,7 @@ const Profile = () => {
   const chain = networks[43114]
 
   const votingPower = useVotingPower(Staking)
-  const { userInfo } = useStakingContract(Staking, new Web3(chain.rpc))
+  const { userInfo } = useStakingContract(Staking)
   const { getPriceKacyAndLP } = usePriceLP()
 
   const profileAddress = router.query.profileAddress

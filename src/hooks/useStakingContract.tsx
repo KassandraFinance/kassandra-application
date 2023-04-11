@@ -6,7 +6,9 @@ import BigNumber from 'bn.js'
 import { AbiItem } from "web3-utils"
 import Web3 from 'web3'
 
-import web3, { EventSubscribe } from '../utils/web3'
+import { networks } from '@/constants/tokenAddresses'
+
+import { EventSubscribe } from '../utils/web3'
 import { TransactionCallback } from '../utils/txWait'
 
 import { useAppSelector } from '../store/hooks'
@@ -44,12 +46,13 @@ export interface PoolInfo {
   votingMultiplier: string; // uint256
 }
 
-const useStakingContract = (address: string, _web3: Web3 = web3) => {
+const useStakingContract = (address: string) => {
+  const web3 = new Web3(networks[43114].rpc)
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const [contract, setContract] = React.useState(new _web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
+  const [contract, setContract] = React.useState(new web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
 
   React.useEffect(() => {
-    setContract(new _web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
+    setContract(new web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
   }, [address])
 
   return React.useMemo(() => {
