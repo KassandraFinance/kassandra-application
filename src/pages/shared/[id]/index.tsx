@@ -20,7 +20,7 @@ const Page = ({ id }: Props) => {
   //   }, [id])
 
   React.useEffect(() => {
-    router.push(`/pool/${fund}`)
+    // router.push(`/pool/${fund}`)
   }, [])
 
   return (
@@ -29,7 +29,7 @@ const Page = ({ id }: Props) => {
         <meta
           property="og:image"
           key="ogImage"
-          content={`/api/funds/shared?id=${id}`}
+          content={`https://dev.kassandra.finance/api/funds/shared?id=${id}`}
         />
         <meta property="og:url" content={`/shared/${id}`} />
         <meta
@@ -40,13 +40,17 @@ const Page = ({ id }: Props) => {
         <meta
           name="twitter:image"
           key="twitterImage"
-          content={`/api/funds/shared?id=${id}`}
+          content={`https://dev.kassandra.finance/api/funds/shared?id=${id}`}
         />
         <meta property="og:image:width" content="1000" />
         <meta property="og:image:height" content="500" />
       </Head>
+
       <div>
-        <img src={`/api/funds/shared?id=${id}`} alt="" />
+        <img
+          src={`https://dev.kassandra.fianance/api/funds/shared?id=${id}`}
+          alt=""
+        />
       </div>
     </>
   )

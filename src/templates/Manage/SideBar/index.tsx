@@ -1,11 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import useManagerPools from '@/hooks/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { setToFirstStep } from '@/store/reducers/poolCreationSlice'
-import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
 
 import substr from '../../../utils/substr'
 
@@ -18,10 +18,15 @@ import SideBarLink from './SideBarLink'
 
 import userIcon from '../../../../public/assets/icons/user.svg'
 import arrow from '../../../../public/assets/utilities/arrow-right-bold.svg'
-import poolIcon from '../../../../public/assets/utilities/pool.svg'
 import plusIcon from '../../../../public/assets/utilities/plus.svg'
-import walletIcon from '../../../../public/assets/utilities/wallet.svg'
-import { profile, rewards, analytics, activities } from './icons'
+import {
+  overview,
+  profile,
+  rewards,
+  analytics,
+  activities,
+  poolIcon
+} from './icons'
 
 import * as S from './styles'
 
@@ -31,6 +36,10 @@ interface ISideBarProps {
 }
 
 const links = [
+  {
+    name: 'My Profile',
+    icon: profile
+  },
   {
     name: 'Analytics',
     icon: analytics
@@ -56,6 +65,9 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
   const poolCreattionChainId = useAppSelector(
     state => state.poolCreation.createPoolData.networkId
   )
+
+  const router = useRouter()
+  const path = router.asPath
 
   const dispatch = useAppDispatch()
 
@@ -287,7 +299,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
         </Link>
         <S.UserInfoContainer isOpen={isOpen}>
           {userWalletAddress.length > 0 ? (
-            <Link href={`/manage`}>
+            <Link href={`/profile/${userWalletAddress}`}>
               <S.UserHeader>
                 <S.UserImage>
                   <img
@@ -339,14 +351,19 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
         managerPools &&
         managerPools.pools.length > 0 ? (
           <>
-            <S.LinksContainer>
-              <SideBarLink name="My Profile" icon={profile} isOpen={isOpen} />
-            </S.LinksContainer>
+            <SideBarLink
+              name="Overview"
+              icon={overview}
+              isOpen={isOpen}
+              isActive={path === '/manage'}
+              link="/manage"
+            />
 
             <SideBarMenu
               title="My managed pool"
               icon={poolIcon}
               isSideBarOpen={isOpen}
+              isActive={path.length === 75}
             />
 
             <S.LinksContainer>
@@ -356,6 +373,9 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
                   name={link.name}
                   icon={link.icon}
                   isOpen={isOpen}
+                  disabled={true}
+                  isActive={false}
+                  link="#"
                 />
               ))}
             </S.LinksContainer>
