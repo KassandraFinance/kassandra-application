@@ -9,6 +9,10 @@ type Props = {
 }
 
 const Page = ({ id }: Props) => {
+  console.log(
+    'teste',
+    `https://app.kassandra.finance/api/funds/shared?id=${id}`
+  )
   const router = useRouter()
   const fund = id.split('-').pop()
 
@@ -48,10 +52,9 @@ const Page = ({ id }: Props) => {
         <meta property="og:image:width" content="1000" />
         <meta property="og:image:height" content="500" />
       </Head>
-
       <div>
         <img
-          src={`https://app.kassandra.fianance/api/funds/shared?id=${id}`}
+          src={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
           alt=""
         />
       </div>
