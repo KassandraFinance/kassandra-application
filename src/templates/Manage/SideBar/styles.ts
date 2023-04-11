@@ -20,7 +20,7 @@ export const SideBar = styled.div<ISideBarProps>`
     width: 0;
     border-radius: 0 8px 8px 0;
 
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgb(255 255 255 / 0.05);
 
     transition-timing-function: ease;
     transition-duration: 500ms;
@@ -284,9 +284,8 @@ export const LinksContainer = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
-    gap: 2.4rem;
 
-    padding-inline: 2.4rem;
+    text-decoration: none;
   `}
 `
 
@@ -303,7 +302,7 @@ export const Line = styled.span<ILineProps>`
     height: 0.1rem;
     margin-inline: 1.6rem;
 
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgb(255 255 255 / 0.3);
 
     transition-timing-function: ease;
     transition-duration: 600ms;
@@ -372,7 +371,7 @@ export const OpenButton = styled.button`
       border: none;
       border-radius: 50%;
 
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgb(255 255 255 / 0.1);
 
       cursor: pointer;
     }

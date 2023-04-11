@@ -15,9 +15,15 @@ interface ISideBarMenuProps {
   title: string;
   icon: any;
   isSideBarOpen: boolean;
+  isActive: boolean;
 }
 
-const SideBarMenu = ({ title, icon, isSideBarOpen }: ISideBarMenuProps) => {
+const SideBarMenu = ({
+  title,
+  icon,
+  isSideBarOpen,
+  isActive
+}: ISideBarMenuProps) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(true)
 
   const router = useRouter()
@@ -31,13 +37,13 @@ const SideBarMenu = ({ title, icon, isSideBarOpen }: ISideBarMenuProps) => {
   }
 
   return (
-    <S.SideBarMenu>
+    <S.SideBarMenu isActive={isActive}>
       <S.Title onClick={handleOpenMenu}>
-        <S.TitleIcon>
-          <Image src={icon} />
-        </S.TitleIcon>
+        <S.TitleIcon isActive={isActive}>{icon}</S.TitleIcon>
 
-        <S.TitleText isSideBarOpen={isSideBarOpen}>{title}</S.TitleText>
+        <S.TitleText isSideBarOpen={isSideBarOpen} isActive={isActive}>
+          {title}
+        </S.TitleText>
 
         <S.OpenButton isOpen={isOpen}>
           <Image src={arrowIcon} />

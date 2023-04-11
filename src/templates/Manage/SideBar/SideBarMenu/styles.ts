@@ -1,11 +1,28 @@
 import styled, { css } from 'styled-components'
 
-export const SideBarMenu = styled.div`
+interface ISideBarMenuProps {
+  isActive: boolean;
+}
+
+// prettier-ignore
+export const SideBarMenu = styled.div<ISideBarMenuProps>`
   ${() => css`
     padding: 1.6rem 2.4rem;
+    border: 1px solid rgb(255 255 255 / 0);
     border-radius: 4px;
 
-    background: rgb(255 255 255 / 5%);
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: border background-color;
+
+    &:hover {
+      border: 1px solid rgb(255 255 255 / 0.15);
+
+      background: rgb(255 255 255 / 0.05);
+    }
+  `}
+  ${({ isActive }) => isActive && css`
+    background-color: rgb(255 255 255 / 0.05);
   `}
 `
 
@@ -19,25 +36,60 @@ export const Title = styled.div`
   `}
 `
 
-export const TitleIcon = styled.div`
-  ${() => css`
+interface ITitleIconProps {
+  isActive: boolean;
+}
+
+// prettier-ignore
+export const TitleIcon = styled.div<ITitleIconProps>`
+  ${({ theme }) => css`
     display: flex;
     justify-content: center;
     align-items: center;
 
     min-width: 2.4rem;
     min-height: 2.4rem;
+
+    svg {
+      path {
+        fill: rgb(252 252 252);
+
+        transition-timing-function: ease;
+        transition-duration: 300ms;
+        transition-property: fill fill-opacity;
+        fill-opacity: 0.5;
+      }
+    }
+
+    ${SideBarMenu}:hover & {
+      svg {
+        path {
+          fill: ${theme.colors.white};
+          fill-opacity: 1;
+        }
+      }
+    }
+  `}
+  ${({ theme, isActive }) => isActive && css`
+    svg {
+      path {
+        fill: ${theme.colors.white};
+        fill-opacity: 1;
+      }
+    }
   `}
 `
 
 interface ITitleTextProps {
   isSideBarOpen: boolean;
+  isActive: boolean;
 }
 
 // prettier-ignore
 export const TitleText = styled.p<ITitleTextProps>`
   ${({ theme }) => css`
     color: ${theme.colors.snow};
+    color: rgb(252 252 252 / 0.5);
     font-weight: ${theme.font.weight.medium};
     font-size: ${theme.font.sizes.font16};
     line-height: ${theme.font.sizes.font16};
@@ -48,7 +100,11 @@ export const TitleText = styled.p<ITitleTextProps>`
 
     transition-timing-function: ease;
     transition-duration: 500ms;
-    transition-property: opacity;
+    transition-property: opacity color;
+
+    ${SideBarMenu}:hover & {
+      color: ${theme.colors.white};
+    }
   `}
   ${({ isSideBarOpen }) => !isSideBarOpen && css`
     opacity: 0;
@@ -56,6 +112,10 @@ export const TitleText = styled.p<ITitleTextProps>`
     @media (min-width: 992px) {
       opacity: 1;
     }
+  `}
+
+  ${({ theme, isActive }) => isActive && css`
+    color: ${theme.colors.white};
   `}
 `
 

@@ -1,22 +1,40 @@
+import Link from 'next/link'
+
 import * as S from './styles'
 
 interface ISideBarLinkProps {
   name: string;
   icon: JSX.Element;
+  link: string;
   isOpen: boolean;
+  disabled?: boolean;
+  isActive: boolean;
 }
 
-const SideBarLink = ({ name, icon, isOpen }: ISideBarLinkProps) => {
+const SideBarLink = ({
+  name,
+  icon,
+  link,
+  isOpen,
+  disabled = false,
+  isActive
+}: ISideBarLinkProps) => {
   return (
-    <S.SideBarLink>
-      <S.Wrapper>
-        <S.Icon>{icon}</S.Icon>
+    <Link href={link} passHref>
+      <S.SideBarLink aria-disabled={disabled} isActive={isActive}>
+        <S.Wrapper>
+          <S.Icon aria-disabled={disabled} isActive={isActive}>
+            {icon}
+          </S.Icon>
 
-        <S.Title isOpen={isOpen}>{name}</S.Title>
+          <S.Title isOpen={isOpen} aria-disabled={disabled} isActive={isActive}>
+            {name}
+          </S.Title>
 
-        <S.Tag>Soon...</S.Tag>
-      </S.Wrapper>
-    </S.SideBarLink>
+          {disabled && <S.Tag>Soon...</S.Tag>}
+        </S.Wrapper>
+      </S.SideBarLink>
+    </Link>
   )
 }
 
