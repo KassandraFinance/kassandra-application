@@ -9,6 +9,10 @@ type Props = {
 }
 
 const Page = ({ id }: Props) => {
+  console.log(
+    'teste',
+    `https://app.kassandra.finance/api/funds/shared?id=${id}`
+  )
   const router = useRouter()
   const fund = id.split('-').pop()
 
@@ -29,26 +33,35 @@ const Page = ({ id }: Props) => {
         <meta
           property="og:image"
           key="ogImage"
-          content={`https://dev.kassandra.finance/api/funds/shared?id=${id}`}
+          content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
-        <meta property="og:url" content={`/shared/${id}`} />
+        <meta
+          property="og:url"
+          content={`https://app.kassandra.finance/shared/${id}`}
+        />
+
         <meta
           name="twitter:card"
           key="twitterCard"
           content="summary_large_image"
         />
+        <meta name="twitter:site" key="twitterSite" content="@dao_kassandra" />
+
+        <meta name="twitter:title" content="Kassandra" />
+
+        <meta name="twitter:description" content="Kassandra DAO" />
+
         <meta
           name="twitter:image"
           key="twitterImage"
-          content={`https://dev.kassandra.finance/api/funds/shared?id=${id}`}
+          content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
         <meta property="og:image:width" content="1000" />
         <meta property="og:image:height" content="500" />
       </Head>
-
       <div>
         <img
-          src={`https://dev.kassandra.fianance/api/funds/shared?id=${id}`}
+          src={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
           alt=""
         />
       </div>

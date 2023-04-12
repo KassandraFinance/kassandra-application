@@ -29,7 +29,7 @@ const ShareImageModal = ({
   const [loading, setLoading] = React.useState(true)
   const printRef = React.useRef<HTMLInputElement>(null)
   const [url, setUrl] = React.useState(
-    `https://dev.kassandra.finance/shared/${v4()}-${productName?.toLowerCase()}`
+    `https://app.kassandra.finance/shared/${v4()}-${productName?.toLowerCase()}`
   )
 
   async function handleDownloadImage() {
@@ -58,7 +58,7 @@ const ShareImageModal = ({
 
   function handleShareClick() {
     setUrl(
-      `https://dev.kassandra.finance/shared/${v4()}-${productName.toLowerCase()}`
+      `https://app.kassandra.finance/shared/${v4()}-${productName.toLowerCase()}`
     )
     setOpenModal(false)
   }
