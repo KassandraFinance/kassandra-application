@@ -26,9 +26,17 @@ export const CardChooseAction = styled.button<ICardChooseActionProps>`
     transition: all 0.3s ease;
     cursor: pointer;
 
-    &:hover {
-      border: 1px solid rgba(252, 252, 252, 0.5);
-      background: rgba(255, 255, 255, 0.15);
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:hover,
+    &:focus {
+      &:not(:disabled) {
+        border: 1px solid rgba(252, 252, 252, 0.5);
+        background: rgba(255, 255, 255, 0.15);
+      }
     }
 
     @media (max-width: 576px) {

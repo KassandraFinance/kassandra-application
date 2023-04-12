@@ -666,6 +666,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
               poolId={poolId}
               actionSelected={actionSelected}
               setActionSelected={setActionSelected}
+              amountTokenInPool={poolInfo?.underlying_assets_addresses.length ?? 0}
             />
           ) : (
             chosenAction[actionSelected]
