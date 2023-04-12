@@ -16,19 +16,13 @@ export default function Index({ poolsKassandra }: IIndexProps) {
   return (
     <>
       <Head>
-        { /* Primary Meta Tags */ }
-        <title>Kassandra</title>
-        <meta name="title" content="Kassandra - Decentralized Funds" />
-        <meta name="description" content="Tokenized data-driven investment funds" />
-
-        { /* Open Graph / Facebook */ }
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://kassandra.finance/" />
-        <meta name="title" property="og:title" content="Kassandra - Decentralized Funds" />
-        <meta name="description" property="og:description" content="Tokenized data-driven investment funds" />
-        <meta name="image" property="og:image" content="https://kassandra.finance/kacy-og.png" />
+        <meta
+          property="og:image"
+          content="https://kassandra.finance/kacy-og.png"
+        />
         <meta property="og:image:width" content="1012" />
         <meta property="og:image:height" content="506" />
+        <meta property="og:url" content="https://kassandra.finance/" />
       </Head>
 
       <Explore poolsKassandra={poolsKassandra} />

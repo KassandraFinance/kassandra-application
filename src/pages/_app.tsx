@@ -43,35 +43,11 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
         <MatomoProvider value={instance}>
           <ThemeProvider theme={theme}>
             <Head>
-              {/* Primary Meta Tags */}
               <title>Kassandra</title>
-              <meta name="title" content="Kassandra - Decentralized Funds" />
               <meta
                 name="description"
                 content="Tokenized data-driven investment funds"
               />
-
-              {/* Open Graph / Facebook */}
-              <meta property="og:type" content="website" />
-              <meta property="og:url" content="https://kassandra.finance/" />
-              <meta
-                name="title"
-                property="og:title"
-                content="Kassandra - Decentralized Funds"
-              />
-              <meta
-                name="description"
-                property="og:description"
-                content="Tokenized data-driven investment funds"
-              />
-              <meta
-                name="image"
-                property="og:image"
-                content="https://kassandra.finance/kacy-og.png"
-              />
-              <meta property="og:image:width" content="1012" />
-              <meta property="og:image:height" content="506" />
-
               <link rel="preconnect" href="https://fonts.gstatic.com" />
               <link
                 href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&amp;display=swap"
@@ -84,8 +60,12 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 sizes="any"
               />
               <meta property="og:site_name" content="Kassandra" />
+              <meta property="og:type" content="website" />
               {/* <meta property="og:url" content="https://kassandra.finance/" /> */}
-
+              <meta
+                property="og:title"
+                content="Kassandra - Decentralized Funds"
+              />
               {/* <meta
             property="og:image:alt"
             content="Welcome to Kassandra DAO - Tokenized data-driven investment funds"
