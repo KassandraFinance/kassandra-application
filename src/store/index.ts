@@ -55,13 +55,28 @@ export type RootReducer = ReturnType<typeof rootReducer>
 
 const persistedReducer = persistReducer<RootReducer>(persistConfig, rootReducer)
 
-export const store = configureStore({
-  reducer: persistedReducer,
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({
-      serializableCheck: false
-    })
-})
+let store
+
+if (typeof window === 'undefined') {
+  //NextJs cannot use persistStore
+  store = configureStore({
+    reducer: rootReducer,
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        serializableCheck: false
+      })
+  })
+} else {
+  store = configureStore({
+    reducer: persistedReducer,
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        serializableCheck: false
+      })
+  })
+}
+
+export { store }
 
 export const persistor = persistStore(store)
 export type RootState = ReturnType<typeof store.getState>
