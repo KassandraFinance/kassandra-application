@@ -42,7 +42,7 @@ const Page = ({ id }: Props) => {
         <meta property="og:type" content="website" />
         <meta
           property="og:url"
-          content={`https://app.kassandra.finance/shared/${id}`}
+          content={`https://app.kassandra.finance/pool/${id}`}
         />
         <meta property="og:title" content="Kassandra - Decentralized Funds" />
         <meta
@@ -58,7 +58,7 @@ const Page = ({ id }: Props) => {
         <meta property="twitter:card" content="summary_large_image" />
         <meta
           property="twitter:url"
-          content={`https://app.kassandra.finance/shared/${id}`}
+          content={`https://app.kassandra.finance/pool/${id}`}
         />
         <meta
           property="twitter:title"
