@@ -25,14 +25,11 @@ import * as S from './styles'
 
 interface IRemoveInvestorModal {
   onClose: () => void;
+  addressesList: Array<string>;
+  setAddressesOfPrivateInvestors: () => Promise<void>;
 }
 
-const addressesList = [
-  '0xb602db4ddaa85b2f8495dbA4Fe6a9950178047cA',
-  '0xD581d597dBc574A458d469A62Fb5a07A625Edf73'
-]
-
-const RemoveInvestorModal = ({ onClose }: IRemoveInvestorModal) => {
+const RemoveInvestorModal = ({ onClose, addressesList, setAddressesOfPrivateInvestors }: IRemoveInvestorModal) => {
   const [searchValue, setSearchValue] = React.useState('')
   const [investorsList, setInvestorsList] = React.useState<string[]>([])
   const [isTransaction, setIsTransaction] = React.useState(false)
@@ -107,6 +104,8 @@ const RemoveInvestorModal = ({ onClose }: IRemoveInvestorModal) => {
       await controller.methods.removeAllowedAddresses(investorsList).send({
         from: userWalletAddress
       }, callBack)
+
+      await setAddressesOfPrivateInvestors()
   }
 
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
@@ -170,7 +169,7 @@ const RemoveInvestorModal = ({ onClose }: IRemoveInvestorModal) => {
               <Button
                 text='Waiting transaction'
                 type='button'
-                backgroundPrimary 
+                backgroundPrimary
                 disabled
                 fullWidth
               />

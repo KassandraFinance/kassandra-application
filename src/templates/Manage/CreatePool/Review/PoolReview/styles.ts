@@ -9,6 +9,7 @@ export const PoolReview = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
+
     margin-bottom: 10rem;
 
     ${FeeBreakdown} {
@@ -29,14 +30,15 @@ export const PoolReviewContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
-    padding: 2.4rem 3.2rem;
 
-    background: rgba(255, 255, 255, 0.05);
+    padding: 2.4rem 3.2rem;
     border-radius: 0.8rem;
+
+    background: rgb(255 255 255 / 0.05);
 
     hr {
       border: none;
-      border: 0.1rem solid rgba(255, 255, 255, 0.5);
+      border: 0.1rem solid rgb(255 255 255 / 0.5);
     }
   `}
 `
@@ -44,8 +46,8 @@ export const PoolReviewContainer = styled.div`
 export const PoolReviewHeader = styled.div`
   ${() => css`
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
 
     @media (max-width: 576px) {
       flex-direction: column;
@@ -56,21 +58,22 @@ export const PoolReviewHeader = styled.div`
 export const PoolNameContainer = styled.span`
   ${() => css`
     display: flex;
-    align-items: center;
     gap: 2.4rem;
+    align-items: center;
 
     @media (max-width: 576px) {
-      width: 100%;
       justify-content: space-between;
+
+      width: 100%;
     }
   `}
 `
 
 export const ImageWrapper = styled.div`
+  overflow: hidden;
+
   width: 7.2rem;
   height: 7.2rem;
-
-  overflow: hidden;
   border-radius: 50%;
 
   img {
@@ -83,33 +86,34 @@ export const PoolNameContent = styled.span`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     gap: 0.8rem;
-
-    @media (max-width: 576px) {
-      align-items: flex-end;
-    }
+    align-items: flex-start;
 
     > p {
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font24};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font24};
       line-height: 100%;
     }
 
     span {
       display: flex;
-      align-items: center;
       gap: 1rem;
-      padding: 0.8rem 1.1rem;
+      align-items: center;
 
-      background: rgba(0, 0, 0, 0.19);
+      padding: 0.8rem 1.1rem;
       border-radius: 0.4rem;
 
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font12};
       line-height: 100%;
+
+      background: rgb(0 0 0 / 0.19);
+    }
+
+    @media (max-width: 576px) {
+      align-items: flex-end;
     }
   `}
 `
@@ -118,12 +122,12 @@ export const PoolValueContent = styled.div`
   ${({ theme }) => css`
     span {
       display: flex;
-      align-items: center;
       gap: 0.8rem;
+      align-items: center;
 
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font24};
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font24};
       line-height: 3.2rem;
 
       @media (max-width: 576px) {
@@ -131,20 +135,22 @@ export const PoolValueContent = styled.div`
         line-height: 2rem;
       }
     }
+
     p {
       color: #c4c4c4;
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font12};
       line-height: 1.4rem;
-      text-transform: uppercase;
       text-align: center;
+      text-transform: uppercase;
     }
 
     @media (max-width: 576px) {
       display: flex;
-      align-items: center;
       flex-direction: row-reverse;
       justify-content: space-between;
+      align-items: center;
+
       width: 100%;
       margin-top: 2.4rem;
     }
@@ -154,17 +160,17 @@ export const PoolValueContent = styled.div`
 export const TvlContainer = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
 
     span {
       display: flex;
-      align-items: center;
       gap: 0.8rem;
+      align-items: center;
 
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font20};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font20};
       line-height: 2rem;
 
       @media (max-width: 576px) {
@@ -175,8 +181,8 @@ export const TvlContainer = styled.div`
 
     p {
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font24};
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font24};
       line-height: 100%;
 
       @media (max-width: 576px) {
@@ -190,32 +196,33 @@ export const TvlContainer = styled.div`
 export const WrapperPoolPrivacy = styled.div`
   ${() => css`
     padding: 2.4rem 3.2rem;
-
-    background: rgba(255, 255, 255, 0.05);
     border-radius: 0.8rem;
+
+    background: rgb(255 255 255 / 0.05);
   `}
 `
 
 export const PoolPrivacyLine = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
 
-    > P {
+    > p {
       color: #c4c4c4;
-      font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font14};
+      line-height: 1.6rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      line-height: 1.6rem;
     }
 
     > span {
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font24};
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font24};
       line-height: 3.2rem;
+      text-transform: capitalize;
 
       @media (max-width: 576px) {
         font-size: ${theme.font.sizes.font18};
@@ -227,16 +234,16 @@ export const PoolPrivacyLine = styled.div`
 
 export const WrapperPoolPrivate = styled.div`
   ${({ theme }) => css`
-    border-top: 0.1rem solid rgba(255, 255, 255, 0.5);
-    padding-top: 1rem;
     margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 0.1rem solid rgb(255 255 255 / 0.5);
 
     > p {
       margin-bottom: 1.2rem;
 
       color: ${theme.colors.white};
-      font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font14};
       line-height: 1.6rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -263,26 +270,25 @@ interface IPrivateAddressprops {
 export const PrivateAddress = styled.div<IPrivateAddressprops>`
   ${({ theme, hasBorder }) => css`
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+
     width: 100%;
-
-    padding-bottom: 0.6rem;
     padding-right: 1.2rem;
+    padding-bottom: 0.6rem;
     padding-left: ${hasBorder ? '0' : '1.2rem'};
-
-    :last-child {
-      padding-bottom: 0.2rem;
-    }
-
     border-right: ${hasBorder
       ? '0.1rem solid rgba(255, 255, 255, 0.5)'
       : 'none'};
 
     color: ${theme.colors.white};
-    font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font16};
     line-height: 100%;
+
+    :last-child {
+      padding-bottom: 0.2rem;
+    }
 
     svg {
       cursor: pointer;
@@ -294,17 +300,17 @@ export const PrivateAddress = styled.div<IPrivateAddressprops>`
     }
 
     @media (max-width: 576px) {
+      margin-bottom: 1rem;
       padding: 0;
       border: none;
-      margin-bottom: 1rem;
     }
   `}
 `
 
 export const WrapperAddressImages = styled.div`
   display: flex;
-  align-items: center;
   gap: 0.8rem;
+  align-items: center;
 `
 
 export const ReviewTable = styled.div`
@@ -312,6 +318,7 @@ export const ReviewTable = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
+
     width: 100%;
   `}
 `
@@ -336,15 +343,15 @@ interface IIsViewProps {
 export const ReviewTh = styled.div<IIsViewProps>`
   ${({ theme, isView }) => css`
     color: ${theme.colors.white};
-    font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font16};
     line-height: 104%;
-
     text-align: right;
 
     :first-child {
       text-align: start;
     }
+
     :last-child {
       text-align: end;
     }
@@ -353,6 +360,7 @@ export const ReviewTh = styled.div<IIsViewProps>`
       display: ${isView ? 'block' : 'none'};
 
       animation: ${tableAnim} 0.4s ease;
+
       :first-child {
         display: block;
       }
@@ -363,25 +371,26 @@ export const ReviewTh = styled.div<IIsViewProps>`
 export const ReviewThImg = styled.div`
   ${() => css`
     display: flex;
-    align-items: center;
-    gap: 0.8rem;
     display: none;
+    gap: 0.8rem;
+    align-items: center;
 
     span {
       display: flex;
       align-items: center;
 
       padding: 0.6rem 0.85rem;
-      background: rgba(255, 255, 255, 0.05);
+      border: 0.1rem solid transparent;
       border-radius: 50%;
 
-      border: 0.1rem solid transparent;
+      background: rgb(255 255 255 / 0.05);
 
       cursor: pointer;
 
       transition: border 0.3s ease;
+
       &:hover {
-        border: 0.1rem solid rgba(255, 255, 255, 0.3);
+        border: 0.1rem solid rgb(255 255 255 / 0.3);
       }
     }
 
@@ -401,11 +410,11 @@ export const ReviewTbody = styled.div`
     flex-direction: column;
 
     ${ReviewTr} {
-      border-bottom: 0.1rem solid rgba(255, 255, 255, 0.3);
+      border-bottom: 0.1rem solid rgb(255 255 255 / 0.3);
 
       :last-child {
-        border-bottom: none;
         padding-bottom: 0;
+        border-bottom: none;
       }
     }
   `}
@@ -416,8 +425,8 @@ export const ReviewTr = styled.div`
     display: grid;
     grid-template-columns: 15rem 1fr 1fr 1fr;
 
-    padding-bottom: 1.6rem;
     padding-top: 1.6rem;
+    padding-bottom: 1.6rem;
 
     #eyeIcon {
       display: none;
@@ -425,6 +434,7 @@ export const ReviewTr = styled.div`
       @media (max-width: 576px) {
         display: flex;
         justify-content: center;
+
         cursor: pointer;
       }
     }
@@ -442,24 +452,26 @@ export const ReviewTd = styled.span<IIsViewProps>`
     width: 100%;
 
     color: #fcfcfc;
-    font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font16};
     line-height: 104%;
     text-align: right;
 
     :first-child {
       display: flex;
-      align-items: center;
       gap: 0.8rem;
+      align-items: center;
 
       text-align: start;
     }
+
     :last-child {
       text-align: end;
     }
 
     @media (max-width: 576px) {
       display: ${isView ? 'block' : 'none'};
+
       animation: ${tableAnim} 0.4s ease;
     }
   `}

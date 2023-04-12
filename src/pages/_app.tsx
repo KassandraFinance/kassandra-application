@@ -43,6 +43,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
         <MatomoProvider value={instance}>
           <ThemeProvider theme={theme}>
             <Head>
+              <meta content="text/html; charset=UTF-8" name="Content-Type" />
               <title>Kassandra</title>
               <meta
                 name="description"

@@ -2,14 +2,16 @@
 import React from 'react'
 import BigNumber from 'bn.js'
 import { AbiItem } from "web3-utils"
+import Web3 from 'web3'
 
-import web3 from '../utils/web3'
 import StakingContract from "../constants/abi/Staking.json"
+import { networks } from '@/constants/tokenAddresses'
 
 import { TransactionCallback } from '../utils/txWait'
 import { useAppSelector } from '../store/hooks'
 
 const useVotingPower = (address: string) => {
+  const web3 = new Web3(networks[43114].rpc)
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const [contract, setContract] = React.useState(new web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
 

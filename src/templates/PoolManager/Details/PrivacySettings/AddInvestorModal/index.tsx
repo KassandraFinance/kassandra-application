@@ -29,9 +29,10 @@ import * as S from './styles'
 
 interface IAddInvestorModalProps {
   onClose: () => void;
+  setAddressesOfPrivateInvestors: () => Promise<void>;
 }
 
-const AddInvestorModal = ({ onClose }: IAddInvestorModalProps) => {
+const AddInvestorModal = ({ onClose, setAddressesOfPrivateInvestors }: IAddInvestorModalProps) => {
   const [value, setValue] = React.useState('')
   const [investorsList, setInvestorsList] = React.useState<string[]>([])
   const [isTransaction, setIsTransaction] = React.useState(false)
@@ -112,6 +113,7 @@ const AddInvestorModal = ({ onClose }: IAddInvestorModalProps) => {
       await controller.methods.addAllowedAddresses(investorsList).send({
         from: userWalletAddress
       }, callBack)
+      await setAddressesOfPrivateInvestors()
   }
 
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
@@ -180,7 +182,7 @@ const AddInvestorModal = ({ onClose }: IAddInvestorModalProps) => {
             <Button
               text='Waiting transaction'
               type='button'
-              backgroundPrimary 
+              backgroundPrimary
               disabled
               fullWidth
             />

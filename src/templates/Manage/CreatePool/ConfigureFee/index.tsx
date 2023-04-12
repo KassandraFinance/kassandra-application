@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector } from '@/store/hooks'
 
 import Steps from '../../../../components/Steps'
 import CreatePoolHeader from '../CreatePoolHeader'

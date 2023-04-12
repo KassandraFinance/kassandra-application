@@ -72,7 +72,8 @@ type NetworkType = Record<
     rpc: string,
     coingecko: string,
     whiteList: string,
-    factory: string
+    factory: string,
+    privateInvestor: string
   }
 >
 
@@ -83,7 +84,8 @@ export const networks: NetworkType = {
     rpc: 'https://rpc.ankr.com/eth_goerli',
     coingecko: 'polygon-pos',
     whiteList: '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57',
-    factory: '0x4722b1d02c0bEBb60D426e9999BB9921d29C2956'
+    factory: '0x4722b1d02c0bEBb60D426e9999BB9921d29C2956',
+    privateInvestor: '0xC8d8AeDBeDd1973b383D6f330C66D653F7DF11D6'
   },
   '137': {
     chainName: 'Polygon Mainnet',
@@ -91,7 +93,8 @@ export const networks: NetworkType = {
     rpc: 'https://polygon-rpc.com/',
     coingecko: 'polygon-pos',
     whiteList: '',
-    factory: ''
+    factory: '',
+    privateInvestor: ''
   },
   '43114': {
     chainId: 43114,
@@ -99,7 +102,8 @@ export const networks: NetworkType = {
     rpc: 'https://api.avax.network/ext/bc/C/rpc',
     coingecko: 'avalanche',
     whiteList: '',
-    factory: ''
+    factory: '',
+    privateInvestor: ''
   }
 }
 
