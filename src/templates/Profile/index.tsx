@@ -337,11 +337,10 @@ const Profile = () => {
       })
     }
 
-    setPriceInDolar({
-      assetsToken: tokenAmountInTokenizedFunds,
-      tokenizedFunds: tokenAmountInAssetsToken,
-      totalInvestmented: tokenAmountInTokenizedFunds.add(tokenAmountInAssetsToken)
-    })
+    setPriceInDolar(prev => ({
+      ...prev,
+      assetsToken: tokenAmountInTokenizedFunds
+    }))
   }, [profileAddress, priceToken, assetsValueInWallet, chainId])
 
   React.useEffect(() => {
@@ -375,58 +374,57 @@ const Profile = () => {
       <S.ProfileContainer>
         <UserDescription userWalletUrl={profileAddress} />
 
-        {(
-          <>
-            <S.TotalValuesCardsContainer>
-              <AnyCardTotal
+        <>
+          <S.TotalValuesCardsContainer>
+            <AnyCardTotal
                 text={String(BNtoDecimal(priceInDolar.totalInvestmented, 6, 2, 2) || 0)}
-                TooltipText="The amount in US Dollars that this address has in investments with Kassandra. This considers tokens, funds, LP, and staked assets."
-                textTitle="HOLDINGS"
-                isDolar={true}
-              />
-              <AnyCardTotal
-                text={`$ ${0}`}
-                TooltipText="The amount in US Dollars that this address manages in tokenized funds with Kassandra."
-                textTitle="TOTAL MANAGED"
-              />
-              <AnyCardTotal
-                text={String(BNtoDecimal(totalVotingPower, 18, 2) || 0)}
-                TooltipText="The voting power of this address. Voting power is used to vote on governance proposals, and it can be earned by staking KACY."
-                textTitle="VOTING POWER"
-              />
-            </S.TotalValuesCardsContainer>
-            <SelectTabs
-              tabs={tabs}
-              isSelect={isSelectTab}
-              setIsSelect={setIsSelectTab}
+              TooltipText="The amount in US Dollars that this address has in investments with Kassandra. This considers tokens, funds, LP, and staked assets."
+              textTitle="HOLDINGS"
+              isDolar={true}
             />
-            {isSelectTab === tabs[0].asPathText ? (
-              data && <Portfolio
-                profileAddress={
-                  typeof profileAddress === 'undefined'
-                    ? ''
-                    : typeof profileAddress === 'string'
-                      ? profileAddress
-                      : ''
-                }
-                assetsValueInWallet={assetsValueInWallet}
-                cardstakesPool={cardstakesPool}
-                priceToken={priceToken}
-                myFunds={myFunds}
-                priceInDolar={priceInDolar}
-                pools={data.pools.map(pool => pool.address)}
-              />
-            ) : isSelectTab === tabs[1].asPathText ? (
-              <ManagedFunds />
-            ) : isSelectTab === tabs[2].asPathText ? (
-              <>
-                <GovernanceData address={profileAddress} />
-              </>
-            ) : (
-              <Loading marginTop={4} />
-            )}
-          </>
-        )}
+            <AnyCardTotal
+              text={`$ ${0}`}
+              TooltipText="The amount in US Dollars that this address manages in tokenized funds with Kassandra."
+              textTitle="TOTAL MANAGED"
+            />
+            <AnyCardTotal
+              text={String(BNtoDecimal(totalVotingPower, 18, 2) || 0)}
+              TooltipText="The voting power of this address. Voting power is used to vote on governance proposals, and it can be earned by staking KACY."
+              textTitle="VOTING POWER"
+            />
+          </S.TotalValuesCardsContainer>
+          <SelectTabs
+            tabs={tabs}
+            isSelect={isSelectTab}
+            setIsSelect={setIsSelectTab}
+          />
+          {isSelectTab === tabs[0].asPathText ? (
+            data && <Portfolio
+              profileAddress={
+                typeof profileAddress === 'undefined'
+                  ? ''
+                  : typeof profileAddress === 'string'
+                    ? profileAddress
+                    : ''
+              }
+              assetsValueInWallet={assetsValueInWallet}
+              cardstakesPool={cardstakesPool}
+              priceToken={priceToken}
+              myFunds={myFunds}
+              priceInDolar={priceInDolar}
+              poolsAddresses={data.pools.map(pool => pool.address)}
+              setPriceInDolar={setPriceInDolar}
+            />
+          ) : isSelectTab === tabs[1].asPathText ? (
+            <ManagedFunds />
+          ) : isSelectTab === tabs[2].asPathText ? (
+            <>
+              <GovernanceData address={profileAddress} />
+            </>
+          ) : (
+            <Loading marginTop={4} />
+          )}
+        </>
       </S.ProfileContainer>
     </>
   )

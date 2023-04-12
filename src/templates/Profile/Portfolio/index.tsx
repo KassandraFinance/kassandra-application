@@ -1,28 +1,31 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
-import { useRouter } from 'next/router'
+import useSWR from 'swr'
+import request from 'graphql-request'
 
 import PortfolioHeading from '../../../components/PortfolioHeading'
 import AssetsTable from './AssetsTable'
 import AnyCard from '../../../components/AnyCard'
 import AssetsCard, { IPriceToken } from './AssetsCard'
 
+import { useAppSelector } from '@/store/hooks'
+
 import AssetsIcon from '../../../../public/assets/iconGradient/assets-distribution.svg'
 import StakedPoolsIcon from '../../../../public/assets/iconGradient/staking-pools.svg'
 
-import { BNtoDecimal } from '../../../utils/numerals'
+import { BNtoDecimal, calcChange } from '@/utils/numerals'
 
-import { useAppSelector } from '../../../store/hooks'
-
-import { IAssetsValueWalletProps, IKacyLpPool } from '..'
+import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
+import { GET_CHART } from './AssetsTable/graphql'
+import { IAssetsValueWalletProps, IKacyLpPool } from '../'
 
 import * as S from './styles'
 
 type IpriceInDolarProps = {
-  tokenizedFunds: Big,
   assetsToken: Big,
-  totalInvestmented: Big
+  tokenizedFunds: Big
 }
 
 interface IProfileProps {
@@ -32,7 +35,14 @@ interface IProfileProps {
   priceToken: IPriceToken;
   myFunds: ImyFundsType;
   priceInDolar: IpriceInDolarProps;
-  pools: string[];
+  poolsAddresses: string[];
+  setPriceInDolar: React.Dispatch<
+    React.SetStateAction<{
+      assetsToken: Big,
+      totalInvestmented: Big,
+      tokenizedFunds: Big
+    }>
+  >;
 }
 
 interface ImyFundsType {
@@ -42,6 +52,45 @@ export interface IBalanceType {
   [key: string]: BigNumber;
 }
 
+type PoolProps = {
+  id: string,
+  address: string,
+  name: string,
+  symbol: string,
+  logo: string,
+  logoChain: string,
+  changeDay: string,
+  changeMonth: string,
+  price: string,
+  tvl: string,
+  balance: string,
+  balanceInUSD: string
+}
+
+type PoolResponse = {
+  id: string,
+  now: { close: number }[],
+  day: { close: number }[],
+  month: { close: number }[],
+  price_usd: string,
+  total_value_locked_usd: string,
+  address: string,
+  name: string,
+  symbol: string,
+  logo: string,
+  investors?: {
+    amount: string
+  }[],
+  chain?: {
+    logo: string
+  }
+}
+
+type Response = {
+  pools: Array<PoolResponse>,
+  managedPools: Array<PoolResponse>
+}
+
 const Portfolio = ({
   profileAddress,
   assetsValueInWallet,
@@ -49,12 +98,13 @@ const Portfolio = ({
   priceToken,
   myFunds,
   priceInDolar,
-  pools
+  poolsAddresses,
+  setPriceInDolar
 }: IProfileProps) => {
   const router = useRouter()
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
-  // eslint-disable-next-line prettier/prettier
+  const [pools, setPools] = React.useState<Array<PoolProps>>([])
   const [tokenizedFunds, setTokenizedFunds] = React.useState<string[]>([])
   const [balanceFunds, setBalanceFunds] = React.useState<IBalanceType>({})
   const [amountProdInPool, setAmountProdInPool] =
@@ -62,6 +112,17 @@ const Portfolio = ({
   const [cardstakesPoolNew, setCardStakesPoolNew] = React.useState<
     IKacyLpPool[]
   >([])
+
+  const { data } = useSWR<Response>(
+    [GET_CHART, profileAddress, tokenizedFunds],
+    (query, profileAddress, assets) =>
+      request(BACKEND_KASSANDRA, query, {
+        id: assets,
+        day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+        month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+        wallet: profileAddress
+      })
+  )
 
   React.useEffect(() => {
     setCardStakesPoolNew([])
@@ -99,7 +160,7 @@ const Portfolio = ({
   React.useEffect(() => {
     setTokenizedFunds([])
 
-    pools.forEach(address => {
+    poolsAddresses.forEach(address => {
       const balanceInWallet = assetsValueInWallet[address]
       const balanceInPool = amountProdInPool[address]
       const balanceProductAll = balanceInWallet
@@ -117,20 +178,84 @@ const Portfolio = ({
     })
   }, [profileAddress, assetsValueInWallet, router, userWalletAddress])
 
+  React.useEffect(() => {
+    if (!data?.pools) {
+      return
+    }
+
+    const pools: PoolProps[] = [
+      ...data.pools.map(pool => {
+        const balance = Big(balanceFunds[pool.address].toString()).div(
+          Big(10).pow(18)
+        )
+        return {
+          id: pool.id,
+          address: pool.address,
+          name: pool.name,
+          symbol: pool.symbol,
+          logo: pool.logo,
+          changeDay: calcChange(pool.now[0]?.close, pool.day[0]?.close),
+          changeMonth: calcChange(pool.now[0]?.close, pool.month[0]?.close),
+          price: pool.price_usd,
+          tvl: pool.total_value_locked_usd,
+          balanceInUSD: balance.mul(pool.price_usd).toFixed(),
+          balance: balance.toFixed(),
+          logoChain: pool.chain?.logo ?? '/assets/logos/avalanche.svg'
+        }
+      })
+    ]
+
+    if (data.managedPools.length > 0) {
+      pools.push(
+        ...data.managedPools.map(pool => {
+          const balance =
+            pool.investors && pool.investors.length > 0
+              ? Big(pool.investors[0].amount)
+              : Big('0')
+          return {
+            id: pool.id,
+            address: pool.address,
+            name: pool.name,
+            symbol: pool.symbol,
+            logo: pool.logo,
+            changeDay: calcChange(pool.now[0]?.close, pool.day[0]?.close),
+            changeMonth: calcChange(pool.now[0]?.close, pool.month[0]?.close),
+            price: pool.price_usd,
+            tvl: pool.total_value_locked_usd,
+            balanceInUSD: balance.mul(pool.price_usd).toFixed(),
+            balance: balance.toFixed(),
+            logoChain: pool.chain?.logo ?? '/assets/icons/coming-soon.svg'
+          }
+        })
+      )
+    }
+
+    setPools(pools.sort((a, b) => Number(b.balance) - Number(a.balance)))
+    const total = pools.reduce(
+      (total, pool) => total + Number(pool.balanceInUSD),
+      0
+    )
+    setPriceInDolar(prev => ({
+      ...prev,
+      totalInvestmented: Big(total).add(priceInDolar.assetsToken),
+      tokenizedFunds: Big(total)
+    }))
+  }, [data, balanceFunds])
+
   return (
     <>
       <S.paddingWrapper>
         <PortfolioHeading
           image={AssetsIcon}
           title="Indexes"
-          usd={BNtoDecimal(priceInDolar.tokenizedFunds, 6, 2, 2)}
+          usd={BNtoDecimal(Big(priceInDolar.tokenizedFunds), 6, 2, 2)}
           tippy="The amount in US Dollars that this address holds in tokenized funds."
         />
       </S.paddingWrapper>
 
-      {tokenizedFunds && tokenizedFunds[0] ? (
+      {pools.length > 0 ? (
         <S.paddingLeftWrapper>
-          <AssetsTable assets={tokenizedFunds} balanceFunds={balanceFunds} />
+          <AssetsTable pools={pools} />
         </S.paddingLeftWrapper>
       ) : (
         <S.paddingWrapper>
