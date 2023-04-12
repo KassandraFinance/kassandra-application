@@ -18,7 +18,7 @@ export default function Index({ poolsKassandra }: IIndexProps) {
       <Head>
         <meta
           property="og:image"
-          content="https://kassandra.finance/kacy-og.png"
+          content="https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png"
         />
         <meta property="og:image:width" content="1012" />
         <meta property="og:image:height" content="506" />
@@ -30,7 +30,7 @@ export default function Index({ poolsKassandra }: IIndexProps) {
         <meta name="twitter:description" content="Kassandra DAO" />
         <meta
           name="twitter:image"
-          content={`https://dev.kassandra.finance/kacy-og.png`}
+          content={`https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png`}
         />
       </Head>
 
