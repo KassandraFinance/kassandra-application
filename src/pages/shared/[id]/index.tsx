@@ -30,8 +30,6 @@ const Page = ({ id }: Props) => {
   return (
     <>
       <Head>
-        <meta content="text/html; charset=UTF-8" name="Content-Type" />
-
         <meta
           property="og:image"
           content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
