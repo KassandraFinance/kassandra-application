@@ -153,7 +153,7 @@ const ActivityCard = ({
             <>
               {activityInfo.map((activity, i) => (
                 <ItemInformation
-                  key={activity.logo}
+                  key={activity.value + activity.newWeight}
                   title={
                     i === 0 ? activityProps[actionType].subTitle : undefined
                   }
