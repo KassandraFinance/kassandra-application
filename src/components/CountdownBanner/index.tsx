@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
-import useCountDownDate from '../../hooks/useCountDownDate'
+
+import { useCountdown } from '@/hooks/useCountDown'
 
 import * as S from './styles'
 
@@ -13,9 +14,7 @@ interface ICountdownCallbackParams {
 }
 
 const CountdownBanner = () => {
-  const { countDown, interval, timeRemaining } = useCountDownDate()
-
-  const withdrawDelay = React.useCallback(async () => {
+  function handleUnixTimestamp() {
     const year = 2021
     const month = 11
     const day = 1
@@ -23,16 +22,11 @@ const CountdownBanner = () => {
     const minute = 0
     const second = 0
     const d = new Date(year, month - 1, day, hour, minute, second)
-    const unix_timestamp = d.getTime()
 
-    countDown(unix_timestamp)
-  }, [])
+    return d.getTime()
+  }
 
-  React.useEffect(() => {
-    withdrawDelay()
-
-    return () => clearInterval(interval)
-  }, [])
+  const { dateFormated } = useCountdown(handleUnixTimestamp())
 
   return (
     <S.Background>
