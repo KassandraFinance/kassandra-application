@@ -11,8 +11,10 @@ import { BACKEND_KASSANDRA, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 import { calcChange } from '@/utils/numerals'
 
 import Loading from '@/components/Loading'
-import ManagerInfo from './ManagerInfo'
+import ModalViewCoin from '@/components/Modals/ModalViewCoin'
+import ImageProfile from '@/components/Governance/ImageProfile'
 
+import eyeShowIcon from '@assets/utilities/eye-show.svg'
 import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
 import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
 
@@ -20,12 +22,16 @@ import * as S from './styles'
 import {
   THead,
   TH,
+  TR,
+  TD,
+  TRLink,
   ColumnTitle,
   TableViewButtonContainer,
   TableViewButton,
   TBody,
   TRHead,
-  Value
+  Value,
+  ViewButton
 } from '@/templates/Explore/CommunityPoolsTable/styles'
 import {
   TableLine,
@@ -33,7 +39,6 @@ import {
   ValueContainer,
   Value as V
 } from '@ui/Modals/ModalViewCoin/styles'
-import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 
 type ITvlProps = {
   close: string
@@ -226,28 +231,57 @@ const ManagersPoolTable = () => {
         {ManagersList.length > 0 ? (
           ManagersList.map(manager => {
             return (
-              <S.ManagerInfoConainer key={manager.address}>
+              <TR key={manager.address}>
                 <Link
                   href={`/profile/${manager.address}?tab=managed-funds`}
                   passHref
                 >
-                  <S.ManagerInfoDesktop>
-                    <ManagerInfo
-                      managerInfo={manager}
-                      inViewCollum={inViewCollum}
-                      handleView={handleView}
-                    />
-                  </S.ManagerInfoDesktop>
+                  <TRLink>
+                    <TD>
+                      <Value align="left">{manager.rank}</Value>
+                    </TD>
+                    <TD>
+                      <ImageProfile
+                        address={manager.address}
+                        diameter={24}
+                        hasAddress={true}
+                        isLink={false}
+                        tab="?tab=managed-funds"
+                      />
+                    </TD>
+                    <TD isView={inViewCollum === 1}>
+                      <Value>${manager.valueManaged}</Value>
+                    </TD>
+                    <TD isView={inViewCollum === 2}>
+                      <Value>{manager.poolCount}</Value>
+                    </TD>
+                    <TD isView={inViewCollum === 3}>
+                      <Value value={Number(manager.changeMonthly)}>
+                        {manager.changeMonthly}%
+                      </Value>
+                    </TD>
+                    <TD isView={inViewCollum === 4}>
+                      <Value value={Number(manager.changeDay)}>
+                        {manager.changeDay}%
+                      </Value>
+                    </TD>
+                    <TD isView={inViewCollum === 5}>
+                      <Value>{manager.voteWeight}%</Value>
+                    </TD>
+
+                    <TD
+                      onClick={event => {
+                        event.preventDefault()
+                        handleView(manager)
+                      }}
+                    >
+                      <ViewButton type="button">
+                        <Image src={eyeShowIcon} />
+                      </ViewButton>
+                    </TD>
+                  </TRLink>
                 </Link>
-                <S.ManagerInfoMobile>
-                  <ManagerInfo
-                    managerInfo={manager}
-                    inViewCollum={inViewCollum}
-                    isLinkAddress={true}
-                    handleView={handleView}
-                  />
-                </S.ManagerInfoMobile>
-              </S.ManagerInfoConainer>
+              </TR>
             )
           })
         ) : (

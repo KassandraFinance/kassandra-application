@@ -1,33 +1,39 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import theme from '../../styles/theme'
-import Link from 'next/link'
 
-export const CardContainer = styled.div`
-  max-width: 40rem;
-  height: 41rem;
+interface ICardContainerProps {
+  isLink: boolean;
+}
 
-  background: rgba(31, 31, 31, 0.72);
-  box-shadow: 0rem 0.4rem 6.9rem -1.7rem rgba(0, 0, 0, 0.51);
-  border-radius: 1.2rem;
+// eslint-disable-next-line prettier/prettier
+export const CardContainer = styled.div<ICardContainerProps>`
+  ${({ isLink }) => css`
+    max-width: 40rem;
+    height: 41rem;
 
-  transition: transform 0.3s ease-in-out;
-  cursor: pointer;
+    background: rgba(31, 31, 31, 0.72);
+    box-shadow: 0rem 0.4rem 6.9rem -1.7rem rgba(0, 0, 0, 0.51);
+    border-radius: 1.2rem;
 
-  a {
-    text-decoration: none;
-  }
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+    pointer-events: ${isLink ? 'auto' : 'none'};
 
-  &:hover {
-    transform: scale(1.05);
+    a {
+      text-decoration: none;
+    }
 
-    z-index: 1;
-  }
+    &:hover {
+      transform: scale(1.05);
+
+      z-index: 1;
+    }
+  `}
 `
 
 export const CardContent = styled.div`
   cursor: auto;
 `
-export const CardLinkContainer = styled(Link)``
 export const CardLinkContent = styled.a``
 
 export const CardHeader = styled.div`

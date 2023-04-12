@@ -1,3 +1,4 @@
+import { Image } from '@/components/Governance/ImageProfile/styles'
 import styled, { css } from 'styled-components'
 
 export const CommunityPoolsTable = styled.div`
@@ -39,20 +40,53 @@ export const TBody = styled.div`
     border-radius: 0 0 8px 8px;
 
     background: rgba(255 255 255 / 0.05);
-
-    div:first-child {
-      border-top: none;
-    }
-    div:last-child {
-      border-bottom: none;
-    }
   `}
 `
 
 export const TR = styled.div`
+  ${({ theme }) => css`
+    margin-inline: 1.6rem;
+
+    border-top: 1px solid transparent;
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: background-color border;
+
+    &:not(:last-of-type) {
+      border-bottom: 1px solid rgba(255 255 255 / 0.3);
+    }
+
+    &:hover {
+      margin: 0;
+      padding-inline: 1.6rem;
+      background-color: ${theme.colors.darkPurple};
+
+      &:not(:first-of-type) {
+        margin-top: -1px;
+        padding-top: 1px;
+        border-top: 1px solid rgba(255 255 255 / 0.3);
+      }
+
+      @media (min-width: 768px) {
+        padding-inline: 2.4rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      margin-inline: 2.4rem;
+    }
+  `}
+`
+
+export const TRLink = styled.a`
   ${() => css`
     display: grid;
     grid-template-columns: minmax(10rem, 1.5fr) 1fr 8rem;
+    gap: 1rem;
+
+    text-decoration: none;
+    cursor: pointer;
 
     @media (min-width: 768px) {
       grid-template-columns:
@@ -297,6 +331,13 @@ export const CoinImageContainer = styled.div`
 
     width: fit-content;
     height: 1.8rem;
+
+    @media (max-width: 768px) {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: auto;
+    }
   `}
 `
 
@@ -315,6 +356,13 @@ export const CoinImageWrapper = styled.div<ICoinImageWrapperProps>`
     width: 1.8rem;
     height: 1.8rem;
     border-radius: 50%;
+
+    @media (max-width: 768px) {
+      position: relative;
+      left: 0;
+
+      margin-right: -0.8rem;
+    }
   `}
 `
 
@@ -359,7 +407,7 @@ export const ViewButton = styled.button`
 
 export const CoinModalContainer = styled.div`
   ${() => css`
-    padding-right: 1.6rem;
+    padding-right: 0.8rem;
   `}
 `
 

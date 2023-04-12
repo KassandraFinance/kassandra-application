@@ -8,13 +8,15 @@ import * as S from './styles'
 interface ITransactionFinalized {
   title: string;
   image: any;
+  onCLick: () => void;
   children: ReactNode;
 }
 
 const TransactionFinalized = ({
   title,
   image,
-  children
+  children,
+  onCLick
 }: ITransactionFinalized) => {
   return (
     <S.TransactionFinalized>
@@ -26,7 +28,7 @@ const TransactionFinalized = ({
 
       {children}
 
-      <Button text="Done" backgroundPrimary fullWidth />
+      <Button text="Done" backgroundPrimary fullWidth onClick={onCLick} />
     </S.TransactionFinalized>
   )
 }

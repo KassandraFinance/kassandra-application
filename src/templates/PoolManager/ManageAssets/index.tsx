@@ -147,6 +147,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       key="transactionFinalized"
       title="Asset addition has been approved"
       image={addIcon}
+      onCLick={() => setIsOpenManageAssets(false)}
     >
       <S.Container>
         <FlexContainer>
@@ -476,7 +477,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       setTransactions(prev =>
         prev.map((item, index) => {
           if (item.status === 'APPROVING') {
-            if (item.key === 'addToken' || item.key === 'removeToken' || item.key === 'Rebalance') {
+            if (item.key === 'addToken' || item.key === 'RemoveToken' || item.key === 'Rebalance') {
               setIsCompleted(true)
             }
             transactionIndex = index

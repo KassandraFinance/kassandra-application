@@ -99,7 +99,9 @@ const PoolToken = ({
         </S.CurrentAmount>
         <S.AmountLine />
       </S.CurrentAmountContainer>
-      <S.Allocation>{BNtoDecimal(currentWeight.mul(100), 2)}%</S.Allocation>
+      <S.Allocation>
+        <p>{BNtoDecimal(currentWeight.mul(100), 2)}%</p>
+      </S.Allocation>
       <S.Arrow>
         <img src="/assets/utilities/arrow-right.svg" alt="" width={32} />
       </S.Arrow>

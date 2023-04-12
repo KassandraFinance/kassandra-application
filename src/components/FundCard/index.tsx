@@ -144,14 +144,9 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
   return (
     <>
       {infoPool.price > '0.1' ? (
-        <S.CardContainer>
-          <S.CardLinkContainer
-            as={link ? S.CardLinkContainer : S.CardContent}
-            href={link ?? ''}
-            passHref
-          >
+        <S.CardContainer isLink={!!link}>
+          <Link href={link ?? ''} passHref>
             <S.CardLinkContent
-              as={link ? S.CardLinkContent : S.CardContent}
               onClick={() =>
                 trackEventFunction(
                   'click-on-link',
@@ -271,7 +266,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
                 )}
               </S.CardBody>
             </S.CardLinkContent>
-          </S.CardLinkContainer>
+          </Link>
         </S.CardContainer>
       ) : null}
     </>

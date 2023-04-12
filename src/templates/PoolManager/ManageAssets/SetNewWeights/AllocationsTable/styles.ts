@@ -112,7 +112,7 @@ export const TrBody = styled.tr`
     @media (max-width: 745px) {
       margin-inline: 1.6rem;
       padding: 1.4rem 0;
-      grid-template-columns: none;
+      grid-template-columns: repeat(4, 1fr);
       gap: 0;
       grid-template-areas:
         'tokenInfo porcentage arrow newAllocation'
