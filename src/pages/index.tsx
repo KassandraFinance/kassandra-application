@@ -30,7 +30,7 @@ export default function Index({ poolsKassandra }: IIndexProps) {
         <meta name="twitter:description" content="Kassandra DAO" />
         <meta
           name="twitter:image"
-          content={`https://kassandra-application-9qzma23ol-kassandra-finance.vercel.app/kacy-og.png`}
+          content={`/kacy-og.png`}
         />
       </Head>
 
