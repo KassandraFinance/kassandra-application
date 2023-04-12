@@ -30,8 +30,6 @@ const Page = ({ id }: Props) => {
   return (
     <>
       <Head>
-        <meta content="text/html; charset=UTF-8" name="Content-Type" />
-
         <meta
           property="og:image"
           content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
@@ -40,20 +38,17 @@ const Page = ({ id }: Props) => {
           property="og:url"
           content={`https://app.kassandra.finance/shared/${id}`}
         />
+        <meta property="og:image:width" content="1000" />
+        <meta property="og:image:height" content="500" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@dao_kassandra" />
-
         <meta name="twitter:title" content="Kassandra" />
-
         <meta name="twitter:description" content="Kassandra DAO" />
-
         <meta
           name="twitter:image"
           content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
-        <meta property="og:image:width" content="1000" />
-        <meta property="og:image:height" content="500" />
       </Head>
       <div>
         <img
