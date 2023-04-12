@@ -43,7 +43,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
         <MatomoProvider value={instance}>
           <ThemeProvider theme={theme}>
             <Head>
-              <meta content="text/html; charset=UTF-8" name="Content-Type" />
               {/* Primary Meta Tags */}
               <title>Kassandra</title>
               <meta name="title" content="Kassandra - Decentralized Funds" />
@@ -54,10 +53,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
 
               {/* Open Graph / Facebook */}
               <meta property="og:type" content="website" />
-              <meta
-                property="og:url"
-                content="https://dev.kassandra.finance/"
-              />
+              <meta property="og:url" content="https://kassandra.finance/" />
               <meta
                 name="title"
                 property="og:title"
@@ -71,14 +67,14 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               <meta
                 name="image"
                 property="og:image"
-                content="https://dev.kassandra.finance/kacy-og.png"
+                content="https://kassandra.finance/kacy-og.png"
               />
 
               {/* Twitter */}
               <meta property="twitter:card" content="summary_large_image" />
               <meta
                 property="twitter:url"
-                content="https://dev.kassandra.finance/"
+                content="https://kassandra.finance/"
               />
               <meta
                 property="twitter:title"
@@ -90,7 +86,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               />
               <meta
                 property="twitter:image"
-                content="https://dev.kassandra.finance/kacy-og.png"
+                content="https://kassandra.finance/kacy-og.png"
               />
               <meta property="twitter:site" content="@dao_kassandra" />
 
