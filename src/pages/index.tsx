@@ -29,14 +29,6 @@ export default function Index({ poolsKassandra }: IIndexProps) {
         <meta name="image" property="og:image" content="https://kassandra.finance/kacy-og.png" />
         <meta property="og:image:width" content="1012" />
         <meta property="og:image:height" content="506" />
-
-        { /* Twitter */ }
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://kassandra.finance/" />
-        <meta property="twitter:title" content="Kassandra - Decentralized Funds" />
-        <meta property="twitter:description" content="Tokenized data-driven investment funds"/>
-        <meta property="twitter:image" content="https://kassandra.finance/kacy-og.png" />
-        <meta property="twitter:site" content="@dao_kassandra" />
       </Head>
 
       <Explore poolsKassandra={poolsKassandra} />
