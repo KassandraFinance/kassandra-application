@@ -27,6 +27,8 @@ export default function Index({ poolsKassandra }: IIndexProps) {
         <meta name="title" property="og:title" content="Kassandra - Decentralized Funds" />
         <meta name="description" property="og:description" content="Tokenized data-driven investment funds" />
         <meta name="image" property="og:image" content="https://kassandra.finance/kacy-og.png" />
+        <meta property="og:image:width" content="1012" />
+        <meta property="og:image:height" content="506" />
 
         { /* Twitter */ }
         <meta property="twitter:card" content="summary_large_image" />

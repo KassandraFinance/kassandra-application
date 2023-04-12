@@ -69,6 +69,8 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 property="og:image"
                 content="https://kassandra.finance/kacy-og.png"
               />
+              <meta property="og:image:width" content="1012" />
+              <meta property="og:image:height" content="506" />
 
               {/* Twitter */}
               <meta property="twitter:card" content="summary_large_image" />
