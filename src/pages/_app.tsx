@@ -44,11 +44,56 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
           <ThemeProvider theme={theme}>
             <Head>
               <meta content="text/html; charset=UTF-8" name="Content-Type" />
+              {/* Primary Meta Tags */}
               <title>Kassandra</title>
+              <meta name="title" content="Kassandra - Decentralized Funds" />
               <meta
                 name="description"
                 content="Tokenized data-driven investment funds"
               />
+
+              {/* Open Graph / Facebook */}
+              <meta property="og:type" content="website" />
+              <meta
+                property="og:url"
+                content="https://dev.kassandra.finance/"
+              />
+              <meta
+                name="title"
+                property="og:title"
+                content="Kassandra - Decentralized Funds"
+              />
+              <meta
+                name="description"
+                property="og:description"
+                content="Tokenized data-driven investment funds"
+              />
+              <meta
+                name="image"
+                property="og:image"
+                content="https://dev.kassandra.finance/kacy-og.png"
+              />
+
+              {/* Twitter */}
+              <meta property="twitter:card" content="summary_large_image" />
+              <meta
+                property="twitter:url"
+                content="https://dev.kassandra.finance/"
+              />
+              <meta
+                property="twitter:title"
+                content="Kassandra - Decentralized Funds"
+              />
+              <meta
+                property="twitter:description"
+                content="Tokenized data-driven investment funds"
+              />
+              <meta
+                property="twitter:image"
+                content="https://dev.kassandra.finance/kacy-og.png"
+              />
+              <meta property="twitter:site" content="@dao_kassandra" />
+
               <link rel="preconnect" href="https://fonts.gstatic.com" />
               <link
                 href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&amp;display=swap"
@@ -61,12 +106,8 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 sizes="any"
               />
               <meta property="og:site_name" content="Kassandra" />
-              <meta property="og:type" content="website" />
               {/* <meta property="og:url" content="https://kassandra.finance/" /> */}
-              <meta
-                property="og:title"
-                content="Kassandra - Decentralized Funds"
-              />
+
               {/* <meta
             property="og:image:alt"
             content="Welcome to Kassandra DAO - Tokenized data-driven investment funds"
