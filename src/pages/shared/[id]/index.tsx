@@ -30,9 +30,10 @@ const Page = ({ id }: Props) => {
   return (
     <>
       <Head>
+        <meta content="text/html; charset=UTF-8" name="Content-Type" />
+
         <meta
           property="og:image"
-          key="ogImage"
           content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
         <meta
@@ -40,12 +41,8 @@ const Page = ({ id }: Props) => {
           content={`https://app.kassandra.finance/shared/${id}`}
         />
 
-        <meta
-          name="twitter:card"
-          key="twitterCard"
-          content="summary_large_image"
-        />
-        <meta name="twitter:site" key="twitterSite" content="@dao_kassandra" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@dao_kassandra" />
 
         <meta name="twitter:title" content="Kassandra" />
 
@@ -53,7 +50,6 @@ const Page = ({ id }: Props) => {
 
         <meta
           name="twitter:image"
-          key="twitterImage"
           content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
         <meta property="og:image:width" content="1000" />
