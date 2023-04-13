@@ -93,9 +93,11 @@ const ShareImageModal = ({
   React.useEffect(() => {
     if (!openModal) return
     setLoading(true)
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setLoading(false)
-    }, 3400)
+    }, 3800)
+
+    return () => clearTimeout(timer)
   }, [openModal])
 
   return (
