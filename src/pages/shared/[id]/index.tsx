@@ -2,34 +2,23 @@ import React from 'react'
 import Head from 'next/head'
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import { ParsedUrlQuery } from 'querystring'
-import { useRouter } from 'next/router'
 
 type Props = {
   id: string
 }
 
 const Page = ({ id }: Props) => {
-  console.log(
-    'teste',
-    `https://app.kassandra.finance/api/funds/shared?id=${id}`
-  )
-  const router = useRouter()
   const fund = id.split('-').pop()
-
-  //   React.useEffect(() => {
-  //     document
-  //       // eslint-disable-next-line prettier/prettier
-  //       .querySelector("meta[property='og:image']")!
-  //       .setAttribute('content', `${URL_API[process.env.NEXT_PUBLIC_URL_API || 4]}/api/funds/shared?id=${id}`)
-  //   }, [id])
-
-  React.useEffect(() => {
-    // router.push(`/pool/${fund}`)
-  }, [])
 
   return (
     <>
       <Head>
+        {/* Tag for redirecting of the page */}
+        <meta
+          httpEquiv="refresh"
+          content={`0; url = https://app.kassandra.finance/pool/${fund}`}
+        />
+
         {/* Primary Meta Tags */}
         <title>Kassandra</title>
         <meta name="title" content="Kassandra - Decentralized Funds" />
@@ -53,6 +42,7 @@ const Page = ({ id }: Props) => {
           property="og:image"
           content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
+        <meta property="og:site_name" content="Kassandra" />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
@@ -73,6 +63,7 @@ const Page = ({ id }: Props) => {
           content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
         <meta property="twitter:site" content="@dao_kassandra" />
+        <meta name="twitter:creator" content="@tgnvsctn" />
       </Head>
       <div>
         <img
@@ -94,7 +85,7 @@ export const getServerSideProps = async (
   if (typeof context.params?.id === 'string') {
     return {
       props: {
-        id: context.params?.id
+        id: context.params.id
       }
     }
   } else {
