@@ -63,7 +63,7 @@ const Page = ({ id }: Props) => {
         {/* Tag for redirecting of the page */}
         <meta
           httpEquiv="refresh"
-          content={`0; url = https://app.kassandra.finance/pool/${fund}`}
+          content={`1; url = https://app.kassandra.finance/pool/${fund}`}
         />
       </Head>
       <div>
