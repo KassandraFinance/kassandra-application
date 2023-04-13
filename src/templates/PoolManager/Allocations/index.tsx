@@ -306,7 +306,7 @@ const Allocations = () => {
     setAllocationHistory(
       activities.sort((a, b) => b.date.getTime() - a.date.getTime())
     )
-  }, [data])
+  }, [data, poolAssets])
 
   return (
     <S.Allocations>
