@@ -13,12 +13,6 @@ const Page = ({ id }: Props) => {
   return (
     <>
       <Head>
-        {/* Tag for redirecting of the page */}
-        <meta
-          httpEquiv="refresh"
-          content={`0; url = https://app.kassandra.finance/pool/${fund}`}
-        />
-
         {/* Primary Meta Tags */}
         <title>Kassandra</title>
         <meta name="title" content="Kassandra - Decentralized Funds" />
@@ -43,6 +37,8 @@ const Page = ({ id }: Props) => {
           content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
         <meta property="og:site_name" content="Kassandra" />
+        <meta property="og:image:width" content="1000" />
+        <meta property="og:image:height" content="500" />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
@@ -63,7 +59,12 @@ const Page = ({ id }: Props) => {
           content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
         <meta property="twitter:site" content="@dao_kassandra" />
-        <meta name="twitter:creator" content="@tgnvsctn" />
+
+        {/* Tag for redirecting of the page */}
+        <meta
+          httpEquiv="refresh"
+          content={`0; url = https://app.kassandra.finance/pool/${fund}`}
+        />
       </Head>
       <div>
         <img
