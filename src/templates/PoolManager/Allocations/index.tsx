@@ -85,7 +85,10 @@ type CoinGeckoResponseType = {
   }
 }
 
-const Allocations = () => {
+interface IAllocationsProps {
+  countDownDate: string;
+}
+const Allocations = ({ countDownDate }: IAllocationsProps) => {
   const [RebalancingProgress, setRebalancingProgress] =
     React.useState<IRebancingProgressProps | null>(null)
   const [listTokenWeights, setlistTokenWeights] = React.useState<
@@ -314,6 +317,7 @@ const Allocations = () => {
         RebalancingProgress={RebalancingProgress}
         listTokenWeights={listTokenWeights}
         rebalanceWeights={rebalanceWeights}
+        countDownDate={countDownDate}
       />
       <AllocationTable
         allocationData={listTokenWeights}

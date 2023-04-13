@@ -52,12 +52,14 @@ interface IIntroReviewProps {
   RebalancingProgress: IRebancingProgressProps | null;
   listTokenWeights: IlistTokenWeightsProps[];
   rebalanceWeights: IRebalanceWeightsProps;
+  countDownDate: string;
 }
 
 const IntroReview = ({
   RebalancingProgress,
   listTokenWeights,
-  rebalanceWeights
+  rebalanceWeights,
+  countDownDate
 }: IIntroReviewProps) => {
   // eslint-disable-next-line prettier/prettier
   const [isOpenTokenInfoMobile, setIsOpenTokenInfoMobile] = React.useState(false)
@@ -157,7 +159,8 @@ const IntroReview = ({
               </S.RebalancingInfo>
               <S.RebalancingInfo>
                 <p>Remaining</p>
-                <p id="remaning">{RebalancingProgress?.remaning ?? 0}</p>
+                {/* <p id="remaning">{RebalancingProgress?.remaning ?? 0}</p> */}
+                <p id="remaning">{countDownDate ?? 0}</p>
               </S.RebalancingInfo>
               <S.RebalancingInfo>
                 <p>ASSETS</p>

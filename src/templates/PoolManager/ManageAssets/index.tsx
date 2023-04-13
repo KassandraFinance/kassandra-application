@@ -39,6 +39,7 @@ import TransactionFinalized from './TransactionFinalized'
 import SetNewWeights from './SetNewWeights'
 import RebalanceReview from './RebalanceReview'
 import RebalanceSuccess from './RebalanceSuccess'
+import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
 import { CoinGeckoAssetsResponseType } from './AddLiquidity/AddLiquidityOperation'
 
@@ -203,7 +204,24 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
               </ValueWrapper>
 
               <ImageWrapper>
-                <Image src={poolInfo.logo} layout="fill" />
+                <TokenWithNetworkImage
+                  tokenImage={{
+                    url: poolInfo?.logo ?? '',
+                    height: 20,
+                    width: 20,
+                    withoutBorder: true
+                  }}
+                  networkImage={{
+                    url: poolInfo?.chain.logo ?? '',
+                    height: 10,
+                    width: 10
+                  }}
+                  blockies={{
+                    size: 4,
+                    scale: 7,
+                    seedName: poolInfo?.name ?? ''
+                  }}
+                />
               </ImageWrapper>
             </ValueContainer>
           )}
@@ -666,6 +684,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
               poolId={poolId}
               actionSelected={actionSelected}
               setActionSelected={setActionSelected}
+              amountTokenInPool={poolInfo?.underlying_assets_addresses.length ?? 0}
             />
           ) : (
             chosenAction[actionSelected]

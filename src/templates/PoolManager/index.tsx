@@ -2,10 +2,17 @@ import React, { ReactElement } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import useSWR from 'swr'
+import request from 'graphql-request'
+import Tippy from '@tippyjs/react'
+
+import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
+import { GET_POOL_REBALANCE_TIME } from './graphql'
 
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import usePoolInfo from '@/hooks/usePoolInfo'
 import { useAppSelector } from '@/store/hooks'
+import { useCountdown } from '@/hooks/useCountDown'
 
 import SharedImage from '../Pool/SharedImage'
 import ShareImageModal from '../Pool/ShareImageModal'
@@ -94,10 +101,18 @@ const PoolManager = () => {
   const { trackEventFunction } = useMatomoEcommerce()
 
   const { poolInfo, isManager } = usePoolInfo(userWalletAddress, poolId)
+  const { data } = useSWR([GET_POOL_REBALANCE_TIME, poolId], (query, poolId) =>
+    request(BACKEND_KASSANDRA, query, { id: poolId })
+  )
+
+  const currentTime = new Date().getTime()
+  const endRebalanceTime = data?.pool?.weight_goals[0].end_timestamp * 1000
+
+  const { dateFormated } = useCountdown(endRebalanceTime)
 
   const PoolManagerComponents: { [key: string]: ReactElement } = {
     analytics: <Analytics poolId={poolId} />,
-    allocations: <Allocations />,
+    allocations: <Allocations countDownDate={dateFormated} />,
     activity: <Activity />,
     investors: <Investors />,
     feeRewards: <FeeRewards />,
@@ -203,14 +218,30 @@ const PoolManager = () => {
                 </S.NameIndex>
               </S.GridIntro>
 
-              <Button
-                className="btn-manage-assets"
-                backgroundSecondary
-                size="large"
-                text="Manage Assets"
-                image={gear.src}
-                onClick={() => setIsOpenManageAssets(true)}
-              />
+              <Tippy
+                allowHTML={true}
+                content={[
+                  <S.RebalancingProgressText key="title">
+                    REBALANCING IN PROGRESS
+                  </S.RebalancingProgressText>,
+                  <S.RebalancingProgressTime key="hours">
+                    {dateFormated}
+                  </S.RebalancingProgressTime>
+                ]}
+                disabled={!(currentTime < endRebalanceTime)}
+              >
+                <span>
+                  <Button
+                    className="btn-manage-assets"
+                    backgroundSecondary
+                    size="large"
+                    text="Manage Assets"
+                    image={gear.src}
+                    onClick={() => setIsOpenManageAssets(true)}
+                    disabledNoEvent={currentTime < endRebalanceTime}
+                  />
+                </span>
+              </Tippy>
             </S.Intro>
             <SelectTabs
               tabs={tabs}
