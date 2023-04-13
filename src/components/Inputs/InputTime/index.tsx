@@ -26,16 +26,17 @@ const InputTime = ({
       <S.InputNumber
         form={form}
         type="number"
+        id={name}
         name={name}
         min={min}
         max={max}
         step={step}
-        value={InputTimeValue}
+        value={InputTimeValue && InputTimeValue > 0 ? InputTimeValue : ''}
         onChange={event => handleInputTime(event)}
         placeholder="Time"
         required={InputTimeValue ? true : false}
       />
-      <S.Label>{name}</S.Label>
+      <S.Label htmlFor={name}>{name}</S.Label>
     </S.WrapperInputTime>
   )
 }

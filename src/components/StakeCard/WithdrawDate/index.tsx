@@ -3,7 +3,7 @@ import React from 'react'
 
 import { Staking } from '../../../constants/tokenAddresses'
 
-import useCountDownDate from '../../../hooks/useCountDownDate'
+import { useCountdown } from '@/hooks/useCountDown'
 import useStakingContract from '../../../hooks/useStakingContract'
 
 import * as S from './styles'
@@ -14,23 +14,23 @@ interface IWithdrawDateProps {
 }
 
 const WithdrawDate = ({ pid, userWalletAddress }: IWithdrawDateProps) => {
-  const { date, countDown, interval } = useCountDownDate()
-  const { stakedUntil } = useStakingContract(Staking)
+  const [withdrawDelay, setWithdrawDelay] = React.useState(0)
 
-  const withdrawDelay = React.useCallback(async () => {
+  const { stakedUntil } = useStakingContract(Staking)
+  const { dateFormated } = useCountdown(withdrawDelay)
+
+  async function handleWithdrawDelay() {
     const unix_timestamp = await stakedUntil(pid, userWalletAddress)
     const countDownDate = new Date(Number(unix_timestamp) * 1000).getTime()
 
-    countDown(countDownDate)
-  }, [])
+    setWithdrawDelay(countDownDate)
+  }
 
   React.useEffect(() => {
-    withdrawDelay()
-
-    return () => clearInterval(interval)
+    handleWithdrawDelay()
   }, [])
 
-  return <S.WithdrawDate>Withdraw in {date}</S.WithdrawDate>
+  return <S.WithdrawDate>Withdraw in {dateFormated ?? 0}</S.WithdrawDate>
 }
 
 export default WithdrawDate

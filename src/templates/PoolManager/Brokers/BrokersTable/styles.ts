@@ -1,11 +1,15 @@
 import styled, { css } from 'styled-components'
-import { TR, Value } from '@/templates/Explore/CommunityPoolsTable/styles'
+import {
+  TRHead,
+  TRLink,
+  Value
+} from '@/templates/Explore/CommunityPoolsTable/styles'
 import { Image } from '@ui/Governance/ImageProfile/styles'
 import { Value as V } from '@ui/Modals/ModalViewCoin/styles'
 
 export const BrokersTable = styled.div`
   ${({ theme }) => css`
-    ${TR} {
+    ${TRLink}, ${TRHead} {
       grid-template-columns: 1fr 1fr 8rem;
       gap: 0.5rem;
 
@@ -18,6 +22,7 @@ export const BrokersTable = styled.div`
 
     ${Image} {
       justify-content: flex-start;
+      pointer-events: none;
 
       span,
       a {
@@ -28,13 +33,6 @@ export const BrokersTable = styled.div`
         font-size: ${theme.font.sizes.font14};
         line-height: 135%;
         letter-spacing: 0.05em;
-      }
-
-      &:hover {
-        span,
-        a {
-          color: ${theme.colors.cyan};
-        }
       }
     }
   `}

@@ -10,6 +10,7 @@ interface ICardChooseActionProps {
   paragraph: string;
   NumberActive: number;
   isActive: chooseActionStep;
+  isDisable?: boolean;
   setChooseActionSelect: React.Dispatch<React.SetStateAction<chooseActionStep>>;
 }
 
@@ -18,6 +19,7 @@ const CardChooseAction = ({
   paragraph,
   title,
   NumberActive,
+  isDisable,
   isActive,
   setChooseActionSelect
 }: ICardChooseActionProps) => {
@@ -34,6 +36,7 @@ const CardChooseAction = ({
       isActive={isActive === NumberActive}
       onClick={() => handleClickChoseCard()}
       type="button"
+      disabled={isDisable}
     >
       <S.imageContent>
         <img src={ImageUrl} alt="" />

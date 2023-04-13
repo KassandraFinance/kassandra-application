@@ -71,18 +71,31 @@ export const ReviewTableAndExecutionPeriod = styled.div`
   `}
 `
 
-export const ExecutionPeriodCard = styled.div`
+export const ExecutionPeriodCardContainer = styled.div`
   ${({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+
     min-width: 36.1rem;
     max-width: 36.1rem;
-    padding: 2.4rem;
-
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
 
     @media (max-width: 992px) {
       min-width: 100%;
     }
+
+    strong {
+      font-weight: ${theme.font.weight.medium};
+    }
+  `}
+`
+
+export const ExecutionPeriodCard = styled.div`
+  ${({ theme }) => css`
+    padding: 2.4rem;
+
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
 
     h3 {
       margin-bottom: 0.8rem;

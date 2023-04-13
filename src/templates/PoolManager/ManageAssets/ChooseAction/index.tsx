@@ -1,4 +1,5 @@
 import React from 'react'
+import Tippy from '@tippyjs/react'
 
 import CardChooseAction from './CardChooseAction'
 import FundCard from '../../../../components/FundCard'
@@ -16,10 +17,11 @@ interface IChooseActionProps {
   poolId: string;
   actionSelected: chooseActionStep;
   setActionSelected: React.Dispatch<React.SetStateAction<chooseActionStep>>;
+  amountTokenInPool: number;
 }
 
 // eslint-disable-next-line prettier/prettier
-const ChooseAction = ({ poolId, actionSelected, setActionSelected }: IChooseActionProps) => {
+const ChooseAction = ({ poolId, actionSelected, setActionSelected, amountTokenInPool }: IChooseActionProps) => {
   return (
     <S.ChooseAction>
       <S.Header>
@@ -51,14 +53,22 @@ const ChooseAction = ({ poolId, actionSelected, setActionSelected }: IChooseActi
             isActive={actionSelected}
             setChooseActionSelect={setActionSelected}
           />
-          <CardChooseAction
-            ImageUrl="/assets/iconGradient/remove.svg"
-            title="remove asset"
-            paragraph="Choose one or more assets you would like to remove from the pool. This is something that."
-            NumberActive={chooseActionStep.Remove}
-            isActive={actionSelected}
-            setChooseActionSelect={setActionSelected}
-          />
+          <Tippy
+            content="You cannot have less than 2 assets in a managed pool. Currently this pool has only 2 assets."
+            disabled={!(amountTokenInPool <= 2)}
+          >
+            <span>
+              <CardChooseAction
+                ImageUrl="/assets/iconGradient/remove.svg"
+                title="remove asset"
+                paragraph="Choose one or more assets you would like to remove from the pool. This is something that."
+                NumberActive={chooseActionStep.Remove}
+                isActive={actionSelected}
+                setChooseActionSelect={setActionSelected}
+                isDisable={amountTokenInPool <= 2}
+              />
+            </span>
+          </Tippy>
         </S.CardChooseActionContainer>
 
         <S.FundCardContainer>

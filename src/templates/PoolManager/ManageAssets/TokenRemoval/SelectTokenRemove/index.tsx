@@ -5,6 +5,7 @@ import { BNtoDecimal } from '@/utils/numerals'
 import { useAppSelector } from '@/store/hooks'
 
 import SelectToken from './SelectToken'
+import WarningCard from '@/components/WarningCard'
 
 import * as S from './styles'
 
@@ -127,16 +128,13 @@ const SelectTokenRemove = ({ poolSymbol }: ISelectTokenRemoveProps) => {
         </S.LineRemovedTokenReview>
       </S.RemovedTokenReviewCard>
 
-      <S.NotificationStatusContainer
-        showError={!lpNeeded.balanceInWallet.gte(lpNeeded.value)}
-      >
-        <img src="/assets/notificationStatus/queued.svg" alt="" />
+      <WarningCard showCard={!lpNeeded.balanceInWallet.gte(lpNeeded.value)}>
         <p>
           You still need{' '}
           {BNtoDecimal(lpNeeded.value, tokenSelection.decimals, 2)} {poolSymbol}{' '}
           to remove {tokenSelection.symbol} from this pool
         </p>
-      </S.NotificationStatusContainer>
+      </WarningCard>
     </S.SelectTokenRemove>
   )
 }

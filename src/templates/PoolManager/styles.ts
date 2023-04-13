@@ -184,3 +184,24 @@ export const LoadingWrapper = styled.div`
     height: calc(100vh - 10.8rem);
   `}
 `
+
+export const RebalancingProgressText = styled.div`
+  ${({ theme }) => css`
+    color: #c4c4c4;
+    font-size: ${theme.font.sizes.font12};
+    font-weight: ${theme.font.weight.normal};
+    line-height: 1.4rem;
+    text-transform: uppercase;
+  `}
+`
+
+export const RebalancingProgressTime = styled.div`
+  ${({ theme }) => css`
+    color: ${theme.colors.white};
+    font-size: ${theme.font.sizes.font12};
+    font-weight: ${theme.font.weight.normal};
+    line-height: 1.4rem;
+    letter-spacing: 0.22em;
+    text-align: center;
+  `}
+`

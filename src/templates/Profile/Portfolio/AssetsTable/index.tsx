@@ -1,14 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
-
-import { request } from 'graphql-request'
-
-import { BACKEND_KASSANDRA } from '../../../../constants/tokenAddresses'
-import { GET_CHART } from './graphql'
+import Blockies from 'react-blockies'
 
 import { BNtoDecimal } from '../../../../utils/numerals'
 
@@ -33,82 +28,28 @@ export interface IParamsType {
 }
 
 interface IAssetsTableProps {
-  assets: string[];
-  balanceFunds: IBalanceType;
+  pools: PoolProps[];
 }
 
-type Response = {
-  pools: {
-    id: string,
-    now: { close: number }[],
-    day: { close: number }[],
-    month: { close: number }[],
-    price_usd: string,
-    total_value_locked_usd: string,
-    address: string,
-    name: string,
-    symbol: string,
-    logo: string
-  }[]
+type PoolProps = {
+  id: string,
+  address: string,
+  name: string,
+  symbol: string,
+  logo: string,
+  changeDay: string,
+  changeMonth: string,
+  price: string,
+  tvl: string,
+  balance: string,
+  balanceInUSD: string,
+  logoChain: string
 }
 
-export const AssetsTable = ({ assets, balanceFunds }: IAssetsTableProps) => {
+export const AssetsTable = ({ pools }: IAssetsTableProps) => {
   const router = useRouter()
 
-  const [changeDay, setChangeDay] = React.useState<IChangeType>({})
-  const [changeMonth, setChangeMonth] = React.useState<IChangeType>({})
-  const [price, setPrice] = React.useState<IPriceType>({})
-  const [tvl, setTvl] = React.useState<IPriceType>({})
-
-  const { data } = useSWR<Response>([GET_CHART, assets], (query, assets) =>
-    request(BACKEND_KASSANDRA, query, {
-      id: assets,
-      day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-      month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30)
-    })
-  )
-
-  function calcChange(newPrice: number, oldPrice: number) {
-    const calc = ((newPrice - oldPrice) / oldPrice) * 100
-    return calc ? calc.toFixed(2) : '0'
-  }
-
-  React.useEffect(() => {
-    if (typeof data === undefined) {
-      return
-    }
-
-    data?.pools?.forEach(element => {
-      const changeDay = calcChange(element.now[0]?.close, element.day[0]?.close)
-
-      const changeMonth = calcChange(
-        element.now[0]?.close,
-        element.month[0]?.close
-      )
-
-      setChangeDay(prevState => ({
-        ...prevState,
-        [element.id]: changeDay
-      }))
-
-      setChangeMonth(prevState => ({
-        ...prevState,
-        [element.id]: changeMonth
-      }))
-
-      setPrice(prevState => ({
-        ...prevState,
-        [element.id]: element.price_usd
-      }))
-
-      setTvl(prevState => ({
-        ...prevState,
-        [element.id]: element.total_value_locked_usd
-      }))
-    })
-  }, [data])
-
-  const Trs = data?.pools.map(pool => {
+  const Trs = pools.map(pool => {
     return (
       <S.Tr
         key={pool.id}
@@ -119,7 +60,11 @@ export const AssetsTable = ({ assets, balanceFunds }: IAssetsTableProps) => {
         <S.Td>
           <S.ProductWrapper>
             <S.ImageWrapper>
-              {pool.logo && <img src={pool.logo} />}
+              {pool.logo ? (
+                <img src={pool.logo} />
+              ) : (
+                <Blockies size={8} scale={9} seed={pool.name ?? ''} />
+              )}
             </S.ImageWrapper>
             <S.FundWrapper>
               <span>{pool.name}</span>
@@ -129,45 +74,31 @@ export const AssetsTable = ({ assets, balanceFunds }: IAssetsTableProps) => {
         </S.Td>
         <S.Td>
           <S.NetworkWrapper>
-            <Image src="/assets/logos/avalanche.svg" width={16} height={16} />
+            <Image src={pool.logoChain} width={16} height={16} />
           </S.NetworkWrapper>
         </S.Td>
-        <S.Td>${parseFloat(price[pool.address]).toFixed(2)}</S.Td>
+        <S.Td>${parseFloat(pool.price).toFixed(2)}</S.Td>
+        <S.Td>${pool.tvl ? BNtoDecimal(Big(pool.tvl), 2) : '0'}</S.Td>
         <S.Td>
-          ${tvl[pool.address] ? BNtoDecimal(Big(tvl[pool.address]), 2) : '0'}
-        </S.Td>
-        <S.Td>
-          <S.Change change={parseFloat(changeMonth[pool.address])}>
-            {changeMonth[pool.address]}%
+          <S.Change change={parseFloat(pool.changeMonth)}>
+            {pool.changeMonth}%
           </S.Change>
         </S.Td>
         <S.Td>
-          <S.Change change={parseFloat(changeDay[pool.address])}>
-            {changeDay[pool.address]}%
+          <S.Change change={parseFloat(pool.changeDay)}>
+            {pool.changeDay}%
           </S.Change>
         </S.Td>
         <S.Td>
           <S.FlexWrapper>
             <div>
-              {balanceFunds[pool.address]
-                ? BNtoDecimal(
-                    Big(balanceFunds[pool.address].toString()).div(
-                      Big(10).pow(18)
-                    ),
-                    2
-                  )
-                : 0}{' '}
+              {pool.balance ? BNtoDecimal(Big(pool.balance), 2) : 0}{' '}
               <span>{pool.symbol}</span>
             </div>
             <span>
               $
-              {balanceFunds[pool.address] && price[pool.address]
-                ? BNtoDecimal(
-                    Big(balanceFunds[pool.address].toString())
-                      .div(Big(10).pow(18))
-                      .mul(Big(price[pool.address])),
-                    2
-                  )
+              {pool.balance && pool.price
+                ? BNtoDecimal(Big(pool.balanceInUSD), 2)
                 : 0}
             </span>
           </S.FlexWrapper>
