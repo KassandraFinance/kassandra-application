@@ -30,25 +30,49 @@ const Page = ({ id }: Props) => {
   return (
     <>
       <Head>
+        {/* Primary Meta Tags */}
+        <title>Kassandra</title>
+        <meta name="title" content="Kassandra - Decentralized Funds" />
+        <meta
+          name="description"
+          content="Tokenized data-driven investment funds"
+        />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:url"
+          content={`https://app.kassandra.finance/pool/${id}`}
+        />
+        <meta property="og:title" content="Kassandra - Decentralized Funds" />
+        <meta
+          property="og:description"
+          content="Tokenized data-driven investment funds"
+        />
         <meta
           property="og:image"
           content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
-        <meta
-          property="og:url"
-          content={`https://app.kassandra.finance/shared/${id}`}
-        />
-        <meta property="og:image:width" content="1000" />
-        <meta property="og:image:height" content="500" />
 
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@dao_kassandra" />
-        <meta name="twitter:title" content="Kassandra" />
-        <meta name="twitter:description" content="Kassandra DAO" />
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
         <meta
-          name="twitter:image"
+          property="twitter:url"
+          content={`https://app.kassandra.finance/pool/${id}`}
+        />
+        <meta
+          property="twitter:title"
+          content="Kassandra - Decentralized Funds"
+        />
+        <meta
+          property="twitter:description"
+          content="Tokenized data-driven investment funds"
+        />
+        <meta
+          property="twitter:image"
           content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
+        <meta property="twitter:site" content="@dao_kassandra" />
       </Head>
       <div>
         <img

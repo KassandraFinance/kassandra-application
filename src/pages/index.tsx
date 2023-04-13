@@ -17,7 +17,7 @@ export default function Index({ poolsKassandra }: IIndexProps) {
     <>
       <Head>
         { /* Primary Meta Tags */ }
-        <title>Meta Tags — Preview, Edit and Generate</title>
+        <title>Kassandra</title>
         <meta name="title" content="Kassandra - Decentralized Funds" />
         <meta name="description" content="Tokenized data-driven investment funds" />
 
