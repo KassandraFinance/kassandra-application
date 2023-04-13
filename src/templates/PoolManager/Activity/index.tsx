@@ -160,7 +160,7 @@ const Activity = () => {
       exit: false,
       rebalance: false,
       add: false,
-      remove: false
+      removed: false
     }
     if (
       optionsSelected.length === options.length ||
@@ -171,7 +171,7 @@ const Activity = () => {
         exit: true,
         rebalance: true,
         add: true,
-        remove: true
+        removed: true
       }
     } else {
       for (const option of optionsSelected) {
