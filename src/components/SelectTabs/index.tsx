@@ -18,9 +18,15 @@ interface ISelectTabsProps {
   setIsSelect: React.Dispatch<
     React.SetStateAction<string | string[] | undefined>
   >;
+  svg?: boolean;
 }
 
-const SelectTabs = ({ tabs, isSelect, setIsSelect }: ISelectTabsProps) => {
+const SelectTabs = ({
+  tabs,
+  isSelect,
+  setIsSelect,
+  svg = false
+}: ISelectTabsProps) => {
   const router = useRouter()
   const { trackEventFunction } = useMatomoEcommerce()
   function handleClickTab(tabSelect: string) {
@@ -53,7 +59,11 @@ const SelectTabs = ({ tabs, isSelect, setIsSelect }: ISelectTabsProps) => {
           isActiveTab={item.asPathText === isSelect}
         >
           <span>
-            <Image src={item.icon} width={16} height={16} layout="fixed" />
+            {svg ? (
+              item.icon
+            ) : (
+              <Image src={item.icon} width={16} height={16} layout="fixed" />
+            )}
           </span>
           {item.text}
         </S.TabsButton>
