@@ -106,12 +106,6 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
 
   return (
     <>
-      <Breadcrumb>
-        <BreadcrumbItem href={`/`} isLastPage>
-          Invest
-        </BreadcrumbItem>
-      </Breadcrumb>
-
       <S.Explore>
         <S.TitleContainer>
           <TitleSection
