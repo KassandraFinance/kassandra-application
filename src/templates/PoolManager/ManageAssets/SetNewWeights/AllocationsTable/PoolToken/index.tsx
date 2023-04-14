@@ -94,20 +94,20 @@ const PoolToken = ({
       <S.CurrentAmountContainer isOpen={moreInfo}>
         <S.CurrentAmount>
           <p>Amount</p>
-          <span>{BNtoDecimal(currentAmount, 2)}</span>
+          <span>{BNtoDecimal(currentAmount, token.decimals, 2)}</span>
           <p>~${BNtoDecimal(currentAmountUSD, 2)}</p>
         </S.CurrentAmount>
         <S.AmountLine />
       </S.CurrentAmountContainer>
       <S.Allocation>
-        <p>{BNtoDecimal(currentWeight.mul(100), 2)}%</p>
+        <p>{currentWeight.toFixed(2)}%</p>
       </S.Allocation>
       <S.Arrow>
         <img src="/assets/utilities/arrow-right.svg" alt="" width={32} />
       </S.Arrow>
       <S.NewAllocation>
         <InputNumber
-          InputNumberValue={Number(newWeight.mul(100).toFixed(2, 2))}
+          InputNumberValue={Number(newWeight.toFixed())}
           name="tokenValue"
           handleInputNumber={event =>
             lockPercentage === lockToken.UNBLOCKED &&
@@ -161,7 +161,7 @@ const PoolToken = ({
       </S.MoreInfoContainer>
       <S.NewAmount isOpen={moreInfo}>
         <p>New Amount</p>
-        <span>~{BNtoDecimal(newAmount ?? Big(0), 2)}</span>
+        <span>~{BNtoDecimal(newAmount ?? Big(0), token.decimals, 2)}</span>
         <p>
           ~$
           {BNtoDecimal(newAmountUSD ?? Big(0), 2)}

@@ -75,13 +75,9 @@ const ReviewTable = () => {
       return {
         imageUrl: item.token.logo ?? '',
         name: item.token.name,
-        currentAllocation: Number(
-          item.currentWeight.mul(100).toFixed(2, 2) ?? 0
-        ),
+        currentAllocation: Number(item.currentWeight.toFixed(2) ?? 0),
         newAllocation: Number(
-          newTokensWights[item.token.address].newWeight
-            .mul(100)
-            .toFixed(2, 2) ?? 0
+          newTokensWights[item.token.address].newWeight.toFixed() ?? 0
         )
       }
     })
@@ -178,7 +174,7 @@ const ReviewTable = () => {
                   </span>
                 </S.TokenNameContainer>
                 <S.CurrentWeightContainer isView={viewColumnInTable}>
-                  <p>{item.currentWeight.mul(100).toFixed(2, 2)}%</p>
+                  <p>{item.currentWeight.toFixed(2)}%</p>
                   <S.CurrentWeight>
                     <p>{item.currentAmount.toFixed(2, 2)}</p>
                   </S.CurrentWeight>
@@ -193,10 +189,7 @@ const ReviewTable = () => {
                 </S.Arrow>
                 <S.NewWeightContainer isView={viewColumnInTable}>
                   <p>
-                    {newTokensWights[item.token.address]?.newWeight
-                      .mul(100)
-                      .toFixed(2, 2)}
-                    %
+                    {newTokensWights[item.token.address]?.newWeight.toFixed()}%
                   </p>
                   <S.NewWeight>
                     <p>
@@ -252,16 +245,16 @@ const ReviewTable = () => {
           <TableLineTitle>current weight</TableLineTitle>
 
           <ValueContainer>
-            <Value>{viewToken?.currentWeight.mul(100).toFixed(2, 2)}%</Value>
+            <Value>{viewToken?.currentWeight.toFixed(2)}%</Value>
           </ValueContainer>
         </TableLine>
         <TableLine>
           <TableLineTitle>new weight</TableLineTitle>
           <ValueContainer>
             <Value>
-              {newTokensWights[viewToken?.token.address ?? '']?.newWeight
-                .mul(100)
-                .toFixed(2, 2)}
+              {newTokensWights[
+                viewToken?.token.address ?? ''
+              ]?.newWeight.toFixed()}
               %
             </Value>
           </ValueContainer>

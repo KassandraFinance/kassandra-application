@@ -61,7 +61,7 @@ const SetNewWeights = () => {
             priceToken(mockTokens[item.token.id] ?? item.token.id) ?? 0
           )
         ),
-        currentWeight: Big(item.weight_normalized ?? 0),
+        currentWeight: Big(Number(item.weight_normalized) * 100 ?? 0),
         token: {
           decimals: item.token.decimals,
           address: item.token.id,
