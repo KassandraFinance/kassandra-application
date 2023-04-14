@@ -104,7 +104,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   )
 
   const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/${networks[poolInfo?.chainId ?? 137].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
+    `${COINGECKO_API}/simple/token_price/${networks[poolInfo?.chain_id ?? 137].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
   )
 
   const buttonTextActionAdd = {

@@ -130,7 +130,6 @@ const ManagersPoolTable = () => {
       )
 
     const managerList = data.managers.map((manage, index) => {
-      console.log(manage.TVLDay[0]?.close)
       return {
         rank: index + 1,
         address: manage.id,

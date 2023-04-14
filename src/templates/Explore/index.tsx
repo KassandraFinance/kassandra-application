@@ -40,7 +40,6 @@ type GetCommunityPoolsType = {
   pools: {
     id: string,
     address: string,
-    chainId: number,
     logo: string | null,
     name: string,
     price_usd: string,
@@ -106,12 +105,6 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
 
   return (
     <>
-      <Breadcrumb>
-        <BreadcrumbItem href={`/`} isLastPage>
-          Invest
-        </BreadcrumbItem>
-      </Breadcrumb>
-
       <S.Explore>
         <S.TitleContainer>
           <TitleSection

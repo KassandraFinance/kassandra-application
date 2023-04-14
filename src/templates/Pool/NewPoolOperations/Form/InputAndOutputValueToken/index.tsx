@@ -58,7 +58,7 @@ const InputAndOutputValueToken = ({
   const disabled = userWalletAddress.length === 0 ?
     "Please connect your wallet by clicking the button below"
     :
-    chainId !== pool.chainId ?
+    chainId !== pool.chain_id ?
       `Please change to the ${pool.chain.chainName} by clicking the button below`
       :
       ""
@@ -77,7 +77,7 @@ const InputAndOutputValueToken = ({
   }
 
   function handleMaxUserBalance() {
-    if (!inputAmountTokenRef || !amountTokenIn || pool.chainId !== chainId || Big(selectedTokenInBalance).lte(0)) {
+    if (!inputAmountTokenRef || !amountTokenIn || pool.chain_id !== chainId || Big(selectedTokenInBalance).lte(0)) {
       return
     }
 
@@ -105,7 +105,7 @@ const InputAndOutputValueToken = ({
       tokenSelect.address.length === 0 ||
       userWalletAddress.length === 0 ||
       chainId.toString().length === 0 ||
-      chainId !== pool.chainId
+      chainId !== pool.chain_id
     ) {
       return setSelectedTokenInBalance(Big(0))
     }

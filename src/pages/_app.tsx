@@ -39,35 +39,33 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
 
   return (
     <ReduxProvider>
-      <PersistGate loading={null} persistor={persistor}>
-        <MatomoProvider value={instance}>
-          <ThemeProvider theme={theme}>
-            <Head>
-              <meta content="text/html; charset=UTF-8" name="Content-Type" />
-              <title>Kassandra</title>
-              <meta
-                name="description"
-                content="Tokenized data-driven investment funds"
-              />
-              <link rel="preconnect" href="https://fonts.gstatic.com" />
-              <link
-                href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&amp;display=swap"
-                rel="stylesheet"
-              />
-              <link rel="icon" href="/favicon.ico" />
-              <link
-                rel="icon"
-                href="https://kassandra.finance/favicon.svg"
-                sizes="any"
-              />
-              <meta property="og:site_name" content="Kassandra" />
-              <meta property="og:type" content="website" />
-              {/* <meta property="og:url" content="https://kassandra.finance/" /> */}
-              <meta
-                property="og:title"
-                content="Kassandra - Decentralized Funds"
-              />
-              {/* <meta
+      <MatomoProvider value={instance}>
+        <ThemeProvider theme={theme}>
+          <Head>
+            <title>Kassandra</title>
+            <meta
+              name="description"
+              content="Tokenized data-driven investment funds"
+            />
+            <link rel="preconnect" href="https://fonts.gstatic.com" />
+            <link
+              href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&amp;display=swap"
+              rel="stylesheet"
+            />
+            <link rel="icon" href="/favicon.ico" />
+            <link
+              rel="icon"
+              href="https://kassandra.finance/favicon.svg"
+              sizes="any"
+            />
+            <meta property="og:site_name" content="Kassandra" />
+            <meta property="og:type" content="website" />
+            {/* <meta property="og:url" content="https://kassandra.finance/" /> */}
+            <meta
+              property="og:title"
+              content="Kassandra - Decentralized Funds"
+            />
+            {/* <meta
             property="og:image:alt"
             content="Welcome to Kassandra DAO - Tokenized data-driven investment funds"
           />
@@ -89,25 +87,24 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
             name="twitter:image:alt"
             content="Welcome to Kassandra DAO - Tokenized data-driven investment funds"
           /> */}
-            </Head>
-            <Toastify />
-            <GlobalStyles selectBackground={true} />
-            <SWRConfig
-              value={{
-                refreshInterval: 10000,
-                fetcher: url => fetch(url).then(res => res.json())
-              }}
-            >
-              {path[1] !== 'manage' ? <Header /> : null}
+          </Head>
+          <Toastify />
+          <GlobalStyles selectBackground={true} />
+          <SWRConfig
+            value={{
+              refreshInterval: 10000,
+              fetcher: url => fetch(url).then(res => res.json())
+            }}
+          >
+            {path[1] !== 'manage' ? <Header /> : null}
 
-              <Component {...pageProps} />
-            </SWRConfig>
-            {router.pathname === '/404' || path[1] === 'manage' ? null : (
-              <Footer />
-            )}
-          </ThemeProvider>
-        </MatomoProvider>
-      </PersistGate>
+            <Component {...pageProps} />
+          </SWRConfig>
+          {router.pathname === '/404' || path[1] === 'manage' ? null : (
+            <Footer />
+          )}
+        </ThemeProvider>
+      </MatomoProvider>
     </ReduxProvider>
   )
 }

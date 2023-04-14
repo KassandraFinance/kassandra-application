@@ -14,9 +14,9 @@ interface ITokenPinProps {
   tokenList1Inch: ITokenList1InchProps[];
 }
 
-const TokenPin = ({ 
-  tokenPinList, 
-  setTokenPinList, 
+const TokenPin = ({
+  tokenPinList,
+  setTokenPinList,
   tokenList1Inch
 }: ITokenPinProps) => {
   const [activeDeletePin, setactiveDeletePin] = React.useState<boolean>(false)
@@ -29,7 +29,7 @@ const TokenPin = ({
       tokenPin => tokenPin.address !== tokenAddress
     )
     localStorage.setItem(
-      `tokenSelection-${pool.chainId}`,
+      `tokenSelection-${pool.chain_id}`,
       JSON.stringify(tokenPinListFiltered)
     )
     setTokenPinList(tokenPinListFiltered)
@@ -38,7 +38,7 @@ const TokenPin = ({
   React.useEffect(() => {
     if (!process.browser) return
 
-    const hasStorage = localStorage.getItem(`tokenSelection-${pool.chainId}`)
+    const hasStorage = localStorage.getItem(`tokenSelection-${pool.chain_id}`)
     const hasStorages: ITokenList1InchProps[] =
       hasStorage && JSON.parse(hasStorage)
 
@@ -47,7 +47,7 @@ const TokenPin = ({
     } else {
       const tokenSearch = tokenList1Inch.slice(0, 6)
       localStorage.setItem(
-        `tokenSelection-${pool.chainId}`,
+        `tokenSelection-${pool.chain_id}`,
         JSON.stringify(tokenSearch)
       )
       setTokenPinList(tokenSearch)

@@ -48,26 +48,26 @@ const PoolAssets = (props: IPoolAssetsProps) => {
 
   return (
     <S.PoolAssets>
-      <S.CoinCardContainer>
-        {data ? (
-          data?.map(token => (
+      {data ? (
+        <S.CoinCardContainer>
+          {data?.map(token => (
             <CoinCard
               key={token.id}
               image={token.image ?? ''}
               name={token.name}
               symbol={token.symbol}
-              sparkLine={token.sparkline.map(line => ({ close: line }))}
-              priceChangeIn7d={token.priceChangePercentage7d.toFixed(4)}
+              sparkLine={token.sparkline?.map(line => ({ close: line }))}
+              priceChangeIn7d={token.priceChangePercentage7d?.toFixed(4)}
               marketCap={token.marketCap}
-              score24h={token.socialScore24h.toFixed(2)}
+              score24h={token.socialScore24h?.toFixed(2)}
               price={token.price}
               period={{ time: 7, frame: 'days', abvFrame: 'D' }}
             />
-          ))
-        ) : (
-          <Loading marginTop={0} />
-        )}
-      </S.CoinCardContainer>
+          ))}
+        </S.CoinCardContainer>
+      ) : (
+        <Loading marginTop={0} />
+      )}
     </S.PoolAssets>
   )
 }

@@ -68,7 +68,7 @@ interface IAllocationProps {
     name: string,
     symbol: string,
     price_usd: string,
-    chainId: number,
+    chain_id: number,
     activities: Activity[],
     weight_goals: IWeightGoalsProps[],
     chain: {
@@ -118,7 +118,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
   )
 
   const { data: coingeckoData } = useCoingecko(
-    networks[data?.pool.chainId ?? 137]?.coingecko,
+    networks[data?.pool.chain_id ?? 137]?.coingecko,
     data?.pool?.chain?.addressWrapped ?? '',
     handleMockToken(poolAssets ?? [])
   )
@@ -309,7 +309,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     setAllocationHistory(
       activities.sort((a, b) => b.date.getTime() - a.date.getTime())
     )
-  }, [data])
+  }, [data, poolAssets])
 
   return (
     <S.Allocations>

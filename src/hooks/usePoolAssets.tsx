@@ -1,3 +1,4 @@
+import React from 'react'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import { gql } from 'graphql-request'
@@ -106,23 +107,25 @@ function usePoolAssets(poolId: string) {
       })
   )
 
-  let underlying_assets: underlyingAssetsInfo[] | undefined
-  if (data?.pool) {
-    if (data.pool.pool_version === 2) {
-      underlying_assets = getWeightsNormalizedV2(
-        data.pool.weight_goals,
-        data.pool.underlying_assets
-      )
-    } else {
-      underlying_assets = data.pool.underlying_assets
+  return React.useMemo(() => {
+    let underlying_assets: underlyingAssetsInfo[] | undefined
+    if (data?.pool) {
+      if (data.pool.pool_version === 2) {
+        underlying_assets = getWeightsNormalizedV2(
+          data.pool.weight_goals,
+          data.pool.underlying_assets
+        )
+      } else {
+        underlying_assets = data.pool.underlying_assets
+      }
     }
-  }
 
-  return {
-    poolAssets: underlying_assets,
-    isValidating,
-    isError: error
-  }
+    return {
+      poolAssets: underlying_assets,
+      isValidating,
+      isError: error
+    }
+  }, [data])
 }
 
 export default usePoolAssets

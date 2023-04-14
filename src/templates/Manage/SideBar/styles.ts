@@ -257,7 +257,7 @@ export const SideBarBody = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
-    gap: 2.4rem;
+    gap: 1.6rem;
 
     height: 100%;
     margin-top: 1.6rem;
