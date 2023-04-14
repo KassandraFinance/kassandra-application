@@ -10,7 +10,6 @@ export const GET_COMMUNITYPOOLS = gql`
       symbol
       logo
       address
-      chainId
       chain {
         logo
       }

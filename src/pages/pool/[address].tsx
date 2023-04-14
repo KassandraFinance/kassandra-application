@@ -24,7 +24,7 @@ interface IPoolProps {
 const Index = ({ pool }: IPoolProps) => {
   const dispatch = useAppDispatch()
 
-  if (pool.chainId === 43114) {
+  if (pool.chain_id === 43114) {
     const renameWavax = pool.underlying_assets.find(asset => asset.token.symbol === 'WAVAX');
     if (renameWavax) {
       renameWavax.token.symbol = 'AVAX'
@@ -68,7 +68,6 @@ const queryPool = `{
   vault_id
   controller
   chain_id
-  chainId
   logo
   pool_version
   strategy

@@ -107,7 +107,7 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
           </S.WarningText>
 
           <S.ButtonContainer>
-            {poolInfo?.chainId === chainId ? (
+            {poolInfo?.chain_id === chainId ? (
               <>
               {!isTransaction ?
                 <Button
@@ -120,7 +120,7 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
                 <Button
                   text='Waiting transaction'
                   type='button'
-                  backgroundPrimary 
+                  backgroundPrimary
                   disabled
                   fullWidth
                 />
@@ -128,17 +128,17 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
               </>
             ) : (
               <>
-                {poolInfo?.chainId && (
+                {poolInfo?.chain_id && (
                   <Button
-                    text={`Connect to ${networks[poolInfo.chainId].chainName}`}
+                    text={`Connect to ${networks[poolInfo.chain_id].chainName}`}
                     backgroundPrimary
                     fullWidth
                     type="button"
                     onClick={() =>
                       changeChain({
-                        chainId: networks[poolInfo.chainId].chainId,
-                        chainName: networks[poolInfo.chainId].chainName,
-                        rpcUrls: [networks[poolInfo.chainId].rpc]
+                        chainId: networks[poolInfo.chain_id].chainId,
+                        chainName: networks[poolInfo.chain_id].chainName,
+                        rpcUrls: [networks[poolInfo.chain_id].rpc]
                       })
                     }
                   />

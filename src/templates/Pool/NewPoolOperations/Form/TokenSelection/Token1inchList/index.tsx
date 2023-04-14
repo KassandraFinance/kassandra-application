@@ -60,17 +60,17 @@ const Token1inchList = ({
   }
 
   function handleClickAddPin(token: IUserTokenProps) {
-    const hasStorage = localStorage.getItem(`tokenSelection-${pool.chainId}`)
+    const hasStorage = localStorage.getItem(`tokenSelection-${pool.chain_id}`)
     const tokenPinfiltered = hasStorage && JSON.parse(hasStorage)
     const checkTokenPin = tokenPinfiltered?.some((tokenPin: ITokenList1InchProps) => tokenPin.address === token.address)
 
     if (checkTokenPin) {
       const tokenFiltered = tokenPinList.filter(tokenPin => tokenPin.address !== token.address)
-      localStorage.setItem(`tokenSelection-${pool.chainId}`, JSON.stringify(tokenFiltered))
+      localStorage.setItem(`tokenSelection-${pool.chain_id}`, JSON.stringify(tokenFiltered))
       setTokenPinList(tokenFiltered)
 
     } else {
-      localStorage.setItem(`tokenSelection-${pool.chainId}`, JSON.stringify([...tokenPinfiltered, token]))
+      localStorage.setItem(`tokenSelection-${pool.chain_id}`, JSON.stringify([...tokenPinfiltered, token]))
       setTokenPinList([...tokenPinfiltered, token])
     }
   }
