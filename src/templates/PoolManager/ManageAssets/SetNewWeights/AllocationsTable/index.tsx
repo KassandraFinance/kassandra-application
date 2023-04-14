@@ -162,7 +162,6 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
 
   return (
     <S.AllocationsTable>
-      <p>{Big(100).minus(totalWeight).toFixed()}</p>
       <S.TableHead>
         <S.TableHeadRow>
           <S.ThHead>Asset Name</S.ThHead>
