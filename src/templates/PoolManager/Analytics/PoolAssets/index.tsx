@@ -48,9 +48,9 @@ const PoolAssets = (props: IPoolAssetsProps) => {
 
   return (
     <S.PoolAssets>
-      <S.CoinCardContainer>
-        {data ? (
-          data?.map(token => (
+      {data ? (
+        <S.CoinCardContainer>
+          {data?.map(token => (
             <CoinCard
               key={token.id}
               image={token.image ?? ''}
@@ -63,11 +63,11 @@ const PoolAssets = (props: IPoolAssetsProps) => {
               price={token.price}
               period={{ time: 7, frame: 'days', abvFrame: 'D' }}
             />
-          ))
-        ) : (
-          <Loading marginTop={0} />
-        )}
-      </S.CoinCardContainer>
+          ))}
+        </S.CoinCardContainer>
+      ) : (
+        <Loading marginTop={0} />
+      )}
     </S.PoolAssets>
   )
 }

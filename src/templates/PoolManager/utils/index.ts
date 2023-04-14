@@ -58,7 +58,7 @@ export function getActivityInfo(
   for (const activity of activityData) {
     if (filters[activity.type]) {
       activityInfo.push({
-        key: activity.id,
+        key: activity.id + activity.type,
         actionType: activityProps[activity.type],
         activityInfo: [],
         date: new Date(activity.timestamp * 1000),

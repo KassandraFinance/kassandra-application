@@ -30,7 +30,7 @@ export const GET_TOKENS_POOL = gql`
         blockExplorerUrl
         addressWrapped
       }
-      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 2) {
+      weight_goals(orderBy: end_timestamp, orderDirection: desc) {
         id
         type
         end_timestamp

@@ -28,6 +28,7 @@ export const GET_ACTIVITIES = gql`
         orderDirection: desc
         first: 100
       ) {
+        id
         type
         timestamp
         price_usd
