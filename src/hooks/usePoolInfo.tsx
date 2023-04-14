@@ -7,7 +7,6 @@ import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 export type GetPoolInfoType = {
   pools: {
     address: string,
-    chainId: number,
     chain_id: number,
     id: string,
     logo: string,
@@ -45,7 +44,6 @@ function usePoolInfo(userWalletAddress: string, poolId: string) {
         address
         vault
         chain_id
-        chainId
         logo
         pool_version
         is_private_pool

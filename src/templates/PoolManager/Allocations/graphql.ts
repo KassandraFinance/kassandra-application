@@ -7,7 +7,7 @@ export const GET_TOKENS_POOL = gql`
       symbol
       logo
       price_usd
-      chainId
+      chain_id
       activities(
         where: {
           type_in: ["join", "exit"]

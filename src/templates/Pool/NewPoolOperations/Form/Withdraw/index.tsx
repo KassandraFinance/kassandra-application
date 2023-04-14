@@ -287,7 +287,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       return
     }
 
-    if (chainId !== pool.chainId || Big(amountTokenIn).lte(0)) {
+    if (chainId !== pool.chain_id || Big(amountTokenIn).lte(0)) {
       setamountAllTokenOut(Array(pool.underlying_assets.length).fill(new BigNumber(0)))
       setAmountTokenOut(new Big(0))
       setErrorMsg('')
@@ -358,7 +358,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       pool.id.length === 0 ||
       userWalletAddress.length === 0 ||
       chainId.toString().length === 0 ||
-      chainId !== pool.chainId
+      chainId !== pool.chain_id
     ) {
       return setSelectedTokenInBalance(Big(0))
     }
@@ -403,7 +403,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   React.useEffect(() => {
     if (userWalletAddress.length === 0 ||
       chainId.toString().length === 0 ||
-      chainId !== pool.chainId ||
+      chainId !== pool.chain_id ||
       typeWithdraw === 'Best_Value'
     ) {
       return setbalanceAllTokenOut(Array(pool.underlying_assets.length).fill(new BigNumber(0)))
@@ -415,7 +415,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   }, [chainId, userWalletAddress, amountTokenIn, typeWithdraw])
 
   React.useEffect(() => {
-    if (chainId !== pool.chainId) {
+    if (chainId !== pool.chain_id) {
       return
     }
 
@@ -482,7 +482,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         disabled={
           userWalletAddress.length === 0
             ? "Please connect your wallet by clicking the button below"
-            : chainId !== pool.chainId
+            : chainId !== pool.chain_id
               ? `Please change to the ${pool.chain.chainName} by clicking the button below`
               : ""
         }
@@ -544,7 +544,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           onClick={() => dispatch(setModalWalletActive(true))}
           text="Connect Wallet"
         />
-      ) : chainId === pool.chainId ? (
+      ) : chainId === pool.chain_id ? (
         <Button
           className="btn-submit"
           backgroundPrimary
