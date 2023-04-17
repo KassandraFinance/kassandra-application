@@ -6,37 +6,41 @@ export const OwnAndReceivedTable = styled.section`
 `
 
 export const Table = styled.table`
+  overflow: hidden;
+
   width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
 
   font-size: ${theme.font.sizes.font14};
-  border-radius: 2rem;
-
-  border-collapse: collapse;
   text-indent: initial;
-  overflow: hidden;
 
   ::-webkit-scrollbar {
     height: 0.5rem;
   }
-  ::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 1rem;
-  }
 
-  @media (max-width: 960px) {
-    display: block;
-    overflow: auto;
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+
+    background-color: rgb(255 255 255 / 0.2);
   }
 
   thead {
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.25);
+
+    background-color: rgb(0 0 0 / 0.25);
   }
 
   tbody {
     width: 100%;
     max-height: 100%;
-    background-color: rgba(255, 255, 255, 0.04);
+
+    background-color: rgb(255 255 255 / 0.04);
+  }
+
+  @media (max-width: 960px) {
+    display: block;
+    overflow: auto;
   }
 `
 
@@ -45,15 +49,10 @@ export const Tr = styled.tr`
   grid-template-columns: 1fr 1fr 1fr 1fr 1.5fr;
 
   max-height: 8.1rem;
-  margin-left: 3.2rem;
   margin-right: 3.2rem;
+  margin-left: 3.2rem;
   padding: 2.4rem 0;
-
   border-top: 1px solid ${theme.colors.grayDisabled};
-
-  @media (max-width: 960px) {
-    min-width: 960px;
-  }
 
   :first-child {
     border: none;
@@ -77,14 +76,16 @@ export const Tr = styled.tr`
 
     p {
       margin-left: 1.4rem;
-      font-size: ${theme.font.sizes.font16};
+
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font16};
     }
 
     span {
       margin-left: 1.4rem;
-      font-size: ${theme.font.sizes.font14};
+
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font14};
     }
   }
 
@@ -92,8 +93,8 @@ export const Tr = styled.tr`
     flex-direction: row;
 
     span {
-      font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font14};
     }
   }
 
@@ -101,14 +102,14 @@ export const Tr = styled.tr`
     align-items: flex-end;
 
     p {
-      font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font16};
     }
 
     span {
       color: #d3d3d3;
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font12};
     }
   }
 
@@ -116,14 +117,19 @@ export const Tr = styled.tr`
     align-items: flex-end;
 
     p {
-      font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font16};
     }
+
     span {
       color: #d3d3d3;
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font12};
     }
+  }
+
+  @media (max-width: 960px) {
+    min-width: 960px;
   }
 `
 
@@ -131,8 +137,8 @@ export const Th = styled.th`
   display: flex;
   justify-content: center;
 
-  font-size: ${theme.font.sizes.font16};
   font-weight: ${theme.font.weight.light};
+  font-size: ${theme.font.sizes.font16};
 
   :first-child {
     justify-content: flex-start;
@@ -147,13 +153,13 @@ export const Th = styled.th`
   }
 
   @media (max-width: 960px) {
-    line-height: ${theme.font.sizes.font14};
     font-size: ${theme.font.sizes.font14};
+    line-height: ${theme.font.sizes.font14};
   }
 
   @media (max-width: 540px) {
-    line-height: ${theme.font.sizes.font12};
     font-size: ${theme.font.sizes.font12};
+    line-height: ${theme.font.sizes.font12};
   }
 `
 

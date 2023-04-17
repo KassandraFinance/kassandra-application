@@ -20,8 +20,7 @@ export const Table = styled.table`
   width: 100%;
   border-spacing: 0;
   border-collapse: collapse;
-  border-radius: 2rem;
-  border-radius: 2rem;
+  border-radius: 8px;
 
   color: ${theme.colors.snow};
   -webkit-border-horizontal-spacing: 0;
@@ -33,8 +32,6 @@ export const Table = styled.table`
 
   @media (max-width: 540px) {
     width: 93.5rem;
-    border-radius: 1.2rem;
-    border-radius: 1.2rem;
   }
 `
 

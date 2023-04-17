@@ -3,11 +3,12 @@ import theme from '../../../styles/theme'
 
 export const UserDescription = styled.div`
   display: flex;
-  width: 100%;
 
-  background: rgba(255, 255, 255, 0.04);
-  border: 0.1rem solid rgba(255, 255, 255, 0.2);
-  border-radius: 1.2rem;
+  width: 100%;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 8px;
+
+  background: rgb(255 255 255 / 0.04);
 
   @media (max-width: 650px) {
     flex-direction: column;
@@ -16,9 +17,9 @@ export const UserDescription = styled.div`
 
 export const BarBottom = styled.div`
   @media (max-width: 650px) {
-    border: 0.1rem solid rgba(255, 255, 255, 0.2);
     width: 90%;
     margin: 0 auto;
+    border: 1px solid rgb(255 255 255 / 0.2);
   }
 `
 
@@ -26,13 +27,13 @@ export const UserInfo = styled.div`
   display: flex;
 
   padding-top: 3.2rem;
-  padding-left: 3.2rem;
   padding-bottom: 3.2rem;
+  padding-left: 3.2rem;
 
   @media (max-width: 650px) {
     padding-top: 3.2rem;
-    padding-left: 3.2rem;
     padding-bottom: 1.3rem;
+    padding-left: 3.2rem;
   }
 `
 
@@ -40,24 +41,9 @@ export const UserInfoContent = styled.div`
   margin-top: 1.2rem;
 
   > img {
-    border-radius: 50%;
     object-fit: cover;
-  }
 
-  @media (max-width: 650px) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    padding-right: 3rem;
-    margin-top: 0;
-
-    #userImage {
-      margin-top: -0.4rem;
-      height: 65px;
-      width: 65px;
-    }
+    border-radius: 50%;
   }
 
   > span {
@@ -66,25 +52,42 @@ export const UserInfoContent = styled.div`
 
   > button {
     display: none;
+
     @media (max-width: 650px) {
       display: flex;
       justify-content: center;
 
-      width: 100px;
+      width: 10rem;
       margin-top: 1rem;
-
-      background-color: transparent;
       border: none;
 
-      color: #ffffff;
-      font-size: ${theme.font.sizes.font14};
+      color: #fff;
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font14};
+
+      background-color: transparent;
 
       cursor: pointer;
 
       > img {
         margin-left: 0.8rem;
       }
+    }
+  }
+
+  @media (max-width: 650px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 0;
+    padding-right: 3rem;
+
+    #userImage {
+      width: 6.5rem;
+      height: 6.5rem;
+      margin-top: -0.4rem;
     }
   }
 `
@@ -101,51 +104,51 @@ export const UserProfileContent = styled.div<IisSelectSeeMoreProps>`
   width: 100%;
   margin-left: 1.6rem;
   padding-right: 3.2rem;
-
-  border-right: 0.1rem solid rgba(255, 255, 255, 0.2);
-
-  @media (max-width: 650px) {
-    border: none;
-    margin-left: 0;
-  }
+  border-right: 0.1rem solid rgb(255 255 255 / 0.2);
 
   p {
     margin-bottom: 0.8rem;
 
-    @media (max-width: 650px) {
-      padding-top: 0.6rem;
-      margin-bottom: 1.3rem;
-    }
-
-    color: #ffffff;
-    font-size: ${theme.font.sizes.font20};
+    color: #fff;
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font20};
+
+    @media (max-width: 650px) {
+      margin-bottom: 1.3rem;
+      padding-top: 0.6rem;
+    }
   }
 
   ul {
     display: flex;
-
-    margin-bottom: 1.3rem;
-    margin-top: 0.5rem;
     gap: 0.8rem;
+
+    margin-top: 0.5rem;
+    margin-bottom: 1.3rem;
 
     @media (max-width: 650px) {
       margin-top: 0.9rem;
     }
   }
+
+  @media (max-width: 650px) {
+    margin-left: 0;
+    border: none;
+  }
 `
 
 export const EditInfoButton = styled.button`
   display: flex;
-  max-width: 8rem;
   gap: 0.8rem;
 
-  background-color: transparent;
+  max-width: 8rem;
   border: none;
 
-  color: #ffffff;
-  font-size: ${theme.font.sizes.font14};
+  color: #fff;
   font-weight: ${theme.font.weight.light};
+  font-size: ${theme.font.sizes.font14};
+
+  background-color: transparent;
 
   cursor: pointer;
 
@@ -156,18 +159,19 @@ export const EditInfoButton = styled.button`
 
 export const UserAddressContent = styled.span`
   display: flex;
+  gap: 1rem;
   align-items: center;
 
   width: 100%;
   margin-bottom: 0.8rem;
-  gap: 1rem;
 
-  font-size: ${theme.font.sizes.font14};
   font-weight: ${theme.font.weight.light};
+  font-size: ${theme.font.sizes.font14};
 
   button {
-    background-color: transparent;
     border: 0;
+
+    background-color: transparent;
 
     cursor: pointer;
   }
@@ -176,16 +180,18 @@ export const UserAddressContent = styled.span`
 export const ManagerInfo = styled.div`
   display: flex;
   flex-direction: column;
+
   width: 100%;
   padding: 3.2rem;
 
   .titleManagerInfo {
     display: flex;
+
     margin-bottom: 0.8rem;
 
     color: #c4c4c4;
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font14};
 
     > span {
       margin-left: 0.8rem;
@@ -195,13 +201,12 @@ export const ManagerInfo = styled.div`
 
 // eslint-disable-next-line prettier/prettier
 export const DescriptionManagerInfo = styled.p`
-  word-break: break-all;
-  color: #ffffff;
-  font-size: ${theme.font.sizes.font16};
+  color: #fff;
   font-weight: ${theme.font.weight.light};
+  font-size: ${theme.font.sizes.font16};
   line-height: 2.1rem;
-
   white-space: pre-wrap;
+  word-break: break-all;
 `
 interface IisSeeMoreProps {
   isSeeMore: boolean;
@@ -215,14 +220,14 @@ export const ButtonSeeMore = styled.button<IisSeeMoreProps>`
   margin-left: 1rem;
   border: 0;
 
-  color: #ffffff;
-  background-color: transparent;
-
+  color: #fff;
+  font-weight: ${theme.font.weight.medium};
   font-size: 1.1rem;
   font-family: ${theme.font.family};
-  font-weight: ${theme.font.weight.medium};
-
   text-align: start;
+
+  background-color: transparent;
+
   cursor: pointer;
 
   > span {
@@ -243,23 +248,23 @@ interface ISocialIconProps {
 // prettier-ignore
 export const SocialIcon = styled.a<ISocialIconProps>`
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 
-  height: 2.4rem;
   width: 2.4rem;
-
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0);
+  height: 2.4rem;
+  border: 1px solid rgb(255 255 255 / 0);
   border-radius: 50%;
 
-  transition: border ${theme.transition.default};
-  opacity: ${props => (props.isActiveSocial ? 'none' : '50%')};
+  background: rgb(255 255 255 / 0.1);
 
-  pointer-events: ${props => (props.isActiveSocial ? 'auto' : 'none')};
+  opacity: ${props => (props.isActiveSocial ? 'none' : '50%')};
   cursor: pointer;
+  pointer-events: ${props => (props.isActiveSocial ? 'auto' : 'none')};
+
+  transition: border ${theme.transition.default};
 
   &:hover {
-    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border: 1.5px solid rgb(255 255 255 / 0.3);
   }
 `
