@@ -158,7 +158,7 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
             <S.ColumnTitle align="right">TVL</S.ColumnTitle>
           </S.TH>
           <S.TH isView={inViewCollum === 3}>
-            <S.ColumnTitle align="center">Asset</S.ColumnTitle>
+            <S.ColumnTitle align="right">Asset</S.ColumnTitle>
           </S.TH>
           <S.TH isView={inViewCollum === 4}>
             <S.ColumnTitle align="right">Volume (24h)</S.ColumnTitle>

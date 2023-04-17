@@ -321,7 +321,13 @@ export const Container = styled.div`
     display: grid;
     grid-template-columns: 1fr;
     align-items: center;
-    justify-items: center;
+    justify-items: end;
+
+    margin-right: 1.8rem;
+
+    @media (max-width: 768px) {
+      margin-right: 0.9rem;
+    }
   `}
 `
 
