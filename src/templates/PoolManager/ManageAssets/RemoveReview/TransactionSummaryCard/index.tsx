@@ -73,15 +73,15 @@ const TransactionSummaryCard = () => {
             <p>Received (est.)</p>
 
             <S.ReceivedInfo>
-              <p>$ {tokenSelection.balanceUSD}</p>
-              <span>
+              <p>
                 {BNtoDecimal(
                   Big(tokenSelection.balance),
                   tokenSelection.decimals,
                   2
                 )}{' '}
                 {tokenSelection.symbol}
-              </span>
+              </p>
+              <span>$ {tokenSelection.balanceUSD}</span>
             </S.ReceivedInfo>
           </S.RemovalInformation>
 

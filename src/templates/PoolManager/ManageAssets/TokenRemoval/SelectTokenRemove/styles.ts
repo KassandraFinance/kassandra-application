@@ -55,10 +55,22 @@ export const ValueText = styled.p<IValueTextProps>`
 
 export const AllocationAndHoldingValue = styled.span`
   ${({ theme }) => css`
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
     font-size: ${theme.font.sizes.font20};
     font-weight: ${theme.font.weight.medium};
     line-height: 2rem;
     text-align: right;
+
+    > span {
+      width: 2.4rem;
+      height: 2.4rem;
+
+      overflow: hidden;
+      border-radius: 50%;
+    }
   `}
 `
 
