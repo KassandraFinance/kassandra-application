@@ -69,7 +69,7 @@ const TokenSelection = () => {
 
   const tokenAddresses = tokenList1Inch.map(token => token.address)
   const { priceToken } = useCoingecko(
-    platform[pool.chainId],
+    platform[pool.chain_id],
     pool.chain.addressWrapped,
     tokenAddresses
   )
@@ -176,11 +176,11 @@ const TokenSelection = () => {
       : handleTokenListFilteringBybalance(tokenList1Inch)
 
   async function handleFetchBalance() {
-    if (chainId !== pool.chainId) return
+    if (chainId !== pool.chain_id) return
 
     try {
       const response = await fetch(
-        `${URL_1INCH_BALANCE}/${pool.chainId}/allowancesAndBalances/0x1111111254eeb25477b68fb85ed929f73a960582/${userWalletAddress}?tokensFetchType=listedTokens`
+        `${URL_1INCH_BALANCE}/${pool.chain_id}/allowancesAndBalances/0x1111111254eeb25477b68fb85ed929f73a960582/${userWalletAddress}?tokensFetchType=listedTokens`
       )
       const listTokenBalanceInWallet = await response.json()
       setBalanceToken(listTokenBalanceInWallet)

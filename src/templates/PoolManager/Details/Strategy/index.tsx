@@ -177,7 +177,7 @@ const Strategy = () => {
                     poolInfo?.controller,
                     poolInfo.logo,
                     value,
-                    poolInfo.chainId
+                    poolInfo.chain_id
                   )
                 }
               />

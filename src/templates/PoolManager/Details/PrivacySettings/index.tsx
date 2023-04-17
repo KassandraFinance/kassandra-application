@@ -44,7 +44,7 @@ const PrivacySettings = () => {
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
   const setAddressesOfPrivateInvestors = async () => {
-    const privateInvestorsContract = new web3.eth.Contract((PrivateInvestors as unknown) as AbiItem, networks[poolInfo?.chainId ?? 137].privateInvestor)
+    const privateInvestorsContract = new web3.eth.Contract((PrivateInvestors as unknown) as AbiItem, networks[poolInfo?.chain_id ?? 137].privateInvestor)
     const addresses = await privateInvestorsContract.methods.getInvestors( poolInfo?.address, 0, 100).call()
     setPrivateInvestors(addresses)
   }

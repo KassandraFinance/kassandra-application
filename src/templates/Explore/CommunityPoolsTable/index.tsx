@@ -27,7 +27,6 @@ interface ICommunityPoolsTableProps {
   pools: {
     id: string,
     address: string,
-    chainId: number,
     logo: string | null,
     name: string,
     price_usd: string,

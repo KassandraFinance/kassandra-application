@@ -119,7 +119,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     const tokenWrappedAddress = getTokenWrapped(pool.underlying_assets, tokenWithHigherLiquidityPool.address)
 
     const response = await fetch(
-      `${URL_1INCH}${pool.chainId}/swap?fromTokenAddress=${
+      `${URL_1INCH}${pool.chain_id}/swap?fromTokenAddress=${
         tokenSelect.address
       }&toTokenAddress=${
         tokenWrappedAddress
@@ -328,7 +328,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
   // verificar se o token está aprovado
   React.useEffect(() => {
-    if (chainId !== pool.chainId) {
+    if (chainId !== pool.chain_id) {
       return
     }
 
@@ -390,7 +390,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
       return
     }
 
-    if (chainId !== pool.chainId) {
+    if (chainId !== pool.chain_id) {
       setAmountTokenOut(Big(0))
       return
     }
@@ -568,7 +568,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
           onClick={() => dispatch(setModalWalletActive(true))}
           text="Connect Wallet"
         />
-      ) : chainId === pool.chainId ? (
+      ) : chainId === pool.chain_id ? (
         <Button
           className="btn-submit"
           backgroundPrimary

@@ -36,7 +36,7 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
 
     let totalWeight = Big(0)
     const poolWeightsRebalanced = {}
-    const formattedValue = Big(value).div(100)
+    const formattedValue = Big(value)
 
     let weightAfter = Big(0)
     let weightBefore = Big(0)
@@ -56,10 +56,10 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
       }
     })
 
-    const weightModifiedAfter = Big(1).sub(weightAfter)
-    const weightModifiedBefore = Big(1).sub(weightBefore)
+    const weightModifiedAfter = Big(100).sub(weightAfter)
+    const weightModifiedBefore = Big(100).sub(weightBefore)
 
-    poolTokensList.forEach(item => {
+    poolTokensList.forEach((item, index) => {
       // eslint-disable-next-line prettier/prettier
       const { lockPercentage, newAmount, newAmountUSD, newWeight } = newTokensWights[item.token.address]
 
@@ -85,7 +85,7 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
 
         Object.assign(poolWeightsRebalanced, {
           [item.token.address]: {
-            newWeight: formattedValue,
+            newWeight: Big(formattedValue),
             newAmount,
             newAmountUSD: newAmount.mul(
               Big(priceToken(mockTokens[item.token.address]) ?? 0)
@@ -95,8 +95,7 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
           }
         })
 
-        totalWeight = totalWeight.add(formattedValue)
-
+        totalWeight = totalWeight.add(Big(formattedValue))
         return
       }
 
@@ -106,9 +105,21 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
       const newAmountToken = Big(
         item.currentAmount.mul(newWeightValue).div(item.currentWeight)
       )
+
+      totalWeight = totalWeight.add(Big(newWeightValue.toFixed(2, 2)))
+
+      let newWeightValueFormatted = Big(newWeightValue.toFixed(2, 2))
+      if (index === poolTokensList.length - 1) {
+        const totalWeightMinusTotalPorcentage = Big(100).sub(totalWeight)
+
+        newWeightValueFormatted = totalWeightMinusTotalPorcentage.add(
+          Big(newWeightValue.toFixed(2, 2))
+        )
+      }
+
       Object.assign(poolWeightsRebalanced, {
         [item.token.address]: {
-          newWeight: newWeightValue,
+          newWeight: newWeightValueFormatted,
           newAmount: newAmountToken,
           newAmountUSD: Big(
             newAmountToken.mul(
@@ -119,8 +130,6 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
           alreadyCalculated: true
         }
       })
-
-      totalWeight = totalWeight.add(newWeightValue)
     })
 
     dispatch(setTotalWeight(totalWeight))
@@ -144,7 +153,7 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
   }
 
   function handleInvalid(event: any) {
-    if (!(totalWeight.toFixed(2, 2) === '1.00')) {
+    if (!totalWeight.eq(Big(100))) {
       return event.target.setCustomValidity(
         'sum of all token weights must give 100%'
       )
@@ -186,7 +195,7 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
             </S.TrBody>
           )
         })}
-        {totalWeight.toFixed(2, 2) !== '1.00' && (
+        {!totalWeight.eq(Big(100)) && (
           <tr>
             <input
               form="manageAssetsForm"
@@ -196,7 +205,7 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
               value={totalWeight.toFixed(2, 2)}
               onInvalid={handleInvalid}
               required
-              checked={totalWeight.toFixed(2, 2) === '1.00'}
+              checked={!totalWeight.eq(Big(100))}
               onChange={() => {
                 return
               }}

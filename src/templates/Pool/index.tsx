@@ -87,7 +87,7 @@ const Pool = () => {
   )
 
   async function getTokenList1Inch() {
-    const res = await fetch(`${URL_1INCH}${pool.chainId}/tokens`)
+    const res = await fetch(`${URL_1INCH}${pool.chain_id}/tokens`)
     const json = await res.json()
     const listToken1Linch = json.tokens
     const listTokenPool = {}

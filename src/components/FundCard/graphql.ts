@@ -14,7 +14,6 @@ export const GET_POOL = gql`
       name
       logo
       address
-      chainId
       foundedBy
       price_usd # pool asset price
       pool_version

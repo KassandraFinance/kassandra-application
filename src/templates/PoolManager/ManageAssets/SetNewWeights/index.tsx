@@ -37,7 +37,7 @@ const SetNewWeights = () => {
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
   const { data: coingeckoData, priceToken } = useCoingecko(
-    networks[poolInfo?.chainId ?? 137]?.coingecko,
+    networks[poolInfo?.chain_id ?? 137]?.coingecko,
     poolInfo?.chain.addressWrapped ?? '',
     handleMockToken(poolAssets ?? [])
   )
@@ -61,7 +61,7 @@ const SetNewWeights = () => {
             priceToken(mockTokens[item.token.id] ?? item.token.id) ?? 0
           )
         ),
-        currentWeight: Big(item.weight_normalized ?? 0),
+        currentWeight: Big(Number(item.weight_normalized) * 100 ?? 0),
         token: {
           decimals: item.token.decimals,
           address: item.token.id,
