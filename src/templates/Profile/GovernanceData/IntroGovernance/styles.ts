@@ -69,10 +69,9 @@ export const AllVotingPowerCard = styled.div`
 
   min-width: 75rem;
   padding: 2.3rem;
-  border: 0.1px solid rgb(255 255 255 / 0.2);
   border-radius: 8px;
 
-  background: rgb(255 255 255 / 0.04);
+  background: rgb(255 255 255 / 0.05);
 
   @media (max-width: 1100px) {
     grid-template-columns: 3fr 0.01rem 2fr;
@@ -95,10 +94,9 @@ export const AddressTotalVotingPower = styled.div`
 
   width: 100%;
   padding: 2.4rem;
-  border: 0.1px solid rgb(255 255 255 / 0.2);
   border-radius: 8px;
 
-  background: rgb(255 255 255 / 0.04);
+  background: rgb(255 255 255 / 0.05);
 
   .address-total-voting-power {
     display: flex;

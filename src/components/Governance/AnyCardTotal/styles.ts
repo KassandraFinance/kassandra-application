@@ -7,10 +7,9 @@ export const TotalValuesCards = styled.div`
 
   width: 100%;
   padding: 2.4rem;
-  border: 1px solid rgb(255 255 255 / 0.2);
   border-radius: 8px;
 
-  background: rgb(255 255 255 / 0.04);
+  background: rgb(255 255 255 / 0.05);
 
   span {
     display: flex;

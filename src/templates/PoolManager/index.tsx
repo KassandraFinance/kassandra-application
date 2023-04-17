@@ -52,37 +52,37 @@ const tabs = [
   {
     asPathText: 'analytics',
     text: 'Analytics',
-    icon: analyticsIcon
+    svg: analyticsIcon
   },
   {
     asPathText: 'allocations',
     text: 'Allocations',
-    icon: allocationsIcon
+    svg: allocationsIcon
   },
   {
     asPathText: 'activity',
     text: 'Activity',
-    icon: activityIcon
+    svg: activityIcon
   },
   {
     asPathText: 'investors',
     text: 'Investors',
-    icon: investorsIcon
+    svg: investorsIcon
   },
   {
     asPathText: 'fee-rewards',
     text: 'Fee Rewards',
-    icon: rewardsIcon
+    svg: rewardsIcon
   },
   {
     asPathText: 'brokers',
     text: 'Brokers',
-    icon: brokersIcon
+    svg: brokersIcon
   },
   {
     asPathText: 'Details',
     text: 'Details',
-    icon: detailsIcon
+    svg: detailsIcon
   }
 ]
 
@@ -250,7 +250,6 @@ const PoolManager = () => {
               tabs={tabs}
               isSelect={isSelectTab}
               setIsSelect={setIsSelectTab}
-              svg
             />
             {
               PoolManagerComponents[

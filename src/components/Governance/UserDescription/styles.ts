@@ -5,10 +5,9 @@ export const UserDescription = styled.div`
   display: flex;
 
   width: 100%;
-  border: 1px solid rgb(255 255 255 / 0.2);
   border-radius: 8px;
 
-  background: rgb(255 255 255 / 0.04);
+  background: rgb(255 255 255 / 0.05);
 
   @media (max-width: 650px) {
     flex-direction: column;

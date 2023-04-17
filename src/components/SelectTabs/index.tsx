@@ -9,7 +9,8 @@ import * as S from './styles'
 type tabs = {
   text: string,
   asPathText: string,
-  icon: StaticImageData
+  icon?: StaticImageData,
+  svg?: JSX.Element
 }
 
 interface ISelectTabsProps {
@@ -18,15 +19,9 @@ interface ISelectTabsProps {
   setIsSelect: React.Dispatch<
     React.SetStateAction<string | string[] | undefined>
   >;
-  svg?: boolean;
 }
 
-const SelectTabs = ({
-  tabs,
-  isSelect,
-  setIsSelect,
-  svg = false
-}: ISelectTabsProps) => {
+const SelectTabs = ({ tabs, isSelect, setIsSelect }: ISelectTabsProps) => {
   const router = useRouter()
   const { trackEventFunction } = useMatomoEcommerce()
   function handleClickTab(tabSelect: string) {
@@ -59,10 +54,15 @@ const SelectTabs = ({
           isActiveTab={item.asPathText === isSelect}
         >
           <span>
-            {svg ? (
-              item.icon
+            {item.svg ? (
+              item.svg
             ) : (
-              <Image src={item.icon} width={16} height={16} layout="fixed" />
+              <Image
+                src={item?.icon || ''}
+                width={16}
+                height={16}
+                layout="fixed"
+              />
             )}
           </span>
           {item.text}
