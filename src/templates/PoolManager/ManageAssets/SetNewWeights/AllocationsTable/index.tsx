@@ -205,7 +205,7 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
               value={totalWeight.toFixed(2, 2)}
               onInvalid={handleInvalid}
               required
-              checked={!totalWeight.eq(Big(100))}
+              checked={totalWeight.eq(Big(100))}
               onChange={() => {
                 return
               }}
