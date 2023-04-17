@@ -187,7 +187,8 @@ const RemoveInvestorModal = ({ onClose, addressesList, setAddressesOfPrivateInve
                     changeChain({
                       chainId: networks[poolInfo.chain_id].chainId,
                       chainName: networks[poolInfo.chain_id].chainName,
-                      rpcUrls: [networks[poolInfo.chain_id].rpc]
+                      rpcUrls: [networks[poolInfo.chain_id].rpc],
+                      nativeCurrency: networks[poolInfo.chain_id].nativeCurrency
                     })
                   }
                 />
