@@ -7,6 +7,8 @@ import Blockies from 'react-blockies'
 
 import { BNtoDecimal } from '../../../../utils/numerals'
 
+import comingSoonIcon from '@assets/icons/coming-soon.svg'
+
 import * as S from './styles'
 
 export interface IChangeType {
@@ -59,23 +61,24 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
       >
         <S.Td>
           <S.ProductWrapper>
-            <S.ImageWrapper>
-              {pool.logo ? (
-                <img src={pool.logo} />
-              ) : (
-                <Blockies size={8} scale={9} seed={pool.name ?? ''} />
-              )}
-            </S.ImageWrapper>
+            <S.Imagecontainer>
+              <S.ImageWrapper>
+                {pool.logo ? (
+                  <img src={pool.logo} />
+                ) : (
+                  <Blockies size={8} scale={9} seed={pool.name ?? ''} />
+                )}
+              </S.ImageWrapper>
+
+              <S.ChainLogoWrapper>
+                <Image src={pool.logoChain || comingSoonIcon} layout="fill" />
+              </S.ChainLogoWrapper>
+            </S.Imagecontainer>
             <S.FundWrapper>
               <span>{pool.name}</span>
               <span>{pool.symbol}</span>
             </S.FundWrapper>
           </S.ProductWrapper>
-        </S.Td>
-        <S.Td>
-          <S.NetworkWrapper>
-            <Image src={pool.logoChain} width={16} height={16} />
-          </S.NetworkWrapper>
         </S.Td>
         <S.Td>${parseFloat(pool.price).toFixed(2)}</S.Td>
         <S.Td>${pool.tvl ? BNtoDecimal(Big(pool.tvl), 2) : '0'}</S.Td>
@@ -113,7 +116,6 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
         <S.THead>
           <S.Tr>
             <S.Th>Product Name</S.Th>
-            <S.Th>Network</S.Th>
             <S.Th>Price</S.Th>
             <S.Th>TVL</S.Th>
             <S.Th>This Month</S.Th>

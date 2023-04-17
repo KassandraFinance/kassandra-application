@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
 
 export const OwnAndReceivedTable = styled.section`
@@ -46,7 +46,7 @@ export const Table = styled.table`
 
 export const Tr = styled.tr`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1.5fr;
+  grid-template-columns: 1fr 1fr 1fr 1.5fr;
 
   max-height: 8.1rem;
   margin-right: 3.2rem;
@@ -167,4 +167,29 @@ export const Td = styled.td`
   display: flex;
   justify-content: center;
   align-items: center;
+`
+
+export const Imagecontainer = styled.div`
+  ${() => css`
+    position: relative;
+
+    width: 2.4rem;
+    height: 2.4rem;
+  `}
+`
+
+export const ChainLogoWrapper = styled.div`
+  ${({ theme }) => css`
+    position: absolute;
+    right: -0.5rem;
+    bottom: 0;
+
+    overflow: hidden;
+
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+
+    background-color: ${theme.colors.white};
+  `}
 `

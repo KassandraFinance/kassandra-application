@@ -79,15 +79,13 @@ export const TBody = styled.tbody`
 
 export const Tr = styled.tr`
   display: grid;
-  grid-template-columns: 1.5fr repeat(6, 1fr);
+  grid-template-columns: 1.5fr repeat(5, 1fr);
   align-items: center;
 
   margin: 0 3.2rem;
   padding: 2.4rem 0;
 
   @media (max-width: 540px) {
-    grid-template-columns: 1.5fr 0.5fr repeat(5, 1fr);
-
     margin: 0 2rem;
     padding: 2rem 0;
   }
@@ -192,4 +190,29 @@ export const FlexWrapper = styled.div`
       font-size: ${theme.font.sizes.font12};
     }
   }
+`
+
+export const Imagecontainer = styled.div`
+  ${() => css`
+    position: relative;
+
+    width: 2.4rem;
+    height: 2.4rem;
+  `}
+`
+
+export const ChainLogoWrapper = styled.div`
+  ${({ theme }) => css`
+    position: absolute;
+    right: -0.5rem;
+    bottom: 0;
+
+    overflow: hidden;
+
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+
+    background-color: ${theme.colors.white};
+  `}
 `

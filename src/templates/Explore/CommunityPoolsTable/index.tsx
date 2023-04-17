@@ -8,12 +8,11 @@ import { calcChange } from '@/utils/numerals'
 
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 
-import notFoundIcon from '../../../../public/assets/icons/coming-soon.svg'
-import arrowLeftBoldIcon from '../../../../public/assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '../../../../public/assets/utilities/arrow-right-bold.svg'
-
-import eyeShowIcon from '../../../../public/assets/utilities/eye-show.svg'
-import comingSoonIcon from '../../../../public/assets/icons/coming-soon.svg'
+import notFoundIcon from '@assets/icons/coming-soon.svg'
+import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
+import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
+import eyeShowIcon from '@assets/utilities/eye-show.svg'
+import comingSoonIcon from '@assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 import {
