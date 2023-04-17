@@ -110,7 +110,7 @@ const FeeBreakdown = () => {
             </S.ReviewListContent>
           )}
         </S.ReviewListContainer>
-        <hr />
+        {/* <hr />
         <S.ReviewListContainer>
           <S.ReviewListContent>
             <S.FeeBreakdownTitle>
@@ -135,7 +135,7 @@ const FeeBreakdown = () => {
               height={20}
             />
           </S.ReviewListContent>
-        </S.ReviewListContainer>
+        </S.ReviewListContainer> */}
       </S.FeeBreakdownContainer>
       <S.WarningContainer>
         <img
