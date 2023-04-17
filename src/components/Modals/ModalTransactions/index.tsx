@@ -113,7 +113,8 @@ const ModalTransactions = ({
               changeChain({
                 chainId: networks[networkId].chainId,
                 chainName: networks[networkId].chainName,
-                rpcUrls: [networks[networkId].rpc]
+                rpcUrls: [networks[networkId].rpc],
+                nativeCurrency: networks[networkId].nativeCurrency
               })
             }
           />

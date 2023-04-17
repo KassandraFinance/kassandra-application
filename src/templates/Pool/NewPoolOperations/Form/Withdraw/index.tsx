@@ -596,7 +596,12 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           onClick={() => changeChain({
             chainId: pool.chain.id,
             chainName: pool.chain.chainName,
-            rpcUrls: pool.chain.rpcUrls
+            rpcUrls: pool.chain.rpcUrls,
+            nativeCurrency: {
+              decimals: pool.chain.nativeTokenDecimals,
+              name: pool.chain.nativeTokenName,
+              symbol: pool.chain.nativeTokenSymbol
+            }
           })}
           disabled={walletConnect ? true : false}
           text={walletConnect ? `Change manually to ${pool.chain.chainName}` : `Change to ${pool.chain.chainName}`}

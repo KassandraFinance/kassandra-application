@@ -64,6 +64,12 @@ export const URL_1INCH = 'https://api.1inch.io/v5.0/'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 
+type CurrencyDetails = {
+  name: string,
+  symbol: string,
+  decimals: number
+}
+
 type NetworkType = Record<
   number,
   {
@@ -73,7 +79,8 @@ type NetworkType = Record<
     coingecko: string,
     whiteList: string,
     factory: string,
-    privateInvestor: string
+    privateInvestor: string,
+    nativeCurrency: CurrencyDetails
   }
 >
 
@@ -85,7 +92,12 @@ export const networks: NetworkType = {
     coingecko: 'polygon-pos',
     whiteList: '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57',
     factory: '0x4722b1d02c0bEBb60D426e9999BB9921d29C2956',
-    privateInvestor: '0xC8d8AeDBeDd1973b383D6f330C66D653F7DF11D6'
+    privateInvestor: '0xC8d8AeDBeDd1973b383D6f330C66D653F7DF11D6',
+    nativeCurrency: {
+      name: 'Goerli Test Token', //Ether
+      symbol: 'ETH',
+      decimals: 18
+    }
   },
   '137': {
     chainName: 'Polygon Mainnet',
@@ -94,7 +106,12 @@ export const networks: NetworkType = {
     coingecko: 'polygon-pos',
     whiteList: '',
     factory: '',
-    privateInvestor: ''
+    privateInvestor: '',
+    nativeCurrency: {
+      name: 'Matic Token',
+      symbol: 'MATIC',
+      decimals: 18
+    }
   },
   '43114': {
     chainId: 43114,
@@ -103,7 +120,12 @@ export const networks: NetworkType = {
     coingecko: 'avalanche',
     whiteList: '',
     factory: '',
-    privateInvestor: ''
+    privateInvestor: '',
+    nativeCurrency: {
+      name: 'Avalanche',
+      symbol: 'AVAX',
+      decimals: 18
+    }
   }
 }
 

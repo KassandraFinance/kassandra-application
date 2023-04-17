@@ -18,7 +18,9 @@ export interface ChainDetails {
 type ChangeChainParams = {
   chainId: number,
   chainName: string,
-  rpcUrls: string[]
+  rpcUrls: string[],
+  nativeCurrency: CurrencyDetails,
+  callbackFunction?: () => void;
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -29,7 +31,7 @@ declare let window: {
   }
 }
 
-export default async ({ chainId, chainName, rpcUrls }: ChangeChainParams) => {
+export default async ({ chainId, chainName, rpcUrls, nativeCurrency, callbackFunction }: ChangeChainParams) => {
   const chainIdHex = `0x${Number(chainId).toString(16)}`;
 
   try {
@@ -37,6 +39,8 @@ export default async ({ chainId, chainName, rpcUrls }: ChangeChainParams) => {
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: chainIdHex }]
     })
+
+    callbackFunction && callbackFunction()
   } catch (error: any) {
     // This error code indicates that the chain has not been added to MetaMask.
     if (error.code === 4902) {
@@ -47,10 +51,13 @@ export default async ({ chainId, chainName, rpcUrls }: ChangeChainParams) => {
             {
               chainId: chainIdHex,
               chainName,
-              rpcUrls
+              rpcUrls,
+              nativeCurrency: nativeCurrency
             },
           ]
         })
+
+        callbackFunction && callbackFunction()
       } catch (addError) {
         // handle "add" error
       }

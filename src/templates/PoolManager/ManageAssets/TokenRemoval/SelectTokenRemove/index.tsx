@@ -1,4 +1,5 @@
 import React from 'react'
+import Blockies from 'react-blockies'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
@@ -15,11 +16,17 @@ enum colorType {
   NEGATIVE
 }
 
-interface ISelectTokenRemoveProps {
-  poolSymbol: string;
+type IPoolInfoProps = {
+  name: string,
+  symbol: string,
+  logo?: string
 }
 
-const SelectTokenRemove = ({ poolSymbol }: ISelectTokenRemoveProps) => {
+interface ISelectTokenRemoveProps {
+  poolInfo: IPoolInfoProps;
+}
+
+const SelectTokenRemove = ({ poolInfo }: ISelectTokenRemoveProps) => {
   const { tokenSelection, lpNeeded } = useAppSelector(
     state => state.removeAsset
   )
@@ -69,17 +76,24 @@ const SelectTokenRemove = ({ poolSymbol }: ISelectTokenRemoveProps) => {
         <S.LineRemovedTokenReview>
           <S.ValueText>Holding</S.ValueText>
           <S.TokenValueContainer>
-            {tokenSelection.balanceUSD !== '0' ? (
+            {tokenSelection.balance !== '0' ? (
               <S.AllocationAndHoldingValue>
-                ${Number(tokenSelection.balanceUSD).toFixed(2)}
+                {tokenSelection.logo !== '' && (
+                  <img
+                    src={tokenSelection.logo}
+                    alt=""
+                    width={18}
+                    height={18}
+                  />
+                )}
+                {Number(tokenSelection.balance).toFixed(2)}{' '}
               </S.AllocationAndHoldingValue>
             ) : (
               <S.AllocationAndHoldingValue>---</S.AllocationAndHoldingValue>
             )}
-            {tokenSelection.balance !== '0' ? (
+            {tokenSelection.balanceUSD !== '0' ? (
               <S.TextBalance>
-                {Number(tokenSelection.balance).toFixed(2)}{' '}
-                {tokenSelection.symbol}
+                ${Number(tokenSelection.balanceUSD).toFixed(2)}
               </S.TextBalance>
             ) : (
               <S.TextBalance>---</S.TextBalance>
@@ -88,11 +102,23 @@ const SelectTokenRemove = ({ poolSymbol }: ISelectTokenRemoveProps) => {
         </S.LineRemovedTokenReview>
         <S.LineRemovedTokenReview>
           <S.ValueText color={color[handleCheckLpNeeded()]}>
-            {poolSymbol} needed for removal
+            {poolInfo.symbol} needed for removal
           </S.ValueText>
           <S.TokenValueContainer>
             {!lpNeeded.value.lte(0) ? (
               <S.AllocationAndHoldingValue>
+                <span>
+                  {poolInfo?.logo ? (
+                    <img src={poolInfo.logo} alt="" width={18} height={18} />
+                  ) : (
+                    <Blockies
+                      className="poolIcon"
+                      seed={poolInfo.name}
+                      size={4}
+                      scale={6}
+                    />
+                  )}
+                </span>
                 {BNtoDecimal(lpNeeded.value, tokenSelection.decimals, 2)}
               </S.AllocationAndHoldingValue>
             ) : (
@@ -131,8 +157,8 @@ const SelectTokenRemove = ({ poolSymbol }: ISelectTokenRemoveProps) => {
       <WarningCard showCard={!lpNeeded.balanceInWallet.gte(lpNeeded.value)}>
         <p>
           You still need{' '}
-          {BNtoDecimal(lpNeeded.value, tokenSelection.decimals, 2)} {poolSymbol}{' '}
-          to remove {tokenSelection.symbol} from this pool
+          {BNtoDecimal(lpNeeded.value, tokenSelection.decimals, 2)}{' '}
+          {poolInfo.symbol} to remove {tokenSelection.symbol} from this pool
         </p>
       </WarningCard>
     </S.SelectTokenRemove>

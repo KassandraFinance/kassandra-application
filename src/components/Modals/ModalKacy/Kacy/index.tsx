@@ -202,7 +202,8 @@ const Kacy = ({
                 changeChain({
                   chainId: avalancheNetwork.chainId,
                   chainName: avalancheNetwork.chainName,
-                  rpcUrls: [avalancheNetwork.rpc]
+                  rpcUrls: [avalancheNetwork.rpc],
+                  nativeCurrency: avalancheNetwork.nativeCurrency
                 })
                 setIsModalKacy(false)
               }}

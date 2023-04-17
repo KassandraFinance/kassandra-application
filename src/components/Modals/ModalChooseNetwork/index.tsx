@@ -38,7 +38,9 @@ const ModalChooseNetwork = ({
               changeChain({
                 chainId: avalancheNetwork.chainId,
                 chainName: avalancheNetwork.chainName,
-                rpcUrls: [avalancheNetwork.rpc]
+                rpcUrls: [avalancheNetwork.rpc],
+                nativeCurrency: avalancheNetwork.nativeCurrency,
+                callbackFunction: handleCloseModal
               })
             }
           >
@@ -54,7 +56,9 @@ const ModalChooseNetwork = ({
               changeChain({
                 chainId: polygonNetwork.chainId,
                 chainName: polygonNetwork.chainName,
-                rpcUrls: [polygonNetwork.rpc]
+                rpcUrls: [polygonNetwork.rpc],
+                nativeCurrency: avalancheNetwork.nativeCurrency,
+                callbackFunction: handleCloseModal
               })
             }
             disabled

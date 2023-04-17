@@ -28,7 +28,7 @@ const Web3Disabled = ({
 }: IWeb3DisabledProps) => {
   const dispatch = useAppDispatch()
   function getFunction(type: string) {
-    const {chainId, chainName, rpc } = networks[43114]
+    const {chainId, chainName, rpc, nativeCurrency } = networks[43114]
     switch (type) {
       case 'connect':
         dispatch(setModalWalletActive(true))
@@ -37,7 +37,8 @@ const Web3Disabled = ({
         changeChain({
             chainId,
             chainName,
-            rpcUrls: [rpc]
+            rpcUrls: [rpc],
+            nativeCurrency
           })
         break
       default:

@@ -305,7 +305,12 @@ const MyAsset = ({
               changeChain({
                 chainId: chain.id,
                 chainName: chain.chainName,
-                rpcUrls: chain.rpcUrls
+                rpcUrls: chain.rpcUrls,
+                nativeCurrency: {
+                  decimals: chain.nativeTokenDecimals,
+                  name: chain.nativeTokenName,
+                  symbol: chain.nativeTokenSymbol
+                }
               })
             }
             disabled={walletConnect ? true : false}
