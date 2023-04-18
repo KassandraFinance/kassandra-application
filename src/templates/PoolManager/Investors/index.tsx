@@ -1,10 +1,7 @@
 import React from 'react'
 
-import TitleSection from '@ui/TitleSection'
 import InvestorsTable from './InvestorsTable'
 import Pagination from '@/components/Pagination'
-
-import featuredIcon from '@assets/iconGradient/featured.svg'
 
 import * as S from './styles'
 
@@ -19,10 +16,6 @@ const Investors = () => {
 
   return (
     <S.Investors>
-      <S.TitleWrapper>
-        <TitleSection title="Inverstor’s leaderboard" image={featuredIcon} />
-      </S.TitleWrapper>
-
       <InvestorsTable skip={skip} take={take} setTotalItems={setTotalItems} />
 
       <S.PaginationWrapper>
