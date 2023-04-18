@@ -1,4 +1,4 @@
-import styled, { css, keyframes } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const FeeRewards = styled.div`
   ${() => css`
@@ -11,8 +11,6 @@ export const FeeRewards = styled.div`
 
     @media (min-width: 992px) {
       gap: 6.1rem;
-
-      margin-top: 4.4rem;
     }
   `}
 `
