@@ -22,16 +22,18 @@ export const TRHead = styled.div`
   display: grid;
   grid-template-columns: minmax(10rem, 1.5fr) 1fr 8rem;
   gap: 1rem;
+
   margin-inline: 1.6rem;
 
   @media (min-width: 768px) {
-    margin-inline: 2.4rem;
     grid-template-columns:
       minmax(13.9rem, 1.5fr) repeat(3, 1fr) minmax(9rem, 1fr) minmax(
         6.3rem,
         1fr
       )
       minmax(6.3rem, 1fr);
+
+    margin-inline: 2.4rem;
   }
 `
 
@@ -46,11 +48,10 @@ export const TBody = styled.div`
 export const TR = styled.div`
   ${({ theme }) => css`
     margin-inline: 1.6rem;
-
     border-top: 1px solid transparent;
 
-    transition-duration: 300ms;
     transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
     transition-property: background-color border;
 
     &:not(:last-of-type) {
@@ -60,6 +61,7 @@ export const TR = styled.div`
     &:hover {
       margin: 0;
       padding-inline: 1.6rem;
+
       background-color: ${theme.colors.darkPurple};
 
       &:not(:first-of-type) {
@@ -86,6 +88,7 @@ export const TRLink = styled.a`
     gap: 1rem;
 
     text-decoration: none;
+
     cursor: pointer;
 
     @media (min-width: 768px) {
@@ -102,24 +105,21 @@ export const TRLink = styled.a`
 export const PoolInfoContainer = styled.div`
   ${({ theme }) => css`
     margin-inline: 1.6rem;
-
     border-top: 1px solid transparent;
-
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-    transition-property: background-color border;
-
     border-bottom: 1px solid rgba(255 255 255 / 0.3);
+
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: background-color border;
 
     &:hover {
       margin: 0;
-      padding-inline: 1.6rem;
-
-      background-color: ${theme.colors.darkPurple};
-
       margin-top: -1px;
+      padding-inline: 1.6rem;
       padding-top: 1px;
       border-top: 1px solid rgba(255 255 255 / 0.3);
+
+      background-color: ${theme.colors.darkPurple};
 
       @media (min-width: 768px) {
         padding-inline: 2.4rem;
@@ -321,7 +321,13 @@ export const Container = styled.div`
     display: grid;
     grid-template-columns: 1fr;
     align-items: center;
-    justify-items: center;
+    justify-items: end;
+
+    margin-right: 1.8rem;
+
+    @media (max-width: 768px) {
+      margin-right: 0.9rem;
+    }
   `}
 `
 
@@ -334,8 +340,9 @@ export const CoinImageContainer = styled.div`
 
     @media (max-width: 768px) {
       display: flex;
-      align-items: center;
       justify-content: flex-end;
+      align-items: center;
+
       width: auto;
     }
   `}
@@ -416,6 +423,7 @@ export const PoolInfoDesktop = styled.a`
     display: none;
 
     text-decoration: none;
+
     cursor: pointer;
 
     @media (min-width: 768px) {
@@ -427,6 +435,7 @@ export const PoolInfoDesktop = styled.a`
 export const PoolInfoMobile = styled.div`
   ${() => css`
     display: block;
+
     @media (min-width: 768px) {
       display: none;
     }

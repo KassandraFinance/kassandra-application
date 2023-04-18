@@ -36,14 +36,17 @@ import Activity from './Activity'
 import Brokers from './Brokers'
 import Details from './Details'
 
-import analytics from '../../../public/assets/tabManage/analytics.svg'
-import allocations from '../../../public/assets/tabManage/allocations.svg'
-import activity from '../../../public/assets/tabManage/activity.svg'
-import investors from '../../../public/assets/tabManage/investors.svg'
-import rewards from '../../../public/assets/tabManage/rewards.svg'
-import brokers from '../../../public/assets/tabManage/brokers.svg'
-import details from '../../../public/assets/tabManage/info.svg'
 import gear from '../../../public/assets/icons/gear.svg'
+
+import {
+  analyticsIcon,
+  detailsIcon,
+  brokersIcon,
+  rewardsIcon,
+  allocationsIcon,
+  activityIcon,
+  investorsIcon
+} from './icons'
 
 import * as S from './styles'
 
@@ -51,37 +54,37 @@ const tabs = [
   {
     asPathText: 'analytics',
     text: 'Analytics',
-    icon: analytics
+    svg: analyticsIcon
   },
   {
     asPathText: 'allocations',
     text: 'Allocations',
-    icon: allocations
+    svg: allocationsIcon
   },
   {
     asPathText: 'activity',
     text: 'Activity',
-    icon: activity
+    svg: activityIcon
   },
   {
     asPathText: 'investors',
     text: 'Investors',
-    icon: investors
+    svg: investorsIcon
   },
   {
     asPathText: 'fee-rewards',
     text: 'Fee Rewards',
-    icon: rewards
+    svg: rewardsIcon
   },
   {
     asPathText: 'brokers',
     text: 'Brokers',
-    icon: brokers
+    svg: brokersIcon
   },
   {
     asPathText: 'details',
     text: 'Details',
-    icon: details
+    svg: detailsIcon
   }
 ]
 

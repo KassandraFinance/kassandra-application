@@ -7,25 +7,17 @@ export const TotalValuesCards = styled.div`
 
   width: 100%;
   padding: 2.4rem;
+  border-radius: 8px;
 
-  background: rgba(255, 255, 255, 0.04);
-  border: 0.1rem solid rgba(255, 255, 255, 0.2);
-  border-radius: 1.2rem;
-
-  @media (max-width: 730px) {
-    flex-direction: row;
-    align-items: center;
-
-    padding: 2rem;
-  }
+  background: rgb(255 255 255 / 0.05);
 
   span {
     display: flex;
     gap: 0.8rem;
 
     color: #c4c4c4;
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font14};
 
     @media (max-width: 880px) {
       font-size: ${theme.font.sizes.font12};
@@ -35,9 +27,9 @@ export const TotalValuesCards = styled.div`
   p {
     margin-top: 2.4rem;
 
-    color: #ffffff;
-    font-size: ${theme.font.sizes.font32};
+    color: #fff;
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font32};
 
     @media (max-width: 880px) {
       font-size: ${theme.font.sizes.font24};
@@ -46,8 +38,16 @@ export const TotalValuesCards = styled.div`
     @media (max-width: 730px) {
       margin-top: 0;
       margin-left: auto;
-      font-size: ${theme.font.sizes.font14};
+
       font-weight: ${theme.font.weight.bold};
+      font-size: ${theme.font.sizes.font14};
     }
+  }
+
+  @media (max-width: 730px) {
+    flex-direction: row;
+    align-items: center;
+
+    padding: 2rem;
   }
 `

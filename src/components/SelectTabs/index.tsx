@@ -9,7 +9,8 @@ import * as S from './styles'
 type tabs = {
   text: string,
   asPathText: string,
-  icon: StaticImageData
+  icon?: StaticImageData,
+  svg?: JSX.Element
 }
 
 interface ISelectTabsProps {
@@ -53,7 +54,16 @@ const SelectTabs = ({ tabs, isSelect, setIsSelect }: ISelectTabsProps) => {
           isActiveTab={item.asPathText === isSelect}
         >
           <span>
-            <Image src={item.icon} width={16} height={16} layout="fixed" />
+            {item.svg ? (
+              item.svg
+            ) : (
+              <Image
+                src={item?.icon || ''}
+                width={16}
+                height={16}
+                layout="fixed"
+              />
+            )}
           </span>
           {item.text}
         </S.TabsButton>

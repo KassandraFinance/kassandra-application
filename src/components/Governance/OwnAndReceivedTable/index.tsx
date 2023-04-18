@@ -124,7 +124,6 @@ export const OwnAndReceivedTable = ({
             <thead>
               <S.Tr className="headTable">
                 <S.Th>Pool</S.Th>
-                <S.Th>Network</S.Th>
                 <S.Th className="delegating">
                   {isDelegationTable ? 'Delegating to' : 'Received from'}
                 </S.Th>
@@ -141,14 +140,18 @@ export const OwnAndReceivedTable = ({
                 userVotingPower.map((item, index) => (
                   <S.Tr key={index}>
                     <S.Td className="pool">
-                      <Image src={avax} width={32} height={32} alt="" />
+                      <S.Imagecontainer>
+                        <Image src={avax} width={32} height={32} alt="" />
+
+                        <S.ChainLogoWrapper>
+                          <Image src={avaxLogo.src} layout="fill" />
+                        </S.ChainLogoWrapper>
+                      </S.Imagecontainer>
+
                       <div>
                         <p>KACY</p>
                         <span>{handleCheckValuePool(item.pool)}</span>
                       </div>
-                    </S.Td>
-                    <S.Td>
-                      <Image src={avaxLogo.src} width={16} height={16} />
                     </S.Td>
                     <S.Td className="delegating-to">
                       {isDelegationTable ? (

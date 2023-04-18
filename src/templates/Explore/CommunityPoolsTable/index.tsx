@@ -8,12 +8,11 @@ import { calcChange } from '@/utils/numerals'
 
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 
-import notFoundIcon from '../../../../public/assets/icons/coming-soon.svg'
-import arrowLeftBoldIcon from '../../../../public/assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '../../../../public/assets/utilities/arrow-right-bold.svg'
-
-import eyeShowIcon from '../../../../public/assets/utilities/eye-show.svg'
-import comingSoonIcon from '../../../../public/assets/icons/coming-soon.svg'
+import notFoundIcon from '@assets/icons/coming-soon.svg'
+import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
+import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
+import eyeShowIcon from '@assets/utilities/eye-show.svg'
+import comingSoonIcon from '@assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 import {
@@ -158,7 +157,7 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
             <S.ColumnTitle align="right">TVL</S.ColumnTitle>
           </S.TH>
           <S.TH isView={inViewCollum === 3}>
-            <S.ColumnTitle align="center">Asset</S.ColumnTitle>
+            <S.ColumnTitle align="right">Asset</S.ColumnTitle>
           </S.TH>
           <S.TH isView={inViewCollum === 4}>
             <S.ColumnTitle align="right">Volume (24h)</S.ColumnTitle>
