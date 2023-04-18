@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 export const CustomLegend = styled.div`
-  ${() => css`
+  ${({ theme }) => css`
     display: flex;
     align-items: center;
 
@@ -16,7 +16,8 @@ export const CustomLegend = styled.div`
     p {
       margin-right: 1.6rem;
 
-      font-weight: 300;
+      font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font12};
     }
   `}
 `
