@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 export const Brokers = styled.div`
   ${() => css`
     margin-bottom: 5rem;
+    padding-top: 2.4rem;
   `}
 `
 
