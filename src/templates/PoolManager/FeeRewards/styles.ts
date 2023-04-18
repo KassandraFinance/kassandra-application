@@ -8,6 +8,7 @@ export const FeeRewards = styled.div`
     justify-content: center;
 
     margin-top: 2.4rem;
+    margin-bottom: 5rem;
 
     @media (min-width: 992px) {
       gap: 6.1rem;
