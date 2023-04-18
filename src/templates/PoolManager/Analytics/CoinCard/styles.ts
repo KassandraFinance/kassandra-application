@@ -43,7 +43,7 @@ export const CoinCardFront = styled.div<ICoinCardFrontProps>`
     padding-inline: 1.6rem;
     padding-top: 1.6rem;
     border: 1px solid rgb(255 255 255 / 0);
-    border-radius: 0.8rem;
+    border-radius: 8px;
 
     background-color: rgb(255 255 255 / 0.05);
 
@@ -318,7 +318,7 @@ export const CoinCardBack = styled.div<ICoinCardBackProps>`
     padding-inline: 1.6rem;
     padding-top: 1.6rem;
     border: 1px solid rgb(255 255 255 / 0);
-    border-radius: 0.8rem;
+    border-radius: 8px;
 
     background-color: rgb(255 255 255 / 0.05);
 

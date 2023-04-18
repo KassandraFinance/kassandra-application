@@ -11,7 +11,7 @@ export const TVMChart = styled.div`
     width: 100%;
     height: 100%;
     padding: 1.6rem;
-    border-radius: 4px;
+    border-radius: 8px;
 
     background: rgb(31 31 31 / 0.72);
   `}
