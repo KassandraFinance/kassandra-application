@@ -19,6 +19,8 @@ export const GET_FEES = gql`
       fee_aum
       fee_aum_kassandra
 
+      last_harvest
+
       fees(
         where: { period: 604800, type_in: ["join", "aum"] }
         orderBy: timestamp

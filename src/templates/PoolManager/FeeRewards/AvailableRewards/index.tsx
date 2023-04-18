@@ -21,7 +21,11 @@ const AvailableRewards = ({ pool }: Props) => {
   const [feesAum, setFeesAum] = React.useState({ kassandra: '0', manager: '0' })
   const dateDiff = pool?.lasCollectedAum[0]?.timestamp
     ? getDateDiff(pool?.lasCollectedAum[0]?.timestamp * 1000)
-    : { string: 'day', value: 0 }
+    : { string: 'days', value: 0 }
+
+  const lastHarvest = pool?.last_harvest
+    ? getDateDiff(pool.last_harvest * 1000)
+    : { string: 'days', value: 0 }
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const managePool = useManagePool(pool.controller)
@@ -70,8 +74,13 @@ const AvailableRewards = ({ pool }: Props) => {
           </S.AmountFees>
         </S.ManagerFee>
         <S.Harvest>
-          <p>LAST HARVEST</p>
+          <p>Last reward update</p>
           <span>{`${dateDiff?.value} ${dateDiff?.string} ago`}</span>
+        </S.Harvest>
+
+        <S.Harvest>
+          <p>Last Harvest</p>
+          <span>{`${lastHarvest?.value} ${lastHarvest?.string} ago`}</span>
         </S.Harvest>
         <Button
           disabledNoEvent={Big(feesAum.manager).lte(0)}

@@ -93,6 +93,10 @@ export const Harvest = styled.div`
     flex-direction: column;
     gap: 1.6rem;
 
+    p {
+      text-transform: uppercase;
+    }
+
     span {
       color: ${theme.colors.white};
       font-weight: ${theme.font.weight.normal};
