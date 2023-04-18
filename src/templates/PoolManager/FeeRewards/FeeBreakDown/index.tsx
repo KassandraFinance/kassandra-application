@@ -20,7 +20,7 @@ const FeeBreakDown = ({ pool }: Props) => {
           <S.FeeBreakdownTitle>Deposit fee</S.FeeBreakdownTitle>
           <S.FeeBreakdownPorcentage>
             {BNtoDecimal(
-              Big(pool.fee_join_manager).add(pool.fee_join_broker),
+              Big(pool.fee_join_manager).add(pool.fee_join_broker).mul(100),
               4
             )}
             %
@@ -28,7 +28,8 @@ const FeeBreakDown = ({ pool }: Props) => {
         </S.ListContent>
         <S.ListContent>
           <S.FeeBreakdownParagraph>
-            Broker commission ({BNtoDecimal(Big(pool.fee_join_broker), 4)}%)
+            Broker commission (
+            {BNtoDecimal(Big(pool.fee_join_broker).mul(100), 4)}%)
           </S.FeeBreakdownParagraph>
           <S.FeeBreakdownParagraphAmount>
             ${Big(pool.total_fees_join_broker_usd).toFixed(2)}
@@ -36,7 +37,8 @@ const FeeBreakDown = ({ pool }: Props) => {
         </S.ListContent>
         <S.ListContent>
           <S.FeeBreakdownParagraph>
-            Manager share ({BNtoDecimal(Big(pool.fee_join_manager), 4)}%)
+            Manager share ({BNtoDecimal(Big(pool.fee_join_manager).mul(100), 4)}
+            %)
           </S.FeeBreakdownParagraph>
           <S.FeeBreakdownParagraphAmount>
             ${Big(pool.total_fees_join_manager_usd).toFixed(2)}
@@ -57,13 +59,18 @@ const FeeBreakDown = ({ pool }: Props) => {
         <S.ListContent>
           <S.FeeBreakdownTitle>Management Fee</S.FeeBreakdownTitle>
           <S.FeeBreakdownPorcentage>
-            {BNtoDecimal(Big(pool.fee_aum).add(pool.fee_aum_kassandra), 4)}%
+            {BNtoDecimal(
+              Big(pool.fee_aum).add(pool.fee_aum_kassandra).mul(100),
+              4
+            )}
+            %
           </S.FeeBreakdownPorcentage>
         </S.ListContent>
 
         <S.ListContent>
           <S.FeeBreakdownParagraph>
-            Kassandra Share ({BNtoDecimal(Big(pool.fee_aum_kassandra), 4)}%)
+            Kassandra Share (
+            {BNtoDecimal(Big(pool.fee_aum_kassandra).mul(100), 4)}%)
           </S.FeeBreakdownParagraph>
           <S.FeeBreakdownParagraphAmount>
             ${Big(pool.total_fees_aum_usd).toFixed(2)}
@@ -71,7 +78,7 @@ const FeeBreakDown = ({ pool }: Props) => {
         </S.ListContent>
         <S.ListContent>
           <S.FeeBreakdownParagraph>
-            Manager Share ({BNtoDecimal(Big(pool.fee_aum), 4)}%)
+            Manager Share ({BNtoDecimal(Big(pool.fee_aum).mul(100), 4)}%)
           </S.FeeBreakdownParagraph>
           <S.FeeBreakdownParagraphAmount>
             ${Big(pool.total_fees_aum_usd).toFixed(2)}
