@@ -54,7 +54,7 @@ const AvailableRewards = ({ pool }: Props) => {
       <S.AvailableAumFees>
         <h3>Available Rewards</h3>
         <S.ManagerFee>
-          <p>MANAGEMENT FEE ({BNtoDecimal(Big(pool.fee_aum), 4)}%)</p>
+          <p>MANAGEMENT FEE ({BNtoDecimal(Big(pool.fee_aum).mul(100), 4)}%)</p>
           <S.AmountFees>
             <span>
               $
