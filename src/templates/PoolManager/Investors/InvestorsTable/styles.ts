@@ -1,5 +1,10 @@
 import styled, { css } from 'styled-components'
-import { TR, Value } from '@/templates/Explore/CommunityPoolsTable/styles'
+import {
+  TR,
+  Value,
+  TD,
+  TH
+} from '@/templates/Explore/CommunityPoolsTable/styles'
 import { Image } from '@ui/Governance/ImageProfile/styles'
 import { Value as V } from '@ui/Modals/ModalViewCoin/styles'
 
@@ -17,8 +22,16 @@ export const InvestorsTable = styled.div`
       }
     }
 
+    ${TD}:first-of-type, ${TH}:first-of-type {
+      display: grid;
+      grid-template-columns: 10px 1fr;
+      gap: 1rem;
+      align-items: center;
+    }
+
     ${Image} {
       justify-content: flex-start;
+
       pointer-events: none;
 
       span,

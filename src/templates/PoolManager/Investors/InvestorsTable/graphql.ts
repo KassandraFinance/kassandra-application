@@ -9,7 +9,7 @@ export const GET_INVESTORS = gql`
         price_usd
         unique_investors
         investors(
-          orderBy: last_deposit_timestamp
+          orderBy: amount
           orderDirection: desc
           skip: $skip
           first: $first
