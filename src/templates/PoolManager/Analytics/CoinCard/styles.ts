@@ -88,6 +88,8 @@ export const InputListWrapper = styled.div`
 export const PeriodSpan = styled.span`
   ${({ theme }) => css`
     padding: 0.4rem 1rem;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: 2px;
 
     font-weight: ${theme.font.weight.normal};
     font-size: ${theme.font.sizes.font12};
