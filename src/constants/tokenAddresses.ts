@@ -91,7 +91,7 @@ export const networks: NetworkType = {
     rpc: 'https://rpc.ankr.com/eth_goerli',
     coingecko: 'polygon-pos',
     whiteList: '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57',
-    factory: '0x4722b1d02c0bEBb60D426e9999BB9921d29C2956',
+    factory: '0x9E3feC2E3AEc12572242dd1376BEd5E1F5bb8200',
     privateInvestor: '0xC8d8AeDBeDd1973b383D6f330C66D653F7DF11D6',
     nativeCurrency: {
       name: 'Goerli Test Token', //Ether
