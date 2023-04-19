@@ -58,12 +58,12 @@ function ERC20Contract(contract: Contract) {
     return new BigNumber(value)
   }
 
-  const allowance = async (contractAddress: string, userWalletAddress: string, amount = '1'): Promise<boolean> => {
+  const allowance = async (contractAddress: string, userWalletAddress: string): Promise<string> => {
     try {
       const allowance: string = await contract.methods.allowance(userWalletAddress, contractAddress).call()
-      return Big(allowance).gte(amount)
+      return allowance
     } catch (e) {
-      return false
+      return '0'
     }
   };
 
