@@ -3,11 +3,12 @@ import styled, { css } from 'styled-components'
 
 interface IwithoutBorderProps {
   withoutBorder?: boolean;
+  isRound?: boolean;
 }
 
 // prettier-ignore
 export const TokenWithNetworkImage = styled.div<IwithoutBorderProps>`
-  ${({ withoutBorder }) => css`
+  ${({ withoutBorder, isRound = true }) => css`
     position: relative;
 
     display: flex;
@@ -26,7 +27,7 @@ export const TokenWithNetworkImage = styled.div<IwithoutBorderProps>`
     img {
       overflow: hidden;
 
-      /* border-radius: 50%; */
+      border-radius: ${isRound ? "50%" : ''};
     }
   `}
 `

@@ -6,8 +6,10 @@ import useSWR from 'swr'
 import request from 'graphql-request'
 import Tippy from '@tippyjs/react'
 
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
+import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { GET_POOL_REBALANCE_TIME } from './graphql'
+
+import changeChain from '@/utils/changeChain'
 
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import usePoolInfo from '@/hooks/usePoolInfo'
@@ -34,14 +36,17 @@ import Activity from './Activity'
 import Brokers from './Brokers'
 import Details from './Details'
 
-import analytics from '../../../public/assets/tabManage/analytics.svg'
-import allocations from '../../../public/assets/tabManage/allocations.svg'
-import activity from '../../../public/assets/tabManage/activity.svg'
-import investors from '../../../public/assets/tabManage/investors.svg'
-import rewards from '../../../public/assets/tabManage/rewards.svg'
-import brokers from '../../../public/assets/tabManage/brokers.svg'
-import details from '../../../public/assets/tabManage/info.svg'
 import gear from '../../../public/assets/icons/gear.svg'
+
+import {
+  analyticsIcon,
+  detailsIcon,
+  brokersIcon,
+  rewardsIcon,
+  allocationsIcon,
+  activityIcon,
+  investorsIcon
+} from './icons'
 
 import * as S from './styles'
 
@@ -49,37 +54,37 @@ const tabs = [
   {
     asPathText: 'analytics',
     text: 'Analytics',
-    icon: analytics
+    svg: analyticsIcon
   },
   {
     asPathText: 'allocations',
     text: 'Allocations',
-    icon: allocations
+    svg: allocationsIcon
   },
   {
     asPathText: 'activity',
     text: 'Activity',
-    icon: activity
+    svg: activityIcon
   },
   {
     asPathText: 'investors',
     text: 'Investors',
-    icon: investors
+    svg: investorsIcon
   },
   {
     asPathText: 'fee-rewards',
     text: 'Fee Rewards',
-    icon: rewards
+    svg: rewardsIcon
   },
   {
     asPathText: 'brokers',
     text: 'Brokers',
-    icon: brokers
+    svg: brokersIcon
   },
   {
-    asPathText: 'Details',
+    asPathText: 'details',
     text: 'Details',
-    icon: details
+    svg: detailsIcon
   }
 ]
 
@@ -93,6 +98,7 @@ const PoolManager = () => {
 
   const router = useRouter()
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const chainId = useAppSelector(state => state.chainId)
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -218,30 +224,46 @@ const PoolManager = () => {
                 </S.NameIndex>
               </S.GridIntro>
 
-              <Tippy
-                allowHTML={true}
-                content={[
-                  <S.RebalancingProgressText key="title">
-                    REBALANCING IN PROGRESS
-                  </S.RebalancingProgressText>,
-                  <S.RebalancingProgressTime key="hours">
-                    {dateFormated}
-                  </S.RebalancingProgressTime>
-                ]}
-                disabled={!(currentTime < endRebalanceTime)}
-              >
-                <span>
-                  <Button
-                    className="btn-manage-assets"
-                    backgroundSecondary
-                    size="large"
-                    text="Manage Assets"
-                    image={gear.src}
-                    onClick={() => setIsOpenManageAssets(true)}
-                    disabledNoEvent={currentTime < endRebalanceTime}
-                  />
-                </span>
-              </Tippy>
+              {poolInfo.chain_id !== chainId ? (
+                <Button
+                  text={`Connect to ${networks[poolInfo.chain_id].chainName}`}
+                  backgroundSecondary
+                  size="large"
+                  onClick={() =>
+                    changeChain({
+                      chainId: networks[poolInfo.chain_id].chainId,
+                      chainName: networks[poolInfo.chain_id].chainName,
+                      rpcUrls: [networks[poolInfo.chain_id].rpc],
+                      nativeCurrency: networks[poolInfo.chain_id].nativeCurrency
+                    })
+                  }
+                />
+              ) : (
+                <Tippy
+                  allowHTML={true}
+                  content={[
+                    <S.RebalancingProgressText key="title">
+                      REBALANCING IN PROGRESS
+                    </S.RebalancingProgressText>,
+                    <S.RebalancingProgressTime key="hours">
+                      {dateFormated}
+                    </S.RebalancingProgressTime>
+                  ]}
+                  disabled={!(currentTime < endRebalanceTime)}
+                >
+                  <span>
+                    <Button
+                      className="btn-manage-assets"
+                      backgroundSecondary
+                      size="large"
+                      text="Manage Assets"
+                      image={gear.src}
+                      onClick={() => setIsOpenManageAssets(true)}
+                      disabledNoEvent={currentTime < endRebalanceTime}
+                    />
+                  </span>
+                </Tippy>
+              )}
             </S.Intro>
             <SelectTabs
               tabs={tabs}

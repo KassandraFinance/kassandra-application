@@ -55,12 +55,10 @@ const InputNumberRight = ({
         </S.PlaceholderWrapper>
 
         {button && (
-          <>
+          <S.InputButton type="button" onClick={onClick}>
             <S.Line />
-            <S.InputButton type="button" onClick={onClick}>
-              {buttonText}
-            </S.InputButton>
-          </>
+            {buttonText}
+          </S.InputButton>
         )}
       </S.InputContainer>
     </S.InputNumberRight>

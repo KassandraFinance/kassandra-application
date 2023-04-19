@@ -10,7 +10,6 @@ import SparkLineChart, { sparkData } from '../SparkLineChart'
 
 import arrowAscendIcon from '../../../../../public/assets/notificationStatus/arrow-ascend.svg'
 import arrowDescendIcon from '../../../../../public/assets/notificationStatus/arrow-descend.svg'
-import heimdallLogo from '../../../../../public/assets/logos/heimdall-logo.svg'
 import comingSoon from '../../../../../public/assets/icons/coming-soon.svg'
 
 import * as S from './styles'
@@ -22,7 +21,6 @@ interface ICoinCardProps {
   sparkLine: sparkData[];
   priceChangeIn7d: string;
   marketCap: number;
-  score24h: string;
   price: string;
   dataList?: string[];
   period?: {
@@ -39,7 +37,6 @@ const CoinCard = ({
   sparkLine,
   priceChangeIn7d,
   marketCap,
-  score24h,
   price,
   dataList,
   period
@@ -206,7 +203,7 @@ const CoinCard = ({
             <S.InfoName>Risk factor</S.InfoName>
             <S.InfoValue value={0.3}>?%</S.InfoValue>
           </S.Info> */}
-          <S.Info>
+          {/* <S.Info>
             <S.InfoName>Social score</S.InfoName>
 
             <S.InfoValueWrapper>
@@ -214,7 +211,7 @@ const CoinCard = ({
 
               <S.InfoValue>{score24h}</S.InfoValue>
             </S.InfoValueWrapper>
-          </S.Info>
+          </S.Info> */}
         </S.MoreInfoContainer>
       </S.CoinCardBack>
     </S.CoinCard>

@@ -7,7 +7,7 @@ interface ISideBarMenuProps {
 // prettier-ignore
 export const SideBarMenu = styled.div<ISideBarMenuProps>`
   ${() => css`
-    padding: 1.6rem 2.4rem;
+    padding: 1.6rem 2rem;
     border: 1px solid rgb(255 255 255 / 0);
     border-radius: 4px;
 
@@ -133,6 +133,7 @@ export const OpenButton = styled.div<IOpenButtonProps>`
     width: 1.6rem;
     height: 1.6rem;
     margin-left: auto;
+    margin-right: 0.5rem;
 
     background-color: transparent;
 
@@ -180,7 +181,7 @@ export const PoolContainer = styled.div<IPoolContainerProps>`
 `
 
 export const PoolWrapper = styled.div`
-  ${() => css`
+  ${({ theme }) => css`
     display: flex;
     align-items: center;
 
@@ -189,6 +190,16 @@ export const PoolWrapper = styled.div`
 
     &:first-of-type {
       margin-top: 0.8rem;
+    }
+
+    &:hover {
+      ${PoolName} {
+        color: ${theme.colors.white};
+      }
+
+      ${PoolStatus} {
+        background-color: ${theme.colors.snow};
+      }
     }
   `}
 `
@@ -236,7 +247,12 @@ export const PoolName = styled.div<IPoolNameProps>`
     letter-spacing: 0.05em;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    transition-duration: 200ms;
+    transition-timing-function: ease-in-out;
+    transition-property: color;
   `}
+
   ${({ theme, active }) => active && css`
       color: ${theme.colors.snow};
       font-weight: ${theme.font.weight.medium};
@@ -256,9 +272,16 @@ export const PoolStatus = styled.span<IPoolStatusProps>`
 
     width: 0.6rem;
     height: 0.6rem;
+
+    background-color: transparent;
     border: 0.5px solid ${theme.colors.grayDisabled};
     border-radius: 50%;
+
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+    transition-property: background-color;
   `}
+
   ${({ theme, active }) => active && css`
       border: 0.5px solid ${theme.colors.snow};
 

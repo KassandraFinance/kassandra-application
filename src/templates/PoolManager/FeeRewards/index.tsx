@@ -44,6 +44,8 @@ export type Pool = {
   fee_aum: string,
   fee_aum_kassandra: string,
 
+  last_harvest: number,
+
   fees: Fees[],
 
   lasCollectedAum: Fees[]

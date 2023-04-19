@@ -63,15 +63,6 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30)
   })
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
-  const router = useRouter()
-  const profileAddress = !router.query.profileAddress
-    ? ''
-    : Array.isArray(router.query.profileAddress)
-    ? ''
-    : router.query.profileAddress
-
   const { data } = useSWR([GET_POOL, params], (query, params) =>
     request(BACKEND_KASSANDRA, query, params)
   )
@@ -83,7 +74,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
   React.useEffect(() => {
     const arrChangePrice = []
 
-    if (data) {
+    if (data?.pool) {
       const newPrice = data?.pool?.price_candles.map(
         (item: { timestamp: number, close: string }) => {
           return {

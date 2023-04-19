@@ -199,7 +199,7 @@ const PoolImage = () => {
                   poolInfo?.controller,
                   poolImage.icon.image_preview,
                   data?.pool.summary,
-                  poolInfo?.chainId
+                  poolInfo?.chain_id
                 )
               }
             />

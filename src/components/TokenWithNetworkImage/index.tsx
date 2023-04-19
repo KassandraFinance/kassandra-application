@@ -35,7 +35,10 @@ const TokenWithNetworkImage = ({
   }
 }: ITokenWithNetworkImage) => {
   return (
-    <S.TokenWithNetworkImage withoutBorder={tokenImage.withoutBorder}>
+    <S.TokenWithNetworkImage
+      withoutBorder={tokenImage.withoutBorder}
+      isRound={tokenImage.width === tokenImage.height}
+    >
       {!tokenImage.url && blockies ? (
         <Blockies
           className="poolIcon"

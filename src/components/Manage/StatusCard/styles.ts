@@ -10,9 +10,9 @@ export const StatusCard = styled.div`
     width: 100%;
     height: 8.6rem;
     padding: 1.6rem;
+    border-radius: 8px;
 
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 0.4rem;
+    background-color: rgb(255 255 255 / 0.05);
 
     @media (min-width: 992px) {
       gap: 1.2rem;
@@ -59,8 +59,8 @@ export const Value = styled.span<IValueProps>`
     letter-spacing: 0.02em;
 
     @media (min-width: 992px) {
-      font-size: ${theme.font.sizes.font24}
-      line-height: ${theme.font.sizes.font32}
+      font-size: ${theme.font.sizes.font24};
+      line-height: ${theme.font.sizes.font32};
     }
   `}
   ${({ theme, status }) => status === 'NEUTRAL' && css`

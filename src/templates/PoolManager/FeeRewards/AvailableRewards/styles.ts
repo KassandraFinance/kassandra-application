@@ -26,7 +26,7 @@ export const AvailableAumFees = styled.div`
       gap: 1.6rem;
 
       padding: 2.4rem;
-      border-radius: 4px;
+      border-radius: 8px;
 
       background-color: rgb(255 255 255 / 0.05);
 
@@ -93,6 +93,10 @@ export const Harvest = styled.div`
     flex-direction: column;
     gap: 1.6rem;
 
+    p {
+      text-transform: uppercase;
+    }
+
     span {
       color: ${theme.colors.white};
       font-weight: ${theme.font.weight.normal};
@@ -115,7 +119,7 @@ export const ClaimedRewards = styled.div`
     align-items: center;
 
     padding: 2.4rem;
-    border-radius: 4px;
+    border-radius: 8px;
 
     background-color: rgb(255 255 255 / 0.05);
 

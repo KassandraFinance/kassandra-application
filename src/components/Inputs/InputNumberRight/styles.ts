@@ -136,7 +136,8 @@ export const Placeholder = styled.span`
 export const Line = styled.span`
   ${() =>
     css`
-      display: inline-block;
+      position: absolute;
+      left: 0;
 
       width: 0.1rem;
       height: 1.4rem;
@@ -147,6 +148,8 @@ export const Line = styled.span`
 
 export const InputButton = styled.button`
   ${({ theme }) => css`
+    position: relative;
+
     height: 3.2rem;
     padding-inline: 0.8rem;
 

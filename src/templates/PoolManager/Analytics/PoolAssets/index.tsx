@@ -25,7 +25,6 @@ type Result = {
   priceChangePercentage7d: number,
   volume: number,
   marketCap: number,
-  socialScore24h: number,
   sparkline: string[]
 }
 
@@ -40,7 +39,7 @@ const PoolAssets = (props: IPoolAssetsProps) => {
       networks[Number(props.chainId)].coingecko +
       '&addressesSeparatedByComma=' +
       addresses
-    : undefined
+    : null
 
   const { data } = useSWR<Result[]>(url, {
     refreshInterval: 60 * 5 * 1000
@@ -59,7 +58,6 @@ const PoolAssets = (props: IPoolAssetsProps) => {
               sparkLine={token.sparkline?.map(line => ({ close: line }))}
               priceChangeIn7d={token.priceChangePercentage7d?.toFixed(4)}
               marketCap={token.marketCap}
-              score24h={token.socialScore24h?.toFixed(2)}
               price={token.price}
               period={{ time: 7, frame: 'days', abvFrame: 'D' }}
             />

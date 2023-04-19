@@ -14,34 +14,32 @@ export const HeadingWrapper = styled.div`
 
   @media (max-width: 700px) {
     flex-direction: column;
-    align-items: flex-start;
     gap: 2.4rem;
+    align-items: flex-start;
   }
 `
 
 export const TotalContainer = styled.div`
-  width: 37.2rem;
-  height: 4.8rem;
-
   display: flex;
   justify-content: space-between;
 
+  width: 37.2rem;
+  height: 4.8rem;
   padding: 1.6rem 2.4rem;
+  border-radius: 8px;
 
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 0.8rem;
+  background: rgb(255 255 255 / 0.04);
 
   @media (max-width: 700px) {
     width: 100%;
-
     padding: 1.6rem 2rem;
   }
 `
 
 export const Total = styled.div`
   display: flex;
-  align-items: center;
   gap: 0.8rem;
+  align-items: center;
 
   span {
     height: 1.4rem;
@@ -56,16 +54,15 @@ export const Total = styled.div`
 `
 
 export const Tooltip = styled.div`
-  width: 15px;
-  height: 15px;
-
+  width: 1.5rem;
+  height: 1.5rem;
   margin-bottom: 0.1rem;
 `
 
 export const Value = styled.div`
   display: flex;
-  align-items: center;
   gap: 1.2rem;
+  align-items: center;
 
   @media (max-width: 540px) {
     gap: 1rem;
@@ -73,7 +70,7 @@ export const Value = styled.div`
 `
 
 export const ValueUSD = styled.div`
-  color: #ffffff;
+  color: #fff;
   font-weight: ${theme.font.weight.medium};
   font-size: ${theme.font.sizes.font16};
   text-align: right;

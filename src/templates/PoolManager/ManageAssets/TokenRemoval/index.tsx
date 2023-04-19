@@ -44,7 +44,7 @@ const TokenRemoval = () => {
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
   const { data: coingeckoData, priceToken } = useCoingecko(
-    networks[poolInfo?.chainId ?? 137]?.coingecko,
+    networks[poolInfo?.chain_id ?? 137]?.coingecko,
     poolInfo?.chain.addressWrapped ?? '',
     handleMockToken(poolInfo?.underlying_assets_addresses ?? [])
   )
@@ -175,7 +175,11 @@ const TokenRemoval = () => {
         <p>Select the token you wish to be removed from the pool</p>
 
         <S.SelectTokenAndTableAllocation>
-          <SelectTokenRemove poolSymbol={poolInfo?.symbol ?? ''} />
+          <SelectTokenRemove poolInfo={{
+            name: poolInfo?.name ?? '',
+            symbol: poolInfo?.symbol ?? '',
+            logo: poolInfo?.logo
+          }}/>
           <NewAllocationTable
             assets={tokenSelection.address === '' ? undefined : weights}
           />
