@@ -11,16 +11,19 @@ export function getWeightsNormalizedV2(
   const startTime = weights[0].start_timestamp
   const endTime = weights[0].end_timestamp
   if (startTime <= currentTime && endTime > currentTime && weights.length > 1) {
-    const assetsV2 = weights[0].weights.map((weight, i) => {
-      const startWeight = weights[1].weights[i].weight_normalized
+    const assetsV2 = weights[0].weights.map(weight => {
+      const startWeight =
+        weights[1].weights.find(
+          _weight => _weight.asset.token.id === weight.asset.token.id
+        )?.weight_normalized ?? '0'
       const endWeight = weight.weight_normalized
 
       const asset = underlying_assets.find(
         asset => asset.token.id === weight.asset.token.id
       )
-
+      let weight_normalized: string
       if (asset) {
-        asset.weight_normalized = Big(endWeight)
+        weight_normalized = Big(endWeight)
           .sub(startWeight)
           .div(endTime - startTime)
           .mul(currentTime - startTime)
@@ -29,7 +32,7 @@ export function getWeightsNormalizedV2(
       } else {
         throw new Error()
       }
-      return asset
+      return { ...asset, weight_normalized }
     })
     return assetsV2
   } else if (weights.length >= 1) {
