@@ -123,7 +123,7 @@ const PoolManager = () => {
     investors: <Investors />,
     feeRewards: <FeeRewards />,
     brokers: <Brokers />,
-    Details: <Details />
+    details: <Details />
   }
 
   React.useEffect(() => {
