@@ -111,8 +111,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const tokensNotAproved: Array<Token> = []
     for (const token of tokens) {
       const { allowance } = ERC20(token.address, new Web3(networks[poolData.networkId ?? 137].rpc))
-      const isAproved = await allowance(networks[poolData.networkId ?? 137].factory, userWalletAddress, token.amount)
-      if (isAproved === false) {
+      const amountApproved = await allowance(networks[poolData.networkId ?? 137].factory, userWalletAddress)
+      if (Big(amountApproved).gte(token.amount)) {
         tokensNotAproved.push(token)
       }
     }
@@ -126,7 +126,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     approve?: {
       token: { amount: string, normalizedAmount: string, symbol: string },
       contractApprove: string,
-      allowance: (_to: string, _from: string, amount?: string) => Promise<boolean>
+      allowance: (_to: string, _from: string) => Promise<string>
     }
   ) {
     if (error) {
@@ -161,8 +161,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
     if (txReceipt.status) {
       if (approve) {
-        const isApproved = await approve.allowance(approve.contractApprove, txReceipt.from, approve.token.amount)
-        if (!isApproved) {
+        const amountApproved = await approve.allowance(approve.contractApprove, txReceipt.from)
+        if (Big(amountApproved).lt(approve.token.amount)) {
           setTransactions(prev => prev.map(item => {
             if (item.status === 'APPROVING') {
               item.status = 'ERROR'
