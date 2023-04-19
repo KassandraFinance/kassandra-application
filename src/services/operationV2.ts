@@ -28,7 +28,7 @@ export default class operationV2 {
   poolInfo: IPoolInfoProps;
   managedPoolController: Contract;
   vaultBalancer: Contract;
-  referral = "0x0000000000000000000000000000000000000000";
+  referral = "0xfAEf901D6c0F54972663Af404DEf71dE195C608b";
 
   constructor(proxyAddress: string, balancerHelpers: string, _poolInfo: IPoolInfoProps) {
     // eslint-disable-next-line prettier/prettier
@@ -85,7 +85,7 @@ export default class operationV2 {
       const feesResponse = await this.managedPoolController.methods.getJoinFees().call()
       const amountToManager = totalBptOut.mul(feesResponse.feesToManager).div(1e18.toString());
       const amountToReferral = totalBptOut.mul(feesResponse.feesToReferral).div(1e18.toString());
-      
+
       investAmountOut = totalBptOut.sub(amountToManager.add(amountToReferral))
 
       response = await this.contract.methods.joinPool(
@@ -379,7 +379,7 @@ export default class operationV2 {
     try {
       const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
       const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256'], [1, tokenAmountIn.toString()])
-      
+
       const minAmountsOutTokens = amountAllTokenOut.map(item => {
         return item.mul(slippageBase).div(slippageExp).toString()
       })
