@@ -8,14 +8,14 @@ export const Label = styled.label`
   ${() => css`
     position: absolute;
 
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+
     width: 1px;
     height: 1px;
     margin: -1px;
-    border: 0;
     padding: 0;
-
-    clip: rect(0 0 0 0);
-    overflow: hidden;
+    border: 0;
   `}
 `
 
@@ -38,52 +38,53 @@ export const Input = styled.input<IInputProps>`
     width: 100%;
     height: 3.2rem;
     padding: 0.8rem;
+    border: 0.1rem solid rgb(255 255 255 / 0);
+    border-radius: 0.4rem;
 
     color: ${theme.colors.white};
-    font-family: 'Rubik';
-    font-style: normal;
     font-weight: ${theme.font.weight.light};
+    font-style: normal;
     font-size: ${theme.font.sizes.font16};
+    font-family: Rubik;
     line-height: 100%;
     text-align: right;
 
-    background: rgba(255, 255, 255, 0.08);
-    border: 0.1rem solid rgba(255, 255, 255, 0);
-    border-radius: 0.4rem;
-
+    background: rgb(255 255 255 / 0.08);
     outline: none;
+
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: border;
 
     /* Chrome, Safari, Edge, Opera */
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
       margin: 0;
+      appearance: none;
     }
 
     /* Firefox */
     &[type='number'] {
-      -moz-appearance: textfield;
+      appearance: textfield;
     }
 
-    &:valid {
+    &:valid:not([value='']) {
       border: 0.1rem solid ${theme.colors.success};
     }
+
     &:invalid:not([value='']) {
       border: 0.1rem solid ${theme.colors.error};
     }
-
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-    transition-property: border;
   `}
   ${({ button }) => button && css`
     border-right: none;
-    border-top-right-radius: 0rem;
-    border-bottom-right-radius: 0rem;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 
-    &:valid {
+    &:valid:not([value='']) {
       border-right: none;
     }
+
     &:invalid:not([value='']) {
       border-right: none;
     }
@@ -99,10 +100,9 @@ export const PlaceholderWrapper = styled.span`
     display: inline-block;
 
     height: 3.2rem;
+    border: 0.1rem solid rgb(255 255 255 / 0);
 
-    border: 0.1rem solid rgba(255, 255, 255, 0);
     opacity: 1;
-
     pointer-events: none;
 
     ${Input}:not([value='']) ~ &,
@@ -124,10 +124,10 @@ export const Placeholder = styled.span`
     padding: 0.8rem;
 
     color: ${theme.colors.white};
-    font-family: 'Rubik';
-    font-style: normal;
     font-weight: ${theme.font.weight.light};
+    font-style: normal;
     font-size: ${theme.font.sizes.font16};
+    font-family: Rubik;
     line-height: 100%;
     text-align: right;
   `}
@@ -142,7 +142,7 @@ export const Line = styled.span`
       width: 0.1rem;
       height: 1.4rem;
 
-      background-color: rgba(255, 255, 255, 0.15);
+      background-color: rgb(255 255 255 / 0.15);
     `}
 `
 
@@ -152,9 +152,7 @@ export const InputButton = styled.button`
 
     height: 3.2rem;
     padding-inline: 0.8rem;
-
-    background: rgba(255, 255, 255, 0.08);
-    border: 0.1rem solid rgba(255, 255, 255, 0);
+    border: 0.1rem solid rgb(255 255 255 / 0);
     border-top-right-radius: 0.4rem;
     border-bottom-right-radius: 0.4rem;
 
@@ -163,7 +161,15 @@ export const InputButton = styled.button`
     font-size: ${theme.font.sizes.font12};
     line-height: 100%;
 
-    ${Input}:valid ~ & {
+    background: rgb(255 255 255 / 0.08);
+
+    cursor: pointer;
+
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: border;
+
+    ${Input}:valid:not([value='']) ~ & {
       border: 0.1rem solid ${theme.colors.success};
       border-left: none;
     }
@@ -171,10 +177,5 @@ export const InputButton = styled.button`
       border: 0.1rem solid ${theme.colors.error};
       border-left: none;
     }
-    cursor: pointer;
-
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-    transition-property: border;
   `}
 `
