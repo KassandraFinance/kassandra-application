@@ -87,6 +87,10 @@ export const HoldingAndPriceContainer = styled.div`
 
 export const HoldingWrapper = styled.div`
   ${({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
     p:last-child {
       color: ${theme.colors.grayDisabled};
       font-size: ${theme.font.sizes.font12};
@@ -196,7 +200,7 @@ export const FundInfoBody = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    height: 100%;
     width: 100%;
   `}
 `
@@ -273,16 +277,22 @@ export const GraphAllocationWrapper = styled.div`
 export const NotRebalancingProgress = styled.p`
   ${({ theme }) => css`
     max-width: 40rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
     margin: 0 auto;
-    margin-top: 2rem;
 
     color: ${theme.colors.grayDisabled};
-    font-size: ${theme.font.sizes.font16};
+    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.normal};
     line-height: 2rem;
     letter-spacing: 0.3em;
     text-transform: uppercase;
     text-align: center;
+
+    @media (max-width: 576px) {
+      margin-top: 1rem;
+    }
   `}
 `
 
