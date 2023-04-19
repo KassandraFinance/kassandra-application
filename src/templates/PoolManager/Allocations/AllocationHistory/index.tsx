@@ -113,20 +113,24 @@ const AllocationHistory = ({ poolInfo }: IAllocationHistoryProps) => {
             />
           ))
         ) : (
-          <Loading marginTop={2.4} />
+          <S.WasNoAllocationsChange>
+            there was no allocations change in the pool
+          </S.WasNoAllocationsChange>
         )}
       </S.ActivityCardContainer>
 
-      <S.PaginationContainer>
-        <Pagination
-          skip={skip}
-          totalItems={totalAllocationHistory}
-          take={4}
-          handlePageClick={({ selected }) => {
-            setSkip(selected * 4)
-          }}
-        />
-      </S.PaginationContainer>
+      {allocationHistory.length > 0 && (
+        <S.PaginationContainer>
+          <Pagination
+            skip={skip}
+            totalItems={totalAllocationHistory}
+            take={4}
+            handlePageClick={({ selected }) => {
+              setSkip(selected * 4)
+            }}
+          />
+        </S.PaginationContainer>
+      )}
     </S.AllocationHistory>
   )
 }
