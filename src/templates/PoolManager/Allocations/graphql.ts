@@ -8,24 +8,9 @@ export const GET_TOKENS_POOL = gql`
       logo
       price_usd
       chain_id
-      activities(
-        where: {
-          type_in: ["join", "exit"]
-          address_not: "0x0000000000000000000000000000000000000000"
-        }
-        orderBy: timestamp
-        orderDirection: desc
-        first: 100
-      ) {
-        id
-        type
-        timestamp
-        price_usd
-        txHash
-        address
-        symbol
-        amount
-      }
+      num_token_add
+      num_token_remove
+      num_weight_goals
       chain {
         blockExplorerUrl
         addressWrapped

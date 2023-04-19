@@ -80,11 +80,24 @@ export type Result = {
     chain: {
       blockExplorerUrl: string
     },
+    manager: {
+      id: string
+    },
     activities: Activity[],
     weight_goals: {
       id: string,
       type: 'rebalance' | 'add' | 'removed',
       end_timestamp: number,
+      previous: {
+        weights: {
+          weight_normalized: string,
+          asset: {
+            token: {
+              symbol: string
+            }
+          }
+        }[]
+      },
       token: {
         symbol: string,
         logo: string,
@@ -213,6 +226,7 @@ const Activity = () => {
               }}
               sharesRedeemed={activity.sharesRedeemed}
               newBalancePool={activity.newBalancePool}
+              managerAddress={data?.pool?.manager.id ?? ''}
             />
           ))
         ) : (

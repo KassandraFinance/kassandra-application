@@ -27,19 +27,19 @@ const Chart = ({
     const { cx, cy } = viewBox
     return (
       <g>
-        <g x={cx} y={cy}>
+        <g x={cx - 70} y={cy}>
           <svg
             x={cx - 40}
-            y={cy - 40}
+            y={cy - 30}
             width={16}
             height={16}
             xmlns="http://www.w3.org/2000/svg"
           >
-            <image href={data[activeIndex].image} width={16} height={16} />
+            <image href={data[activeIndex]?.image} width={16} height={16} />
           </svg>
           <text
             x={cx + 10}
-            y={cy - 30}
+            y={cy - 20}
             className="recharts-text"
             textAnchor="middle"
             dominantBaseline="central"
@@ -52,14 +52,14 @@ const Chart = ({
           </text>
         </g>
         <text
-          x={cx}
-          y={cy + 5}
+          x={cx + 3}
+          y={cy + 10}
           className="recharts-text recharts-label"
           textAnchor="middle"
           dominantBaseline="central"
           alignmentBaseline="middle"
           fill="#fcfcfc"
-          fontSize="36"
+          fontSize="32"
           fontWeight="500"
         >
           {value}%
@@ -67,8 +67,8 @@ const Chart = ({
 
         {isRebalancing && (
           <text
-            x={cx}
-            y={cy + 30}
+            x={cx + 2}
+            y={cy + 36}
             className="recharts-text recharts-label"
             textAnchor="middle"
             dominantBaseline="central"
@@ -110,11 +110,11 @@ const Chart = ({
               fill={COLORS[index]}
               className={entry.symbol}
               stroke={
-                entry.symbol === data[activeIndex].symbol
+                entry.symbol === data[activeIndex]?.symbol
                   ? '#ffff'
                   : 'transparent'
               }
-              strokeWidth={entry.symbol === data[activeIndex].symbol ? 2 : 0}
+              strokeWidth={entry.symbol === data[activeIndex]?.symbol ? 2 : 0}
               style={{ outline: 'none' }}
             />
           ))}

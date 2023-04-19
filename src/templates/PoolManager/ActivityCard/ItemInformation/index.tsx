@@ -43,13 +43,13 @@ const ItemInformation = (props: IItemInformationProps) => {
           <S.TitleInfo>
             {props.weight ? (
               <S.WeightsWrapper>
-                <p>{props.weight}</p>
+                <p>{props.weight}%</p>
                 <img
                   src="/assets/utilities/arrow-right.svg"
                   alt=""
                   width={14}
                 />
-                <p>{props.newWeight}</p>
+                <p>{props.newWeight}%</p>
               </S.WeightsWrapper>
             ) : (
               <>
