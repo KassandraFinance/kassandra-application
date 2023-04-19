@@ -319,10 +319,10 @@ const Pool = () => {
               <ScrollUpButton />
               <Change />
               <FeeBreakdown
-                feeJoinBroker={data.fee_join_broker}
-                feeJoinManager={data.fee_join_manager}
-                feeAum={data.fee_aum}
-                feeAumKassandra={data.fee_aum_kassandra}
+                feeJoinBroker={data.pool.fee_join_broker}
+                feeJoinManager={data.pool.fee_join_manager}
+                feeAum={data.pool.fee_aum}
+                feeAumKassandra={data.pool.fee_aum_kassandra}
               />
               <MyAsset
                 chain={pool.chain}
