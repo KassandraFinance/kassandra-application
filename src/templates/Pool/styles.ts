@@ -77,10 +77,11 @@ export const Intro = styled.div<IIntroProps>`
 `
 
 export const NameIndex = styled.div`
-  p {
+  a {
     color: ${theme.colors.gray};
     font-size: ${theme.font.sizes.font12};
     text-transform: uppercase;
+    text-decoration: none;
   }
 `
 

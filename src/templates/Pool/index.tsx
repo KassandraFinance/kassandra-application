@@ -3,11 +3,13 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Big from 'big.js'
+import Link from 'next/link'
 
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
 import { BNtoDecimal } from '../../utils/numerals'
+import substr from '@/utils/substr'
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setTokenList1Inch } from '../../store/reducers/tokenList1Inch'
@@ -63,6 +65,7 @@ export interface IPriceAndChangeTokens {
 }
 
 const Pool = () => {
+  const [profileName, setProfileName] = React.useState(null)
   const [openModal, setOpenModal] = React.useState(false)
   const [loading, setLoading] = React.useState<boolean>(true)
   const [infoPool, setInfoPool] = React.useState<InfoPool>({
@@ -85,6 +88,15 @@ const Pool = () => {
       day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
     })
   )
+
+  async function getProfile() {
+    const response = await fetch(`/api/profile/${pool.manager.id}`)
+    const userProfile = await response.json()
+
+    if (userProfile.nickname) {
+      setProfileName(userProfile.nickname)
+    }
+  }
 
   async function getTokenList1Inch() {
     const res = await fetch(`${URL_1INCH}${pool.chain_id}/tokens`)
@@ -172,6 +184,12 @@ const Pool = () => {
     }
   }, [data])
 
+  React.useEffect(() => {
+    if (pool.manager.id !== '') {
+      getProfile()
+    }
+  }, [pool.manager.id])
+
   return (
     <>
       <ShareImageModal
@@ -243,7 +261,17 @@ const Pool = () => {
                   </S.NameAndSymbol>
                   <S.SymbolAndMade>
                     <h3>${pool.symbol}</h3>
-                    {pool.manager && <p>by {pool.manager}</p>}
+                    {pool.manager.id && (
+                      <Link
+                        href={`/profile/${pool.manager.id}?tab=managed-funds`}
+                        passHref
+                      >
+                        <a>
+                          by{' '}
+                          {profileName ? profileName : substr(pool.manager.id)}
+                        </a>
+                      </Link>
+                    )}
                   </S.SymbolAndMade>
                 </S.NameIndex>
               </S.Intro>

@@ -71,6 +71,9 @@ const queryPool = `{
   logo
   pool_version
   strategy
+  manager {
+    id
+  }
   chain {
     id
     logo
