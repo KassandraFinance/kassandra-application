@@ -77,7 +77,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
   const [walletConnect, setWalletConnect] = React.useState<string | null>(null)
   const [trasactionData, setTrasactionData] = React.useState<any>()
   const [errorMsg, setErrorMsg] = React.useState('')
-    const [slippage, setSlippage] = React.useState({
+  const [slippage, setSlippage] = React.useState({
     value: '0.5',
     custom: '2.0',
     isCustom: false
@@ -120,12 +120,9 @@ const Invest = ({ typeAction }: IInvestProps) => {
     const tokenWrappedAddress = getTokenWrapped(pool.underlying_assets, tokenWithHigherLiquidityPool.address)
 
     const response = await fetch(
-      `${URL_1INCH}${pool.chain_id}/swap?fromTokenAddress=${
-        tokenSelect.address
-      }&toTokenAddress=${
-        tokenWrappedAddress
-      }&amount=${Big(amountTokenIn).toFixed()}&fromAddress=${
-        operation.contractAddress || '0x84f154A845784Ca37Ae962504250a618EB4859dc'
+      `${URL_1INCH}${pool.chain_id}/swap?fromTokenAddress=${tokenSelect.address
+      }&toTokenAddress=${tokenWrappedAddress
+      }&amount=${Big(amountTokenIn).toFixed()}&fromAddress=${operation.contractAddress || '0x84f154A845784Ca37Ae962504250a618EB4859dc'
       }&slippage=1&disableEstimate=true`
     )
     const data = await response.json()
@@ -149,7 +146,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         : tokenWithHigherLiquidityPool?.address
 
 
-    let data1Inch = { amountTokenIn, transactionDataTx: ''}
+    let data1Inch = { amountTokenIn, transactionDataTx: '' }
     if (!tokensChecked) {
       data1Inch = await handle1Inch()
     }
@@ -160,6 +157,19 @@ const Invest = ({ typeAction }: IInvestProps) => {
       transactionDataTx: data1Inch.transactionDataTx,
       isWrap: tokensChecked?.is_wraps
     }
+  }
+
+  async function updateAllowance() {
+    const allowance = await ERC20(tokenSelect.address).allowance(
+      operation.contractAddress,
+      userWalletAddress
+    )
+
+    setAmountApproved(Big(allowance))
+    setApprovals((old) => ({
+      ...old,
+      [typeAction]: Big(allowance).gte(amountTokenIn) ? [Approval.Approved] : [Approval.Denied]
+    }))
   }
 
   const approvalCallback = React.useCallback(
@@ -209,22 +219,19 @@ const Invest = ({ typeAction }: IInvestProps) => {
             `Approval of ${tokenSymbol} confirmed, wait while we sync with the latest block of the blockchain.`
           )
 
-          const approved = await ERC20(tokenAddress).allowance(
-            operation.contractAddress,
-            userWalletAddress
-          )
-
-          setAmountApproved(Big(approved))
-
-          if (Big(approved).gte(amountTokenIn)) {
-            setApprovals(old => {
-              return {
-                ...old,
-                [tabTitle]: [Approval.Approved]
-              }
-            })
-            return
+          let approved = false
+          while (!approved) {
+            await new Promise(r => setTimeout(r, 1000)) // sleep
+            const allowance = await ERC20(tokenAddress).allowance(
+              operation.contractAddress,
+              userWalletAddress
+            )
+            if (amountApproved.toFixed() !== Big(allowance).toFixed() || amountApproved.gte(amountTokenIn)) {
+              await updateAllowance()
+              approved = true
+            }
           }
+          return
         }
 
         setApprovals(old => {
@@ -260,7 +267,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         if (txReceipt.status) {
           ToastSuccess(`Investment in ${tokenSymbol} confirmed`)
 
-          setTimeout( async () => {
+          setTimeout(async () => {
             const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
             const amountPool = await getBalanceToken(pool.address, userWalletAddress)
             const allowance = await ERC20(tokenSelect.address).allowance(
@@ -336,35 +343,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     if (chainId !== pool.chain_id) {
       return
     }
-
-    const handleTokensApproved = async () => {
-      const newApprovals: string[] = []
-
-      // if (newApprovals.includes(tokenSelect.address)) return
-
-      if (tokenSelect.address === addressNativeToken1Inch) {
-        newApprovals.push(addressNativeToken1Inch)
-      } else {
-        const allowance = await ERC20(tokenSelect.address).allowance(
-            operation.contractAddress,
-            userWalletAddress
-        )
-        setAmountApproved(Big(allowance))
-        if (Big(allowance).gte(amountTokenIn)) {
-          newApprovals.push(tokenSelect.address)
-        }
-      }
-
-      setApprovals(old => ({
-          ...old,
-        [typeAction]: newApprovals.length > 0 ?
-          [Approval.Approved] :
-          [Approval.Denied]
-        // [typeAction]: newApprovals.map((item) => item ? Approval.Approved : Approval.Denied)
-      }))
-    }
-    handleTokensApproved()
-    // setIsReload(!isReload)
+    updateAllowance()
   }, [typeAction, tokenSelect.address, userWalletAddress, chainId])
 
   React.useEffect(() => {
@@ -390,10 +369,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
       Big(amountTokenIn).lte(0)
       // swapInAddress === crpPoolAddress
     ) {
-      setApprovals(old => ({
-        ...old,
-      [typeAction]: [Approval.Approved]
-    }))
+      updateAllowance()
       setAmountTokenOut(Big(0))
       setErrorMsg('')
       return
@@ -409,7 +385,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         userWalletAddress,
         tokenInAddress: tokenSelect.address,
         minPoolAmountOut: new BigNumber('0'),
-        amountTokenIn:  new BigNumber(Big(amountTokenIn).toFixed() || '0'),
+        amountTokenIn: new BigNumber(Big(amountTokenIn).toFixed() || '0'),
         data: transactionDataTx
       })
 
@@ -470,15 +446,15 @@ const Invest = ({ typeAction }: IInvestProps) => {
       if (amountApproved.lt(amountTokenIn)) {
         setApprovals(old => ({
           ...old,
-        [typeAction]: [Approval.Denied]
-      }))
-    } else {
-      setApprovals(old => ({
-        ...old,
-      [typeAction]: [Approval.Approved]
-    }))
+          [typeAction]: [Approval.Denied]
+        }))
+      } else {
+        setApprovals(old => ({
+          ...old,
+          [typeAction]: [Approval.Approved]
+        }))
+      }
     }
-  }
 
     verifyIsApproved()
     calc()
@@ -494,7 +470,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
     if (Big(amountTokenIn).gt(0) && parseFloat(amountTokenOut.toString()) > 0) {
       const usdAmountIn = Big(amountTokenIn)
-        .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase())  || 0))
+        .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
         .div(Big(10).pow(tokenSelect.decimals || 18))
 
       const usdAmountOut = Big(amountTokenOut)
@@ -522,7 +498,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     if (tokenSelect.name === pool.chain.nativeTokenName &&
       Big(amountTokenIn).lte(selectedTokenInBalance) &&
       Big(amountTokenIn).gte(balanceMinusFee)
-    ){
+    ) {
       setGasFee({ ...gasFee, error: true })
       return
     }
@@ -597,7 +573,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
           className="btn-submit"
           backgroundPrimary
           disabledNoEvent={
-           (approvals[typeAction].length === 0) ||
+            (approvals[typeAction].length === 0) ||
             (approvals[typeAction][0] > Approval.Approved) ||
             (approvals[typeAction][0] === Approval.Approved &&
               (amountTokenIn.toString() === '0' ||
@@ -611,27 +587,26 @@ const Invest = ({ typeAction }: IInvestProps) => {
               ? amountTokenIn.toString() !== '0' ||
                 inputAmountTokenRef?.current?.value !== null
                 ?
-                  `${typeAction} ${
-                    '$' +
-                      BNtoDecimal(
-                        Big(amountTokenIn.toString())
-                          .mul(
-                            Big(priceToken(tokenSelect.address) || 0)
+                `${typeAction} ${'$' +
+                BNtoDecimal(
+                  Big(amountTokenIn.toString())
+                    .mul(
+                      Big(priceToken(tokenSelect.address) || 0)
 
-                          )
-                          .div(Big(10).pow(Number(tokenSelect.decimals))),
-                        18,
-                        2,
-                        2
-                      )
-                    }`
+                    )
+                    .div(Big(10).pow(Number(tokenSelect.decimals))),
+                  18,
+                  2,
+                  2
+                )
+                }`
                 : `${typeAction}`
               : approvals[typeAction][0] === Approval.WaitingTransaction
-              ? 'Approving...'
-              : approvals[typeAction][0] === undefined ||
-                approvals[typeAction][0] === Approval.Syncing
-              ? 'Syncing with Blockchain...'
-              : 'Approve'
+                ? 'Approving...'
+                : approvals[typeAction][0] === undefined ||
+                  approvals[typeAction][0] === Approval.Syncing
+                  ? 'Syncing with Blockchain...'
+                  : 'Approve'
           }
         />
       ) : (
