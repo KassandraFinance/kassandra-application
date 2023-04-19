@@ -381,7 +381,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             </S.LinksContainer>
           </>
         ) : (
-          <S.LinksContainer>
+          <S.TextWrapper>
             <S.Text isOpen={isOpen}>
               Start your journey as an asset pool manager in kassandra's
               ecosystem.
@@ -391,7 +391,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
               process for creating managed pools that utilize digital assets
               that you can choose from.
             </S.Text>
-          </S.LinksContainer>
+          </S.TextWrapper>
         )}
         <S.SideBarContainer>
           <S.ButtonWrapper isOpen={isOpen}>

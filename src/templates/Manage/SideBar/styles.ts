@@ -317,6 +317,12 @@ export const Line = styled.span<ILineProps>`
   `}
 `
 
+export const TextWrapper = styled.div`
+  ${() => css`
+    padding-inline: 2.4rem;
+  `}
+`
+
 interface ITextProps {
   isOpen: boolean;
 }
