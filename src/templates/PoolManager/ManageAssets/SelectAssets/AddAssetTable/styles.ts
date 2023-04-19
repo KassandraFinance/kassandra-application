@@ -114,14 +114,16 @@ export const Table = styled(T)`
 `
 
 export const THead = styled(THD)`
-  ${() => css``}
+  ${() => css`
+    height: 6.4rem;
+  `}
 `
 
 export const Tr = styled(TR)`
   ${() => css`
     gap: 0.6rem;
 
-    height: 8.109rem;
+    height: 6.4rem;
 
     @media (min-width: 576px) {
       gap: 1.1rem;
