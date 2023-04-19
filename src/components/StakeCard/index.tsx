@@ -2,6 +2,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import Web3 from 'web3'
 
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
@@ -13,7 +14,8 @@ import { request } from 'graphql-request'
 import {
   Staking,
   LPDaiAvax,
-  SUBGRAPH_URL
+  SUBGRAPH_URL,
+  networks
 } from '../../constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG } from '../../constants/pools'
 
@@ -28,12 +30,13 @@ import { setModalWalletActive } from '../../store/reducers/modalWalletActive'
 
 import { GET_INFO_POOL } from './graphql'
 
-import web3 from '../../utils/web3'
-import { BNtoDecimal } from '../../utils/numerals'
+import web3 from '@/utils/web3'
+import { BNtoDecimal } from '@/utils/numerals'
 import waitTransaction, {
   MetamaskError,
   TransactionCallback
 } from '../../utils/txWait'
+import changeChain from '@/utils/changeChain'
 
 import Button from '../Button'
 import { ToastSuccess, ToastWarning } from '../Toastify/toast'
@@ -112,8 +115,8 @@ const StakeCard = ({
     React.useState<boolean>(false)
   const [isModalRequestUnstake, setIsModalRequestUnstake] =
     React.useState<boolean>(false)
-  const [isApproveKacyStaking, setIsApproveKacyStaking] =
-    React.useState<boolean>(false)
+  const [amountApproveKacyStaking, setAmountApproveKacyStaking] =
+    React.useState<Big>(Big(0))
   const [lockPeriod, setLockPeriod] = React.useState(0)
   const [decimals, setDecimals] = React.useState<string>('18')
   const [stakeTransaction, setStakeTransaction] = React.useState<string>('')
@@ -141,11 +144,13 @@ const StakeCard = ({
     vestingPeriod: '...',
     lockPeriod: '...'
   })
-  const { userWalletAddress } = useAppSelector(state => state)
+  const { userWalletAddress, chainId } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
 
   const { getPriceKacyAndLP } = usePriceLP()
   const stakingContract = useStakingContract(Staking)
+
+  const avalanche = networks[43114]
 
   const { data } = useSWR(
     [GET_INFO_POOL, address],
@@ -173,6 +178,12 @@ const StakeCard = ({
     setStakeTransaction(transaction)
   }
 
+  async function updateAllowance() {
+    const token = ERC20(infoStaked.stakingToken)
+    const allowance = await token.allowance(Staking, userWalletAddress)
+    setAmountApproveKacyStaking(Big(allowance))
+  }
+
   async function getLiquidityPoolPriceInDollar() {
     const addressProviderReserves = isLP && address ? address : LP_KACY_AVAX_PNG
 
@@ -198,19 +209,14 @@ const StakeCard = ({
 
   async function handleApproveKacy() {
     const token = ERC20(infoStaked.stakingToken)
-    if (isApproveKacyStaking) {
-      const decimals = await token.decimals()
-      setDecimals(decimals.toString())
 
-      return
-    }
+    const decimals = await token.decimals()
+    setDecimals(decimals.toString())
 
-    const res = await token.approve(
-      Staking,
-      userWalletAddress,
-      approvalCallback
-    )
-    setIsApproveKacyStaking(res)
+    await token.approve(Staking, userWalletAddress, approvalCallback)
+
+    const allowance = await token.allowance(Staking, userWalletAddress)
+    setAmountApproveKacyStaking(Big(allowance))
   }
 
   const approvalCallback = React.useCallback((): TransactionCallback => {
@@ -278,11 +284,10 @@ const StakeCard = ({
       return
     }
 
-    const token = ERC20(infoStaked.stakingToken)
+    const token = ERC20(infoStaked.stakingToken, new Web3(avalanche.rpc))
     token
       .allowance(Staking, userWalletAddress)
-      .then((response: boolean) => setIsApproveKacyStaking(response))
-
+      .then((response: string) => setAmountApproveKacyStaking(Big(response)))
     stakingContract.availableWithdraw &&
       stakingContract
         .availableWithdraw(pid, userWalletAddress)
@@ -430,7 +435,10 @@ const StakeCard = ({
                           text="Claim"
                           size="claim"
                           backgroundSecondary
-                          disabledNoEvent={kacyEarned.lte(new BigNumber(0))}
+                          disabledNoEvent={
+                            kacyEarned.lte(new BigNumber(0)) ||
+                            chainId !== avalanche.chainId
+                          }
                           onClick={() =>
                             stakingContract.getReward(
                               pid,
@@ -458,37 +466,40 @@ const StakeCard = ({
                         </>
                       ) : (
                         <>
-                          {stakeWithLockPeriod ? null : isApproveKacyStaking ? (
-                            infoStaked.withdrawDelay !== '0' &&
-                            infoStaked.withdrawable ? (
-                              <Button
-                                type="button"
-                                text={`Stake ${symbol}`}
-                                size="huge"
-                                backgroundSecondary
-                                fullWidth
-                                onClick={() => setIsModalCancelUnstake(true)}
-                              />
-                            ) : (
-                              <Button
-                                type="button"
-                                text={`Stake ${symbol}`}
-                                size="huge"
-                                backgroundSecondary
-                                fullWidth
-                                onClick={() => {
-                                  openStakeAndWithdraw('staking')
-                                }}
-                              />
-                            )
-                          ) : (
+                          {chainId !== avalanche.chainId ? (
                             <Button
                               type="button"
-                              text="Approve Contract"
+                              text="Connect to Avalanche"
                               size="huge"
                               backgroundSecondary
                               fullWidth
-                              onClick={handleApproveKacy}
+                              onClick={() =>
+                                changeChain({
+                                  ...avalanche,
+                                  rpcUrls: [avalanche.rpc]
+                                })
+                              }
+                            />
+                          ) : stakeWithLockPeriod ? null : infoStaked.withdrawDelay !==
+                              '0' && infoStaked.withdrawable ? (
+                            <Button
+                              type="button"
+                              text={`Stake ${symbol}`}
+                              size="huge"
+                              backgroundSecondary
+                              fullWidth
+                              onClick={() => setIsModalCancelUnstake(true)}
+                            />
+                          ) : (
+                            <Button
+                              type="button"
+                              text={`Stake ${symbol}`}
+                              size="huge"
+                              backgroundSecondary
+                              fullWidth
+                              onClick={() => {
+                                openStakeAndWithdraw('staking')
+                              }}
                             />
                           )}
                           {stakeWithLockPeriod ||
@@ -500,8 +511,9 @@ const StakeCard = ({
                               size="huge"
                               backgroundBlack
                               disabledNoEvent={
-                                stakeWithLockPeriod &&
-                                currentAvailableWithdraw.lte(0)
+                                (stakeWithLockPeriod &&
+                                  currentAvailableWithdraw.lte(0)) ||
+                                chainId !== avalanche.chainId
                               }
                               fullWidth
                               onClick={() => {
@@ -515,7 +527,8 @@ const StakeCard = ({
                               size="huge"
                               backgroundBlack
                               disabledNoEvent={
-                                infoStaked.yourStake.toString() === '0'
+                                infoStaked.yourStake.toString() === '0' ||
+                                chainId !== avalanche.chainId
                               }
                               fullWidth
                               onClick={() => setIsModalRequestUnstake(true)}
@@ -585,6 +598,9 @@ const StakeCard = ({
           stakeTransaction={stakeTransaction}
           setStakeTransaction={setStakeTransaction}
           link={properties.link ?? ''}
+          amountApproved={amountApproveKacyStaking}
+          handleApprove={handleApproveKacy}
+          updateAllowance={updateAllowance}
         />
       )}
       {isModalCancelUnstake && (
