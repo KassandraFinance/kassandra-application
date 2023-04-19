@@ -3,8 +3,8 @@ import styled, { css } from 'styled-components'
 export const CoinSummary = styled.div`
   ${() => css`
     display: flex;
-    align-items: center;
     gap: 1.2rem;
+    align-items: center;
   `}
 `
 
@@ -12,6 +12,12 @@ export const ImageWrapper = styled.div`
   ${() => css`
     min-width: 2.4rem;
     min-height: 2.4rem;
+
+    img {
+      overflow: hidden;
+
+      border-radius: 50%;
+    }
   `}
 `
 
@@ -27,8 +33,8 @@ export const TextWrapper = styled.div`
 export const Name = styled.span`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     gap: 0.4rem;
+    align-items: center;
 
     height: fit-content;
 
