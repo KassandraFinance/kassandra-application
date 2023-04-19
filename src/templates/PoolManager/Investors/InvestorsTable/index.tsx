@@ -159,6 +159,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
       <THead>
         <TRHead>
           <TH>
+            <ColumnTitle>#</ColumnTitle>
             <ColumnTitle>Investor</ColumnTitle>
           </TH>
           <TH isView={inViewCollum === 1}>
@@ -194,7 +195,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
       </THead>
 
       <TBody>
-        {data?.manager?.pools[0]?.investors.map(investor => {
+        {data?.manager?.pools[0]?.investors.map((investor, index) => {
           const firstDeposit = getDateDiff(
             investor.first_deposit_timestamp * 1000
           )
@@ -207,6 +208,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
               <Link href={`/profile/${investor.wallet}?tab=portfolio`} passHref>
                 <TRLink>
                   <TD>
+                    <Value>{index + 1}</Value>
                     <Value>
                       <ImageProfile
                         address={investor.wallet}

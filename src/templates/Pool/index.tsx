@@ -27,6 +27,7 @@ import ScrollUpButton from '../../components/ScrollUpButton'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 import PoweredBy from './PoweredBy'
+import FeeBreakdown from './FeeBreakdown'
 // import ActivityTable from './ActivityTable'
 
 import Change from './Change'
@@ -345,6 +346,12 @@ const Pool = () => {
               <ChartProducts />
               <ScrollUpButton />
               <Change />
+              <FeeBreakdown
+                feeJoinBroker={data.pool.fee_join_broker}
+                feeJoinManager={data.pool.fee_join_manager}
+                feeAum={data.pool.fee_aum}
+                feeAumKassandra={data.pool.fee_aum_kassandra}
+              />
               <MyAsset
                 chain={pool.chain}
                 poolToken={pool.address}

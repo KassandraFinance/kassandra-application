@@ -13,10 +13,6 @@ import * as S from './styles'
 const Brokers = () => {
   return (
     <S.Brokers>
-      <S.TitleWrapper>
-        <TitleSection title="Overview" image={overviewIcon} />
-      </S.TitleWrapper>
-
       <BrokersOverview />
 
       <S.TitleWrapper>

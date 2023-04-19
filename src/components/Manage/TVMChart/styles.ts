@@ -11,7 +11,7 @@ export const TVMChart = styled.div`
     width: 100%;
     height: 100%;
     padding: 1.6rem;
-    border-radius: 4px;
+    border-radius: 8px;
 
     background: rgb(31 31 31 / 0.72);
   `}
@@ -41,11 +41,12 @@ interface IControlProps {
 // prettier-ignore
 export const ChartTypeButton = styled.button<IControlProps>`
   ${({ theme, ...props }) => css`
+    position: relative;
+
     height: 2rem;
     margin-top: 0.4rem;
     padding-bottom: 0.4rem;
     border: none;
-    border-bottom: 0.1rem solid ${props.selected ? theme.colors.cyan : 'transparent'};
 
     color: ${theme.colors.grayDisabled};
     font-weight: ${theme.font.weight.light};
@@ -56,6 +57,30 @@ export const ChartTypeButton = styled.button<IControlProps>`
     background-color: transparent;
 
     cursor: pointer;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -0.1rem;
+      left: ${props.selected ? '0' : '50%'};
+
+      width: ${props.selected ? '100%' : '0'};
+      height: 0.1rem;
+      border-radius: 1px;
+
+      background-color: ${theme.colors.cyan};
+      box-shadow: 0 0 0.6rem ${theme.colors.cyan};
+
+      transition-timing-function: ease-in-out;
+      transition-duration: 300ms;
+      transition-property: width left opacity;
+    }
+
+    &:hover::after {
+      left: 0%;
+
+      width: 100%;
+    }
 `}
 `
 

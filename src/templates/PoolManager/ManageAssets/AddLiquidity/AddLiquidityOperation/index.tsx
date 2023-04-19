@@ -171,7 +171,7 @@ const AddLiquidityOperation = () => {
             buttonText="Max"
             button
             value={liquidit.allocation}
-            min="0"
+            min="0.0000001"
             max="95"
             lable="Token Allocation"
             placeholder=""
