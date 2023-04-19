@@ -6,6 +6,9 @@ export const GET_ACTIVITIES = gql`
       name
       symbol
       logo
+      manager {
+        id
+      }
       underlying_assets {
         token {
           logo
@@ -37,10 +40,25 @@ export const GET_ACTIVITIES = gql`
         symbol
         amount
       }
-      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 100) {
+      weight_goals(
+        orderBy: end_timestamp
+        orderDirection: desc
+        first: 100
+        where: { previous_not: null }
+      ) {
         id
         type
         end_timestamp
+        previous {
+          weights {
+            weight_normalized
+            asset {
+              token {
+                symbol
+              }
+            }
+          }
+        }
         token {
           symbol
           price_usd

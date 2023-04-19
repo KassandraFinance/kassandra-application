@@ -27,6 +27,7 @@ export interface IActivityCardProps {
   wallet: string;
   activityInfo: ActivityInfo[];
   txHash: string;
+  managerAddress: string;
   pool: {
     name: string,
     symbol: string,
@@ -90,7 +91,8 @@ const ActivityCard = ({
   pool,
   txHash,
   newBalancePool,
-  sharesRedeemed
+  sharesRedeemed,
+  managerAddress
 }: IActivityCardProps) => {
   const { data } = useSWR(`/api/profile/${wallet}`, {
     refreshInterval: 60 * 60 * 5 * 1000
@@ -133,7 +135,7 @@ const ActivityCard = ({
       <S.ActivityBodyContainer>
         <S.PoolAndUserWrapper>
           <ItemInformation
-            title="Investor"
+            title={managerAddress === wallet ? 'Manager' : 'Investor'}
             name={nickname}
             description={substr(wallet)}
             userWalletAddress={wallet}
