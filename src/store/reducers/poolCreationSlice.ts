@@ -16,6 +16,8 @@ export type TokenType = {
 }
 
 export type PoolData = {
+  id?: string,
+  txHash?: string,
   termsAndConditions?: boolean,
   network?: string,
   networkId?: number,

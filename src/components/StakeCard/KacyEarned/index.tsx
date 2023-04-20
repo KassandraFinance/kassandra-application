@@ -41,7 +41,7 @@ const KacyEarned = ({
     getKacyEaned()
 
     return () => clearInterval(interval)
-  }, [])
+  }, [userWalletAddress])
 
   return (
     <S.KacyEarned>

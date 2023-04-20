@@ -289,9 +289,9 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     const transactionsList: TransactionsListType[] = []
 
     const { allowance } = ERC20(tokenId)
-    const isAproved = await allowance(controller, userWalletAddress, amountToAprove)
+    const amountApproved = await allowance(controller, userWalletAddress)
 
-    if (isAproved) {
+    if (Big(amountApproved).gte(amountToAprove)) {
       transactionsList.push({
         key: tokenId,
         transaction: `Approve ${poolSymbol ? poolSymbol : tokenSymbol}`,
@@ -434,7 +434,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     approve?: {
       token: { amount: string, normalizedAmount: string, symbol: string },
       contractApprove: string,
-      allowance: (_to: string, _from: string, amount?: string) => Promise<boolean>
+      allowance: (_to: string, _from: string) => Promise<string>
     }
   ): Promise<boolean> {
     if (error) {
@@ -468,8 +468,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
     if (txReceipt.status) {
       if (approve) {
-        const isApproved = await approve.allowance(approve.contractApprove, txReceipt.from, approve.token.amount)
-        if (!isApproved) {
+        const amountApproved = await approve.allowance(approve.contractApprove, txReceipt.from)
+        if (Big(amountApproved).lt(approve.token.amount)) {
           setTransactions(prev => prev.map(item => {
             if (item.status === 'APPROVING') {
               item.status = 'ERROR'

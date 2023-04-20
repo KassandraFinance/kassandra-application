@@ -9,12 +9,13 @@ import {
 
 import { useAppSelector } from '../../../store/hooks'
 
-import { Kacy } from '../../../constants/tokenAddresses'
+import { Kacy, networks } from '../../../constants/tokenAddresses'
 
 import Button from '../../Button'
 import Overlay from '../../Overlay';
 
 import { provider } from '../../../utils/web3';
+import changeChain from '@/utils/changeChain';
 
 import spinerIcon from '../../../../public/assets/iconGradient/spinner.png'
 
@@ -44,6 +45,7 @@ const ModalBuyKacyOnPangolin = ({
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
+  const avalanche = networks[43114]
 
   const connect = localStorage.getItem('walletconnect')
 
@@ -69,7 +71,7 @@ const ModalBuyKacyOnPangolin = ({
             </S.Spinner>
             <p>Initializing Pangolin widget...</p>
           </S.textContainer>
-          {userWalletAddress === '' && (
+          {userWalletAddress === '' ? (
             <Button
               type="button"
               text="Connect Wallet"
@@ -78,10 +80,19 @@ const ModalBuyKacyOnPangolin = ({
               fullWidth
               onClick={() => setIsModaWallet(true)}
             />
-          )}
+          ) : avalanche.chainId !== chainId ? (
+            <Button
+              type="button"
+              text="Connect to Avalanche Mainnet"
+              size="huge"
+              backgroundSecondary
+              fullWidth
+              onClick={() => changeChain({ chainId: avalanche.chainId, rpcUrls: [avalanche.rpc], chainName: avalanche.chainName, nativeCurrency: avalanche.nativeCurrency })}
+            />
+          ) : <></>}
         </S.LoadingContent>
       </S.LoadingContainer>
-      {userWalletAddress !== '' && (
+      {userWalletAddress !== '' && chainId === avalanche.chainId &&  (
         <PangolinProvider account={userWalletAddress} chainId={chainId} library={walletProvider.givenProvider} theme={swapTheme}>
             <S.ModalBuyKacyContainer>
               <SwapWidget isLimitOrderVisible={false} defaultOutputToken={Kacy} />

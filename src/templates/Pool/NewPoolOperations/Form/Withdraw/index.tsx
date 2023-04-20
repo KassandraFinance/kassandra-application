@@ -66,6 +66,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   const [selectedTokenOutBalance, setSelectedTokenOutBalance] = React.useState(
     new Big(-1)
   )
+  const [amountApproved, setAmountApproved] = React.useState(Big(0))
   const [errorMsg, setErrorMsg] = React.useState('')
   const [maxActive, setMaxActive] = React.useState<boolean>(false)
   const [amountAllTokenOut, setamountAllTokenOut] = React.useState<BigNumber[]>([])
@@ -146,22 +147,18 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
             `Approval of ${tokenSymbol} confirmed, wait while we sync with the latest block of the blockchain.`
           )
           let approved = false
-
-          while (!approved) {
-            approved = await ERC20(tokenAddress).allowance(
+          while(!approved) {
+            await new Promise(r => setTimeout(r, 1000)) // sleep
+            const allowance = await ERC20(pool.address).allowance(
               operation.withdrawContract,
               userWalletAddress
             )
-            await new Promise(r => setTimeout(r, 200)) // sleep
-          }
 
-          setApprovals(old => {
-            return {
-              ...old,
-              [tabTitle]: [Approval.Approved]
+            if (amountApproved.toFixed() !== Big(allowance).toFixed() || amountApproved.gte(amountTokenIn)) {
+              await updateAllowance()
+              approved = true
             }
-          })
-
+          }
           return
         }
 
@@ -282,6 +279,19 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     setbalanceAllTokenOut(newSwapOutBalance)
   }
 
+  async function updateAllowance() {
+    const allowance = await ERC20(pool.address).allowance(
+      operation.withdrawContract,
+      userWalletAddress
+    )
+
+    setAmountApproved(Big(allowance))
+    setApprovals((old) => ({
+      ...old,
+      [typeAction]: Big(allowance).gte(amountTokenIn) ? [Approval.Approved] : [Approval.Denied]
+    }))
+  }
+
   React.useEffect(() => {
     if (typeAction !== 'Withdraw' || tokenSelect.address === pool.id) {
       return
@@ -291,6 +301,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       setamountAllTokenOut(Array(pool.underlying_assets.length).fill(new BigNumber(0)))
       setAmountTokenOut(new Big(0))
       setErrorMsg('')
+      updateAllowance()
 
       if (tokenSelect.address === '') {
         setAmountTokenOut(new Big(0))
@@ -348,6 +359,21 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       }
     }
 
+    const verifyIsApproved = () => {
+      if (amountApproved.lt(amountTokenIn)) {
+        setApprovals(old => ({
+          ...old,
+          [typeAction]: [Approval.Denied]
+        }))
+      } else {
+        setApprovals(old => ({
+          ...old,
+          [typeAction]: [Approval.Approved]
+        }))
+      }
+    }
+
+    verifyIsApproved()
     calc()
     setErrorMsg('')
     setAmountTokenOut(new Big(0))
@@ -419,26 +445,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       return
     }
 
-    const handleTokensApproved = async () => {
-      const newApprovals: string[] = []
-
-      // if (newApprovals.includes(tokenSelect.address)) return
-      const isAllowance = await ERC20(pool.address).allowance(
-        operation.withdrawContract,
-        userWalletAddress
-      )
-
-      if (isAllowance) {
-        newApprovals.push(pool.id)
-      }
-
-
-      setApprovals((old: any) => ({
-        ...old,
-        [typeAction]: newApprovals.length > 0 ? [Approval.Approved] : [Approval.Denied]
-      }))
-    }
-    handleTokensApproved()
+    updateAllowance()
   }, [typeAction, userWalletAddress, chainId])
 
   React.useEffect(() => {
