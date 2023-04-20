@@ -80,7 +80,8 @@ type NetworkType = Record<
     whiteList: string,
     factory: string,
     privateInvestor: string,
-    nativeCurrency: CurrencyDetails
+    nativeCurrency: CurrencyDetails,
+    blockExplorer: string
   }
 >
 
@@ -89,6 +90,7 @@ export const networks: NetworkType = {
     chainName: 'Goerli Test Network',
     chainId: 5,
     rpc: 'https://rpc.ankr.com/eth_goerli',
+    blockExplorer: 'https://goerli.etherscan.io',
     coingecko: 'polygon-pos',
     whiteList: '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57',
     factory: '0x9E3feC2E3AEc12572242dd1376BEd5E1F5bb8200',
@@ -103,6 +105,7 @@ export const networks: NetworkType = {
     chainName: 'Polygon Mainnet',
     chainId: 137,
     rpc: 'https://polygon-rpc.com/',
+    blockExplorer: 'https://polygonscan.com',
     coingecko: 'polygon-pos',
     whiteList: '',
     factory: '',
@@ -117,6 +120,7 @@ export const networks: NetworkType = {
     chainId: 43114,
     chainName: 'Avalanche Mainnet',
     rpc: 'https://api.avax.network/ext/bc/C/rpc',
+    blockExplorer: 'https://snowtrace.io',
     coingecko: 'avalanche',
     whiteList: '',
     factory: '',
