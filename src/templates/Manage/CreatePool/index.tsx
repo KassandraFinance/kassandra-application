@@ -1,6 +1,6 @@
 import React from 'react'
 import Big from 'big.js'
-import { AbiItem, keccak256, toChecksumAddress } from 'web3-utils'
+import { AbiItem, keccak256 } from 'web3-utils'
 import web3 from '../../../utils/web3'
 import crypto from 'crypto'
 
@@ -8,12 +8,11 @@ import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import {
   setBackStepNumber,
   setNextStepNumber,
-  setClear,
-  setToFirstStep
+  setToFirstStep,
+  setPoolData
 } from '../../../store/reducers/poolCreationSlice'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
 import { ERC20 } from '../../../hooks/useERC20Contract'
-import substr from '../../../utils/substr'
 import waitTransaction, {
   MetamaskError
 } from '../../../utils/txWait'
@@ -112,7 +111,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     for (const token of tokens) {
       const { allowance } = ERC20(token.address, new Web3(networks[poolData.networkId ?? 137].rpc))
       const amountApproved = await allowance(networks[poolData.networkId ?? 137].factory, userWalletAddress)
-      if (Big(amountApproved).gte(token.amount)) {
+      if (Big(amountApproved).lt(token.amount)) {
         tokensNotAproved.push(token)
       }
     }
@@ -244,7 +243,9 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
             resolve(result)
           }))
       })
-      if (!approved) break
+      if (!approved) {
+        break
+      }
     }
   }
 
@@ -320,14 +321,12 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       status: 'WAITING'
     })
 
-    if (poolData.privacy) {
-      poolData.privateAddressList?.forEach(privateAddress => {
+    if (poolData.privacy && poolData.privateAddressList?.length) {
         transactionsList.push({
-          key: privateAddress.address,
-          transaction: `Add address to whitelist: ${substr(privateAddress.address)}`,
+          key: "setPrivateInvestors",
+          transaction: `Add addresses to whitelist`,
           status: 'WAITING'
         })
-      })
     }
 
     if (poolData.strategy || poolData.icon?.image_preview) {
@@ -531,6 +530,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         from: userWalletAddress
       }, callBack)
 
+      dispatch(setPoolData({ id: `${poolData.networkId}${response.pool}`, txHash: tx.transactionHash }))
+
       if (pool.isPrivatePool) {
         const addressList = poolData?.privateAddressList ? poolData.privateAddressList : []
         await handlePrivateInvestors(response.poolController, addressList)
@@ -539,7 +540,6 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         await sendPoolData(response.poolController, poolData.icon?.image_preview || '', poolData.strategy || '', chainId)
       }
 
-      dispatch(setClear())
       setTransactionButtonStatus(TransactionStatus.COMPLETED)
     } catch (error) {
       console.error('It was not possible to create pool', error)
