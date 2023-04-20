@@ -58,7 +58,7 @@ const FeeBreakdown = ({
               {Big(feeJoinManager || '0')
                 .add(feeJoinBroker || '0')
                 .mul(100)
-                .toFixed(1)}
+                .toFixed(2)}
               %
             </S.FeeValue>
           </S.FeeContainer>
@@ -69,14 +69,14 @@ const FeeBreakdown = ({
                 Broker commission (
                 {Big(feeJoinBroker || '0')
                   .mul(100)
-                  .toFixed(1)}
+                  .toFixed(2)}
                 %)
               </S.FeeSmall>
 
               <S.FeeValueSmall>
                 {Big(feeJoinBroker || '0')
                   .mul(100)
-                  .toFixed(1)}
+                  .toFixed(2)}
                 %
               </S.FeeValueSmall>
             </S.FeeContainer>
@@ -86,14 +86,14 @@ const FeeBreakdown = ({
                 Manager share (
                 {Big(feeJoinManager || '0')
                   .mul(100)
-                  .toFixed(1)}
+                  .toFixed(2)}
                 %)
               </S.FeeSmall>
 
               <S.FeeValueSmall>
                 {Big(feeJoinManager || '0')
                   .mul(100)
-                  .toFixed(1)}
+                  .toFixed(2)}
                 %
               </S.FeeValueSmall>
             </S.FeeContainer>
@@ -130,7 +130,7 @@ const FeeBreakdown = ({
               {Big(feeAum || '0')
                 .add(feeAumKassandra || '0')
                 .mul(100)
-                .toFixed(1)}
+                .toFixed(2)}
               %
             </S.FeeValue>
           </S.FeeContainer>
@@ -141,14 +141,14 @@ const FeeBreakdown = ({
                 KASSANDRA SHARE (
                 {Big(feeAumKassandra || '0')
                   .mul(100)
-                  .toFixed(1)}
+                  .toFixed(2)}
                 %)
               </S.FeeSmall>
 
               <S.FeeValueSmall>
                 {Big(feeAumKassandra || '0')
                   .mul(100)
-                  .toFixed(1)}
+                  .toFixed(2)}
                 %
               </S.FeeValueSmall>
             </S.FeeContainer>
@@ -158,14 +158,14 @@ const FeeBreakdown = ({
                 Manager share (
                 {Big(feeAum || '0')
                   .mul(100)
-                  .toFixed(1)}
+                  .toFixed(2)}
                 %)
               </S.FeeSmall>
 
               <S.FeeValueSmall>
                 {Big(feeAum || '0')
                   .mul(100)
-                  .toFixed(1)}
+                  .toFixed(2)}
                 %
               </S.FeeValueSmall>
             </S.FeeContainer>

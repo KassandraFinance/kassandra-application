@@ -13,14 +13,12 @@ import {
 
 import useCoingecko from '@/hooks/useCoingecko'
 import usePoolAssets from '@/hooks/usePoolAssets'
-import { useAppSelector } from '@/store/hooks'
 import { underlyingAssetsInfo } from '@/store/reducers/pool'
 
 import { getDateDiff } from '@/utils/date'
-import { getActivityInfo, getManagerActivity } from '../utils'
 
 import AllocationTable from './AllocationTable'
-import AllocationHistory, { ActivityCardProps } from './AllocationHistory'
+import AllocationHistory from './AllocationHistory'
 import IntroReview, {
   IlistTokenWeightsProps,
   IRebalanceWeightsProps,
@@ -28,17 +26,6 @@ import IntroReview, {
 } from './IntroReview'
 
 import * as S from './styles'
-
-type Activity = {
-  id: string,
-  type: 'join' | 'exit',
-  symbol: string[],
-  amount: string[],
-  price_usd: string[],
-  txHash: string,
-  timestamp: number,
-  address: string
-}
 
 type IWeightGoalsProps = {
   id: string,
@@ -69,7 +56,6 @@ interface IAllocationProps {
     symbol: string,
     price_usd: string,
     chain_id: number,
-    activities: Activity[],
     weight_goals: IWeightGoalsProps[],
     chain: {
       blockExplorerUrl: string,
@@ -96,13 +82,8 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
   >([])
   const [rebalanceWeights, setRebalanceWeights] =
     React.useState<IRebalanceWeightsProps>(null)
-  const [allocationHistory, setAllocationHistory] = React.useState<
-    ActivityCardProps[]
-  >([])
 
   const router = useRouter()
-
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -278,39 +259,6 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     setRebalanceWeights(rebalanceWeights)
   }, [data])
 
-  React.useEffect(() => {
-    if (!data || !poolAssets) return setAllocationHistory([])
-
-    const underlyingAssets = poolAssets?.map(item => {
-      const { logo, symbol } = item.token
-
-      return {
-        token: {
-          logo: logo ?? '',
-          symbol: symbol,
-          wraps: {
-            symbol: symbol,
-            logo: logo ?? ''
-          }
-        }
-      }
-    })
-
-    const activitiesInvestors = getActivityInfo(
-      data.pool.activities,
-      underlyingAssets
-    )
-    const managerActivities = getManagerActivity(
-      data.pool.weight_goals,
-      userWalletAddress
-    )
-    const activities = [...activitiesInvestors, ...managerActivities]
-
-    setAllocationHistory(
-      activities.sort((a, b) => b.date.getTime() - a.date.getTime())
-    )
-  }, [data, poolAssets])
-
   return (
     <S.Allocations>
       <IntroReview
@@ -323,10 +271,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
         allocationData={listTokenWeights}
         isRebalance={isRebalancing}
       />
-      <AllocationHistory
-        allocationHistory={allocationHistory}
-        poolInfo={poolInfo}
-      />
+      <AllocationHistory poolInfo={poolInfo} />
     </S.Allocations>
   )
 }

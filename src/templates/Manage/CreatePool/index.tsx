@@ -301,13 +301,13 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       if (notApprovedToken) {
         notApprovedList.push({
           key: mockTokensReverse[token.address] ?? token.address,
-          transaction: `Aprove ${token.symbol}`,
+          transaction: `Approve ${token.symbol}`,
           status: 'WAITING'
         })
       } else {
         approvedList.push({
           key: token.address,
-          transaction: `Aprove ${token.symbol}`,
+          transaction: `Approve ${token.symbol}`,
           status: 'APPROVED'
         })
       }

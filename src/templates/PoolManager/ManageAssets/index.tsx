@@ -330,13 +330,9 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       status: 'APPROVING'
     }])
 
-    const addressesArray: string[] = []
     const weightsArray: string[] = []
-    const poolTokensListSorted = poolTokensList.slice().sort((a, b) => a.token.address > b.token.address ? 1 : -1)
-
-    poolTokensListSorted.forEach(item => {
-      addressesArray.push(item.token.address)
-      weightsArray.push(newTokensWights[item.token.address].newWeight.mul(Big(10).pow(16)).toFixed())
+    poolInfo.underlying_assets_addresses.forEach(item => {
+      weightsArray.push(newTokensWights[item].newWeight.mul(Big(10).pow(16)).toFixed())
     })
 
     try {
@@ -352,7 +348,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       await poolController.methods.updateWeightsGradually(
         Math.floor(currentDateAdded / 1000),
         Math.floor(periodSelectedFormatted / 1000),
-        addressesArray,
+        poolInfo.underlying_assets_addresses,
         weightsArray
       ).send(
         {

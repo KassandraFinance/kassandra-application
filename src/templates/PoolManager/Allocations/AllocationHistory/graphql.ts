@@ -1,54 +1,27 @@
 import { gql } from 'graphql-request'
 
-export const GET_ACTIVITIES = gql`
-  query ($id: ID!) {
+export const GET_ALLOCATION_POOL = gql`
+  query ($id: ID!, $skip: Int) {
     pool(id: $id) {
-      name
-      symbol
-      logo
+      num_token_add
+      num_token_remove
+      num_weight_goals
+      num_join
+      num_exit
       manager {
         id
-      }
-      underlying_assets {
-        token {
-          logo
-          symbol
-          wraps {
-            symbol
-            logo
-          }
-        }
-      }
-      chain {
-        blockExplorerUrl
-      }
-      activities(
-        where: {
-          type_in: ["join", "exit"]
-          address_not: "0x0000000000000000000000000000000000000000"
-        }
-        orderBy: timestamp
-        orderDirection: desc
-        first: 100
-      ) {
-        id
-        type
-        timestamp
-        price_usd
-        txHash
-        address
-        symbol
-        amount
       }
       weight_goals(
         orderBy: end_timestamp
         orderDirection: desc
-        first: 100
+        first: 4
+        skip: $skip
         where: { previous_not: null }
       ) {
         id
         type
         end_timestamp
+        start_timestamp
         previous {
           weights {
             weight_normalized
@@ -61,8 +34,8 @@ export const GET_ACTIVITIES = gql`
         }
         token {
           symbol
-          price_usd
           logo
+          price_usd
         }
         weights {
           weight_normalized

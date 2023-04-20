@@ -62,11 +62,13 @@ export interface IPoolSlice {
   vault_id: string;
   controller: string;
   chain_id: number;
+  manager: {
+    id: string
+  };
   chain: ChainInfo;
   name: string;
   symbol: string;
   strategy: string;
-  manager?: string;
   logo: string;
   pool_version: number;
   poolId?: number;
@@ -102,7 +104,9 @@ const initialState: IPoolSlice = {
   },
   name: '',
   symbol: '',
-  manager: '',
+  manager: {
+    id: ''
+  },
   logo: '',
   pool_version: 0,
   poolId: 0,

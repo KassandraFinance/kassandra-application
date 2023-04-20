@@ -30,6 +30,16 @@ type IWeightGoalsProps = {
   id: string,
   type: 'rebalance' | 'add' | 'removed',
   end_timestamp: number,
+  previous: {
+    weights: {
+      weight_normalized: string,
+      asset: {
+        token: {
+          symbol: string
+        }
+      }
+    }[]
+  },
   token: {
     symbol: string,
     logo: string,
@@ -107,41 +117,32 @@ export function getManagerActivity(
   }
 ): Array<ActivityCardProps> {
   const activityInfo: ActivityCardProps[] = []
-  let countRebalance = 0
   for (const [i, activity] of weightGoals.entries()) {
     if (activity.type === 'rebalance' && filters[activity.type]) {
-      if (
-        weightGoals[i + 1] &&
-        weightGoals[i + 1].type === 'rebalance' &&
-        countRebalance === 0
-      ) {
-        activityInfo.push({
-          key: activity.id,
-          actionType: activityProps[activity.type],
-          activityInfo: [],
-          date: new Date(activity.end_timestamp * 1000),
-          txHash: '',
-          wallet: userWalletAddress
+      activityInfo.push({
+        key: activity.id,
+        actionType: activityProps[activity.type],
+        activityInfo: [],
+        date: new Date(activity.end_timestamp * 1000),
+        txHash: '',
+        wallet: userWalletAddress
+      })
+
+      const indexOfActivityInfo = activityInfo.length - 1
+      for (const [_i, operation] of activity.weights.entries()) {
+        activityInfo[indexOfActivityInfo].activityInfo.push({
+          amount: '0',
+          logo: operation.asset.token.logo ?? '',
+          newWeight: Big(operation.weight_normalized).mul(100).toFixed(2),
+          symbol: operation.asset.token.symbol,
+          weight: Big(weightGoals[i].previous.weights[_i].weight_normalized)
+            .mul(100)
+            .toFixed(2),
+          value: '0'
         })
-        const indexOfActivityInfo = activityInfo.length - 1
-        for (const [_i, operation] of activity.weights.entries()) {
-          countRebalance = 1
-          activityInfo[indexOfActivityInfo].activityInfo.push({
-            amount: '0',
-            logo: operation.asset.token.logo ?? '',
-            newWeight: Big(operation.weight_normalized).mul(100).toFixed(2),
-            symbol: operation.asset.token.symbol,
-            weight: Big(weightGoals[i + 1].weights[_i].weight_normalized)
-              .mul(100)
-              .toFixed(2),
-            value: '0'
-          })
-        }
-      } else {
-        countRebalance = 0
       }
     } else {
-      if (filters[activity.type] && weightGoals[i + 1]) {
+      if (filters[activity.type] && weightGoals[i]) {
         activityInfo.push({
           key: activity.id,
           actionType: activityProps[activity.type],
@@ -157,7 +158,7 @@ export function getManagerActivity(
         let newWeight = '0'
         if (activity.type === 'removed') {
           weightNormalized =
-            weightGoals[i + 1].weights.find(
+            weightGoals[i].previous.weights.find(
               weight => weight.asset.token.symbol === symbol
             )?.weight_normalized ?? '0'
         } else {
@@ -169,14 +170,19 @@ export function getManagerActivity(
           }
         }
 
-        for (const [_i, operation] of activity.weights.entries()) {
+        for (const operation of activity.weights) {
           if (operation.asset.token.symbol !== symbol) {
             activityInfo[indexOfActivityInfo].newBalancePool?.push({
               amount: '0',
               logo: operation.asset.token.logo ?? '',
               newWeight: Big(operation.weight_normalized).mul(100).toFixed(2),
               symbol: operation.asset.token.symbol,
-              weight: Big(weightGoals[i + 1].weights[_i].weight_normalized)
+              weight: Big(
+                weightGoals[i].previous.weights.find(
+                  item =>
+                    item.asset.token.symbol === operation.asset.token.symbol
+                )?.weight_normalized ?? 0
+              )
                 .mul(100)
                 .toFixed(2),
               value: '0'
