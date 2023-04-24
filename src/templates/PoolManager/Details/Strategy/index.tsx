@@ -37,7 +37,7 @@ import * as S from './styles'
 
 const Strategy = () => {
   const [value, setValue] = React.useState('')
-  const [isEdit, setIsEdit] = React.useState(false)
+  const [isEdit, setIsEdit] = React.useState(true)
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
@@ -131,6 +131,11 @@ const Strategy = () => {
       })
   )
 
+  React.useEffect(() => {
+    if (!data?.pool?.summary) return
+    setValue(data.pool.summary)
+  }, [data])
+
   return (
     <S.Strategy>
       <S.TitleWrapper>
@@ -150,11 +155,6 @@ const Strategy = () => {
       ) : (
         <S.MarkdownEditor>
           <MdEditor
-            view={{
-              html: false,
-              menu: true,
-              md: true
-            }}
             value={value}
             renderHTML={text => (
               <S.Text>
