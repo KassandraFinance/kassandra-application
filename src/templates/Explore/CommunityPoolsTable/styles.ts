@@ -45,6 +45,21 @@ export const TBody = styled.div`
   `}
 `
 
+interface ICommunityPoolsTBodyProps {
+  tableRowsNumber: number;
+  lineHeight: number;
+}
+// eslint-disable-next-line prettier/prettier
+export const CommunityPoolsTBody = styled(TBody)<ICommunityPoolsTBodyProps>`
+  ${({ tableRowsNumber, lineHeight }) => css`
+    transition-timing-function: ease-in-out;
+    transition-duration: 500ms;
+    transition-property: height;
+
+    height: ${tableRowsNumber * lineHeight}rem;
+  `}
+`
+
 export const TR = styled.div`
   ${({ theme }) => css`
     margin-inline: 1.6rem;
@@ -215,6 +230,43 @@ export const ColumnTitle = styled.div<IColumnTitleProps>`
   `}
 `
 
+interface ITvlButtonSortingProps {
+  isRotateArrow: boolean;
+}
+
+// eslint-disable-next-line prettier/prettier
+export const THButtonSorting = styled(ColumnTitle)<ITvlButtonSortingProps>`
+  ${() => css`
+    border: none;
+    background-color: transparent;
+
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    justify-content: flex-end;
+
+    cursor: pointer;
+
+    img {
+      margin-bottom: 0.3rem;
+
+      transition-duration: 300ms;
+      transition-timing-function: ease-in-out;
+      transition-property: transform;
+
+      transform: rotate(0);
+    }
+  `}
+
+  ${({ isRotateArrow }) =>
+    isRotateArrow &&
+    css`
+      img {
+        transform: rotate(180deg);
+      }
+    `}
+
+`
 interface IValueProps {
   value?: number;
   align?: 'right' | 'left' | 'center';
@@ -439,5 +491,15 @@ export const PoolInfoMobile = styled.div`
     @media (min-width: 768px) {
       display: none;
     }
+  `}
+`
+
+export const LoadingContainer = styled.div`
+  ${() => css`
+    min-height: 51.3rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `}
 `

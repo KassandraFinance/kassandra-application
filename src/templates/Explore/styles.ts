@@ -60,3 +60,9 @@ export const TitleWrapper = styled.div`
     margin-bottom: 2.4rem;
   `}
 `
+
+export const PaginationWrapper = styled.div`
+  ${() => css`
+    margin-top: 6rem;
+  `}
+`
