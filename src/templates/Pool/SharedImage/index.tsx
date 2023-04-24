@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import React from 'react'
 import Blockies from 'react-blockies'
 
@@ -36,7 +37,9 @@ const SharedImage = ({
       <S.Header>
         <S.Title>
           {pool.logo ? (
-            <img src={pool.logo} width={40} height={40} />
+            <S.PoolLogoWrapper>
+              <Image src={pool.logo} width={40} height={40} />
+            </S.PoolLogoWrapper>
           ) : (
             <Blockies
               seed={pool.name}
@@ -107,9 +110,9 @@ const SharedImage = ({
               </S.InfoTitle>
               <S.AssetsContainer>
                 {pool.underlying_assets.map((item, index) => (
-                  <img
+                  <Image
                     key={index}
-                    src={item.token.wraps?.logo ?? item.token.logo}
+                    src={item.token?.wraps?.logo ?? item.token?.logo ?? ''}
                     width={25}
                     height={25}
                   />
