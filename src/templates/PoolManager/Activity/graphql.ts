@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request'
 
 export const GET_ACTIVITIES = gql`
-  query ($id: ID!) {
+  query ($id: ID!, $first: Int!, $skip: Int!, $options: [String!]!) {
     pool(id: $id) {
       name
       symbol
@@ -24,12 +24,13 @@ export const GET_ACTIVITIES = gql`
       }
       activities(
         where: {
-          type_in: ["join", "exit"]
+          type_in: $options
           address_not: "0x0000000000000000000000000000000000000000"
         }
         orderBy: timestamp
         orderDirection: desc
-        first: 100
+        skip: $skip
+        first: $first
       ) {
         id
         type
@@ -43,11 +44,13 @@ export const GET_ACTIVITIES = gql`
       weight_goals(
         orderBy: end_timestamp
         orderDirection: desc
-        first: 100
-        where: { previous_not: null }
+        skip: $skip
+        first: $first
+        where: { previous_not: null, type_in: $options }
       ) {
         id
         type
+        txHash
         end_timestamp
         previous {
           weights {
