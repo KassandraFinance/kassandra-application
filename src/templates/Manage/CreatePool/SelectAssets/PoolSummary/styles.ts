@@ -139,6 +139,8 @@ export const RemoveButton = styled.button`
 
 export const ProgressBar = styled.div`
   ${({ theme }) => css`
+    position: relative;
+
     width: 100%;
     height: 0.4rem;
     border: none;
@@ -247,5 +249,16 @@ export const Error = styled.span`
     font-weight: ${theme.font.weight.light};
     font-size: ${theme.font.sizes.font14};
     line-height: 100%;
+  `}
+`
+
+export const InputValidation = styled.input`
+  ${() => css`
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    opacity: 0;
+    pointer-events: none;
   `}
 `

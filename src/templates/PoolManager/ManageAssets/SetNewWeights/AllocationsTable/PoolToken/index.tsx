@@ -110,7 +110,6 @@ const PoolToken = ({
           InputNumberValue={Number(newWeight.toFixed())}
           name="tokenValue"
           handleInputNumber={event =>
-            lockPercentage === lockToken.UNBLOCKED &&
             handleCalcNewWeights(Number(event.target.value), tokenInfo)
           }
           min={alreadyCalculated ? 1 : 0}
