@@ -60,10 +60,13 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
     const weightModifiedBefore = Big(100).sub(weightBefore)
 
     poolTokensList.forEach((item, index) => {
-      // eslint-disable-next-line prettier/prettier
-      const { lockPercentage, newAmount, newAmountUSD, newWeight } = newTokensWights[item.token.address]
+      const { lockPercentage, newAmount, newAmountUSD, newWeight } =
+        newTokensWights[item.token.address]
 
-      if (lockPercentage === lockToken.BLOCKED) {
+      if (
+        lockPercentage === lockToken.BLOCKED &&
+        item.token.address !== tokenInfo.token.address
+      ) {
         Object.assign(poolWeightsRebalanced, {
           [item.token.address]: {
             newWeight: newWeight,
@@ -90,7 +93,9 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
             newAmountUSD: newAmount.mul(
               Big(priceToken(mockTokens[item.token.address]) ?? 0)
             ),
-            lockPercentage: lockToken.UNBLOCKED,
+            lockPercentage: formattedValue.lte(0)
+              ? lockToken.UNBLOCKED
+              : lockToken.BLOCKED,
             alreadyCalculated: true
           }
         })
