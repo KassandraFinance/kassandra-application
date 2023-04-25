@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-const initialState = ''
+const initialState = 'TVL'
 
 export const chartSelectedSlice = createSlice({
   name: 'chartSelected',

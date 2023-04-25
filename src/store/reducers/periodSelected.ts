@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-const initialState = ''
+const initialState = '1W'
 
 export const periodSelectedSlice = createSlice({
   name: 'periodSelected',

@@ -147,7 +147,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
             `Approval of ${tokenSymbol} confirmed, wait while we sync with the latest block of the blockchain.`
           )
           let approved = false
-          while(!approved) {
+          while (!approved) {
             await new Promise(r => setTimeout(r, 1000)) // sleep
             const allowance = await ERC20(pool.address).allowance(
               operation.withdrawContract,
@@ -535,7 +535,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
         <S.ExchangeRate>
           <S.SpanLight>Withdraw fee:</S.SpanLight>
-          <S.SpanLight>3.00%</S.SpanLight>
+          <S.SpanLight>{Big(data?.pool?.fee_exit || '0').mul(100).toFixed(2)}%</S.SpanLight>
         </S.ExchangeRate>
 
         <S.TransactionSettingsOptions>
