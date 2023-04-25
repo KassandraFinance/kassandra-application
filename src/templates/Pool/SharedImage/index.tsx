@@ -7,6 +7,8 @@ import { underlyingAssetsInfo } from '@/store/reducers/pool'
 
 // import substr from '../../../utils/substr'
 import ChartProducts from './ChartProducts'
+
+import imageIcon from '@assets/icons/coming-soon.svg'
 import {
   Background,
   IconBar,
@@ -117,7 +119,9 @@ const SharedImage = ({
                 {tokens?.map((item, index) => (
                   <Image
                     key={index}
-                    src={item.token?.logo ?? item.token.wraps.logo ?? ''}
+                    src={
+                      item.token?.logo ?? item.token?.wraps?.logo ?? imageIcon
+                    }
                     width={25}
                     height={25}
                   />

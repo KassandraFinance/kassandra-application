@@ -553,7 +553,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
           {/* <S.SpanLight>{title} fee:</S.SpanLight>
           <S.SpanLight>{fees[title]}%</S.SpanLight> */}
           <S.SpanLight>Invest fee:</S.SpanLight>
-          <S.SpanLight>0%</S.SpanLight>
+          <S.SpanLight>{Big(data?.pool?.fee_join_manager || '0').add(data?.pool?.fee_join_broker || '').mul(100).toFixed(2)}%</S.SpanLight>
         </S.ExchangeRate>
       </S.TransactionSettingsContainer>
       <S.TransactionSettingsOptions>

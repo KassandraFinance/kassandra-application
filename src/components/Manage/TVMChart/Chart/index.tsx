@@ -25,7 +25,7 @@ interface IChartProps {
 const Chart = ({ data, color }: IChartProps) => {
   return (
     <S.Chart>
-      <ResponsiveContainer width="99%" height="100%">
+      <ResponsiveContainer width="99%" height={266}>
         <AreaChart
           data={data}
           style={{
@@ -60,7 +60,7 @@ const Chart = ({ data, color }: IChartProps) => {
           />
           <YAxis
             mirror
-            domain={[0, 'auto']}
+            domain={['auto', 'auto']}
             tickLine={false}
             axisLine={false}
             hide
