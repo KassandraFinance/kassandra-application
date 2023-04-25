@@ -204,6 +204,8 @@ const Pool = () => {
           totalValueLocked={infoPool.tvl}
           socialIndex={pool.symbol}
           productName={pool.name}
+          poolLogo={pool.logo}
+          tokens={pool.underlying_assets}
         />
       </ShareImageModal>
       <Breadcrumb>
@@ -351,6 +353,7 @@ const Pool = () => {
                 feeJoinManager={data.pool.fee_join_manager}
                 feeAum={data.pool.fee_aum}
                 feeAumKassandra={data.pool.fee_aum_kassandra}
+                withdrawFee={data.pool.fee_exit}
               />
               <MyAsset
                 chain={pool.chain}

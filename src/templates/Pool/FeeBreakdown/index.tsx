@@ -11,13 +11,15 @@ interface IFeeBreakdownProps {
   feeJoinManager: string;
   feeAum: string;
   feeAumKassandra: string;
+  withdrawFee: string;
 }
 
 const FeeBreakdown = ({
   feeAum,
   feeAumKassandra,
   feeJoinManager,
-  feeJoinBroker
+  feeJoinBroker,
+  withdrawFee
 }: IFeeBreakdownProps) => {
   const [isDepositFee, setIsDepositFee] = React.useState(false)
   const [isManagementFee, setIsManagementFee] = React.useState(false)
@@ -178,7 +180,12 @@ const FeeBreakdown = ({
           <S.FeeContainer>
             <S.FeeName>Withdrawal Fee</S.FeeName>
 
-            <S.FeeValue>0.0%</S.FeeValue>
+            <S.FeeValue>
+              {Big(withdrawFee || '0')
+                .mul(100)
+                .toFixed(2)}
+              %
+            </S.FeeValue>
           </S.FeeContainer>
         </S.Container>
       </S.FeesContainer>
