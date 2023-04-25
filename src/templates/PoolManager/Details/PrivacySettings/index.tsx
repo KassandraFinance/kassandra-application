@@ -3,13 +3,13 @@ import Image from 'next/image'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { useRouter } from 'next/router'
 import { AbiItem } from 'web3-utils'
+import Web3 from 'web3'
 
 import { useAppSelector } from '@/store/hooks'
 import usePoolInfo from '@/hooks/usePoolInfo'
 
 import PrivateInvestors from '@/constants/abi/PrivateInvestors.json'
 import { networks } from '@/constants/tokenAddresses'
-import web3 from '@/utils/web3'
 
 import Button from '@/components/Button'
 import ImageProfile from '@/components/Governance/ImageProfile'
@@ -44,7 +44,9 @@ const PrivacySettings = () => {
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
   const setAddressesOfPrivateInvestors = async () => {
-    const privateInvestorsContract = new web3.eth.Contract((PrivateInvestors as unknown) as AbiItem, networks[poolInfo?.chain_id ?? 137].privateInvestor)
+    const network = networks[poolInfo?.chain_id ?? 137]
+    const _web3 = new Web3(network.rpc)
+    const privateInvestorsContract = new _web3.eth.Contract((PrivateInvestors as unknown) as AbiItem, network.privateInvestor)
     const addresses = await privateInvestorsContract.methods.getInvestors( poolInfo?.address, 0, 100).call()
     setPrivateInvestors(addresses)
   }
