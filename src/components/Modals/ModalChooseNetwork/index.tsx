@@ -57,18 +57,15 @@ const ModalChooseNetwork = ({
                 chainId: polygonNetwork.chainId,
                 chainName: polygonNetwork.chainName,
                 rpcUrls: [polygonNetwork.rpc],
-                nativeCurrency: avalancheNetwork.nativeCurrency,
+                nativeCurrency: polygonNetwork.nativeCurrency,
                 callbackFunction: handleCloseModal
               })
             }
-            disabled
           >
             <S.WrapperIcons>
               <Image src={polygon} width={24} height={24} />
 
               <span>Polygon</span>
-
-              <span>Coming soon...</span>
             </S.WrapperIcons>
           </S.WrapperIconsBackGround>
         </S.ModalContent>
