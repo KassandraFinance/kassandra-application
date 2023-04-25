@@ -213,134 +213,141 @@ const PoolManager = () => {
 
         <div></div>
 
-        <Header />
-        {poolInfo ? (
+        <div>
+          <Header />
           <S.Content>
-            <S.Intro>
-              <S.GridIntro>
-                <TokenWithNetworkImage
-                  tokenImage={{
-                    url: poolInfo?.logo,
-                    height: 75,
-                    width: 75,
-                    withoutBorder: true
-                  }}
-                  networkImage={{
-                    url: poolInfo?.chain?.logo,
-                    height: 20,
-                    width: 20
-                  }}
-                  blockies={{
-                    size: 8,
-                    scale: 9,
-                    seedName: poolInfo?.name
-                  }}
-                />
-                <S.NameIndex>
-                  <S.NameAndSymbol>
-                    <h1>{poolInfo?.name}</h1>
-                  </S.NameAndSymbol>
-                  <S.SymbolAndLink>
-                    <h3>${poolInfo?.symbol}</h3>
-                    <Link href={`/pool/${poolInfo?.id}`}>
-                      <button className="circle">
-                        <Image
-                          src="/assets/icons/website-with-bg.svg"
-                          width={32}
-                          height={32}
-                        />
-                      </button>
-                    </Link>
-                    <a
-                      href={`${poolInfo?.chain?.blockExplorerUrl}/address/${poolInfo?.address}`}
-                      className="circle"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Image
-                        src="/assets/icons/go-to-site-with-bg.svg"
-                        width={32}
-                        height={32}
-                      />
-                    </a>
-                    <button
-                      onClick={() => {
-                        setOpenModal(true)
-                        trackEventFunction(
-                          'click',
-                          `social-share-${poolInfo?.name}`,
-                          'pool'
-                        )
+            {poolInfo ? (
+              <>
+                <S.Intro>
+                  <S.GridIntro>
+                    <TokenWithNetworkImage
+                      tokenImage={{
+                        url: poolInfo?.logo,
+                        height: 75,
+                        width: 75,
+                        withoutBorder: true
                       }}
-                      className="circle"
-                    >
-                      <Image
-                        src="/assets/icons/share-with-bg.svg"
-                        width={32}
-                        height={32}
-                      />
-                    </button>
-                  </S.SymbolAndLink>
-                </S.NameIndex>
-              </S.GridIntro>
+                      networkImage={{
+                        url: poolInfo?.chain?.logo,
+                        height: 20,
+                        width: 20
+                      }}
+                      blockies={{
+                        size: 8,
+                        scale: 9,
+                        seedName: poolInfo?.name
+                      }}
+                    />
+                    <S.NameIndex>
+                      <S.NameAndSymbol>
+                        <h1>{poolInfo?.name}</h1>
+                      </S.NameAndSymbol>
+                      <S.SymbolAndLink>
+                        <h3>${poolInfo?.symbol}</h3>
+                        <Link href={`/pool/${poolInfo?.id}`}>
+                          <button className="circle">
+                            <Image
+                              src="/assets/icons/website-with-bg.svg"
+                              width={32}
+                              height={32}
+                            />
+                          </button>
+                        </Link>
+                        <a
+                          href={`${poolInfo?.chain?.blockExplorerUrl}/address/${poolInfo?.address}`}
+                          className="circle"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Image
+                            src="/assets/icons/go-to-site-with-bg.svg"
+                            width={32}
+                            height={32}
+                          />
+                        </a>
+                        <button
+                          onClick={() => {
+                            setOpenModal(true)
+                            trackEventFunction(
+                              'click',
+                              `social-share-${poolInfo?.name}`,
+                              'pool'
+                            )
+                          }}
+                          className="circle"
+                        >
+                          <Image
+                            src="/assets/icons/share-with-bg.svg"
+                            width={32}
+                            height={32}
+                          />
+                        </button>
+                      </S.SymbolAndLink>
+                    </S.NameIndex>
+                  </S.GridIntro>
 
-              {poolInfo.chain_id !== chainId ? (
-                <Button
-                  text={`Connect to ${networks[poolInfo.chain_id].chainName}`}
-                  backgroundSecondary
-                  size="large"
-                  onClick={() =>
-                    changeChain({
-                      chainId: networks[poolInfo.chain_id].chainId,
-                      chainName: networks[poolInfo.chain_id].chainName,
-                      rpcUrls: [networks[poolInfo.chain_id].rpc],
-                      nativeCurrency: networks[poolInfo.chain_id].nativeCurrency
-                    })
-                  }
-                />
-              ) : (
-                <Tippy
-                  allowHTML={true}
-                  content={[
-                    <S.RebalancingProgressText key="title">
-                      REBALANCING IN PROGRESS
-                    </S.RebalancingProgressText>,
-                    <S.RebalancingProgressTime key="hours">
-                      {dateFormated}
-                    </S.RebalancingProgressTime>
-                  ]}
-                  disabled={!(currentTime < endRebalanceTime)}
-                >
-                  <span>
+                  {poolInfo.chain_id !== chainId ? (
                     <Button
-                      className="btn-manage-assets"
+                      text={`Connect to ${networks[poolInfo.chain_id].chainName
+                        }`}
                       backgroundSecondary
                       size="large"
-                      text="Manage Assets"
-                      image={gear.src}
-                      onClick={() => setIsOpenManageAssets(true)}
-                      disabledNoEvent={currentTime < endRebalanceTime}
+                      onClick={() =>
+                        changeChain({
+                          chainId: networks[poolInfo.chain_id].chainId,
+                          chainName: networks[poolInfo.chain_id].chainName,
+                          rpcUrls: [networks[poolInfo.chain_id].rpc],
+                          nativeCurrency:
+                            networks[poolInfo.chain_id].nativeCurrency
+                        })
+                      }
                     />
-                  </span>
-                </Tippy>
-              )}
-            </S.Intro>
-            <SelectTabs
-              tabs={tabs}
-              isSelect={isSelectTab}
-              setIsSelect={setIsSelectTab}
-            />
-            {
-              PoolManagerComponents[
-              `${isSelectTab === 'fee-rewards' ? 'feeRewards' : isSelectTab}`
-              ]
-            }
+                  ) : (
+                    <Tippy
+                      allowHTML={true}
+                      content={[
+                        <S.RebalancingProgressText key="title">
+                          REBALANCING IN PROGRESS
+                        </S.RebalancingProgressText>,
+                        <S.RebalancingProgressTime key="hours">
+                          {dateFormated}
+                        </S.RebalancingProgressTime>
+                      ]}
+                      disabled={!(currentTime < endRebalanceTime)}
+                    >
+                      <span>
+                        <Button
+                          className="btn-manage-assets"
+                          backgroundSecondary
+                          size="large"
+                          text="Manage Assets"
+                          image={gear.src}
+                          onClick={() => setIsOpenManageAssets(true)}
+                          disabledNoEvent={currentTime < endRebalanceTime}
+                        />
+                      </span>
+                    </Tippy>
+                  )}
+                </S.Intro>
+                <SelectTabs
+                  tabs={tabs}
+                  isSelect={isSelectTab}
+                  setIsSelect={setIsSelectTab}
+                />
+                {
+                  PoolManagerComponents[
+                  `${isSelectTab === 'fee-rewards' ? 'feeRewards' : isSelectTab
+                  }`
+                  ]
+                }
+              </>
+            ) : (
+              <S.LoadingWrapper>
+                <Loading marginTop={0} />
+              </S.LoadingWrapper>
+            )}
           </S.Content>
-        ) : (
-          <S.LoadingWrapper>
-            <Loading marginTop={0} />
-          </S.LoadingWrapper>
-        )}
+        </div>
       </S.DashBoard>
       {isOpenManageAssets && (
         <ManageAssets setIsOpenManageAssets={setIsOpenManageAssets} />

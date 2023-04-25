@@ -33,12 +33,14 @@ export const Wrapper = styled.div<IWrapperProps>`
   }
 
   ${({ dashBoard }) => dashBoard && css`
+    z-index: 1040;
+
     justify-content: flex-end;
 
     margin-inline: auto 2.4rem;
 
     @media (max-width: 1200px) {
-      padding-inline: 0rem;
+      padding-inline: 0;
     }
   `}
 `
@@ -95,35 +97,56 @@ export const MenuLinkDisable = styled.a`
   padding-bottom: 1.3rem;
 
   color: ${theme.colors.grayDisabled};
-  font-size: ${theme.font.sizes.font16};
   font-weight: ${theme.font.weight.light};
-  text-decoration: none;
+  font-size: ${theme.font.sizes.font16};
   text-align: center;
+  text-decoration: none;
 
   cursor: not-allowed;
+
   &:hover {
+    @keyframes hoverAnimation {
+      from {
+        left: 50%;
+
+        width: 0;
+      }
+
+      to {
+        left: 0;
+
+        width: 100%;
+      }
+    }
+
     &::after {
       content: '';
       position: absolute;
 
       display: block;
+
       height: 0.3rem;
       margin-top: 1.2rem;
+      border-radius: 0.3rem;
 
       background-color: ${theme.colors.grayDisabled};
-      border-radius: 0.3rem;
 
       animation: hoverAnimation 0.3s forwards;
     }
-    @keyframes hoverAnimation {
-      from {
-        width: 0;
-        left: 50%;
-      }
-      to {
-        width: 100%;
-        left: 0;
-      }
+  }
+
+  img {
+    position: absolute;
+    top: 1.8rem;
+    right: -2rem;
+
+    @media (max-width: 540px) {
+      top: 1.7rem;
+      right: -1.6rem;
+    }
+
+    @media (max-width: 360px) {
+      top: 1.6rem;
     }
   }
 
@@ -133,26 +156,14 @@ export const MenuLinkDisable = styled.a`
 
   @media (max-width: 541px) {
     margin-right: 2rem;
+
     font-size: ${theme.font.sizes.font14};
   }
 
   @media (max-width: 360px) {
     margin-right: 1.4rem;
+
     font-size: ${theme.font.sizes.font12};
-  }
-
-  img {
-    position: absolute;
-    right: -2rem;
-    top: 1.8rem;
-
-    @media (max-width: 540px) {
-      right: -1.6rem;
-      top: 1.7rem;
-    }
-    @media (max-width: 360px) {
-      top: 1.6rem;
-    }
   }
 `
 
@@ -165,22 +176,24 @@ export const MenuContainer = styled.div`
 export const HamburgerButton = styled.button`
   ${() => css`
     position: relative;
+
     display: none;
 
     @media (max-width: 768px) {
+      z-index: 1050;
+
       display: flex;
       justify-content: center;
       align-items: center;
 
       width: 4rem;
       height: 4rem;
-
-      background-color: rgba(255, 255, 255, 0.1);
       border: none;
       border-radius: 50%;
 
+      background-color: rgb(255 255 255 / 0.1);
+
       cursor: pointer;
-      z-index: 1050;
     }
   `}
 `
@@ -201,13 +214,15 @@ export const HamburgerMenu = styled.div<IHambuergerMenuProps>`
       div {
         position: relative;
         top: 0;
+
         height: 0.1rem;
-        background-color: ${theme.colors.snow};
         margin-bottom: 0.4rem;
         border-radius: 0.2rem;
 
-        transition-duration: 300ms;
+        background-color: ${theme.colors.snow};
+
         transition-timing-function: ease-in-out;
+        transition-duration: 300ms;
         transition-property: transform top width right;
       }
 
@@ -217,11 +232,13 @@ export const HamburgerMenu = styled.div<IHambuergerMenuProps>`
 
       div:last-child {
         margin-bottom: 0;
+
         transform-origin: 1.2rem;
       }
 
       div:nth-child(2) {
         right: 0;
+
         width: 1.2rem;
       }
 
@@ -231,18 +248,22 @@ export const HamburgerMenu = styled.div<IHambuergerMenuProps>`
   ${({ isShowMenu }) => isShowMenu && css`
        div:first-child {
         top: -0.1rem;
+
         transform: rotateZ(45deg);
       }
 
       div:last-child {
         top: 0.1rem;
+
         transform: rotateZ(45deg);
       }
 
       div:nth-child(2) {
-        width: 1.697rem;
         top: 0;
         right: 0.3rem;
+
+        width: 1.697rem;
+
         transform: rotateZ(-45deg);
       }
   `}
