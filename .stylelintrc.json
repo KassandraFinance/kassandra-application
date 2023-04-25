@@ -22,6 +22,7 @@
       "/^width|^height/": ["rem", "%", "vh", "vw"],
       "/^font-size/": ["rem"]
     },
+    "media-feature-range-notation": "prefix",
     "alpha-value-notation": ["number"],
     "declaration-empty-line-before": [
       "always",
