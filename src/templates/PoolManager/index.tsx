@@ -5,16 +5,20 @@ import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import request from 'graphql-request'
 import Tippy from '@tippyjs/react'
+import { BNtoDecimal } from '../../utils/numerals'
+import Big from 'big.js'
 
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
-import { GET_POOL_REBALANCE_TIME } from './graphql'
+import { GET_POOL_REBALANCE_TIME, GET_POOL_PRICE } from './graphql'
 
 import changeChain from '@/utils/changeChain'
 
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import usePoolInfo from '@/hooks/usePoolInfo'
-import { useAppSelector } from '@/store/hooks'
+import usePoolAssets from '@/hooks/usePoolAssets'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { useCountdown } from '@/hooks/useCountDown'
+import { setPerformanceValues } from '@/store/reducers/performanceValues'
 
 import SharedImage from '../Pool/SharedImage'
 import ShareImageModal from '../Pool/ShareImageModal'
@@ -96,6 +100,7 @@ const PoolManager = () => {
     string | string[] | undefined
   >('analytics')
 
+  const dispatch = useAppDispatch()
   const router = useRouter()
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
@@ -107,6 +112,7 @@ const PoolManager = () => {
   const { trackEventFunction } = useMatomoEcommerce()
 
   const { poolInfo, isManager } = usePoolInfo(userWalletAddress, poolId)
+  const { poolAssets } = usePoolAssets(poolId)
   const { data } = useSWR([GET_POOL_REBALANCE_TIME, poolId], (query, poolId) =>
     request(BACKEND_KASSANDRA, query, { id: poolId })
   )
@@ -126,6 +132,22 @@ const PoolManager = () => {
     details: <Details />
   }
 
+  function calcChange(newPrice: number, oldPrice: number) {
+    const calc = ((newPrice - oldPrice) / oldPrice) * 100
+    return calc ? calc.toFixed(2) : '0'
+  }
+
+  const { data: change } = useSWR([GET_POOL_PRICE], query =>
+    request(BACKEND_KASSANDRA, query, {
+      id: poolId,
+      day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+      week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
+      month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+      quarterly: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 90),
+      year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365)
+    })
+  )
+
   React.useEffect(() => {
     if (isManager) {
       router.push(`/pool/${poolId}`)
@@ -144,6 +166,44 @@ const PoolManager = () => {
 
     setIsSelectTab(router.query.tab)
   }, [router])
+
+  React.useEffect(() => {
+    if (change?.pool) {
+      const changeDay = calcChange(
+        change.pool.now[0].close,
+        change.pool.day[0]?.close
+      )
+      const changeWeek = calcChange(
+        change.pool.now[0].close,
+        change.pool.week[0]?.close
+      )
+      const changeMonth = calcChange(
+        change.pool.now[0].close,
+        change.pool.month[0]?.close
+      )
+      const changeQuarterly = calcChange(
+        change.pool.now[0].close,
+        change.pool.quarterly[0]?.close
+      )
+      const changeYear = calcChange(
+        change.pool.now[0].close,
+        change.pool.year[0]?.close
+      )
+
+      dispatch(
+        setPerformanceValues({
+          title: 'Weekly Performance',
+          allPerformancePeriod: {
+            'Daily Performance': changeDay,
+            'Weekly Performance': changeWeek,
+            'Monthly Performance': changeMonth,
+            '3 Months Performance': changeQuarterly,
+            'Yearly Performance': changeYear
+          }
+        })
+      )
+    }
+  }, [change])
 
   return (
     <S.PoolManager>
@@ -272,7 +332,7 @@ const PoolManager = () => {
             />
             {
               PoolManagerComponents[
-                `${isSelectTab === 'fee-rewards' ? 'feeRewards' : isSelectTab}`
+              `${isSelectTab === 'fee-rewards' ? 'feeRewards' : isSelectTab}`
               ]
             }
           </S.Content>
@@ -285,7 +345,7 @@ const PoolManager = () => {
       {isOpenManageAssets && (
         <ManageAssets setIsOpenManageAssets={setIsOpenManageAssets} />
       )}
-      {poolInfo && (
+      {poolInfo && poolAssets && (
         <ShareImageModal
           poolId={poolInfo?.id}
           setOpenModal={setOpenModal}
@@ -294,9 +354,14 @@ const PoolManager = () => {
         >
           <SharedImage
             crpPoolAddress={poolInfo?.id}
-            totalValueLocked={poolInfo?.total_value_locked_usd || ''}
+            totalValueLocked={BNtoDecimal(
+              Big(poolInfo?.total_value_locked_usd) || '0',
+              0
+            )}
             socialIndex={poolInfo?.symbol}
             productName={poolInfo?.name}
+            poolLogo={poolInfo?.logo}
+            tokens={poolAssets}
           />
         </ShareImageModal>
       )}
