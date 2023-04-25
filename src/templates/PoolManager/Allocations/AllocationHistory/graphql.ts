@@ -22,6 +22,7 @@ export const GET_ALLOCATION_POOL = gql`
         type
         end_timestamp
         start_timestamp
+        txHash
         previous {
           weights {
             weight_normalized

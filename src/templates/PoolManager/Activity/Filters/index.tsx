@@ -14,8 +14,8 @@ type Props = {
   options: OptionsFilter[],
   handleCheckbox: (key: string) => void,
   handleClear: () => void,
-  handleSelectAll: (options: OptionsFilter[]) => void,
-  optionsSelected: string[]
+  optionsSelected: string[],
+  handleSelectAll?: (options: OptionsFilter[]) => void
 }
 
 const Filters = ({
@@ -51,11 +51,13 @@ const Filters = ({
           text={'Clear'}
           onClick={handleClear}
         />
-        <Button
-          backgroundTransparent={true}
-          text={'Select All'}
-          onClick={() => handleSelectAll(options)}
-        />
+        {handleSelectAll && (
+          <Button
+            backgroundTransparent={true}
+            text={'Select All'}
+            onClick={() => handleSelectAll(options)}
+          />
+        )}
       </S.ButtonsContainer>
     </S.Filters>
   )

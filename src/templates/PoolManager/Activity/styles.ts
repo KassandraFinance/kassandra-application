@@ -23,3 +23,35 @@ export const ActivityCardsContainer = styled.div`
 
   width: 100%;
 `
+
+export const LoadMoreContainer = styled.div`
+  ${() => css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `}
+`
+
+export const LoadMore = styled.button`
+  ${() => css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 4rem;
+    height: 4rem;
+    border: none;
+    border: 1px solid rgb(255 255 255 / 0);
+    border-radius: 50%;
+
+    background-color: rgb(255 255 255 / 0.1);
+
+    cursor: pointer;
+
+    transition: border 300ms ease-in-out;
+
+    &:hover {
+      border: 1px solid rgb(255 255 255 / 0.1);
+    }
+  `}
+`

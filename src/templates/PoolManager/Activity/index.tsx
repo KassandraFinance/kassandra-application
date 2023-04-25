@@ -1,8 +1,9 @@
 import React from 'react'
 import router from 'next/router'
+import Image from 'next/image'
 
 import Big from 'big.js'
-import useSWR from 'swr'
+import useSWRInfinite from 'swr/infinite'
 import request from 'graphql-request'
 
 import { getActivityInfo, getManagerActivity } from '../utils'
@@ -86,6 +87,7 @@ export type Result = {
     activities: Activity[],
     weight_goals: {
       id: string,
+      txHash: string,
       type: 'rebalance' | 'add' | 'removed',
       end_timestamp: number,
       previous: {
@@ -131,10 +133,37 @@ export type ActivityCardProps = {
   }
 }
 
+type RequestParams = {
+  first: number,
+  skip: number,
+  id: string,
+  options: string[]
+}
+
+const getKey = (
+  pageIndex: number,
+  prevData: any,
+  options: string[],
+  poolId: string
+) => {
+  if (
+    prevData &&
+    !prevData.pool.activities.length &&
+    !prevData.pool.weight_goals.length
+  ) {
+    return null
+  }
+  return [
+    GET_ACTIVITIES,
+    { skip: pageIndex * first, first, id: poolId, options }
+  ]
+}
+
 Big.RM = 2
+const first = 10
 const Activity = () => {
   const [optionsSelected, setOptionsSelected] = React.useState<Array<string>>(
-    options.map(opt => opt.key)
+    []
   )
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
@@ -143,11 +172,30 @@ const Activity = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { data } = useSWR<Result>([GET_ACTIVITIES, poolId], (query, id) =>
-    request(BACKEND_KASSANDRA, query, {
-      id
-    })
+  const { data, size, setSize } = useSWRInfinite<Result>(
+    (index, prevData) =>
+      getKey(
+        index,
+        prevData,
+        optionsSelected.length > 0
+          ? optionsSelected
+          : options.map(option => option.key),
+        poolId
+      ),
+    (query: string, { first, skip, id, options }: RequestParams) =>
+      request(BACKEND_KASSANDRA, query, {
+        first,
+        skip,
+        id,
+        options
+      }),
+    { refreshInterval: 0 }
   )
+  const isLoading = data && typeof data[size - 1] === 'undefined'
+  const isEnd =
+    data &&
+    data[data.length - 1].pool.activities.length < first &&
+    data[data.length - 1].pool.weight_goals.length < first
 
   function handleCheckbox(key: string) {
     const index = optionsSelected.findIndex(option => option === key)
@@ -162,12 +210,8 @@ const Activity = () => {
     setOptionsSelected([])
   }
 
-  function handleSelectAll(options: OptionsFilter[]) {
-    setOptionsSelected(options.map(opt => opt.key))
-  }
-
   const activityHistory = React.useMemo((): ActivityCardProps[] => {
-    if (!data) return []
+    if (!data?.length) return []
     let filters: Record<string, boolean> = {
       join: false,
       exit: false,
@@ -191,13 +235,26 @@ const Activity = () => {
         filters[option] = true
       }
     }
+
+    const _activities: Activity[] = []
+    const weights = []
+    const _length = data.length
+    for (let index = 0; index < _length; index++) {
+      for (const activity of data[index].pool.activities) {
+        _activities.push(activity)
+      }
+      for (const weight of data[index].pool.weight_goals) {
+        weights.push(weight)
+      }
+    }
+
     const activitiesInvestors = getActivityInfo(
-      data.pool.activities,
-      data.pool.underlying_assets,
+      _activities,
+      data[0].pool.underlying_assets,
       filters
     )
     const managerActivities = getManagerActivity(
-      data.pool.weight_goals,
+      weights,
       userWalletAddress,
       filters
     )
@@ -209,26 +266,42 @@ const Activity = () => {
   return (
     <S.Activity>
       <S.ActivityCardsContainer>
-        {activityHistory.length > 0 && data?.pool ? (
-          activityHistory.map(activity => (
-            <ActivityCard
-              key={activity.key}
-              actionType={activity.actionType}
-              date={activity.date}
-              scan={data.pool.chain?.blockExplorerUrl}
-              wallet={activity.wallet}
-              txHash={activity.txHash}
-              activityInfo={activity.activityInfo}
-              pool={{
-                name: data.pool.name,
-                symbol: data.pool.symbol,
-                logo: data.pool.logo
-              }}
-              sharesRedeemed={activity.sharesRedeemed}
-              newBalancePool={activity.newBalancePool}
-              managerAddress={data?.pool?.manager.id ?? ''}
-            />
-          ))
+        {activityHistory.length > 0 && data?.length ? (
+          <>
+            {activityHistory.slice(0, size * first).map(activity => (
+              <ActivityCard
+                key={activity.key}
+                actionType={activity.actionType}
+                date={activity.date}
+                scan={data[0].pool.chain?.blockExplorerUrl}
+                wallet={activity.wallet}
+                txHash={activity.txHash}
+                activityInfo={activity.activityInfo}
+                pool={{
+                  name: data[0].pool.name,
+                  symbol: data[0].pool.symbol,
+                  logo: data[0].pool.logo
+                }}
+                sharesRedeemed={activity.sharesRedeemed}
+                newBalancePool={activity.newBalancePool}
+                managerAddress={data[0]?.pool?.manager.id ?? ''}
+              />
+            ))}
+            {isLoading && <Loading marginTop={0} />}
+            {!isEnd && (
+              <S.LoadMoreContainer>
+                <S.LoadMore onClick={() => setSize(size + 1)}>
+                  <Image
+                    src="/assets/utilities/arrow-select-down.svg"
+                    width={16}
+                    height={16}
+                  />
+                </S.LoadMore>
+              </S.LoadMoreContainer>
+            )}
+          </>
+        ) : data?.length && data[0]?.pool ? (
+          <></>
         ) : (
           <Loading marginTop={0} />
         )}
@@ -238,7 +311,6 @@ const Activity = () => {
         optionsSelected={optionsSelected}
         handleCheckbox={handleCheckbox}
         handleClear={handleClear}
-        handleSelectAll={handleSelectAll}
       />
     </S.Activity>
   )

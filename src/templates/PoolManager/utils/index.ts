@@ -29,6 +29,7 @@ type IUnderlyingAssetsProps = {
 type IWeightGoalsProps = {
   id: string,
   type: 'rebalance' | 'add' | 'removed',
+  txHash: string,
   end_timestamp: number,
   previous: {
     weights: {
@@ -124,7 +125,7 @@ export function getManagerActivity(
         actionType: activityProps[activity.type],
         activityInfo: [],
         date: new Date(activity.end_timestamp * 1000),
-        txHash: '',
+        txHash: activity.txHash,
         wallet: userWalletAddress
       })
 
@@ -149,7 +150,7 @@ export function getManagerActivity(
           activityInfo: [],
           newBalancePool: [],
           date: new Date(activity.end_timestamp * 1000),
-          txHash: '',
+          txHash: activity.txHash,
           wallet: userWalletAddress
         })
         const indexOfActivityInfo = activityInfo.length - 1
