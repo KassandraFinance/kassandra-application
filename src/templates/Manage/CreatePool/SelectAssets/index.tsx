@@ -93,11 +93,18 @@ const SelectAssets = () => {
     setTokenBalance(balanceArr)
   }
 
-  function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleInput(e: React.ChangeEvent<HTMLInputElement>, key: string, isLocked: boolean) {
     let allocation = e.target.value
 
     if (allocation.length > 0) {
       allocation = allocation.replace(/^0+/, '')
+      if (!isLocked && Number(allocation) > 0) {
+        handleLockToken(key)
+      } else if (isLocked && Number(allocation) <=0) {
+        handleLockToken(key)
+      }
+    } else if (isLocked) {
+      handleLockToken(key)
     }
 
     dispatch(
@@ -121,7 +128,7 @@ const SelectAssets = () => {
     const getWhitelist = async () => {
       try {
         const web3 = new Web3(networks[networkId ?? 137].rpc);
-        
+
         // eslint-disable-next-line prettier/prettier
         const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[networkId ?? 137].whiteList);
         const whitelist = await whitelistContract.methods.getTokens(0, 50).call();

@@ -16,7 +16,11 @@ interface IPoolSummaryProps {
   creation?: boolean;
   coinsList: TokenType[];
   totalAllocation: number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    key: string,
+    isLocked: boolean
+  ) => void;
   onRemoveToken?: (token: TokenType) => void;
   onLockToken?: (id: string) => void;
   priceList: CoinGeckoResponseType | undefined;
@@ -37,6 +41,17 @@ const PoolSummary = ({
     return
   }
 }: IPoolSummaryProps) => {
+  function handleInvalid(event: any) {
+    event.target.setCustomValidity(errorMessage)
+  }
+
+  const errorMessage =
+    totalAllocation > 100
+      ? `The total can't be over 100%`
+      : totalAllocation < 100
+      ? `The total can't be lower than 100%`
+      : ''
+
   return (
     <S.PoolSummary>
       <S.Header>
@@ -102,9 +117,11 @@ const PoolSummary = ({
                       lable={`${coin.name} allocation`}
                       required
                       min="1"
-                      max="100"
+                      max="99"
                       value={coin.allocation.toString()}
-                      onChange={onChange}
+                      onChange={event =>
+                        onChange(event, coin.symbol, coin.isLocked)
+                      }
                     />
 
                     <S.RemoveButton
@@ -116,6 +133,9 @@ const PoolSummary = ({
                   </S.AllocationContainer>
                   {Number(coin.allocation) < 1 && (
                     <S.Error>Allocation must be above 1%</S.Error>
+                  )}
+                  {Number(coin.allocation) > 100 && (
+                    <S.Error>Allocation must be below 100%</S.Error>
                   )}
                 </>
               ) : (
@@ -138,12 +158,26 @@ const PoolSummary = ({
 
           <S.ProgressBar>
             <S.ProgressValue value={totalAllocation}></S.ProgressValue>
+            {totalAllocation !== 100 && (
+              <S.InputValidation
+                form="poolCreationForm"
+                id="checkWeights"
+                name="inputCheckWeights"
+                type="radio"
+                value={totalAllocation}
+                onInvalid={handleInvalid}
+                required
+                checked={totalAllocation === 100}
+                onChange={() => {
+                  return
+                }}
+              />
+            )}
           </S.ProgressBar>
         </S.TotalContainer>
 
-        {totalAllocation > 100 && (
-          <S.Error>The total can’t be over 100%</S.Error>
-        )}
+        {totalAllocation > 100 && <S.Error>{errorMessage}</S.Error>}
+        {totalAllocation < 100 && <S.Error>{errorMessage}</S.Error>}
       </S.Body>
     </S.PoolSummary>
   )
