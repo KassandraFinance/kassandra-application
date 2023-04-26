@@ -27,11 +27,11 @@ const ExecutionPeriod = () => {
         return
 
       case 'average':
-        dispatch(setPeriodSelect(48))
+        dispatch(setPeriodSelect(24))
         return
 
       case 'fast':
-        dispatch(setPeriodSelect(24))
+        dispatch(setPeriodSelect(1))
         return
 
       default:
@@ -61,11 +61,11 @@ const ExecutionPeriod = () => {
           setTimePeriodSelect('optimized')
           return
 
-        case 48:
+        case 24:
           setTimePeriodSelect('average')
           return
 
-        case 24:
+        case 1:
           setTimePeriodSelect('fast')
           return
 
@@ -114,7 +114,7 @@ const ExecutionPeriod = () => {
             />
 
             <S.SelectPeriodContent>
-              <p>48 hours</p>
+              <p>24 hours</p>
               <Tippy content="TIPPY">
                 <img src="/assets/utilities/tooltip.svg" />
               </Tippy>
@@ -131,7 +131,7 @@ const ExecutionPeriod = () => {
             />
 
             <S.SelectPeriodContent>
-              <p>24 hours</p>
+              <p>1 hours</p>
               <Tippy content="TIPPY">
                 <img src="/assets/utilities/tooltip.svg" />
               </Tippy>
@@ -143,7 +143,7 @@ const ExecutionPeriod = () => {
           <span>Customize</span>
           <S.PersonalizePeriod>
             <p>
-              The period for executing the rebalance must be between 24 and 72
+              The period for executing the rebalance must be between 1 and 72
               hours.{' '}
             </p>
             <InputTime
@@ -151,15 +151,15 @@ const ExecutionPeriod = () => {
               handleInputTime={handleInputTime}
               name="Hour/s"
               max={72}
-              min={24}
+              min={1}
               step={1}
             />
           </S.PersonalizePeriod>
           {timeValue
-            ? (timeValue > 72 || timeValue < 24) && (
+            ? (timeValue > 72 || timeValue < 1) && (
                 <S.ErrorPeriod>
                   The amount of time for the rebalancing process must be higher
-                  than 24 and lower than 72 hours
+                  than 1 and lower than 72 hours
                 </S.ErrorPeriod>
               )
             : null}
