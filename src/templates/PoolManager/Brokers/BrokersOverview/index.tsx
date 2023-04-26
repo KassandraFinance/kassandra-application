@@ -67,18 +67,17 @@ const BrokersOverview = () => {
     }
   }
 
-  const params = {
-    id: userWalletAddress,
-    poolId: poolId,
-    depositsTimestamp: periodList[depositsPeriod].timestamp,
-    rewardsTimestamp: periodList[rewardsPeriod].timestamp
-  }
-
   const { data } = useSWR<GetBrokersFees>(
     userWalletAddress.length > 0 && poolId.length > 0
-      ? [GET_BROKERS_FEES, params]
+      ? [GET_BROKERS_FEES, depositsPeriod]
       : null,
-    (query, params) => request(BACKEND_KASSANDRA, query, params)
+    query =>
+      request(BACKEND_KASSANDRA, query, {
+        id: userWalletAddress,
+        poolId: poolId,
+        depositsTimestamp: periodList[depositsPeriod].timestamp,
+        rewardsTimestamp: periodList[rewardsPeriod].timestamp
+      })
   )
 
   function addDeposits(
