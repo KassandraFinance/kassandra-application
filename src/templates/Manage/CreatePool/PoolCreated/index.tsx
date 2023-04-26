@@ -28,9 +28,13 @@ const PoolCreated = () => {
       )
       setPoolId(id)
     }
+  }, [networkId, id, txHash])
 
-    dispatch(setClear())
-  }, [])
+  React.useEffect(() => {
+    if (blockExplorer !== '') {
+      dispatch(setClear())
+    }
+  }, [blockExplorer])
 
   return (
     <S.PoolCreated>
