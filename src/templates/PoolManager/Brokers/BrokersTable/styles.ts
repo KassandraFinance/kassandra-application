@@ -78,3 +78,20 @@ export const AddressContainer = styled.div`
     }
   `}
 `
+
+export const NoHaveBrokers = styled.p`
+  ${({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    color: ${theme.colors.grayDisabled};
+    font-size: ${theme.font.sizes.font14};
+    font-weight: ${theme.font.weight.normal};
+    line-height: 2rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-align: center;
+  `}
+`
