@@ -1,8 +1,22 @@
 import { gql } from 'graphql-request'
 
 export const GET_MANAGERS_POOLS = gql`
-  query ($day: Int, $month: Int) {
-    managers(orderBy: total_value_locked_usd, orderDirection: desc) {
+  query (
+    $day: Int
+    $month: Int
+    $orderDirection: OrderDirection
+    $skip: Int
+    $first: Int
+  ) {
+    totalManagers: managers {
+      id
+    }
+    managers(
+      orderBy: total_value_locked_usd
+      orderDirection: $orderDirection
+      skip: $skip
+      first: $first
+    ) {
       id
       pool_count
       unique_investors

@@ -13,6 +13,7 @@ import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
 import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
 import eyeShowIcon from '@assets/utilities/eye-show.svg'
 import comingSoonIcon from '@assets/icons/coming-soon.svg'
+import Loading from '@/components/Loading'
 
 import * as S from './styles'
 import {
@@ -22,46 +23,61 @@ import {
   Value as V
 } from '@ui/Modals/ModalViewCoin/styles'
 
-interface ICommunityPoolsTableProps {
-  pools: {
-    id: string,
-    address: string,
-    logo: string | null,
-    name: string,
-    price_usd: string,
-    symbol: string,
-    total_value_locked_usd: string,
-    chain: {
-      logo: string
-    },
-    now: {
-      close: string,
-      timestamp: number
-    }[],
-    day: {
-      close: string,
-      timestamp: number
-    }[],
-    month: {
-      close: string,
-      timestamp: number
-    }[],
-    volumes: {
-      volume_usd: string
-    }[],
-    weight_goals: {
-      weights: {
-        asset: {
-          token: {
-            logo: string
-          }
+type IPoolsInfosProps = {
+  id: string,
+  address: string,
+  logo: string | null,
+  name: string,
+  price_usd: string,
+  symbol: string,
+  total_value_locked_usd: string,
+  chain: {
+    logo: string
+  },
+  now: {
+    close: string,
+    timestamp: number
+  }[],
+  day: {
+    close: string,
+    timestamp: number
+  }[],
+  month: {
+    close: string,
+    timestamp: number
+  }[],
+  volumes: {
+    volume_usd: string
+  }[],
+  weight_goals: {
+    weights: {
+      asset: {
+        token: {
+          logo: string
         }
-      }[]
+      }
     }[]
-  }[];
+  }[]
 }
 
-const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
+export enum communityPoolSorting {
+  DESC = 'desc',
+  ASC = 'asc'
+}
+
+interface ICommunityPoolsTableProps {
+  pools?: IPoolsInfosProps[];
+  communityPoolSorted: communityPoolSorting;
+  setCommunityPoolSorted: React.Dispatch<
+    React.SetStateAction<communityPoolSorting>
+  >;
+}
+
+const CommunityPoolsTable = ({
+  pools,
+  communityPoolSorted,
+  setCommunityPoolSorted
+}: ICommunityPoolsTableProps) => {
   const [inViewCollum, setInViewCollum] = React.useState(1)
   const [isOpen, setIsOpen] = React.useState(false)
   const [pool, setPool] = React.useState({
@@ -142,6 +158,21 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
     setIsOpen(true)
   }
 
+  function handleClickChangeTvlSorting(currentValue: string) {
+    switch (currentValue) {
+      case communityPoolSorting.DESC:
+        setCommunityPoolSorted(communityPoolSorting.ASC)
+        break
+
+      case communityPoolSorting.ASC:
+        setCommunityPoolSorted(communityPoolSorting.DESC)
+        break
+
+      default:
+        break
+    }
+  }
+
   return (
     <S.CommunityPoolsTable>
       <S.THead>
@@ -154,7 +185,18 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
             <S.ColumnTitle align="right">Price</S.ColumnTitle>
           </S.TH>
           <S.TH isView={inViewCollum === 2}>
-            <S.ColumnTitle align="right">TVL</S.ColumnTitle>
+            <S.THButtonSorting
+              onClick={() => handleClickChangeTvlSorting(communityPoolSorted)}
+              isRotateArrow={communityPoolSorted === communityPoolSorting.ASC}
+            >
+              TVL{' '}
+              <img
+                src="/assets/utilities/arrow-select-down.svg"
+                alt=""
+                width={10}
+                height={10}
+              />
+            </S.THButtonSorting>
           </S.TH>
           <S.TH isView={inViewCollum === 3}>
             <S.ColumnTitle align="right">Asset</S.ColumnTitle>
@@ -183,136 +225,142 @@ const CommunityPoolsTable = ({ pools }: ICommunityPoolsTableProps) => {
         </S.TRHead>
       </S.THead>
 
-      <S.TBody>
-        {pools?.map(pool => {
-          return (
-            <S.TR key={pool.address}>
-              <Link href={`/pool/${pool.id}`} passHref>
-                <S.TRLink>
-                  <S.TD>
-                    <S.ValueContainer>
-                      <S.Imagecontainer>
-                        <S.ImageWrapper>
-                          {pool.logo ? (
-                            <Image src={pool.logo} layout="fill" />
-                          ) : (
-                            <Blockies seed={pool.name} size={8} scale={3} />
-                          )}
-                        </S.ImageWrapper>
+      <S.TBodyWithHeight tableRowsNumber={pools?.length ?? 8} lineHeight={8.6}>
+        {pools ? (
+          pools.map(pool => {
+            return (
+              <S.TR key={pool.address}>
+                <Link href={`/pool/${pool.id}`} passHref>
+                  <S.TRLink>
+                    <S.TD>
+                      <S.ValueContainer>
+                        <S.Imagecontainer>
+                          <S.ImageWrapper>
+                            {pool.logo ? (
+                              <Image src={pool.logo} layout="fill" />
+                            ) : (
+                              <Blockies seed={pool.name} size={8} scale={3} />
+                            )}
+                          </S.ImageWrapper>
 
-                        <S.ChainLogoWrapper>
-                          <Image
-                            src={pool.chain?.logo || comingSoonIcon}
-                            layout="fill"
-                          />
-                        </S.ChainLogoWrapper>
-                      </S.Imagecontainer>
+                          <S.ChainLogoWrapper>
+                            <Image
+                              src={pool.chain?.logo || comingSoonIcon}
+                              layout="fill"
+                            />
+                          </S.ChainLogoWrapper>
+                        </S.Imagecontainer>
 
-                      <S.ValueWrapper>
-                        <S.TextValue>{pool.name}</S.TextValue>
+                        <S.ValueWrapper>
+                          <S.TextValue>{pool.name}</S.TextValue>
 
-                        <S.SecondaryTextValue>
-                          {pool.symbol}
-                        </S.SecondaryTextValue>
-                      </S.ValueWrapper>
-                    </S.ValueContainer>
-                  </S.TD>
-                  <S.TD isView={inViewCollum === 1}>
-                    <S.Value>${Big(pool?.price_usd || 0).toFixed(2)}</S.Value>
-                  </S.TD>
-                  <S.TD isView={inViewCollum === 2}>
-                    <S.Value>
-                      ${Big(pool?.total_value_locked_usd || 0).toFixed(2)}
-                    </S.Value>
-                  </S.TD>
-                  <S.TD isView={inViewCollum === 3}>
-                    <S.Container>
-                      <S.CoinImageContainer>
-                        {pool.weight_goals[0].weights.map((coin, index) => {
-                          return (
-                            <S.CoinImageWrapper
-                              key={coin.asset?.token?.logo}
-                              position={index}
-                            >
-                              <Image
-                                src={coin.asset?.token?.logo || notFoundIcon}
-                                layout="fill"
-                              />
-                            </S.CoinImageWrapper>
+                          <S.SecondaryTextValue>
+                            {pool.symbol}
+                          </S.SecondaryTextValue>
+                        </S.ValueWrapper>
+                      </S.ValueContainer>
+                    </S.TD>
+                    <S.TD isView={inViewCollum === 1}>
+                      <S.Value>${Big(pool?.price_usd || 0).toFixed(2)}</S.Value>
+                    </S.TD>
+                    <S.TD isView={inViewCollum === 2}>
+                      <S.Value>
+                        ${Big(pool?.total_value_locked_usd || 0).toFixed(2)}
+                      </S.Value>
+                    </S.TD>
+                    <S.TD isView={inViewCollum === 3}>
+                      <S.Container>
+                        <S.CoinImageContainer>
+                          {pool.weight_goals[0].weights.map((coin, index) => {
+                            return (
+                              <S.CoinImageWrapper
+                                key={coin.asset?.token?.logo}
+                                position={index}
+                              >
+                                <Image
+                                  src={coin.asset?.token?.logo || notFoundIcon}
+                                  layout="fill"
+                                />
+                              </S.CoinImageWrapper>
+                            )
+                          })}
+                        </S.CoinImageContainer>
+                      </S.Container>
+                    </S.TD>
+                    <S.TD isView={inViewCollum === 4}>
+                      <S.Value>
+                        ${Big(pool.volumes[0]?.volume_usd || 0).toFixed(2)}
+                      </S.Value>
+                    </S.TD>
+                    <S.TD isView={inViewCollum === 5}>
+                      <S.Value
+                        value={Number(
+                          calcChange(
+                            Number(pool.now[0]?.close || 0),
+                            Number(pool.month[0]?.close || 0)
                           )
-                        })}
-                      </S.CoinImageContainer>
-                    </S.Container>
-                  </S.TD>
-                  <S.TD isView={inViewCollum === 4}>
-                    <S.Value>
-                      ${Big(pool.volumes[0]?.volume_usd || 0).toFixed(2)}
-                    </S.Value>
-                  </S.TD>
-                  <S.TD isView={inViewCollum === 5}>
-                    <S.Value
-                      value={Number(
-                        calcChange(
+                        )}
+                      >
+                        {calcChange(
                           Number(pool.now[0]?.close || 0),
                           Number(pool.month[0]?.close || 0)
-                        )
-                      )}
-                    >
-                      {calcChange(
-                        Number(pool.now[0]?.close || 0),
-                        Number(pool.month[0]?.close || 0)
-                      )}
-                      %
-                    </S.Value>
-                  </S.TD>
-                  <S.TD isView={inViewCollum === 6}>
-                    <S.Value
-                      value={Number(
-                        calcChange(
+                        )}
+                        %
+                      </S.Value>
+                    </S.TD>
+                    <S.TD isView={inViewCollum === 6}>
+                      <S.Value
+                        value={Number(
+                          calcChange(
+                            Number(pool.now[0]?.close || 0),
+                            Number(pool.month[0]?.close || 0)
+                          )
+                        )}
+                      >
+                        {calcChange(
                           Number(pool.now[0]?.close || 0),
                           Number(pool.month[0]?.close || 0)
-                        )
-                      )}
-                    >
-                      {calcChange(
-                        Number(pool.now[0]?.close || 0),
-                        Number(pool.month[0]?.close || 0)
-                      )}
-                      %
-                    </S.Value>
-                  </S.TD>
+                        )}
+                        %
+                      </S.Value>
+                    </S.TD>
 
-                  <S.TD
-                    onClick={event => {
-                      event.preventDefault()
-                      handleViewMobile(
-                        pool.name,
-                        pool.logo,
-                        pool.price_usd,
-                        pool.total_value_locked_usd,
-                        pool.weight_goals[0].weights,
-                        pool.volumes[0].volume_usd,
-                        calcChange(
-                          Number(pool.now[0].close),
-                          Number(pool.month[0].close)
-                        ),
-                        calcChange(
-                          Number(pool.now[0].close),
-                          Number(pool.month[0].close)
+                    <S.TD
+                      onClick={event => {
+                        event.preventDefault()
+                        handleViewMobile(
+                          pool.name,
+                          pool.logo,
+                          pool.price_usd,
+                          pool.total_value_locked_usd,
+                          pool.weight_goals[0].weights,
+                          pool.volumes[0].volume_usd,
+                          calcChange(
+                            Number(pool.now[0].close),
+                            Number(pool.month[0].close)
+                          ),
+                          calcChange(
+                            Number(pool.now[0].close),
+                            Number(pool.month[0].close)
+                          )
                         )
-                      )
-                    }}
-                  >
-                    <S.ViewButton type="button">
-                      <Image src={eyeShowIcon} />
-                    </S.ViewButton>
-                  </S.TD>
-                </S.TRLink>
-              </Link>
-            </S.TR>
-          )
-        })}
-      </S.TBody>
+                      }}
+                    >
+                      <S.ViewButton type="button">
+                        <Image src={eyeShowIcon} />
+                      </S.ViewButton>
+                    </S.TD>
+                  </S.TRLink>
+                </Link>
+              </S.TR>
+            )
+          })
+        ) : (
+          <S.LoadingContainer>
+            <Loading marginTop={0} />
+          </S.LoadingContainer>
+        )}
+      </S.TBodyWithHeight>
 
       <ModalViewCoin
         isOpen={isOpen}

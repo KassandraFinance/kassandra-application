@@ -11,9 +11,12 @@ import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import TitleSection from '../../components/TitleSection'
 import FundCard from '../../components/FundCard'
 import Loading from '../../components/Loading'
-import CommunityPoolsTable from './CommunityPoolsTable'
+import CommunityPoolsTable, {
+  communityPoolSorting
+} from './CommunityPoolsTable'
 import ManagersPoolTable from './ManagersPoolTable'
 import SelectTabs from '@/components/SelectTabs'
+import Pagination from '@/components/Pagination'
 
 import sectionTitleEye from '../../../public/assets/iconGradient/section-title-eye.svg'
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
@@ -45,6 +48,9 @@ type GetCommunityPoolsType = {
     price_usd: string,
     symbol: string,
     total_value_locked_usd: string,
+    factory: {
+      pool_count: number
+    },
     chain: {
       logo: string
     },
@@ -77,30 +83,34 @@ type GetCommunityPoolsType = {
 
 export default function Explore({ poolsKassandra }: IIndexProps) {
   const [loading, setLoading] = React.useState(true)
+  const [skip, setSkip] = React.useState(0)
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
   >('pools')
+  const [communityPoolSorted, setCommunityPoolSorted] =
+    React.useState<communityPoolSorting>(communityPoolSorting.DESC)
 
-  const params = {
-    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-    multisig: multisig
-  }
+  const take = 8
 
   const { data } = useSWR<GetCommunityPoolsType>(
-    [GET_COMMUNITYPOOLS, params],
-    (query, { day, month }) =>
+    [GET_COMMUNITYPOOLS, communityPoolSorted, skip],
+    query =>
       request(BACKEND_KASSANDRA, query, {
-        day,
-        month,
-        multisig
+        day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+        month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+        multisig: multisig,
+        orderDirection: communityPoolSorted,
+        first: take,
+        skip
       })
   )
 
   React.useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setLoading(false)
     }, 2700)
+
+    return () => clearTimeout(timer)
   }, [])
 
   return (
@@ -152,7 +162,22 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
                   text=""
                 />
               </S.TitleWrapper>
-              {data && <CommunityPoolsTable pools={data?.pools} />}
+              <CommunityPoolsTable
+                pools={data?.pools}
+                communityPoolSorted={communityPoolSorted}
+                setCommunityPoolSorted={setCommunityPoolSorted}
+              />
+
+              <S.PaginationWrapper>
+                <Pagination
+                  skip={skip}
+                  take={take}
+                  totalItems={data?.pools[0].factory.pool_count ?? 1}
+                  handlePageClick={({ selected }) => {
+                    setSkip(selected * take)
+                  }}
+                />
+              </S.PaginationWrapper>
             </S.ComunitFundsContainer>
           </S.ExploreContainer>
         )}
