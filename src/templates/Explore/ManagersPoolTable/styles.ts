@@ -46,7 +46,3 @@ export const ManagersPoolTable = styled.div`
     }
   `}
 `
-
-export const LoadingContainer = styled.div`
-  padding-block: 8rem;
-`

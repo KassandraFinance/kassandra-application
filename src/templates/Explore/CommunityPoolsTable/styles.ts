@@ -50,11 +50,13 @@ interface ICommunityPoolsTBodyProps {
   lineHeight: number;
 }
 // eslint-disable-next-line prettier/prettier
-export const CommunityPoolsTBody = styled(TBody)<ICommunityPoolsTBodyProps>`
+export const TBodyWithHeight = styled(TBody)<ICommunityPoolsTBodyProps>`
   ${({ tableRowsNumber, lineHeight }) => css`
     transition-timing-function: ease-in-out;
-    transition-duration: 500ms;
+    transition-duration: 400ms;
     transition-property: height;
+
+    overflow-y: hidden;
 
     height: ${tableRowsNumber * lineHeight}rem;
   `}
@@ -237,13 +239,13 @@ interface ITvlButtonSortingProps {
 // eslint-disable-next-line prettier/prettier
 export const THButtonSorting = styled(ColumnTitle)<ITvlButtonSortingProps>`
   ${() => css`
-    border: none;
-    background-color: transparent;
-
     display: flex;
     align-items: center;
     gap: 0.4rem;
     justify-content: flex-end;
+
+    border: none;
+    background-color: transparent;
 
     cursor: pointer;
 
@@ -496,10 +498,16 @@ export const PoolInfoMobile = styled.div`
 
 export const LoadingContainer = styled.div`
   ${() => css`
-    min-height: 51.3rem;
+    min-height: 100%;
 
     display: flex;
     align-items: center;
     justify-content: center;
+  `}
+`
+
+export const PaginationWrapper = styled.div`
+  ${() => css`
+    margin-top: 6rem;
   `}
 `

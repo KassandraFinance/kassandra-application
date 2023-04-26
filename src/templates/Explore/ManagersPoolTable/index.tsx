@@ -28,10 +28,13 @@ import {
   ColumnTitle,
   TableViewButtonContainer,
   TableViewButton,
-  TBody,
   TRHead,
   Value,
-  ViewButton
+  ViewButton,
+  THButtonSorting,
+  PaginationWrapper,
+  TBodyWithHeight,
+  LoadingContainer
 } from '@/templates/Explore/CommunityPoolsTable/styles'
 import {
   TableLine,
@@ -39,12 +42,14 @@ import {
   ValueContainer,
   Value as V
 } from '@ui/Modals/ModalViewCoin/styles'
+import Pagination from '@/components/Pagination'
 
 type ITvlProps = {
   close: string
 }
 
 type IManagerAddress = {
+  totalManagers: string[],
   managers: {
     id: string,
     pool_count: number,
@@ -75,7 +80,17 @@ type IManagerListProps = {
   voteWeight: string
 }
 
+export enum managersPoolTableSorting {
+  DESC = 'desc',
+  ASC = 'asc'
+}
+
 const ManagersPoolTable = () => {
+  const [skip, setSkip] = React.useState(0)
+  const [totalManagers, setTotalManagers] = React.useState(0)
+  const [managersPoolSorting, setManagersPoolSorting] =
+    React.useState<managersPoolTableSorting>(managersPoolTableSorting.DESC)
+
   const [ManagersList, setManagersList] = React.useState<IManagerListProps[]>(
     []
   )
@@ -96,18 +111,19 @@ const ManagersPoolTable = () => {
     voteWeight: ''
   })
 
+  const take = 8
+
   const params = {
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30)
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    orderDirection: managersPoolSorting,
+    first: take,
+    skip
   }
 
   const { data } = useSWR<IManagerAddress>(
     [GET_MANAGERS_POOLS, params],
-    (query, { day, month }) =>
-      request(BACKEND_KASSANDRA, query, {
-        day,
-        month
-      })
+    (query, params) => request(BACKEND_KASSANDRA, query, params)
   )
 
   const usersWalletAddresses = data && data.managers.map(manager => manager.id)
@@ -131,7 +147,7 @@ const ManagersPoolTable = () => {
 
     const managerList = data.managers.map((manage, index) => {
       return {
-        rank: index + 1,
+        rank: skip + index + 1,
         address: manage.id,
         poolCount: manage.pool_count,
         valueManaged: Big(manage.total_value_locked_usd).toFixed(2, 2),
@@ -154,6 +170,7 @@ const ManagersPoolTable = () => {
       }
     })
 
+    setTotalManagers(data.totalManagers.length)
     setManagersList(managerList)
   }
 
@@ -180,6 +197,21 @@ const ManagersPoolTable = () => {
     })
   }
 
+  function handleClickChangeTvlSorting(currentValue: string) {
+    switch (currentValue) {
+      case managersPoolTableSorting.DESC:
+        setManagersPoolSorting(managersPoolTableSorting.ASC)
+        break
+
+      case managersPoolTableSorting.ASC:
+        setManagersPoolSorting(managersPoolTableSorting.DESC)
+        break
+
+      default:
+        break
+    }
+  }
+
   React.useEffect(() => {
     handleGetManagers(data)
   }, [data, voteWeights])
@@ -197,7 +229,20 @@ const ManagersPoolTable = () => {
             </ColumnTitle>
           </TH>
           <TH isView={inViewCollum === 1}>
-            <ColumnTitle align="right">Value Managed</ColumnTitle>
+            <THButtonSorting
+              onClick={() => handleClickChangeTvlSorting(managersPoolSorting)}
+              isRotateArrow={
+                managersPoolSorting === managersPoolTableSorting.ASC
+              }
+            >
+              Value Managed{' '}
+              <img
+                src="/assets/utilities/arrow-select-down.svg"
+                alt=""
+                width={10}
+                height={10}
+              />
+            </THButtonSorting>
           </TH>
           <TH isView={inViewCollum === 2}>
             <ColumnTitle align="right">Pools Managed</ColumnTitle>
@@ -226,7 +271,10 @@ const ManagersPoolTable = () => {
         </TRHead>
       </THead>
 
-      <TBody>
+      <TBodyWithHeight
+        tableRowsNumber={ManagersList?.length > 0 ? ManagersList?.length : take}
+        lineHeight={8.5}
+      >
         {ManagersList.length > 0 ? (
           ManagersList.map(manager => {
             return (
@@ -284,11 +332,22 @@ const ManagersPoolTable = () => {
             )
           })
         ) : (
-          <S.LoadingContainer>
+          <LoadingContainer>
             <Loading marginTop={0} />
-          </S.LoadingContainer>
+          </LoadingContainer>
         )}
-      </TBody>
+      </TBodyWithHeight>
+
+      <PaginationWrapper>
+        <Pagination
+          skip={skip}
+          take={take}
+          totalItems={totalManagers}
+          handlePageClick={({ selected }) => {
+            setSkip(selected * take)
+          }}
+        />
+      </PaginationWrapper>
 
       <ModalViewCoin
         isOpen={isOpen}

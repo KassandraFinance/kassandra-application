@@ -225,10 +225,7 @@ const CommunityPoolsTable = ({
         </S.TRHead>
       </S.THead>
 
-      <S.CommunityPoolsTBody
-        tableRowsNumber={pools?.length ?? 8}
-        lineHeight={8.6}
-      >
+      <S.TBodyWithHeight tableRowsNumber={pools?.length ?? 8} lineHeight={8.6}>
         {pools ? (
           pools.map(pool => {
             return (
@@ -363,7 +360,7 @@ const CommunityPoolsTable = ({
             <Loading marginTop={0} />
           </S.LoadingContainer>
         )}
-      </S.CommunityPoolsTBody>
+      </S.TBodyWithHeight>
 
       <ModalViewCoin
         isOpen={isOpen}
