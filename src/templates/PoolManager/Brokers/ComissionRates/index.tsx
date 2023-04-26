@@ -47,6 +47,7 @@ const ComissionRates = () => {
         <S.TotalValue>
           {Big(data?.manager?.pools[0]?.fee_join_manager || 0)
             .add(data?.manager?.pools[0]?.fee_join_broker || 0)
+            .mul(100)
             .toFixed()}
           %
         </S.TotalValue>
@@ -55,13 +56,23 @@ const ComissionRates = () => {
       <S.ValueContainer>
         <S.Value>Broker Comission</S.Value>
 
-        <S.Value>{data?.manager?.pools[0]?.fee_join_broker}%</S.Value>
+        <S.Value>
+          {Big(data?.manager?.pools[0]?.fee_join_broker ?? 0)
+            .mul(100)
+            .toFixed()}
+          %
+        </S.Value>
       </S.ValueContainer>
 
       <S.ValueContainer>
         <S.Value>Manager share</S.Value>
 
-        <S.Value>{data?.manager?.pools[0]?.fee_join_manager}%</S.Value>
+        <S.Value>
+          {Big(data?.manager?.pools[0]?.fee_join_manager ?? 0)
+            .mul(100)
+            .toFixed()}
+          %
+        </S.Value>
       </S.ValueContainer>
     </S.ComissionRates>
   )
