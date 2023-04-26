@@ -130,6 +130,7 @@ export const UserInfoContainer = styled.div<IUserInfoContainerProps>`
       flex-direction: ${isOpen ? 'row' : 'column'};
       justify-content: space-between;
 
+      height: 9.8rem;
       padding: 0;
 
       background-color: transparent;

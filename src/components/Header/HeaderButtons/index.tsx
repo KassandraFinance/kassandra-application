@@ -51,8 +51,8 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
     '137': {
       icon: polygonIcon,
       network: 'Polygon',
-      color: '#8247e5',
-      fillColor: '#8247e5'
+      color: '#7B3FE4',
+      fillColor: 'white'
     },
     notSuported: {
       icon: disconnectedIcon,
