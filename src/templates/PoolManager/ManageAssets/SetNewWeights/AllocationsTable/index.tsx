@@ -173,14 +173,14 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
           <S.ThHead>Current amount</S.ThHead>
           <S.ThHead>
             Weight
-            <Tippy content="TIPPY">
+            <Tippy content="The current allocation of each asset in this pool.">
               <img src="/assets/utilities/tooltip.svg" />
             </Tippy>
           </S.ThHead>
           <S.ThHead id="arrowIconContent" />
           <S.ThHead>
             Target Weight
-            <Tippy content="TIPPY">
+            <Tippy content="The new allocation that each asset should be after the rebalancing operation.">
               <img src="/assets/utilities/tooltip.svg" />
             </Tippy>
           </S.ThHead>

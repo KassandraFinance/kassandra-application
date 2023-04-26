@@ -76,6 +76,18 @@ export const TitleInfo = styled.div`
       line-height: 135%;
     }
 
+    a {
+      text-decoration: none;
+
+      &:hover {
+        span {
+          color: ${theme.colors.white};
+
+          transition: color 300ms ease-in-out;
+        }
+      }
+    }
+
     @media (max-width: 576px) {
       display: flex;
       flex-direction: column;

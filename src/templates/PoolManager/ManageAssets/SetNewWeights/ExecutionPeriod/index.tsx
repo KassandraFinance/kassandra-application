@@ -82,7 +82,12 @@ const ExecutionPeriod = () => {
 
   return (
     <S.ExecutionPeriod>
-      <h3>token weights rebalancing execution period</h3>
+      <div>
+        <h3>token weights rebalancing execution period</h3>
+        <Tippy content="Tooltip: Rebalancing operations don't happen instantly but linearly over a given time period. The longer you can wait for the process to happen, the more efficient it will be. You can use the fast option for small or urgent reallocations, but you should prefer the slowest when dealing with big reallocations.">
+          <img src="/assets/utilities/tooltip.svg" />
+        </Tippy>
+      </div>
 
       <S.ExecutionPeriodBody>
         <S.SelectPeriodCotainer>
@@ -98,9 +103,6 @@ const ExecutionPeriod = () => {
 
             <S.SelectPeriodContent>
               <p>72 hours</p>
-              <Tippy content="TIPPY">
-                <img src="/assets/utilities/tooltip.svg" />
-              </Tippy>
             </S.SelectPeriodContent>
           </S.SelectPeriod>
           <S.SelectPeriod>
@@ -115,9 +117,6 @@ const ExecutionPeriod = () => {
 
             <S.SelectPeriodContent>
               <p>24 hours</p>
-              <Tippy content="TIPPY">
-                <img src="/assets/utilities/tooltip.svg" />
-              </Tippy>
             </S.SelectPeriodContent>
           </S.SelectPeriod>
           <S.SelectPeriod>
@@ -132,9 +131,6 @@ const ExecutionPeriod = () => {
 
             <S.SelectPeriodContent>
               <p>1 hours</p>
-              <Tippy content="TIPPY">
-                <img src="/assets/utilities/tooltip.svg" />
-              </Tippy>
             </S.SelectPeriodContent>
           </S.SelectPeriod>
         </S.SelectPeriodCotainer>
