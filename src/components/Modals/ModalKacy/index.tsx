@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import useSWR from 'swr'
 import BigNumber from 'bn.js'
+import Web3 from 'web3'
 
 import { useAppSelector } from '../../../store/hooks'
 import { ERC20 } from '../../../hooks/useERC20Contract'
@@ -9,7 +10,6 @@ import { poolsKacy, allPools } from '../../../constants/pools'
 import { Staking, networks } from '../../../constants/tokenAddresses'
 import useStakingContract from '../../../hooks/useStakingContract'
 
-import { BNtoDecimal } from '../../../utils/numerals'
 import { abbreviateNumber } from '../../../utils/abbreviateNumber'
 
 import Kacy from './Kacy'
@@ -27,6 +27,15 @@ interface IKacyMarketDataProps {
   kacyPercentage: number;
 }
 
+const KACY_MULTICHAIN = [
+  {
+    chain: 43114
+  },
+  {
+    chain: 137
+  }
+]
+
 const ModalKacy = () => {
   const [isModalKacy, setIsModalKacy] = React.useState(false)
   const [isOpenModal, setIsOpenModal] = React.useState<boolean>(false)
@@ -43,17 +52,20 @@ const ModalKacy = () => {
   const [kacyUnclaimed, setKacyUnclaimed] = React.useState<BigNumber>(
     new BigNumber(0)
   )
-  const [kacyWallet, setKacyWallet] = React.useState<BigNumber>(
-    new BigNumber(0)
+  const [kacyWallet, setKacyWallet] = React.useState<Record<number, BigNumber>>(
+    {
+      [0]: new BigNumber(0)
+    }
   )
   const [kacyTotal, setKacyTotal] = React.useState<BigNumber>(new BigNumber(0))
 
   const { data } = useSWR('/api/overview')
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const ERC20Contract = ERC20(poolsKacy[0].address)
-  const { userInfo, earned } = useStakingContract(Staking)
+  const userWalletAddress = '0x4097B714eCD64bE697e61D4f04925B666c8e4369'
+  // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
+
+  const { userInfo, earned } = useStakingContract(Staking)
 
   const connect = process.browser && localStorage.getItem('walletconnect')
 
@@ -75,13 +87,21 @@ const ModalKacy = () => {
       return
     }
 
-    if (Number(chainId) !== networks[43114].chainId) {
-      return
-    }
-
     async function getKacyBalanceInWallet() {
-      const balanceToken = await ERC20Contract.balance(userWalletAddress)
-      setKacyWallet(balanceToken)
+      const kacyAmountInWallet: Record<number, BigNumber> = {}
+
+      for (const kacy of KACY_MULTICHAIN) {
+        const chain = networks[kacy.chain]
+
+        if (chain.kacyAddress) {
+          const contract = ERC20(chain.kacyAddress, new Web3(chain.rpc))
+          const balance = await contract.balance(userWalletAddress)
+
+          Object.assign(kacyAmountInWallet, { [kacy.chain]: balance ?? 0 })
+        }
+      }
+
+      setKacyWallet(kacyAmountInWallet)
     }
 
     async function getTokenAmountInPool(pid: number) {
@@ -121,12 +141,18 @@ const ModalKacy = () => {
   }, [userWalletAddress, chainId])
 
   React.useEffect(() => {
-    if (!userWalletAddress) {
-      return
-    }
-    let count = new BigNumber(0)
+    if (!userWalletAddress) return
 
-    count = count.add(kacyStaked).add(kacyUnclaimed).add(kacyWallet)
+    let count = new BigNumber(0)
+    let countInWallet = new BigNumber(0)
+
+    for (const kacy of KACY_MULTICHAIN) {
+      countInWallet = countInWallet.add(
+        kacyWallet[kacy.chain] ?? new BigNumber(0)
+      )
+    }
+
+    count = count.add(kacyStaked).add(kacyUnclaimed).add(countInWallet)
     setKacyTotal(count)
   }, [kacyStaked, kacyUnclaimed, kacyWallet])
 
@@ -147,26 +173,26 @@ const ModalKacy = () => {
           <Button
             className="kacyAmount"
             text={
-              userWalletAddress && Number(chainId) === networks[43114].chainId
+              userWalletAddress
                 ? isKacyZeroValue
                   ? 'Buy KACY'
-                  : `${abbreviateNumber(BNtoDecimal(kacyTotal, 18, 2))} KACY`
+                  : `${abbreviateNumber(
+                      kacyTotal
+                        .div(new BigNumber(10).pow(new BigNumber(18)))
+                        .toString()
+                    )} KACY`
                 : 'Buy KACY'
             }
             icon={<Image src={kacyIcon} width={18} height={18} />}
             backgroundBlack
-            onClick={() =>
-              isKacyZeroValue && Number(chainId) === networks[43114].chainId
-                ? setIsOpenModal(true)
-                : setIsModalKacy(true)
-            }
+            onClick={() => setIsModalKacy(true)}
           />
         )}
       </S.KacyAmount>
 
       {isModalKacy && (
         <Kacy
-          price={kacyMarketData.price}
+          price={kacyMarketData.price ?? 0}
           supply={kacyMarketData.supply}
           kacyStaked={kacyStaked}
           kacyUnclaimed={kacyUnclaimed}

@@ -18,6 +18,8 @@ export const Kacy =
     ? '0xf32398dae246C5f672B52A54e9B413dFFcAe1A44'
     : '0x1d7C6846F033e593b4f3f21C39573bb1b41D43Cb'
 
+export const KacyPoligon = '0x366e293A5CF90A0458D9fF9f3f92234dA598F62e'
+
 export const Staking =
   process.env.NEXT_PUBLIC_MASTER === '1'
     ? '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031'
@@ -75,6 +77,7 @@ type NetworkType = Record<
   {
     chainName: string,
     chainId: number,
+    kacyAddress?: string,
     rpc: string,
     coingecko: string,
     whiteList: string,
@@ -105,6 +108,7 @@ export const networks: NetworkType = {
     chainName: 'Polygon Mainnet',
     chainId: 137,
     rpc: 'https://polygon-rpc.com/',
+    kacyAddress: KacyPoligon,
     blockExplorer: 'https://polygonscan.com',
     coingecko: 'polygon-pos',
     whiteList: '',
@@ -120,6 +124,7 @@ export const networks: NetworkType = {
     chainId: 43114,
     chainName: 'Avalanche Mainnet',
     rpc: 'https://api.avax.network/ext/bc/C/rpc',
+    kacyAddress: Kacy,
     blockExplorer: 'https://snowtrace.io',
     coingecko: 'avalanche',
     whiteList: '',
