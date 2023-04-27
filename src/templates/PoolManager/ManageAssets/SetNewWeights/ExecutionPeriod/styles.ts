@@ -3,18 +3,24 @@ import { Label } from '../../../../../components/Inputs/InputRadio/styles'
 
 export const ExecutionPeriod = styled.div`
   ${({ theme }) => css`
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    padding: 2.4rem;
-    margin-bottom: 10rem;
     max-width: 36.1rem;
+    margin-bottom: 10rem;
+    padding: 2.4rem;
+    border-radius: 8px;
 
-    > h3 {
-      font-size: ${theme.font.sizes.font14};
-      font-weight: ${theme.font.weight.normal};
-      line-height: 1.6rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
+    background: rgb(255 255 255 / 0.05);
+
+    > div {
+      display: flex;
+      align-items: flex-end;
+
+      > h3 {
+        font-weight: ${theme.font.weight.normal};
+        font-size: ${theme.font.sizes.font14};
+        line-height: 1.6rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
     }
 
     @media (max-width: 1160px) {
@@ -29,6 +35,7 @@ export const ExecutionPeriodBody = styled.div`
     @media (min-width: 576px) and (max-width: 1160px) {
       display: flex;
     }
+
     /*
     @media (max-width: 576px) {
       flex-direction: column;
@@ -38,14 +45,13 @@ export const ExecutionPeriodBody = styled.div`
 
 export const SelectPeriodCotainer = styled.div`
   ${() => css`
-    margin-top: 2.4rem;
-    margin-bottom: 2.4rem;
-
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
 
     width: 100%;
+    margin-top: 2.4rem;
+    margin-bottom: 2.4rem;
 
     @media (min-width: 576px) and (max-width: 1160px) {
       margin-right: 2.4rem;
@@ -57,8 +63,8 @@ export const SelectPeriodCotainer = styled.div`
 export const SelectPeriod = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
 
     ${Label} {
       font-weight: ${theme.font.weight.light};
@@ -70,13 +76,13 @@ export const SelectPeriod = styled.div`
 export const SelectPeriodContent = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     gap: 0.8rem;
+    align-items: center;
 
     > p {
       color: #fcfcfc;
-      font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font16};
       line-height: 110%;
     }
   `}
@@ -86,28 +92,27 @@ export const PersonalizePeriodContainer = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
-    padding-top: 2.4rem;
-    width: 100%;
 
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    width: 100%;
+    padding-top: 2.4rem;
+    border-top: 1px solid rgb(255 255 255 / 0.3);
 
     span {
-      font-size: ${theme.font.sizes.font14};
+      margin-bottom: 1.6rem;
+
       font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font14};
       line-height: 1.6rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-
-      margin-bottom: 1.6rem;
     }
 
     @media (min-width: 576px) and (max-width: 1160px) {
       margin-top: 2.5rem;
-      padding-left: 2.4rem;
       padding-top: 0;
-
+      padding-left: 2.4rem;
       border-top: none;
-      border-left: 1px solid rgba(255, 255, 255, 0.3);
+      border-left: 1px solid rgb(255 255 255 / 0.3);
     }
   `}
 `
@@ -116,18 +121,19 @@ export const PersonalizePeriod = styled.div`
   ${({ theme }) => css`
     display: flex;
     justify-content: space-between;
+
     width: 100%;
 
     > input {
       max-width: 6.9rem;
     }
 
-    P {
-      font-size: ${theme.font.sizes.font16};
-      font-weight: ${theme.font.weight.light};
-      line-height: 135%;
-
+    p {
       padding-right: 2rem;
+
+      font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font16};
+      line-height: 135%;
     }
   `}
 `
@@ -135,8 +141,8 @@ export const PersonalizePeriod = styled.div`
 export const ErrorPeriod = styled.p`
   ${({ theme }) => css`
     color: #e8372c;
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
     line-height: 135%;
   `}
 `

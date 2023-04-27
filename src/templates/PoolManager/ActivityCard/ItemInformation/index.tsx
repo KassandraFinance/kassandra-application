@@ -3,6 +3,7 @@ import Jazzicon from 'react-jazzicon/dist/Jazzicon'
 import { jsNumberForAddress } from 'react-jazzicon'
 
 import * as S from './styles'
+import Link from 'next/link'
 
 interface IItemInformationProps {
   name: string;
@@ -27,7 +28,7 @@ const ItemInformation = (props: IItemInformationProps) => {
             <Jazzicon
               seed={jsNumberForAddress(
                 String(props.userWalletAddress) ||
-                  '0x1111111111111111111111111111111111111111'
+                '0x1111111111111111111111111111111111111111'
               )}
               diameter={32}
             />
@@ -54,7 +55,15 @@ const ItemInformation = (props: IItemInformationProps) => {
             ) : (
               <>
                 <p>{props.name}</p>
-                <span>{props.description}</span>
+                {props?.userWalletAddress ? (
+                  <Link href={`/profile/${props.userWalletAddress}`} passHref>
+                    <a>
+                      <span>{props.description}</span>
+                    </a>
+                  </Link>
+                ) : (
+                  <span>{props.description}</span>
+                )}
               </>
             )}
           </S.TitleInfo>
