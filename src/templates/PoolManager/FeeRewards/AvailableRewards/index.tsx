@@ -45,20 +45,28 @@ const AvailableRewards = ({ pool }: Props) => {
       try {
         const { feesToManager, feesToKassandra } =
           await managePool.getAumFeesToManagerAndKassandra(userWalletAddress)
+
         setFeesAum({ kassandra: feesToKassandra, manager: feesToManager })
       } catch (error) {
         console.log(error)
       }
     }
     getAvailableAumFee()
-  }, [managePool])
+  }, [managePool, userWalletAddress])
 
   return (
     <S.AvailableRewards>
       <S.AvailableAumFees>
         <h3>Available Rewards</h3>
         <S.ManagerFee>
-          <p>MANAGEMENT FEE ({BNtoDecimal(Big(pool.fee_aum).mul(100), 4)}%)</p>
+          <p>
+            MANAGEMENT FEE (
+            {BNtoDecimal(
+              Big(pool.fee_aum).sub(pool.fee_aum_kassandra).mul(100),
+              4
+            )}
+            %)
+          </p>
           <S.AmountFees>
             <span>
               $
@@ -96,7 +104,7 @@ const AvailableRewards = ({ pool }: Props) => {
         <p>ALL TIME REWARDS</p>
         <span>
           $
-          {Big(pool.total_fees_aum_usd)
+          {Big(pool.total_fees_aum_manager_usd)
             .add(pool.total_fees_join_manager_usd)
             .toFixed(2)}
         </span>

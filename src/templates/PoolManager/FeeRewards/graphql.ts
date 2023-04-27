@@ -15,7 +15,8 @@ export const GET_FEES = gql`
       total_fees_join_manager_usd
       total_fees_join_broker_usd
 
-      total_fees_aum_usd
+      total_fees_aum_manager_usd
+      total_fees_aum_kassandra_usd
       fee_aum
       fee_aum_kassandra
 
