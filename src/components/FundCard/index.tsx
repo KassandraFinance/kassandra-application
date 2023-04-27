@@ -185,7 +185,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
 
                 <S.FundStatusContainer>
                   <S.FundStatus>
-                    <span>${parseInt(infoPool.tvl)}K</span>
+                    <span>${infoPool.tvl}</span>
                     <h4>Tvl</h4>
                   </S.FundStatus>
 
