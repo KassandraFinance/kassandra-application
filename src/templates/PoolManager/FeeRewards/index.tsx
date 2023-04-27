@@ -40,7 +40,8 @@ export type Pool = {
   total_fees_join_manager_usd: string,
   total_fees_join_broker_usd: string,
 
-  total_fees_aum_usd: string,
+  total_fees_aum_manager_usd: string,
+  total_fees_aum_kassandra_usd: string,
   fee_aum: string,
   fee_aum_kassandra: string,
 
