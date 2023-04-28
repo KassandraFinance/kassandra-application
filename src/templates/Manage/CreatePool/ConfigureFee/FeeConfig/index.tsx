@@ -71,7 +71,7 @@ const FeeConfig = () => {
         inputValue = `${value}.${decimals.slice(0, 1)}`
       }
 
-      if (Number(inputValue) > 100) inputValue = '100'
+      if (Number(inputValue) > 9.5) inputValue = '9.5'
     }
 
     dispatch(setFee({ inputName: inputName, inputValue: inputValue }))
