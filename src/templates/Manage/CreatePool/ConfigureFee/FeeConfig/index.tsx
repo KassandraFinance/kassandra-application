@@ -294,7 +294,7 @@ const FeeConfig = () => {
                       form="poolCreationForm"
                       name="managementFee"
                       min={0}
-                      max={94.5}
+                      max={9.5}
                       step={0.01}
                       InputRangeValue={
                         feesData.managementFee.feeRate
@@ -366,14 +366,14 @@ const FeeConfig = () => {
         )}
       </S.CardWrapper>
 
-      <S.CardWrapper>
+      {/* <S.CardWrapper>
         <S.WithdrawFeeTitle>
           Withdraw fee | <strong>Always enabled</strong>
         </S.WithdrawFeeTitle>
         <S.CardWrapperParagraph>
           Kassandra DAO charges withdrawal fees with every redemption.
         </S.CardWrapperParagraph>
-      </S.CardWrapper>
+      </S.CardWrapper> */}
     </S.FeeConfig>
   )
 }
