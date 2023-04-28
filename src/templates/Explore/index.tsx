@@ -83,6 +83,7 @@ type GetCommunityPoolsType = {
 
 export default function Explore({ poolsKassandra }: IIndexProps) {
   const [loading, setLoading] = React.useState(true)
+  const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
   const [skip, setSkip] = React.useState(0)
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
@@ -112,6 +113,12 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
 
     return () => clearTimeout(timer)
   }, [])
+
+  React.useEffect(() => {
+    if (!data) return
+
+    setTotalPoolsTable(data?.pools[0].factory.pool_count)
+  }, [data])
 
   return (
     <>
@@ -172,7 +179,7 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
                 <Pagination
                   skip={skip}
                   take={take}
-                  totalItems={data?.pools[0].factory.pool_count ?? 1}
+                  totalItems={totalPoolsTable}
                   handlePageClick={({ selected }) => {
                     setSkip(selected * take)
                   }}
