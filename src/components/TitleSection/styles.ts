@@ -48,7 +48,7 @@ export const Title = styled.div<ITitleProps>`
 export const TitleContent = styled.div`
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.2rem;
   max-width: 100%;
 
   @media (max-width: 700px) {
