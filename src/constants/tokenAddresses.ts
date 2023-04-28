@@ -84,7 +84,8 @@ type NetworkType = Record<
     factory: string,
     privateInvestor: string,
     nativeCurrency: CurrencyDetails,
-    blockExplorer: string
+    blockExplorer: string,
+    kacyOFT: string
   }
 >
 
@@ -98,6 +99,7 @@ export const networks: NetworkType = {
     whiteList: '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57',
     factory: '0x9E3feC2E3AEc12572242dd1376BEd5E1F5bb8200',
     privateInvestor: '0xC8d8AeDBeDd1973b383D6f330C66D653F7DF11D6',
+    kacyOFT: '',
     nativeCurrency: {
       name: 'Goerli Test Token', //Ether
       symbol: 'ETH',
@@ -114,6 +116,7 @@ export const networks: NetworkType = {
     whiteList: '',
     factory: '',
     privateInvestor: '',
+    kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     nativeCurrency: {
       name: 'Matic Token',
       symbol: 'MATIC',
@@ -130,6 +133,7 @@ export const networks: NetworkType = {
     whiteList: '',
     factory: '',
     privateInvestor: '',
+    kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     nativeCurrency: {
       name: 'Avalanche',
       symbol: 'AVAX',

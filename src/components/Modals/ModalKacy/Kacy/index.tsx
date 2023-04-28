@@ -29,6 +29,7 @@ interface IKacyProps {
   kacyTotal: BigNumber;
   setIsModalKacy: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsModalBridge: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Kacy = ({
@@ -39,7 +40,8 @@ const Kacy = ({
   kacyWallet,
   kacyTotal,
   setIsModalKacy,
-  setIsOpenModal
+  setIsOpenModal,
+  setIsModalBridge
 }: IKacyProps) => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
@@ -228,15 +230,28 @@ const Kacy = ({
                 target="_blank"
               />
             ) : (
-              <Button
-                text="Buy KACY"
-                backgroundPrimary
-                fullWidth
-                onClick={() => {
-                  setIsOpenModal(true)
-                  setIsModalKacy(false)
-                }}
-              />
+              <>
+                {/*
+                <Button
+                  text="Buy KACY"
+                  backgroundPrimary
+                  fullWidth
+                  onClick={() => {
+                    setIsOpenModal(true)
+                    setIsModalKacy(false)
+                  }}
+                />
+                */}
+                <Button
+                  text="Bridge KACY"
+                  backgroundPrimary
+                  fullWidth
+                  onClick={() => {
+                    setIsModalBridge(true)
+                    setIsModalKacy(false)
+                  }}
+                />
+              </>
             )
           ) : chainId !== avalancheNetwork.chainId && userWalletAddress ? (
             <Button
