@@ -288,8 +288,9 @@ const PoolManager = () => {
 
                   {poolInfo.chain_id !== chainId ? (
                     <Button
-                      text={`Connect to ${networks[poolInfo.chain_id].chainName
-                        }`}
+                      text={`Connect to ${
+                        networks[poolInfo.chain_id].chainName
+                      }`}
                       backgroundSecondary
                       size="large"
                       onClick={() =>
@@ -336,8 +337,9 @@ const PoolManager = () => {
                 />
                 {
                   PoolManagerComponents[
-                  `${isSelectTab === 'fee-rewards' ? 'feeRewards' : isSelectTab
-                  }`
+                    `${
+                      isSelectTab === 'fee-rewards' ? 'feeRewards' : isSelectTab
+                    }`
                   ]
                 }
               </>

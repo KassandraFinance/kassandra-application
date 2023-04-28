@@ -57,8 +57,8 @@ type Result = {
 }
 
 const legend: Record<string, string> = {
-  feesJoinManager: 'MANAGED FEE',
-  feesAumManager: 'DEPOSIT FEE'
+  feesJoinManager: 'DEPOSIT FEE',
+  feesAumManager: 'MANAGED FEE'
 }
 
 const FeeRewards = () => {

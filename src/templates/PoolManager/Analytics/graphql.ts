@@ -152,6 +152,16 @@ export const GET_WITHDRAWS = gql`
   }
 `
 
+export const GET_JOINS = gql`
+  query ($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      volumes(where: { period: 3600, type: "join", timestamp_gt: $timestamp }) {
+        volume_usd
+      }
+    }
+  }
+`
+
 export const GET_SHARPRATIO = gql`
   query ($id: ID!, $timestamp: Int!) {
     pool(id: $id) {
@@ -169,6 +179,7 @@ export const GET_CHAINID = gql`
   query ($id: ID!) {
     pool(id: $id) {
       chain_id
+      unique_investors
     }
   }
 `
