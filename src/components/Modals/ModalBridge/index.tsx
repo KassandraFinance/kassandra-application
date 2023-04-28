@@ -153,6 +153,7 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
 
       const valueMult = Big(value).mul(Big(10).pow(18)).toFixed(0)
 
+      // eslint-disable-next-line prettier/prettier
       const kacyOFT = new web3.eth.Contract((OFT as unknown) as AbiItem, networks[chainId].kacyOFT);
 
       const fees = await kacyOFT.methods.estimateSendFee(lzChainIds[Number(id)], userWalletAddress, valueMult, false, []).call({
