@@ -61,8 +61,7 @@ const ModalKacy = () => {
 
   const { data } = useSWR('/api/overview')
 
-  const userWalletAddress = '0x4097B714eCD64bE697e61D4f04925B666c8e4369'
-  // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
 
   const { userInfo, earned } = useStakingContract(Staking)
