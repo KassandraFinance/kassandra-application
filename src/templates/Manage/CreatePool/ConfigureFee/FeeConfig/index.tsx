@@ -365,6 +365,15 @@ const FeeConfig = () => {
           </S.FeeContainer>
         )}
       </S.CardWrapper>
+
+      {/* <S.CardWrapper>
+        <S.WithdrawFeeTitle>
+          Withdraw fee | <strong>Always enabled</strong>
+        </S.WithdrawFeeTitle>
+        <S.CardWrapperParagraph>
+          Kassandra DAO charges withdrawal fees with every redemption.
+        </S.CardWrapperParagraph>
+      </S.CardWrapper> */}
     </S.FeeConfig>
   )
 }
