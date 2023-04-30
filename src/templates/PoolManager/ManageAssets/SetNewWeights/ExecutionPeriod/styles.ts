@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { Label } from '../../../../../components/Inputs/InputRadio/styles'
 
 export const ExecutionPeriod = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     max-width: 36.1rem;
     margin-bottom: 10rem;
     padding: 2.4rem;
@@ -10,22 +10,26 @@ export const ExecutionPeriod = styled.div`
 
     background: rgb(255 255 255 / 0.05);
 
-    > div {
-      display: flex;
-      align-items: flex-end;
-
-      > h3 {
-        font-weight: ${theme.font.weight.normal};
-        font-size: ${theme.font.sizes.font14};
-        line-height: 1.6rem;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-      }
-    }
-
     @media (max-width: 1160px) {
       min-width: 100%;
       margin-bottom: 15rem;
+    }
+  `}
+`
+
+export const ExecutionTitle = styled.div`
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    h3 {
+      font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font14};
+      line-height: 1.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
     }
   `}
 `
@@ -35,11 +39,6 @@ export const ExecutionPeriodBody = styled.div`
     @media (min-width: 576px) and (max-width: 1160px) {
       display: flex;
     }
-
-    /*
-    @media (max-width: 576px) {
-      flex-direction: column;
-    } */
   `}
 `
 
