@@ -15,6 +15,7 @@ import { abbreviateNumber } from '../../../utils/abbreviateNumber'
 import Kacy from './Kacy'
 import ModalBuyKacyOnPangolin from '../ModalBuyKacyOnPangolin'
 import Button from '../../Button'
+import ModalBridge from '../ModalBridge'
 
 import kacyIcon from '../../../../public/assets/logos/kacy-96.svg'
 
@@ -39,6 +40,7 @@ const KACY_MULTICHAIN = [
 const ModalKacy = () => {
   const [isModalKacy, setIsModalKacy] = React.useState(false)
   const [isOpenModal, setIsOpenModal] = React.useState<boolean>(false)
+  const [isModalBridge, setIsModalBridge] = React.useState(false)
   const [kacyMarketData, setKacyMarketData] =
     React.useState<IKacyMarketDataProps>({
       price: 0,
@@ -199,6 +201,7 @@ const ModalKacy = () => {
           kacyTotal={kacyTotal}
           setIsModalKacy={setIsModalKacy}
           setIsOpenModal={setIsOpenModal}
+          setIsModalBridge={setIsModalBridge}
         />
       )}
 
@@ -208,6 +211,8 @@ const ModalKacy = () => {
           setModalOpen={setIsOpenModal}
         />
       )}
+
+      {isModalBridge ? <ModalBridge setIsModalOpen={setIsModalBridge} /> : null}
     </>
   )
 }
