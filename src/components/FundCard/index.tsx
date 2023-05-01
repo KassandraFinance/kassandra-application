@@ -1,15 +1,19 @@
 import React from 'react'
-import Big from 'big.js'
+import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
+import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
-import Link from 'next/link'
+
+import { useAppSelector } from '@/store/hooks'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
 
-import { BNtoDecimal } from '../../utils/numerals'
+import { getWeightsNormalizedV2 } from '../../utils/updateAssetsToV2'
+import { BNtoDecimal, calcChange } from '../../utils/numerals'
 
 import FundAreaChart from './FundAreaChart'
 import FundBarChart from './FundBarChart'
@@ -30,9 +34,10 @@ interface InfoPool {
 
 interface IFundCardProps {
   poolAddress: string;
+  link?: string;
 }
 
-const FundCard = ({ poolAddress }: IFundCardProps) => {
+const FundCard = ({ poolAddress, link }: IFundCardProps) => {
   const { trackEventFunction } = useMatomoEcommerce()
 
   const dateNow = new Date()
@@ -66,15 +71,10 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
     return Number((weight * 100).toFixed(2))
   }
 
-  function calcChange(newPrice: number, oldPrice: number) {
-    const calc = ((newPrice - oldPrice) / oldPrice) * 100
-    return calc ? calc.toFixed(2) : '0'
-  }
-
   React.useEffect(() => {
     const arrChangePrice = []
 
-    if (data) {
+    if (data?.pool) {
       const newPrice = data?.pool?.price_candles.map(
         (item: { timestamp: number, close: string }) => {
           return {
@@ -104,7 +104,19 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
       })
 
       setPrice(newPrice)
-      setPoolInfo(data.pool.underlying_assets)
+      if (data.pool.pool_version === 2) {
+        try {
+          const poolInfo = getWeightsNormalizedV2(
+            data.pool.weight_goals,
+            data.pool.underlying_assets
+          )
+          setPoolInfo(poolInfo ?? data.pool.underlying_assets)
+        } catch (error) {
+          setPoolInfo(data.pool.underlying_assets)
+        }
+      } else {
+        setPoolInfo(data.pool.underlying_assets)
+      }
     }
   }, [data])
 
@@ -123,130 +135,128 @@ const FundCard = ({ poolAddress }: IFundCardProps) => {
   return (
     <>
       {infoPool.price > '0.1' ? (
-        <S.CardContainer>
-          <Link href={`/pool/${poolAddress}`} passHref>
-            <a
-            // onClick={() =>
-            //   trackEventFunction(
-            //     'click-on-link',
-            //     `${data.pool.symbol.toLocaleLowerCase()}`,
-            //     'feature-funds'
-            //   )
-            // }
+        <S.CardContainer isLink={!!link}>
+          <Link href={link ?? ''} passHref>
+            <S.CardLinkContent
+              onClick={() =>
+                trackEventFunction(
+                  'click-on-link',
+                  `${data.pool.symbol.toLocaleLowerCase()}`,
+                  'feature-funds'
+                )
+              }
             >
-              <>
-                <S.CardHeader>
-                  <S.ImageContainer>
-                    <TokenWithNetworkImage
-                      tokenImage={{
-                        url: data.pool?.logo,
-                        height: 36,
-                        width: 36
-                      }}
-                      networkImage={{
-                        url: data.pool.chain?.logo,
-                        height: 16,
-                        width: 16
-                      }}
-                      blockies={{
-                        size: 8,
-                        scale: 5,
-                        seedName: data.pool.name ?? ''
-                      }}
-                    />
-                  </S.ImageContainer>
+              <S.CardHeader>
+                <S.ImageContainer>
+                  <TokenWithNetworkImage
+                    tokenImage={{
+                      url: data.pool?.logo,
+                      height: 36,
+                      width: 36
+                    }}
+                    networkImage={{
+                      url: data.pool.chain?.logo,
+                      height: 16,
+                      width: 16
+                    }}
+                    blockies={{
+                      size: 8,
+                      scale: 5,
+                      seedName: data.pool.name ?? ''
+                    }}
+                  />
+                </S.ImageContainer>
 
-                  <S.FundPrice>
-                    <h3>Price</h3>
-                    <span>
-                      {data?.pool
-                        ? `$${parseFloat(infoPool.price).toFixed(2)}`
-                        : '...'}
-                    </span>
-                  </S.FundPrice>
-                </S.CardHeader>
+                <S.FundPrice>
+                  <h3>Price</h3>
+                  <span>
+                    {data?.pool
+                      ? `$${parseFloat(infoPool.price).toFixed(2)}`
+                      : '...'}
+                  </span>
+                </S.FundPrice>
+              </S.CardHeader>
 
-                <S.CardBody>
-                  <S.FundName>
-                    <h3>{data?.pool?.name}</h3>
-                    <span>by {data?.pool?.foundedBy}</span>
-                  </S.FundName>
+              <S.CardBody>
+                <S.FundName>
+                  <h3>{data?.pool?.name}</h3>
+                  <span>by {data?.pool?.foundedBy ?? 'Community'}</span>
+                </S.FundName>
 
-                  <S.FundStatusContainer>
-                    <S.FundStatus>
-                      <span>${parseInt(infoPool.tvl)}K</span>
-                      <h4>Tvl</h4>
-                    </S.FundStatus>
+                <S.FundStatusContainer>
+                  <S.FundStatus>
+                    <span>${infoPool.tvl}</span>
+                    <h4>Tvl</h4>
+                  </S.FundStatus>
 
-                    <S.FundStatus>
-                      <div>
-                        <span
-                          style={{
-                            color:
-                              parseFloat(changeWeek[1]) >= 0
-                                ? '#5EE56B'
-                                : '#EA3224'
-                          }}
-                        >
-                          {changeWeek[1]}%
-                        </span>
-                        <Image
-                          src={
+                  <S.FundStatus>
+                    <div>
+                      <span
+                        style={{
+                          color:
                             parseFloat(changeWeek[1]) >= 0
-                              ? arrowAscend
-                              : arrowDescend
-                          }
-                          width={16}
-                          height={16}
-                        />
-                      </div>
-                      <h4>monthly</h4>
-                    </S.FundStatus>
+                              ? '#5EE56B'
+                              : '#EA3224'
+                        }}
+                      >
+                        {changeWeek[1]}%
+                      </span>
+                      <Image
+                        src={
+                          parseFloat(changeWeek[1]) >= 0
+                            ? arrowAscend
+                            : arrowDescend
+                        }
+                        width={16}
+                        height={16}
+                      />
+                    </div>
+                    <h4>monthly</h4>
+                  </S.FundStatus>
 
-                    <S.FundStatus>
-                      <div>
-                        <span
-                          style={{
-                            color:
-                              parseFloat(changeWeek[0]) >= 0
-                                ? '#5EE56B'
-                                : '#EA3224'
-                          }}
-                        >
-                          {changeWeek[0]}%
-                        </span>
-                        <Image
-                          src={
+                  <S.FundStatus>
+                    <div>
+                      <span
+                        style={{
+                          color:
                             parseFloat(changeWeek[0]) >= 0
-                              ? arrowAscend
-                              : arrowDescend
-                          }
-                          width={16}
-                          height={16}
-                        />
-                      </div>
-                      <h4>24h</h4>
-                    </S.FundStatus>
-                  </S.FundStatusContainer>
+                              ? '#5EE56B'
+                              : '#EA3224'
+                        }}
+                      >
+                        {changeWeek[0]}%
+                      </span>
+                      <Image
+                        src={
+                          parseFloat(changeWeek[0]) >= 0
+                            ? arrowAscend
+                            : arrowDescend
+                        }
+                        width={16}
+                        height={16}
+                      />
+                    </div>
+                    <h4>24h</h4>
+                  </S.FundStatus>
+                </S.FundStatusContainer>
 
-                  <FundAreaChart areaChartData={price} color="#E843C4" />
+                <FundAreaChart areaChartData={price} color="#E843C4" />
 
-                  <S.TokenIconsContainer>
-                    <FundTokenIcons poolInfo={poolInfo ?? []} />
-                    {poolInfo.length > 3 && (
-                      <p>
-                        +{poolInfo.length - 3}
-                        <span> more</span>
-                      </p>
-                    )}
-                  </S.TokenIconsContainer>
-
-                  {data && (
-                    <FundBarChart poolObject={poolObject} poolInfo={poolInfo} />
+                <S.TokenIconsContainer>
+                  <FundTokenIcons poolInfo={poolInfo ?? []} />
+                  {poolInfo.length > 3 && (
+                    <p>
+                      +{poolInfo.length - 3}
+                      <span> more</span>
+                    </p>
                   )}
-                </S.CardBody>
-              </>
-            </a>
+                </S.TokenIconsContainer>
+
+                {data && (
+                  <FundBarChart poolObject={poolObject} poolInfo={poolInfo} />
+                )}
+              </S.CardBody>
+            </S.CardLinkContent>
           </Link>
         </S.CardContainer>
       ) : null}

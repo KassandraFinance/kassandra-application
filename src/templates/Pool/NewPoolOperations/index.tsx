@@ -45,6 +45,12 @@ const NewPoolOperations = () => {
     setInputCheckedBarMobile('Disable')
   }, [modalWalletActive])
 
+  React.useEffect(() => {
+    if (!tokenSelectionActive) return
+
+    dispatch(setTokenSelectionActive(false))
+  }, [])
+
   return (
     <S.NewPoolOperations>
       {isOpenPoolOperationMobile && (

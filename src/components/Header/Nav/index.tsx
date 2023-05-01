@@ -35,6 +35,7 @@ const Nav = ({
   const { trackEventFunction } = useMatomoEcommerce()
 
   const router = useRouter()
+  const path = router.asPath.split('/')
 
   function handleClickOverlay() {
     setIsShowMenu(false)
@@ -85,7 +86,16 @@ const Nav = ({
             Stake
           </S.MenuLink>
         </Link>
-        {/* <Link href="/manage" passHref> */}
+        {/* <Link href="/manage" passHref>
+          <S.MenuLink
+            onClick={() => {
+              trackEventFunction('click-on-link', 'manage', 'header')
+            }}
+            active={path[1] === 'manage'}
+          >
+            Manage
+          </S.MenuLink>
+        </Link> */}
         <S.MenuLink
           onClick={() => {
             setIsModalWaitingList(true)
@@ -95,7 +105,6 @@ const Nav = ({
         >
           Manage
         </S.MenuLink>
-        {/* </Link> */}
         <DropdownMenu
           nameOnHeader="DAO"
           isActive={

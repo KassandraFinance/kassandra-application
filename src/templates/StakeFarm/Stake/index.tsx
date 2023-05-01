@@ -1,8 +1,7 @@
-/* eslint-disable prettier/prettier */
 import React from 'react'
 import BigNumber from 'bn.js'
 
-import { chains, Staking } from '../../../constants/tokenAddresses'
+import { Staking } from '../../../constants/tokenAddresses'
 
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import useStakingContract from '../../../hooks/useStakingContract'
@@ -24,10 +23,7 @@ const Stake = () => {
   const { trackCategoryPageView } = useMatomoEcommerce()
   const { balance } = useStakingContract(Staking)
 
-  const { userWalletAddress, chainId } = useAppSelector(state => state)
-
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
+  const { userWalletAddress } = useAppSelector(state => state)
 
   React.useEffect(() => {
     trackCategoryPageView([
@@ -37,7 +33,7 @@ const Stake = () => {
   }, [])
 
   React.useEffect(() => {
-    if (userWalletAddress.length === 0 || Number(chainId) !== chain.chainId) {
+    if (userWalletAddress.length === 0) {
       return
     }
 
@@ -55,6 +51,7 @@ const Stake = () => {
 
     calc()
   }, [userWalletAddress])
+
   return (
     <S.GridStaking>
       {process.env.NEXT_PUBLIC_MASTER === '1'

@@ -5,6 +5,7 @@ export const GET_POOL = gql`
     pool(id: $id) {
       price_usd
       decimals
+      fee_exit
     }
   }
 `

@@ -1,7 +1,7 @@
 import Image from 'next/image'
 
 import changeChain from '../../../utils/changeChain'
-import { chains } from '../../../constants/tokenAddresses'
+import { networks } from '../../../constants/tokenAddresses'
 
 import Modal from '../Modal'
 import Overlay from '../../Overlay'
@@ -24,6 +24,9 @@ const ModalChooseNetwork = ({
     setIsChooseNetwork(false)
   }
 
+  const avalancheNetwork = networks[43114]
+  const polygonNetwork = networks[137]
+
   return (
     <S.ModalChooseNetwork>
       <Overlay onClick={handleCloseModal} isOpen={isOpen} />
@@ -31,7 +34,15 @@ const ModalChooseNetwork = ({
       <Modal title="Choose Network" onCloseModal={handleCloseModal}>
         <S.ModalContent>
           <S.WrapperIconsBackGround
-            onClick={() => changeChain(chains.avalanche)}
+            onClick={() =>
+              changeChain({
+                chainId: avalancheNetwork.chainId,
+                chainName: avalancheNetwork.chainName,
+                rpcUrls: [avalancheNetwork.rpc],
+                nativeCurrency: avalancheNetwork.nativeCurrency,
+                callbackFunction: handleCloseModal
+              })
+            }
           >
             <S.WrapperIcons>
               <Image src={avalanche} width={24} height={24} />
@@ -41,15 +52,20 @@ const ModalChooseNetwork = ({
           </S.WrapperIconsBackGround>
 
           <S.WrapperIconsBackGround
-            onClick={() => changeChain(chains.polygon)}
-            disabled
+            onClick={() =>
+              changeChain({
+                chainId: polygonNetwork.chainId,
+                chainName: polygonNetwork.chainName,
+                rpcUrls: [polygonNetwork.rpc],
+                nativeCurrency: polygonNetwork.nativeCurrency,
+                callbackFunction: handleCloseModal
+              })
+            }
           >
             <S.WrapperIcons>
               <Image src={polygon} width={24} height={24} />
 
               <span>Polygon</span>
-
-              <span>Coming soon...</span>
             </S.WrapperIcons>
           </S.WrapperIconsBackGround>
         </S.ModalContent>

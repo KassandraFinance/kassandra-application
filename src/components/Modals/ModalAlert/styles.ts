@@ -1,8 +1,15 @@
 import styled, { css } from 'styled-components'
+import { Modal } from '../Modal/styles'
+import { Overlay } from '../../Overlay/styles'
 import theme from '../../../styles/theme'
 
 export const ModalAlert = styled.div`
-  ${() => css``}
+  ${() => css`
+    ${Modal},
+    ${Overlay} {
+      z-index: 1051;
+    }
+  `}
 `
 
 export const ModalBody = styled.div`

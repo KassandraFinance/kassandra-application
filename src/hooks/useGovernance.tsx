@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
 import React from 'react'
 import { AbiItem } from "web3-utils"
+import Web3 from 'web3'
 
-import web3 from '../utils/web3'
 import { TransactionCallback } from '../utils/txWait'
 
 import Governance from "../constants/abi/Governance.json"
+import { networks } from '@/constants/tokenAddresses'
 
 import approved from '../../public/assets/notificationStatus/approved.svg'
 import cancelled from '../../public/assets/notificationStatus/cancelled.svg'
@@ -26,6 +27,7 @@ const valuesStateProposal = [
 ]
 
 const useGovernance = (address: string) => {
+  const web3 = new Web3(networks[43114].rpc)
   const [contract, setContract] = React.useState(new web3.eth.Contract((Governance as unknown) as AbiItem, address))
 
   React.useEffect(() => {

@@ -3,14 +3,13 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-import { chains, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
+import { networks, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
 import { useAppSelector } from '../../../store/hooks'
 
 import useConnect from '../../../hooks/useConnect'
 
 import { GET_ALL_PROPOSALS } from './graphql'
 
-import Header from '../../../components/Header'
 import TitleSection from '../../../components/TitleSection'
 import Breadcrumb from '../../../components/Breadcrumb'
 import BreadcrumbItem from '../../../components/Breadcrumb/BreadcrumbItem'
@@ -30,8 +29,7 @@ const Proposals = () => {
   const { chainId, userWalletAddress } = useAppSelector(state => state)
   const { metamaskInstalled } = useConnect()
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
+  const chain = networks[43114]
 
   const [skip, setSkip] = React.useState<number>(0)
 
@@ -47,7 +45,6 @@ const Proposals = () => {
 
   return (
     <>
-      <Header />
       <Breadcrumb>
         <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem href="/gov">Governance</BreadcrumbItem>

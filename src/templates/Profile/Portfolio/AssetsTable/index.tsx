@@ -1,19 +1,13 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
-
-import { request } from 'graphql-request'
-
-import {
-  SUBGRAPH_URL,
-  ProductDetails
-} from '../../../../constants/tokenAddresses'
-import { GET_CHART } from './graphql'
+import Blockies from 'react-blockies'
 
 import { BNtoDecimal } from '../../../../utils/numerals'
+
+import comingSoonIcon from '@assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 
@@ -36,154 +30,78 @@ export interface IParamsType {
 }
 
 interface IAssetsTableProps {
-  assets: ProductDetails[];
-  balanceFunds: IBalanceType;
+  pools: PoolProps[];
 }
 
-export const AssetsTable = ({ assets, balanceFunds }: IAssetsTableProps) => {
+type PoolProps = {
+  id: string,
+  address: string,
+  name: string,
+  symbol: string,
+  logo: string,
+  changeDay: string,
+  changeMonth: string,
+  price: string,
+  tvl: string,
+  balance: string,
+  balanceInUSD: string,
+  logoChain: string
+}
+
+export const AssetsTable = ({ pools }: IAssetsTableProps) => {
   const router = useRouter()
 
-  const [changeDay, setChangeDay] = React.useState<IChangeType>({})
-  const [changeMonth, setChangeMonth] = React.useState<IChangeType>({})
-  const [price, setPrice] = React.useState<IPriceType>({})
-  const [tvl, setTvl] = React.useState<IPriceType>({})
-  const [params, setParams] = React.useState<IParamsType>({
-    id: [],
-    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30)
-  })
-
-  const { data } = useSWR([GET_CHART, params], (query, params) =>
-    request(SUBGRAPH_URL, query, params)
-  )
-
-  function calcChange(newPrice: number, oldPrice: number) {
-    const calc = ((newPrice - oldPrice) / oldPrice) * 100
-    return calc ? calc.toFixed(2) : '0'
-  }
-
-  React.useEffect(() => {
-    const arr: string[] = []
-    assets.forEach(asset => {
-      arr.push(asset.sipAddress)
-    })
-
-    setParams(prevState => ({
-      ...prevState,
-      id: arr
-    }))
-  }, [assets])
-
-  React.useEffect(() => {
-    if (typeof data === undefined) {
-      return
-    }
-
-    data?.pools?.forEach(
-      (element: {
-        now: { close: number }[],
-        day: { close: number }[],
-        month: { close: number }[],
-        id: string,
-        price_usd: string,
-        total_value_locked_usd: string
-      }) => {
-        const changeDay = calcChange(
-          element.now[0]?.close,
-          element.day[0]?.close
-        )
-
-        const changeMonth = calcChange(
-          element.now[0]?.close,
-          element.month[0]?.close
-        )
-
-        setChangeDay(prevState => ({
-          ...prevState,
-          [element.id]: changeDay
-        }))
-
-        setChangeMonth(prevState => ({
-          ...prevState,
-          [element.id]: changeMonth
-        }))
-
-        setPrice(prevState => ({
-          ...prevState,
-          [element.id]: element.price_usd
-        }))
-
-        setTvl(prevState => ({
-          ...prevState,
-          [element.id]: element.total_value_locked_usd
-        }))
-      }
-    )
-  }, [data])
-
-  const Trs = assets.map((asset, index: number) => {
+  const Trs = pools.map(pool => {
     return (
       <S.Tr
-        key={index}
+        key={pool.id}
         onClick={() => {
-          router.push(`/pool/${asset.symbol.toLowerCase()}`)
+          router.push(`/pool/${pool.id.toLowerCase()}`)
         }}
       >
         <S.Td>
           <S.ProductWrapper>
-            <S.ImageWrapper>
-              <Image src={asset.fundIcon} layout="responsive" />
-            </S.ImageWrapper>
+            <S.Imagecontainer>
+              <S.ImageWrapper>
+                {pool.logo ? (
+                  <img src={pool.logo} />
+                ) : (
+                  <Blockies size={8} scale={9} seed={pool.name ?? ''} />
+                )}
+              </S.ImageWrapper>
+
+              <S.ChainLogoWrapper>
+                <Image src={pool.logoChain || comingSoonIcon} layout="fill" />
+              </S.ChainLogoWrapper>
+            </S.Imagecontainer>
             <S.FundWrapper>
-              <span>{asset.name}</span>
-              <span>{asset.symbol}</span>
+              <span>{pool.name}</span>
+              <span>{pool.symbol}</span>
             </S.FundWrapper>
           </S.ProductWrapper>
         </S.Td>
+        <S.Td>${parseFloat(pool.price).toFixed(2)}</S.Td>
+        <S.Td>${pool.tvl ? BNtoDecimal(Big(pool.tvl), 2) : '0'}</S.Td>
         <S.Td>
-          <S.NetworkWrapper>
-            <Image src="/assets/logos/avalanche.svg" width={16} height={16} />
-          </S.NetworkWrapper>
-        </S.Td>
-        <S.Td>${parseFloat(price[asset.sipAddress]).toFixed(2)}</S.Td>
-        <S.Td>
-          $
-          {tvl[asset.sipAddress]
-            ? BNtoDecimal(Big(tvl[asset.sipAddress]), 2)
-            : '0'}
-        </S.Td>
-        <S.Td>
-          <S.Change change={parseFloat(changeMonth[asset.sipAddress])}>
-            {changeMonth[asset.sipAddress]}%
+          <S.Change change={parseFloat(pool.changeMonth)}>
+            {pool.changeMonth}%
           </S.Change>
         </S.Td>
         <S.Td>
-          <S.Change change={parseFloat(changeDay[asset.sipAddress])}>
-            {changeDay[asset.sipAddress]}%
+          <S.Change change={parseFloat(pool.changeDay)}>
+            {pool.changeDay}%
           </S.Change>
         </S.Td>
         <S.Td>
           <S.FlexWrapper>
             <div>
-              {balanceFunds[asset.sipAddress]
-                ? BNtoDecimal(
-                    Big(balanceFunds[asset.sipAddress].toString()).div(
-                      Big(10).pow(18)
-                    ),
-                    2
-                  )
-                : 0}{' '}
-              <span>{asset.symbol}</span>
+              {pool.balance ? BNtoDecimal(Big(pool.balance), 2) : 0}{' '}
+              <span>{pool.symbol}</span>
             </div>
             <span>
               $
-              {balanceFunds[asset.sipAddress] && price[asset.sipAddress]
-                ? BNtoDecimal(
-                    Big(balanceFunds[asset.sipAddress].toString())
-                      .div(Big(10).pow(18))
-                      .mul(Big(price[asset.sipAddress])),
-                    2
-                  )
+              {pool.balance && pool.price
+                ? BNtoDecimal(Big(pool.balanceInUSD), 2)
                 : 0}
             </span>
           </S.FlexWrapper>
@@ -198,7 +116,6 @@ export const AssetsTable = ({ assets, balanceFunds }: IAssetsTableProps) => {
         <S.THead>
           <S.Tr>
             <S.Th>Product Name</S.Th>
-            <S.Th>Network</S.Th>
             <S.Th>Price</S.Th>
             <S.Th>TVL</S.Th>
             <S.Th>This Month</S.Th>

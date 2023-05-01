@@ -36,23 +36,20 @@ const Form = ({
   typeWithdraw
 }: IFormProps) => {
   const { pool, tokenList1Inch } = useAppSelector(state => state)
-
-  const poolController = ''
-  const poolId = pool.id.slice(pool.chainId.toString().length)
+  const poolId = pool.id.slice(pool.chain_id.toString().length)
 
   const poolInfo = {
     id: poolId,
     address: pool.address,
-    controller: poolController,
-    vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
-    // vault: pool.vault,
+    controller: pool.controller,
+    vault: pool.vault,
     tokens: pool.underlying_assets,
     tokensAddresses: pool.underlying_assets_addresses,
   }
 
   const tokenAddresses = tokenList1Inch.map(token => token.address)
   const { priceToken } = useCoingecko(
-    platform[pool.chainId],
+    platform[pool.chain_id],
     pool.chain.addressWrapped.toLowerCase(),
     tokenAddresses
   )

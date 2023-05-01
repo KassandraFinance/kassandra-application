@@ -6,7 +6,7 @@ import { Contract } from 'web3-eth-contract';
 
 import ProxyInvestV2 from "../constants/abi/ProxyInvestV2.json"
 import BalancerHelpers from "../constants/abi/BalancerHelpers.json"
-import ManagedPoolController from "../constants/abi/ManagedPoolController.json"
+import KassandraController from "../constants/abi/KassandraController.json"
 import VaultBalancer from "../constants/abi/VaultBalancer.json"
 
 import { CalcAllOutGivenPoolInParams, CalcAmountOutParams, CalcSingleOutGivenPoolInParams, EstimatedGasParams, ExitSwapPoolAllTokenAmountInParams, ExitSwapPoolAmountInParams, IPoolInfoProps, JoinSwapAmountInParams } from './IOperation';
@@ -28,13 +28,13 @@ export default class operationV2 {
   poolInfo: IPoolInfoProps;
   managedPoolController: Contract;
   vaultBalancer: Contract;
-  referral = "0x0000000000000000000000000000000000000000";
+  referral = "0xfAEf901D6c0F54972663Af404DEf71dE195C608b";
 
   constructor(proxyAddress: string, balancerHelpers: string, _poolInfo: IPoolInfoProps) {
     // eslint-disable-next-line prettier/prettier
     this.contract = new web3.eth.Contract((ProxyInvestV2 as unknown) as AbiItem, proxyAddress)
     this.balancerHelpersContract = new web3.eth.Contract((BalancerHelpers as unknown) as AbiItem, balancerHelpers)
-    this.managedPoolController = new web3.eth.Contract((ManagedPoolController as unknown) as AbiItem, _poolInfo.controller)
+    this.managedPoolController = new web3.eth.Contract((KassandraController as unknown) as AbiItem, _poolInfo.controller)
     this.vaultBalancer = new web3.eth.Contract((VaultBalancer as unknown) as AbiItem, _poolInfo.vault)
     this.poolInfo = _poolInfo
     this.contractAddress = proxyAddress
@@ -43,18 +43,15 @@ export default class operationV2 {
 
   createRequestJoinInPool(tokenInAddress: string, newAmountTokenIn: string, minAmountOut: BigNumber) {
     const joinKind = 1
-    // const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
-    const assets = this.poolInfo.tokensAddresses
+    const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
     const amountsIn = this.poolInfo.tokensAddresses.map(item => {
       if (item.toLowerCase() === tokenInAddress.toLowerCase()) {
         return newAmountTokenIn
       }
       return '0'
     })
-    // const maxAmountsIn = [0, ...amountsIn]
-    const maxAmountsIn = amountsIn
-    const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256[]', 'uint256'], [joinKind, maxAmountsIn, minAmountOut])
-
+    const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256[]', 'uint256'], [joinKind, amountsIn, minAmountOut])
+    const maxAmountsIn = [0, ...amountsIn]
     const request = {
       assets,
       maxAmountsIn,
@@ -77,33 +74,32 @@ export default class operationV2 {
     let transactionError
     const request = this.createRequestJoinInPool(tokenSelected.tokenInAddress, tokenSelected.newAmountTokenIn.toString(), minAmountOut)
     try {
-      const response = await this.balancerHelpersContract.methods.queryJoin(
+      let response = await this.balancerHelpersContract.methods.queryJoin(
         this.poolInfo.id,
-        userWalletAddress,
-        userWalletAddress,
+        this.contractAddress,
+        this.contractAddress,
         request
       ).call({ from: userWalletAddress });
 
-      investAmountOut = response.bptOut
+      const totalBptOut = Big(response.bptOut)
+      const feesResponse = await this.managedPoolController.methods.getJoinFees().call()
+      const amountToManager = totalBptOut.mul(feesResponse.feesToManager).div(1e18.toString());
+      const amountToReferral = totalBptOut.mul(feesResponse.feesToReferral).div(1e18.toString());
 
-      await this.contract.methods.joinPool(
-        // userWalletAddress,
-        // this.referral,
-        // this.poolInfo.controller,
-        this.poolInfo.id,
+      investAmountOut = totalBptOut.sub(amountToManager.add(amountToReferral))
+
+      response = await this.contract.methods.joinPool(
+        userWalletAddress,
+        this.referral,
+        this.poolInfo.controller,
         request
       ).call({ from: userWalletAddress })
 
-      // const feesResponse = await this.managedPoolController.methods.getJoinFees().call()
-
-      // const amountOut = response.bptOut
-      // const amountToManager = amountOut.mul(feesResponse.feesToManager).div(1e18.toString());
-      // const amountToReferral = amountOut.mul(feesResponse.feesToReferral).div(1e18.toString());
-      // const amountToInvestor = amountOut.sub(amountToManager.add(amountToReferral))
+      investAmountOut = response.amountToRecipient
 
       return {
-      investAmountOut,
-      transactionError
+        investAmountOut,
+        transactionError
     }
     } catch (error: any) {
       const errorStr = error.toString().match(/(BAL#\d{0,3})/)
@@ -140,14 +136,12 @@ export default class operationV2 {
 
     if (hasTokenInPool) {
       const request = this.createRequestJoinInPool(tokenInAddress, tokenAmountIn.toString(), minPoolAmountOut)
-
       const result = await this.contract.methods.joinPool(
-        this.poolInfo.id,
+        userWalletAddress,
+        this.referral,
+        this.poolInfo.controller,
         request
-        // userWalletAddress,
-        // this.referral,
-        // this.poolInfo.controller,
-      ).send({ from: userWalletAddress, gasPrice: new BigNumber(gasPriceValue) }, transactionCallback)
+      ).send({ from: userWalletAddress }, transactionCallback)
 
       return result
     }
@@ -212,11 +206,14 @@ export default class operationV2 {
     userWalletAddress,
     selectedTokenInBalance
   }: CalcSingleOutGivenPoolInParams) {
-    // const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
-    const assets = this.poolInfo.tokensAddresses
+    let withdrawAmoutOut
+    let transactionError
+
+    const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
     let indexToken = -1
-    for (let index = 0; index < this.poolInfo.tokensAddresses.length; index++) {
-      if (this.poolInfo.tokensAddresses[index] === tokenSelectAddress) {
+    const _length = assets.length
+    for (let index = 0; index < _length; index++) {
+      if (assets[index] === tokenSelectAddress) {
         indexToken = index
         break
       }
@@ -224,7 +221,7 @@ export default class operationV2 {
 
     if (indexToken === -1) throw new Error('Token not found')
 
-    const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256', 'uint256'], [0, poolAmountIn, indexToken])
+    const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256', 'uint256'], [0, poolAmountIn, indexToken - 1])
     const request = {
       assets,
       minAmountsOut: new Array(assets.length).fill(0),
@@ -233,39 +230,34 @@ export default class operationV2 {
     }
 
     try {
-      // const response = await this.balancerHelpersContract.methods.exitPool(
-      //   this.poolInfo.id,
-      //   userWalletAddress,
-      //   userWalletAddress,
-      //   request
-      // ).call({ from: userWalletAddress });
-      const response = await this.vaultBalancer.methods.exitPool(
+      let response = await this.balancerHelpersContract.methods.queryExit(
         this.poolInfo.id,
         userWalletAddress,
         userWalletAddress,
         request
-      ).call();
+      ).call({ from: userWalletAddress })
+
+      withdrawAmoutOut = response.amountsOut[indexToken]
+
+      response = await this.vaultBalancer.methods.exitPool(
+        this.poolInfo.id,
+        userWalletAddress,
+        userWalletAddress,
+        request
+      ).call({ from: userWalletAddress })
 
       return {
-        withdrawAmoutOut: response.amountsOut[indexToken],
-        transactionError: undefined
+        withdrawAmoutOut,
+        transactionError
       }
     } catch (error: any) {
-      // const errorStr = error.toString()
-
-      const response = await this.balancerHelpersContract.methods.queryExit(
-        this.poolInfo.id,
-        userWalletAddress,
-        userWalletAddress,
-        request
-      ).call({ from: userWalletAddress });
-
       let transactionError: string | undefined = undefined
       if (Big(poolAmountIn).gt(selectedTokenInBalance)) {
         transactionError = 'This amount exceeds your balance!'
       }
+
       return {
-        withdrawAmoutOut: response.amountsOut[indexToken] ?? 0,
+        withdrawAmoutOut,
         transactionError
       }
     }
@@ -277,8 +269,7 @@ export default class operationV2 {
     userWalletAddress,
     selectedTokenInBalance
   }: CalcAllOutGivenPoolInParams) {
-    // const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
-    const assets = this.poolInfo.tokensAddresses
+    const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
     const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256'], [1, poolAmountIn.toString()])
     const request = {
       assets,
@@ -289,11 +280,8 @@ export default class operationV2 {
 
     let allAmountsOut
     let transactionError: string | undefined = undefined
-    try {
-      // const response = await this.balancerHelpersContract.methods.exitPool(
-      //   this.poolInfo.id, userWalletAddress, userWalletAddress, request
-      // ).call();
 
+    try {
       const response = await this.balancerHelpersContract.methods.queryExit(
         this.poolInfo.id,
         userWalletAddress,
@@ -301,8 +289,7 @@ export default class operationV2 {
         request
       ).call({ from: userWalletAddress });
 
-      // request.minAmountsOut = response.amountsOut
-      allAmountsOut = response.amountsOut
+      allAmountsOut = response.amountsOut.slice(1, response.amountsOut.length)
 
       await this.vaultBalancer.methods.exitPool(
         this.poolInfo.id,
@@ -312,7 +299,6 @@ export default class operationV2 {
       ).call({ from: userWalletAddress });
 
       return {
-        // withdrawAmoutOut: response.amountsOut,
         withdrawAllAmoutOut: allAmountsOut.map((item: string) => new BigNumber(item)),
         transactionError: undefined
       }
@@ -332,8 +318,7 @@ export default class operationV2 {
       }
 
       return {
-        // withdrawAllAmoutOut: response.amountsOut?.map((item: string) => new BigNumber(item)),
-        withdrawAllAmoutOut: allAmountsOut,
+        withdrawAllAmoutOut: allAmountsOut.map((item: string) => new BigNumber(item)),
         transactionError
       }
     }
@@ -347,11 +332,11 @@ export default class operationV2 {
     transactionCallback
   }: ExitSwapPoolAmountInParams) {
     try {
-      // const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
-      const assets = this.poolInfo.tokensAddresses
+      const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
       let indexToken = -1
-      for (let index = 0; index < this.poolInfo.tokensAddresses.length; index++) {
-        if (this.poolInfo.tokensAddresses[index].toLowerCase() === tokenOutAddress.toLowerCase()) {
+      const _length = assets.length
+      for (let index = 0; index < _length; index++) {
+        if (assets[index].toLowerCase() === tokenOutAddress.toLowerCase()) {
           indexToken = index
           break
         }
@@ -359,13 +344,10 @@ export default class operationV2 {
 
       if (indexToken === -1) throw new Error('Token not found')
 
-      const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256', 'uint256'], [0, tokenAmountIn.toString(), indexToken])
-      const minAmountsOut = this.poolInfo.tokensAddresses.map(item => {
-        if(item.toLowerCase() === tokenOutAddress.toLowerCase()) {
-          return minPoolAmountOut.toString()
-        }
-        return '0'
-      })
+      const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256', 'uint256'], [0, tokenAmountIn.toString(), indexToken - 1])
+      const minAmountsOut = new Array(_length).fill(0)
+
+      minAmountsOut[indexToken] = minPoolAmountOut.toString()
 
       const request = {
         assets,
@@ -374,13 +356,12 @@ export default class operationV2 {
         toInternalBalance: false
       }
 
-      const gasPriceValue =  await web3.eth.getGasPrice()
       await this.vaultBalancer.methods.exitPool(
         this.poolInfo.id,
         userWalletAddress,
         userWalletAddress,
         request
-      ).send({ from: userWalletAddress, gasPrice: gasPriceValue }, transactionCallback);
+      ).send({ from: userWalletAddress }, transactionCallback);
 
     } catch (error) {
       console.log(error)
@@ -396,31 +377,27 @@ export default class operationV2 {
     transactionCallback
   }: ExitSwapPoolAllTokenAmountInParams) {
     try {
-      // const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
-      const assets = this.poolInfo.tokensAddresses
+      const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
       const userData = web3.eth.abi.encodeParameters(['uint256', 'uint256'], [1, tokenAmountIn.toString()])
-      const minAmountsOut = amountAllTokenOut.map(item => {
+
+      const minAmountsOutTokens = amountAllTokenOut.map(item => {
         return item.mul(slippageBase).div(slippageExp).toString()
       })
+
       const request = {
         assets,
-        minAmountsOut,
+        minAmountsOut: [0, ...minAmountsOutTokens],
         userData,
         toInternalBalance: false
       }
 
-      const gasPriceValue =  await web3.eth.getGasPrice()
       await this.vaultBalancer.methods.exitPool(
         this.poolInfo.id,
         userWalletAddress,
         userWalletAddress,
         request
-      ).send({ from: userWalletAddress, gasPrice: gasPriceValue }, transactionCallback);
+      ).send({ from: userWalletAddress }, transactionCallback);
 
-      // return {
-      //   withdrawAmoutOut: response.amountsOut,
-      //   transactionError: undefined
-      // }
     } catch (error) {
       console.log(error)
     }

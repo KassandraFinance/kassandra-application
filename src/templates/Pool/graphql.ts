@@ -11,6 +11,12 @@ export const GET_INFO_POOL = gql`
       fee_swap
       # pool token information
 
+      fee_join_manager
+      fee_join_broker
+
+      fee_aum_kassandra
+      fee_aum
+
       withdraw: fees(
         where: { period: 3600, timestamp_gt: $day, type: "exit" }
       ) {

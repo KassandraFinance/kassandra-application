@@ -12,7 +12,7 @@ export const ModalContent = styled.div`
 
     width: 39.2rem;
 
-    background: rgba(31, 41, 55, 0.96);
+    background: rgb(31 41 55 / 0.96);
     backdrop-filter: blur(0.4rem);
 
     @media (max-width: 576px) {
@@ -28,10 +28,19 @@ export const WrapperIconsBackGround = styled.button`
 
     width: 100%;
     padding: 0.1rem;
+    border: none;
+    border-radius: 10px;
 
     background: #1f1f1fb8;
-    border-radius: 1rem;
-    border: none;
+
+    &:hover,
+    &:focus {
+      background-image: linear-gradient(0deg, #ffbf00 -0.02%, #e843c4 99.99%);
+    }
+
+    &:focus {
+      outline: none;
+    }
 
     &:disabled {
       filter: grayscale(1);
@@ -39,11 +48,11 @@ export const WrapperIconsBackGround = styled.button`
       &:disabled {
         > div {
           span {
-            color: rgba(255, 255, 255, 0.3);
-            font-family: 'Rubik';
-            font-style: normal;
+            color: rgb(255 255 255 / 0.3);
             font-weight: 300;
+            font-style: normal;
             font-size: ${theme.font.sizes.font16};
+            font-family: Rubik, sans-serif;
             line-height: 100%;
             letter-spacing: 0.05em;
           }
@@ -54,26 +63,21 @@ export const WrapperIconsBackGround = styled.button`
         }
       }
     }
-
-    &:hover,
-    &:focus {
-      background-image: linear-gradient(0deg, #ffbf00 -0.02%, #e843c4 99.99%);
-    }
-
-    &:focus {
-      outline: none;
-    }
   `}
 `
 
 export const WrapperIcons = styled.div`
   ${({ theme }) => css`
+    z-index: 2;
+
     display: flex;
-    align-items: center;
     gap: 1.2rem;
+    align-items: center;
 
     width: 100%;
     padding: 1.6rem;
+    border: none;
+    border-radius: 10px;
 
     color: ${theme.colors.snow};
     font-weight: ${theme.font.weight.light};
@@ -81,11 +85,8 @@ export const WrapperIcons = styled.div`
     letter-spacing: 0.08rem;
 
     background: #1f1f1f;
-    border-radius: 1rem;
-    border: none;
 
     cursor: pointer;
-    z-index: 2;
 
     span {
       color: ${theme.colors.snow};

@@ -15,6 +15,7 @@ export const NewPoolOperations = styled.div`
 export const PoolOperationsContainer = styled.div`
   ${() => css`
     border-radius: 1.2rem;
+    box-shadow: 0px 4px 69px -17px rgba(0, 0, 0, 0.51);
 
     @media (max-width: 960px) {
       z-index: 1041;

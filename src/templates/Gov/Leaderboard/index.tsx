@@ -1,11 +1,10 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { chains } from '../../../constants/tokenAddresses'
+import { networks } from '../../../constants/tokenAddresses'
 
 import { useAppSelector } from '../../../store/hooks'
 import useConnect from '../../../hooks/useConnect'
 
-import Header from '../../../components/Header'
 import TitleSection from '../../../components/TitleSection'
 import Breadcrumb from '../../../components/Breadcrumb'
 import BreadcrumbItem from '../../../components/Breadcrumb/BreadcrumbItem'
@@ -35,13 +34,14 @@ const Leaderboard = () => {
 
   const page = typeof router.query.page === 'string' ? router.query.page : '0'
 
+  const chain = networks[43114]
+
   React.useEffect(() => {
     setSkip((parseInt(page) - 1) * take)
   }, [page])
 
   return (
     <>
-      <Header />
       <Breadcrumb>
         <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem href="/gov">Governance</BreadcrumbItem>
@@ -49,13 +49,12 @@ const Leaderboard = () => {
           Voting Power Leaderboard
         </BreadcrumbItem>
       </Breadcrumb>
-      {(metamaskInstalled && Number(chainId) !== chains.avalanche.chainId) ||
-      (userWalletAddress.length > 0 &&
-        Number(chainId) !== chains.avalanche.chainId) ? (
+      {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
+      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
         <Web3Disabled
-          textButton={`Connect to ${chains.avalanche.chainName}`}
+          textButton={`Connect to ${chain.chainName}`}
           textHeader="Your wallet is set to the wrong network."
-          bodyText={`Please switch to the ${chains.avalanche.chainName} network to have access to governance`}
+          bodyText={`Please switch to the ${chain.chainName} network to have access to governance`}
           type="changeChain"
         />
       ) : (

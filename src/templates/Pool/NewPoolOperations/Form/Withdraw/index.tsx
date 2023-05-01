@@ -66,6 +66,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   const [selectedTokenOutBalance, setSelectedTokenOutBalance] = React.useState(
     new Big(-1)
   )
+  const [amountApproved, setAmountApproved] = React.useState(Big(0))
   const [errorMsg, setErrorMsg] = React.useState('')
   const [maxActive, setMaxActive] = React.useState<boolean>(false)
   const [amountAllTokenOut, setamountAllTokenOut] = React.useState<BigNumber[]>([])
@@ -146,22 +147,18 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
             `Approval of ${tokenSymbol} confirmed, wait while we sync with the latest block of the blockchain.`
           )
           let approved = false
-
           while (!approved) {
-            approved = await ERC20(tokenAddress).allowance(
+            await new Promise(r => setTimeout(r, 1000)) // sleep
+            const allowance = await ERC20(pool.address).allowance(
               operation.withdrawContract,
               userWalletAddress
             )
-            await new Promise(r => setTimeout(r, 200)) // sleep
-          }
 
-          setApprovals(old => {
-            return {
-              ...old,
-              [tabTitle]: [Approval.Approved]
+            if (amountApproved.toFixed() !== Big(allowance).toFixed() || amountApproved.gte(amountTokenIn)) {
+              await updateAllowance()
+              approved = true
             }
-          })
-
+          }
           return
         }
 
@@ -282,15 +279,29 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     setbalanceAllTokenOut(newSwapOutBalance)
   }
 
+  async function updateAllowance() {
+    const allowance = await ERC20(pool.address).allowance(
+      operation.withdrawContract,
+      userWalletAddress
+    )
+
+    setAmountApproved(Big(allowance))
+    setApprovals((old) => ({
+      ...old,
+      [typeAction]: Big(allowance).gte(amountTokenIn) ? [Approval.Approved] : [Approval.Denied]
+    }))
+  }
+
   React.useEffect(() => {
     if (typeAction !== 'Withdraw' || tokenSelect.address === pool.id) {
       return
     }
 
-    if (chainId !== pool.chainId || Big(amountTokenIn).lte(0)) {
+    if (chainId !== pool.chain_id || Big(amountTokenIn).lte(0)) {
       setamountAllTokenOut(Array(pool.underlying_assets.length).fill(new BigNumber(0)))
       setAmountTokenOut(new Big(0))
       setErrorMsg('')
+      updateAllowance()
 
       if (tokenSelect.address === '') {
         setAmountTokenOut(new Big(0))
@@ -348,6 +359,21 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       }
     }
 
+    const verifyIsApproved = () => {
+      if (amountApproved.lt(amountTokenIn)) {
+        setApprovals(old => ({
+          ...old,
+          [typeAction]: [Approval.Denied]
+        }))
+      } else {
+        setApprovals(old => ({
+          ...old,
+          [typeAction]: [Approval.Approved]
+        }))
+      }
+    }
+
+    verifyIsApproved()
     calc()
     setErrorMsg('')
     setAmountTokenOut(new Big(0))
@@ -358,8 +384,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       pool.id.length === 0 ||
       userWalletAddress.length === 0 ||
       chainId.toString().length === 0 ||
-      chainId !== pool.chainId ||
-      !Big(amountTokenIn).lte(Big(0))
+      chainId !== pool.chain_id
     ) {
       return setSelectedTokenInBalance(Big(0))
     }
@@ -404,7 +429,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   React.useEffect(() => {
     if (userWalletAddress.length === 0 ||
       chainId.toString().length === 0 ||
-      chainId !== pool.chainId ||
+      chainId !== pool.chain_id ||
       typeWithdraw === 'Best_Value'
     ) {
       return setbalanceAllTokenOut(Array(pool.underlying_assets.length).fill(new BigNumber(0)))
@@ -416,30 +441,11 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   }, [chainId, userWalletAddress, amountTokenIn, typeWithdraw])
 
   React.useEffect(() => {
-    if (chainId !== pool.chainId) {
+    if (chainId !== pool.chain_id) {
       return
     }
 
-    const handleTokensApproved = async () => {
-      const newApprovals: string[] = []
-
-      // if (newApprovals.includes(tokenSelect.address)) return
-      const isAllowance = await ERC20(pool.address).allowance(
-        operation.withdrawContract,
-        userWalletAddress
-      )
-
-      if (isAllowance) {
-        newApprovals.push(pool.id)
-      }
-
-
-      setApprovals((old: any) => ({
-        ...old,
-        [typeAction]: newApprovals.length > 0 ? [Approval.Approved] : [Approval.Denied]
-      }))
-    }
-    handleTokensApproved()
+    updateAllowance()
   }, [typeAction, userWalletAddress, chainId])
 
   React.useEffect(() => {
@@ -483,7 +489,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         disabled={
           userWalletAddress.length === 0
             ? "Please connect your wallet by clicking the button below"
-            : chainId !== pool.chainId
+            : chainId !== pool.chain_id
               ? `Please change to the ${pool.chain.chainName} by clicking the button below`
               : ""
         }
@@ -529,7 +535,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
         <S.ExchangeRate>
           <S.SpanLight>Withdraw fee:</S.SpanLight>
-          <S.SpanLight>3.00%</S.SpanLight>
+          <S.SpanLight>{Big(data?.pool?.fee_exit || '0').mul(100).toFixed(2)}%</S.SpanLight>
         </S.ExchangeRate>
 
         <S.TransactionSettingsOptions>
@@ -545,7 +551,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           onClick={() => dispatch(setModalWalletActive(true))}
           text="Connect Wallet"
         />
-      ) : chainId === pool.chainId ? (
+      ) : chainId === pool.chain_id ? (
         <Button
           className="btn-submit"
           backgroundPrimary
@@ -596,15 +602,13 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           type="button"
           onClick={() => changeChain({
             chainId: pool.chain.id,
-            blockExplorerUrl: pool.chain.blockExplorerUrl,
             chainName: pool.chain.chainName,
+            rpcUrls: pool.chain.rpcUrls,
             nativeCurrency: {
               decimals: pool.chain.nativeTokenDecimals,
-              symbol: pool.chain.nativeTokenSymbol,
-              name: pool.chain.chainName
-            },
-            rpcUrls: pool.chain.rpcUrls,
-            wrapped: pool.chain.addressWrapped
+              name: pool.chain.nativeTokenName,
+              symbol: pool.chain.nativeTokenSymbol
+            }
           })}
           disabled={walletConnect ? true : false}
           text={walletConnect ? `Change manually to ${pool.chain.chainName}` : `Change to ${pool.chain.chainName}`}

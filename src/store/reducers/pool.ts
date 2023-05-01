@@ -31,6 +31,19 @@ export interface ChainInfo {
   addressWrapped: string;
 }
 
+export interface WeightsV2 {
+  start_timestamp: number;
+  end_timestamp: number;
+  weights: {
+    weight_normalized: string,
+    asset: {
+      token: {
+        id: string
+      }
+    }
+  }[];
+}
+
 export interface underlyingAssetsInfo {
   balance: string;
   weight_goal_normalized: string;
@@ -46,30 +59,36 @@ export interface IPoolSlice {
   id: string;
   address: string;
   vault: string;
+  vault_id: string;
+  controller: string;
   chain_id: number;
-  chainId: number;
+  manager: {
+    id: string
+  };
   chain: ChainInfo;
   name: string;
   symbol: string;
   strategy: string;
-  manager?: string;
   logo: string;
   pool_version: number;
   poolId?: number;
   url: string;
   summary?: string;
   addresses: string[];
+  total_value_locked_usd?: string;
   partners?: Partners[];
   underlying_assets_addresses: string[];
   underlying_assets: underlyingAssetsInfo[];
+  weight_goals: WeightsV2[];
 }
 
 const initialState: IPoolSlice = {
   id: '',
   address: '',
   vault: '',
+  vault_id: '',
+  controller: '',
   chain_id: 0,
-  chainId: 0,
   strategy: '',
   chain: {
     id: 0,
@@ -85,7 +104,9 @@ const initialState: IPoolSlice = {
   },
   name: '',
   symbol: '',
-  manager: '',
+  manager: {
+    id: ''
+  },
   logo: '',
   pool_version: 0,
   poolId: 0,
@@ -116,6 +137,22 @@ const initialState: IPoolSlice = {
           price_usd: ''
         }
       }
+    }
+  ],
+  weight_goals: [
+    {
+      start_timestamp: 0,
+      end_timestamp: 0,
+      weights: [
+        {
+          weight_normalized: '',
+          asset: {
+            token: {
+              id: ''
+            }
+          }
+        }
+      ]
     }
   ]
 }

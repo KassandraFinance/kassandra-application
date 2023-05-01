@@ -1,12 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { chains } from '../../constants/tokenAddresses'
+import { networks } from '../../constants/tokenAddresses'
 
 import { useAppSelector } from '../../store/hooks'
 import useConnect from '../../hooks/useConnect'
 
-import Header from '../../components/Header'
 import TitleSection from '../../components/TitleSection'
 import Overview from '../../components/Governance/Overview'
 import ProposalTable from '../../components/Governance/ProposalTable'
@@ -27,14 +26,12 @@ const Gov = () => {
   const { chainId, userWalletAddress } = useAppSelector(state => state)
   const { metamaskInstalled } = useConnect()
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
+  const chain = networks[43114]
 
   const take = 5
 
   return (
     <>
-      <Header />
       <Breadcrumb>
         <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem href="/gov" isLastPage>

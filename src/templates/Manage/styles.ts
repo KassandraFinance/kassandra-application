@@ -15,10 +15,11 @@ interface IDashBoardProps {
 export const DashBoard = styled.div<IDashBoardProps>`
   ${() => css`
     display: grid;
-    grid-template-columns: 0rem 100%;
+    grid-template-columns: 0 100%;
+    overflow-x: hidden;
 
-    transition-duration: 550ms;
     transition-timing-function: ease;
+    transition-duration: 500ms;
     transition-property: grid;
 
     > ${Overlay} {
@@ -29,8 +30,8 @@ export const DashBoard = styled.div<IDashBoardProps>`
       grid-template-columns: 7.4rem calc(100% - 7.4rem);
 
       > ${Overlay} {
-        background-color: rgba(0, 0, 0, 0);
-        backdrop-filter: blur(0rem);
+        background-color: rgb(0 0 0 / 0);
+        backdrop-filter: blur(0);
       }
     }
 
@@ -62,19 +63,20 @@ export const UserDashBoardButton = styled.button`
     display: none;
 
     @media (max-width: 768px) {
+      z-index: 1020;
+
       display: flex;
       justify-content: center;
       align-items: center;
 
       width: 4rem;
       height: 4rem;
-
-      background-color: rgba(255, 255, 255, 0.1);
       border: none;
       border-radius: 50%;
 
+      background-color: rgb(255 255 255 / 0.1);
+
       cursor: pointer;
-      z-index: 1020;
     }
   `}
 `
@@ -97,8 +99,8 @@ export const UserImageWrapper = styled.div<IUserImageWrapperProps>`
 
     opacity: ${isOpen ? '0' : '1'};
 
-    transition-duration: 550ms;
     transition-timing-function: ease;
+    transition-duration: 500ms;
     transition-property: opacity;
 
     img {
@@ -120,8 +122,8 @@ export const CloseIconWrapper = styled.div<ICloseIconWrapperProps>`
 
     opacity: ${isOpen ? '1' : '0'};
 
-    transition-duration: 550ms;
     transition-timing-function: ease;
+    transition-duration: 500ms;
     transition-property: opacity;
   `}
 `

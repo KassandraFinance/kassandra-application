@@ -963,10 +963,10 @@ const Form = ({
 
         if (txReceipt.status) {
           ToastSuccess(`Approval of ${tokenSymbol} confirmed, wait while we sync with the latest block of the blockchain.`)
-          let approved = false;
+          const approved = false;
 
           while (!approved) {
-            approved = await ERC20(tokenAddress).allowance(ProxyContract, userWalletAddress);
+            await ERC20(tokenAddress).allowance(ProxyContract, userWalletAddress);
             await new Promise(r => setTimeout(r, 200)); // sleep
           }
 
