@@ -67,8 +67,8 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
   }
 
   function handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const value = event.target.value || '0'
-    setValue(value.replace(/^0+/, ''))
+    const value = event.target.value
+    setValue(value.replace(/^0+/, '') || '0')
   }
 
   function handleCloseModal() {
