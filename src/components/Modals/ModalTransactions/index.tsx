@@ -1,3 +1,4 @@
+import React from 'react'
 import Image from 'next/image'
 
 import { useAppSelector } from '@/store/hooks'
@@ -5,6 +6,7 @@ import { useAppSelector } from '@/store/hooks'
 import { networks } from '@/constants/tokenAddresses'
 import changeChain from '@/utils/changeChain'
 
+import Loading from '@/components/Loading'
 import Button from '../../Button'
 
 import executedIcon from '@assets/notificationStatus/executed.svg'
@@ -53,9 +55,17 @@ const ModalTransactions = ({
   onComfirm,
   networkId = null
 }: IModalTransactionsProps) => {
+  const [isLoading, setIsLoading] = React.useState(true)
+
   const chainId = useAppSelector(state => state.chainId)
 
-  return (
+  React.useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 700)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  return transactions.length > 0 && !isLoading ? (
     <S.ModalTransactions>
       <S.Title>{title}</S.Title>
 
@@ -156,6 +166,8 @@ const ModalTransactions = ({
         )}
       </S.ButtonsWrapper>
     </S.ModalTransactions>
+  ) : (
+    <Loading marginTop={0} />
   )
 }
 
