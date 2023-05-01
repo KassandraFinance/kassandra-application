@@ -2,7 +2,7 @@ import { gql } from 'graphql-request'
 
 export const GET_CHART = gql`
   query ($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
-    pools(where: { id_in: $id }) {
+    pools(where: { id_in: $id, chain_not: "5" }) {
       id
       address
       name
@@ -38,7 +38,9 @@ export const GET_CHART = gql`
       }
     }
 
-    managedPools: pools(where: { investors_: { wallet: $wallet } }) {
+    managedPools: pools(
+      where: { investors_: { wallet: $wallet }, chain_not: "5" }
+    ) {
       id
       address
       name

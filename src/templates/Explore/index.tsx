@@ -31,12 +31,12 @@ const tabs = [
     asPathText: 'pools',
     text: 'Investment Pools',
     icon: inexpensiveIcon
-  },
-  {
-    asPathText: 'managers',
-    text: 'Pool Managers',
-    icon: managerIcon
   }
+  // {
+  //   asPathText: 'managers',
+  //   text: 'Pool Managers',
+  //   icon: managerIcon
+  // }
 ]
 
 type GetCommunityPoolsType = {
@@ -161,7 +161,7 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
               ))}
             </S.CardContainer>
 
-            <S.ComunitFundsContainer>
+            {/* <S.ComunitFundsContainer>
               <S.TitleWrapper>
                 <TitleSection
                   image={communityFunds}
@@ -185,15 +185,15 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
                   }}
                 />
               </S.PaginationWrapper>
-            </S.ComunitFundsContainer>
+            </S.ComunitFundsContainer> */}
           </S.ExploreContainer>
         )}
 
-        {isSelectTab === 'managers' && (
+        {/* {isSelectTab === 'managers' && (
           <S.ExploreContainer>
             <ManagersPoolTable />
           </S.ExploreContainer>
-        )}
+        )} */}
       </S.Explore>
     </>
   )

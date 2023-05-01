@@ -42,6 +42,7 @@ import substr from '../../utils/substr'
 import { BNtoDecimal } from '../../utils/numerals'
 
 import * as S from './styles'
+import AnyCard from '@/components/AnyCard'
 
 // eslint-disable-next-line prettier/prettier
 declare let window: {
@@ -58,8 +59,8 @@ const tabs = [
     icon: walletIcon
   },
   {
-    asPathText: 'managed-funds',
-    text: 'Managed Funds',
+    asPathText: 'managed-pools',
+    text: 'Managed Pools',
     icon: profileIcon
   },
   {
@@ -416,7 +417,8 @@ const Profile = () => {
               setPriceInDolar={setPriceInDolar}
             />
           ) : isSelectTab === tabs[1].asPathText ? (
-            <ManagedFunds />
+            <AnyCard text='Coming soon' />
+            // <ManagedFunds />
           ) : isSelectTab === tabs[2].asPathText ? (
             <>
               <GovernanceData address={profileAddress} />
