@@ -219,7 +219,7 @@ const Kacy = ({
             </S.Li>
           </S.Ul>
 
-          {chainId === avalancheNetwork.chainId && userWalletAddress ? (
+          {userWalletAddress ? (
             connect ? (
               <Button
                 text="Buy KACY"
@@ -230,8 +230,7 @@ const Kacy = ({
                 target="_blank"
               />
             ) : (
-              <>
-                {/*
+              <S.ButtonContainer>
                 <Button
                   text="Buy KACY"
                   backgroundPrimary
@@ -241,32 +240,17 @@ const Kacy = ({
                     setIsModalKacy(false)
                   }}
                 />
-                */}
                 <Button
                   text="Bridge KACY"
-                  backgroundPrimary
+                  backgroundSecondary
                   fullWidth
                   onClick={() => {
                     setIsModalBridge(true)
                     setIsModalKacy(false)
                   }}
                 />
-              </>
+              </S.ButtonContainer>
             )
-          ) : chainId !== avalancheNetwork.chainId && userWalletAddress ? (
-            <Button
-              text={`Change to ${avalancheNetwork.chainName}`}
-              backgroundPrimary
-              fullWidth
-              onClick={() => {
-                changeChain({
-                  chainId: avalancheNetwork.chainId,
-                  chainName: avalancheNetwork.chainName,
-                  rpcUrls: [avalancheNetwork.rpc],
-                  nativeCurrency: avalancheNetwork.nativeCurrency
-                })
-              }}
-            />
           ) : (
             <Button
               text="Connect Wallet"
