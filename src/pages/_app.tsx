@@ -6,11 +6,15 @@ import { ThemeProvider } from 'styled-components'
 import { useRouter } from 'next/router'
 import { SWRConfig } from 'swr'
 
+import { persistor } from '../store'
+import { PersistGate } from 'redux-persist/integration/react'
+
 import GlobalStyles from '../styles/global'
 import theme from '../styles/theme'
 
 import { ReduxProvider } from '../store/reduxContext'
 
+import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Toastify from '../components/Toastify'
 
@@ -31,6 +35,7 @@ const instance = createInstance({
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
+  const path = router.asPath.split('/')
 
   return (
     <ReduxProvider>
@@ -91,10 +96,11 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               fetcher: url => fetch(url).then(res => res.json())
             }}
           >
+            {path[1] !== 'manage' ? <Header /> : null}
+
             <Component {...pageProps} />
           </SWRConfig>
-          {router.pathname === '/404' ||
-          router.pathname === '/manage' ? null : (
+          {router.pathname === '/404' || path[1] === 'manage' ? null : (
             <Footer />
           )}
         </ThemeProvider>

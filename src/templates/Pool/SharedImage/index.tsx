@@ -1,10 +1,14 @@
+import Image from 'next/image'
 import React from 'react'
 import Blockies from 'react-blockies'
 
 import { useAppSelector } from '../../../store/hooks'
+import { underlyingAssetsInfo } from '@/store/reducers/pool'
 
 // import substr from '../../../utils/substr'
 import ChartProducts from './ChartProducts'
+
+import imageIcon from '@assets/icons/coming-soon.svg'
 import {
   Background,
   IconBar,
@@ -20,26 +24,32 @@ interface ISharedImageProps {
   totalValueLocked: string;
   socialIndex: string;
   productName: string;
+  poolLogo: string;
+  tokens: underlyingAssetsInfo[];
 }
 
 const SharedImage = ({
   crpPoolAddress,
   totalValueLocked,
   socialIndex,
-  productName
+  productName,
+  poolLogo,
+  tokens
 }: ISharedImageProps) => {
-  const { performanceValues, pool } = useAppSelector(state => state)
+  const { performanceValues } = useAppSelector(state => state)
 
   return (
     <S.SharedImage className="bg-image-color">
       <Background />
       <S.Header>
         <S.Title>
-          {pool.logo ? (
-            <img src={pool.logo} width={40} height={40} />
+          {poolLogo ? (
+            <S.PoolLogoWrapper>
+              <Image src={poolLogo} width={40} height={40} />
+            </S.PoolLogoWrapper>
           ) : (
             <Blockies
-              seed={pool.name}
+              seed={productName}
               className="poolIcon"
               size={8}
               scale={5}
@@ -76,7 +86,7 @@ const SharedImage = ({
                 <S.InfoValue color="red">
                   {
                     performanceValues.allPerformancePeriod[
-                      performanceValues.title
+                    performanceValues.title
                     ]
                   }
                   %
@@ -86,7 +96,7 @@ const SharedImage = ({
                   +
                   {
                     performanceValues.allPerformancePeriod[
-                      performanceValues.title
+                    performanceValues.title
                     ]
                   }
                   %
@@ -106,10 +116,12 @@ const SharedImage = ({
                 <span>Assets</span>
               </S.InfoTitle>
               <S.AssetsContainer>
-                {pool.underlying_assets.map((item, index) => (
-                  <img
+                {tokens?.map((item, index) => (
+                  <Image
                     key={index}
-                    src={item.token.wraps?.logo ?? item.token.logo}
+                    src={
+                      item.token?.logo ?? item.token?.wraps?.logo ?? imageIcon
+                    }
                     width={25}
                     height={25}
                   />

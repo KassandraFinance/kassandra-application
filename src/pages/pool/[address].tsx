@@ -11,6 +11,7 @@ import { IPoolSlice, setPool } from '../../store/reducers/pool'
 import { PoolTokensProvider } from '../../context/PoolTokensContext'
 
 import Pool from '../../templates/Pool'
+import { getWeightsNormalizedV2 } from '../../utils/updateAssetsToV2'
 
 interface IParams extends ParsedUrlQuery {
   address: string;
@@ -23,14 +24,26 @@ interface IPoolProps {
 const Index = ({ pool }: IPoolProps) => {
   const dispatch = useAppDispatch()
 
-  if (pool.chainId === 43114) {
+  if (pool.chain_id === 43114) {
     const renameWavax = pool.underlying_assets.find(asset => asset.token.symbol === 'WAVAX');
     if (renameWavax) {
       renameWavax.token.symbol = 'AVAX'
       renameWavax.token.name = 'Avalanche'
     }
   }
-  const underlying_assets = [...pool.underlying_assets].sort((a, b) => a.token.id > b.token.id ? 1 : -1)
+  let underlying_assets = [...pool.underlying_assets].sort((a, b) => a.token.id > b.token.id ? 1 : -1)
+
+  if (pool.pool_version === 2) {
+    try {
+      const assetsV2 = getWeightsNormalizedV2(pool.weight_goals, underlying_assets)
+      if (assetsV2) {
+        underlying_assets = assetsV2
+      }
+    } catch (error) {
+      console.log(error)
+     }
+  }
+
   const poolWithSortedTokens = {...pool, underlying_assets}
   dispatch(setPool(poolWithSortedTokens))
 
@@ -52,11 +65,15 @@ const queryPool = `{
   id
   address
   vault
+  vault_id
+  controller
   chain_id
-  chainId
   logo
   pool_version
   strategy
+  manager {
+    id
+  }
   chain {
     id
     logo
@@ -100,6 +117,18 @@ const queryPool = `{
         name
         logo
       }
+    }
+  }
+  weight_goals(orderBy: end_timestamp orderDirection: desc first: 2) {
+    start_timestamp
+    end_timestamp
+    weights(orderBy: weight_normalized orderDirection: desc) {
+      asset {
+        token {
+          id
+        }
+      }
+      weight_normalized
     }
   }
 }`
@@ -152,7 +181,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     return { props: { pool }, revalidate:  300 }
   } catch (error) {
     console.log(error)
-    return { notFound: true }
+    return { notFound: true, revalidate:  60 }
   }
 }
 

@@ -6,6 +6,8 @@ export const GET_INFO_POOL = gql`
       # information pool
       decimals
       price_usd
+      fee_join_broker
+      fee_join_manager
     }
   }
 `

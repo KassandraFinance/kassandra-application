@@ -2,10 +2,11 @@ import styled, { css } from 'styled-components'
 import theme from '../../../../styles/theme'
 
 export const TableWrapper = styled.div`
-  margin-top: 1.6rem;
-
   display: block;
   overflow-x: auto;
+
+  margin-top: 1.6rem;
+
   white-space: nowrap;
 
   @media (max-width: 960px) {
@@ -14,19 +15,16 @@ export const TableWrapper = styled.div`
 `
 
 export const Table = styled.table`
-  width: 100%;
+  overflow: hidden;
 
-  -webkit-border-radius: 2rem;
-  -moz-border-radius: 2rem;
-  border-radius: 2rem;
-  -webkit-border-horizontal-spacing: 0;
-  -webkit-border-vertical-spacing: 0;
+  width: 100%;
   border-spacing: 0;
+  border-collapse: collapse;
+  border-radius: 8px;
 
   color: ${theme.colors.snow};
-
-  border-collapse: collapse;
-  overflow: hidden;
+  -webkit-border-horizontal-spacing: 0;
+  -webkit-border-vertical-spacing: 0;
 
   @media (max-width: 960px) {
     width: 114rem;
@@ -34,24 +32,21 @@ export const Table = styled.table`
 
   @media (max-width: 540px) {
     width: 93.5rem;
-
-    -webkit-border-radius: 1.2rem;
-    -moz-border-radius: 1.2rem;
-    border-radius: 1.2rem;
   }
 `
 
 export const THead = styled.thead`
-  background: rgba(0, 0, 0, 0.25);
+  background: rgb(0 0 0 / 0.25);
 `
 
 export const TBody = styled.tbody`
-  background: rgba(255, 255, 255, 0.04);
+  background: rgb(255 255 255 / 0.04);
 
   tr {
     margin-top: -0.1rem;
-    border-top: 0.1rem solid rgba(255, 255, 255, 0);
-    border-bottom: 0.1rem solid rgba(255, 255, 255, 0.3);
+    border-top: 0.1rem solid rgb(255 255 255 / 0);
+    border-bottom: 0.1rem solid rgb(255 255 255 / 0.3);
+
     transition: background-color ease-in-out 0.3s, border ease-in-out 0.3s,
       padding ease-in-out 0.3s, margin ease-in-out 0.3s;
 
@@ -59,10 +54,10 @@ export const TBody = styled.tbody`
       margin: 0;
       margin-top: -0.1rem;
       padding: 2.4rem 3.2rem;
-
-      background-color: ${theme.colors.darkPurple};
       border-top: 0.1rem solid ${theme.colors.grayDisabled};
       border-bottom: 0.1rem solid ${theme.colors.grayDisabled};
+
+      background-color: ${theme.colors.darkPurple};
 
       cursor: pointer;
 
@@ -84,15 +79,13 @@ export const TBody = styled.tbody`
 
 export const Tr = styled.tr`
   display: grid;
-  grid-template-columns: 1.5fr repeat(6, 1fr);
+  grid-template-columns: 1.5fr repeat(5, 1fr);
   align-items: center;
 
   margin: 0 3.2rem;
   padding: 2.4rem 0;
 
   @media (max-width: 540px) {
-    grid-template-columns: 1.5fr 0.5fr repeat(5, 1fr);
-
     margin: 0 2rem;
     padding: 2rem 0;
   }
@@ -116,7 +109,6 @@ export const Th = styled.th`
 export const Td = styled.td`
   font-weight: ${theme.font.weight.medium};
   font-size: ${theme.font.sizes.font14};
-
   text-align: center;
 
   &:first-child {
@@ -126,13 +118,21 @@ export const Td = styled.td`
 
 export const ProductWrapper = styled.div`
   display: flex;
-  align-items: center;
   gap: 1.2rem;
+  align-items: center;
 `
 
 export const ImageWrapper = styled.div`
+  overflow: hidden;
+
   width: 2.4rem;
   height: 2.4rem;
+  border-radius: 50%;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
 
   @media (max-width: 540px) {
     width: 1.8rem;
@@ -155,8 +155,8 @@ export const FundWrapper = styled.div`
 
 export const NetworkWrapper = styled.div`
   display: flex;
-  justify-content: center;
   gap: 0.8rem;
+  justify-content: center;
 
   @media (max-width: 540px) {
     span {
@@ -190,4 +190,29 @@ export const FlexWrapper = styled.div`
       font-size: ${theme.font.sizes.font12};
     }
   }
+`
+
+export const Imagecontainer = styled.div`
+  ${() => css`
+    position: relative;
+
+    width: 2.4rem;
+    height: 2.4rem;
+  `}
+`
+
+export const ChainLogoWrapper = styled.div`
+  ${({ theme }) => css`
+    position: absolute;
+    right: -0.5rem;
+    bottom: 0;
+
+    overflow: hidden;
+
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+
+    background-color: ${theme.colors.white};
+  `}
 `

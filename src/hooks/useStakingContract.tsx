@@ -4,6 +4,9 @@ import React from 'react'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 import { AbiItem } from "web3-utils"
+import Web3 from 'web3'
+
+import { networks } from '@/constants/tokenAddresses'
 
 import web3, { EventSubscribe } from '../utils/web3'
 import { TransactionCallback } from '../utils/txWait'
@@ -44,11 +47,14 @@ export interface PoolInfo {
 }
 
 const useStakingContract = (address: string) => {
+  const _web3 = new Web3(networks[43114].rpc)
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const [contract, setContract] = React.useState(new web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
+  const [contract, setContract] = React.useState(new _web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
+  const [contractSend, setContractSend] = React.useState(new web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
 
   React.useEffect(() => {
-    setContract(new web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
+    setContract(new _web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
+    setContractSend(new web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
   }, [address])
 
   return React.useMemo(() => {
@@ -59,7 +65,7 @@ const useStakingContract = (address: string) => {
     /* SEND */
 
     const stake = async (pid: number, amount: BigNumber, delegatee: string , callback: TransactionCallback) => {
-      await contract.methods.stake(pid, amount, userWalletAddress, delegatee)
+      await contractSend.methods.stake(pid, amount, userWalletAddress, delegatee)
         .send(
           { from: userWalletAddress },
           callback
@@ -67,21 +73,21 @@ const useStakingContract = (address: string) => {
     }
 
     const unstake = async  (pid: number, callback: TransactionCallback) => {
-      await contract.methods.unstake(pid)
+      await contractSend.methods.unstake(pid)
         .send({ from: userWalletAddress },
           callback
         )
     }
 
     const cancelUnstake = async (pid: number, callback: TransactionCallback) => {
-      await contract.methods.cancelUnstake(pid)
+      await contractSend.methods.cancelUnstake(pid)
         .send({ from: userWalletAddress },
           callback
         )
     }
 
     const getReward = async (pid: number, callback: TransactionCallback) => {
-      await contract.methods.getReward(pid)
+      await contractSend.methods.getReward(pid)
         .send(
           { from: userWalletAddress },
           callback
@@ -89,7 +95,7 @@ const useStakingContract = (address: string) => {
     }
 
     const withdraw = async (pid: number, amount : BigNumber, callback: TransactionCallback) => {
-      await contract.methods.withdraw(pid, amount)
+      await contractSend.methods.withdraw(pid, amount)
         .send({ from: userWalletAddress },
           callback
         )

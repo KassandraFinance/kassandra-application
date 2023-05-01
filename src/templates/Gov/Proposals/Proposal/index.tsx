@@ -12,8 +12,8 @@ import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
 import {
-  chains,
   GovernorAlpha,
+  networks,
   Staking,
   SUBGRAPH_URL
 } from '../../../../constants/tokenAddresses'
@@ -33,7 +33,6 @@ import { setModalAlertText } from '../../../../store/reducers/modalAlertText'
 
 import { GET_PROPOSAL } from './graphql'
 
-import Header from '../../../../components/Header'
 import ModalVotes from '../../../../components/Governance/ModalVotes'
 import TitleSection from '../../../../components/TitleSection'
 import VoteCard from '../../../../components/Governance/VoteCard'
@@ -192,8 +191,7 @@ const Proposal = () => {
   const { chainId, userWalletAddress } = useAppSelector(state => state)
   const { metamaskInstalled } = useConnect()
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
+  const chain = networks[43114]
   const idProposal = router.query.proposal
 
   const { data } = useSWR<IRequestDataProposal>(
@@ -267,9 +265,7 @@ const Proposal = () => {
 
   React.useEffect(() => {
     if (data) {
-      const secondsPerBlock =
-        chains[process.env.NEXT_PUBLIC_MASTER === '1' ? 'avalanche' : 'fuji']
-          .secondsPerBlock ?? 2
+      const secondsPerBlock = 2
 
       const createdProposal = new Date(Number(data.proposal[0].created) * 1000)
 
@@ -630,7 +626,6 @@ const Proposal = () => {
   return (
     <>
       <>
-        <Header />
         <Breadcrumb>
           <BreadcrumbItem href="/">Invest</BreadcrumbItem>
           <BreadcrumbItem href="/gov">Governance</BreadcrumbItem>
@@ -638,12 +633,12 @@ const Proposal = () => {
             Proposal {router.query.proposal}
           </BreadcrumbItem>
         </Breadcrumb>
-        {(metamaskInstalled && Number(chainId) !== chains.avalanche.chainId) ||
-        (userWalletAddress.length > 0 && Number(chainId) !== chains.avalanche.chainId) ? (
+        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
+        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
           <Web3Disabled
             textButton={`Connect to ${chain.chainName}`}
             textHeader="Your wallet is set to the wrong network."
-            bodyText={`Please switch to the ${chains.avalanche.chainName} network to have access to governance`}
+            bodyText={`Please switch to the ${chain.chainName} network to have access to governance`}
             type="changeChain"
           />
         ) : (
@@ -861,11 +856,7 @@ const Proposal = () => {
                       return (
                         <S.TableDescriptionWrapper key={index}>
                           <S.LinkTargetSnowTrace
-                            href={`${
-                              process.env.NEXT_PUBLIC_MASTER === '1'
-                                ? chains.avalanche.blockExplorerUrl
-                                : chains.fuji.blockExplorerUrl
-                            }address/${proposal.targets[index]}`}
+                            href={`https://snowtrace.io/address/${proposal.targets[index]}`}
                             target="_blank"
                             rel="noopener noreferrer"
                           >

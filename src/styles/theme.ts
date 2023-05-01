@@ -36,12 +36,17 @@ export default {
     cyan: '#26DBDB',
     darkGray: '#343434',
     gray: '#8F8F8F',
+    lightGray: '#8b8b8b',
     grayDisabled: '#bdbdbd',
     amber: '#FFBF00',
     snow: '#FCFCFC',
     red: '#EA3224',
     green: '#5EE56B',
-    white: '#ffffff'
+    white: '#ffffff',
+    redAvalanche: '#E84142',
+    purplePolygon: '#8247E5',
+    error: '#E8372C',
+    success: '#2CE878',
   },
   spacings: {
     space8: '0.8rem',

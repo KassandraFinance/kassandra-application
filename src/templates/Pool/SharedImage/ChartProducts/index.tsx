@@ -120,10 +120,10 @@ const ChartProducts = ({ crpPoolAddress, height }: IChartProductsProps) => {
   React.useEffect(() => {
     if (data) {
       const newTVL = data?.pool.total_value_locked.map(
-        (item: { timestamp: number, value: string }) => {
+        (item: { timestamp: number, close: string }) => {
           return {
             timestamp: item.timestamp,
-            value: Number(item.value)
+            value: Number(item.close)
           }
         }
       )

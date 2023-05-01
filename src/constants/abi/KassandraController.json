@@ -1,5 +1,183 @@
 [
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "contract IERC20",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "TokenAdded",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "tokenToAdd",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenToAddNormalizedWeight",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenToAddBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      }
+    ],
+    "name": "addToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "canSetCircuitBreakers",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getManagementAumFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "managerAumFeePercentage",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "kassandraAumFeePercentage",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "kassandraRules",
+    "outputs": [
+      {
+        "internalType": "contract IKassandraRules",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pool",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "tokenToRemove",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      }
+    ],
+    "name": "removeToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "startTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "endTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "contract IERC20[]",
+        "name": "tokens",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "endWeights",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "updateWeightsGradually",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawCollectedManagementFees",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "feesToManager",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "feesToKassandra",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "components": [
@@ -21,23 +199,6 @@
         ],
         "internalType": "struct BasePoolController.BasePoolRights",
         "name": "baseRights",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint64",
-            "name": "feesToManager",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint64",
-            "name": "feesToReferral",
-            "type": "uint64"
-          }
-        ],
-        "internalType": "struct KassandraManagedPoolController.FeesPercentages",
-        "name": "feesPercentages",
         "type": "tuple"
       },
       {
@@ -74,10 +235,34 @@
         "internalType": "contract IWhitelist",
         "name": "whitelist",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "kassandraAumFee",
+        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "feesToManager",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "feesToReferral",
+        "type": "uint256"
+      }
+    ],
+    "name": "JoinFeesUpdate",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -115,6 +300,25 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousStrategist",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newStrategist",
+        "type": "address"
+      }
+    ],
+    "name": "StrategistChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "oldSwapFeeController",
@@ -137,12 +341,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "member",
-        "type": "address"
+        "internalType": "address[]",
+        "name": "members",
+        "type": "address[]"
       }
     ],
-    "name": "addAllowedAddress",
+    "name": "addAllowedAddresses",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -327,6 +531,24 @@
   },
   {
     "inputs": [],
+    "name": "getManagementAumFeeParams",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "aumFeePercentage",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastCollectionTimestamp",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getManager",
     "outputs": [
       {
@@ -379,12 +601,38 @@
   },
   {
     "inputs": [],
+    "name": "getStrategist",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getSwapFeeController",
     "outputs": [
       {
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getSwapFeePercentage",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -409,11 +657,65 @@
         "internalType": "address",
         "name": "poolAddress",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "proxyInvest",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint64",
+            "name": "feesToManager",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "feesToReferral",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct KassandraManagedPoolController.FeesPercentages",
+        "name": "feesPercentages",
+        "type": "tuple"
       }
     ],
     "name": "initialize",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "poolAddress",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "member",
+        "type": "address"
+      }
+    ],
+    "name": "isAllowedAddress",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -458,12 +760,37 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "member",
-        "type": "address"
+        "internalType": "address[]",
+        "name": "members",
+        "type": "address[]"
       }
     ],
-    "name": "removeAllowedAddress",
+    "name": "removeAllowedAddresses",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint64",
+            "name": "feesToManager",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "feesToReferral",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct KassandraManagedPoolController.FeesPercentages",
+        "name": "feesPercentages",
+        "type": "tuple"
+      }
+    ],
+    "name": "setJoinFees",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -471,6 +798,19 @@
   {
     "inputs": [],
     "name": "setPublicPool",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newStrategist",
+        "type": "address"
+      }
+    ],
+    "name": "setStrategist",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -510,19 +850,6 @@
       }
     ],
     "name": "updateMetadata",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "recipient",
-        "type": "address"
-      }
-    ],
-    "name": "withdrawCollectedManagementFees",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

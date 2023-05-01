@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import theme from '../../../../styles/theme'
 
 export const Kacy = styled.div``
@@ -37,6 +37,7 @@ export const Ul =
 
 export const Li = styled.li`
   display: flex;
+  align-items: center;
   justify-content: space-between;
 
   color: ${theme.colors.snow};
@@ -46,7 +47,7 @@ export const Li = styled.li`
   letter-spacing: 0.05em;
 
   &:not(:last-of-type) {
-    margin-bottom: 1.6rem;
+    margin-bottom: 1.2rem;
   }
 
   @media (max-width: 500px) {
@@ -80,7 +81,7 @@ export const KacyTotalContainer = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  margin-bottom: 2.4rem;
+  margin-bottom: 1.6rem;
 
   @media (max-width: 500px) {
     margin-bottom: 1.6rem;
@@ -100,12 +101,6 @@ export const ImgWrapper = styled.div`
 
   background: ${theme.colors.darkPurple};
   border-radius: 50%;
-`
-
-export const ChainIcon = styled.div`
-  position: absolute;
-  bottom: 0;
-  right: 0;
 `
 
 export const TotalWrapper = styled.div`
@@ -159,4 +154,28 @@ export const Line = styled.div`
 
   border-radius: 0.1rem;
   background-color: rgba(255, 255, 255, 0.15);
+`
+
+export const ChainContainer = styled.div`
+  ${() => css`
+    width: 100%;
+
+    color: rgb(189, 189, 189);
+    font-weight: ${theme.font.weight.normal};
+    font-size: ${theme.font.sizes.font14};
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.8rem;
+  `}
+`
+
+export const ButtonContainer = styled.div`
+  ${() => css`
+    display: flex;
+    gap: 0.8rem;
+  `}
 `

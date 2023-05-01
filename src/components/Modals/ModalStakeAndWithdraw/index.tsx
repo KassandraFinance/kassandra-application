@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 import { ToastSuccess, ToastWarning } from '../../Toastify/toast'
+import Web3 from 'web3'
 
 import { BNtoDecimal } from '../../../utils/numerals'
 import waitTransaction, {
@@ -14,8 +15,8 @@ import waitTransaction, {
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
 
-import { Staking } from '../../../constants/tokenAddresses'
-import useERC20Contract from '../../../hooks/useERC20Contract'
+import { Staking, networks } from '../../../constants/tokenAddresses'
+import { ERC20 } from '../../../hooks/useERC20Contract'
 import useStakingContract from '../../../hooks/useStakingContract'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
@@ -36,6 +37,9 @@ interface IModalStakeProps {
   stakeTransaction: string;
   setStakeTransaction: React.Dispatch<React.SetStateAction<string>>;
   link: string;
+  amountApproved: Big;
+  updateAllowance: () => Promise<void>;
+  handleApprove: () => Promise<void>;
 }
 
 const ModalStakeAndWithdraw = ({
@@ -47,7 +51,10 @@ const ModalStakeAndWithdraw = ({
   symbol,
   stakeTransaction,
   setStakeTransaction,
-  link
+  link,
+  amountApproved,
+  updateAllowance,
+  handleApprove
 }: IModalStakeProps) => {
   const dispatch = useAppDispatch()
 
@@ -68,7 +75,7 @@ const ModalStakeAndWithdraw = ({
   const { trackEventFunction } = useMatomoEcommerce()
 
   const kacyStake = useStakingContract(Staking)
-  const kacyToken = useERC20Contract(stakingToken)
+  const kacyToken = ERC20(stakingToken, new Web3(networks[43114].rpc))
   const productSKU = `${Staking}_${pid}`
 
   const connect = localStorage.getItem('walletconnect')
@@ -99,8 +106,8 @@ const ModalStakeAndWithdraw = ({
         toDelegate.delegatee === '0x0000000000000000000000000000000000000000'
           ? userWalletAddress
           : toDelegate.delegatee
-
-      kacyStake.stake(pid, amountStake, delegate, stakeCallback())
+      await kacyStake.stake(pid, amountStake, delegate, stakeCallback())
+      await updateAllowance()
     } else if (stakeTransaction === 'unstaking') {
       kacyStake.withdraw(pid, amountStake, withdrawCallback())
     }
@@ -135,6 +142,7 @@ const ModalStakeAndWithdraw = ({
   React.useEffect(() => {
     setMultiplier(0)
     handleKacyAmount(new BigNumber(0))
+    updateAllowance()
   }, [])
 
   React.useEffect(() => {
@@ -338,18 +346,35 @@ const ModalStakeAndWithdraw = ({
                 max
               </button>
             </S.ButtonContainer>
-            <S.ConfirmButton
-              type="button"
-              disabled={amountStake.toString() === '0'}
-              onClick={() => {
-                setModalOpen(false)
-                handleConfirm()
-                setAmountStake(new BigNumber(0))
-                setStakeTransaction('')
-              }}
-            >
-              Confirm
-            </S.ConfirmButton>
+            <S.WrapperButton>
+              {amountApproved.lt(amountStake.toString()) &&
+              stakeTransaction === 'staking' ? (
+                <Button
+                  type="button"
+                  text="Approve Contract"
+                  disabledNoEvent={amountStake.gt(balance)}
+                  backgroundSecondary
+                  fullWidth
+                  onClick={handleApprove}
+                />
+              ) : (
+                <Button
+                  backgroundSecondary
+                  type="button"
+                  disabledNoEvent={
+                    amountStake.eq(new BigNumber(0)) || amountStake.gt(balance)
+                  }
+                  text="Confirm"
+                  fullWidth
+                  onClick={() => {
+                    setModalOpen(false)
+                    handleConfirm()
+                    setAmountStake(new BigNumber(0))
+                    setStakeTransaction('')
+                  }}
+                />
+              )}
+            </S.WrapperButton>
 
             {symbol === 'KACY' ? (
               connect ? (

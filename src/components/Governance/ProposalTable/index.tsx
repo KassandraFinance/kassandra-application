@@ -4,19 +4,15 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-import {
-  chains,
-  GovernorAlpha,
-  SUBGRAPH_URL
-} from '../../../constants/tokenAddresses'
+import { GovernorAlpha, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
 
 import useGovernance from '../../../hooks/useGovernance'
+
+import Loading from '../../Loading'
 
 import { GET_PROPOSALS } from './graphql'
 
 import * as S from './styles'
-import { Divider } from '../../Footer/styles'
-import Loading from '../../Loading'
 
 const statsSecundaryProposalLibColor: { [key: string]: string } = {
   'voting open': '#E843C4',
@@ -60,9 +56,7 @@ export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
     Array<IProposalsListProps>
   >([])
 
-  const secondsPerBlock =
-    chains[process.env.NEXT_PUBLIC_MASTER === '1' ? 'avalanche' : 'fuji']
-      .secondsPerBlock ?? 2
+  const secondsPerBlock = 2
 
   const { data } = useSWR([GET_PROPOSALS, skip, take], (query, skip, take) =>
     request(SUBGRAPH_URL, query, { skip, take })

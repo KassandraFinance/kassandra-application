@@ -36,6 +36,7 @@ export const TransactionSettings = styled.div`
     font-weight: 300;
 
     > span {
+      display: flex;
       margin-left: 0.4rem;
     }
 

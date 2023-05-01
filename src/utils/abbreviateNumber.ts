@@ -1,6 +1,5 @@
-export function abbreviateNumber(number: string) {
-  const trim = number.replace(/\s+/g, '')
-  const inter = parseInt(trim)
+export function abbreviateNumber(number: string | number) {
+  const inter = typeof number === 'string' ? parseInt(number) : number
 
   function nFormatter(number: number, divisor: number, unit: string) {
     const div = Math.floor(number / divisor)

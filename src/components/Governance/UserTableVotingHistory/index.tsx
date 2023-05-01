@@ -4,11 +4,7 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-import {
-  chains,
-  GovernorAlpha,
-  SUBGRAPH_URL
-} from '../../../constants/tokenAddresses'
+import { GovernorAlpha, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
 
 import useGovernance from '../../../hooks/useGovernance'
 
@@ -71,9 +67,7 @@ export const UserTableVotingHistory = ({
     IProposalsTableProps[]
   >([])
 
-  const secondsPerBlock =
-    chains[process.env.NEXT_PUBLIC_MASTER === '1' ? 'avalanche' : 'fuji']
-      .secondsPerBlock ?? 2
+  const secondsPerBlock = 2
 
   const { data } = useSWR([GET_PROPOSALS], query =>
     request(SUBGRAPH_URL, query, {

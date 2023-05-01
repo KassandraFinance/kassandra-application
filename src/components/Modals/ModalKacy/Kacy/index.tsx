@@ -8,7 +8,7 @@ import { setModalWalletActive } from '../../../../store/reducers/modalWalletActi
 
 import { BNtoDecimal } from '../../../../utils/numerals'
 import changeChain from '../../../../utils/changeChain'
-import { chains } from '../../../../constants/tokenAddresses'
+import { networks } from '../../../../constants/tokenAddresses'
 
 import Overlay from '../../../Overlay'
 import Modal from '../../Modal'
@@ -16,6 +16,7 @@ import Button from '../../../Button'
 
 import kacyIcon from '../../../../../public/assets/logos/kacy-96.svg'
 import avalancheIcon from '../../../../../public/assets/logos/avalanche.svg'
+import polygonIcon from '../../../../../public/assets/logos/polygon.svg'
 
 import * as S from './styles'
 
@@ -24,10 +25,11 @@ interface IKacyProps {
   supply: number;
   kacyStaked: BigNumber;
   kacyUnclaimed: BigNumber;
-  kacyWallet: BigNumber;
+  kacyWallet: Record<number, BigNumber>;
   kacyTotal: BigNumber;
   setIsModalKacy: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsModalBridge: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Kacy = ({
@@ -38,7 +40,8 @@ const Kacy = ({
   kacyWallet,
   kacyTotal,
   setIsModalKacy,
-  setIsOpenModal
+  setIsOpenModal,
+  setIsModalBridge
 }: IKacyProps) => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
@@ -46,31 +49,28 @@ const Kacy = ({
   const connect = process.browser && localStorage.getItem('walletconnect')
   const dispatch = useAppDispatch()
 
-  const chain =
-    process.env.NEXT_PUBLIC_MASTER === '1' ? chains.avalanche : chains.fuji
+  const avalancheNetwork = networks[43114]
+  const polygonNetwork = networks[137]
 
   const totalSupply = 10000000
 
   function handleCloseModal() {
     setIsModalKacy(false)
   }
+
   return (
     <S.Kacy>
       <Overlay onClick={handleCloseModal} />
 
       <Modal title="Your KACY Stats" onCloseModal={handleCloseModal}>
         <S.ModalContent>
-          {userWalletAddress && chainId === chain.chainId && (
+          {userWalletAddress && (
             <>
               <S.KacyTotalContainer>
                 <S.ImgContainer>
                   <S.ImgWrapper>
                     <Image src={kacyIcon} width={40} height={40} />
                   </S.ImgWrapper>
-
-                  <S.ChainIcon>
-                    <Image src={avalancheIcon} width={20} height={20} />
-                  </S.ChainIcon>
                 </S.ImgContainer>
 
                 <S.TotalWrapper>
@@ -79,7 +79,9 @@ const Kacy = ({
                   <S.KacyUSDTotal>
                     ~
                     {BNtoDecimal(
-                      Big(kacyTotal.toString()).mul(price).div(Big(10).pow(18)),
+                      Big(kacyTotal?.toString() ?? 0)
+                        .mul(price)
+                        .div(Big(10).pow(18)),
                       6,
                       2,
                       2
@@ -89,7 +91,11 @@ const Kacy = ({
                 </S.TotalWrapper>
               </S.KacyTotalContainer>
 
-              <S.Line />
+              <S.ChainContainer>
+                <img src={avalancheIcon.src} alt="" width={20} height={20} />
+                <p>Avalanche</p>
+                <S.Line />
+              </S.ChainContainer>
 
               <S.Ul>
                 <S.Li>
@@ -131,11 +137,51 @@ const Kacy = ({
                 <S.Li>
                   Wallet
                   <S.Value>
-                    {BNtoDecimal(kacyWallet, 18, 2)}
+                    {BNtoDecimal(
+                      kacyWallet[avalancheNetwork.chainId] ?? Big(0),
+                      18,
+                      2
+                    )}
                     <span>
                       ~
                       {BNtoDecimal(
-                        Big(kacyWallet.toString())
+                        Big(
+                          kacyWallet[avalancheNetwork.chainId]?.toString() ??
+                            Big(0)
+                        )
+                          .mul(price)
+                          .div(Big(10).pow(18)),
+                        6,
+                        2,
+                        2
+                      )}{' '}
+                      USD
+                    </span>
+                  </S.Value>
+                </S.Li>
+              </S.Ul>
+
+              <S.ChainContainer>
+                <img src={polygonIcon.src} alt="" width={20} height={20} />
+                <p>Polygon</p>
+                <S.Line />
+              </S.ChainContainer>
+              <S.Ul>
+                <S.Li>
+                  Wallet
+                  <S.Value>
+                    {BNtoDecimal(
+                      kacyWallet[polygonNetwork.chainId] ?? Big(0),
+                      18,
+                      2
+                    )}
+                    <span>
+                      ~
+                      {BNtoDecimal(
+                        Big(
+                          kacyWallet[polygonNetwork.chainId]?.toString() ??
+                            Big(0)
+                        )
                           .mul(price)
                           .div(Big(10).pow(18)),
                         6,
@@ -173,7 +219,7 @@ const Kacy = ({
             </S.Li>
           </S.Ul>
 
-          {chainId === chain.chainId && userWalletAddress ? (
+          {userWalletAddress ? (
             connect ? (
               <Button
                 text="Buy KACY"
@@ -184,26 +230,27 @@ const Kacy = ({
                 target="_blank"
               />
             ) : (
-              <Button
-                text="Buy KACY"
-                backgroundPrimary
-                fullWidth
-                onClick={() => {
-                  setIsOpenModal(true)
-                  setIsModalKacy(false)
-                }}
-              />
+              <S.ButtonContainer>
+                <Button
+                  text="Buy KACY"
+                  backgroundPrimary
+                  fullWidth
+                  onClick={() => {
+                    setIsOpenModal(true)
+                    setIsModalKacy(false)
+                  }}
+                />
+                <Button
+                  text="Bridge KACY"
+                  backgroundSecondary
+                  fullWidth
+                  onClick={() => {
+                    setIsModalBridge(true)
+                    setIsModalKacy(false)
+                  }}
+                />
+              </S.ButtonContainer>
             )
-          ) : chainId !== chain.chainId ? (
-            <Button
-              text={`Change to ${chain.chainName}`}
-              backgroundPrimary
-              fullWidth
-              onClick={() => {
-                changeChain(chain)
-                setIsModalKacy(false)
-              }}
-            />
           ) : (
             <Button
               text="Connect Wallet"
@@ -211,7 +258,6 @@ const Kacy = ({
               fullWidth
               onClick={() => {
                 dispatch(setModalWalletActive(true))
-                setIsModalKacy(false)
               }}
             />
           )}

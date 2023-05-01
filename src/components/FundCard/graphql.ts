@@ -14,9 +14,9 @@ export const GET_POOL = gql`
       name
       logo
       address
-      chainId
       foundedBy
       price_usd # pool asset price
+      pool_version
       # price candlestick
       # just taking the close value can make a line graph
       # base can be usd or btc
@@ -92,7 +92,6 @@ export const GET_POOL = gql`
         timestamp
         close
       }
-
       month: price_candles(
         where: { base: "usd", period: 3600, timestamp_gt: $month }
         orderBy: timestamp
@@ -100,6 +99,18 @@ export const GET_POOL = gql`
       ) {
         timestamp
         close
+      }
+      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 2) {
+        start_timestamp
+        end_timestamp
+        weights(orderBy: weight_normalized, orderDirection: desc) {
+          weight_normalized
+          asset {
+            token {
+              id
+            }
+          }
+        }
       }
     }
   }

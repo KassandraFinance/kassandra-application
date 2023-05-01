@@ -4,16 +4,17 @@ export const Backdrop = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 20;
+  z-index: 1030;
 
   display: flex;
   justify-content: center;
   align-items: center;
+
+  width: 100vw;
   max-width: 100%;
   height: 100vh;
-  width: 100vw;
 
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgb(0 0 0 / 0.7);
 
   @media (max-width: 500px) {
     align-items: flex-end;
@@ -21,7 +22,7 @@ export const Backdrop = styled.div`
 `
 
 export const ModalContainer = styled.div`
-  border-radius: 1.2rem;
+  border-radius: 12px;
 
   @media (max-width: 1130px) {
     width: 98.5vw;
@@ -38,13 +39,13 @@ export const ModalHeader = styled.header`
   align-items: center;
 
   padding: 2.4rem;
-
-  font-size: 1.6rem;
-  font-weight: 500;
-
-  background-color: rgba(31, 31, 31);
   border-top-left-radius: 1.2rem;
   border-top-right-radius: 1.2rem;
+
+  font-weight: 500;
+  font-size: 1.6rem;
+
+  background-color: rgb(31 31 31);
 
   .close-modal {
     cursor: pointer;
@@ -53,30 +54,33 @@ export const ModalHeader = styled.header`
 
 export const ModalBody = styled.div`
   display: flex;
-  padding: 2.4rem;
 
-  background-color: rgba(31, 41, 55, 1);
-  border-bottom-left-radius: 1.2rem;
+  padding: 2.4rem;
   border-bottom-right-radius: 1.2rem;
+  border-bottom-left-radius: 1.2rem;
+
+  background-color: rgb(31 41 55 / 1);
 
   @media (max-width: 500px) {
     display: block;
+
     padding: 3.4rem 2.2rem;
   }
 `
 
 export const SocialMediaContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  order: -1;
+  flex-flow: column wrap;
   gap: 1.6rem;
+  justify-content: space-between;
+  order: -1;
+
   margin-right: 3.2rem;
 
   @media (max-width: 500px) {
     flex-direction: row;
     gap: 3.2rem;
+
     margin-right: 0;
   }
 `
@@ -84,8 +88,8 @@ export const SocialMediaContainer = styled.div`
 export const SocialMedia = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 0.8rem;
+  align-items: center;
 
   min-width: 5.6rem;
 
@@ -101,13 +105,13 @@ export const SocialMedia = styled.div`
   }
 
   @media (max-width: 550px) {
-    max-width: 4.2rem;
     min-width: 0;
+    max-width: 4.2rem;
   }
 
   @media (max-width: 500px) {
-    max-width: 5.6rem;
     min-width: 0;
+    max-width: 5.6rem;
   }
 `
 
@@ -117,20 +121,22 @@ export const ImageContainer = styled.div`
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 0.5rem;
+    border-radius: 5px;
+
+    background-color: rgb(255 255 255 / 0.2);
   }
 
   @media (max-width: 1130px) {
     overflow-x: scroll;
+
     width: 100%;
   }
 
   @media (max-width: 500px) {
-    opacity: 0;
-    visibility: hidden;
     width: 0;
     height: 0;
-    /* display: none; */
+
+    opacity: 0;
+    visibility: hidden;
   }
 `

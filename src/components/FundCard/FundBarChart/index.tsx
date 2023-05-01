@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { BarChart, XAxis, YAxis, Bar } from 'recharts'
+import { BarChart, XAxis, YAxis, Bar, ResponsiveContainer } from 'recharts'
 
 interface IBarChartProps {
   poolObject: any;
@@ -35,42 +35,42 @@ const FundBarChart = ({ poolObject, poolInfo }: IBarChartProps) => {
   const poolLength = poolInfo.length - 1
 
   return (
-    <BarChart
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: '0 auto',
-        marginTop: '0.65rem',
-        maxWidth: '100%',
-        borderRadius: '50%'
-      }}
-      data={[{ name: 'pool', ...poolObject }]}
-      layout="vertical"
-      margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-      width={288}
-      height={5}
-    >
-      <XAxis type="number" domain={[0, 100]} hide />
-      <YAxis type="category" hide dataKey="pool" />
+    <ResponsiveContainer width="99%" height={5}>
+      <BarChart
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: '0 auto',
+          marginTop: '0.65rem',
+          maxWidth: '100%',
+          borderRadius: '50%'
+        }}
+        data={[{ name: 'pool', ...poolObject }]}
+        layout="vertical"
+        margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+      >
+        <XAxis type="number" domain={[0, 100]} hide />
+        <YAxis type="category" hide dataKey="pool" />
 
-      {poolInfo.map((item: any, index: number) => (
-        <Bar
-          key={item.token.id}
-          barSize={4}
-          stackId="pool"
-          dataKey={item.token.id}
-          fill={`${dictionary[index]}`}
-          radius={
-            index === 0
-              ? [25, 0, 0, 25]
-              : index === poolLength
-              ? [0, 25, 25, 0]
-              : [0, 0, 0, 0]
-          }
-        />
-      ))}
-    </BarChart>
+        {poolInfo.map((item: any, index: number) => (
+          <Bar
+            key={item.token.id}
+            barSize={4}
+            stackId="pool"
+            dataKey={item.token.id}
+            fill={`${dictionary[index]}`}
+            radius={
+              index === 0
+                ? [25, 0, 0, 25]
+                : index === poolLength
+                ? [0, 25, 25, 0]
+                : [0, 0, 0, 0]
+            }
+          />
+        ))}
+      </BarChart>
+    </ResponsiveContainer>
   )
 }
 
