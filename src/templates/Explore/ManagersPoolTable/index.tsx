@@ -280,7 +280,7 @@ const ManagersPoolTable = () => {
             return (
               <TR key={manager.address}>
                 <Link
-                  href={`/profile/${manager.address}?tab=managed-funds`}
+                  href={`/profile/${manager.address}?tab=managed-pools`}
                   passHref
                 >
                   <TRLink>
@@ -293,7 +293,7 @@ const ManagersPoolTable = () => {
                         diameter={24}
                         hasAddress={true}
                         isLink={false}
-                        tab="?tab=managed-funds"
+                        tab="?tab=managed-pools"
                       />
                     </TD>
                     <TD isView={inViewCollum === 1}>

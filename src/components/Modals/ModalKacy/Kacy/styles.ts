@@ -172,3 +172,10 @@ export const ChainContainer = styled.div`
     gap: 0.8rem;
   `}
 `
+
+export const ButtonContainer = styled.div`
+  ${() => css`
+    display: flex;
+    gap: 0.8rem;
+  `}
+`

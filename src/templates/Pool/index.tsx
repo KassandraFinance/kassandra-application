@@ -266,7 +266,7 @@ const Pool = () => {
                     <h3>${pool.symbol}</h3>
                     {pool.manager.id && (
                       <Link
-                        href={`/profile/${pool.manager.id}?tab=managed-funds`}
+                        href={`/profile/${pool.manager.id}?tab=managed-pools`}
                         passHref
                       >
                         <a>
