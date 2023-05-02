@@ -13,12 +13,22 @@ export const Invest = styled.form`
     padding-left: 3.2rem;
 
     .btn-submit {
-      margin-top: 2rem;
+      :disabled {
+        img {
+          opacity: 0.4;
+        }
+      }
     }
 
     @media (max-width: 500px) {
       padding: 2rem;
     }
+  `}
+`
+
+export const PrivatePoolTooltip = styled.p`
+  ${() => css`
+    padding: 0.4rem;
   `}
 `
 
@@ -46,6 +56,7 @@ export const TransactionSettingsOptions = styled.div`
 
   width: 100%;
   margin-top: 0.6rem;
+  margin-bottom: 2rem;
 `
 
 export const TransactionSettings = styled.div`

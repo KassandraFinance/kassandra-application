@@ -71,6 +71,7 @@ const queryPool = `{
   logo
   pool_version
   strategy
+  is_private_pool
   manager {
     id
   }
