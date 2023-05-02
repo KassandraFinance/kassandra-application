@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { InputRadioContainer } from '@/components/Inputs/InputRadio/styles'
 
 type colorDictType = {
   [key: string]: string
@@ -47,7 +48,6 @@ export const StepCardContainer = styled.div`
       gap: 2.4rem;
 
       width: 100%;
-
       margin: 0;
       margin-bottom: 33rem;
     }
@@ -61,9 +61,7 @@ export const SelectNetwork = styled.div`
 
     @media (min-width: 768px) {
       width: 100%;
-
       margin: 0;
-      /* margin-bottom: 26.3rem; */
     }
   `}
 `
@@ -114,6 +112,19 @@ export const ButtonsContainer = styled.div`
 export const ButtonWrapper = styled.div`
   ${() => css`
     position: relative;
+
+    ${InputRadioContainer} {
+      position: absolute;
+      top: 2.6rem;
+      right: 2rem;
+
+      display: block;
+
+      width: fit-content;
+      height: fit-content;
+
+      pointer-events: none;
+    }
   `}
 `
 
@@ -126,13 +137,15 @@ interface IButtonNetworkProps {
 export const ButtonNetwork = styled.button<IButtonNetworkProps>`
   ${({ theme, borderColor, selected }) => css`
     display: flex;
-    align-items: center;
     gap: 1rem;
+    align-items: center;
 
     width: 100%;
     height: 6.4rem;
-    margin-bottom: 0.8rem;
     padding: 1.6rem;
+    border: none;
+    border: 1px solid ${!selected ? 'rgba(31, 31, 31, 0.72)' : colorDict[borderColor]};
+    border-radius: 8px;
 
     color: ${theme.colors.snow};
     font-weight: ${theme.font.weight.light};
@@ -140,35 +153,32 @@ export const ButtonNetwork = styled.button<IButtonNetworkProps>`
     line-height: ${theme.font.sizes.font24};
     letter-spacing: 0.05em;
 
-    background: rgba(31, 31, 31, 0.72);
-    border: none;
-    border-radius: 0.8rem;
-    border: 0.1rem solid ${!selected ? 'rgba(31, 31, 31, 0.72)' : colorDict[borderColor]};
-
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-    transition-property: border;
+    background: rgb(31 31 31 / 0.72);
 
     cursor: pointer;
 
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: border;
+
     &:hover,
     &:active {
-      border: 0.1rem solid ${colorDict[borderColor]};
+      border: 1px solid ${colorDict[borderColor]};
     }
 
     &:disabled {
       margin-bottom: 0;
+      border-color: ${theme.colors.darkGray};
 
-      color: rgba(255, 255, 255, 0.3);
+      color: rgb(255 255 255 / 0.3);
 
       background: ${theme.colors.darkGray} ;
-      border-color: ${theme.colors.darkGray};
+
+      cursor: not-allowed;
 
       img {
         filter: grayscale(150%);
       }
-
-      cursor: not-allowed;
     }
 
     @media (min-width: 768px) {
@@ -193,10 +203,11 @@ export const LinkWrapper = styled.div`
       position: absolute;
       top: 50%;
       right: 1.6rem;
+
       transform: translateY(-50%);
 
       > a {
-        color: rgba(255, 255, 255, 0.3);
+        color: rgb(255 255 255 / 0.3);
 
         cursor: not-allowed;
 
@@ -207,11 +218,6 @@ export const LinkWrapper = styled.div`
     }
 
     @media (min-width: 768px) {
-      position: absolute;
-      top: 50%;
-      right: 1.6rem;
-      transform: translateY(-50%);
-
       > a {
         height: 6.4rem;
 
@@ -227,7 +233,6 @@ export const InputValidation = styled.input`
     top: 0;
 
     opacity: 0;
-
     pointer-events: none;
   `}
 `
