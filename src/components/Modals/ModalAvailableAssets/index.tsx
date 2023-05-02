@@ -12,17 +12,31 @@ import { BACKEND_KASSANDRA } from '../../../constants/tokenAddresses'
 import Loading from '../../Loading'
 import Overlay from '../../Overlay'
 import ModalWithMobile from '../ModalWithMobile'
+import SelectTabs from '@/components/SelectTabs'
 
 import KassandraWhitelistAbi from "../../../constants/abi/KassandraWhitelist.json";
+
+import polygonIcon from '@assets/logos/matic.svg'
+import ethIcon from '@assets/logos/eth-logo.svg'
 
 import * as S from './styles'
 
 import { mockTokens, networks } from '../../../constants/tokenAddresses'
 
+const tabs = [
+  {
+    asPathText: '5',
+    text: 'Goerly',
+    icon: ethIcon
+  },
+  {
+    asPathText: '137',
+    text: 'Polygon',
+    icon: polygonIcon
+  }
+]
+
 interface IModalAvailableAssetsProps {
-  chainIcon: JSX.Element;
-  chainName: string;
-  chainId: number;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -33,14 +47,24 @@ type ITokenProps = {
 }
 
 const ModalAvailableAssets = ({
-  chainIcon,
-  chainId,
-  chainName,
   setModalOpen
 }: IModalAvailableAssetsProps) => {
   const [whitelist, setWhitelist] = React.useState<string[]>();
+  const [isSelectTab, setIsSelectTab] = React.useState<
+    string | string[] | undefined
+  >('5')
 
   React.useEffect(() => {
+    if (!isSelectTab) {
+      return
+    }
+
+    if (Array.isArray(isSelectTab)) {
+      return
+    }
+
+    const chainId = Number(isSelectTab)
+
     const getWhitelist = async () => {
       try {
         const web3 = new Web3(networks[chainId].rpc);
@@ -54,11 +78,11 @@ const ModalAvailableAssets = ({
           setWhitelist(whitelist)
         }
       } catch (error) {
-          console.error(Error)
+        console.error(Error)
       }
     }
     getWhitelist();
-  }, [])
+  }, [isSelectTab])
 
   const { data } = useSWR([GET_INFO_TOKENS, whitelist], (query, whitelist) =>
     request(BACKEND_KASSANDRA, query, {
@@ -71,30 +95,36 @@ const ModalAvailableAssets = ({
       <Overlay onClick={() => setModalOpen(false)} />
 
       <ModalWithMobile
-        title={`${chainName} Assets`}
-        titleIcon={chainIcon}
+        title={`Available Assets`}
         onCloseModal={() => setModalOpen(false)}
       >
-        <S.ModalAvailableAssetsContent hasToken={data && data.tokensByIds}>
-          {data && data.tokensByIds ? (
-            data.tokensByIds.map((token: ITokenProps, index: number) => {
-              return token && (
-                <Link
-                  key={token.name + index}
-                  href={`https://heimdall-frontend.vercel.app/coins/${token.symbol.toLocaleLowerCase()}`}
-                  passHref
-                >
-                  <S.tokenContent target="_blank">
-                    <img src={token.logo} alt="" width={24} height={24} />
-                    <p>{token.name}</p>
-                  </S.tokenContent>
-                </Link>
-              )
-            })
-          ) : (
-            <Loading marginTop={0} />
-          )}
-        </S.ModalAvailableAssetsContent>
+        <>
+          <SelectTabs tabs={tabs}
+            isSelect={isSelectTab}
+            setIsSelect={setIsSelectTab}
+          />
+
+          <S.ModalAvailableAssetsContent hasToken={data && data.tokensByIds}>
+            {data && data.tokensByIds ? (
+              data.tokensByIds.map((token: ITokenProps, index: number) => {
+                return token && (
+                  <Link
+                    key={token.name + index}
+                    href={`https://heimdall-frontend.vercel.app/coins/${token.symbol.toLocaleLowerCase()}`}
+                    passHref
+                  >
+                    <S.tokenContent target="_blank">
+                      <img src={token.logo} alt="" width={24} height={24} />
+                      <p>{token.name}</p>
+                    </S.tokenContent>
+                  </Link>
+                )
+              })
+            ) : (
+              <Loading marginTop={0} />
+            )}
+          </S.ModalAvailableAssetsContent>
+        </>
       </ModalWithMobile>
     </S.ModalAvailableAssets>
   )
