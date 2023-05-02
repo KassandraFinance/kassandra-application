@@ -6,15 +6,15 @@ interface IValidateInputValueProps {
   min: number;
 }
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const WrapperInputNumber = styled.div<IValidateInputValueProps>`
   ${({ theme }) => css`
-    color: #ffffff;
-    font-size: ${theme.font.sizes.font16};
-    font-weight: ${theme.font.weight.medium};
-
     border: 1px solid transparent;
-    border-radius: 0.8rem;
+    border-radius: 8px;
+
+    color: #fff;
+    font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font16};
   `}
 
   ${({ value, max, min }) =>
@@ -35,58 +35,66 @@ interface ILabelProps {
   value: string;
 }
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const Label = styled.label<ILabelProps>`
   ${({ theme, value }) => css`
     position: relative;
 
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+
     min-width: 7.8rem;
     padding-block: 0.8rem;
-
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgb(255 255 255 / 0.05);
     border-radius: 4px;
+
+    background: rgb(255 255 255 / 0.15);
 
     ::after {
       content: '%';
       position: absolute;
       right: ${value.length === 1
-        ? '1.6rem'
-        : value.length === 2
+      ? '1.6rem'
+      : value.length === 2
         ? '1.2rem'
         : '0.6rem'};
 
-      color: #ffffff;
-      font-family: ${theme.font.family};
-      font-size: ${theme.font.sizes.font16};
+      color: #fff;
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font16};
+      font-family: ${theme.font.family};
     }
   `}
 `
 
 export const InputNumber = styled.input`
   ${({ theme }) => css`
-    margin-right: 1rem;
     width: 100%;
+    margin-right: 1rem;
+    border: none;
 
-    color: #ffffff;
-    font-family: ${theme.font.family};
-    font-size: ${theme.font.sizes.font16};
+    color: #fff;
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font16};
+    font-family: ${theme.font.family};
     line-height: 100%;
     text-align: center;
 
-    outline: none;
     background-color: transparent;
-    border: none;
+    outline: none;
 
-    ::-webkit-inner-spin-button,
-    ::-webkit-outer-spin-button {
-      -webkit-appearance: none;
+    /* Chrome, Safari, Edge, Opera */
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
       margin: 0;
+
+      appearance: none;
+    }
+
+    /* Firefox */
+    &[type='number'] {
+      appearance: textfield;
     }
   `}
 `

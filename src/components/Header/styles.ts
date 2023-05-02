@@ -33,7 +33,7 @@ export const Wrapper = styled.div<IWrapperProps>`
   }
 
   ${({ dashBoard }) => dashBoard && css`
-    z-index: 1040;
+    z-index: 1020;
 
     justify-content: flex-end;
 

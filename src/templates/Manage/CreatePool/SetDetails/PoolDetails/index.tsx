@@ -42,7 +42,7 @@ const PoolDetails = () => {
           required
           value={details.poolName ?? ''}
           minLength={3}
-          maxLength={32}
+          maxLength={20}
           lable="managed pool name"
           error="Invalid fund name. Fund names must be 32 characters or less"
           onChange={handleInput}
