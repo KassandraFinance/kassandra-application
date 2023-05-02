@@ -25,6 +25,7 @@ export const GET_COMMUNITYPOOLS = gql`
       }
       price_usd
       total_value_locked_usd
+      is_private_pool
       factory {
         pool_count
       }

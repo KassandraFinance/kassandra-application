@@ -48,6 +48,7 @@ type GetCommunityPoolsType = {
     price_usd: string,
     symbol: string,
     total_value_locked_usd: string,
+    is_private_pool: boolean,
     factory: {
       pool_count: number
     },
