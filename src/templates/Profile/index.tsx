@@ -417,8 +417,7 @@ const Profile = () => {
               setPriceInDolar={setPriceInDolar}
             />
           ) : isSelectTab === tabs[1].asPathText ? (
-            <AnyCard text='Coming soon' />
-            // <ManagedFunds />
+            <ManagedFunds />
           ) : isSelectTab === tabs[2].asPathText ? (
             <>
               <GovernanceData address={profileAddress} />
