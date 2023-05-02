@@ -28,12 +28,12 @@ const stepGuide = [
   {
     icon: assetsIcon,
     title: 'Step 2 - Select assets',
-    text: 'Every product must have at least 5% KACY allocation.'
+    text: 'Choose the assets you want your managed pool to have from our whitelist.'
   },
   {
     icon: adjustIcon,
     title: 'Step 3 - Add initial liquidity',
-    text: 'Total initial amount must be at least $20.000.'
+    text: 'Provide the initial liquidity for your managed pool to work with.'
   },
   {
     icon: feeConfigurationIcon,
