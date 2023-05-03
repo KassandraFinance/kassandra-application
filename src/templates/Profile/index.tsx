@@ -42,7 +42,6 @@ import substr from '../../utils/substr'
 import { BNtoDecimal } from '../../utils/numerals'
 
 import * as S from './styles'
-import AnyCard from '@/components/AnyCard'
 
 // eslint-disable-next-line prettier/prettier
 declare let window: {

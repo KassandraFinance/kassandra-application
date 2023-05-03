@@ -96,15 +96,6 @@ const Nav = ({
             Manage
           </S.MenuLink>
         </Link>
-        {/* <S.MenuLink
-          onClick={() => {
-            setIsModalWaitingList(true)
-            trackEventFunction('click-on-link', 'manage', 'header')
-          }}
-          active={router.asPath === '/manage'}
-        >
-          Manage
-        </S.MenuLink> */}
         <DropdownMenu
           nameOnHeader="DAO"
           isActive={
