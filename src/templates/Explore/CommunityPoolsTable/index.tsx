@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
+import Tippy from '@tippyjs/react'
 
 import { calcChange } from '@/utils/numerals'
 
@@ -31,6 +32,7 @@ type IPoolsInfosProps = {
   price_usd: string,
   symbol: string,
   total_value_locked_usd: string,
+  is_private_pool: boolean,
   chain: {
     logo: string
   },
@@ -252,7 +254,24 @@ const CommunityPoolsTable = ({
                         </S.Imagecontainer>
 
                         <S.ValueWrapper>
-                          <S.TextValue>{pool.name}</S.TextValue>
+                          <S.TextValue id="privatePool">
+                            {pool.is_private_pool && (
+                              <Tippy
+                                content={[
+                                  <S.PrivatePoolTooltip key="PrivatePool">
+                                    Private Pool
+                                  </S.PrivatePoolTooltip>
+                                ]}
+                              >
+                                <img
+                                  src="/assets/utilities/lock.svg"
+                                  width={14}
+                                  height={13}
+                                />
+                              </Tippy>
+                            )}
+                            {pool.name}
+                          </S.TextValue>
 
                           <S.SecondaryTextValue>
                             {pool.symbol}

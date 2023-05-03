@@ -4,6 +4,7 @@ import BigNumber from 'bn.js'
 import web3 from '../../../../../utils/web3'
 import useSWR from 'swr';
 import { request } from 'graphql-request';
+import Tippy from '@tippyjs/react';
 
 import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
 
@@ -42,6 +43,7 @@ export type Titles = keyof typeof messages;
 interface IWithdrawProps {
   typeWithdraw: string;
   typeAction: Titles;
+  privateInvestors: string[];
 }
 
 enum Approval {
@@ -53,7 +55,7 @@ enum Approval {
 
 type Approvals = { [key in Titles]: Approval[] }
 
-const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
+const Withdraw = ({ typeWithdraw, typeAction, privateInvestors }: IWithdrawProps) => {
   const [amountTokenIn, setamountTokenIn] = React.useState<Big | string>(
     Big(0)
   )
@@ -517,12 +519,12 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         {typeWithdraw === 'Single_asset' && (
           <S.ExchangeRate>
             <S.SpanLight>Price Impact:</S.SpanLight>
-            <S.PriceImpactWrapper price={BNtoDecimal(
+            <S.PriceImpactWrapper price={Number(BNtoDecimal(
               priceImpact,
               18,
               2,
               2
-            )}>
+            ))}>
               {BNtoDecimal(
                 priceImpact,
                 18,
@@ -542,6 +544,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           <TransactionSettings slippage={slippage} setSlippage={setSlippage} />
         </S.TransactionSettingsOptions>
       </S.TransactionSettingsContainer>
+
       {userWalletAddress.length === 0 && walletConnect === null ? (
         <Button
           className="btn-submit"
@@ -552,48 +555,71 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           text="Connect Wallet"
         />
       ) : chainId === pool.chain_id ? (
-        <Button
-          className="btn-submit"
-          backgroundPrimary
-          disabledNoEvent={
-            (approvals[typeAction].length === 0) ||
-            (approvals[typeAction][0] > Approval.Approved) ||
-            (approvals[typeAction][0] === Approval.Approved &&
-              (amountTokenIn.toString() === '0' ||
-                (typeWithdraw === 'Single_asset' && amountTokenOut.toString() === '0') ||
-                (typeWithdraw === 'Best_value' && amountAllTokenOut.length === 0) ||
-                errorMsg.length > 0
-              ))
-          }
-          fullWidth
-          type="submit"
-          text={
-            approvals[typeAction][0] === Approval.Approved
-              ? amountTokenIn.toString() !== '0' ||
-                inputAmountInTokenRef?.current?.value !== null
-                ?
-                typeWithdraw === "Best_value" ?
-                  `${typeAction} ${'$' + priceInDollarOnWithdraw}`
-                  :
-                  `${typeAction} ${'$' +
-                  BNtoDecimal(
-                    (Big((amountTokenOut).toString()))
-                      .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
-                      .div(Big(10).pow(Number(tokenSelect.decimals || 18))),
-                    18,
-                    2,
-                    2
-                  )
-                  }`
-                : `${typeAction}`
-              : approvals[typeAction][0] === Approval.WaitingTransaction
-                ? 'Approving...'
-                : approvals[typeAction][0] === undefined ||
-                  approvals[typeAction][0] === Approval.Syncing
-                  ? 'Syncing with Blockchain...'
-                  : 'Approve'
-          }
-        />
+        pool.is_private_pool && !privateInvestors.some(address => address === userWalletAddress) ? (
+          <Tippy
+            allowHTML={true}
+            content={[
+              <S.PrivatePoolTooltip key="poolPrivate">
+                This is a <strong key="privatePool">Private Pool</strong>, the manager decided to limit the addresses that can invest in it
+              </S.PrivatePoolTooltip>,
+            ]}
+          >
+            <span style={{ width: '100%' }}>
+              <Button
+                className="btn-submit"
+                backgroundPrimary
+                fullWidth
+                type="button"
+                text="Private Pool"
+                disabledNoEvent
+                image='/assets/utilities/lock.svg'
+                />
+            </span>
+          </Tippy>
+        ) : (
+          <Button
+            className="btn-submit"
+            backgroundPrimary
+            disabledNoEvent={
+              (approvals[typeAction].length === 0) ||
+              (approvals[typeAction][0] > Approval.Approved) ||
+              (approvals[typeAction][0] === Approval.Approved &&
+                (amountTokenIn.toString() === '0' ||
+                  (typeWithdraw === 'Single_asset' && amountTokenOut.toString() === '0') ||
+                  (typeWithdraw === 'Best_value' && amountAllTokenOut.length === 0) ||
+                  errorMsg.length > 0
+                ))
+            }
+            fullWidth
+            type="submit"
+            text={
+              approvals[typeAction][0] === Approval.Approved
+                ? amountTokenIn.toString() !== '0' ||
+                  inputAmountInTokenRef?.current?.value !== null
+                  ?
+                  typeWithdraw === "Best_value" ?
+                    `${typeAction} ${'$' + priceInDollarOnWithdraw}`
+                    :
+                    `${typeAction} ${'$' +
+                    BNtoDecimal(
+                      (Big((amountTokenOut).toString()))
+                        .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
+                        .div(Big(10).pow(Number(tokenSelect.decimals || 18))),
+                      18,
+                      2,
+                      2
+                    )
+                    }`
+                  : `${typeAction}`
+                : approvals[typeAction][0] === Approval.WaitingTransaction
+                  ? 'Approving...'
+                  : approvals[typeAction][0] === undefined ||
+                    approvals[typeAction][0] === Approval.Syncing
+                    ? 'Syncing with Blockchain...'
+                    : 'Approve'
+            }
+          />
+        )
       ) : (
         <Button
           className="btn-submit"

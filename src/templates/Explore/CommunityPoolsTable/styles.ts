@@ -7,6 +7,18 @@ export const CommunityPoolsTable = styled.div`
 
     width: 100%;
     border-radius: 8px;
+
+    #privatePool {
+      img {
+        margin-right: 0.6rem;
+      }
+    }
+  `}
+`
+
+export const PrivatePoolTooltip = styled.p`
+  ${() => css`
+    padding: 0.4rem;
   `}
 `
 
