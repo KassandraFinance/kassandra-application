@@ -322,11 +322,11 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     })
 
     if (poolData.privacy && poolData.privateAddressList?.length) {
-        transactionsList.push({
-          key: "setPrivateInvestors",
-          transaction: `Add addresses to whitelist`,
-          status: 'WAITING'
-        })
+      transactionsList.push({
+        key: "setPrivateInvestors",
+        transaction: `Add addresses to whitelist`,
+        status: 'WAITING'
+      })
     }
 
     if (poolData.strategy || poolData.icon?.image_preview) {
@@ -491,7 +491,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       settingsParams: {
         tokens: tokens.map(token => token.address),
         normalizedWeights: normalizedWeights,
-        swapFeePercentage: Big(0.03).mul(Big(10).pow(18)).toFixed(0),
+        swapFeePercentage: Big(0.003).mul(Big(10).pow(18)).toFixed(0),
         swapEnabledOnStart: true,
         mustAllowlistLPs: false,
         managementAumFeePercentage: Big(managementAumFeePercentage).gt(0) ? Big(managementAumFeePercentage).mul(Big(10).pow(18)).toFixed(0) : Big(0).mul(Big(10).pow(18)).toFixed(0),

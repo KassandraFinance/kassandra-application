@@ -1,12 +1,10 @@
 import React from 'react'
 import Image from 'next/image'
-import useSWR from 'swr'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 import { useRouter } from 'next/router'
 
 import {
-  COINGECKO_API,
   networks,
   mockTokensReverse
 } from '../../../../../constants/tokenAddresses'
@@ -21,6 +19,7 @@ import {
 } from '../../../../../store/reducers/addAssetSlice'
 import { ERC20 } from '../../../../../hooks/useERC20Contract'
 import usePoolInfo from '@/hooks/usePoolInfo'
+import useCoingecko from '@/hooks/useCoingecko'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
@@ -87,8 +86,10 @@ const AddLiquidityOperation = () => {
 
   const { poolInfo } = usePoolInfo(wallet, poolId)
 
-  const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
+  const { data: priceData } = useCoingecko(
+    networks[poolInfo?.chain_id ?? 137].coingecko,
+    networks[poolInfo?.chain_id ?? 137].nativeCurrency.address,
+    [token.id]
   )
 
   React.useEffect(() => {

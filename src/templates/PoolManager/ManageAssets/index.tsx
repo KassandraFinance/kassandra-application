@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import useSWR from 'swr'
 import Big from 'big.js'
 import web3 from '../../../utils/web3'
 import { AbiItem } from 'web3-utils'
@@ -11,6 +10,8 @@ import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
 import usePoolAssets from '@/hooks/usePoolAssets'
 import usePoolInfo from '@/hooks/usePoolInfo'
+import useCoingecko from '@/hooks/useCoingecko'
+
 import { mockTokensReverse } from '../../../constants/tokenAddresses'
 import Kacupe from '@/constants/abi/KassandraController.json'
 
@@ -18,7 +19,6 @@ import { BNtoDecimal } from '../../../utils/numerals'
 import waitTransaction, { MetamaskError } from '../../../utils/txWait'
 
 import {
-  COINGECKO_API,
   networks
 } from '../../../constants/tokenAddresses'
 
@@ -40,8 +40,6 @@ import SetNewWeights from './SetNewWeights'
 import RebalanceReview from './RebalanceReview'
 import RebalanceSuccess from './RebalanceSuccess'
 import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
-
-import { CoinGeckoAssetsResponseType } from './AddLiquidity/AddLiquidityOperation'
 
 import addIcon from '../../../../public/assets/iconGradient/add.svg'
 
@@ -86,7 +84,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const lpNeeded = useAppSelector(
     state => state.removeAsset.lpNeeded
   )
-  const { periodSelect, poolTokensList, newTokensWights } = useAppSelector(
+  const { periodSelect, newTokensWights } = useAppSelector(
     state => state.rebalanceAssets
   )
 
@@ -103,9 +101,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     poolId
   )
 
-  const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/${networks[poolInfo?.chain_id ?? 137].coingecko}?contract_addresses=${token.id}&vs_currencies=usd`
-  )
+  const { data: priceData } = useCoingecko(networks[poolInfo?.chain_id ?? 137].coingecko, networks[poolInfo?.chain_id ?? 137].nativeCurrency.address, [token.id])
 
   const buttonTextActionAdd = {
     [TransactionStatus.START]: `Start ${token.symbol} Addition`,
@@ -392,7 +388,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         normalizedAmount: amount,
         symbol: poolInfo.symbol
       })
-      } else {
+    } else {
       setTransactions(prev =>
         prev.map((item, index) => {
           if (index === 1) {
@@ -554,7 +550,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         (error: MetamaskError, txHash: string) => callBack(error, txHash, { allowance, contractApprove: poolInfo?.controller, token }).then(result => {
           resolve(result)
         }))
-      })
+    })
   }
 
   async function handleAddToken() {

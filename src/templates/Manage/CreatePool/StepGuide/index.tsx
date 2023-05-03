@@ -122,7 +122,6 @@ const StepGuide = () => {
                 borderColor="polygon"
                 selected={network === 'polygon'}
                 onClick={() => handleSelectNetwork('polygon', 137)}
-                disabled
               >
                 <Image src={polygonIcon} width={24} height={24} /> Polygon
               </S.ButtonNetwork>

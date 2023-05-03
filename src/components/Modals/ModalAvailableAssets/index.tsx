@@ -70,7 +70,7 @@ const ModalAvailableAssets = ({
         const web3 = new Web3(networks[chainId].rpc);
         // eslint-disable-next-line prettier/prettier
         const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[chainId].whiteList);
-        const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
+        const whitelist = await whitelistContract.methods.getTokens(0, 100).call();
 
         if (chainId === 5) {
           setWhitelist(whitelist.map((token: string) => toChecksumAddress(mockTokens[token])));

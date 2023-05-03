@@ -1,5 +1,4 @@
 import React from 'react'
-import useSWR from 'swr'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 import Web3 from 'web3'
@@ -7,11 +6,9 @@ import Web3 from 'web3'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setLiquidity } from '../../../../store/reducers/poolCreationSlice'
 import { ERC20 } from '../../../../hooks/useERC20Contract'
-import {
-  COINGECKO_API,
-  mockTokens,
-  networks
-} from '../../../../constants/tokenAddresses'
+import useCoingecko from '@/hooks/useCoingecko'
+
+import { mockTokens, networks } from '../../../../constants/tokenAddresses'
 
 import CreatePoolHeader from '../CreatePoolHeader'
 import Steps from '../../../../components/Steps'
@@ -121,10 +118,10 @@ const AddLiquidity = () => {
     )
   }
 
-  const { data } = useSWR<CoinGeckoResponseType>(
-    `${COINGECKO_API}/simple/token_price/${
-      networks[networkId ?? 137].coingecko
-    }?contract_addresses=${addressesList.toString()}&vs_currencies=usd&include_24hr_change=true`
+  const { data } = useCoingecko(
+    networks[networkId ?? 137].coingecko,
+    networks[networkId ?? 137].nativeCurrency.address,
+    addressesList
   )
 
   React.useEffect(() => {
