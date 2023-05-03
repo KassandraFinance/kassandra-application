@@ -519,12 +519,12 @@ const Withdraw = ({ typeWithdraw, typeAction, privateInvestors }: IWithdrawProps
         {typeWithdraw === 'Single_asset' && (
           <S.ExchangeRate>
             <S.SpanLight>Price Impact:</S.SpanLight>
-            <S.PriceImpactWrapper price={BNtoDecimal(
+            <S.PriceImpactWrapper price={Number(BNtoDecimal(
               priceImpact,
               18,
               2,
               2
-            )}>
+            ))}>
               {BNtoDecimal(
                 priceImpact,
                 18,

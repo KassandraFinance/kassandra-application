@@ -537,12 +537,12 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       <S.TransactionSettingsContainer>
         <S.ExchangeRate>
           <S.SpanLight>Price Impact:</S.SpanLight>
-          <S.PriceImpactWrapper price={BNtoDecimal(
+          <S.PriceImpactWrapper price={Number(BNtoDecimal(
             priceImpact,
             18,
             2,
             2
-          )}>
+          )) ?? 0}>
             {BNtoDecimal(
               priceImpact,
               18,

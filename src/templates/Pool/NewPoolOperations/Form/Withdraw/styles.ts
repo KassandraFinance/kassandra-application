@@ -53,7 +53,7 @@ export const TransactionSettingsContainer = styled.div`
   `}
 `
 interface IPriceImpactWrapperProps {
-  price: string | number;
+  price: number;
 }
 
 // eslint-disable-next-line prettier/prettier

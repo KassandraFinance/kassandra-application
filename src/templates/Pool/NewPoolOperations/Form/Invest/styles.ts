@@ -139,7 +139,7 @@ export const TransactionSettings = styled.div`
 `
 
 interface IPriceImpactWrapperProps {
-  price: string | number;
+  price: number;
 }
 
 // prettier-ignore
@@ -148,7 +148,7 @@ export const PriceImpactWrapper = styled.span<IPriceImpactWrapperProps>`
 
     height: 1.7rem;
 
-    color: ${price <= 1 ? '#5EE56B' : price <= 2 ? '#bdbdbd' : price <= 5 ?'orange' : '#EA3224'};
+    color: ${price <= 1 ? '#5EE56B' : price <= 2 ? '#bdbdbd' : price <= 5 ? 'orange' : '#EA3224'};
 
     font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.light};
