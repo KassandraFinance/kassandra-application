@@ -113,9 +113,9 @@ export const networks: NetworkType = {
     kacyAddress: KacyPoligon,
     blockExplorer: 'https://polygonscan.com',
     coingecko: 'polygon-pos',
-    whiteList: '',
-    factory: '',
-    privateInvestor: '',
+    whiteList: '0xfe7AeA0E15F34aCa30285E64C529b1B2a074F531',
+    factory: '0x228885c9d0440Ae640B88fBeE31522CC6a59Fd2F',
+    privateInvestor: '0xa356Dc5260Ca76b4113CD7251906ffb57629b985',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     nativeCurrency: {
       name: 'Matic Token',

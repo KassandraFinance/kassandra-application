@@ -100,7 +100,7 @@ const SelectAssets = () => {
       allocation = allocation.replace(/^0+/, '')
       if (!isLocked && Number(allocation) > 0) {
         handleLockToken(key)
-      } else if (isLocked && Number(allocation) <=0) {
+      } else if (isLocked && Number(allocation) <= 0) {
         handleLockToken(key)
       }
     } else if (isLocked) {
@@ -131,7 +131,7 @@ const SelectAssets = () => {
 
         // eslint-disable-next-line prettier/prettier
         const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[networkId ?? 137].whiteList);
-        const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
+        const whitelist = await whitelistContract.methods.getTokens(0, 100).call();
 
         setWhitelist(whitelist);
       } catch (error) {

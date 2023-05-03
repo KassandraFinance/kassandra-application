@@ -62,7 +62,7 @@ const SelectAssets = () => {
     whitelist: tokensListGoerli
   }
 
-  const { data } = useSWR<({ tokensByIds: TokensInfoResponseType[], pool: {underlying_assets_addresses: string[]} })>([GET_INFO_TOKENS, params], (query, params) =>
+  const { data } = useSWR<({ tokensByIds: TokensInfoResponseType[], pool: { underlying_assets_addresses: string[] } })>([GET_INFO_TOKENS, params], (query, params) =>
     request(BACKEND_KASSANDRA, query, params)
   )
 
@@ -89,7 +89,7 @@ const SelectAssets = () => {
       try {
         const web3 = new Web3(networks[chainId].rpc);
         const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[chainId].whiteList);
-        const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
+        const whitelist = await whitelistContract.methods.getTokens(0, 100).call();
 
         setWhitelist(whitelist);
       } catch (error) {
@@ -100,26 +100,26 @@ const SelectAssets = () => {
   }, [])
 
   React.useEffect(() => {
-  async function getBalances(tokensList: string[]) {
-    type BalanceType = Record<string, BigNumber>
-    let balanceArr: BalanceType = {}
-    for (const token of tokensList) {
-      const { balance } = ERC20(token)
-      const balanceValue = await balance(wallet)
-      balanceArr = {
-        ...balanceArr,
-        [mockTokens[token]]: balanceValue
+    async function getBalances(tokensList: string[]) {
+      type BalanceType = Record<string, BigNumber>
+      let balanceArr: BalanceType = {}
+      for (const token of tokensList) {
+        const { balance } = ERC20(token)
+        const balanceValue = await balance(wallet)
+        balanceArr = {
+          ...balanceArr,
+          [mockTokens[token]]: balanceValue
+        }
       }
-    }
 
-    setTokensList(prev => {
+      setTokensList(prev => {
         const newArr = prev.map(item => {
           item.balance = balanceArr[item?.id?.toLowerCase()]
           return item
         })
         return newArr
       })
-  }
+    }
     const arr = whitelist ? whitelist : []
     {
       if (data) {
