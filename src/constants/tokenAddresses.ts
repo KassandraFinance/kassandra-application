@@ -69,7 +69,8 @@ export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 type CurrencyDetails = {
   name: string,
   symbol: string,
-  decimals: number
+  decimals: number,
+  address: string
 }
 
 type NetworkType = Record<
@@ -101,6 +102,7 @@ export const networks: NetworkType = {
     privateInvestor: '0xC8d8AeDBeDd1973b383D6f330C66D653F7DF11D6',
     kacyOFT: '',
     nativeCurrency: {
+      address: '0xffb99f4a02712c909d8f7cc44e67c87ea1e71e83',
       name: 'Goerli Test Token', //Ether
       symbol: 'ETH',
       decimals: 18
@@ -118,6 +120,7 @@ export const networks: NetworkType = {
     privateInvestor: '0xa356Dc5260Ca76b4113CD7251906ffb57629b985',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     nativeCurrency: {
+      address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
       name: 'Matic Token',
       symbol: 'MATIC',
       decimals: 18
@@ -135,6 +138,7 @@ export const networks: NetworkType = {
     privateInvestor: '',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     nativeCurrency: {
+      address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Avalanche',
       symbol: 'AVAX',
       decimals: 18

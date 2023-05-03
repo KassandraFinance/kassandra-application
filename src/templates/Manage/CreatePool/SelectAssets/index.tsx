@@ -8,14 +8,16 @@ import Big from 'big.js'
 
 import { ERC20 } from '../../../../hooks/useERC20Contract'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
+import useCoingecko from '@/hooks/useCoingecko'
 import {
   setTokens,
   setTokenLock,
   setAllocation,
   TokenType
 } from '../../../../store/reducers/poolCreationSlice'
+
 import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
-import { BACKEND_KASSANDRA, mockTokens, networks, COINGECKO_API } from '../../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA, mockTokens, networks } from '../../../../constants/tokenAddresses'
 import { GET_INFO_TOKENS } from './graphql'
 
 import Steps from '../../../../components/Steps'
@@ -75,9 +77,7 @@ const SelectAssets = () => {
     return element !== null
   })
 
-  const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/${networks[networkId ?? 137].coingecko}?contract_addresses=${tokensListGoerli?.toString()}&vs_currencies=usd&include_market_cap=true&include_24hr_change=true`
-  )
+  const { data: priceData } = useCoingecko(networks[networkId ?? 137].coingecko, networks[networkId ?? 137].nativeCurrency.address, tokensListGoerli ?? [''])
 
   async function getBalances(tokensList: string[]) {
     let balanceArr = {}

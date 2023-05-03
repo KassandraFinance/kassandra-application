@@ -9,9 +9,9 @@ import BigNumber from 'bn.js'
 import { ERC20 } from '../../../../hooks/useERC20Contract'
 import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
 import { useAppSelector } from '../../../../store/hooks'
+import useCoingecko from '@/hooks/useCoingecko'
 import {
   BACKEND_KASSANDRA,
-  COINGECKO_API,
   networks,
   mockTokens,
   mockTokensReverse
@@ -66,9 +66,7 @@ const SelectAssets = () => {
     request(BACKEND_KASSANDRA, query, params)
   )
 
-  const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/${networks[chainId].coingecko}?contract_addresses=${tokensListGoerli?.toString()}&vs_currencies=usd&include_market_cap=true&include_24hr_change=true`
-  )
+  const { data: priceData } = useCoingecko(networks[chainId].coingecko, networks[chainId].nativeCurrency.address, tokensListGoerli ?? [])
 
   React.useEffect(() => {
     if (!data) {
