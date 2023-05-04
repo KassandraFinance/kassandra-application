@@ -125,6 +125,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     approve?: {
       token: { amount: string, normalizedAmount: string, symbol: string },
       contractApprove: string,
+      oldAllowance: string,
       allowance: (_to: string, _from: string) => Promise<string>
     }
   ) {
@@ -159,28 +160,54 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const txReceipt = await waitTransaction(txHash)
 
     if (txReceipt.status) {
-      if (approve) {
-        const amountApproved = await approve.allowance(approve.contractApprove, txReceipt.from)
-        if (Big(amountApproved).lt(approve.token.amount)) {
-          setTransactions(prev => prev.map(item => {
-            if (item.status === 'APPROVING') {
-              item.status = 'ERROR'
-            } else if (item.status === 'NEXT') {
-              item.status = 'WAITING'
+    if (approve) {
+        for (let index = 0; index < 100; index++) {
+          await new Promise(r => setTimeout(r, 500))
+
+          const amountApproved = await approve.allowance(approve.contractApprove, txReceipt.from)
+          if (amountApproved !== approve.oldAllowance && amountApproved !== '0') {
+            if (Big(amountApproved).lt(approve.token.amount)) {
+              setTransactions(prev => prev.map(item => {
+                if (item.status === 'APPROVING') {
+                  item.status = 'ERROR'
+                } else if (item.status === 'NEXT') {
+                  item.status = 'WAITING'
+                }
+                return item
+              }))
+
+              setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
+              dispatch(
+                setModalAlertText({
+                  errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
+                  solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
+                })
+              )
+
+              return false
             }
-            return item
-          }))
 
-          setTransactionButtonStatus(TransactionStatus.CONTINUE)
+            break
+          } else if (index === 99) {
+            setTransactions(prev => prev.map(item => {
+              if (item.status === 'APPROVING') {
+                item.status = 'ERROR'
+              } else if (item.status === 'NEXT') {
+                item.status = 'WAITING'
+              }
+              return item
+            }))
+            setTransactionButtonStatus(TransactionStatus.CONTINUE)
+            dispatch(
+              setModalAlertText({
+                errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
+                solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
+              })
+            )
 
-          dispatch(
-            setModalAlertText({
-              errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
-              solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
-            })
-          )
-
-          return false
+            return false
+          }
         }
       }
       let transactionIndex = -100
@@ -237,12 +264,15 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     for (const token of notAprovedTokens) {
       const { approve, allowance } = ERC20(token.address)
       const factory = networks[poolData.networkId ?? 137].factory
+      const oldAllowance = await allowance(factory, userWalletAddress)
+
       const approved = await new Promise<boolean>(resolve => {
         approve(factory, userWalletAddress, (error: MetamaskError, txHash: string) =>
-          callBack(error, txHash, { token, contractApprove: factory, allowance }).then(result => {
+          callBack(error, txHash, { token, contractApprove: factory, oldAllowance, allowance }).then(result => {
             resolve(result)
           }))
-      })
+        })
+
       if (!approved) {
         break
       }
@@ -487,7 +517,11 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           arr.push(notApprovedToken)
         }
       }
-      await handleApproveTokens(arr)
+      try {
+        await handleApproveTokens(arr)
+      } catch (error) {
+        console.log(error)
+      }
     }
 
     const managementFeeRate = poolData.fees?.managementFee.feeRate ? poolData.fees.managementFee.feeRate : 0
@@ -519,7 +553,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         feesToReferral: poolData.fees?.refferalFee?.isChecked ? Big(feesToReferral).mul(Big(10).pow(18)).toFixed(0) : Big(0).mul(Big(10).pow(18)).toFixed(0),
       },
     }
-    console.log(pool)
+
     try {
       const factoryContract = new web3.eth.Contract((KassandraManagedControllerFactoryAbi as unknown) as AbiItem, networks[poolData.networkId ?? 137].factory);
 
@@ -531,6 +565,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         pool.maxAmountsIn,
         pool.settingsParams,
         pool.feesSettings,
+        web3.utils.padLeft('0x', 64)
       ).call({
         from: userWalletAddress
       })
@@ -543,6 +578,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         pool.maxAmountsIn,
         pool.settingsParams,
         pool.feesSettings,
+        web3.utils.padLeft('0x', 64)
       ).send({
         from: userWalletAddress
       }, callBack)
