@@ -4,11 +4,14 @@ import Big from 'big.js'
 import Link from 'next/link'
 import useSWR from 'swr'
 import request from 'graphql-request'
+import Tippy from '@tippyjs/react'
+import 'tippy.js/dist/tippy.css'
 
 import { GET_MANAGERS_POOLS, GET_USERS_VOTEWEIGHTS } from './graphql'
 import { BACKEND_KASSANDRA, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 
 import { calcChange } from '@/utils/numerals'
+import { abbreviateNumber } from '@/utils/abbreviateNumber'
 
 import Loading from '@/components/Loading'
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
@@ -17,6 +20,7 @@ import ImageProfile from '@/components/Governance/ImageProfile'
 import eyeShowIcon from '@assets/utilities/eye-show.svg'
 import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
 import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
+import tooltip from '@assets/utilities/tooltip.svg'
 
 import * as S from './styles'
 import {
@@ -235,7 +239,17 @@ const ManagersPoolTable = () => {
                 managersPoolSorting === managersPoolTableSorting.ASC
               }
             >
-              Value Managed{' '}
+              TVM{' '}
+              <Tippy content="Total Value Managed">
+                <S.Tooltip tabIndex={0}>
+                  <Image
+                    src={tooltip}
+                    alt="Explanation"
+                    height={16}
+                    width={16}
+                  />
+                </S.Tooltip>
+              </Tippy>
               <img
                 src="/assets/utilities/arrow-select-down.svg"
                 alt=""
@@ -297,7 +311,9 @@ const ManagersPoolTable = () => {
                       />
                     </TD>
                     <TD isView={inViewCollum === 1}>
-                      <Value>${manager.valueManaged}</Value>
+                      <Value>
+                        ${abbreviateNumber(manager.valueManaged, 1)}
+                      </Value>
                     </TD>
                     <TD isView={inViewCollum === 2}>
                       <Value>{manager.poolCount}</Value>

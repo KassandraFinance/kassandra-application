@@ -26,12 +26,13 @@ export const ManagersPoolTable = styled.div`
     }
 
     #manager {
-      margin-left: 1.9rem;
+      margin-left: 1rem;
     }
 
     ${Image} {
       justify-content: flex-start;
-      margin-left: 1.9rem;
+
+      margin-left: 1rem;
 
       pointer-events: none;
 
@@ -45,4 +46,9 @@ export const ManagersPoolTable = styled.div`
       }
     }
   `}
+`
+
+export const Tooltip = styled.div`
+  width: 1.6rem;
+  height: 1.6rem;
 `
