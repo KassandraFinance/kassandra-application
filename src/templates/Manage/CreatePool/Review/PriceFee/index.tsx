@@ -70,9 +70,9 @@ const PriceFee = () => {
       <S.PriceFee>
         <S.PriceFeeTitle>Price to create your pool</S.PriceFeeTitle>
         <S.PriceFeeParagraph>
-          You’ll need to pay ETH to cover the Smart contract creation costs. We
-          do not charge fees to create Funds, these costs are Avalanche Network
-          Fees.
+          You’ll need to pay {networks[networkId ?? 137].nativeCurrency.symbol}{' '}
+          to cover the Smart contract creation costs. We do not charge fees to
+          create Funds, these costs are Avalanche Network Fees.
         </S.PriceFeeParagraph>
         <S.PriceFeeBody>
           <S.NetworkFeesContainer>
