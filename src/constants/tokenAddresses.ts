@@ -40,8 +40,11 @@ export const ProxyContract =
     ? '0xCf734790E7D25f4E366b7d2F9710D3Eb1DB62036'
     : '0x97e33051B09092C1301A90b964a74cA51C0b068B'
 
-export const ProxyInvestV2 = '0x2CA2CF9624c4b0c5d87a3204780408cDA9EB9BfD' // Goerli
-export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Goerli
+// export const ProxyInvestV2 = '0x2CA2CF9624c4b0c5d87a3204780408cDA9EB9BfD' // Goerli
+// export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Goerli
+
+export const ProxyInvestV2 = '0x77F18A3963796Dd252EbEF15C9eadfE229c7c89a' // Polygon
+export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Polygon
 
 export const addressNativeToken1Inch =
   '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
