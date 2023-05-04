@@ -113,8 +113,6 @@ export const TabsButton = styled.button<ITabsButtonProps>`
     height: 5.2rem;
     padding: 1rem;
 
-    font-weight: ${props =>
-      props.isActiveTab ? theme.font.weight.semibold : theme.font.weight.light};
     font-size: ${theme.font.sizes.font14};
   }
 `
