@@ -47,15 +47,17 @@ const AddLiquidity = () => {
     addressesList = [...addressesList, token.address]
   }
 
-  // alterar função quando for entrar em produção
   async function getBalances() {
     let balancesList = {}
-    for (const token of Object.keys(mockTokens)) {
-      const { balance } = ERC20(token, new Web3(networks[networkId ?? 137].rpc))
+    for (const token of tokensList) {
+      const { balance } = ERC20(
+        token.address,
+        new Web3(networks[networkId ?? 137].rpc)
+      )
       const balanceValue = await balance(wallet)
       balancesList = {
         ...balancesList,
-        [mockTokens[token]]: balanceValue
+        [mockTokens[token.address] ?? token.address]: balanceValue
       }
     }
 
