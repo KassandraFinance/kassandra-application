@@ -36,7 +36,7 @@ const PriceFee = () => {
   }
 
   const { data } = useSWR(
-    `${COINGECKO_API}/simple/price?ids=ethereum&vs_currencies=usd`
+    `${COINGECKO_API}/simple/price?ids=wmatic&vs_currencies=usd`
   )
 
   React.useEffect(() => {
@@ -78,10 +78,13 @@ const PriceFee = () => {
           <S.NetworkFeesContainer>
             <p>network fees</p>
             <S.WrapperPrice>
-              <span>~{estimateGas.gas} ETH</span>
+              <span>
+                ~{estimateGas.gas}{' '}
+                {networks[networkId ?? 137].nativeCurrency.symbol}
+              </span>
               {data && (
                 <p>
-                  ${(data?.ethereum?.usd * Number(estimateGas.gas)).toFixed(2)}{' '}
+                  ${(data?.wmatic?.usd * Number(estimateGas.gas)).toFixed(2)}{' '}
                   USD
                 </p>
               )}
