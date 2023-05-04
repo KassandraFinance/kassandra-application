@@ -59,13 +59,13 @@ const CoinSummary = ({
       <S.TextWrapper>
         <S.Name>
           <div>{coinName}</div>
-          {url && (
+          {/* {url && (
             <Link href={url} passHref>
               <S.ALink>
                 <Image src={link} width={14} height={14} />
               </S.ALink>
             </Link>
-          )}
+          )} */}
         </S.Name>
 
         <S.Symbol table={table}>
