@@ -29,7 +29,7 @@ import * as S from './styles'
 const tabs = [
   {
     asPathText: 'pools',
-    text: 'Investment Pools',
+    text: 'Managed Pools',
     icon: inexpensiveIcon
   },
   {
