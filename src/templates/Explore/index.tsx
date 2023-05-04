@@ -116,7 +116,7 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
   }, [])
 
   React.useEffect(() => {
-    if (!data) return
+    if (!data?.pools.length) return
 
     setTotalPoolsTable(data?.pools[0].factory.pool_count)
   }, [data])

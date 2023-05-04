@@ -297,7 +297,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const approvedList: TransactionsListType[] = []
 
     for (const token of tokensList) {
-      const notApprovedToken = notAprovedTokens.find(_token => _token.address.toLowerCase() === token.address.toLowerCase())
+      if (poolData.networkId === 5) {
+      const notApprovedToken = notAprovedTokens.find(_token => _token.address === mockTokensReverse[token.address] ?? token.address)
       if (notApprovedToken) {
         notApprovedList.push({
           key: mockTokensReverse[token.address] ?? token.address,
@@ -311,9 +312,25 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           status: 'APPROVED'
         })
       }
+    } else {
+      const notApprovedToken = notAprovedTokens.find(_token => _token.address === token.address)
+      if (notApprovedToken) {
+        notApprovedList.push({
+          key: token.address,
+          transaction: `Approve ${token.symbol}`,
+          status: 'WAITING'
+        })
+      } else {
+        approvedList.push({
+          key: token.address,
+          transaction: `Approve ${token.symbol}`,
+          status: 'APPROVED'
+        })
+      }
     }
+  }
 
-    transactionsList.push(...approvedList, ...notApprovedList)
+  transactionsList.push(...approvedList, ...notApprovedList)
 
     transactionsList.push({
       key: 'createPool',
@@ -546,10 +563,10 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (stepNumber === 5) {
-      getTransactionsList()
+      await getTransactionsList()
     }
 
     handleNextButton()
