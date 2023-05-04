@@ -8,7 +8,10 @@ import { setLiquidity } from '../../../../store/reducers/poolCreationSlice'
 import { ERC20 } from '../../../../hooks/useERC20Contract'
 import useCoingecko from '@/hooks/useCoingecko'
 
-import { mockTokens, networks } from '../../../../constants/tokenAddresses'
+import {
+  mockTokensReverse,
+  networks
+} from '../../../../constants/tokenAddresses'
 
 import CreatePoolHeader from '../CreatePoolHeader'
 import Steps from '../../../../components/Steps'
@@ -50,14 +53,17 @@ const AddLiquidity = () => {
   async function getBalances() {
     let balancesList = {}
     for (const token of tokensList) {
+      const tokenAddress =
+        networkId === 5 ? mockTokensReverse[token.address] : token.address
+
       const { balance } = ERC20(
-        token.address,
+        tokenAddress,
         new Web3(networks[networkId ?? 137].rpc)
       )
       const balanceValue = await balance(wallet)
       balancesList = {
         ...balancesList,
-        [mockTokens[token.address] ?? token.address]: balanceValue
+        [token.address]: balanceValue
       }
     }
 
