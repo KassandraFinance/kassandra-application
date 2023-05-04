@@ -42,17 +42,20 @@ const useCoingecko = (
     ? undefined
     : dataTwo
     ? Object.assign(dataOne, dataTwo)
-    : dataKacy
-    ? Object.assign(dataOne, {
-        [KacyPoligon.toLowerCase()]: dataKacy[Kacy.toLowerCase()]
-      })
     : dataOne
+
+  dataKacy &&
+    data &&
+    Object.assign(data, {
+      [KacyPoligon.toLowerCase()]: dataKacy[Kacy.toLowerCase()]
+    })
 
   const priceToken = (address: string) => {
     let _address = address
     if (address === addressNativeToken1Inch) {
       _address = nativeAddress
     }
+
     return data?.[_address]?.usd
   }
 
