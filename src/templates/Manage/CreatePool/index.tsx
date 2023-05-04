@@ -260,7 +260,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
   async function getTransactionsList() {
     const tokens: Array<Token> = []
-    const tokensList = poolData.tokens ? poolData.tokens : []
+    const tokensList = poolData.tokens ? [...poolData.tokens] : []
     const transactionsList: TransactionsListType[] = []
 
     if (poolData.networkId === 5) {
@@ -297,7 +297,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const approvedList: TransactionsListType[] = []
 
     for (const token of tokensList) {
-      const notApprovedToken = notAprovedTokens.find(_token => _token.address === mockTokensReverse[token.address] ?? token.address)
+      const notApprovedToken = notAprovedTokens.find(_token => _token.address.toLowerCase() === token.address.toLowerCase())
       if (notApprovedToken) {
         notApprovedList.push({
           key: mockTokensReverse[token.address] ?? token.address,
@@ -404,7 +404,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const maxAmountsIn: string[] = []
     const tokens: Array<Token> = []
     const normalizedWeights: string[] = []
-    const tokensList = poolData.tokens ? poolData.tokens : []
+    const tokensList = poolData.tokens ? [...poolData.tokens] : []
 
     // for testnet Goerli
     if (poolData.networkId === 5) {
