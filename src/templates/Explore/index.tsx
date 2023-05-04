@@ -152,13 +152,26 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
             )}
 
             <S.CardContainer loading={loading}>
-              {poolsKassandra.map(pool => (
+              {/* {poolsKassandra.map(pool => (
                 <FundCard
                   key={pool.id}
                   poolAddress={pool.id}
                   link={`/pool/${pool.id}`}
                 />
-              ))}
+              ))} */}
+              {poolsKassandra.map(pool => {
+                if (
+                  pool.id !==
+                  '1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52'
+                )
+                  return (
+                    <FundCard
+                      key={pool.id}
+                      poolAddress={pool.id}
+                      link={`/pool/${pool.id}`}
+                    />
+                  )
+              })}
             </S.CardContainer>
 
             {/* <S.ComunitFundsContainer>
