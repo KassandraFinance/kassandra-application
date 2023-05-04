@@ -502,7 +502,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         feesToReferral: poolData.fees?.refferalFee?.isChecked ? Big(feesToReferral).mul(Big(10).pow(18)).toFixed(0) : Big(0).mul(Big(10).pow(18)).toFixed(0),
       },
     }
-
+    console.log(pool)
     try {
       const factoryContract = new web3.eth.Contract((KassandraManagedControllerFactoryAbi as unknown) as AbiItem, networks[poolData.networkId ?? 137].factory);
 
