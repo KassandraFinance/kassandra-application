@@ -1,6 +1,7 @@
 import Head from 'next/head'
 
-import PoolManager from '../../templates/PoolManager'
+// import PoolManager from '../../templates/PoolManager'
+import PageNotFound from '@/templates/404'
 
 const Index = () => {
   return (
@@ -15,7 +16,7 @@ const Index = () => {
         <meta property="og:url" content="https://kassandra.finance/" />
       </Head>
 
-      <PoolManager />
+      <PageNotFound />
     </>
   )
 }

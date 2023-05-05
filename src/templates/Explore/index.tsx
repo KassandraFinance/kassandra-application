@@ -25,18 +25,19 @@ import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg
 import managerIcon from '../../../public/assets/iconGradient/manager.svg'
 
 import * as S from './styles'
+import AnyCard from '@/components/AnyCard'
 
 const tabs = [
   {
     asPathText: 'pools',
     text: 'Managed Pools',
     icon: inexpensiveIcon
-  },
-  {
-    asPathText: 'managers',
-    text: 'Pool Managers',
-    icon: managerIcon
   }
+  // {
+  //   asPathText: 'managers',
+  //   text: 'Pool Managers',
+  //   icon: managerIcon
+  // }
 ]
 
 type GetCommunityPoolsType = {
@@ -170,7 +171,8 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
                   text=""
                 />
               </S.TitleWrapper>
-              <CommunityPoolsTable
+              <AnyCard text="Coming soon..." />
+              {/* <CommunityPoolsTable
                 pools={data?.pools}
                 communityPoolSorted={communityPoolSorted}
                 setCommunityPoolSorted={setCommunityPoolSorted}
@@ -185,16 +187,16 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
                     setSkip(selected * take)
                   }}
                 />
-              </S.PaginationWrapper>
+              </S.PaginationWrapper> */}
             </S.ComunitFundsContainer>
           </S.ExploreContainer>
         )}
 
-        {isSelectTab === 'managers' && (
+        {/* {isSelectTab === 'managers' && (
           <S.ExploreContainer>
             <ManagersPoolTable />
           </S.ExploreContainer>
-        )}
+        )} */}
       </S.Explore>
     </>
   )
