@@ -39,6 +39,10 @@ export const WasNoAllocationsChange = styled.div`
     letter-spacing: 0.3em;
     text-transform: uppercase;
     text-align: center;
+
+    @media (max-width: 576px) {
+      font-size: ${theme.font.sizes.font12};
+    }
   `}
 `
 

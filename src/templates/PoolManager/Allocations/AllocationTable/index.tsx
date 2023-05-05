@@ -63,9 +63,9 @@ const AllocationTable = ({
 
   function handleCurrentViewTable(method: string, value: number) {
     if (method === 'next') {
-      setViewColumnInTable(value === 4 ? 1 : viewColumnInTable + 1)
+      setViewColumnInTable(value === 3 ? 1 : viewColumnInTable + 1)
     } else {
-      setViewColumnInTable(value === 1 ? 4 : viewColumnInTable - 1)
+      setViewColumnInTable(value === 1 ? 3 : viewColumnInTable - 1)
     }
   }
 
