@@ -150,20 +150,15 @@ export default class operationV2 {
     const nativeValue = tokenInAddress === addressNativeToken1Inch ? tokenAmountIn : new BigNumber(0)
 
     const res = await this.contract.methods.joinPoolExactTokenInWithSwap(
-      // {
-      // recipient: userWalletAddress,
-      // referrer: this.referral,
-      // controller: this.poolInfo.controller,
-      // tokenIn: tokenInAddress,
-      // tokenAmountIn: tokenAmountIn,
-      // tokenExchange,
-      // minTokenAmountOut: minPoolAmountOut,
-      // },
-      this.poolInfo.id,
-      tokenInAddress,
-      tokenAmountIn,
+      {
+      recipient: userWalletAddress,
+      referrer: this.referral,
+      controller: this.poolInfo.controller,
+      tokenIn: tokenInAddress,
+      tokenAmountIn: tokenAmountIn.toString(),
       tokenExchange,
-      minPoolAmountOut,
+      minTokenAmountOut: minPoolAmountOut.toString(),
+      },
       data
     ).send({ from: userWalletAddress, value: nativeValue, gasPrice: new BigNumber(gasPriceValue) })
 
