@@ -10,6 +10,7 @@ export const GET_POOL_PRICE = gql`
     $year: Int!
   ) {
     pool(id: $id) {
+      price_usd
       now: price_candles(
         where: { base: "usd", period: 3600 }
         orderBy: timestamp

@@ -7,6 +7,8 @@ import { useAppSelector } from '../../../../../store/hooks'
 
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
 
+import { KacyPoligon } from '@/constants/tokenAddresses';
+
 import { BNtoDecimal } from '../../../../../utils/numerals';
 import { decimalToBN } from '../../../../../utils/poolUtils';
 
@@ -44,6 +46,17 @@ const TokenAssetIn = ({
 
   function wei2String(input: Big) {
     return input.div(Big(10).pow(Number(18)))
+  }
+
+  let diff = '0'
+  const indexKacy = pool.underlying_assets.findIndex(
+    asset => asset.token.id === KacyPoligon
+  )
+  if (indexKacy !== -1) {
+    diff = Big(poolPriceUSD.price_usd)
+      .mul(2)
+      .div(98)
+      .toFixed()
   }
 
   function handleMaxUserBalance() {
@@ -172,7 +185,7 @@ const TokenAssetIn = ({
                 BNtoDecimal(
                   Big(amountTokenIn.toString())
                     .mul(
-                      Big(poolPriceUSD?.price_usd || 0)
+                      Big(poolPriceUSD?.price_usd || 0).add(diff)
                     )
                     .div(Big(10).pow(Number(poolPriceUSD?.decimals || 18))),
                   18,
