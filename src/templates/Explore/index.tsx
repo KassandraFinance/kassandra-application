@@ -25,18 +25,19 @@ import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg
 import managerIcon from '../../../public/assets/iconGradient/manager.svg'
 
 import * as S from './styles'
+import AnyCard from '@/components/AnyCard'
 
 const tabs = [
   {
     asPathText: 'pools',
     text: 'Managed Pools',
     icon: inexpensiveIcon
-  },
-  {
-    asPathText: 'managers',
-    text: 'Pool Managers',
-    icon: managerIcon
   }
+  // {
+  //   asPathText: 'managers',
+  //   text: 'Pool Managers',
+  //   icon: managerIcon
+  // }
 ]
 
 type GetCommunityPoolsType = {
@@ -153,26 +154,13 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
             )}
 
             <S.CardContainer loading={loading}>
-              {/* {poolsKassandra.map(pool => (
+              {poolsKassandra.map(pool => (
                 <FundCard
                   key={pool.id}
                   poolAddress={pool.id}
                   link={`/pool/${pool.id}`}
                 />
-              ))} */}
-              {poolsKassandra.map(pool => {
-                if (
-                  pool.id !==
-                  '1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52'
-                )
-                  return (
-                    <FundCard
-                      key={pool.id}
-                      poolAddress={pool.id}
-                      link={`/pool/${pool.id}`}
-                    />
-                  )
-              })}
+              ))}
             </S.CardContainer>
 
             <S.ComunitFundsContainer>
@@ -183,7 +171,8 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
                   text=""
                 />
               </S.TitleWrapper>
-              <CommunityPoolsTable
+              <AnyCard text="Coming soon..." />
+              {/* <CommunityPoolsTable
                 pools={data?.pools}
                 communityPoolSorted={communityPoolSorted}
                 setCommunityPoolSorted={setCommunityPoolSorted}
@@ -198,16 +187,16 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
                     setSkip(selected * take)
                   }}
                 />
-              </S.PaginationWrapper>
+              </S.PaginationWrapper> */}
             </S.ComunitFundsContainer>
           </S.ExploreContainer>
         )}
 
-        {isSelectTab === 'managers' && (
+        {/* {isSelectTab === 'managers' && (
           <S.ExploreContainer>
             <ManagersPoolTable />
           </S.ExploreContainer>
-        )}
+        )} */}
       </S.Explore>
     </>
   )
