@@ -52,7 +52,7 @@ const TokenAssetIn = ({
   const indexKacy = pool.underlying_assets.findIndex(
     asset => asset.token.id === KacyPoligon
   )
-  if (indexKacy !== -1) {
+  if (indexKacy !== -1 && poolPriceUSD?.price_usd) {
     diff = Big(poolPriceUSD.price_usd)
       .mul(2)
       .div(98)
