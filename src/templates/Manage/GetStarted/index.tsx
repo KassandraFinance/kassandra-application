@@ -8,7 +8,10 @@ import Image from 'next/image'
 import changeChain, { ChainDetails } from '../../../utils/changeChain'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
-import { setToFirstStep } from '@/store/reducers/poolCreationSlice'
+import {
+  setToFirstStep,
+  setBackStepNumber
+} from '@/store/reducers/poolCreationSlice'
 
 // import { GET_PROFILE } from './graphql'
 // import { SUBGRAPH_URL } from '../../../constants/tokenAddresses'
@@ -48,6 +51,9 @@ const GetStarted = () => {
   function handleCreatePool() {
     if (poolCreattionChainId === 0 && stepNumber > 0) {
       dispatch(setToFirstStep())
+    }
+    if (stepNumber >= 6) {
+      dispatch(setBackStepNumber())
     }
     setIsCreatePool(true)
     return

@@ -1,41 +1,19 @@
 import React from 'react'
 import Link from 'next/link'
 
-import Button from '../../../../components/Button'
-
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { setClear } from '@/store/reducers/poolCreationSlice'
+import Button from '@/components/Button'
 
 import { networks } from '@/constants/tokenAddresses'
 
-import createFundSucess from '../../../../../public/assets/iconGradient/sucess.svg'
+import createFundSucess from '@assets/iconGradient/sucess.svg'
 
 import * as S from './styles'
 
-const PoolCreated = () => {
-  const [blockExplorer, setBlockExplorer] = React.useState('')
-  const [poolId, setPoolId] = React.useState('')
+interface IPoolCreatedProps {
+  data: { id: string, networkId: number, txHash: string };
+}
 
-  const dispatch = useAppDispatch()
-  const { networkId, id, txHash } = useAppSelector(
-    state => state.poolCreation.createPoolData
-  )
-
-  React.useEffect(() => {
-    if (networkId && id && txHash) {
-      setBlockExplorer(
-        `${networks[networkId ?? 137]?.blockExplorer}/tx/${txHash}`
-      )
-      setPoolId(id)
-    }
-  }, [networkId, id, txHash])
-
-  React.useEffect(() => {
-    if (blockExplorer !== '') {
-      dispatch(setClear())
-    }
-  }, [blockExplorer])
-
+const PoolCreated = ({ data }: IPoolCreatedProps) => {
   return (
     <S.PoolCreated>
       <S.fundCreateCard>
@@ -44,7 +22,10 @@ const PoolCreated = () => {
         <S.FundCreatedParagraph>
           Your smart contracts have been deploysed in the following transacion:
         </S.FundCreatedParagraph>
-        <Link href={blockExplorer} passHref>
+        <Link
+          href={`${networks[data.networkId].blockExplorer}/tx/${data?.txHash}`}
+          passHref
+        >
           <Button
             target="_blank"
             as="a"
