@@ -2,8 +2,12 @@ import React from 'react'
 import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
+import Big from 'big.js'
 
-import { BACKEND_KASSANDRA } from '../../../constants/tokenAddresses'
+import {
+  BACKEND_KASSANDRA,
+  KacyPoligon
+} from '../../../constants/tokenAddresses'
 
 import { GET_POOL_PRICE } from './graphql'
 
@@ -40,47 +44,95 @@ const Change = () => {
     const arrChangePrice = []
 
     if (data?.pool) {
-      const changeDay = calcChange(
-        data.pool.now[0].close,
-        data.pool.day[0]?.close
+      const indexKacy = pool.underlying_assets.findIndex(
+        asset => asset.token.id === KacyPoligon
       )
-      const changeWeek = calcChange(
-        data.pool.now[0].close,
-        data.pool.week[0]?.close
-      )
-      const changeMonth = calcChange(
-        data.pool.now[0].close,
-        data.pool.month[0]?.close
-      )
-      const changeQuarterly = calcChange(
-        data.pool.now[0].close,
-        data.pool.quarterly[0]?.close
-      )
-      const changeYear = calcChange(
-        data.pool.now[0].close,
-        data.pool.year[0]?.close
-      )
+      if (indexKacy !== -1) {
+        const diff = Big(data.pool.price_usd).mul(2).div(98).toFixed()
+        const changeDay = calcChange(
+          Big(data.pool.now[0].close).add(diff).toNumber(),
+          Big(data.pool.day[0]?.close).add(diff).toNumber()
+        )
+        const changeWeek = calcChange(
+          Big(data.pool.now[0].close).add(diff).toNumber(),
+          Big(data.pool.week[0]?.close).add(diff).toNumber()
+        )
+        const changeMonth = calcChange(
+          Big(data.pool.now[0].close).add(diff).toNumber(),
+          Big(data.pool.month[0]?.close).add(diff).toNumber()
+        )
+        const changeQuarterly = calcChange(
+          Big(data.pool.now[0].close).add(diff).toNumber(),
+          Big(data.pool.quarterly[0]?.close).add(diff).toNumber()
+        )
+        const changeYear = calcChange(
+          Big(data.pool.now[0].close).add(diff).toNumber(),
+          Big(data.pool.year[0]?.close).add(diff).toNumber()
+        )
 
-      arrChangePrice[0] = changeDay
-      arrChangePrice[1] = changeWeek
-      arrChangePrice[2] = changeMonth
-      arrChangePrice[3] = changeQuarterly
-      arrChangePrice[4] = changeYear
+        arrChangePrice[0] = changeDay
+        arrChangePrice[1] = changeWeek
+        arrChangePrice[2] = changeMonth
+        arrChangePrice[3] = changeQuarterly
+        arrChangePrice[4] = changeYear
 
-      setArrChangePrice(arrChangePrice)
+        setArrChangePrice(arrChangePrice)
 
-      dispatch(
-        setPerformanceValues({
-          title: 'Weekly Performance',
-          allPerformancePeriod: {
-            'Daily Performance': changeDay,
-            'Weekly Performance': changeWeek,
-            'Monthly Performance': changeMonth,
-            '3 Months Performance': changeQuarterly,
-            'Yearly Performance': changeYear
-          }
-        })
-      )
+        dispatch(
+          setPerformanceValues({
+            title: 'Weekly Performance',
+            allPerformancePeriod: {
+              'Daily Performance': changeDay,
+              'Weekly Performance': changeWeek,
+              'Monthly Performance': changeMonth,
+              '3 Months Performance': changeQuarterly,
+              'Yearly Performance': changeYear
+            }
+          })
+        )
+      } else {
+        const changeDay = calcChange(
+          data.pool.now[0].close,
+          data.pool.day[0]?.close
+        )
+        const changeWeek = calcChange(
+          data.pool.now[0].close,
+          data.pool.week[0]?.close
+        )
+        const changeMonth = calcChange(
+          data.pool.now[0].close,
+          data.pool.month[0]?.close
+        )
+        const changeQuarterly = calcChange(
+          data.pool.now[0].close,
+          data.pool.quarterly[0]?.close
+        )
+        const changeYear = calcChange(
+          data.pool.now[0].close,
+          data.pool.year[0]?.close
+        )
+
+        arrChangePrice[0] = changeDay
+        arrChangePrice[1] = changeWeek
+        arrChangePrice[2] = changeMonth
+        arrChangePrice[3] = changeQuarterly
+        arrChangePrice[4] = changeYear
+
+        setArrChangePrice(arrChangePrice)
+
+        dispatch(
+          setPerformanceValues({
+            title: 'Weekly Performance',
+            allPerformancePeriod: {
+              'Daily Performance': changeDay,
+              'Weekly Performance': changeWeek,
+              'Monthly Performance': changeMonth,
+              '3 Months Performance': changeQuarterly,
+              'Yearly Performance': changeYear
+            }
+          })
+        )
+      }
     }
   }, [data])
 

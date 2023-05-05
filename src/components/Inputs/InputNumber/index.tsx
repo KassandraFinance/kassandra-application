@@ -26,7 +26,7 @@ const InputNumber = ({
       <S.Label value={String(InputNumberValue)}>
         <S.InputNumber
           form={form}
-          type="Number"
+          type="number"
           id={name}
           name={name}
           value={InputNumberValue}

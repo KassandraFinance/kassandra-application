@@ -1,20 +1,16 @@
 import React from 'react'
 import Image from 'next/image'
-import useSWR from 'swr'
 import Big from 'big.js'
 import { useRouter } from 'next/router'
 
-import {
-  COINGECKO_API,
-  networks
-} from '../../../../../constants/tokenAddresses'
+import { networks } from '../../../../../constants/tokenAddresses'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import { useAppSelector } from '../../../../../store/hooks'
 import usePoolInfo from '@/hooks/usePoolInfo'
+import useCoingecko from '@/hooks/useCoingecko'
 
-import { CoinGeckoAssetsResponseType } from '../../AddLiquidity/AddLiquidityOperation'
 import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
 import * as S from './styles'
@@ -33,10 +29,10 @@ const TransactionSummary = () => {
 
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
-  const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/${
-      networks[poolInfo?.chain_id ?? 137].coingecko
-    }?contract_addresses=${token.id}&vs_currencies=usd`
+  const { data: priceData } = useCoingecko(
+    networks[poolInfo?.chain_id ?? 137].coingecko,
+    networks[poolInfo?.chain_id ?? 137].nativeCurrency.address,
+    [token.id]
   )
 
   return (

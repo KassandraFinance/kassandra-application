@@ -29,14 +29,14 @@ import * as S from './styles'
 const tabs = [
   {
     asPathText: 'pools',
-    text: 'Investment Pools',
+    text: 'Managed Pools',
     icon: inexpensiveIcon
+  },
+  {
+    asPathText: 'managers',
+    text: 'Pool Managers',
+    icon: managerIcon
   }
-  // {
-  //   asPathText: 'managers',
-  //   text: 'Pool Managers',
-  //   icon: managerIcon
-  // }
 ]
 
 type GetCommunityPoolsType = {
@@ -48,6 +48,7 @@ type GetCommunityPoolsType = {
     price_usd: string,
     symbol: string,
     total_value_locked_usd: string,
+    is_private_pool: boolean,
     factory: {
       pool_count: number
     },
@@ -115,7 +116,7 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
   }, [])
 
   React.useEffect(() => {
-    if (!data) return
+    if (!data?.pools.length) return
 
     setTotalPoolsTable(data?.pools[0].factory.pool_count)
   }, [data])
@@ -161,7 +162,7 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
               ))}
             </S.CardContainer>
 
-            {/* <S.ComunitFundsContainer>
+            <S.ComunitFundsContainer>
               <S.TitleWrapper>
                 <TitleSection
                   image={communityFunds}
@@ -185,15 +186,15 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
                   }}
                 />
               </S.PaginationWrapper>
-            </S.ComunitFundsContainer> */}
+            </S.ComunitFundsContainer>
           </S.ExploreContainer>
         )}
 
-        {/* {isSelectTab === 'managers' && (
+        {isSelectTab === 'managers' && (
           <S.ExploreContainer>
             <ManagersPoolTable />
           </S.ExploreContainer>
-        )} */}
+        )}
       </S.Explore>
     </>
   )

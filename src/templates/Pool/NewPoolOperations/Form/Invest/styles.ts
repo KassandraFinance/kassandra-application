@@ -13,12 +13,22 @@ export const Invest = styled.form`
     padding-left: 3.2rem;
 
     .btn-submit {
-      margin-top: 2rem;
+      :disabled {
+        img {
+          opacity: 0.4;
+        }
+      }
     }
 
     @media (max-width: 500px) {
       padding: 2rem;
     }
+  `}
+`
+
+export const PrivatePoolTooltip = styled.p`
+  ${() => css`
+    padding: 0.4rem;
   `}
 `
 
@@ -46,6 +56,7 @@ export const TransactionSettingsOptions = styled.div`
 
   width: 100%;
   margin-top: 0.6rem;
+  margin-bottom: 2rem;
 `
 
 export const TransactionSettings = styled.div`
@@ -128,7 +139,7 @@ export const TransactionSettings = styled.div`
 `
 
 interface IPriceImpactWrapperProps {
-  price: string | number;
+  price: number;
 }
 
 // prettier-ignore
@@ -137,7 +148,7 @@ export const PriceImpactWrapper = styled.span<IPriceImpactWrapperProps>`
 
     height: 1.7rem;
 
-    color: ${price <= 1 ? '#5EE56B' : price <= 2 ? '#bdbdbd' : price <= 5 ?'orange' : '#EA3224'};
+    color: ${price <= 1 ? '#5EE56B' : price <= 2 ? '#bdbdbd' : price <= 5 ? 'orange' : '#EA3224'};
 
     font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.light};

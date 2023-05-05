@@ -1,14 +1,14 @@
 import React from 'react'
-import useSWR from 'swr'
 import Link from 'next/link'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import Blockies from 'react-blockies'
 import Big from 'big.js'
 
-import { COINGECKO_API, networks } from '@/constants/tokenAddresses'
+import { networks } from '@/constants/tokenAddresses'
 
 import { useAppSelector } from '../../../../../store/hooks'
 import { TokenType } from '../../../../../store/reducers/poolCreationSlice'
+import useCoingecko from '@/hooks/useCoingecko'
 
 import substr from '../../../../../utils/substr'
 import { BNtoDecimal } from '../../../../../utils/numerals'
@@ -16,8 +16,6 @@ import { BNtoDecimal } from '../../../../../utils/numerals'
 import { ToastInfo } from '../../../../../components/Toastify/toast'
 import FeeBreakdown from '../../ConfigureFee/FeeBreakdown'
 import ModalViewCoinMobile from '../../../../../components/Modals/ModalViewCoinMobile'
-
-import { CoinGeckoResponseType } from '../../AddLiquidity'
 
 import * as S from './styles'
 
@@ -43,10 +41,10 @@ const PoolReview = () => {
     addressesList = [...addressesList, token.address]
   }
 
-  const { data } = useSWR<CoinGeckoResponseType>(
-    `${COINGECKO_API}/simple/token_price/${
-      networks[poolData.networkId ?? 137].coingecko
-    }?contract_addresses=${addressesList.toString()}&vs_currencies=usd&include_24hr_change=true`
+  const { data } = useCoingecko(
+    networks[poolData.networkId ?? 137].coingecko,
+    networks[poolData.networkId ?? 137].nativeCurrency.address,
+    addressesList
   )
 
   function handleCurrentViewTable(method: string, value: number) {

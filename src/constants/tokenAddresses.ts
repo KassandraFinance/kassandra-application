@@ -40,8 +40,11 @@ export const ProxyContract =
     ? '0xCf734790E7D25f4E366b7d2F9710D3Eb1DB62036'
     : '0x97e33051B09092C1301A90b964a74cA51C0b068B'
 
-export const ProxyInvestV2 = '0x2CA2CF9624c4b0c5d87a3204780408cDA9EB9BfD' // Goerli
-export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Goerli
+// export const ProxyInvestV2 = '0x2CA2CF9624c4b0c5d87a3204780408cDA9EB9BfD' // Goerli
+// export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Goerli
+
+export const ProxyInvestV2 = '0x77F18A3963796Dd252EbEF15C9eadfE229c7c89a' // Polygon
+export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Polygon
 
 export const addressNativeToken1Inch =
   '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
@@ -69,7 +72,8 @@ export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 type CurrencyDetails = {
   name: string,
   symbol: string,
-  decimals: number
+  decimals: number,
+  address: string
 }
 
 type NetworkType = Record<
@@ -101,6 +105,7 @@ export const networks: NetworkType = {
     privateInvestor: '0xC8d8AeDBeDd1973b383D6f330C66D653F7DF11D6',
     kacyOFT: '',
     nativeCurrency: {
+      address: '0xffb99f4a02712c909d8f7cc44e67c87ea1e71e83',
       name: 'Goerli Test Token', //Ether
       symbol: 'ETH',
       decimals: 18
@@ -113,11 +118,12 @@ export const networks: NetworkType = {
     kacyAddress: KacyPoligon,
     blockExplorer: 'https://polygonscan.com',
     coingecko: 'polygon-pos',
-    whiteList: '',
-    factory: '',
-    privateInvestor: '',
+    whiteList: '0xfe7AeA0E15F34aCa30285E64C529b1B2a074F531',
+    factory: '0x228885c9d0440Ae640B88fBeE31522CC6a59Fd2F',
+    privateInvestor: '0xa356Dc5260Ca76b4113CD7251906ffb57629b985',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     nativeCurrency: {
+      address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
       name: 'Matic Token',
       symbol: 'MATIC',
       decimals: 18
@@ -135,6 +141,7 @@ export const networks: NetworkType = {
     privateInvestor: '',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     nativeCurrency: {
+      address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Avalanche',
       symbol: 'AVAX',
       decimals: 18

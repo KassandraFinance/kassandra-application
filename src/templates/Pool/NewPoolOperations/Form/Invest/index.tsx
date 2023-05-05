@@ -3,8 +3,9 @@ import Big from 'big.js'
 import BigNumber from 'bn.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
+import Tippy from '@tippyjs/react'
 
-import { addressNativeToken1Inch, BACKEND_KASSANDRA, URL_1INCH } from '../../../../../constants/tokenAddresses'
+import { addressNativeToken1Inch, BACKEND_KASSANDRA, KacyPoligon, URL_1INCH } from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -65,9 +66,10 @@ type Approvals = { [key in Titles]: Approval[] }
 
 interface IInvestProps {
   typeAction: Titles;
+  privateInvestors: string[];
 }
 
-const Invest = ({ typeAction }: IInvestProps) => {
+const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const [maxActive, setMaxActive] = React.useState<boolean>(false)
   // const [isReload, setIsReload] = React.useState<boolean>(false)
   const [amountTokenIn, setAmountTokenIn] = React.useState<Big | string>(Big(0))
@@ -312,6 +314,14 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
         trackBuying(pool.id, pool.symbol, data?.pool?.price_usd, pool.chain.chainName)
 
+        const indexKacy = pool.underlying_assets.findIndex(
+          asset => asset.token.id === KacyPoligon
+        )
+        let diff = '0'
+        if (indexKacy !== -1) {
+          diff = Big(data?.pool?.price_usd ?? 0).mul(2).div(98).toFixed()
+        }
+
         operation.joinswapExternAmountIn({
           tokenInAddress: tokenSelect.address,
           tokenAmountIn: new BigNumber(Big(amountTokenIn).toFixed()),
@@ -323,7 +333,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
             pool.symbol,
             Number(BNtoDecimal(
               Big(amountTokenOut.toFixed())
-                .mul(Big(data?.pool?.price_usd || 0))
+                .mul(Big(data?.pool?.price_usd || 0).add(diff))
                 .div(Big(10).pow(data?.pool?.decimals)),
               18,
               2,
@@ -469,6 +479,26 @@ const Invest = ({ typeAction }: IInvestProps) => {
     }
 
     if (Big(amountTokenIn).gt(0) && parseFloat(amountTokenOut.toString()) > 0) {
+      const indexKacy = pool.underlying_assets.findIndex(
+        asset => asset.token.id === KacyPoligon
+      )
+      if (indexKacy !== -1) {
+        const diff = Big(data?.pool?.price_usd ?? 0).mul(2).div(98).toFixed()
+        const usdAmountIn = Big(amountTokenIn)
+        .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
+        .div(Big(10).pow(tokenSelect.decimals || 18))
+
+      const usdAmountOut = Big(amountTokenOut)
+        .mul(Big(data?.pool?.price_usd || 0).add(diff))
+        .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
+
+      const subValue = usdAmountIn.sub(usdAmountOut)
+
+      if (usdAmountIn.gt(0)) {
+        const valuePriceImpact = subValue.div(usdAmountIn).mul(100)
+        valuePriceImpact.gt(0) ? setPriceImpact(valuePriceImpact) : setPriceImpact(Big(0))
+      }
+      } else {
       const usdAmountIn = Big(amountTokenIn)
         .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
         .div(Big(10).pow(tokenSelect.decimals || 18))
@@ -483,6 +513,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         const valuePriceImpact = subValue.div(usdAmountIn).mul(100)
         valuePriceImpact.gt(0) ? setPriceImpact(valuePriceImpact) : setPriceImpact(Big(0))
       }
+    }
     } else {
       setPriceImpact(Big(0))
     }
@@ -535,12 +566,12 @@ const Invest = ({ typeAction }: IInvestProps) => {
       <S.TransactionSettingsContainer>
         <S.ExchangeRate>
           <S.SpanLight>Price Impact:</S.SpanLight>
-          <S.PriceImpactWrapper price={BNtoDecimal(
+          <S.PriceImpactWrapper price={Number(BNtoDecimal(
             priceImpact,
             18,
             2,
             2
-          )}>
+          )) ?? 0}>
             {BNtoDecimal(
               priceImpact,
               18,
@@ -569,46 +600,70 @@ const Invest = ({ typeAction }: IInvestProps) => {
           text="Connect Wallet"
         />
       ) : chainId === pool.chain_id ? (
-        <Button
-          className="btn-submit"
-          backgroundPrimary
-          disabledNoEvent={
-            (approvals[typeAction].length === 0) ||
-            (approvals[typeAction][0] > Approval.Approved) ||
-            (approvals[typeAction][0] === Approval.Approved &&
-              (amountTokenIn.toString() === '0' ||
-                amountTokenOut.toString() === '0' ||
-                errorMsg?.length > 0))
-          }
-          fullWidth
-          type="submit"
-          text={
-            approvals[typeAction][0] === Approval.Approved
-              ? amountTokenIn.toString() !== '0' ||
-                inputAmountTokenRef?.current?.value !== null
-                ?
-                `${typeAction} ${'$' +
-                BNtoDecimal(
-                  Big(amountTokenIn.toString())
-                    .mul(
-                      Big(priceToken(tokenSelect.address) || 0)
+        pool.is_private_pool && !privateInvestors.some(address => address === userWalletAddress) ? (
+          <Tippy
+            allowHTML={true}
+            content={[
+              <S.PrivatePoolTooltip key="poolPrivate">
+                This is a <strong key="privatePool">Private Pool</strong>, the manager decided to limit the addresses that can invest in it
+              </S.PrivatePoolTooltip>,
+            ]}
+          >
 
-                    )
-                    .div(Big(10).pow(Number(tokenSelect.decimals))),
-                  18,
-                  2,
-                  2
-                )
-                }`
-                : `${typeAction}`
-              : approvals[typeAction][0] === Approval.WaitingTransaction
-                ? 'Approving...'
-                : approvals[typeAction][0] === undefined ||
-                  approvals[typeAction][0] === Approval.Syncing
-                  ? 'Syncing with Blockchain...'
-                  : 'Approve'
-          }
-        />
+            <span style={{ width: '100%' }}>
+              <Button
+                className="btn-submit"
+                backgroundPrimary
+                fullWidth
+                type="button"
+                text="Private Pool"
+                disabledNoEvent
+                image='/assets/utilities/lock.svg'
+                />
+            </span>
+          </Tippy>
+        ) : (
+          <Button
+            className="btn-submit"
+            backgroundPrimary
+            disabledNoEvent={
+              (approvals[typeAction].length === 0) ||
+              (approvals[typeAction][0] > Approval.Approved) ||
+              (approvals[typeAction][0] === Approval.Approved &&
+                (amountTokenIn.toString() === '0' ||
+                  amountTokenOut.toString() === '0' ||
+                  errorMsg?.length > 0))
+            }
+            fullWidth
+            type="submit"
+            text={
+              approvals[typeAction][0] === Approval.Approved
+                ? amountTokenIn.toString() !== '0' ||
+                  inputAmountTokenRef?.current?.value !== null
+                  ?
+                  `${typeAction} ${'$' +
+                  BNtoDecimal(
+                    Big(amountTokenIn.toString())
+                      .mul(
+                        Big(priceToken(tokenSelect.address) || 0)
+
+                      )
+                      .div(Big(10).pow(Number(tokenSelect.decimals))),
+                    18,
+                    2,
+                    2
+                  )
+                  }`
+                  : `${typeAction}`
+                : approvals[typeAction][0] === Approval.WaitingTransaction
+                  ? 'Approving...'
+                  : approvals[typeAction][0] === undefined ||
+                    approvals[typeAction][0] === Approval.Syncing
+                    ? 'Syncing with Blockchain...'
+                    : 'Approve'
+            }
+          />
+        )
       ) : (
         <Button
           className="btn-submit"

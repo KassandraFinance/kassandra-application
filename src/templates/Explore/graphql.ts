@@ -9,7 +9,10 @@ export const GET_COMMUNITYPOOLS = gql`
     $skip: Int
   ) {
     pools(
-      where: { manager_not: "0xFF56b00bDaEEf52C3EBb81B0efA6e28497305175" }
+      where: {
+        manager_not: "0xFF56b00bDaEEf52C3EBb81B0efA6e28497305175"
+        id_not: "1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52"
+      }
       orderBy: total_value_locked_usd
       orderDirection: $orderDirection
       first: $first
@@ -25,6 +28,7 @@ export const GET_COMMUNITYPOOLS = gql`
       }
       price_usd
       total_value_locked_usd
+      is_private_pool
       factory {
         pool_count
       }
