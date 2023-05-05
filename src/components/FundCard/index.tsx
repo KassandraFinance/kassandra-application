@@ -1,16 +1,18 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/router'
 import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-import { useAppSelector } from '@/store/hooks'
-
+import useKacyPrice from '@/hooks/useKacyPrice'
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
-import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
+import {
+  BACKEND_KASSANDRA,
+  Kacy,
+  KacyPoligon
+} from '../../constants/tokenAddresses'
 
 import { getWeightsNormalizedV2 } from '../../utils/updateAssetsToV2'
 import { BNtoDecimal, calcChange } from '../../utils/numerals'
@@ -39,6 +41,7 @@ interface IFundCardProps {
 
 const FundCard = ({ poolAddress, link }: IFundCardProps) => {
   const { trackEventFunction } = useMatomoEcommerce()
+  const { data: dataKacy } = useKacyPrice()
 
   const dateNow = new Date()
 
@@ -75,35 +78,87 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
     const arrChangePrice = []
 
     if (data?.pool) {
-      const newPrice = data?.pool?.price_candles.map(
-        (item: { timestamp: number, close: string }) => {
-          return {
-            timestamp: item.timestamp,
-            close: Number(item.close)
+      const indexKacy = data.pool.underlying_assets.findIndex(
+        (asset: any) => asset.token.id === KacyPoligon
+      )
+
+      console.log(indexKacy)
+
+      if (indexKacy !== -1) {
+        const diff = Big(data.pool.price_usd).mul(2).div(98).toFixed()
+        const newPrice = data?.pool?.price_candles.map(
+          (item: { timestamp: number, close: string }) => {
+            return {
+              timestamp: item.timestamp,
+              close: Big(item.close).add(diff).toNumber()
+            }
           }
+        )
+
+        console.log(diff)
+        const changeDay = calcChange(
+          Big(data.pool.now[0]?.close).add(diff).toNumber(),
+          Big(data.pool.day[0]?.close).add(diff).toNumber()
+        )
+        const changeMonth = calcChange(
+          Big(data.pool.now[0]?.close).add(diff).toNumber(),
+          Big(data.pool.month[0]?.close).add(diff).toNumber()
+        )
+
+        arrChangePrice[0] = changeDay
+        arrChangePrice[1] = changeMonth
+
+        setChangeWeek(arrChangePrice)
+
+        let totalKacy = '0'
+        if (dataKacy) {
+          totalKacy = Big(dataKacy[Kacy.toLowerCase()]?.usd.toString() ?? '0')
+            .mul(data.pool.underlying_assets[indexKacy].balance)
+            .toFixed()
+          console.log(totalKacy, 'kacy')
         }
-      )
+        setInfoPool({
+          tvl: BNtoDecimal(
+            Big(data.pool?.total_value_locked_usd).add(totalKacy),
+            2,
+            2,
+            2
+          ),
+          price: Big(data.pool.price_usd).add(diff).toFixed()
+        })
 
-      const changeDay = calcChange(
-        data.pool.now[0]?.close,
-        data.pool.day[0]?.close
-      )
-      const changeMonth = calcChange(
-        data.pool.now[0]?.close,
-        data.pool.month[0]?.close
-      )
+        setPrice(newPrice)
+      } else {
+        const newPrice = data?.pool?.price_candles.map(
+          (item: { timestamp: number, close: string }) => {
+            return {
+              timestamp: item.timestamp,
+              close: Number(item.close)
+            }
+          }
+        )
 
-      arrChangePrice[0] = changeDay
-      arrChangePrice[1] = changeMonth
+        const changeDay = calcChange(
+          data.pool.now[0]?.close,
+          data.pool.day[0]?.close
+        )
+        const changeMonth = calcChange(
+          data.pool.now[0]?.close,
+          data.pool.month[0]?.close
+        )
 
-      setChangeWeek(arrChangePrice)
+        arrChangePrice[0] = changeDay
+        arrChangePrice[1] = changeMonth
 
-      setInfoPool({
-        tvl: BNtoDecimal(Big(data.pool?.total_value_locked_usd), 2, 2, 2),
-        price: data.pool.price_usd
-      })
+        setChangeWeek(arrChangePrice)
 
-      setPrice(newPrice)
+        setInfoPool({
+          tvl: BNtoDecimal(Big(data.pool?.total_value_locked_usd), 2, 2, 2),
+          price: data.pool.price_usd
+        })
+
+        setPrice(newPrice)
+      }
       if (data.pool.pool_version === 2) {
         try {
           const poolInfo = getWeightsNormalizedV2(

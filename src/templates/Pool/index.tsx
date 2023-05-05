@@ -16,7 +16,12 @@ import { setTokenList1Inch } from '../../store/reducers/tokenList1Inch'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
-import { BACKEND_KASSANDRA, URL_1INCH } from '../../constants/tokenAddresses'
+import {
+  BACKEND_KASSANDRA,
+  Kacy,
+  KacyPoligon,
+  URL_1INCH
+} from '../../constants/tokenAddresses'
 
 import { GET_INFO_POOL } from './graphql'
 
@@ -42,6 +47,7 @@ import SharedImage from './SharedImage'
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
 
 import * as S from './styles'
+import useKacyPrice from '@/hooks/useKacyPrice'
 
 export interface IfarmInfoYYProps {
   urlFarmContract: string;
@@ -82,6 +88,7 @@ const Pool = () => {
 
   const { pool } = useAppSelector(state => state)
   const dispatch = useAppDispatch()
+  const { data: dataKacy } = useKacyPrice()
 
   const { data } = useSWR([GET_INFO_POOL], query =>
     request(BACKEND_KASSANDRA, query, {
@@ -174,14 +181,41 @@ const Pool = () => {
         0
       )
 
-      setInfoPool({
-        tvl: BNtoDecimal(Big(data.pool.total_value_locked_usd), 2, 2, 2),
-        swapFees: BNtoDecimal(Big(swapFees), 2, 2, 2),
-        withdrawFees: BNtoDecimal(Big(withdrawFees), 2, 2, 2),
-        volume: BNtoDecimal(Big(volume), 2, 2, 2),
-        price: data.pool.price_usd,
-        decimals: data.pool.decimals
-      })
+      const indexKacy = pool.underlying_assets.findIndex(
+        asset => asset.token.id === KacyPoligon
+      )
+      if (indexKacy !== -1) {
+        const diff = Big(data.pool.price_usd).mul(2).div(98).toFixed()
+        let totalKacy = '0'
+        if (dataKacy) {
+          totalKacy = Big(dataKacy[Kacy.toLowerCase()]?.usd.toString() ?? '0')
+            .mul(pool.underlying_assets[indexKacy].balance)
+            .toFixed()
+          console.log(totalKacy, 'kacy')
+        }
+        setInfoPool({
+          tvl: BNtoDecimal(
+            Big(data.pool.total_value_locked_usd).add(totalKacy),
+            2,
+            2,
+            2
+          ),
+          swapFees: BNtoDecimal(Big(swapFees), 2, 2, 2),
+          withdrawFees: BNtoDecimal(Big(withdrawFees), 2, 2, 2),
+          volume: BNtoDecimal(Big(volume), 2, 2, 2),
+          price: Big(data.pool.price_usd).add(diff).toFixed(),
+          decimals: data.pool.decimals
+        })
+      } else {
+        setInfoPool({
+          tvl: BNtoDecimal(Big(data.pool.total_value_locked_usd), 2, 2, 2),
+          swapFees: BNtoDecimal(Big(swapFees), 2, 2, 2),
+          withdrawFees: BNtoDecimal(Big(withdrawFees), 2, 2, 2),
+          volume: BNtoDecimal(Big(volume), 2, 2, 2),
+          price: data.pool.price_usd,
+          decimals: data.pool.decimals
+        })
+      }
     }
   }, [data])
 
