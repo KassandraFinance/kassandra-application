@@ -64,13 +64,13 @@ interface ICommunityPoolsTBodyProps {
 // eslint-disable-next-line prettier/prettier
 export const TBodyWithHeight = styled(TBody)<ICommunityPoolsTBodyProps>`
   ${({ tableRowsNumber, lineHeight }) => css`
-    transition-timing-function: ease-in-out;
-    transition-duration: 400ms;
-    transition-property: height;
-
     overflow-y: hidden;
 
     height: ${tableRowsNumber * lineHeight}rem;
+
+    transition-timing-function: ease-in-out;
+    transition-duration: 400ms;
+    transition-property: height;
   `}
 `
 
@@ -94,8 +94,8 @@ export const TR = styled.div`
       background-color: ${theme.colors.darkPurple};
 
       &:not(:first-of-type) {
-        margin-top: -1px;
-        padding-top: 1px;
+        margin-top: -0.1rem;
+        padding-top: 0.1rem;
         border-top: 1px solid rgba(255 255 255 / 0.3);
       }
 
@@ -143,9 +143,9 @@ export const PoolInfoContainer = styled.div`
 
     &:hover {
       margin: 0;
-      margin-top: -1px;
+      margin-top: -0.1rem;
       padding-inline: 1.6rem;
-      padding-top: 1px;
+      padding-top: 0.1rem;
       border-top: 1px solid rgba(255 255 255 / 0.3);
 
       background-color: ${theme.colors.darkPurple};
@@ -252,22 +252,22 @@ interface ITvlButtonSortingProps {
 export const THButtonSorting = styled(ColumnTitle)<ITvlButtonSortingProps>`
   ${() => css`
     display: flex;
-    align-items: center;
     gap: 0.4rem;
     justify-content: flex-end;
+    align-items: center;
 
     border: none;
+
     background-color: transparent;
 
     cursor: pointer;
 
-    img {
+    > img {
       margin-bottom: 0.3rem;
 
-      transition-duration: 300ms;
       transition-timing-function: ease-in-out;
+      transition-duration: 300ms;
       transition-property: transform;
-
       transform: rotate(0);
     }
   `}
@@ -275,7 +275,7 @@ export const THButtonSorting = styled(ColumnTitle)<ITvlButtonSortingProps>`
   ${({ isRotateArrow }) =>
     isRotateArrow &&
     css`
-      img {
+      > img {
         transform: rotate(180deg);
       }
     `}
@@ -510,11 +510,11 @@ export const PoolInfoMobile = styled.div`
 
 export const LoadingContainer = styled.div`
   ${() => css`
-    min-height: 100%;
-
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+
+    min-height: 100%;
   `}
 `
 

@@ -109,8 +109,9 @@ export const HeaderButtons = styled.div<IHeaderButtonsProps>`
 
     @media (max-width: 576px) {
       gap: 0.8rem;
+      justify-content: space-between;
 
-      padding: 1.6rem 1rem;
+      padding: 1.6rem;
     }
   `}
 `

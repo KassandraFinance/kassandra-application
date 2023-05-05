@@ -20,13 +20,15 @@ interface IDropdownProps {
   linkPage: Array<ILinkPage>;
   isActive?: boolean;
   adaptToResponsiveSize?: boolean;
+  onClick: () => void;
 }
 
 const DropdownMenu = ({
   nameOnHeader,
   linkPage,
   isActive,
-  adaptToResponsiveSize = false
+  adaptToResponsiveSize = false,
+  onClick
 }: IDropdownProps) => {
   const [isDropdown, setIsDropdown] = React.useState<boolean>(false)
   const { trackEventFunction } = useMatomoEcommerce()
@@ -54,7 +56,7 @@ const DropdownMenu = ({
         isDropdown={isDropdown}
         adaptToResponsiveSize={adaptToResponsiveSize}
       >
-        <S.DropdownContent>
+        <S.DropdownContent onClick={onClick}>
           {linkPage.map((item, index) => (
             <div key={index}>
               {item.disabled ? (
