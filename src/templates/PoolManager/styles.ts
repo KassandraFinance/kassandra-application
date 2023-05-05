@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import { Overlay } from '../../components/Overlay/styles'
+import { TabsContainer } from '@/components/SelectTabs/styles'
 
 export const PoolManager = styled.div`
   ${() => css`
@@ -60,6 +61,12 @@ export const Content = styled.div`
     @media (min-width: 768px) {
       padding-inline: 2.4rem;
     }
+
+    @media (max-width: 576px) {
+      ${TabsContainer} {
+        margin-top: 0;
+      }
+    }
   `}
 `
 
@@ -74,14 +81,13 @@ export const Intro = styled.div`
     margin-top: 0;
   }
 
-  @media (max-width: 510px) {
+  @media (max-width: 576px) {
     display: grid;
     grid-template-columns: 1fr;
 
     margin: 0;
 
     .btn-manage-assets {
-      max-width: 36rem;
       margin-top: 3.2rem;
       margin-bottom: 4rem;
     }
@@ -109,6 +115,13 @@ export const GridIntro = styled.div`
     grid-template-columns: 7.2rem auto;
 
     max-width: 100%;
+  }
+
+  @media (max-width: 560px) {
+    .poolIcon {
+      max-width: 6.4rem;
+      max-height: 6.4rem;
+    }
   }
 `
 

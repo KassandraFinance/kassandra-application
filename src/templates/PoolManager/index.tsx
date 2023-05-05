@@ -293,6 +293,7 @@ const PoolManager = () => {
                       }`}
                       backgroundSecondary
                       size="large"
+                      className="btn-manage-assets"
                       onClick={() =>
                         changeChain({
                           chainId: networks[poolInfo.chain_id].chainId,
@@ -322,6 +323,7 @@ const PoolManager = () => {
                           backgroundSecondary
                           size="large"
                           text="Manage Assets"
+                          fullWidth
                           image={gear.src}
                           onClick={() => setIsOpenManageAssets(true)}
                           disabledNoEvent={currentTime < endRebalanceTime}
