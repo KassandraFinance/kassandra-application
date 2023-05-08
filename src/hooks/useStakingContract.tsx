@@ -46,8 +46,8 @@ export interface PoolInfo {
   votingMultiplier: string; // uint256
 }
 
-const useStakingContract = (address: string) => {
-  const _web3 = new Web3(networks[43114].rpc)
+const useStakingContract = (address: string, chainId = 43114) => {
+  const _web3 = new Web3(networks[chainId].rpc)
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const [contract, setContract] = React.useState(new _web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
   const [contractSend, setContractSend] = React.useState(new web3.eth.Contract((StakingContract as unknown) as AbiItem, address))

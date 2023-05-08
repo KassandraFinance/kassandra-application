@@ -64,6 +64,8 @@ const Stake = () => {
               stakeWithVotingPower={pool.stakeWithVotingPower}
               stakeWithLockPeriod={pool.stakeWithLockPeriod}
               isLP={pool.isLP}
+              chain={pool.chain}
+              stakingAddress={pool.stakingContract}
             />
           ))
         : poolsKacyFuji.map(pool => (
@@ -75,6 +77,8 @@ const Stake = () => {
               stakeWithVotingPower={pool.stakeWithVotingPower}
               stakeWithLockPeriod={pool.stakeWithLockPeriod}
               isLP={pool.isLP}
+              chain={pool.chain}
+              stakingAddress={pool.stakingContract}
             />
           ))}
       {process.env.NEXT_PUBLIC_MASTER === '1' &&
@@ -89,6 +93,8 @@ const Stake = () => {
                 stakeWithVotingPower={pool.stakeWithVotingPower}
                 stakeWithLockPeriod={pool.stakeWithLockPeriod}
                 isLP={pool.isLP}
+                chain={pool.chain}
+                stakingAddress={pool.stakingContract}
               />
             )
           }

@@ -12,7 +12,6 @@ import BigNumber from 'bn.js'
 import { request } from 'graphql-request'
 
 import {
-  Staking,
   LPDaiAvax,
   SUBGRAPH_URL,
   networks
@@ -78,6 +77,11 @@ export interface IInfoStaked {
 interface IStakingProps {
   pid: number;
   symbol: string;
+  stakingAddress: string;
+  chain: {
+    id: number,
+    logo: string
+  };
   properties: {
     logo: {
       src: string,
@@ -102,7 +106,9 @@ const StakeCard = ({
   stakeWithVotingPower,
   stakeWithLockPeriod,
   isLP,
-  address
+  address,
+  stakingAddress,
+  chain
 }: IStakingProps) => {
   const dispatch = useAppDispatch()
 
@@ -144,13 +150,15 @@ const StakeCard = ({
     vestingPeriod: '...',
     lockPeriod: '...'
   })
+  const networkChain = networks[chain.id]
   const { userWalletAddress, chainId } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
 
   const { getPriceKacyAndLP } = usePriceLP()
-  const stakingContract = useStakingContract(Staking)
-
-  const avalanche = networks[43114]
+  const stakingContract = useStakingContract(
+    stakingAddress,
+    networkChain.chainId
+  )
 
   const { data } = useSWR(
     [GET_INFO_POOL, address],
@@ -180,7 +188,7 @@ const StakeCard = ({
 
   async function updateAllowance() {
     const token = ERC20(infoStaked.stakingToken)
-    const allowance = await token.allowance(Staking, userWalletAddress)
+    const allowance = await token.allowance(stakingAddress, userWalletAddress)
     setAmountApproveKacyStaking(Big(allowance))
   }
 
@@ -213,9 +221,9 @@ const StakeCard = ({
     const decimals = await token.decimals()
     setDecimals(decimals.toString())
 
-    await token.approve(Staking, userWalletAddress, approvalCallback)
+    await token.approve(stakingAddress, userWalletAddress, approvalCallback)
 
-    const allowance = await token.allowance(Staking, userWalletAddress)
+    const allowance = await token.allowance(stakingAddress, userWalletAddress)
     setAmountApproveKacyStaking(Big(allowance))
   }
 
@@ -284,9 +292,9 @@ const StakeCard = ({
       return
     }
 
-    const token = ERC20(infoStaked.stakingToken, new Web3(avalanche.rpc))
+    const token = ERC20(infoStaked.stakingToken, new Web3(networkChain.rpc))
     token
-      .allowance(Staking, userWalletAddress)
+      .allowance(stakingAddress, userWalletAddress)
       .then((response: string) => setAmountApproveKacyStaking(Big(response)))
     stakingContract.availableWithdraw &&
       stakingContract
@@ -328,6 +336,11 @@ const StakeCard = ({
                   url: properties.logo.src,
                   width: stakeLogoWidth,
                   withoutBorder: true
+                }}
+                networkImage={{
+                  url: chain.logo,
+                  height: 20,
+                  width: 20
                 }}
               />
               <S.IntroStaking>
@@ -417,6 +430,8 @@ const StakeCard = ({
                 stakeWithVotingPower={stakeWithVotingPower}
                 stakeWithLockPeriod={stakeWithLockPeriod}
                 availableWithdraw={currentAvailableWithdraw}
+                stakingAddress={stakingAddress}
+                chain={chain}
               />
               <S.ButtonContainer stakeWithVotingPower={!stakeWithVotingPower}>
                 {userWalletAddress ? (
@@ -437,7 +452,7 @@ const StakeCard = ({
                           backgroundSecondary
                           disabledNoEvent={
                             kacyEarned.lte(new BigNumber(0)) ||
-                            chainId !== avalanche.chainId
+                            chainId !== networkChain.chainId
                           }
                           onClick={() =>
                             stakingContract.getReward(
@@ -466,7 +481,7 @@ const StakeCard = ({
                         </>
                       ) : (
                         <>
-                          {chainId !== avalanche.chainId ? (
+                          {chainId !== networkChain.chainId ? (
                             <Button
                               type="button"
                               text="Connect to Avalanche"
@@ -475,8 +490,8 @@ const StakeCard = ({
                               fullWidth
                               onClick={() =>
                                 changeChain({
-                                  ...avalanche,
-                                  rpcUrls: [avalanche.rpc]
+                                  ...networkChain,
+                                  rpcUrls: [networkChain.rpc]
                                 })
                               }
                             />
@@ -513,7 +528,7 @@ const StakeCard = ({
                               disabledNoEvent={
                                 (stakeWithLockPeriod &&
                                   currentAvailableWithdraw.lte(0)) ||
-                                chainId !== avalanche.chainId
+                                chainId !== networkChain.chainId
                               }
                               fullWidth
                               onClick={() => {
@@ -528,7 +543,7 @@ const StakeCard = ({
                               backgroundBlack
                               disabledNoEvent={
                                 infoStaked.yourStake.toString() === '0' ||
-                                chainId !== avalanche.chainId
+                                chainId !== networkChain.chainId
                               }
                               fullWidth
                               onClick={() => setIsModalRequestUnstake(true)}
@@ -579,6 +594,8 @@ const StakeCard = ({
                     kacyPrice={kacyPrice}
                     link={properties.link ?? ''}
                     setIsOpenModal={setIsOpenModalPangolin}
+                    stakingAddress={stakingAddress}
+                    chainId={chain.id}
                   />
                 )}
               </S.ButtonContainer>
@@ -601,6 +618,8 @@ const StakeCard = ({
           amountApproved={amountApproveKacyStaking}
           handleApprove={handleApproveKacy}
           updateAllowance={updateAllowance}
+          stakingAddress={stakingAddress}
+          chain={chain.id}
         />
       )}
       {isModalCancelUnstake && (

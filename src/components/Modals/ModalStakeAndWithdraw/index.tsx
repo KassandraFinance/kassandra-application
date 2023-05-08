@@ -40,6 +40,8 @@ interface IModalStakeProps {
   amountApproved: Big;
   updateAllowance: () => Promise<void>;
   handleApprove: () => Promise<void>;
+  stakingAddress: string;
+  chain: number;
 }
 
 const ModalStakeAndWithdraw = ({
@@ -54,7 +56,9 @@ const ModalStakeAndWithdraw = ({
   link,
   amountApproved,
   updateAllowance,
-  handleApprove
+  handleApprove,
+  stakingAddress,
+  chain
 }: IModalStakeProps) => {
   const dispatch = useAppDispatch()
 
@@ -74,8 +78,8 @@ const ModalStakeAndWithdraw = ({
     useMatomoEcommerce()
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const kacyStake = useStakingContract(Staking)
-  const kacyToken = ERC20(stakingToken, new Web3(networks[43114].rpc))
+  const kacyStake = useStakingContract(stakingAddress)
+  const kacyToken = ERC20(stakingToken, new Web3(networks[chain].rpc))
   const productSKU = `${Staking}_${pid}`
 
   const connect = localStorage.getItem('walletconnect')
