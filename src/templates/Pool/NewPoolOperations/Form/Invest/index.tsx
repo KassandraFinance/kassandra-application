@@ -94,9 +94,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     feeNumber: 0,
     feeString: ''
   })
-  const [outAssetBalance, setOutAssetBalance] = React.useState(new Big(-1))
+  const [outAssetBalance, setOutAssetBalance] = React.useState(Big(-1))
   const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
-    new Big(-1)
+    Big(-1)
   )
 
   const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
@@ -168,10 +168,17 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     )
 
     setAmountApproved(Big(allowance))
-    setApprovals((old) => ({
-      ...old,
-      [typeAction]: Big(allowance).gte(amountTokenIn) ? [Approval.Approved] : [Approval.Denied]
-    }))
+    if (addressNativeToken1Inch !== tokenSelect.address) {
+      setApprovals((old) => ({
+        ...old,
+        [typeAction]: Big(allowance).gte(amountTokenIn) ? [Approval.Approved] : [Approval.Denied]
+      }))
+    } else {
+      setApprovals((old) => ({
+        ...old,
+        [typeAction]: [Approval.Approved]
+      }))
+    }
   }
 
   const approvalCallback = React.useCallback(
@@ -268,24 +275,28 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
         if (txReceipt.status) {
           ToastSuccess(`Investment in ${tokenSymbol} confirmed`)
+          let amountPool = Big(0)
+          for (let index = 0; index < 100; index++) {
+            await new Promise(r => setTimeout(r, 500))
+            amountPool = await getBalanceToken(pool.address, userWalletAddress)
+            if (amountPool.toFixed() !== outAssetBalance.toFixed() && amountPool.gt(0)) break
+          }
 
-          setTimeout(async () => {
-            const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.pool_version === 1 ? pool.chain.addressWrapped : undefined)
-            const amountPool = await getBalanceToken(pool.address, userWalletAddress)
-            const allowance = await ERC20(tokenSelect.address).allowance(
-              operation.contractAddress,
-              userWalletAddress
-            )
+          const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.pool_version === 1 ? pool.chain.addressWrapped : undefined)
+          const allowance = await ERC20(tokenSelect.address).allowance(
+            operation.contractAddress,
+            userWalletAddress
+          )
 
-            setAmountApproved(Big(allowance))
-            setSelectedTokenInBalance(amountToken)
-            setOutAssetBalance(amountPool)
-            setAmountTokenOut(Big(0))
-            setAmountTokenIn(Big(0))
-            if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
-              inputAmountTokenRef.current.value = ''
-            }
-          }, 2000);
+          setAmountApproved(Big(allowance))
+          setSelectedTokenInBalance(amountToken)
+          setOutAssetBalance(amountPool)
+          setAmountTokenOut(Big(0))
+          setAmountTokenIn(Big(0))
+          if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
+            inputAmountTokenRef.current.value = ''
+          }
+
           return
         }
       }
@@ -343,7 +354,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         })
         return
       } catch (error) {
-        console.log('aaaaaaaaaaa ', error)
+
         dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
       }
     }
@@ -454,7 +465,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     }
 
     const verifyIsApproved = () => {
-      if (amountApproved.lt(amountTokenIn)) {
+      if (amountApproved.lt(amountTokenIn) && addressNativeToken1Inch !== tokenSelect.address) {
         setApprovals(old => ({
           ...old,
           [typeAction]: [Approval.Denied]
