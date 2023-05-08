@@ -46,19 +46,17 @@ import {
 } from '@ui/Modals/ModalViewCoin/styles'
 
 type GetBrokersType = {
-  manager: {
-    pools: {
-      num_brokers: number,
+  pools: {
+    num_brokers: number,
 
-      brokers: {
-        wallet: string,
-        num_deposits: number,
-        unique_investors: number,
-        deposits_usd: string,
-        fees_usd: string
-      }[]
+    brokers: {
+      wallet: string,
+      num_deposits: number,
+      unique_investors: number,
+      deposits_usd: string,
+      fees_usd: string
     }[]
-  }
+  }[]
 }
 
 const BrokersTable = () => {
@@ -100,7 +98,7 @@ const BrokersTable = () => {
       })
   )
 
-  const brokersList = data?.manager?.pools[0].brokers
+  const brokersList = data?.pools[0]?.brokers
 
   function handleCurrentInView(n: number, columns: number) {
     setInViewCollum(prev => {
@@ -137,7 +135,9 @@ const BrokersTable = () => {
   }
 
   // eslint-disable-next-line prettier/prettier
-  function handleClickCopyToClipboard(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+  function handleClickCopyToClipboard(
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) {
     event.preventDefault()
     ToastInfo('Copy address')
   }
@@ -273,7 +273,7 @@ const BrokersTable = () => {
         <Pagination
           skip={skip}
           take={take}
-          totalItems={data?.manager?.pools[0].num_brokers ?? 0}
+          totalItems={data?.pools[0]?.num_brokers ?? 0}
           handlePageClick={({ selected }) => {
             setSkip(selected * take)
           }}

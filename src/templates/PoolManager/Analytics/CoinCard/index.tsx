@@ -60,7 +60,7 @@ const CoinCard = ({
   }
 
   const volatility = React.useMemo(() => {
-    const size = (sparkLine.length / 7)
+    const size = Math.ceil(sparkLine.length / 7)
     let aggIndex = 0
     let index = 0
     const data = sparkLine.reduce((acc, _value, i) => {
