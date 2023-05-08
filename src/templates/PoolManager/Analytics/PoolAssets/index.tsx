@@ -58,7 +58,7 @@ const PoolAssets = (props: IPoolAssetsProps) => {
       asset.token.id.toLowerCase() ===
       '0x366e293a5cf90a0458d9ff9f3f92234da598f62e'
   )
-    ? 'https://coins-metadata-production.up.railway.app/coins/contracts?name=' +
+    ? `${COINS_METADATA}/coins/contracts?name=` +
       networks[43114].coingecko +
       '&addressesSeparatedByComma=' +
       '0xf32398dae246c5f672b52a54e9b413dffcae1a44'
