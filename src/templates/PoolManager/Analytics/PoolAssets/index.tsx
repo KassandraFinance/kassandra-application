@@ -4,7 +4,11 @@ import useSWR from 'swr'
 import usePoolAssets from '@/hooks/usePoolAssets'
 
 import CoinCard from '@/templates/PoolManager/Analytics/CoinCard'
-import { mockTokens, networks } from '@/constants/tokenAddresses'
+import {
+  COINS_METADATA,
+  mockTokens,
+  networks
+} from '@/constants/tokenAddresses'
 import Loading from '@/components/Loading'
 
 import * as S from './styles'
@@ -35,7 +39,7 @@ const PoolAssets = (props: IPoolAssetsProps) => {
     .toString()
 
   const url = addresses
-    ? 'https://coins-metadata.kassandra.finance/coins/contracts?name=' +
+    ? `${COINS_METADATA}/coins/contracts?name=` +
       networks[Number(props.chainId)].coingecko +
       '&addressesSeparatedByComma=' +
       addresses
