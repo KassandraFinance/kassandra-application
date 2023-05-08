@@ -115,11 +115,13 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     new Date().getTime()
 
   function handleMockToken(tokenList: any) {
-    const mockTokensList = tokenList?.map((item: any) => {
-      return mockTokens[item.token.id]
-    })
-
-    return mockTokensList
+    if (data?.pool.chain_id === 5) {
+      return tokenList?.map((item: any) => {
+        return mockTokens[item.token.id]
+      })
+    } else {
+      return tokenList?.map((asset: any) => asset.token.id)
+    }
   }
 
   function tokenWeightFormatted(value: string) {
@@ -131,8 +133,12 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     coingeckoData: CoinGeckoResponseType
   ) {
     const tokenList = poolAssets.map(item => {
-      const tokenPrice =
-        coingeckoData && coingeckoData[mockTokens[item.token.id]]
+      let tokenPrice
+      if (data?.pool.chain_id === 5) {
+        tokenPrice = coingeckoData && coingeckoData[mockTokens[item.token.id]]
+      } else {
+        tokenPrice = coingeckoData && coingeckoData[item.token.id.toLowerCase()]
+      }
 
       return {
         token: {
@@ -145,7 +151,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
         allocation: tokenWeightFormatted(item.weight_normalized),
         holding: {
           value: Big(item.balance),
-          valueUSD: Big(item.balance).mul(Big(tokenPrice.usd ?? 0))
+          valueUSD: Big(item.balance).mul(Big(tokenPrice?.usd ?? 0))
         },
         price: {
           value: tokenPrice?.usd ?? 0,

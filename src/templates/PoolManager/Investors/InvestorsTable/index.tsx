@@ -45,21 +45,19 @@ import {
 } from '@ui/Modals/ModalViewCoin/styles'
 
 type GetInvestorsType = {
-  manager: {
-    pools: {
+  pools: {
+    id: string,
+    price_usd: string,
+    supply: string,
+    unique_investors: number,
+    investors: {
       id: string,
-      price_usd: string,
-      supply: string,
-      unique_investors: number,
-      investors: {
-        id: string,
-        wallet: string,
-        first_deposit_timestamp: number,
-        last_deposit_timestamp: number,
-        amount: string
-      }[]
+      wallet: string,
+      first_deposit_timestamp: number,
+      last_deposit_timestamp: number,
+      amount: string
     }[]
-  }
+  }[]
 }
 
 interface IInvestorsTable {
@@ -141,7 +139,9 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
   )
 
   // eslint-disable-next-line prettier/prettier
-  function handleClickCopyToClipboard(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+  function handleClickCopyToClipboard(
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) {
     event.preventDefault()
     ToastInfo('Copy address')
   }
@@ -151,7 +151,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
       return
     }
 
-    setTotalItems(data.manager.pools[0].unique_investors - 1)
+    setTotalItems(data.pools[0]?.unique_investors - 1)
   }, [data])
 
   return (
@@ -195,7 +195,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
       </THead>
 
       <TBody>
-        {data?.manager?.pools[0]?.investors.map((investor, index) => {
+        {data?.pools[0]?.investors.map((investor, index) => {
           const firstDeposit = getDateDiff(
             investor.first_deposit_timestamp * 1000
           )
@@ -233,7 +233,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
                     <Value>
                       $
                       {Big(investor.amount)
-                        .mul(data.manager.pools[0].price_usd)
+                        .mul(data?.pools[0]?.price_usd || 0)
                         .toFixed(2)}
                     </Value>
                   </TD>
@@ -244,7 +244,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
                     <Value>
                       {Big(investor.amount)
                         .mul(100)
-                        .div(data.manager.pools[0].supply)
+                        .div(data?.pools[0]?.supply || 0)
                         .toFixed(2)}
                       %
                     </Value>
@@ -279,11 +279,11 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
                       handleView(investor.wallet, '', investor.wallet, {
                         percentage: Big(investor.amount)
                           .mul(100)
-                          .div(data.manager.pools[0].supply)
+                          .div(data?.pools[0]?.supply || 0)
                           .toFixed(2),
                         investorShare: Big(investor.amount).toFixed(2),
                         totalInvested: Big(investor.amount)
-                          .mul(data.manager.pools[0].price_usd)
+                          .mul(data?.pools[0]?.price_usd || 0)
                           .toFixed(2),
                         lastDeposit: `${lastDeposit?.value} ${lastDeposit?.string}`,
                         firstDeposit: `${firstDeposit?.value} ${firstDeposit?.string}`,

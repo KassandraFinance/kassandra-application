@@ -110,6 +110,10 @@ export const ImageWrapper = styled.div`
 
     background-color: rgb(189 189 189 / 0.1);
     mix-blend-mode: normal;
+
+    img {
+      border-radius: 50%;
+    }
   `}
 `
 
@@ -273,6 +277,10 @@ export const InfoValueWrapper = styled.span`
     display: flex;
     gap: 0.4rem;
     align-items: center;
+
+    img {
+      border-radius: 50%;
+    }
   `}
 `
 
