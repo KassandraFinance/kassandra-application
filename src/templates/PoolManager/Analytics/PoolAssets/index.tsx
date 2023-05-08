@@ -47,7 +47,7 @@ const PoolAssets = (props: IPoolAssetsProps) => {
   }
 
   const url = addresses
-    ? 'https://coins-metadata-production.up.railway.app/coins/contracts?name=' +
+    ? `${COINS_METADATA}/coins/contracts?name=` +
       networks[props.chainId].coingecko +
       '&addressesSeparatedByComma=' +
       addresses
