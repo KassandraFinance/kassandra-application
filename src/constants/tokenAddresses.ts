@@ -68,6 +68,7 @@ export const BACKEND_KASSANDRA =
 export const URL_1INCH = 'https://api.1inch.io/v5.0/'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
+export const COINS_METADATA = 'https://coins-metadata-production.up.railway.app'
 
 type CurrencyDetails = {
   name: string,
@@ -119,7 +120,8 @@ export const networks: NetworkType = {
     blockExplorer: 'https://polygonscan.com',
     coingecko: 'polygon-pos',
     whiteList: '0xfe7AeA0E15F34aCa30285E64C529b1B2a074F531',
-    factory: '0x228885c9d0440Ae640B88fBeE31522CC6a59Fd2F',
+    factory: '0x290272D39BA3Fa0Fb2a683fC88290A9d55a1023d', // factory test
+    // factory: '0x228885c9d0440Ae640B88fBeE31522CC6a59Fd2F',
     privateInvestor: '0xa356Dc5260Ca76b4113CD7251906ffb57629b985',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     nativeCurrency: {
