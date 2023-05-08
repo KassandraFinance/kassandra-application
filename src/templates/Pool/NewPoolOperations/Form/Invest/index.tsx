@@ -270,7 +270,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           ToastSuccess(`Investment in ${tokenSymbol} confirmed`)
 
           setTimeout(async () => {
-            const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
+            const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.pool_version === 1 ? pool.chain.addressWrapped : undefined)
             const amountPool = await getBalanceToken(pool.address, userWalletAddress)
             const allowance = await ERC20(tokenSelect.address).allowance(
               operation.contractAddress,
@@ -343,6 +343,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         })
         return
       } catch (error) {
+        console.log('aaaaaaaaaaa ', error)
         dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
       }
     }

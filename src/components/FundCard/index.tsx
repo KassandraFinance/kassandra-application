@@ -82,8 +82,6 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
         (asset: any) => asset.token.id === KacyPoligon
       )
 
-      console.log(indexKacy)
-
       if (indexKacy !== -1) {
         const diff = Big(data.pool.price_usd).mul(2).div(98).toFixed()
         const newPrice = data?.pool?.price_candles.map(
@@ -95,7 +93,6 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
           }
         )
 
-        console.log(diff)
         const changeDay = calcChange(
           Big(data.pool.now[0]?.close).add(diff).toNumber(),
           Big(data.pool.day[0]?.close).add(diff).toNumber()
@@ -115,7 +112,6 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
           totalKacy = Big(dataKacy[Kacy.toLowerCase()]?.usd.toString() ?? '0')
             .mul(data.pool.underlying_assets[indexKacy].balance)
             .toFixed()
-          console.log(totalKacy, 'kacy')
         }
         setInfoPool({
           tvl: BNtoDecimal(
