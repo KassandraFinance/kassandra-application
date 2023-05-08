@@ -52,7 +52,7 @@ const TokenAssetOut = ({
       .div(98)
       .toFixed()
   }
-  data && console.log(Big(data.pool.price_usd).add(diff).toFixed())
+
   React.useEffect(() => {
     if (
       pool.id.length === 0 ||
