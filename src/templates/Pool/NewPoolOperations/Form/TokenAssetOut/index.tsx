@@ -90,7 +90,7 @@ const TokenAssetOut = ({
           </S.Token>
           <S.Balance>
             Balance:{' '}
-            {outAssetBalance > new Big(-1)
+            {outAssetBalance.gt(-1)
               ? BNtoDecimal(
                   Big(outAssetBalance).div(Big(10).pow(18)),
                   pool.chain.nativeTokenDecimals

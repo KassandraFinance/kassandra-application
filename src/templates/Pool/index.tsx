@@ -191,7 +191,6 @@ const Pool = () => {
           totalKacy = Big(dataKacy[Kacy.toLowerCase()]?.usd.toString() ?? '0')
             .mul(pool.underlying_assets[indexKacy].balance)
             .toFixed()
-          console.log(totalKacy, 'kacy')
         }
         setInfoPool({
           tvl: BNtoDecimal(
