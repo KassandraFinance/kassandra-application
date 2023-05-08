@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Tippy from '@tippyjs/react'
 
-import { addressNativeToken1Inch, BACKEND_KASSANDRA, KacyPoligon, URL_1INCH } from '../../../../../constants/tokenAddresses'
+import { addressNativeToken1Inch, BACKEND_KASSANDRA, URL_1INCH } from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -325,14 +325,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
         trackBuying(pool.id, pool.symbol, data?.pool?.price_usd, pool.chain.chainName)
 
-        const indexKacy = pool.underlying_assets.findIndex(
-          asset => asset.token.id === KacyPoligon
-        )
-        let diff = '0'
-        if (indexKacy !== -1) {
-          diff = Big(data?.pool?.price_usd ?? 0).mul(2).div(98).toFixed()
-        }
-
         operation.joinswapExternAmountIn({
           tokenInAddress: tokenSelect.address,
           tokenAmountIn: new BigNumber(Big(amountTokenIn).toFixed()),
@@ -344,7 +336,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
             pool.symbol,
             Number(BNtoDecimal(
               Big(amountTokenOut.toFixed())
-                .mul(Big(data?.pool?.price_usd || 0).add(diff))
+                .mul(data?.pool?.price_usd || 0)
                 .div(Big(10).pow(data?.pool?.decimals)),
               18,
               2,
@@ -491,26 +483,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     }
 
     if (Big(amountTokenIn).gt(0) && parseFloat(amountTokenOut.toString()) > 0) {
-      const indexKacy = pool.underlying_assets.findIndex(
-        asset => asset.token.id === KacyPoligon
-      )
-      if (indexKacy !== -1) {
-        const diff = Big(data?.pool?.price_usd ?? 0).mul(2).div(98).toFixed()
-        const usdAmountIn = Big(amountTokenIn)
-        .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
-        .div(Big(10).pow(tokenSelect.decimals || 18))
-
-      const usdAmountOut = Big(amountTokenOut)
-        .mul(Big(data?.pool?.price_usd || 0).add(diff))
-        .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
-
-      const subValue = usdAmountIn.sub(usdAmountOut)
-
-      if (usdAmountIn.gt(0)) {
-        const valuePriceImpact = subValue.div(usdAmountIn).mul(100)
-        valuePriceImpact.gt(0) ? setPriceImpact(valuePriceImpact) : setPriceImpact(Big(0))
-      }
-      } else {
       const usdAmountIn = Big(amountTokenIn)
         .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
         .div(Big(10).pow(tokenSelect.decimals || 18))
@@ -525,7 +497,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         const valuePriceImpact = subValue.div(usdAmountIn).mul(100)
         valuePriceImpact.gt(0) ? setPriceImpact(valuePriceImpact) : setPriceImpact(Big(0))
       }
-    }
     } else {
       setPriceImpact(Big(0))
     }
