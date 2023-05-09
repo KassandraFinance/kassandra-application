@@ -12,8 +12,10 @@ import BigNumber from 'bn.js'
 import { request } from 'graphql-request'
 
 import {
+  BACKEND_KASSANDRA,
+  KacyPoligon,
   LPDaiAvax,
-  SUBGRAPH_URL,
+  WETH_POLYGON,
   networks
 } from '../../constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG } from '../../constants/pools'
@@ -55,6 +57,7 @@ import infoCyanIcon from '../../../public/assets/notificationStatus/info.svg'
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
 
 import * as S from './styles'
+import useCoingecko from '@/hooks/useCoingecko'
 
 export interface IInfoStaked {
   yourStake: BigNumber;
@@ -154,7 +157,13 @@ const StakeCard = ({
   const { userWalletAddress, chainId } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const { getPriceKacyAndLP } = usePriceLP()
+  const { priceToken } = useCoingecko(
+    networkChain.coingecko,
+    networkChain.nativeCurrency.address,
+    [WETH_POLYGON, KacyPoligon]
+  )
+
+  const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(chain.id)
   const stakingContract = useStakingContract(
     stakingAddress,
     networkChain.chainId
@@ -162,7 +171,7 @@ const StakeCard = ({
 
   const { data } = useSWR(
     [GET_INFO_POOL, address],
-    (query, id) => request(SUBGRAPH_URL, query, { id }),
+    (query, id) => request(BACKEND_KASSANDRA, query, { id }),
     {
       refreshInterval: 10000
     }
@@ -193,26 +202,38 @@ const StakeCard = ({
   }
 
   async function getLiquidityPoolPriceInDollar() {
-    const addressProviderReserves = isLP && address ? address : LP_KACY_AVAX_PNG
-
-    const { kacyPriceInDollar, priceLP } = await getPriceKacyAndLP(
-      addressProviderReserves,
-      LPDaiAvax,
-      isLP
-    )
-    setKacyPrice(kacyPriceInDollar)
-
-    if (isLP && priceLP) {
-      setPoolPrice(priceLP)
-      return
+    const priceKacy = priceToken(KacyPoligon.toLowerCase())
+    if (priceKacy) {
+      setKacyPrice(Big(priceKacy))
     }
-
-    if (data) {
-      setPoolPrice(Big(data?.pool?.price_usd || -1))
+    if (chain.id === 137 && isLP && address) {
+      const priceWETH = priceToken(WETH_POLYGON.toLowerCase())
+      if (priceWETH) {
+        setPoolPrice(await getPriceKacyAndLPBalancer(priceWETH, address))
+      }
       return
-    }
+    } else if (isLP) {
+      const addressProviderReserves =
+        isLP && address ? address : LP_KACY_AVAX_PNG
 
-    setPoolPrice(kacyPriceInDollar)
+      const { kacyPriceInDollar, priceLP } = await getPriceKacyAndLP(
+        addressProviderReserves,
+        LPDaiAvax,
+        isLP
+      )
+      setKacyPrice(kacyPriceInDollar)
+
+      if (isLP && priceLP) {
+        setPoolPrice(priceLP)
+        return
+      }
+    } else if (priceKacy) {
+      if (data?.pools?.length) {
+        setPoolPrice(Big(data.pools[0]?.price_usd || -1))
+        return
+      }
+      setPoolPrice(Big(priceKacy))
+    }
   }
 
   async function handleApproveKacy() {

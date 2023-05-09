@@ -4,8 +4,6 @@ import Link from 'next/link'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 
-import { Staking } from '../../../constants/tokenAddresses'
-
 import useStakingContract from '../../../hooks/useStakingContract'
 
 import { getDate } from '../../../utils/date'

@@ -49,6 +49,10 @@ export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // P
 export const addressNativeToken1Inch =
   '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
+export const VAULT_POLYGON = '0xBA12222222228d8Ba445958a75a0704d566BF2C8'
+
+export const WETH_POLYGON = '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
+
 export const platform: Record<number, string> = {
   [43114]: 'avalanche',
   [137]: 'polygon-pos'

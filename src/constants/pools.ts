@@ -46,6 +46,8 @@ const PHYPE = {
   id: '1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52'
 }
 
+export const KACY_WETH = '0xfaf3bc722d34146be83a2aac40b43148a51a9126'
+
 const kacyInvestor1: PoolDetails = {
   pid: 0,
   symbol: 'KACY',
@@ -260,9 +262,31 @@ const phype: PoolDetails = {
   isLP: false
 }
 
+const lpBalancer: PoolDetails = {
+  pid: 0,
+  symbol: 'KACY-WETH',
+  stakingContract: '0xd530f3ce79c9eb03e59dce89a7504dd41d4899bb',
+  chain: {
+    id: 137,
+    logo: '/assets/logos/polygon.svg'
+  },
+  properties: {
+    logo: {
+      src: '/assets/logos/joe-kacy.svg',
+      style: { width: '14.4rem' }
+    },
+    title: '$KACY-WETH BAL LP',
+    link: `https://app.balancer.fi/#/polygon/pool/0xfaf3bc722d34146be83a2aac40b43148a51a9126000200000000000000000b4c`
+  },
+  stakeWithVotingPower: false,
+  stakeWithLockPeriod: false,
+  address: KACY_WETH,
+  isLP: true
+}
+
 export const poolsKacy = [kacy1x, kacy2x, kacy3x]
 export const poolsInvestor = [kacyInvestor1, kacyInvestor2]
-export const poolsFunds = [lpPNG, lpJoe, ahype, tricrypto, phype]
+export const poolsFunds = [lpPNG, lpJoe, ahype, tricrypto, phype, lpBalancer]
 export const poolsKacyFuji = [kacy1x, kacy2x, kacy3x]
 export const poolsFundsFuji = [lpPNG, ahype]
 export const allPools = [
@@ -275,5 +299,6 @@ export const allPools = [
   tricrypto,
   kacyInvestor1,
   kacyInvestor2,
-  phype
+  phype,
+  lpBalancer
 ]

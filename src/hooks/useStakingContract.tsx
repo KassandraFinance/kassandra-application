@@ -103,6 +103,13 @@ const useStakingContract = (address: string, chainId = 43114) => {
 
     // ======== Read Contract ========
 
+    const getUserInfo = async (pid: number, walletAddress: string | string[] | undefined, stakingContract: string, _chainId: number) => {
+      const _web3 = new Web3(networks[_chainId].rpc)
+      const _contract = new _web3.eth.Contract((StakingContract as unknown) as AbiItem, stakingContract)
+      const value = await _contract.methods.userInfo(pid, walletAddress).call()
+      return value
+    }
+
     const availableWithdraw = async (pid: number, walletAddress: string) => {
       const value: string = await contract.methods.availableWithdraw(pid, walletAddress).call()
       return Big(value)
@@ -166,7 +173,8 @@ const useStakingContract = (address: string, chainId = 43114) => {
       unstaking,
       withdrawable,
 
-      userInfo
+      userInfo,
+      getUserInfo
     }
   }, [contract, userWalletAddress])
 }
