@@ -505,7 +505,7 @@ const StakeCard = ({
                           {chainId !== networkChain.chainId ? (
                             <Button
                               type="button"
-                              text="Connect to Avalanche"
+                              text={`Connect to ${networkChain.chainName}`}
                               size="huge"
                               backgroundSecondary
                               fullWidth

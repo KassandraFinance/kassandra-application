@@ -116,7 +116,7 @@ export const networks: NetworkType = {
     }
   },
   '137': {
-    chainName: 'Polygon Mainnet',
+    chainName: 'Polygon',
     chainId: 137,
     rpc: 'https://polygon-rpc.com/',
     kacyAddress: KacyPoligon,
@@ -135,7 +135,7 @@ export const networks: NetworkType = {
   },
   '43114': {
     chainId: 43114,
-    chainName: 'Avalanche Mainnet',
+    chainName: 'Avalanche',
     rpc: 'https://api.avax.network/ext/bc/C/rpc',
     kacyAddress: Kacy,
     blockExplorer: 'https://snowtrace.io',

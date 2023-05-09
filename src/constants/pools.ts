@@ -272,7 +272,7 @@ const lpBalancer: PoolDetails = {
   },
   properties: {
     logo: {
-      src: '/assets/logos/joe-kacy.svg',
+      src: '/assets/logos/lp-bal.svg',
       style: { width: '14.4rem' }
     },
     title: '$KACY-WETH BAL LP',
