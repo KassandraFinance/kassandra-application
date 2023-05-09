@@ -7,10 +7,7 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Blockies from 'react-blockies'
 
-import {
-  BACKEND_KASSANDRA,
-  KacyPoligon
-} from '../../../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
 
 // import web3 from '../../../../../utils/web3'
 import { BNtoDecimal } from '../../../../../utils/numerals'
@@ -42,17 +39,7 @@ const TokenAssetOut = ({
       id: pool.id
     })
   )
-  let diff = '0'
-  const indexKacy = pool.underlying_assets.findIndex(
-    asset => asset.token.id === KacyPoligon
-  )
-  if (indexKacy !== -1) {
-    diff = Big(data?.pool?.price_usd ?? 0)
-      .mul(2)
-      .div(98)
-      .toFixed()
-  }
-  data && console.log(Big(data.pool.price_usd).add(diff).toFixed())
+
   React.useEffect(() => {
     if (
       pool.id.length === 0 ||
@@ -90,7 +77,7 @@ const TokenAssetOut = ({
           </S.Token>
           <S.Balance>
             Balance:{' '}
-            {outAssetBalance > new Big(-1)
+            {outAssetBalance.gt(-1)
               ? BNtoDecimal(
                   Big(outAssetBalance).div(Big(10).pow(18)),
                   pool.chain.nativeTokenDecimals
@@ -117,7 +104,7 @@ const TokenAssetOut = ({
               'USD: ' +
                 BNtoDecimal(
                   Big(amountTokenOut.toString())
-                    .mul(Big(data?.pool?.price_usd || 0).add(diff))
+                    .mul(data?.pool?.price_usd || 0)
                     .div(Big(10).pow(data?.pool?.decimals)),
                   18,
                   2,

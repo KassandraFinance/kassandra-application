@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Tippy from '@tippyjs/react'
 
-import { addressNativeToken1Inch, BACKEND_KASSANDRA, KacyPoligon, URL_1INCH } from '../../../../../constants/tokenAddresses'
+import { addressNativeToken1Inch, BACKEND_KASSANDRA, URL_1INCH } from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -94,9 +94,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     feeNumber: 0,
     feeString: ''
   })
-  const [outAssetBalance, setOutAssetBalance] = React.useState(new Big(-1))
+  const [outAssetBalance, setOutAssetBalance] = React.useState(Big(-1))
   const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
-    new Big(-1)
+    Big(-1)
   )
 
   const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
@@ -168,10 +168,17 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     )
 
     setAmountApproved(Big(allowance))
-    setApprovals((old) => ({
-      ...old,
-      [typeAction]: Big(allowance).gte(amountTokenIn) ? [Approval.Approved] : [Approval.Denied]
-    }))
+    if (addressNativeToken1Inch !== tokenSelect.address) {
+      setApprovals((old) => ({
+        ...old,
+        [typeAction]: Big(allowance).gte(amountTokenIn) ? [Approval.Approved] : [Approval.Denied]
+      }))
+    } else {
+      setApprovals((old) => ({
+        ...old,
+        [typeAction]: [Approval.Approved]
+      }))
+    }
   }
 
   const approvalCallback = React.useCallback(
@@ -268,24 +275,28 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
         if (txReceipt.status) {
           ToastSuccess(`Investment in ${tokenSymbol} confirmed`)
+          let amountPool = Big(0)
+          for (let index = 0; index < 100; index++) {
+            await new Promise(r => setTimeout(r, 500))
+            amountPool = await getBalanceToken(pool.address, userWalletAddress)
+            if (amountPool.toFixed() !== outAssetBalance.toFixed() && amountPool.gt(0)) break
+          }
 
-          setTimeout(async () => {
-            const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
-            const amountPool = await getBalanceToken(pool.address, userWalletAddress)
-            const allowance = await ERC20(tokenSelect.address).allowance(
-              operation.contractAddress,
-              userWalletAddress
-            )
+          const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.pool_version === 1 ? pool.chain.addressWrapped : undefined)
+          const allowance = await ERC20(tokenSelect.address).allowance(
+            operation.contractAddress,
+            userWalletAddress
+          )
 
-            setAmountApproved(Big(allowance))
-            setSelectedTokenInBalance(amountToken)
-            setOutAssetBalance(amountPool)
-            setAmountTokenOut(Big(0))
-            setAmountTokenIn(Big(0))
-            if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
-              inputAmountTokenRef.current.value = ''
-            }
-          }, 2000);
+          setAmountApproved(Big(allowance))
+          setSelectedTokenInBalance(amountToken)
+          setOutAssetBalance(amountPool)
+          setAmountTokenOut(Big(0))
+          setAmountTokenIn(Big(0))
+          if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
+            inputAmountTokenRef.current.value = ''
+          }
+
           return
         }
       }
@@ -314,14 +325,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
         trackBuying(pool.id, pool.symbol, data?.pool?.price_usd, pool.chain.chainName)
 
-        const indexKacy = pool.underlying_assets.findIndex(
-          asset => asset.token.id === KacyPoligon
-        )
-        let diff = '0'
-        if (indexKacy !== -1) {
-          diff = Big(data?.pool?.price_usd ?? 0).mul(2).div(98).toFixed()
-        }
-
         operation.joinswapExternAmountIn({
           tokenInAddress: tokenSelect.address,
           tokenAmountIn: new BigNumber(Big(amountTokenIn).toFixed()),
@@ -333,7 +336,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
             pool.symbol,
             Number(BNtoDecimal(
               Big(amountTokenOut.toFixed())
-                .mul(Big(data?.pool?.price_usd || 0).add(diff))
+                .mul(data?.pool?.price_usd || 0)
                 .div(Big(10).pow(data?.pool?.decimals)),
               18,
               2,
@@ -343,6 +346,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         })
         return
       } catch (error) {
+
         dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
       }
     }
@@ -453,7 +457,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     }
 
     const verifyIsApproved = () => {
-      if (amountApproved.lt(amountTokenIn)) {
+      if (amountApproved.lt(amountTokenIn) && addressNativeToken1Inch !== tokenSelect.address) {
         setApprovals(old => ({
           ...old,
           [typeAction]: [Approval.Denied]
@@ -479,26 +483,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     }
 
     if (Big(amountTokenIn).gt(0) && parseFloat(amountTokenOut.toString()) > 0) {
-      const indexKacy = pool.underlying_assets.findIndex(
-        asset => asset.token.id === KacyPoligon
-      )
-      if (indexKacy !== -1) {
-        const diff = Big(data?.pool?.price_usd ?? 0).mul(2).div(98).toFixed()
-        const usdAmountIn = Big(amountTokenIn)
-        .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
-        .div(Big(10).pow(tokenSelect.decimals || 18))
-
-      const usdAmountOut = Big(amountTokenOut)
-        .mul(Big(data?.pool?.price_usd || 0).add(diff))
-        .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
-
-      const subValue = usdAmountIn.sub(usdAmountOut)
-
-      if (usdAmountIn.gt(0)) {
-        const valuePriceImpact = subValue.div(usdAmountIn).mul(100)
-        valuePriceImpact.gt(0) ? setPriceImpact(valuePriceImpact) : setPriceImpact(Big(0))
-      }
-      } else {
       const usdAmountIn = Big(amountTokenIn)
         .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
         .div(Big(10).pow(tokenSelect.decimals || 18))
@@ -513,7 +497,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         const valuePriceImpact = subValue.div(usdAmountIn).mul(100)
         valuePriceImpact.gt(0) ? setPriceImpact(valuePriceImpact) : setPriceImpact(Big(0))
       }
-    }
     } else {
       setPriceImpact(Big(0))
     }

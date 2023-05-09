@@ -29,12 +29,14 @@ function ERC20Contract(contract: Contract) {
     userWalletAddress: string,
     callback: TransactionCallback
   ): Promise<boolean> => {
+    const chainId = await web3.eth.getChainId()
     try {
       const gasPrice =  await web3.eth.getGasPrice()
       return contract.methods.approve(spenderAddress, web3.utils.toTwosComplement(-1)).send(
         {
           from: userWalletAddress,
-          gasPrice: gasPrice
+          gasPrice: gasPrice,
+          maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
         },
         callback
       )

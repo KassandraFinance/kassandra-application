@@ -29,6 +29,7 @@ export interface IKacyLpPool {
     link?: string
   };
   amount: BigNumber;
+  chainLogo: string;
 }
 
 export interface IPriceToken {
@@ -46,9 +47,10 @@ interface IStakingTableProps {
 }
 
 const namePools: { [key: string]: string } = {
-  KACY: 'BY KASSANDRA',
-  'LP-JOE': 'by HEIMDALL.land & Trader Joe',
-  'LP-PNG': 'by HEIMDALL.land & pangolin '
+  KACY: 'by Kassandra',
+  'LP-JOE': 'by Kassandra & Trader Joe',
+  'LP-PNG': 'by Kassandra & pangolin',
+  'KACY-WETH': 'by Kassandra & Balancer'
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -80,6 +82,11 @@ const AssetsCard = ({
                       url: stake.properties ? stake.properties.logo.src : '',
                       width: NumberWidth,
                       withoutBorder: true
+                    }}
+                    networkImage={{
+                      url: stake.chainLogo,
+                      height: 16,
+                      width: 16
                     }}
                   />
                 </span>
