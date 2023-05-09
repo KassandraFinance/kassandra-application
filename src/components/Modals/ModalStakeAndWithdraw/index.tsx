@@ -78,7 +78,7 @@ const ModalStakeAndWithdraw = ({
     useMatomoEcommerce()
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const kacyStake = useStakingContract(stakingAddress)
+  const kacyStake = useStakingContract(stakingAddress, chain)
   const kacyToken = ERC20(stakingToken, new Web3(networks[chain].rpc))
   const productSKU = `${Staking}_${pid}`
 
