@@ -17,6 +17,8 @@ interface IKacyEarnedProps {
   kacyEarned: BigNumber;
   setKacyEarned: React.Dispatch<React.SetStateAction<BigNumber>>;
   kacyPrice: Big;
+  stakingAddress: string;
+  chainId: number;
 }
 
 const KacyEarned = ({
@@ -24,9 +26,11 @@ const KacyEarned = ({
   userWalletAddress,
   kacyEarned,
   setKacyEarned,
-  kacyPrice
+  kacyPrice,
+  stakingAddress,
+  chainId
 }: IKacyEarnedProps) => {
-  const { earned } = useStakingContract(Staking)
+  const { earned } = useStakingContract(stakingAddress, chainId)
 
   async function getKacyEaned() {
     const earnedResponse: BigNumber = await earned(pid, userWalletAddress)
