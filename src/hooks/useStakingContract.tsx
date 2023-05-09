@@ -48,7 +48,7 @@ export interface PoolInfo {
 
 const useStakingContract = (address: string, chainId = 43114) => {
   const _web3 = new Web3(networks[chainId].rpc)
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const { userWalletAddress, chainId: _chainId } = useAppSelector(state => state)
   const [contract, setContract] = React.useState(new _web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
   const [contractSend, setContractSend] = React.useState(new web3.eth.Contract((StakingContract as unknown) as AbiItem, address))
 
@@ -67,14 +67,14 @@ const useStakingContract = (address: string, chainId = 43114) => {
     const stake = async (pid: number, amount: BigNumber, delegatee: string , callback: TransactionCallback) => {
       await contractSend.methods.stake(pid, amount, userWalletAddress, delegatee)
         .send(
-          { from: userWalletAddress },
+          { from: userWalletAddress, maxPriorityFeePerGas: _chainId === 137 ? 30e9 : 2.5e9 },
           callback
         )
     }
 
     const unstake = async  (pid: number, callback: TransactionCallback) => {
       await contractSend.methods.unstake(pid)
-        .send({ from: userWalletAddress },
+        .send({ from: userWalletAddress, maxPriorityFeePerGas: _chainId === 137 ? 30e9 : 2.5e9 },
           callback
         )
     }
@@ -89,14 +89,14 @@ const useStakingContract = (address: string, chainId = 43114) => {
     const getReward = async (pid: number, callback: TransactionCallback) => {
       await contractSend.methods.getReward(pid)
         .send(
-          { from: userWalletAddress },
+          { from: userWalletAddress, maxPriorityFeePerGas: _chainId === 137 ? 30e9 : 2.5e9 },
           callback
         )
     }
 
     const withdraw = async (pid: number, amount : BigNumber, callback: TransactionCallback) => {
       await contractSend.methods.withdraw(pid, amount)
-        .send({ from: userWalletAddress },
+        .send({ from: userWalletAddress, maxPriorityFeePerGas: _chainId === 137 ? 30e9 : 2.5e9 },
           callback
         )
     }
