@@ -4,7 +4,7 @@ import React from 'react'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 
-import { Staking } from '../../../constants/tokenAddresses'
+import { networks } from '../../../constants/tokenAddresses'
 
 import useStakingContract from '../../../hooks/useStakingContract'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
@@ -35,6 +35,8 @@ interface IDetailsProps {
   kacyPrice: Big;
   link: string;
   setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  stakingAddress: string;
+  chainId: number;
 }
 
 const Details = ({
@@ -47,13 +49,15 @@ const Details = ({
   poolPrice,
   kacyPrice,
   link,
-  setIsOpenModal
+  setIsOpenModal,
+  stakingAddress,
+  chainId
 }: IDetailsProps) => {
   const [depositedAmount, setDepositedAmount] = React.useState<BigNumber>(
     new BigNumber(-1)
   )
   const { trackEventFunction } = useMatomoEcommerce()
-  const { poolInfo } = useStakingContract(Staking)
+  const { poolInfo } = useStakingContract(stakingAddress, chainId)
 
   const connect = localStorage.getItem('walletconnect')
 
@@ -137,7 +141,7 @@ const Details = ({
       </S.Info>
       <S.Info>
         <ExternalLink
-          hrefLink={`https://snowtrace.io/address/${stakingToken}`}
+          hrefLink={`${networks[chainId].blockExplorer}/address/${stakingToken}`}
           text="See contract"
         />
         {symbol === 'KACY' ? (

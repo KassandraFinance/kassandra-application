@@ -64,7 +64,7 @@ const MyAsset = ({
   const stakingContract = useStakingContract(Staking)
   const tokenWallet = useERC20Contract(poolToken)
   const { trackEventFunction } = useMatomoEcommerce()
-  const { getPriceKacyAndLP } = usePriceLP()
+  const { getPriceKacyAndLP } = usePriceLP(chain.id)
 
   const { chainId, userWalletAddress, pool } = useAppSelector(state => state)
 
