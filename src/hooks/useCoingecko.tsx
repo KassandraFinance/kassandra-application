@@ -43,7 +43,7 @@ const useCoingecko = (
     `${COINS_METADATA}/coins/contracts?name=` +
       `${nativeTokenName}` +
       '&addressesSeparatedByComma=' +
-      `${tokenAddresses.slice(0, 130).toString()}`
+      `${tokenAddresses.slice(0, 130).toString().toLowerCase()}`
   )
 
   const { data: dataTwo } = useSWR<CoinsMetadataResultType>(
@@ -51,7 +51,10 @@ const useCoingecko = (
       ? `${COINS_METADATA}/coins/contracts?name=` +
           `${nativeTokenName}` +
           '&addressesSeparatedByComma=' +
-          `${tokenAddresses.slice(130, tokenAddresses.length).toString()}`
+          `${tokenAddresses
+            .slice(130, tokenAddresses.length)
+            .toString()
+            .toLowerCase()}`
       : null
   )
 
