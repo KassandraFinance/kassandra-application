@@ -31,9 +31,12 @@ export const AvailableAumFees = styled.div`
       background-color: rgb(255 255 255 / 0.05);
 
       h3 {
-        font-weight: ${theme.font.weight.medium};
-        font-size: ${theme.font.sizes.font16};
-        line-height: 104%;
+        color: ${theme.colors.white};
+        font-weight: ${theme.font.weight.normal};
+        font-size: ${theme.font.sizes.font14};
+        line-height: 1.6rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
       }
 
       @media (min-width: 576px) {

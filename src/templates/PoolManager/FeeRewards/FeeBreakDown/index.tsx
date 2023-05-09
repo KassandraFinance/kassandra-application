@@ -95,7 +95,6 @@ const FeeBreakDown = ({ pool }: Props) => {
           </S.FeeBreakdownParagraphTotalAMount>
         </S.ListContent>
       </S.ReviewListContainer>
-      <hr />
     </S.FeeBreakdown>
   )
 }
