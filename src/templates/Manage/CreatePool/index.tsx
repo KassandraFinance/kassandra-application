@@ -125,6 +125,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     approve?: {
       token: { amount: string, normalizedAmount: string, symbol: string },
       contractApprove: string,
+      oldAllowance: string,
       allowance: (_to: string, _from: string) => Promise<string>
     }
   ) {
@@ -159,28 +160,54 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const txReceipt = await waitTransaction(txHash)
 
     if (txReceipt.status) {
-      if (approve) {
-        const amountApproved = await approve.allowance(approve.contractApprove, txReceipt.from)
-        if (Big(amountApproved).lt(approve.token.amount)) {
-          setTransactions(prev => prev.map(item => {
-            if (item.status === 'APPROVING') {
-              item.status = 'ERROR'
-            } else if (item.status === 'NEXT') {
-              item.status = 'WAITING'
+    if (approve) {
+        for (let index = 0; index < 100; index++) {
+          await new Promise(r => setTimeout(r, 500))
+
+          const amountApproved = await approve.allowance(approve.contractApprove, txReceipt.from)
+          if (amountApproved !== approve.oldAllowance && amountApproved !== '0') {
+            if (Big(amountApproved).lt(approve.token.amount)) {
+              setTransactions(prev => prev.map(item => {
+                if (item.status === 'APPROVING') {
+                  item.status = 'ERROR'
+                } else if (item.status === 'NEXT') {
+                  item.status = 'WAITING'
+                }
+                return item
+              }))
+
+              setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
+              dispatch(
+                setModalAlertText({
+                  errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
+                  solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
+                })
+              )
+
+              return false
             }
-            return item
-          }))
 
-          setTransactionButtonStatus(TransactionStatus.CONTINUE)
+            break
+          } else if (index === 99) {
+            setTransactions(prev => prev.map(item => {
+              if (item.status === 'APPROVING') {
+                item.status = 'ERROR'
+              } else if (item.status === 'NEXT') {
+                item.status = 'WAITING'
+              }
+              return item
+            }))
+            setTransactionButtonStatus(TransactionStatus.CONTINUE)
+            dispatch(
+              setModalAlertText({
+                errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
+                solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
+              })
+            )
 
-          dispatch(
-            setModalAlertText({
-              errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
-              solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
-            })
-          )
-
-          return false
+            return false
+          }
         }
       }
       let transactionIndex = -100
@@ -237,12 +264,15 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     for (const token of notAprovedTokens) {
       const { approve, allowance } = ERC20(token.address)
       const factory = networks[poolData.networkId ?? 137].factory
+      const oldAllowance = await allowance(factory, userWalletAddress)
+
       const approved = await new Promise<boolean>(resolve => {
         approve(factory, userWalletAddress, (error: MetamaskError, txHash: string) =>
-          callBack(error, txHash, { token, contractApprove: factory, allowance }).then(result => {
+          callBack(error, txHash, { token, contractApprove: factory, oldAllowance, allowance }).then(result => {
             resolve(result)
           }))
-      })
+        })
+
       if (!approved) {
         break
       }
@@ -260,7 +290,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
   async function getTransactionsList() {
     const tokens: Array<Token> = []
-    const tokensList = poolData.tokens ? poolData.tokens : []
+    const tokensList = poolData.tokens ? [...poolData.tokens] : []
     const transactionsList: TransactionsListType[] = []
 
     if (poolData.networkId === 5) {
@@ -297,6 +327,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const approvedList: TransactionsListType[] = []
 
     for (const token of tokensList) {
+      if (poolData.networkId === 5) {
       const notApprovedToken = notAprovedTokens.find(_token => _token.address === mockTokensReverse[token.address] ?? token.address)
       if (notApprovedToken) {
         notApprovedList.push({
@@ -311,9 +342,25 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           status: 'APPROVED'
         })
       }
+    } else {
+      const notApprovedToken = notAprovedTokens.find(_token => _token.address === token.address)
+      if (notApprovedToken) {
+        notApprovedList.push({
+          key: token.address,
+          transaction: `Approve ${token.symbol}`,
+          status: 'WAITING'
+        })
+      } else {
+        approvedList.push({
+          key: token.address,
+          transaction: `Approve ${token.symbol}`,
+          status: 'APPROVED'
+        })
+      }
     }
+  }
 
-    transactionsList.push(...approvedList, ...notApprovedList)
+  transactionsList.push(...approvedList, ...notApprovedList)
 
     transactionsList.push({
       key: 'createPool',
@@ -322,11 +369,11 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     })
 
     if (poolData.privacy && poolData.privateAddressList?.length) {
-        transactionsList.push({
-          key: "setPrivateInvestors",
-          transaction: `Add addresses to whitelist`,
-          status: 'WAITING'
-        })
+      transactionsList.push({
+        key: "setPrivateInvestors",
+        transaction: `Add addresses to whitelist`,
+        status: 'WAITING'
+      })
     }
 
     if (poolData.strategy || poolData.icon?.image_preview) {
@@ -404,7 +451,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const maxAmountsIn: string[] = []
     const tokens: Array<Token> = []
     const normalizedWeights: string[] = []
-    const tokensList = poolData.tokens ? poolData.tokens : []
+    const tokensList = poolData.tokens ? [...poolData.tokens] : []
 
     // for testnet Goerli
     if (poolData.networkId === 5) {
@@ -470,7 +517,11 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           arr.push(notApprovedToken)
         }
       }
-      await handleApproveTokens(arr)
+      try {
+        await handleApproveTokens(arr)
+      } catch (error) {
+        console.log(error)
+      }
     }
 
     const managementFeeRate = poolData.fees?.managementFee.feeRate ? poolData.fees.managementFee.feeRate : 0
@@ -491,7 +542,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       settingsParams: {
         tokens: tokens.map(token => token.address),
         normalizedWeights: normalizedWeights,
-        swapFeePercentage: Big(0.03).mul(Big(10).pow(18)).toFixed(0),
+        swapFeePercentage: Big(0.003).mul(Big(10).pow(18)).toFixed(0),
         swapEnabledOnStart: true,
         mustAllowlistLPs: false,
         managementAumFeePercentage: Big(managementAumFeePercentage).gt(0) ? Big(managementAumFeePercentage).mul(Big(10).pow(18)).toFixed(0) : Big(0).mul(Big(10).pow(18)).toFixed(0),
@@ -514,6 +565,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         pool.maxAmountsIn,
         pool.settingsParams,
         pool.feesSettings,
+        web3.utils.padLeft('0x', 64)
       ).call({
         from: userWalletAddress
       })
@@ -526,6 +578,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         pool.maxAmountsIn,
         pool.settingsParams,
         pool.feesSettings,
+        web3.utils.padLeft('0x', 64)
       ).send({
         from: userWalletAddress
       }, callBack)
@@ -546,10 +599,10 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (stepNumber === 5) {
-      getTransactionsList()
+      await getTransactionsList()
     }
 
     handleNextButton()

@@ -1,5 +1,4 @@
 import React from 'react'
-import useSWR from 'swr'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 import Web3 from 'web3'
@@ -7,9 +6,10 @@ import Web3 from 'web3'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setLiquidity } from '../../../../store/reducers/poolCreationSlice'
 import { ERC20 } from '../../../../hooks/useERC20Contract'
+import useCoingecko from '@/hooks/useCoingecko'
+
 import {
-  COINGECKO_API,
-  mockTokens,
+  mockTokensReverse,
   networks
 } from '../../../../constants/tokenAddresses'
 
@@ -50,15 +50,20 @@ const AddLiquidity = () => {
     addressesList = [...addressesList, token.address]
   }
 
-  // alterar função quando for entrar em produção
   async function getBalances() {
     let balancesList = {}
-    for (const token of Object.keys(mockTokens)) {
-      const { balance } = ERC20(token, new Web3(networks[networkId ?? 137].rpc))
+    for (const token of tokensList) {
+      const tokenAddress =
+        networkId === 5 ? mockTokensReverse[token.address] : token.address
+
+      const { balance } = ERC20(
+        tokenAddress,
+        new Web3(networks[networkId ?? 137].rpc)
+      )
       const balanceValue = await balance(wallet)
       balancesList = {
         ...balancesList,
-        [mockTokens[token]]: balanceValue
+        [token.address]: balanceValue
       }
     }
 
@@ -121,10 +126,10 @@ const AddLiquidity = () => {
     )
   }
 
-  const { data } = useSWR<CoinGeckoResponseType>(
-    `${COINGECKO_API}/simple/token_price/${
-      networks[networkId ?? 137].coingecko
-    }?contract_addresses=${addressesList.toString()}&vs_currencies=usd&include_24hr_change=true`
+  const { data } = useCoingecko(
+    networks[networkId ?? 137].coingecko,
+    networks[networkId ?? 137].nativeCurrency.address,
+    addressesList
   )
 
   React.useEffect(() => {

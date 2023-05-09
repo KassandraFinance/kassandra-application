@@ -8,14 +8,16 @@ import Big from 'big.js'
 
 import { ERC20 } from '../../../../hooks/useERC20Contract'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
+import useCoingecko from '@/hooks/useCoingecko'
 import {
   setTokens,
   setTokenLock,
   setAllocation,
   TokenType
 } from '../../../../store/reducers/poolCreationSlice'
+
 import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
-import { BACKEND_KASSANDRA, mockTokens, networks, COINGECKO_API } from '../../../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA, mockTokens, networks } from '../../../../constants/tokenAddresses'
 import { GET_INFO_TOKENS } from './graphql'
 
 import Steps from '../../../../components/Steps'
@@ -75,9 +77,7 @@ const SelectAssets = () => {
     return element !== null
   })
 
-  const { data: priceData } = useSWR<CoinGeckoAssetsResponseType>(
-    `${COINGECKO_API}/simple/token_price/${networks[networkId ?? 137].coingecko}?contract_addresses=${tokensListGoerli?.toString()}&vs_currencies=usd&include_market_cap=true&include_24hr_change=true`
-  )
+  const { data: priceData } = useCoingecko(networks[networkId ?? 137].coingecko, networks[networkId ?? 137].nativeCurrency.address, tokensListGoerli ?? [''])
 
   async function getBalances(tokensList: string[]) {
     let balanceArr = {}
@@ -100,7 +100,7 @@ const SelectAssets = () => {
       allocation = allocation.replace(/^0+/, '')
       if (!isLocked && Number(allocation) > 0) {
         handleLockToken(key)
-      } else if (isLocked && Number(allocation) <=0) {
+      } else if (isLocked && Number(allocation) <= 0) {
         handleLockToken(key)
       }
     } else if (isLocked) {
@@ -131,7 +131,7 @@ const SelectAssets = () => {
 
         // eslint-disable-next-line prettier/prettier
         const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[networkId ?? 137].whiteList);
-        const whitelist = await whitelistContract.methods.getTokens(0, 50).call();
+        const whitelist = await whitelistContract.methods.getTokens(0, 100).call();
 
         setWhitelist(whitelist);
       } catch (error) {

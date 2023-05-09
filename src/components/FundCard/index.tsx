@@ -1,12 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/router'
 import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
-
-import { useAppSelector } from '@/store/hooks'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
@@ -104,6 +101,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
       })
 
       setPrice(newPrice)
+
       if (data.pool.pool_version === 2) {
         try {
           const poolInfo = getWeightsNormalizedV2(

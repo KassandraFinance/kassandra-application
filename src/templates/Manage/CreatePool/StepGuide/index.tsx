@@ -8,6 +8,7 @@ import StepCard from './StepCard'
 import ExternalLink from '../../../../components/ExternalLink'
 import CreatePoolHeader from '../CreatePoolHeader'
 import ModalAvailableAssets from '../../../../components/Modals/ModalAvailableAssets'
+import InputRadio from '@/components/Inputs/InputRadio'
 
 import infoIcon from '../../../../../public/assets/iconGradient/info-solid-gradient.svg'
 import assetsIcon from '../../../../../public/assets/iconGradient/assets-distribution.svg'
@@ -28,12 +29,12 @@ const stepGuide = [
   {
     icon: assetsIcon,
     title: 'Step 2 - Select assets',
-    text: 'Every product must have at least 5% KACY allocation.'
+    text: 'Choose the assets you want your managed pool to have from our whitelist.'
   },
   {
     icon: adjustIcon,
     title: 'Step 3 - Add initial liquidity',
-    text: 'Total initial amount must be at least $20.000.'
+    text: 'Provide the initial liquidity for your managed pool to work with.'
   },
   {
     icon: feeConfigurationIcon,
@@ -97,24 +98,22 @@ const StepGuide = () => {
               </S.ButtonNetwork>
 
               <S.LinkWrapper>
-                {/* <ExternalLink
-                  text="Available assets"
-                  onClick={() => handleAvailableAssets('Avalanche Mainnet', 43114)}
-                /> */}
                 <ExternalLink text="Coming soon..." />
               </S.LinkWrapper>
-              <S.InputValidation
+              {/*
+              <InputRadio
                 form="poolCreationForm"
-                type="radio"
-                id="avalanche"
+                inputId="avalanche"
                 name="network"
                 value="avalanche"
-                checked={network === 'avalanche'}
-                onChange={() => {
+                text=""
+                inputChecked={network === 'avalanche'}
+                handleClickInput={() => {
                   return
                 }}
                 required
               />
+              */}
             </S.ButtonWrapper>
 
             <S.ButtonWrapper>
@@ -123,26 +122,18 @@ const StepGuide = () => {
                 borderColor="polygon"
                 selected={network === 'polygon'}
                 onClick={() => handleSelectNetwork('polygon', 137)}
-                disabled
               >
                 <Image src={polygonIcon} width={24} height={24} /> Polygon
               </S.ButtonNetwork>
 
-              <S.LinkWrapper>
-                {/* <ExternalLink
-                  text="Available assets"
-                  onClick={() => handleAvailableAssets('Polygon Mainnet', 137)}
-                /> */}
-                <ExternalLink text="Coming soon..." />
-              </S.LinkWrapper>
-              <S.InputValidation
+              <InputRadio
                 form="poolCreationForm"
-                type="radio"
-                id="polygon"
+                inputId="polygon"
                 name="network"
                 value="polygon"
-                checked={network === 'polygon'}
-                onChange={() => {
+                text=""
+                inputChecked={network === 'polygon'}
+                handleClickInput={() => {
                   return
                 }}
                 required
@@ -163,25 +154,25 @@ const StepGuide = () => {
                 Goerli
               </S.ButtonNetwork>
 
-              <S.LinkWrapper>
-                <ExternalLink
-                  text="Available assets"
-                  onClick={() => handleAvailableAssets('Goerli Testnet', 5)}
-                />
-              </S.LinkWrapper>
-              <S.InputValidation
+              <InputRadio
                 form="poolCreationForm"
-                type="radio"
-                id="goerli"
+                inputId="goerli"
                 name="network"
                 value="goerli"
-                checked={network === 'goerli'}
-                onChange={() => {
+                text=""
+                inputChecked={network === 'goerli'}
+                handleClickInput={() => {
                   return
                 }}
                 required
               />
             </S.ButtonWrapper>
+            <S.LinkWrapper>
+              <ExternalLink
+                text="Available assets"
+                onClick={() => handleAvailableAssets('Goerli Testnet', 5)}
+              />
+            </S.LinkWrapper>
           </S.ButtonsContainer>
         </S.SelectNetwork>
 
@@ -199,18 +190,7 @@ const StepGuide = () => {
       </S.ContainerCardAndNetwork>
 
       {isAvailableAssets && (
-        <ModalAvailableAssets
-          chainIcon={
-            <Image
-              src="https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880"
-              width={27}
-              height={27}
-            />
-          }
-          chainName={chainInfo.chainName}
-          chainId={chainInfo.chainId}
-          setModalOpen={setIsAvailableAssets}
-        />
+        <ModalAvailableAssets setModalOpen={setIsAvailableAssets} />
       )}
     </S.StepGuide>
   )

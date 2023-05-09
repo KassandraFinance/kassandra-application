@@ -152,7 +152,7 @@ const Pool = () => {
   }, [pool])
 
   React.useEffect(() => {
-    if (data) {
+    if (data?.pool) {
       const swapFees = data.pool.swap.reduce(
         (acc: Big, current: { volume_usd: string }) => {
           return Big(current.volume_usd).add(acc)

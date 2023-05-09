@@ -37,7 +37,7 @@ const Nav = ({
   const router = useRouter()
   const path = router.asPath.split('/')
 
-  function handleClickOverlay() {
+  function handleClose() {
     setIsShowMenu(false)
   }
 
@@ -50,7 +50,7 @@ const Nav = ({
       {showOverlay && (
         <Overlay
           isOpen={isShowMenu}
-          onClick={handleClickOverlay}
+          onClick={handleClose}
           onAnimationEnd={animationClose}
         />
       )}
@@ -59,9 +59,10 @@ const Nav = ({
         <Link href="/" passHref>
           <S.MenuLink
             active={false}
-            onClick={() =>
+            onClick={() => {
               trackEventFunction('click-on-link', 'home-page', 'header')
-            }
+              handleClose()
+            }}
           >
             <Image src={kacyIcon} width={27} height={24} />
           </S.MenuLink>
@@ -69,9 +70,10 @@ const Nav = ({
         <Link href="/" passHref>
           <S.MenuLink
             active={router.asPath === '/' || router.asPath === '/'}
-            onClick={() =>
+            onClick={() => {
               trackEventFunction('click-on-link', 'invest', 'header')
-            }
+              handleClose()
+            }}
           >
             Invest
           </S.MenuLink>
@@ -79,9 +81,10 @@ const Nav = ({
         <Link href="/farm?tab=stake" passHref>
           <S.MenuLink
             active={router.pathname === '/farm'}
-            onClick={() =>
+            onClick={() => {
               trackEventFunction('click-on-link', 'farm', 'header')
-            }
+              handleClose()
+            }}
           >
             Stake
           </S.MenuLink>
@@ -131,6 +134,7 @@ const Nav = ({
               newTab: true
             }
           ]}
+          onClick={handleClose}
         />
         <DropdownMenu
           nameOnHeader="Learn"
@@ -162,6 +166,7 @@ const Nav = ({
             }
           ]}
           adaptToResponsiveSize
+          onClick={handleClose}
         />
 
         <MenuFooter />

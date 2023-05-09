@@ -49,7 +49,7 @@ const TokenAssetOut = ({
       return setOutAssetBalance(Big(0))
     }
     // eslint-disable-next-line prettier/prettier
-    (async () => {
+    ;(async () => {
       const balance = await getBalanceToken(pool.address, userWalletAddress)
       setOutAssetBalance(balance)
     })()
@@ -77,7 +77,7 @@ const TokenAssetOut = ({
           </S.Token>
           <S.Balance>
             Balance:{' '}
-            {outAssetBalance > new Big(-1)
+            {outAssetBalance.gt(-1)
               ? BNtoDecimal(
                   Big(outAssetBalance).div(Big(10).pow(18)),
                   pool.chain.nativeTokenDecimals
@@ -104,7 +104,7 @@ const TokenAssetOut = ({
               'USD: ' +
                 BNtoDecimal(
                   Big(amountTokenOut.toString())
-                    .mul(Big(data?.pool?.price_usd || 0))
+                    .mul(data?.pool?.price_usd || 0)
                     .div(Big(10).pow(data?.pool?.decimals)),
                   18,
                   2,

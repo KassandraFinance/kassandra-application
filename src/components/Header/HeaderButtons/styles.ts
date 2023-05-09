@@ -11,36 +11,16 @@ export const HeaderButtons = styled.div<IHeaderButtonsProps>`
     display: flex;
     gap: 1rem;
 
-    @media (max-width: 840px) {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      left: 0;
-
-      align-items: center;
-
-      height: 6.8rem;
-      padding: 1.6rem;
-
-      background-color: ${theme.colors.darkPurple};
-
-      z-index: ${theme.layers.menu};
-    }
-
-    @media (max-width: 576px) {
-      gap: 0.8rem;
-
-      padding: 1.6rem 1rem;
-    }
-
     .button-wallet {
       gap: 0.5rem;
+
       width: fit-content;
       padding: 1.2rem 2rem;
+      border: 1px solid ${theme.colors.snow};
 
-      font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.normal};
-      border: 0.1rem solid ${theme.colors.snow};
+      font-size: ${theme.font.sizes.font14};
+
       transition: 300ms;
 
       img {
@@ -50,8 +30,10 @@ export const HeaderButtons = styled.div<IHeaderButtonsProps>`
       &:hover,
       &:focus {
         border-color: ${theme.colors.snow};
-        background-color: ${theme.colors.snow};
+
         color: ${theme.colors.darkPurple};
+
+        background-color: ${theme.colors.snow};
         outline-color: ${theme.colors.snow};
       }
 
@@ -66,12 +48,13 @@ export const HeaderButtons = styled.div<IHeaderButtonsProps>`
 
     .button-network {
       gap: 0;
+
       padding: 1.2rem 1.6rem;
+      border: 0.7px solid ${networkColor};
+      border-radius: 4px;
 
       font-size: 0;
 
-      border: 0.07rem solid ${networkColor};
-      border-radius: 0.4rem;
       outline: ${networkColor};
 
       svg {
@@ -107,6 +90,28 @@ export const HeaderButtons = styled.div<IHeaderButtonsProps>`
         font-size: ${theme.font.sizes.font12};
         line-height: ${theme.font.sizes.font12};
       }
+    }
+
+    @media (max-width: 840px) {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: ${theme.layers.menu};
+
+      align-items: center;
+
+      height: 6.8rem;
+      padding: 1.6rem;
+
+      background-color: ${theme.colors.darkPurple};
+    }
+
+    @media (max-width: 576px) {
+      gap: 0.8rem;
+      justify-content: space-between;
+
+      padding: 1.6rem;
     }
   `}
 `

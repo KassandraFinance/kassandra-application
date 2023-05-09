@@ -13,7 +13,7 @@ export const Explore = styled.section`
   }
 
   @media (max-width: 960px) {
-    padding: 0 2.4rem;
+    padding: 0 1.6rem;
   }
 `
 

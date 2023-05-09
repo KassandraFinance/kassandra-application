@@ -172,7 +172,7 @@ const TokenAssetIn = ({
                 BNtoDecimal(
                   Big(amountTokenIn.toString())
                     .mul(
-                      Big(poolPriceUSD?.price_usd || 0)
+                      poolPriceUSD?.price_usd || 0
                     )
                     .div(Big(10).pow(Number(poolPriceUSD?.decimals || 18))),
                   18,

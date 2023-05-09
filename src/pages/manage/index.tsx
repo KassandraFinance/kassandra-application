@@ -1,6 +1,7 @@
 import Head from 'next/head'
 
-import Manage from '../../templates/Manage'
+// import Manage from '../../templates/Manage'
+import PageNotFound from '@/templates/404'
 
 export default function Index() {
   return (
@@ -15,7 +16,7 @@ export default function Index() {
         <meta property="og:url" content="https://kassandra.finance/" />
       </Head>
 
-      <Manage />
+      <PageNotFound />
     </>
   )
 }

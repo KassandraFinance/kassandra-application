@@ -14,15 +14,18 @@ import { ERC20 } from '../../hooks/useERC20Contract'
 import useStakingContract from '../../hooks/useStakingContract'
 import usePriceLP from '../../hooks/usePriceLP'
 import useVotingPower from '../../hooks/useVotingPower'
+import useCoingecko from '@/hooks/useCoingecko'
 
 import { GET_PROFILE } from './graphql'
 import {
   LPDaiAvax,
   Staking,
-  SUBGRAPH_URL,
-  networks
+  networks,
+  BACKEND_KASSANDRA,
+  KacyPoligon,
+  WETH_POLYGON
 } from '../../constants/tokenAddresses'
-import { LP_KACY_AVAX_PNG, LP_KACY_AVAX_JOE, allPools } from '../../constants/pools'
+import { LP_KACY_AVAX_PNG, LP_KACY_AVAX_JOE, allPools, KACY_WETH } from '../../constants/pools'
 
 import Breadcrumb from '../../components/Breadcrumb'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
@@ -42,7 +45,6 @@ import substr from '../../utils/substr'
 import { BNtoDecimal } from '../../utils/numerals'
 
 import * as S from './styles'
-import AnyCard from '@/components/AnyCard'
 
 // eslint-disable-next-line prettier/prettier
 declare let window: {
@@ -120,8 +122,10 @@ const Profile = () => {
   const [priceToken, setPriceToken] = React.useState<IPriceToken>({
     'LP-PNG': Big(0),
     'LP-JOE': Big(0),
+    'KACY-WETH': Big(0),
     KACY: Big(0),
     aHYPE: Big(0),
+    pHYPE: Big(0),
     K3C: Big(0)
   })
 
@@ -139,8 +143,8 @@ const Profile = () => {
   const chain = networks[43114]
 
   const votingPower = useVotingPower(Staking)
-  const { userInfo } = useStakingContract(Staking)
-  const { getPriceKacyAndLP } = usePriceLP()
+  const { getUserInfo } = useStakingContract(Staking)
+  const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(chain.chainId)
 
   const profileAddress = router.query.profileAddress
   const isSelectQueryTab = router.query.tab
@@ -150,11 +154,17 @@ const Profile = () => {
       : profileAddress
     : ''
 
-  const { data } = useSWR<Response>([GET_PROFILE], query => request(SUBGRAPH_URL, query))
+  const { data } = useSWR<Response>([GET_PROFILE], query => request(BACKEND_KASSANDRA, query))
 
-  async function getTokenAmountInPool(pid: number) {
+  const { priceToken: getPriceToken } = useCoingecko(
+    networks[137].coingecko,
+    networks[137].nativeCurrency.address,
+    [WETH_POLYGON, KacyPoligon]
+  )
+
+  async function getTokenAmountInPool(pid: number, stakingContract: string, chain: number) {
     try {
-      const userInfoResponse = await userInfo(pid, profileAddress)
+      const userInfoResponse = await getUserInfo(pid, profileAddress, stakingContract, chain)
 
       return new BigNumber(userInfoResponse.amount)
     } catch (error) {
@@ -201,6 +211,17 @@ const Profile = () => {
         }))
       }
     }
+
+    const wethPrice = getPriceToken(WETH_POLYGON)
+    if (wethPrice) {
+      const priceLPbal = await getPriceKacyAndLPBalancer(wethPrice, KACY_WETH)
+      if (priceLPbal) {
+        setPriceToken(prevState => ({
+          ...prevState,
+          'KACY-WETH': priceLPbal,
+        }))
+      }
+    }
   }
 
   async function getAmountToken() {
@@ -217,7 +238,7 @@ const Profile = () => {
     const ids: Array<string> = []
     await Promise.all(
       allPools.map(async pool => {
-        const tokenAmountInPool = await getTokenAmountInPool(pool.pid)
+        const tokenAmountInPool = await getTokenAmountInPool(pool.pid, pool.stakingContract, pool.chain.id)
         ids.push(pool.address)
 
         if (pool.symbol === 'KACY') {
@@ -417,8 +438,7 @@ const Profile = () => {
               setPriceInDolar={setPriceInDolar}
             />
           ) : isSelectTab === tabs[1].asPathText ? (
-            <AnyCard text='Coming soon' />
-            // <ManagedFunds />
+            <ManagedFunds />
           ) : isSelectTab === tabs[2].asPathText ? (
             <>
               <GovernanceData address={profileAddress} />

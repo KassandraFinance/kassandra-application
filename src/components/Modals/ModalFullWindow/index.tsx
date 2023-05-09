@@ -16,8 +16,17 @@ const ModalFullWindow = ({
 }: IModalFullWindowProps) => {
   React.useEffect(() => {
     document.body.style.overflowY = 'hidden'
+
+    const style = document.getElementById('top')?.style
+    if (style) {
+      style.zIndex = '0'
+    }
+
     return () => {
       document.body.style.overflowY = 'auto'
+      if (style) {
+        style.zIndex = '1020'
+      }
     }
   }, [])
 

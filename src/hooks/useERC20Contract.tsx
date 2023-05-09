@@ -3,7 +3,6 @@
 import React from 'react'
 import BigNumber from 'bn.js'
 import Web3 from 'web3'
-import Big from 'big.js'
 
 import { AbiItem } from "web3-utils"
 import { Contract } from "web3-eth-contract"
@@ -30,14 +29,20 @@ function ERC20Contract(contract: Contract) {
     userWalletAddress: string,
     callback: TransactionCallback
   ): Promise<boolean> => {
+    const chainId = await web3.eth.getChainId()
     try {
+      const gasPrice =  await web3.eth.getGasPrice()
       return contract.methods.approve(spenderAddress, web3.utils.toTwosComplement(-1)).send(
-        { from: userWalletAddress },
+        {
+          from: userWalletAddress,
+          gasPrice: gasPrice,
+          maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
+        },
         callback
-      );
+      )
     } catch (e) {
       console.log("error", e);
-      return false;
+      return false
     }
   };
 

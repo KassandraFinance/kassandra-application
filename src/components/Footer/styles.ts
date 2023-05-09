@@ -27,8 +27,38 @@ export const UpperContainer = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   gap: 1.6rem;
 
-  padding: 8rem 0;
   max-width: 69rem;
+  padding: 8rem 0;
+
+  li {
+    margin: 1.5rem 0;
+
+    @media (max-width: 740px) {
+      text-align: top;
+    }
+  }
+
+  h4 {
+    margin-bottom: 0.8rem;
+
+    font-weight: 500;
+    font-size: 2rem;
+
+    @media (max-width: 740px) {
+      font-size: ${theme.font.sizes.font16};
+    }
+  }
+
+  a {
+    color: ${theme.colors.snow};
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
+    text-decoration: none;
+
+    @media (max-width: 710px) {
+      font-size: ${theme.font.sizes.font12};
+    }
+  }
 
   @media (max-width: 740px) {
     width: 100%;
@@ -39,37 +69,11 @@ export const UpperContainer = styled.div`
     width: 100%;
     padding: 0;
   }
-
-  li {
-    @media (max-width: 740px) {
-      text-align: top;
-    }
-    margin: 1.5rem 0;
-  }
-  h4 {
-    margin-bottom: 0.8rem;
-
-    font-size: 2rem;
-    font-weight: 500;
-    @media (max-width: 740px) {
-      font-size: ${theme.font.sizes.font16};
-    }
-  }
-  a {
-    color: ${theme.colors.snow};
-    font-size: ${theme.font.sizes.font14};
-    font-weight: ${theme.font.weight.light};
-    text-decoration: none;
-
-    @media (max-width: 710px) {
-      font-size: ${theme.font.sizes.font12};
-    }
-  }
 `
 export const LowerContainerMobile = styled.div`
   display: flex;
-  justify-content: space-between;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
 
   width: 100%;
@@ -78,6 +82,19 @@ export const LowerContainerMobile = styled.div`
 
   text-align: center;
 
+  ul {
+    display: flex;
+    gap: 1.6rem;
+    justify-content: center;
+
+    margin-bottom: 1.6rem;
+
+    @media (max-width: 400px) {
+      margin: auto;
+      padding: 1rem;
+    }
+  }
+
   @media (min-width: 740px) {
     display: none;
   }
@@ -85,31 +102,13 @@ export const LowerContainerMobile = styled.div`
   @media (max-width: 400px) {
     padding: 0;
   }
-
-  ul {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1.6rem;
-
-    li {
-      flex: 1 0 4.8rem;
-    }
-
-    @media (max-width: 400px) {
-      padding: 1rem;
-      margin: auto;
-    }
-  }
 `
 export const LowerContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 7rem 0;
 
-  @media (max-width: 740px) {
-    display: none;
-  }
+  padding: 7rem 0;
 
   ul {
     display: flex;
@@ -118,6 +117,10 @@ export const LowerContainer = styled.div`
     li {
       flex: 1 0 4.8rem;
     }
+  }
+
+  @media (max-width: 740px) {
+    display: none;
   }
 `
 export const Certified = styled.div`
@@ -136,13 +139,17 @@ export const Certified = styled.div`
   span {
     margin-right: 0.6rem;
 
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.bold};
+    font-size: ${theme.font.sizes.font14};
     letter-spacing: 0.07rem;
   }
 
   img {
     margin-right: 1.6rem;
+
+    @media (max-width: 576px) {
+      margin-right: 0;
+    }
   }
 `
 
@@ -156,8 +163,8 @@ export const LowerLeft = styled.div`
   }
 
   span {
-    font-size: 1.6rem;
     font-weight: 300;
+    font-size: 1.6rem;
   }
 `
 
@@ -168,14 +175,15 @@ export const LowerRight = styled.div`
 
 export const SocialIcon = styled.a`
   display: flex;
-  align-items: center;
   justify-content: center;
-  height: 3.2rem;
-  width: 3.2rem;
+  align-items: center;
 
-  background: rgba(255, 255, 255, 0.1);
+  width: 3.2rem;
+  height: 3.2rem;
+  border: 1px solid rgb(255 255 255 / 0);
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0);
+
+  background: rgb(255 255 255 / 0.1);
 
   transition: border ${theme.transition.default};
 
@@ -184,12 +192,13 @@ export const SocialIcon = styled.a`
   } */
 
   &:hover {
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgb(255 255 255 / 0.3);
   }
 `
 
 export const Divider = styled.div`
-  background-color: transparent;
   /* border-top: 1px solid rgba(255, 255, 255, 0.14); */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid rgb(255 255 255 / 0.14);
+
+  background-color: transparent;
 `

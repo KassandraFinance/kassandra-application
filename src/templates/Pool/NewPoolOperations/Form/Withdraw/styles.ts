@@ -19,6 +19,18 @@ export const Withdraw = styled.form`
     > img {
       /* margin-block: 1.2rem; */
     }
+
+    .btn-submit:disabled {
+      img {
+        opacity: 0.4;
+      }
+    }
+  `}
+`
+
+export const PrivatePoolTooltip = styled.p`
+  ${() => css`
+    padding: 0.4rem;
   `}
 `
 
@@ -41,7 +53,7 @@ export const TransactionSettingsContainer = styled.div`
   `}
 `
 interface IPriceImpactWrapperProps {
-  price: string | number;
+  price: number;
 }
 
 // eslint-disable-next-line prettier/prettier

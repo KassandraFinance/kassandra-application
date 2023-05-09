@@ -25,11 +25,12 @@ import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg
 import managerIcon from '../../../public/assets/iconGradient/manager.svg'
 
 import * as S from './styles'
+import AnyCard from '@/components/AnyCard'
 
 const tabs = [
   {
     asPathText: 'pools',
-    text: 'Investment Pools',
+    text: 'Managed Pools',
     icon: inexpensiveIcon
   }
   // {
@@ -48,6 +49,7 @@ type GetCommunityPoolsType = {
     price_usd: string,
     symbol: string,
     total_value_locked_usd: string,
+    is_private_pool: boolean,
     factory: {
       pool_count: number
     },
@@ -115,7 +117,7 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
   }, [])
 
   React.useEffect(() => {
-    if (!data) return
+    if (!data?.pools.length) return
 
     setTotalPoolsTable(data?.pools[0].factory.pool_count)
   }, [data])
@@ -152,29 +154,16 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
             )}
 
             <S.CardContainer loading={loading}>
-              {/* {poolsKassandra.map(pool => (
+              {poolsKassandra.map(pool => (
                 <FundCard
                   key={pool.id}
                   poolAddress={pool.id}
                   link={`/pool/${pool.id}`}
                 />
-              ))} */}
-              {poolsKassandra.map(pool => {
-                if (
-                  pool.id !==
-                  '1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52'
-                )
-                  return (
-                    <FundCard
-                      key={pool.id}
-                      poolAddress={pool.id}
-                      link={`/pool/${pool.id}`}
-                    />
-                  )
-              })}
+              ))}
             </S.CardContainer>
 
-            {/* <S.ComunitFundsContainer>
+            <S.ComunitFundsContainer>
               <S.TitleWrapper>
                 <TitleSection
                   image={communityFunds}
@@ -182,7 +171,8 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
                   text=""
                 />
               </S.TitleWrapper>
-              <CommunityPoolsTable
+              <AnyCard text="Coming soon..." />
+              {/* <CommunityPoolsTable
                 pools={data?.pools}
                 communityPoolSorted={communityPoolSorted}
                 setCommunityPoolSorted={setCommunityPoolSorted}
@@ -197,8 +187,8 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
                     setSkip(selected * take)
                   }}
                 />
-              </S.PaginationWrapper>
-            </S.ComunitFundsContainer> */}
+              </S.PaginationWrapper> */}
+            </S.ComunitFundsContainer>
           </S.ExploreContainer>
         )}
 

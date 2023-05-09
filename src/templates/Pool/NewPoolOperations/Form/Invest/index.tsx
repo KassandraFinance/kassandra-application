@@ -3,6 +3,7 @@ import Big from 'big.js'
 import BigNumber from 'bn.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
+import Tippy from '@tippyjs/react'
 
 import { addressNativeToken1Inch, BACKEND_KASSANDRA, URL_1INCH } from '../../../../../constants/tokenAddresses'
 
@@ -65,9 +66,10 @@ type Approvals = { [key in Titles]: Approval[] }
 
 interface IInvestProps {
   typeAction: Titles;
+  privateInvestors: string[];
 }
 
-const Invest = ({ typeAction }: IInvestProps) => {
+const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const [maxActive, setMaxActive] = React.useState<boolean>(false)
   // const [isReload, setIsReload] = React.useState<boolean>(false)
   const [amountTokenIn, setAmountTokenIn] = React.useState<Big | string>(Big(0))
@@ -92,9 +94,9 @@ const Invest = ({ typeAction }: IInvestProps) => {
     feeNumber: 0,
     feeString: ''
   })
-  const [outAssetBalance, setOutAssetBalance] = React.useState(new Big(-1))
+  const [outAssetBalance, setOutAssetBalance] = React.useState(Big(-1))
   const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
-    new Big(-1)
+    Big(-1)
   )
 
   const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
@@ -166,10 +168,17 @@ const Invest = ({ typeAction }: IInvestProps) => {
     )
 
     setAmountApproved(Big(allowance))
-    setApprovals((old) => ({
-      ...old,
-      [typeAction]: Big(allowance).gte(amountTokenIn) ? [Approval.Approved] : [Approval.Denied]
-    }))
+    if (addressNativeToken1Inch !== tokenSelect.address) {
+      setApprovals((old) => ({
+        ...old,
+        [typeAction]: Big(allowance).gte(amountTokenIn) ? [Approval.Approved] : [Approval.Denied]
+      }))
+    } else {
+      setApprovals((old) => ({
+        ...old,
+        [typeAction]: [Approval.Approved]
+      }))
+    }
   }
 
   const approvalCallback = React.useCallback(
@@ -266,24 +275,28 @@ const Invest = ({ typeAction }: IInvestProps) => {
 
         if (txReceipt.status) {
           ToastSuccess(`Investment in ${tokenSymbol} confirmed`)
+          let amountPool = Big(0)
+          for (let index = 0; index < 100; index++) {
+            await new Promise(r => setTimeout(r, 500))
+            amountPool = await getBalanceToken(pool.address, userWalletAddress)
+            if (amountPool.toFixed() !== outAssetBalance.toFixed() && amountPool.gt(0)) break
+          }
 
-          setTimeout(async () => {
-            const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
-            const amountPool = await getBalanceToken(pool.address, userWalletAddress)
-            const allowance = await ERC20(tokenSelect.address).allowance(
-              operation.contractAddress,
-              userWalletAddress
-            )
+          const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.pool_version === 1 ? pool.chain.addressWrapped : undefined)
+          const allowance = await ERC20(tokenSelect.address).allowance(
+            operation.contractAddress,
+            userWalletAddress
+          )
 
-            setAmountApproved(Big(allowance))
-            setSelectedTokenInBalance(amountToken)
-            setOutAssetBalance(amountPool)
-            setAmountTokenOut(Big(0))
-            setAmountTokenIn(Big(0))
-            if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
-              inputAmountTokenRef.current.value = ''
-            }
-          }, 2000);
+          setAmountApproved(Big(allowance))
+          setSelectedTokenInBalance(amountToken)
+          setOutAssetBalance(amountPool)
+          setAmountTokenOut(Big(0))
+          setAmountTokenIn(Big(0))
+          if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
+            inputAmountTokenRef.current.value = ''
+          }
+
           return
         }
       }
@@ -323,7 +336,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
             pool.symbol,
             Number(BNtoDecimal(
               Big(amountTokenOut.toFixed())
-                .mul(Big(data?.pool?.price_usd || 0))
+                .mul(data?.pool?.price_usd || 0)
                 .div(Big(10).pow(data?.pool?.decimals)),
               18,
               2,
@@ -333,6 +346,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
         })
         return
       } catch (error) {
+
         dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
       }
     }
@@ -443,7 +457,7 @@ const Invest = ({ typeAction }: IInvestProps) => {
     }
 
     const verifyIsApproved = () => {
-      if (amountApproved.lt(amountTokenIn)) {
+      if (amountApproved.lt(amountTokenIn) && addressNativeToken1Inch !== tokenSelect.address) {
         setApprovals(old => ({
           ...old,
           [typeAction]: [Approval.Denied]
@@ -535,12 +549,12 @@ const Invest = ({ typeAction }: IInvestProps) => {
       <S.TransactionSettingsContainer>
         <S.ExchangeRate>
           <S.SpanLight>Price Impact:</S.SpanLight>
-          <S.PriceImpactWrapper price={BNtoDecimal(
+          <S.PriceImpactWrapper price={Number(BNtoDecimal(
             priceImpact,
             18,
             2,
             2
-          )}>
+          )) ?? 0}>
             {BNtoDecimal(
               priceImpact,
               18,
@@ -569,46 +583,70 @@ const Invest = ({ typeAction }: IInvestProps) => {
           text="Connect Wallet"
         />
       ) : chainId === pool.chain_id ? (
-        <Button
-          className="btn-submit"
-          backgroundPrimary
-          disabledNoEvent={
-            (approvals[typeAction].length === 0) ||
-            (approvals[typeAction][0] > Approval.Approved) ||
-            (approvals[typeAction][0] === Approval.Approved &&
-              (amountTokenIn.toString() === '0' ||
-                amountTokenOut.toString() === '0' ||
-                errorMsg?.length > 0))
-          }
-          fullWidth
-          type="submit"
-          text={
-            approvals[typeAction][0] === Approval.Approved
-              ? amountTokenIn.toString() !== '0' ||
-                inputAmountTokenRef?.current?.value !== null
-                ?
-                `${typeAction} ${'$' +
-                BNtoDecimal(
-                  Big(amountTokenIn.toString())
-                    .mul(
-                      Big(priceToken(tokenSelect.address) || 0)
+        pool.is_private_pool && !privateInvestors.some(address => address === userWalletAddress) ? (
+          <Tippy
+            allowHTML={true}
+            content={[
+              <S.PrivatePoolTooltip key="poolPrivate">
+                This is a <strong key="privatePool">Private Pool</strong>, the manager decided to limit the addresses that can invest in it
+              </S.PrivatePoolTooltip>,
+            ]}
+          >
 
-                    )
-                    .div(Big(10).pow(Number(tokenSelect.decimals))),
-                  18,
-                  2,
-                  2
-                )
-                }`
-                : `${typeAction}`
-              : approvals[typeAction][0] === Approval.WaitingTransaction
-                ? 'Approving...'
-                : approvals[typeAction][0] === undefined ||
-                  approvals[typeAction][0] === Approval.Syncing
-                  ? 'Syncing with Blockchain...'
-                  : 'Approve'
-          }
-        />
+            <span style={{ width: '100%' }}>
+              <Button
+                className="btn-submit"
+                backgroundPrimary
+                fullWidth
+                type="button"
+                text="Private Pool"
+                disabledNoEvent
+                image='/assets/utilities/lock.svg'
+                />
+            </span>
+          </Tippy>
+        ) : (
+          <Button
+            className="btn-submit"
+            backgroundPrimary
+            disabledNoEvent={
+              (approvals[typeAction].length === 0) ||
+              (approvals[typeAction][0] > Approval.Approved) ||
+              (approvals[typeAction][0] === Approval.Approved &&
+                (amountTokenIn.toString() === '0' ||
+                  amountTokenOut.toString() === '0' ||
+                  errorMsg?.length > 0))
+            }
+            fullWidth
+            type="submit"
+            text={
+              approvals[typeAction][0] === Approval.Approved
+                ? amountTokenIn.toString() !== '0' ||
+                  inputAmountTokenRef?.current?.value !== null
+                  ?
+                  `${typeAction} ${'$' +
+                  BNtoDecimal(
+                    Big(amountTokenIn.toString())
+                      .mul(
+                        Big(priceToken(tokenSelect.address) || 0)
+
+                      )
+                      .div(Big(10).pow(Number(tokenSelect.decimals))),
+                    18,
+                    2,
+                    2
+                  )
+                  }`
+                  : `${typeAction}`
+                : approvals[typeAction][0] === Approval.WaitingTransaction
+                  ? 'Approving...'
+                  : approvals[typeAction][0] === undefined ||
+                    approvals[typeAction][0] === Approval.Syncing
+                    ? 'Syncing with Blockchain...'
+                    : 'Approve'
+            }
+          />
+        )
       ) : (
         <Button
           className="btn-submit"
