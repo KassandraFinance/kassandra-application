@@ -32,12 +32,13 @@ const usePriceLP = (chainId: number) => {
 
 
     const getPriceKacyAndLPBalancer = async (priceWETH: number, poolAddress: string) => {
-      const vault = new web3.eth.Contract((VAULT as unknown) as AbiItem, VAULT_POLYGON)
+      const _web3 = new Web3(networks[137].rpc)
+      const vault = new _web3.eth.Contract((VAULT as unknown) as AbiItem, VAULT_POLYGON)
       const res = await vault.methods.getPoolTokenInfo("0xfaf3bc722d34146be83a2aac40b43148a51a9126000200000000000000000b4c", "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619").call()
 
       const wethReserve = Big(res.cash).mul(priceWETH)
 
-      const ERC20Contract = ERC20(poolAddress, web3)
+      const ERC20Contract = ERC20(poolAddress, _web3)
       const supplyLPToken = await ERC20Contract.totalSupply()
       if (supplyLPToken.lte(new BigNumber('0'))) {
         return Big('0')

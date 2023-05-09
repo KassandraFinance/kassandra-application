@@ -88,6 +88,7 @@ export interface IKacyLpPool {
     link?: string
   };
   amount: BigNumber;
+  chainLogo: string;
 }
 export interface IAssetsValueWalletProps {
   [key: string]: BigNumber;
@@ -212,7 +213,7 @@ const Profile = () => {
       }
     }
 
-    const wethPrice = getPriceToken(WETH_POLYGON)
+    const wethPrice = getPriceToken(WETH_POLYGON.toLocaleLowerCase())
     if (wethPrice) {
       const priceLPbal = await getPriceKacyAndLPBalancer(wethPrice, KACY_WETH)
       if (priceLPbal) {
@@ -230,7 +231,8 @@ const Profile = () => {
       address: '',
       symbol: '',
       poolName: '',
-      amount: new BigNumber(0)
+      amount: new BigNumber(0),
+      chainLogo: ''
     }
 
     const stakeObject: Array<IKacyLpPool> = []
@@ -250,7 +252,8 @@ const Profile = () => {
             poolName: pool.symbol,
             symbol: pool.symbol,
             properties: pool.properties,
-            amount: kacyAmount.add(tokenAmountInPool)
+            amount: kacyAmount.add(tokenAmountInPool),
+            chainLogo: pool.chain.logo
           }
         } else {
           stakeObject.push({
@@ -261,7 +264,8 @@ const Profile = () => {
               ? pool.properties.title
               : pool.symbol,
             properties: pool.properties,
-            symbol: pool.symbol
+            symbol: pool.symbol,
+            chainLogo: pool.chain.logo
           })
         }
       })
