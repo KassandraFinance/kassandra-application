@@ -465,6 +465,8 @@ const StakeCard = ({
                           kacyEarned={kacyEarned}
                           setKacyEarned={setKacyEarned}
                           kacyPrice={kacyPrice}
+                          stakingAddress={stakingAddress}
+                          chainId={chain.id}
                         />
                         <Button
                           type="button"
