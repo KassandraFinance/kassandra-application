@@ -83,10 +83,12 @@ const ExecutionPeriod = () => {
   return (
     <S.ExecutionPeriod>
       <S.ExecutionTitle>
-        <h3>token weights rebalancing execution period </h3>
-        <Tippy content="Tooltip: Rebalancing operations don't happen instantly but linearly over a given time period. The longer you can wait for the process to happen, the more efficient it will be. You can use the fast option for small or urgent reallocations, but you should prefer the slowest when dealing with big reallocations.">
-          <img src="/assets/utilities/tooltip.svg" />
-        </Tippy>
+        <h3>
+          token weights rebalancing execution period
+          <Tippy content="Tooltip: Rebalancing operations don't happen instantly but linearly over a given time period. The longer you can wait for the process to happen, the more efficient it will be. You can use the fast option for small or urgent reallocations, but you should prefer the slowest when dealing with big reallocations.">
+            <img src="/assets/utilities/tooltip.svg" />
+          </Tippy>
+        </h3>
       </S.ExecutionTitle>
 
       <S.ExecutionPeriodBody>
@@ -153,11 +155,11 @@ const ExecutionPeriod = () => {
           </S.PersonalizePeriod>
           {timeValue
             ? (timeValue > 72 || timeValue < 1) && (
-                <S.ErrorPeriod>
-                  The amount of time for the rebalancing process must be higher
-                  than 1 and lower than 72 hours
-                </S.ErrorPeriod>
-              )
+              <S.ErrorPeriod>
+                The amount of time for the rebalancing process must be higher
+                than 1 and lower than 72 hours
+              </S.ErrorPeriod>
+            )
             : null}
         </S.PersonalizePeriodContainer>
       </S.ExecutionPeriodBody>
