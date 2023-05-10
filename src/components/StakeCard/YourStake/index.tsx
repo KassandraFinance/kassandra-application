@@ -4,8 +4,6 @@ import Link from 'next/link'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 
-import { Staking } from '../../../constants/tokenAddresses'
-
 import useStakingContract from '../../../hooks/useStakingContract'
 
 import { getDate } from '../../../utils/date'
@@ -27,6 +25,11 @@ interface IYourStakeProps {
   stakeWithLockPeriod: boolean;
   lockPeriod: number;
   availableWithdraw: Big;
+  stakingAddress: string;
+  chain: {
+    id: number,
+    logo: string
+  };
 }
 
 const YourStake = ({
@@ -39,9 +42,11 @@ const YourStake = ({
   poolPrice,
   kacyPrice,
   lockPeriod,
-  availableWithdraw
+  availableWithdraw,
+  chain,
+  stakingAddress
 }: IYourStakeProps) => {
-  const stakingContract = useStakingContract(Staking)
+  const stakingContract = useStakingContract(stakingAddress, chain.id)
 
   const [delegateTo, setDelegateTo] = React.useState<string>('')
 
@@ -55,6 +60,7 @@ const YourStake = ({
       new BigNumber(86400)
     )
     const totalStaked = new BigNumber(poolInfoResponse.depositedAmount)
+
     const apr =
       poolInfoResponse.depositedAmount.toString() !== '0' &&
       kacyPrice.gt('-1') &&
@@ -71,7 +77,7 @@ const YourStake = ({
               )
               .toFixed(0)
           )
-        : new BigNumber(-1)
+        : new BigNumber(0)
 
     const startDate = getDate(
       Number(poolInfoResponse.periodFinish) -

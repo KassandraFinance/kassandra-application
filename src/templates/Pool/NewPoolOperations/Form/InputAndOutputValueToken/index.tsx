@@ -111,7 +111,7 @@ const InputAndOutputValueToken = ({
     }
 
     (async () => {
-      const userTokenBalance = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
+      const userTokenBalance = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.pool_version === 1 ? pool.chain.addressWrapped : undefined)
       setSelectedTokenInBalance(userTokenBalance)
     })()
   }, [

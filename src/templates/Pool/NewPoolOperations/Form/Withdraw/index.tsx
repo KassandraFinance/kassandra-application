@@ -196,14 +196,17 @@ const Withdraw = ({ typeWithdraw, typeAction, privateInvestors }: IWithdrawProps
 
         if (txReceipt.status) {
           ToastSuccess(`Withdrawal of ${tokenSymbol} confirmed`)
-
-          setTimeout(async () => {
-            const amountPool = await getBalanceToken(pool.address, userWalletAddress)
+          let amountPool= Big(0)
+          for (let index = 0; index < 100; index++) {
+            await new Promise(r => setTimeout(r, 500))
+            amountPool = await getBalanceToken(pool.address, userWalletAddress)
+            if (amountPool.toFixed() !== selectedTokenInBalance.toFixed() && amountPool.gt(0)) break
+          }
             if (inputAmountInTokenRef && inputAmountInTokenRef.current !== null) {
               inputAmountInTokenRef.current.value = ''
             }
             if (typeWithdraw === 'Single_asset') {
-              const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.chain.addressWrapped)
+              const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.pool_version === 1 ? pool.chain.addressWrapped : undefined)
 
               setSelectedTokenInBalance(amountPool)
               setSelectedTokenOutBalance(amountToken)
@@ -213,8 +216,6 @@ const Withdraw = ({ typeWithdraw, typeAction, privateInvestors }: IWithdrawProps
             } else {
               getUserBalanceAllToken()
             }
-          }, 2000);
-
           return
         }
       }

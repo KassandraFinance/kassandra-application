@@ -141,7 +141,7 @@ export default class operationV2 {
         this.referral,
         this.poolInfo.controller,
         request
-      ).send({ from: userWalletAddress }, transactionCallback)
+      ).send({ from: userWalletAddress, gasPrice: new BigNumber(gasPriceValue), maxPriorityFeePerGas: 30e9 }, transactionCallback)
 
       return result
     }
@@ -160,7 +160,7 @@ export default class operationV2 {
       minTokenAmountOut: minPoolAmountOut.toString(),
       },
       data
-    ).send({ from: userWalletAddress, value: nativeValue, gasPrice: new BigNumber(gasPriceValue) })
+    ).send({ from: userWalletAddress, value: nativeValue, gasPrice: new BigNumber(gasPriceValue), maxPriorityFeePerGas: 30e9 })
 
     return res
   }
@@ -356,7 +356,7 @@ export default class operationV2 {
         userWalletAddress,
         userWalletAddress,
         request
-      ).send({ from: userWalletAddress }, transactionCallback);
+      ).send({ from: userWalletAddress, maxPriorityFeePerGas: 30e9 }, transactionCallback);
 
     } catch (error) {
       console.log(error)
@@ -391,7 +391,7 @@ export default class operationV2 {
         userWalletAddress,
         userWalletAddress,
         request
-      ).send({ from: userWalletAddress }, transactionCallback);
+      ).send({ from: userWalletAddress, maxPriorityFeePerGas: 30e9 }, transactionCallback);
 
     } catch (error) {
       console.log(error)

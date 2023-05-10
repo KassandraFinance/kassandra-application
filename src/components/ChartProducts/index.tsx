@@ -1,17 +1,11 @@
 import React from 'react'
 import useSWR from 'swr'
 import request from 'graphql-request'
-import Big from 'big.js'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
-import {
-  BACKEND_KASSANDRA,
-  Kacy,
-  KacyPoligon
-} from '../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
 
-import useKacyPrice from '@/hooks/useKacyPrice'
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setChartSelected } from '../../store/reducers/chartSelected'
 import { setPerformanceValues } from '../../store/reducers/performanceValues'
@@ -31,7 +25,6 @@ const arrPeriod: string[] = ['1W', '1M', '3M', '1Y']
 
 const ChartProducts = () => {
   const dispatch = useAppDispatch()
-  const { data: dataKacy } = useKacyPrice()
 
   const [inputChecked, setInputChecked] = React.useState<string>('Price')
   const [price, setPrice] = React.useState([])
@@ -151,61 +144,27 @@ const ChartProducts = () => {
 
   React.useEffect(() => {
     if (data) {
-      const indexKacy = pool.underlying_assets.findIndex(
-        asset => asset.token.id === KacyPoligon
-      )
-      if (indexKacy !== -1) {
-        const diff = Big(data.pool.price_usd).mul(2).div(98).toFixed()
-        let totalKacy = '0'
-        if (dataKacy) {
-          totalKacy = Big(dataKacy[Kacy.toLowerCase()]?.usd.toString() ?? '0')
-            .mul(pool.underlying_assets[indexKacy].balance)
-            .toFixed()
+      const newTVL = data?.pool?.total_value_locked.map(
+        (item: { timestamp: number, close: string }) => {
+          return {
+            timestamp: item.timestamp,
+            value: Number(item.close)
+          }
         }
-        const newTVL = data?.pool?.total_value_locked.map(
-          (item: { timestamp: number, close: string }) => {
-            return {
-              timestamp: item.timestamp,
-              value: Big(item.close).add(totalKacy).toNumber()
-            }
-          }
-        )
+      )
 
-        const newPrice = data?.pool?.price_candles.map(
-          (item: { timestamp: number, close: string }) => {
-            return {
-              timestamp: item.timestamp,
-              close: Big(item.close).add(diff).toNumber()
-            }
+      const newPrice = data?.pool?.price_candles.map(
+        (item: { timestamp: number, close: string }) => {
+          return {
+            timestamp: item.timestamp,
+            close: Number(item.close)
           }
-        )
+        }
+      )
 
-        setTvl(newTVL)
-        setPrice(newPrice)
-        setAllocation(data?.pool?.weights)
-      } else {
-        const newTVL = data?.pool?.total_value_locked.map(
-          (item: { timestamp: number, close: string }) => {
-            return {
-              timestamp: item.timestamp,
-              value: Number(item.close)
-            }
-          }
-        )
-
-        const newPrice = data?.pool?.price_candles.map(
-          (item: { timestamp: number, close: string }) => {
-            return {
-              timestamp: item.timestamp,
-              close: Number(item.close)
-            }
-          }
-        )
-
-        setTvl(newTVL)
-        setPrice(newPrice)
-        setAllocation(data?.pool?.weights)
-      }
+      setTvl(newTVL)
+      setPrice(newPrice)
+      setAllocation(data?.pool?.weights)
     }
   }, [data])
 

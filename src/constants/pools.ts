@@ -1,6 +1,11 @@
 interface PoolDetails {
   pid: number;
   symbol: string;
+  stakingContract: string;
+  chain: {
+    id: number,
+    logo: string
+  };
   properties: {
     logo: {
       src: string,
@@ -36,9 +41,21 @@ export const AHYPE_ADDRESS =
 
 const TRICRYPTO_ADDRESS = '0xA6CAB4b1019ee22309dcA5ba62C3372a791dcB2E'
 
+const PHYPE = {
+  address: '0x83Db290AE85e02FEF7ccF45c1B551e75e7F8cC82',
+  id: '1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52'
+}
+
+export const KACY_WETH = '0xfaf3bc722d34146be83a2aac40b43148a51a9126'
+
 const kacyInvestor1: PoolDetails = {
   pid: 0,
   symbol: 'KACY',
+  stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
+  chain: {
+    id: 43114,
+    logo: '/assets/logos/avax.png'
+  },
   properties: {
     logo: {
       src: '/assets/logos/kacy-stake.svg',
@@ -55,6 +72,11 @@ const kacyInvestor1: PoolDetails = {
 const kacyInvestor2: PoolDetails = {
   pid: 1,
   symbol: 'KACY',
+  stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
+  chain: {
+    id: 43114,
+    logo: '/assets/logos/avax.png'
+  },
   properties: {
     logo: {
       src: '/assets/logos/kacy-stake.svg',
@@ -70,6 +92,11 @@ const kacyInvestor2: PoolDetails = {
 const kacy1x: PoolDetails = {
   pid: process.env.NEXT_PUBLIC_MASTER === '1' ? 2 : 0,
   symbol: 'KACY',
+  stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
+  chain: {
+    id: 43114,
+    logo: '/assets/logos/avax.png'
+  },
   properties: {
     logo: {
       src: '/assets/logos/kacy-stake.svg',
@@ -86,6 +113,11 @@ const kacy1x: PoolDetails = {
 const kacy2x: PoolDetails = {
   pid: process.env.NEXT_PUBLIC_MASTER === '1' ? 3 : 1,
   symbol: 'KACY',
+  stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
+  chain: {
+    id: 43114,
+    logo: '/assets/logos/avax.png'
+  },
   properties: {
     logo: {
       src: '/assets/logos/kacy-stake.svg',
@@ -102,6 +134,11 @@ const kacy2x: PoolDetails = {
 const kacy3x: PoolDetails = {
   pid: process.env.NEXT_PUBLIC_MASTER === '1' ? 4 : 2,
   symbol: 'KACY',
+  stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
+  chain: {
+    id: 43114,
+    logo: '/assets/logos/avax.png'
+  },
   properties: {
     logo: {
       src: '/assets/logos/kacy-stake.svg',
@@ -118,6 +155,11 @@ const kacy3x: PoolDetails = {
 const lpPNG: PoolDetails = {
   pid: 5,
   symbol: 'LP-PNG',
+  stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
+  chain: {
+    id: 43114,
+    logo: '/assets/logos/avax.png'
+  },
   properties: {
     logo: {
       src: '/assets/logos/lp-kacy.svg',
@@ -135,6 +177,11 @@ const lpPNG: PoolDetails = {
 const lpJoe: PoolDetails = {
   pid: 7,
   symbol: 'LP-JOE',
+  stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
+  chain: {
+    id: 43114,
+    logo: '/assets/logos/avax.png'
+  },
   properties: {
     logo: {
       src: '/assets/logos/joe-kacy.svg',
@@ -152,6 +199,11 @@ const lpJoe: PoolDetails = {
 const ahype: PoolDetails = {
   pid: process.env.NEXT_PUBLIC_MASTER === '1' ? 6 : 4,
   symbol: 'aHYPE',
+  stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
+  chain: {
+    id: 43114,
+    logo: '/assets/logos/avax.png'
+  },
   properties: {
     logo: {
       src: '/assets/logos/ahype-stake.svg',
@@ -169,6 +221,11 @@ const ahype: PoolDetails = {
 const tricrypto: PoolDetails = {
   pid: 8,
   symbol: 'K3C',
+  stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
+  chain: {
+    id: 43114,
+    logo: '/assets/logos/avax.png'
+  },
   properties: {
     logo: {
       src: '/assets/logos/tricrypto-stake.svg',
@@ -183,9 +240,53 @@ const tricrypto: PoolDetails = {
   isLP: false
 }
 
+const phype: PoolDetails = {
+  pid: 1,
+  symbol: 'pHYPE',
+  stakingContract: '0xd530f3ce79c9eb03e59dce89a7504dd41d4899bb',
+  chain: {
+    id: 137,
+    logo: '/assets/logos/polygon.svg'
+  },
+  properties: {
+    logo: {
+      src: '/assets/logos/phype-stake.svg',
+      style: { width: '5.8rem' }
+    },
+    title: '$pHYPE',
+    link: `/pool/${PHYPE.id}`
+  },
+  stakeWithVotingPower: false,
+  stakeWithLockPeriod: false,
+  address: PHYPE.address,
+  isLP: false
+}
+
+const lpBalancer: PoolDetails = {
+  pid: 0,
+  symbol: 'KACY-WETH',
+  stakingContract: '0xd530f3ce79c9eb03e59dce89a7504dd41d4899bb',
+  chain: {
+    id: 137,
+    logo: '/assets/logos/polygon.svg'
+  },
+  properties: {
+    logo: {
+      src: '/assets/logos/lp-bal.svg',
+      style: { width: '14.4rem' }
+    },
+    title: '$KACY-WETH BAL LP',
+    link: `https://app.balancer.fi/#/polygon/pool/0xfaf3bc722d34146be83a2aac40b43148a51a9126000200000000000000000b4c`
+  },
+  stakeWithVotingPower: false,
+  stakeWithLockPeriod: false,
+  address: KACY_WETH,
+  isLP: true
+}
+
 export const poolsKacy = [kacy1x, kacy2x, kacy3x]
 export const poolsInvestor = [kacyInvestor1, kacyInvestor2]
-export const poolsFunds = [lpPNG, lpJoe, ahype, tricrypto]
+export const poolsFunds = [lpPNG, lpJoe, ahype, tricrypto, phype, lpBalancer]
 export const poolsKacyFuji = [kacy1x, kacy2x, kacy3x]
 export const poolsFundsFuji = [lpPNG, ahype]
 export const allPools = [
@@ -197,5 +298,7 @@ export const allPools = [
   ahype,
   tricrypto,
   kacyInvestor1,
-  kacyInvestor2
+  kacyInvestor2,
+  phype,
+  lpBalancer
 ]

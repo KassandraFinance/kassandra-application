@@ -12,9 +12,10 @@ import BigNumber from 'bn.js'
 import { request } from 'graphql-request'
 
 import {
-  Staking,
+  BACKEND_KASSANDRA,
+  KacyPoligon,
   LPDaiAvax,
-  SUBGRAPH_URL,
+  WETH_POLYGON,
   networks
 } from '../../constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG } from '../../constants/pools'
@@ -56,6 +57,7 @@ import infoCyanIcon from '../../../public/assets/notificationStatus/info.svg'
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
 
 import * as S from './styles'
+import useCoingecko from '@/hooks/useCoingecko'
 
 export interface IInfoStaked {
   yourStake: BigNumber;
@@ -78,6 +80,11 @@ export interface IInfoStaked {
 interface IStakingProps {
   pid: number;
   symbol: string;
+  stakingAddress: string;
+  chain: {
+    id: number,
+    logo: string
+  };
   properties: {
     logo: {
       src: string,
@@ -102,7 +109,9 @@ const StakeCard = ({
   stakeWithVotingPower,
   stakeWithLockPeriod,
   isLP,
-  address
+  address,
+  stakingAddress,
+  chain
 }: IStakingProps) => {
   const dispatch = useAppDispatch()
 
@@ -144,17 +153,25 @@ const StakeCard = ({
     vestingPeriod: '...',
     lockPeriod: '...'
   })
+  const networkChain = networks[chain.id]
   const { userWalletAddress, chainId } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const { getPriceKacyAndLP } = usePriceLP()
-  const stakingContract = useStakingContract(Staking)
+  const { priceToken } = useCoingecko(
+    networkChain.coingecko,
+    networkChain.nativeCurrency.address,
+    [WETH_POLYGON, KacyPoligon]
+  )
 
-  const avalanche = networks[43114]
+  const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(chain.id)
+  const stakingContract = useStakingContract(
+    stakingAddress,
+    networkChain.chainId
+  )
 
   const { data } = useSWR(
     [GET_INFO_POOL, address],
-    (query, id) => request(SUBGRAPH_URL, query, { id }),
+    (query, id) => request(BACKEND_KASSANDRA, query, { id }),
     {
       refreshInterval: 10000
     }
@@ -180,31 +197,43 @@ const StakeCard = ({
 
   async function updateAllowance() {
     const token = ERC20(infoStaked.stakingToken)
-    const allowance = await token.allowance(Staking, userWalletAddress)
+    const allowance = await token.allowance(stakingAddress, userWalletAddress)
     setAmountApproveKacyStaking(Big(allowance))
   }
 
   async function getLiquidityPoolPriceInDollar() {
-    const addressProviderReserves = isLP && address ? address : LP_KACY_AVAX_PNG
-
-    const { kacyPriceInDollar, priceLP } = await getPriceKacyAndLP(
-      addressProviderReserves,
-      LPDaiAvax,
-      isLP
-    )
-    setKacyPrice(kacyPriceInDollar)
-
-    if (isLP && priceLP) {
-      setPoolPrice(priceLP)
-      return
+    const priceKacy = priceToken(KacyPoligon.toLowerCase())
+    if (priceKacy) {
+      setKacyPrice(Big(priceKacy))
     }
-
-    if (data) {
-      setPoolPrice(Big(data?.pool?.price_usd || -1))
+    if (chain.id === 137 && isLP && address) {
+      const priceWETH = priceToken(WETH_POLYGON.toLowerCase())
+      if (priceWETH) {
+        setPoolPrice(await getPriceKacyAndLPBalancer(priceWETH, address))
+      }
       return
-    }
+    } else if (isLP) {
+      const addressProviderReserves =
+        isLP && address ? address : LP_KACY_AVAX_PNG
 
-    setPoolPrice(kacyPriceInDollar)
+      const { kacyPriceInDollar, priceLP } = await getPriceKacyAndLP(
+        addressProviderReserves,
+        LPDaiAvax,
+        isLP
+      )
+      setKacyPrice(kacyPriceInDollar)
+
+      if (isLP && priceLP) {
+        setPoolPrice(priceLP)
+        return
+      }
+    } else if (priceKacy) {
+      if (data?.pools?.length) {
+        setPoolPrice(Big(data.pools[0]?.price_usd || -1))
+        return
+      }
+      setPoolPrice(Big(priceKacy))
+    }
   }
 
   async function handleApproveKacy() {
@@ -213,9 +242,9 @@ const StakeCard = ({
     const decimals = await token.decimals()
     setDecimals(decimals.toString())
 
-    await token.approve(Staking, userWalletAddress, approvalCallback)
+    await token.approve(stakingAddress, userWalletAddress, approvalCallback)
 
-    const allowance = await token.allowance(Staking, userWalletAddress)
+    const allowance = await token.allowance(stakingAddress, userWalletAddress)
     setAmountApproveKacyStaking(Big(allowance))
   }
 
@@ -284,9 +313,9 @@ const StakeCard = ({
       return
     }
 
-    const token = ERC20(infoStaked.stakingToken, new Web3(avalanche.rpc))
+    const token = ERC20(infoStaked.stakingToken, new Web3(networkChain.rpc))
     token
-      .allowance(Staking, userWalletAddress)
+      .allowance(stakingAddress, userWalletAddress)
       .then((response: string) => setAmountApproveKacyStaking(Big(response)))
     stakingContract.availableWithdraw &&
       stakingContract
@@ -328,6 +357,11 @@ const StakeCard = ({
                   url: properties.logo.src,
                   width: stakeLogoWidth,
                   withoutBorder: true
+                }}
+                networkImage={{
+                  url: chain.logo,
+                  height: 20,
+                  width: 20
                 }}
               />
               <S.IntroStaking>
@@ -417,6 +451,8 @@ const StakeCard = ({
                 stakeWithVotingPower={stakeWithVotingPower}
                 stakeWithLockPeriod={stakeWithLockPeriod}
                 availableWithdraw={currentAvailableWithdraw}
+                stakingAddress={stakingAddress}
+                chain={chain}
               />
               <S.ButtonContainer stakeWithVotingPower={!stakeWithVotingPower}>
                 {userWalletAddress ? (
@@ -429,6 +465,8 @@ const StakeCard = ({
                           kacyEarned={kacyEarned}
                           setKacyEarned={setKacyEarned}
                           kacyPrice={kacyPrice}
+                          stakingAddress={stakingAddress}
+                          chainId={chain.id}
                         />
                         <Button
                           type="button"
@@ -437,7 +475,7 @@ const StakeCard = ({
                           backgroundSecondary
                           disabledNoEvent={
                             kacyEarned.lte(new BigNumber(0)) ||
-                            chainId !== avalanche.chainId
+                            chainId !== networkChain.chainId
                           }
                           onClick={() =>
                             stakingContract.getReward(
@@ -466,17 +504,17 @@ const StakeCard = ({
                         </>
                       ) : (
                         <>
-                          {chainId !== avalanche.chainId ? (
+                          {chainId !== networkChain.chainId ? (
                             <Button
                               type="button"
-                              text="Connect to Avalanche"
+                              text={`Connect to ${networkChain.chainName}`}
                               size="huge"
                               backgroundSecondary
                               fullWidth
                               onClick={() =>
                                 changeChain({
-                                  ...avalanche,
-                                  rpcUrls: [avalanche.rpc]
+                                  ...networkChain,
+                                  rpcUrls: [networkChain.rpc]
                                 })
                               }
                             />
@@ -513,7 +551,7 @@ const StakeCard = ({
                               disabledNoEvent={
                                 (stakeWithLockPeriod &&
                                   currentAvailableWithdraw.lte(0)) ||
-                                chainId !== avalanche.chainId
+                                chainId !== networkChain.chainId
                               }
                               fullWidth
                               onClick={() => {
@@ -528,7 +566,7 @@ const StakeCard = ({
                               backgroundBlack
                               disabledNoEvent={
                                 infoStaked.yourStake.toString() === '0' ||
-                                chainId !== avalanche.chainId
+                                chainId !== networkChain.chainId
                               }
                               fullWidth
                               onClick={() => setIsModalRequestUnstake(true)}
@@ -579,6 +617,8 @@ const StakeCard = ({
                     kacyPrice={kacyPrice}
                     link={properties.link ?? ''}
                     setIsOpenModal={setIsOpenModalPangolin}
+                    stakingAddress={stakingAddress}
+                    chainId={chain.id}
                   />
                 )}
               </S.ButtonContainer>
@@ -601,6 +641,8 @@ const StakeCard = ({
           amountApproved={amountApproveKacyStaking}
           handleApprove={handleApproveKacy}
           updateAllowance={updateAllowance}
+          stakingAddress={stakingAddress}
+          chain={chain.id}
         />
       )}
       {isModalCancelUnstake && (

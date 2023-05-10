@@ -149,7 +149,8 @@ const Portfolio = ({
               pid: pool.pid,
               poolName: pool.poolName,
               symbol: pool.symbol,
-              properties: pool.properties
+              properties: pool.properties,
+              chainLogo: pool.chainLogo
             }
           ])
         }
