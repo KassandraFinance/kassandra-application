@@ -1,5 +1,4 @@
-import { Image } from '@/components/Governance/ImageProfile/styles'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 export const CommunityPoolsTable = styled.div`
   ${() => css`
@@ -175,7 +174,11 @@ export const TH = styled.div<ITHProps>`
     width: 100%;
     height: 6.4rem;
 
+    animation: ${tableAnim} 0.4s ease;
+
     @media (min-width: 768px) {
+      animation-name: none;
+
       &:last-of-type {
         display: none;
       }
@@ -204,7 +207,11 @@ export const TD = styled.div<ITDProps>`
     width: 100%;
     height: 8.4rem;
 
+    animation: ${tableAnim} 0.4s ease;
+
     @media (min-width: 768px) {
+      animation-name: none;
+
       &:last-of-type {
         display: none;
       }
@@ -531,4 +538,15 @@ export const PaginationWrapper = styled.div`
   ${() => css`
     margin-top: 6rem;
   `}
+`
+
+const tableAnim = keyframes`
+  from {
+    transform: translateX(-1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 `
