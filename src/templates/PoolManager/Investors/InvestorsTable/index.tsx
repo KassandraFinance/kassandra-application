@@ -175,7 +175,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
             <ColumnTitle align="right">Investor Share</ColumnTitle>
           </TH>
           <TH isView={inViewCollum === 5}>
-            <ColumnTitle align="right">Percentage</ColumnTitle>
+            <ColumnTitle align="right">share %</ColumnTitle>
           </TH>
           <TH isView={inViewCollum === 6}>
             <ColumnTitle align="right">Address</ColumnTitle>
@@ -338,7 +338,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
           </ValueContainer>
         </TableLine>
         <TableLine>
-          <TableLineTitle>Percentage</TableLineTitle>
+          <TableLineTitle>share %</TableLineTitle>
 
           <ValueContainer>
             <V>{lineData.percentage}%</V>
