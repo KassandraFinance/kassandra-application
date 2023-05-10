@@ -14,8 +14,7 @@ import CoinSummary from '@/templates/Manage/CreatePool/SelectAssets/CoinSummary'
 import InputRadio from '../../../../../components/Inputs/InputRadio'
 import ModalViewCoin from '../../../../../components/Modals/ModalViewCoin'
 
-import arrowLeftBoldIcon from '../../../../../../public/assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '../../../../../../public/assets/utilities/arrow-right-bold.svg'
+import arrowIcon from '../../../../../../public/assets/utilities/arrow-left.svg'
 import eyeShowIcon from '../../../../../../public/assets/utilities/eye-show.svg'
 
 import * as S from './styles'
@@ -162,14 +161,15 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                   type="button"
                   onClick={() => handleCurrentInView(-1)}
                 >
-                  <Image src={arrowLeftBoldIcon} width={16} height={16} />
+                  <Image src={arrowIcon} width={7} height={12} />
                 </S.TableViewButton>
 
                 <S.TableViewButton
                   type="button"
                   onClick={() => handleCurrentInView(1)}
+                  id="arrowRight"
                 >
-                  <Image src={arrowRightBoldIcon} width={16} height={16} />
+                  <Image src={arrowIcon} width={7} height={12} />
                 </S.TableViewButton>
               </S.Th>
             </S.Tr>

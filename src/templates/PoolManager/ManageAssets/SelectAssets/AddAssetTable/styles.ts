@@ -152,6 +152,9 @@ interface IThProps {
 // prettier-ignore
 export const Th = styled(TH)<IThProps>`
   ${() => css`
+    #arrowRight {
+      transform: rotate(180deg);
+    }
     @media (max-width: 767.98px) {
       animation: ${tableAnim} 0.4s ease;
 
