@@ -9,14 +9,11 @@ export const AllocationsTable = styled.table`
     height: 100%;
     border-collapse: collapse;
     border-radius: 0.8rem;
-    border-radius: 0.8rem;
-    border-radius: 0.8rem;
   `}
 `
 
 export const TableHead = styled.thead`
   ${() => css`
-    border-radius: 2rem;
     border-radius: 2rem;
     border-radius: 0.8rem;
 
@@ -125,7 +122,7 @@ export const TrBody = styled.tr`
         'tokenInfo porcentage arrow newAllocation'
         '. moreInfo moreInfo .'
         'currentAmount currentAmount newAmount newAmount';
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 9.9rem 1fr 2rem 1fr;
       gap: 0;
 
       margin-inline: 1.6rem;

@@ -190,7 +190,6 @@ const AllocationsTable = ({ priceToken, chainId }: IAllocationsTableProps) => {
       </S.TableHead>
       <S.TBodyAllocations>
         {poolTokensList.map(item => {
-          console.log(mockTokens[item.token.address])
           return (
             <S.TrBody key={item.token.address}>
               <PoolToken

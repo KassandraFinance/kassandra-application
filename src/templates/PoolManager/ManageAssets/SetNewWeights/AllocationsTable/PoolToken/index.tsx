@@ -9,6 +9,7 @@ import { BNtoDecimal } from '@/utils/numerals'
 import InputNumber from '../../../../../../components/Inputs/InputNumber'
 
 import * as S from './styles'
+import Image from 'next/image'
 
 export type AssetType = {
   currentWeight: Big,
@@ -101,10 +102,10 @@ const PoolToken = ({
         <S.AmountLine />
       </S.CurrentAmountContainer>
       <S.Allocation>
-        <p>{currentWeight.toFixed(2)}%</p>
+        <p>{currentWeight.toFixed(1)}%</p>
       </S.Allocation>
       <S.Arrow>
-        <img src="/assets/utilities/arrow-right.svg" alt="" width={32} />
+        <Image src="/assets/utilities/arrow-right.svg" alt="" layout="fill" />
       </S.Arrow>
       <S.NewAllocation>
         <InputNumber
