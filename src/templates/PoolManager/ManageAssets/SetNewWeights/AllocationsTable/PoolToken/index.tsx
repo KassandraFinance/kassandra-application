@@ -13,7 +13,6 @@ import * as S from './styles'
 export type AssetType = {
   currentWeight: Big,
   currentAmount: Big,
-  currentAmountUSD: Big,
   token: {
     address: string,
     decimals: number,
@@ -33,6 +32,7 @@ type INewTokensWeights = {
 interface IPoolTokensProps {
   tokenInfo: AssetType;
   newTokensValues: Record<string, INewTokensWeights>;
+  priceToken: number;
   handleLockStatus: (address: string, status: lockToken) => void;
   handleCalcNewWeights: (value: number, tokenInfo: AssetType) => void;
 }
@@ -41,11 +41,12 @@ const PoolToken = ({
   tokenInfo,
   newTokensValues,
   handleLockStatus,
-  handleCalcNewWeights
+  handleCalcNewWeights,
+  priceToken
 }: IPoolTokensProps) => {
   const [moreInfo, setMoreInfo] = React.useState(false)
 
-  const { currentAmount, currentAmountUSD, currentWeight, token } = tokenInfo
+  const { currentAmount, currentWeight, token } = tokenInfo
   const {
     alreadyCalculated,
     lockPercentage,
@@ -95,7 +96,7 @@ const PoolToken = ({
         <S.CurrentAmount>
           <p>Amount</p>
           <span>{BNtoDecimal(currentAmount, token.decimals, 2)}</span>
-          <p>~${BNtoDecimal(currentAmountUSD, 2)}</p>
+          <p>~${BNtoDecimal(currentAmount.mul(priceToken), 2)}</p>
         </S.CurrentAmount>
         <S.AmountLine />
       </S.CurrentAmountContainer>

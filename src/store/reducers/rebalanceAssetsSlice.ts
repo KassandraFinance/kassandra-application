@@ -17,7 +17,6 @@ type INewTokensWeights = {
 export type AssetType = {
   currentWeight: Big,
   currentAmount: Big,
-  currentAmountUSD: Big,
   token: {
     address: string,
     decimals: number,

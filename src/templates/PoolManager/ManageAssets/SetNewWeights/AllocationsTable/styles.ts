@@ -2,24 +2,26 @@ import styled, { css } from 'styled-components'
 
 export const AllocationsTable = styled.table`
   ${() => css`
-    border-collapse: collapse;
+    overflow: hidden;
+
     /* max-width: 74.6rem; */
     width: 100%;
     height: 100%;
-
-    overflow: hidden;
-    -webkit-border-radius: 0.8rem;
-    -moz-border-radius: 0.8rem;
+    border-collapse: collapse;
+    border-radius: 0.8rem;
+    border-radius: 0.8rem;
     border-radius: 0.8rem;
   `}
 `
 
 export const TableHead = styled.thead`
   ${() => css`
-    background: rgba(0, 0, 0, 0.25);
-    -webkit-border-radius: 2rem;
-    -moz-border-radius: 2rem;
+    border-radius: 2rem;
+    border-radius: 2rem;
     border-radius: 0.8rem;
+
+    background: rgb(0 0 0 / 0.25);
+
     /* background: rgba(0, 0, 0, 0.25); */
   `}
 `
@@ -29,11 +31,13 @@ export const TableHeadRow = styled.tr`
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 4.8rem 1fr 1fr;
     gap: 1rem;
+
     padding: 2.4rem;
 
     th:not(:first-child, :last-child) {
       justify-content: center;
     }
+
     th:last-child,
     th:nth-child(2) {
       justify-content: flex-end;
@@ -41,12 +45,14 @@ export const TableHeadRow = styled.tr`
 
     @media (max-width: 620px) {
       gap: 0.4rem;
+
       padding-inline: 1.6rem;
     }
 
     @media (max-width: 745px) {
       display: flex;
       justify-content: space-between;
+
       width: 100%;
       padding: 1.6rem;
 
@@ -63,8 +69,8 @@ export const ThHead = styled.th`
     align-items: center;
 
     color: #fcfcfc;
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
     line-height: 100%;
     letter-spacing: 0.05em;
 
@@ -79,13 +85,15 @@ export const TBodyAllocations = styled.tbody`
     position: relative;
 
     max-width: 74.6rem;
-    background: rgba(255, 255, 255, 0.04);
     border-radius: 8px;
+
+    background: rgb(255 255 255 / 0.04);
 
     #inputBalanceValue {
       position: absolute;
-      bottom: 10%;
       right: 28%;
+      bottom: 10%;
+
       opacity: 0;
     }
   `}
@@ -94,30 +102,34 @@ export const TBodyAllocations = styled.tbody`
 export const TrBody = styled.tr`
   ${() => css`
     display: grid;
+
     /* grid-template-columns: repeat(6, 1fr); */
     grid-template-columns: 1fr 1fr 1fr 4.8rem 1fr 1fr;
-    padding: 2.6rem 0;
-    margin-inline: 2.4rem;
     gap: 1rem;
 
+    margin-inline: 2.4rem;
+    padding: 2.6rem 0;
+
     :not(:first-child) {
-      border-top: 1px solid rgba(255, 255, 255, 0.3);
+      border-top: 1px solid rgb(255 255 255 / 0.3);
     }
 
     @media (max-width: 620px) {
       gap: 0.4rem;
+
       margin-inline: 1.6rem;
     }
 
     @media (max-width: 745px) {
-      margin-inline: 1.6rem;
-      padding: 1.4rem 0;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0;
       grid-template-areas:
         'tokenInfo porcentage arrow newAllocation'
         '. moreInfo moreInfo .'
         'currentAmount currentAmount newAmount newAmount';
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+
+      margin-inline: 1.6rem;
+      padding: 1.4rem 0;
     }
   `}
 `

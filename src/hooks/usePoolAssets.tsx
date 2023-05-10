@@ -104,7 +104,10 @@ function usePoolAssets(poolId: string) {
     (query, poolId) =>
       request(BACKEND_KASSANDRA, query, {
         id: poolId
-      })
+      }),
+    {
+      refreshInterval: 60000
+    }
   )
 
   return React.useMemo(() => {
