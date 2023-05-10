@@ -44,7 +44,10 @@ export const Image = styled.div<IImageProps>`
     margin-left: 1.6rem;
 
     color: ${theme.colors.snow};
+    line-height: 135%;
     text-decoration: none;
+    text-align: start;
+
     transition: 300ms;
 
     @media (max-width: 540px) {

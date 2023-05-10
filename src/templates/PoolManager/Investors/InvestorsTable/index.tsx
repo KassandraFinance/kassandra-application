@@ -18,8 +18,7 @@ import { ToastInfo } from '@/components/Toastify/toast'
 import ImageProfile from '@/components/Governance/ImageProfile'
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 
-import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
+import arrowIcon from '@assets/utilities/arrow-left.svg'
 import eyeShowIcon from '@assets/utilities/eye-show.svg'
 
 import * as S from './styles'
@@ -175,7 +174,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
             <ColumnTitle align="right">Investor Share</ColumnTitle>
           </TH>
           <TH isView={inViewCollum === 5}>
-            <ColumnTitle align="right">Percentage</ColumnTitle>
+            <ColumnTitle align="right">share %</ColumnTitle>
           </TH>
           <TH isView={inViewCollum === 6}>
             <ColumnTitle align="right">Address</ColumnTitle>
@@ -183,11 +182,11 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
           <TH>
             <TableViewButtonContainer>
               <TableViewButton onClick={() => handleCurrentInView(-1, 6)}>
-                <Image src={arrowLeftBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </TableViewButton>
 
               <TableViewButton onClick={() => handleCurrentInView(1, 6)}>
-                <Image src={arrowRightBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </TableViewButton>
             </TableViewButtonContainer>
           </TH>
@@ -338,7 +337,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
           </ValueContainer>
         </TableLine>
         <TableLine>
-          <TableLineTitle>Percentage</TableLineTitle>
+          <TableLineTitle>share %</TableLineTitle>
 
           <ValueContainer>
             <V>{lineData.percentage}%</V>

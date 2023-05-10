@@ -18,8 +18,7 @@ import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 import ImageProfile from '@/components/Governance/ImageProfile'
 
 import eyeShowIcon from '@assets/utilities/eye-show.svg'
-import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
+import arrowIcon from '@assets/utilities/arrow-left.svg'
 import tooltip from '@assets/utilities/tooltip.svg'
 
 import * as S from './styles'
@@ -274,11 +273,11 @@ const ManagersPoolTable = () => {
           <TH>
             <TableViewButtonContainer>
               <TableViewButton onClick={() => handleCurrentInView(-1)}>
-                <Image src={arrowLeftBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </TableViewButton>
 
               <TableViewButton onClick={() => handleCurrentInView(1)}>
-                <Image src={arrowRightBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </TableViewButton>
             </TableViewButtonContainer>
           </TH>

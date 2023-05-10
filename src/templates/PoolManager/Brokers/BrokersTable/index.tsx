@@ -17,8 +17,7 @@ import { ToastInfo } from '@/components/Toastify/toast'
 import Pagination from '@/components/Pagination'
 import Loading from '@/components/Loading'
 
-import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
+import arrowIcon from '@assets/utilities/arrow-left.svg'
 import eyeShowIcon from '@assets/utilities/eye-show.svg'
 
 import * as S from './styles'
@@ -167,11 +166,11 @@ const BrokersTable = () => {
           <TH>
             <TableViewButtonContainer>
               <TableViewButton onClick={() => handleCurrentInView(-1, 5)}>
-                <Image src={arrowLeftBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </TableViewButton>
 
               <TableViewButton onClick={() => handleCurrentInView(1, 5)}>
-                <Image src={arrowRightBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </TableViewButton>
             </TableViewButtonContainer>
           </TH>
