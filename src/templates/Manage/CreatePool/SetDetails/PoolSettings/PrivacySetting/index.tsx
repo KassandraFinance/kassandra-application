@@ -56,14 +56,7 @@ const PoolSettings = ({
 
   return (
     <S.PrivacySetting>
-      <S.PrivacySettingContainer
-        isOpen={poolData.privacy === 'private'}
-        height={
-          poolData.privateAddressList && poolData.privateAddressList.length > 0
-            ? Math.ceil(poolData.privateAddressList.length / 2) * 4.4 + 3
-            : 0
-        }
-      >
+      <S.PrivacySettingContainer>
         <S.PoolSettingTitle>Privacy Setting</S.PoolSettingTitle>
         <S.PoolSettingParagraph>
           Choose who can invest in the managed pool you are creating.
