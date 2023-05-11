@@ -8,6 +8,7 @@ export const TokenInfo = styled.td`
 
     @media (max-width: 745px) {
       grid-area: tokenInfo;
+      gap: 0.8rem;
     }
   `}
 `
@@ -18,6 +19,8 @@ export const TokenNameContainer = styled.div`
     flex-direction: column;
     justify-content: center;
     gap: 0.4rem;
+
+    width: 100%;
 
     > p {
       color: #bdbdbd;
@@ -69,7 +72,7 @@ export const TokenName = styled.a`
 export const Line = styled.span`
   ${() => css`
     display: none;
-    margin-left: 0.9rem;
+    margin-left: auto;
     height: 1.4rem;
 
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -84,7 +87,10 @@ interface IMoreInfoProps {
 }
 
 // eslint-disable-next-line prettier/prettier
-export const CurrentAmountContainer = styled.td<IMoreInfoProps>`
+export const CurrentAmountContainer =
+  styled.td <
+    IMoreInfoProps >
+    `
   ${({ isOpen }) => css`
     display: flex;
     align-items: center;
@@ -186,16 +192,21 @@ export const Allocation = styled.td`
 
 export const Arrow = styled.td`
   ${() => css`
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: flex-start;
 
+    width: 3.2rem;
+
     @media (max-width: 650px) {
       justify-content: center;
     }
+
     @media (max-width: 745px) {
       grid-area: arrow;
       justify-content: center;
+      width: 1.5rem;
     }
   `}
 `
@@ -281,7 +292,10 @@ export const InputCheckbox = styled.td`
 `
 
 // eslint-disable-next-line prettier/prettier
-export const NewAmount = styled.td<IMoreInfoProps>`
+export const NewAmount =
+  styled.td <
+    IMoreInfoProps >
+    `
   ${({ theme, isOpen }) => css`
     display: flex;
     flex-direction: column;
@@ -323,7 +337,10 @@ export const NewAmount = styled.td<IMoreInfoProps>`
 `
 
 // eslint-disable-next-line prettier/prettier
-export const MoreInfoContainer = styled.td<IMoreInfoProps>`
+export const MoreInfoContainer =
+  styled.td <
+    IMoreInfoProps >
+    `
   ${({ theme, isOpen }) => css`
     display: flex;
     align-items: center;

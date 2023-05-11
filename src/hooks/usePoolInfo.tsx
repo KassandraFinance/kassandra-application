@@ -78,7 +78,10 @@ function usePoolInfo(userWalletAddress: string, poolId: string) {
       request(BACKEND_KASSANDRA, query, {
         manager: userWalletAddress,
         id: poolId
-      })
+      }),
+    {
+      refreshInterval: 60000
+    }
   )
 
   return {

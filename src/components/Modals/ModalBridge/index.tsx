@@ -86,10 +86,10 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
 
     if (id === '43114') {
       const amount = await contract.allowance(chain.kacyOFT, userWalletAddress)
-      setApprovedAmount(Big(amount).div(Big(10).pow(18)).toFixed())
+      setApprovedAmount(Big(amount).div(Big(10).pow(18)).toFixed(6))
     }
 
-    setBalance(Big(balance.toString()).div(Big(10).pow(18)).toFixed(2))
+    setBalance(Big(balance.toString()).div(Big(10).pow(18)).toString())
   }
 
   const approvalCallback = React.useCallback((): TransactionCallback => {
@@ -142,7 +142,7 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
       userWalletAddress
     )
 
-    setApprovedAmount(Big(amount).div(Big(10).pow(18)).toFixed())
+    setApprovedAmount(Big(amount).div(Big(10).pow(18)).toFixed(6))
   }
 
   async function handleBridge(id: string) {
@@ -168,6 +168,10 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  function handleMaxClick() {
+    setValue(balance)
   }
 
   return (
@@ -197,7 +201,7 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
             </S.Wrapper>
 
             <S.InputContainer>
-              <S.Text>Balance: {balance} Kacy</S.Text>
+              <S.Text>Balance: {parseFloat(balance).toFixed(6)} Kacy</S.Text>
 
               <InputNumberRight
                 name="inputAmount"
@@ -208,6 +212,9 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
                 onChange={handleOnChange}
                 lable=""
                 placeholder="Add token amount"
+                button
+                buttonText='Max'
+                onClick={handleMaxClick}
               />
             </S.InputContainer>
 
