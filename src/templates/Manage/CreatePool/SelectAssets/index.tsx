@@ -86,7 +86,7 @@ const SelectAssets = () => {
       const balanceValue = await balance(wallet)
       balanceArr = {
         ...balanceArr,
-        [mockTokens[token]]: balanceValue
+        [mockTokens[token] ?? token.toLowerCase()]: balanceValue
       }
     }
 
@@ -142,8 +142,7 @@ const SelectAssets = () => {
   }, [])
 
   React.useEffect(() => {
-    const arr = whitelist ? whitelist : []
-    getBalances(arr)
+    getBalances(whitelist ?? [])
   }, [whitelist, wallet])
 
   return (

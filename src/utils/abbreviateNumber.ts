@@ -1,20 +1,21 @@
 export function abbreviateNumber(number: string | number, fix = 0) {
-  if (number === 0) return number
+  const inter = typeof number === 'string' ? parseFloat(number) : number
 
-  const inter = typeof number === 'string' ? parseInt(number) : number
-
-  function nFormatter(number: number, divisor: number, unit: string) {
-    const div = (number / divisor).toFixed(fix)
-    return div + unit
+  function nFormatter(divisor: number, unit: string) {
+    const div = (inter / divisor).toFixed(fix)
+    return div + '\u202F' + unit
   }
 
   if (inter >= 1e3 && inter < 1e6) {
-    return nFormatter(inter, 1e3, 'k')
+    return nFormatter(1e3, 'k')
   } else if (inter >= 1e6 && inter < 1e9) {
-    return nFormatter(inter, 1e6, 'M')
+    return nFormatter(1e6, 'M')
   } else if (inter >= 1e9) {
-    return nFormatter(inter, 1e9, 'B')
-  } else {
-    return nFormatter(inter, 1, '')
+    return nFormatter(1e9, 'B')
+  } else if (inter < 1) {
+    return inter.toLocaleString('en-US', {
+      maximumSignificantDigits: 5
+    })
   }
+  return nFormatter(1, '')
 }
