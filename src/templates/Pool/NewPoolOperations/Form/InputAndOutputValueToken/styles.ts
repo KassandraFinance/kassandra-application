@@ -9,6 +9,9 @@ export const InputAndOutputValueToken = styled.div`
   background: rgba(31, 31, 31, 0.72);
   border-radius: 1rem;
 
+  @media (max-width: 960px) {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
   @media (max-width: 450px) {
     min-width: 30rem;
   }

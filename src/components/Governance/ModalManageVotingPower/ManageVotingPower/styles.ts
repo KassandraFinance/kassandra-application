@@ -7,7 +7,7 @@ export const Content = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  background: #1f2937;
+  background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
   border-radius: 0 0 10px 10px;
 `
 
@@ -25,6 +25,8 @@ export const WrapperIconsBackGround = styled.button`
   border: none;
 
   transition: 200ms;
+
+  background-image: linear-gradient(0deg, #ffffff15 -0.02%, #ffffff15 99.99%);
 
   @media (max-width: 440px) {
     margin-top: 1.6rem;

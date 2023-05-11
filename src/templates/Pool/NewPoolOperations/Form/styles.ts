@@ -7,7 +7,7 @@ export const Form = styled.div`
     border-bottom-right-radius: 1.2rem;
 
     @media (max-width: 960px) {
-      background-color: rgb(31, 41, 55);
+      background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
     }
   `}
 `

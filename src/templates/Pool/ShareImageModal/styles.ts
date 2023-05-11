@@ -59,7 +59,7 @@ export const ModalBody = styled.div`
   border-bottom-right-radius: 1.2rem;
   border-bottom-left-radius: 1.2rem;
 
-  background-color: rgb(31 41 55 / 1);
+  background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
 
   @media (max-width: 500px) {
     display: block;
@@ -123,7 +123,7 @@ export const ImageContainer = styled.div`
   ::-webkit-scrollbar-thumb {
     border-radius: 5px;
 
-    background-color: rgb(255 255 255 / 0.2);
+    background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
   }
 
   @media (max-width: 1130px) {
