@@ -3,7 +3,7 @@ import router from 'next/router'
 import useSWR from 'swr'
 import BigNumber from 'bn.js'
 import { request } from 'graphql-request'
-import { useInView } from 'react-intersection-observer'
+// import { useInView } from 'react-intersection-observer'
 
 import { SUBGRAPH_URL } from '../../../constants/tokenAddresses'
 
@@ -55,9 +55,9 @@ const ModalVotes = ({
   const [modalVotesList, setModalVotesList] = React.useState<IModalVotesList[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
 
-  const { ref, inView } = useInView({
-    threshold: 0.1
-  })
+  // const { ref, inView } = useInView({
+  //   threshold: 0.1
+  // })
 
   function getTextButton(typeVote: string) {
     if (typeVote === 'For') {
@@ -148,12 +148,12 @@ const ModalVotes = ({
                   return (
                     <S.UserData
                       key={index + user.voter.id}
-                      ref={
-                        index === modalVotesList.length - 1 &&
-                        modalVotesList.length !== 0
-                          ? ref
-                          : null
-                      }
+                      // ref={
+                      //   index === modalVotesList.length - 1 &&
+                      //   modalVotesList.length !== 0
+                      //     ? ref
+                      //     : null
+                      // }
                     >
                       <S.UserName>
                         <ImageProfile
@@ -170,8 +170,8 @@ const ModalVotes = ({
                     </S.UserData>
                   )
                 })}
+                {/* <S.shadow inView={inView} /> */}
               </S.Tbody>
-              <S.shadow inView={inView} />
             </>
           ) : (
             <S.textContainer>
@@ -182,6 +182,7 @@ const ModalVotes = ({
         <S.ButtonWrapper>
           <Button
             text={getTextButton(voteType)}
+            fullWidth
             backgroundVote={{
               voteState: checkVoteButton(userVote, proposalState, voteType),
               type: voteType

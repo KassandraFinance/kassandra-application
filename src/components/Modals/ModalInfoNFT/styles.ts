@@ -211,7 +211,7 @@ export const ModalInfoNftContent = styled.div`
   height: 100vh;
   max-width: 55rem;
 
-  background-color: #232734;
+  background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
 
   z-index: 1050;
 
