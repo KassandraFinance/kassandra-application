@@ -155,6 +155,13 @@ const useStakingContract = (address: string, chainId = 43114) => {
       return value
     }
 
+    const earnedMultChain = async (pid: number, walletAddress: string, stakingContractAddress: string, chainId: number ) => {
+      const _web3 = new Web3(networks[chainId].rpc)
+      const contract = new _web3.eth.Contract((StakingContract as unknown) as AbiItem, stakingContractAddress)
+      const value: string = await contract.methods.earned(pid, walletAddress).call()
+      return new BigNumber(value)
+    }
+
     return {
       events,
 
@@ -172,6 +179,7 @@ const useStakingContract = (address: string, chainId = 43114) => {
       stakedUntil,
       unstaking,
       withdrawable,
+      earnedMultChain,
 
       userInfo,
       getUserInfo
