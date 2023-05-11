@@ -7,7 +7,8 @@ export const Modal = styled.div`
     left: 50%;
     transform: translate(-50%, -50%);
 
-    background-color: #1f2937;
+    background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
+
     border-radius: 1.2rem;
 
     z-index: 1050;
@@ -55,7 +56,6 @@ export const ModalHeader = styled.div`
     border-bottom: 0.1rem solid #575f69;
 
     @media (max-width: 576px) {
-      background-color: transparent;
       border-bottom: none;
       padding: 1.6rem;
     }
@@ -109,7 +109,6 @@ export const ModalBody = styled.div`
   ${() => css`
     padding: 2.4rem;
 
-    background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
     border-radius: 0 0 1.2rem 1.2rem;
 
     @media (max-width: 576px) {

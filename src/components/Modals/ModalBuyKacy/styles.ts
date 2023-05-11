@@ -14,7 +14,7 @@ export const ModalBuyKacyContainer = styled.div<IModalBuyKacyProps>`
 
   display: ${props => (props.modalOpen ? 'block' : 'none')};
 
-  background: #1F2937;
+  background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
   border-radius: 1.2rem;
 
   z-index: 21;

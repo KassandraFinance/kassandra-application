@@ -17,7 +17,8 @@ export const TermsAndConditions = styled.div<IModalBuyKacyProps>`
   padding-top: 2.4rem;
   width: 70rem;
 
-  background: #1F2937;
+  background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
+
   border-radius: 1.2rem;
 
   z-index: 1050;

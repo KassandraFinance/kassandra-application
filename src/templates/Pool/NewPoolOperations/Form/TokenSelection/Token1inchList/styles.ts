@@ -11,6 +11,10 @@ export const TokenListContainer = styled.div`
     > div {
       border-radius: 1rem;
       background: rgba(31, 31, 31, 0.72);
+
+      @media (max-width: 960px) {
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
     }
   `}
 `

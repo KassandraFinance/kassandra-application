@@ -52,7 +52,7 @@ export const TransactionSettings = styled.div`
 
     padding: 2rem;
 
-    background-color: #1f2937;
+    background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
     border-radius: 1rem;
     border: 0.1rem solid rgba(255, 255, 255, 0.3);
 

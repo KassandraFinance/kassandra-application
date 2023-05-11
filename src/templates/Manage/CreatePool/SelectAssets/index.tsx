@@ -6,7 +6,6 @@ import { AbiItem, toChecksumAddress } from 'web3-utils'
 import request from 'graphql-request'
 import Big from 'big.js'
 
-import { ERC20 } from '../../../../hooks/useERC20Contract'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import useCoingecko from '@/hooks/useCoingecko'
 import {
@@ -16,6 +15,7 @@ import {
   TokenType
 } from '../../../../store/reducers/poolCreationSlice'
 
+import ERC20ABI from "@/constants/abi/ERC20.json"
 import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
 import { BACKEND_KASSANDRA, mockTokens, networks } from '../../../../constants/tokenAddresses'
 import { GET_INFO_TOKENS } from './graphql'
@@ -80,15 +80,21 @@ const SelectAssets = () => {
   const { data: priceData } = useCoingecko(networks[networkId ?? 137].coingecko, networks[networkId ?? 137].nativeCurrency.address, tokensListGoerli ?? [''])
 
   async function getBalances(tokensList: string[]) {
-    let balanceArr = {}
+    const web3 = new Web3(networks[networkId ?? 137].rpc)
+    const batch = new web3.BatchRequest()
+
+    const balanceArr = {}
     for (const token of tokensList) {
-      const { balance } = ERC20(token, new Web3(networks[networkId ?? 137].rpc))
-      const balanceValue = await balance(wallet)
-      balanceArr = {
-        ...balanceArr,
-        [mockTokens[token] ?? token.toLowerCase()]: balanceValue
-      }
+      // eslint-disable-next-line prettier/prettier
+      const contract = new web3.eth.Contract((ERC20ABI as unknown) as AbiItem, token)
+      batch.add(contract.methods.balanceOf(wallet).call.request({ from: wallet }, (error: any, balance: string) => {
+        console.log('balance', balance)
+        Object.assign(balanceArr, {
+          [mockTokens[token] ?? token.toLowerCase()]: new BigNumber(balance)
+        })
+      }))
     }
+    batch.execute()
 
     setTokenBalance(balanceArr)
   }
