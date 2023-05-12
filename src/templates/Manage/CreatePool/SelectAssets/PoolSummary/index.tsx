@@ -136,7 +136,7 @@ const PoolSummary = ({
                       type="button"
                       onClick={() => onRemoveToken(coin)}
                     >
-                      <Image src={closeIcon} />
+                      <Image src={closeIcon} layout="fill" />
                     </S.RemoveButton>
                   </S.AllocationContainer>
                   {Number(coin.allocation) < 1 && (

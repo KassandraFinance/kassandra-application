@@ -126,6 +126,8 @@ export const LockButton = styled.button<ILockButtonProps>`
 
 export const RemoveButton = styled.button`
   ${() => css`
+    position: relative;
+
     width: 1rem;
     height: 1rem;
     border: none;
