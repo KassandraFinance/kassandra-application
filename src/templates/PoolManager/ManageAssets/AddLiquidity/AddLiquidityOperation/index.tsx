@@ -67,7 +67,7 @@ const AddLiquidityOperation = () => {
   const dispatch = useAppDispatch()
 
   const token = useAppSelector(state => state.addAsset.token)
-  const chainId = useAppSelector(state => state.addAsset.chainId)
+  const chainId = useAppSelector(state => state.chainId)
   const liquidit = useAppSelector(state => state.addAsset.liquidit)
   const wallet = useAppSelector(state => state.userWalletAddress)
 

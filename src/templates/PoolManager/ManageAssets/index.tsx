@@ -87,6 +87,9 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const { periodSelect, newTokensWights } = useAppSelector(
     state => state.rebalanceAssets
   )
+  const chainId = useAppSelector(
+    state => state.chainId
+  )
 
   const router = useRouter()
 
@@ -348,7 +351,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         weightsArray
       ).send(
         {
-          from: userWalletAddress
+          from: userWalletAddress,
+          maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
         },
         callBack
       )
@@ -416,7 +420,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         )
         .send(
           {
-            from: userWalletAddress
+            from: userWalletAddress,
+            maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
           },
           callBack
         )
@@ -585,6 +590,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   async function handleAddToken() {
     if (!poolInfo) return
 
+    const tokenAdd = chainId === 5 ? mockTokensReverse[token.id.toLowerCase()] : token.id
+
     setTransactionButtonStatus(TransactionStatus.WAITING)
 
     if (
@@ -605,7 +612,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
       try {
         await handleApproveToken({
-          address: mockTokensReverse[token.id.toLowerCase()],
+          address: tokenAdd,
           amount: Big(tokenLiquidity.amount)
             .mul(Big(10).pow(token.decimals))
             .toFixed(0),
@@ -645,7 +652,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, poolInfo.controller);
       const response = await poolController.methods
         .addToken(
-          mockTokensReverse[token.id.toLowerCase()],
+          tokenAdd,
           allocation,
           tokenToAddBalance,
           userWalletAddress,
@@ -653,7 +660,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         )
         .send(
           {
-            from: userWalletAddress
+            from: userWalletAddress,
+            maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
           },
           callBack
         )
@@ -688,7 +696,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     }
     if (actionSelected === chooseActionStep.Add && step === 2) {
       getTransactionsList(
-        mockTokensReverse[token.id.toLowerCase()],
+        chainId === 5 ? mockTokensReverse[token.id.toLowerCase()] : token.id,
         poolInfo.controller,
         'Add',
         'addToken',
