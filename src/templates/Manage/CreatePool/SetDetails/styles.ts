@@ -3,6 +3,8 @@ import styled, { css } from 'styled-components'
 export const SetDetails = styled.div`
   ${() => css`
     overflow-y: auto;
+
+    margin-bottom: 12rem;
   `}
 `
 

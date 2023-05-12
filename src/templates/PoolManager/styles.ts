@@ -201,8 +201,8 @@ export const LoadingWrapper = styled.div`
 export const RebalancingProgressText = styled.div`
   ${({ theme }) => css`
     color: #c4c4c4;
-    font-size: ${theme.font.sizes.font12};
     font-weight: ${theme.font.weight.normal};
+    font-size: ${theme.font.sizes.font12};
     line-height: 1.4rem;
     text-transform: uppercase;
   `}
@@ -211,10 +211,95 @@ export const RebalancingProgressText = styled.div`
 export const RebalancingProgressTime = styled.div`
   ${({ theme }) => css`
     color: ${theme.colors.white};
-    font-size: ${theme.font.sizes.font12};
     font-weight: ${theme.font.weight.normal};
+    font-size: ${theme.font.sizes.font12};
     line-height: 1.4rem;
     letter-spacing: 0.22em;
     text-align: center;
+  `}
+`
+
+export const UserDashBoardButton = styled.button`
+  ${() => css`
+    position: absolute;
+    top: 2.4rem;
+    right: 7.2rem;
+
+    display: none;
+
+    @media (max-width: 768px) {
+      z-index: 1021;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 4rem;
+      height: 4rem;
+      border: none;
+      border-radius: 50%;
+
+      background-color: rgb(255 255 255 / 0.1);
+
+      cursor: pointer;
+    }
+  `}
+`
+
+interface IUserImageWrapperProps {
+  isOpen: boolean;
+}
+
+// prettier-ignore
+export const UserImageWrapper = styled.div<IUserImageWrapperProps>`
+  ${({ isOpen }) => css`
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 2rem;
+    height: 2rem;
+
+    opacity: ${isOpen ? '0' : '1'};
+
+    transition-timing-function: ease;
+    transition-duration: 500ms;
+    transition-property: opacity;
+
+    img {
+      object-fit: cover;
+
+      border-radius: 50%;
+    }
+  `}
+`
+
+export const NetworkImageWrapper = styled.div`
+  ${() => css`
+    position: absolute;
+    right: -1rem;
+    bottom: -0.9rem;
+
+    width: 1.2rem;
+    height: 1.2rem;
+  `}
+`
+
+interface ICloseIconWrapperProps {
+  isOpen: boolean;
+}
+
+// prettier-ignore
+export const CloseIconWrapper = styled.div<ICloseIconWrapperProps>`
+  ${({ isOpen }) => css`
+    position: absolute;
+
+    opacity: ${isOpen ? '1' : '0'};
+
+    transition-timing-function: ease;
+    transition-duration: 500ms;
+    transition-property: opacity;
   `}
 `

@@ -284,13 +284,18 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }
   }
 
-  async function handlePrivateInvestors(poolControler: string, investorsList: { address: string }[]) {
+  async function handlePrivateInvestors(poolControler: string, investorsList: { address: string }[]): Promise<boolean> {
     // eslint-disable-next-line prettier/prettier
     const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
 
-    await controller.methods.addAllowedAddresses(investorsList.map(investor => investor.address)).send({
-      from: userWalletAddress
-    }, callBack)
+    const result = await new Promise<boolean>(resolve => {
+      controller.methods.addAllowedAddresses(investorsList.map(investor => investor.address)).send({
+        from: userWalletAddress, maxPriorityFeePerGas: 30e9
+      }, (error: MetamaskError, txHash: string) => callBack(error, txHash).then(res => {
+        resolve(res)
+      }))
+    })
+    return result
   }
 
   async function getTransactionsList() {
@@ -585,14 +590,33 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         pool.feesSettings,
         web3.utils.padLeft('0x', 64)
       ).send({
-        from: userWalletAddress
+        from: userWalletAddress, maxPriorityFeePerGas: 30e9
       }, callBack)
 
       setCompletedData({ id: `${poolData.networkId}${response.pool}`, txHash: tx.transactionHash, networkId: poolData.networkId ?? 137 })
 
       if (pool.isPrivatePool) {
-        const addressList = poolData?.privateAddressList ? poolData.privateAddressList : []
-        await handlePrivateInvestors(response.poolController, addressList)
+        try {
+          const addressList = poolData?.privateAddressList ? poolData.privateAddressList : []
+          const res = await handlePrivateInvestors(response.poolController, addressList)
+          if (!res) {
+            throw new Error("Error for add Private Investors")
+          }
+        } catch (error) {
+          dispatch(setModalAlertText({
+            errorText: "Could not add private investors, but the pool was created sucessfully",
+            solutionText: "Please try adding them in the dashboard later"
+          }))
+
+          setTransactionButtonStatus(TransactionStatus.COMPLETED)
+
+          dispatch(setClear())
+
+          setTimeout(() => {
+            handleNextButton()
+          }, 500);
+          return
+        }
       }
       if (poolData.strategy || poolData.icon?.image_preview) {
         await sendPoolData(response.poolController, poolData.icon?.image_preview || '', poolData.strategy || '', chainId)
@@ -606,9 +630,9 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         handleNextButton()
       }, 300);
     } catch (error) {
-      console.error('It was not possible to create pool', error)
-      const endIndex = error?.toString().search('{') || 0
-      const err = error?.toString().substring(7, endIndex) || 'It was not possible to create pool'
+      const _error = error as Error
+      const errorStr = _error.toString().match(/(BAL#\d{0,3})/)
+      const err =  errorStr ? errorStr[0] : _error?.message ?? 'It was not possible to create pool'
 
       dispatch(setModalAlertText({
         errorText: err,
@@ -621,7 +645,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         } else if (item.status === 'NEXT') {
           item.status = 'WAITING'
         }
-          return item
+        return item
       }))
     }
   }

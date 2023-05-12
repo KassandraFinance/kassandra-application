@@ -80,16 +80,17 @@ const SelectAssets = () => {
   const { data: priceData } = useCoingecko(networks[networkId ?? 137].coingecko, networks[networkId ?? 137].nativeCurrency.address, tokensListGoerli ?? [''])
 
   async function getBalances(tokensList: string[]) {
-    const _Web3 = new Web3(networks[networkId ?? 137].rpc)
-    const batch = new _Web3.BatchRequest()
+    const web3 = new Web3(networks[networkId ?? 137].rpc)
+    const batch = new web3.BatchRequest()
 
     const balanceArr = {}
     for (const token of tokensList) {
       // eslint-disable-next-line prettier/prettier
-      const contract = new _Web3.eth.Contract((ERC20ABI as unknown) as AbiItem, token)
+      const contract = new web3.eth.Contract((ERC20ABI as unknown) as AbiItem, token)
       batch.add(contract.methods.balanceOf(wallet).call.request({ from: wallet }, (error: any, balance: string) => {
+        console.log('balance', balance)
         Object.assign(balanceArr, {
-          [mockTokens[token]]: new BigNumber(balance)
+          [mockTokens[token] ?? token.toLowerCase()]: new BigNumber(balance)
         })
       }))
     }
@@ -147,8 +148,7 @@ const SelectAssets = () => {
   }, [])
 
   React.useEffect(() => {
-    const arr = whitelist ? whitelist : []
-    getBalances(arr)
+    getBalances(whitelist ?? [])
   }, [whitelist, wallet])
 
   return (

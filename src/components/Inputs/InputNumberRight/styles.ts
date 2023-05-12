@@ -11,9 +11,9 @@ export const Label = styled.label`
     overflow: hidden;
     clip: rect(0 0 0 0);
 
-    width: 1px;
-    height: 1px;
-    margin: -1px;
+    width: 0.1rem;
+    height: 0.1rem;
+    margin: -0.1rem;
     padding: 0;
     border: 0;
   `}
@@ -38,14 +38,14 @@ export const Input = styled.input<IInputProps>`
     width: 100%;
     height: 3.2rem;
     padding: 0.8rem;
-    border: 0.1rem solid rgb(255 255 255 / 0);
-    border-radius: 0.4rem;
+    border: 1px solid rgb(255 255 255 / 0);
+    border-radius: 4px;
 
     color: ${theme.colors.white};
     font-weight: ${theme.font.weight.light};
     font-style: normal;
     font-size: ${theme.font.sizes.font16};
-    font-family: Rubik;
+    font-family: Rubik, sans-serif;
     line-height: 100%;
     text-align: right;
 
@@ -69,11 +69,11 @@ export const Input = styled.input<IInputProps>`
     }
 
     &:valid:not([value='']) {
-      border: 0.1rem solid ${theme.colors.success};
+      border: 1px solid ${theme.colors.success};
     }
 
     &:invalid:not([value='']) {
-      border: 0.1rem solid ${theme.colors.error};
+      border: 1px solid ${theme.colors.error};
     }
   `}
   ${({ button }) => button && css`
@@ -100,19 +100,19 @@ export const PlaceholderWrapper = styled.span`
     display: inline-block;
 
     height: 3.2rem;
-    border: 0.1rem solid rgb(255 255 255 / 0);
+    border: 1px solid rgb(255 255 255 / 0);
 
     opacity: 1;
     pointer-events: none;
+
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: opacity;
 
     ${Input}:not([value='']) ~ &,
     ${Input}:focus ~ & {
       opacity: 0;
     }
-
-    transition-duration: 300ms;
-    transition-timing-function: ease-in-out;
-    transition-property: opacity;
   `}
 `
 
@@ -127,7 +127,7 @@ export const Placeholder = styled.span`
     font-weight: ${theme.font.weight.light};
     font-style: normal;
     font-size: ${theme.font.sizes.font16};
-    font-family: Rubik;
+    font-family: Rubik, sans-serif;
     line-height: 100%;
     text-align: right;
   `}
@@ -152,7 +152,7 @@ export const InputButton = styled.button`
 
     height: 3.2rem;
     padding-inline: 0.8rem;
-    border: 0.1rem solid rgb(255 255 255 / 0);
+    border: 1px solid rgb(255 255 255 / 0);
     border-top-right-radius: 0.4rem;
     border-bottom-right-radius: 0.4rem;
 
@@ -170,11 +170,11 @@ export const InputButton = styled.button`
     transition-property: border;
 
     ${Input}:valid:not([value='']) ~ & {
-      border: 0.1rem solid ${theme.colors.success};
+      border: 1px solid ${theme.colors.success};
       border-left: none;
     }
     ${Input}:invalid:not([value='']) ~ & {
-      border: 0.1rem solid ${theme.colors.error};
+      border: 1px solid ${theme.colors.error};
       border-left: none;
     }
   `}

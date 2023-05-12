@@ -142,11 +142,12 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                       : 0}
                   </S.Td>
                   <S.Td className="balance">
-                    {tokenBalance[coin.id.toLowerCase()]
+                    {tokenBalance[coin.id.toLowerCase()] &&
+                    tokenBalance[coin.id.toLowerCase()].gt(new BigNumber(0))
                       ? abbreviateNumber(
                           Big(tokenBalance[coin.id.toLowerCase()].toString())
                             .div(Big(10).pow(coin.decimals))
-                            .toString()
+                            .toFixed()
                         )
                       : 0}{' '}
                     <S.SecondaryText>
