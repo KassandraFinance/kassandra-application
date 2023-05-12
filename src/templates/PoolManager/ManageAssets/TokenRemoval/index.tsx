@@ -51,7 +51,7 @@ const TokenRemoval = () => {
 
   function handleMockToken(tokenList: string[]) {
     const mockTokensList = tokenList?.map(item => {
-      return mockTokens[item]
+      return mockTokens[item] ?? item
     })
 
     return mockTokensList
