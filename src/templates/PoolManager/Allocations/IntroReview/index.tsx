@@ -1,6 +1,8 @@
 import Big from 'big.js'
 import React from 'react'
 
+import { mockTokens } from '@/constants/tokenAddresses'
+
 import ExternalLink from '@/components/ExternalLink'
 import PieChartAllocations from './PieChartAllocations'
 import RadialProcentageBar from './RebalancingProgressGraph'
@@ -36,16 +38,18 @@ export type IRebalanceWeightsProps = {
   }[]
 } | null
 
+type CoinsMetadataType = {
+  [key: string]: {
+    usd: number,
+    usd_24h_change: number,
+    usd_market_cap: number
+  }
+}
 export interface IlistTokenWeightsProps {
   token: ITokenProps;
   allocation: string;
   holding: {
-    value: Big,
-    valueUSD: Big
-  };
-  price: {
-    value: number,
-    changeValue: number
+    value: Big
   };
 }
 interface IIntroReviewProps {
@@ -53,24 +57,34 @@ interface IIntroReviewProps {
   listTokenWeights: IlistTokenWeightsProps[];
   rebalanceWeights: IRebalanceWeightsProps;
   countDownDate: string;
+  coingeckoData: CoinsMetadataType;
+  chainId: number;
 }
 
 const IntroReview = ({
   RebalancingProgress,
   listTokenWeights,
   rebalanceWeights,
-  countDownDate
+  countDownDate,
+  coingeckoData,
+  chainId
 }: IIntroReviewProps) => {
   // eslint-disable-next-line prettier/prettier
   const [isOpenTokenInfoMobile, setIsOpenTokenInfoMobile] = React.useState(false)
   const [activeIndex, setActiveIndex] = React.useState(0)
 
-  const tokenSeleted = listTokenWeights[activeIndex]
+  const tokenSeleted = listTokenWeights[activeIndex] ?? {}
   const allocationsDataChart = listTokenWeights.map(item => ({
     image: item.token.logo,
     symbol: item.token.symbol,
     value: Number(item.allocation)
   }))
+  const coingeckoTokenInfo =
+    coingeckoData[
+      chainId === 5
+        ? mockTokens[tokenSeleted?.token?.address]?.toLowerCase()
+        : tokenSeleted?.token?.address.toLowerCase()
+    ]
 
   return (
     <S.IntroReview>
@@ -87,37 +101,40 @@ const IntroReview = ({
         <S.TokenInfoContent>
           <S.ImgAndSymbolWrapper>
             <img
-              src={tokenSeleted?.token.logo ?? ''}
+              src={tokenSeleted?.token?.logo ?? ''}
               alt=""
               width={16}
               height={16}
             />
-            <p>{tokenSeleted?.token.symbol}</p>
+            <p>{tokenSeleted?.token?.symbol}</p>
           </S.ImgAndSymbolWrapper>
           <S.HoldingAndPriceContainer>
             <S.HoldingWrapper>
               <S.TitleHoldingAndPrice>holding</S.TitleHoldingAndPrice>
               <S.ValueHoldingAndPrice>
-                ${tokenSeleted?.holding.valueUSD?.toFixed(2) ?? 0}
+                $
+                {tokenSeleted?.holding?.value
+                  .mul(Big(coingeckoTokenInfo?.usd.toFixed(2) ?? 0))
+                  .toFixed(2) ?? 0}
               </S.ValueHoldingAndPrice>
               <p>
-                {tokenSeleted?.holding.value.toFixed(2, 2) ?? 0}{' '}
-                {tokenSeleted?.token.symbol}
+                {tokenSeleted?.holding?.value.toFixed(2, 2) ?? 0}{' '}
+                {tokenSeleted?.token?.symbol}
               </p>
             </S.HoldingWrapper>
             <S.PriceDayWrapper>
               <S.TitleHoldingAndPrice>PRICE 24H</S.TitleHoldingAndPrice>
               <S.PriceDayValue>
                 <S.ValueHoldingAndPrice>
-                  ${tokenSeleted?.price.value?.toFixed(2)}
+                  ${(coingeckoTokenInfo?.usd ?? 0).toFixed(2)}
                 </S.ValueHoldingAndPrice>
                 <S.ChangeDayValue
-                  changePrice={tokenSeleted?.price.changeValue ?? 0}
+                  changePrice={coingeckoTokenInfo?.usd_24h_change ?? 0}
                 >
-                  <p>{tokenSeleted?.price.changeValue?.toFixed(2) ?? 0}%</p>
+                  <p>{(coingeckoTokenInfo?.usd_24h_change ?? 0).toFixed(2)}%</p>
                   <img
                     src={
-                      tokenSeleted?.price.changeValue >= 0
+                      (coingeckoTokenInfo?.usd_24h_change ?? 0) >= 0
                         ? priceUp.src
                         : priceDown.src
                     }
