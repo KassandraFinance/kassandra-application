@@ -33,7 +33,7 @@ const CoinSummary = ({
     <S.CoinSummary>
       <S.ImageWrapper>
         {coinImage ? (
-          <Image src={coinImage} width={24} height={24} />
+          <Image src={coinImage} layout="fill" />
         ) : (
           <TokenWithNetworkImage
             tokenImage={{
