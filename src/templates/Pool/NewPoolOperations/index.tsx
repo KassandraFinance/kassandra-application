@@ -34,7 +34,8 @@ const NewPoolOperations = () => {
   React.useEffect(() => {
     if (inputChecked === 'Withdraw') return
 
-    dispatch(setTokenSelect(tokenList1Inch[0]))
+    const nativeToken = tokenList1Inch.find(token => token?.tags && token.tags[0] === 'native')
+    dispatch(setTokenSelect(nativeToken ?? tokenList1Inch[0]))
   }, [inputChecked])
 
   React.useEffect(() => {
