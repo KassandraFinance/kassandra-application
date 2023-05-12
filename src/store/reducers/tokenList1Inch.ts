@@ -6,6 +6,7 @@ export interface ITokenList1InchProps {
   address: string;
   decimals: number;
   logoURI: string;
+  tags: string[];
 }
 
 const initialState: ITokenList1InchProps[] = [
@@ -14,7 +15,8 @@ const initialState: ITokenList1InchProps[] = [
     name: '',
     address: '',
     decimals: 0,
-    logoURI: ''
+    logoURI: '',
+    tags: []
   }
 ]
 

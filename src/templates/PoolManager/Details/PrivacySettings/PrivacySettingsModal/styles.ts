@@ -1,12 +1,7 @@
 import styled, { css } from 'styled-components'
-import { ModalBody } from '@/components/Modals/Modal/styles'
 
 export const PrivacySettingsModal = styled.div`
-  ${() => css`
-    ${ModalBody} {
-      background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
-    }
-  `}
+  ${() => css``}
 `
 
 export const Content = styled.div`

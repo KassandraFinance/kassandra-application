@@ -12,7 +12,7 @@ export const ModalContent = styled.div`
 
     width: 39.2rem;
 
-    background: rgb(31 41 55 / 0.96);
+    background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
     backdrop-filter: blur(0.4rem);
 
     @media (max-width: 576px) {
@@ -32,7 +32,7 @@ export const WrapperIconsBackGround = styled.button`
     border-radius: 10px;
 
     background: #1f1f1fb8;
-
+    background-image: linear-gradient(0deg, #ffffff15 -0.02%, #ffffff15 99.99%);
     &:hover,
     &:focus {
       background-image: linear-gradient(0deg, #ffbf00 -0.02%, #e843c4 99.99%);

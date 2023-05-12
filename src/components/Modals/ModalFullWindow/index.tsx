@@ -22,10 +22,20 @@ const ModalFullWindow = ({
       style.zIndex = '0'
     }
 
+    const userDashBoardButton = document.getElementById(
+      'userDashBoardButton'
+    )?.style
+    if (userDashBoardButton) {
+      userDashBoardButton.zIndex = '0'
+    }
+
     return () => {
       document.body.style.overflowY = 'auto'
       if (style) {
         style.zIndex = '1020'
+      }
+      if (userDashBoardButton) {
+        userDashBoardButton.zIndex = '1021'
       }
     }
   }, [])

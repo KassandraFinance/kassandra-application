@@ -1,5 +1,4 @@
-import { Image } from '@/components/Governance/ImageProfile/styles'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 export const CommunityPoolsTable = styled.div`
   ${() => css`
@@ -175,7 +174,11 @@ export const TH = styled.div<ITHProps>`
     width: 100%;
     height: 6.4rem;
 
+    animation: ${tableAnim} 0.4s ease;
+
     @media (min-width: 768px) {
+      animation-name: none;
+
       &:last-of-type {
         display: none;
       }
@@ -204,7 +207,11 @@ export const TD = styled.div<ITDProps>`
     width: 100%;
     height: 8.4rem;
 
+    animation: ${tableAnim} 0.4s ease;
+
     @media (min-width: 768px) {
+      animation-name: none;
+
       &:last-of-type {
         display: none;
       }
@@ -442,8 +449,12 @@ export const CoinImageWrapper = styled.div<ICoinImageWrapperProps>`
 export const TableViewButtonContainer = styled.div`
   ${() => css`
     display: flex;
-    gap: 1.2rem;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 0.8rem;
+
+    ${TableViewButton}:last-child {
+      transform: rotate(180deg);
+    }
   `}
 `
 
@@ -452,15 +463,20 @@ export const TableViewButton = styled.button`
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0.6rem 0.85rem;
 
-    min-width: 3.2rem;
-    min-height: 3.2rem;
     border: none;
     border-radius: 50%;
+    border: 0.1rem solid transparent;
 
     background-color: rgba(255 255 255 / 0.05);
 
     cursor: pointer;
+    transition: border 0.3s ease;
+
+    &:hover {
+      border: 0.1rem solid rgba(255, 255, 255, 0.3);
+    }
   `}
 `
 
@@ -522,4 +538,15 @@ export const PaginationWrapper = styled.div`
   ${() => css`
     margin-top: 6rem;
   `}
+`
+
+const tableAnim = keyframes`
+  from {
+    transform: translateX(-1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 `

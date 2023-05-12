@@ -2,6 +2,8 @@ import React from 'react'
 import Big from 'big.js'
 import Tippy from '@tippyjs/react'
 
+import { mockTokens } from '@/constants/tokenAddresses'
+
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 import Loading from '@/components/Loading'
 
@@ -14,6 +16,14 @@ import {
 } from '../../../../components/Modals/ModalViewCoin/styles'
 import * as S from './styles'
 
+type CoinsMetadataType = {
+  [key: string]: {
+    usd: number,
+    usd_24h_change: number,
+    usd_market_cap: number
+  }
+}
+
 type IAllocationDataProps = {
   token: {
     address: string,
@@ -22,13 +32,13 @@ type IAllocationDataProps = {
   },
   allocation: string,
   holding: {
-    value: Big,
-    valueUSD: Big
-  },
-  price: {
-    value: number,
-    changeValue: number
+    value: Big
+    // valueUSD: Big
   }
+  // price: {
+  //   value: number,
+  //   changeValue: number
+  // }
   // yields: {
   //   apy: string,
   //   url: string
@@ -38,11 +48,15 @@ type IAllocationDataProps = {
 interface IAllocationTableProps {
   allocationData: IAllocationDataProps[];
   isRebalance: boolean;
+  coingeckoData: CoinsMetadataType;
+  chainId: number;
 }
 
 const AllocationTable = ({
   allocationData,
-  isRebalance
+  isRebalance,
+  coingeckoData,
+  chainId
 }: IAllocationTableProps) => {
   const [viewToken, setViewToken] = React.useState<IAllocationDataProps>()
   const [viewColumnInTable, setViewColumnInTable] = React.useState(1)
@@ -63,9 +77,9 @@ const AllocationTable = ({
 
   function handleCurrentViewTable(method: string, value: number) {
     if (method === 'next') {
-      setViewColumnInTable(value === 4 ? 1 : viewColumnInTable + 1)
+      setViewColumnInTable(value === 3 ? 1 : viewColumnInTable + 1)
     } else {
-      setViewColumnInTable(value === 1 ? 4 : viewColumnInTable - 1)
+      setViewColumnInTable(value === 1 ? 3 : viewColumnInTable - 1)
     }
   }
 
@@ -111,6 +125,12 @@ const AllocationTable = ({
         <S.TbodyWrapper>
           {allocationData.length > 0 ? (
             allocationData.map((item, index) => {
+              const coingeckoTokenInfo =
+                coingeckoData[
+                  chainId === 5
+                    ? mockTokens[item?.token?.address]?.toLowerCase()
+                    : item?.token?.address.toLowerCase()
+                ]
               return (
                 <S.TrWrapper key={item.token.address + index}>
                   <S.TokenInfo>
@@ -131,15 +151,22 @@ const AllocationTable = ({
                     <p>{item.allocation}%</p>
                   </S.Allocation>
                   <S.Holding className="holding">
-                    <p>$ {item.holding.valueUSD.toFixed(2, 2)}</p>
+                    <p>
+                      ${' '}
+                      {Big(item.holding.value)
+                        .mul(Big(coingeckoTokenInfo?.usd ?? 0))
+                        .toFixed(2)}
+                    </p>
                     <span>
                       {item.holding.value.toFixed(2, 2)} {item.token.symbol}
                     </span>
                   </S.Holding>
                   <S.PriceContent className="price">
-                    <p>$ {item.price.value?.toFixed(2)}</p>
-                    <S.PriceChange changePrice={item.price.changeValue}>
-                      {item.price.changeValue?.toFixed(2)}%
+                    <p>$ {coingeckoTokenInfo?.usd?.toFixed(2)}</p>
+                    <S.PriceChange
+                      changePrice={coingeckoTokenInfo?.usd_24h_change ?? 0}
+                    >
+                      {(coingeckoTokenInfo?.usd_24h_change ?? 0)?.toFixed(2)}%
                     </S.PriceChange>
                   </S.PriceContent>
                   {/* <S.YieldContent className="yield">
@@ -197,7 +224,21 @@ const AllocationTable = ({
         <TableLine>
           <TableLineTitle>holding</TableLineTitle>
           <ValueContainer>
-            <Value>$ {viewToken?.holding.valueUSD.toFixed(2, 2)}</Value>
+            <Value>
+              ${' '}
+              {viewToken?.holding.value
+                .mul(
+                  coingeckoData[
+                    chainId === 5
+                      ? mockTokens[
+                          viewToken?.token?.address ?? ''
+                        ]?.toLowerCase()
+                      : viewToken?.token?.address.toLowerCase() ?? ''
+                  ].usd ?? 0
+                )
+                .toFixed(2)}
+            </Value>
+
             <SecondaryValue>
               {viewToken?.holding.value.toFixed(2, 2)} {viewToken?.token.symbol}
             </SecondaryValue>
@@ -206,10 +247,32 @@ const AllocationTable = ({
         <TableLine>
           <TableLineTitle>Price 24H</TableLineTitle>
           <ValueContainer>
-            <Value>$ {viewToken?.price.value.toFixed(2)}</Value>
+            <Value>
+              ${' '}
+              {coingeckoData[
+                chainId === 5
+                  ? mockTokens[viewToken?.token?.address ?? '']?.toLowerCase()
+                  : viewToken?.token?.address.toLowerCase() ?? ''
+              ]?.usd.toFixed(2) ?? 0}
+            </Value>
             <SecondaryValue>
-              <S.PriceChange changePrice={viewToken?.price.changeValue ?? 0}>
-                {viewToken?.price.changeValue.toFixed(2)}%
+              <S.PriceChange
+                changePrice={
+                  coingeckoData[
+                    chainId === 5
+                      ? mockTokens[
+                          viewToken?.token?.address ?? ''
+                        ]?.toLowerCase()
+                      : viewToken?.token?.address.toLowerCase() ?? ''
+                  ]?.usd_24h_change ?? 0
+                }
+              >
+                {coingeckoData[
+                  chainId === 5
+                    ? mockTokens[viewToken?.token?.address ?? '']?.toLowerCase()
+                    : viewToken?.token?.address.toLowerCase() ?? ''
+                ]?.usd_24h_change.toFixed(2) ?? 0}
+                %
               </S.PriceChange>
             </SecondaryValue>
           </ValueContainer>

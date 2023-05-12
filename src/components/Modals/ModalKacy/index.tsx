@@ -51,9 +51,12 @@ const ModalKacy = () => {
   const [kacyStaked, setKacyStaked] = React.useState<BigNumber>(
     new BigNumber(0)
   )
-  const [kacyUnclaimed, setKacyUnclaimed] = React.useState<BigNumber>(
-    new BigNumber(0)
-  )
+  const [kacyUnclaimed, setKacyUnclaimed] = React.useState<
+    Record<number, BigNumber>
+  >({
+    [43114]: new BigNumber(0),
+    [137]: new BigNumber(0)
+  })
   const [kacyWallet, setKacyWallet] = React.useState<Record<number, BigNumber>>(
     {
       [0]: new BigNumber(0)
@@ -66,7 +69,7 @@ const ModalKacy = () => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
 
-  const { userInfo, earned } = useStakingContract(Staking)
+  const { userInfo, earnedMultChain } = useStakingContract(Staking)
 
   const connect = process.browser && localStorage.getItem('walletconnect')
 
@@ -121,19 +124,24 @@ const ModalKacy = () => {
       setKacyStaked(count)
     }
 
-    async function earnedKacy(pid: number) {
-      const earnedResponse: BigNumber = await earned(pid, userWalletAddress)
-      return earnedResponse
-    }
-
     const kacyEarned = async () => {
-      let count = new BigNumber(0)
-      for (const kacy of allPools) {
-        const res = await earnedKacy(kacy.pid)
-
-        count = count.add(res)
+      const kacyCount: Record<number, BigNumber> = {
+        [43114]: new BigNumber(0),
+        [137]: new BigNumber(0)
       }
-      setKacyUnclaimed(count)
+
+      for (const kacy of allPools) {
+        const res = await earnedMultChain(
+          kacy.pid,
+          userWalletAddress,
+          kacy.stakingContract,
+          kacy.chain.id
+        )
+
+        kacyCount[kacy.chain.id] = kacyCount[kacy.chain.id].add(res)
+      }
+
+      setKacyUnclaimed(kacyCount)
     }
 
     getKacyBalanceInWallet()
@@ -153,7 +161,11 @@ const ModalKacy = () => {
       )
     }
 
-    count = count.add(kacyStaked).add(kacyUnclaimed).add(countInWallet)
+    count = count
+      .add(kacyStaked)
+      .add(kacyUnclaimed[43114])
+      .add(kacyUnclaimed[137])
+      .add(countInWallet)
     setKacyTotal(count)
   }, [kacyStaked, kacyUnclaimed, kacyWallet])
 

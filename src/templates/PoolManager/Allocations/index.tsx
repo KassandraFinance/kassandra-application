@@ -115,25 +115,21 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     new Date().getTime()
 
   function handleMockToken(tokenList: any) {
-    const mockTokensList = tokenList?.map((item: any) => {
-      return mockTokens[item.token.id]
-    })
-
-    return mockTokensList
+    if (data?.pool.chain_id === 5) {
+      return tokenList?.map((item: any) => {
+        return mockTokens[item.token.id]
+      })
+    } else {
+      return tokenList?.map((asset: any) => asset.token.id)
+    }
   }
 
   function tokenWeightFormatted(value: string) {
     return Big(value).mul(100).toFixed(2, 2)
   }
 
-  function handleCurrentAllocationInfo(
-    poolAssets: underlyingAssetsInfo[],
-    coingeckoData: CoinGeckoResponseType
-  ) {
+  function handleCurrentAllocationInfo(poolAssets: underlyingAssetsInfo[]) {
     const tokenList = poolAssets.map(item => {
-      const tokenPrice =
-        coingeckoData && coingeckoData[mockTokens[item.token.id]]
-
       return {
         token: {
           address: item.token.id,
@@ -144,12 +140,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
         },
         allocation: tokenWeightFormatted(item.weight_normalized),
         holding: {
-          value: Big(item.balance),
-          valueUSD: Big(item.balance).mul(Big(tokenPrice.usd ?? 0))
-        },
-        price: {
-          value: tokenPrice?.usd ?? 0,
-          changeValue: tokenPrice?.usd_24h_change ?? 0
+          value: Big(item.balance)
         }
       }
     })
@@ -228,13 +219,12 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
   }
 
   React.useEffect(() => {
-    if (!data || !coingeckoData) return
+    if (!data) return
 
-    const tokenList =
-      poolAssets && handleCurrentAllocationInfo(poolAssets, coingeckoData)
+    const tokenList = poolAssets && handleCurrentAllocationInfo(poolAssets)
 
     setlistTokenWeights(tokenList ?? [])
-  }, [data, coingeckoData])
+  }, [data])
 
   React.useEffect(() => {
     if (!data) return
@@ -266,10 +256,14 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
         listTokenWeights={listTokenWeights}
         rebalanceWeights={rebalanceWeights}
         countDownDate={countDownDate}
+        coingeckoData={coingeckoData ?? {}}
+        chainId={data?.pool.chain_id ?? 137}
       />
       <AllocationTable
         allocationData={listTokenWeights}
         isRebalance={isRebalancing}
+        coingeckoData={coingeckoData ?? {}}
+        chainId={data?.pool.chain_id ?? 137}
       />
       <AllocationHistory poolInfo={poolInfo} />
     </S.Allocations>

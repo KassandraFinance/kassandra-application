@@ -10,8 +10,7 @@ import { calcChange } from '@/utils/numerals'
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 
 import notFoundIcon from '@assets/icons/coming-soon.svg'
-import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
+import arrowIcon from '@assets/utilities/arrow-left.svg'
 import eyeShowIcon from '@assets/utilities/eye-show.svg'
 import comingSoonIcon from '@assets/icons/coming-soon.svg'
 import Loading from '@/components/Loading'
@@ -216,11 +215,11 @@ const CommunityPoolsTable = ({
           <S.TH>
             <S.TableViewButtonContainer>
               <S.TableViewButton onClick={() => handleCurrentInView(-1)}>
-                <Image src={arrowLeftBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </S.TableViewButton>
 
               <S.TableViewButton onClick={() => handleCurrentInView(1)}>
-                <Image src={arrowRightBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </S.TableViewButton>
             </S.TableViewButtonContainer>
           </S.TH>

@@ -7,9 +7,12 @@ type TokenType = {
   symbol: string,
   logo: string | undefined,
   balance: string,
-  balanceUSD?: string,
   weight: string,
   decimals: number
+}
+
+interface ITokenSelectionProps extends TokenType {
+  balanceInUSD: string;
 }
 
 export type AssetType = {
@@ -33,7 +36,7 @@ export type ILpNeededProps = {
 interface IRemoveAssetProps {
   poolTokensList: TokenType[];
   weights: AssetType[];
-  tokenSelection: TokenType;
+  tokenSelection: ITokenSelectionProps;
   lpNeeded: ILpNeededProps;
 }
 
@@ -46,7 +49,7 @@ const initialState: IRemoveAssetProps = {
     symbol: '',
     logo: '',
     balance: '',
-    balanceUSD: '0',
+    balanceInUSD: '',
     weight: '0',
     decimals: 0
   },
@@ -61,7 +64,7 @@ export const poolCreationSlice = createSlice({
   name: 'removeAsset',
   initialState,
   reducers: {
-    setTokenSelection: (state, action: PayloadAction<TokenType>) => {
+    setTokenSelection: (state, action: PayloadAction<ITokenSelectionProps>) => {
       state.tokenSelection = action.payload
     },
     setPoolTokensList: (state, action: PayloadAction<TokenType[]>) => {

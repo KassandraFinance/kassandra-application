@@ -9,7 +9,7 @@ import {
   setBackStepNumber,
   setNextStepNumber,
   setToFirstStep,
-  setPoolData
+  setClear
 } from '../../../store/reducers/poolCreationSlice'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
 import { ERC20 } from '../../../hooks/useERC20Contract'
@@ -66,6 +66,11 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   const [transactions, setTransactions] = React.useState<TransactionsListType[]>([])
   const [isPoolCreated, setIsPoolCreated] = React.useState<boolean>(false)
   const [transactionButtonStatus, setTransactionButtonStatus] = React.useState(TransactionStatus.START)
+  const [completedData, setCompletedData] = React.useState({
+    id: '',
+    networkId: 0,
+    txHash: ''
+  })
 
   const dispatch = useAppDispatch()
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
@@ -99,7 +104,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       onComfirm={() => { dispatch(setNextStepNumber()) }}
       networkId={poolData.networkId}
     />,
-    <PoolCreated key="poolCreated" />
+    <PoolCreated key="poolCreated" data={completedData} />
   ]
 
   function handleNextButton() {
@@ -160,7 +165,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     const txReceipt = await waitTransaction(txHash)
 
     if (txReceipt.status) {
-    if (approve) {
+      if (approve) {
         for (let index = 0; index < 100; index++) {
           await new Promise(r => setTimeout(r, 500))
 
@@ -271,7 +276,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           callBack(error, txHash, { token, contractApprove: factory, oldAllowance, allowance }).then(result => {
             resolve(result)
           }))
-        })
+      })
 
       if (!approved) {
         break
@@ -279,13 +284,18 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }
   }
 
-  async function handlePrivateInvestors(poolControler: string, investorsList: { address: string }[]) {
+  async function handlePrivateInvestors(poolControler: string, investorsList: { address: string }[]): Promise<boolean> {
     // eslint-disable-next-line prettier/prettier
     const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
 
-    await controller.methods.addAllowedAddresses(investorsList.map(investor => investor.address)).send({
-      from: userWalletAddress
-    }, callBack)
+    const result = await new Promise<boolean>(resolve => {
+      controller.methods.addAllowedAddresses(investorsList.map(investor => investor.address)).send({
+        from: userWalletAddress, maxPriorityFeePerGas: 30e9
+      }, (error: MetamaskError, txHash: string) => callBack(error, txHash).then(res => {
+        resolve(res)
+      }))
+    })
+    return result
   }
 
   async function getTransactionsList() {
@@ -328,39 +338,39 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
     for (const token of tokensList) {
       if (poolData.networkId === 5) {
-      const notApprovedToken = notAprovedTokens.find(_token => _token.address === mockTokensReverse[token.address] ?? token.address)
-      if (notApprovedToken) {
-        notApprovedList.push({
-          key: mockTokensReverse[token.address] ?? token.address,
-          transaction: `Approve ${token.symbol}`,
-          status: 'WAITING'
-        })
+        const notApprovedToken = notAprovedTokens.find(_token => _token.address === mockTokensReverse[token.address] ?? token.address)
+        if (notApprovedToken) {
+          notApprovedList.push({
+            key: mockTokensReverse[token.address] ?? token.address,
+            transaction: `Approve ${token.symbol}`,
+            status: 'WAITING'
+          })
+        } else {
+          approvedList.push({
+            key: token.address,
+            transaction: `Approve ${token.symbol}`,
+            status: 'APPROVED'
+          })
+        }
       } else {
-        approvedList.push({
-          key: token.address,
-          transaction: `Approve ${token.symbol}`,
-          status: 'APPROVED'
-        })
-      }
-    } else {
-      const notApprovedToken = notAprovedTokens.find(_token => _token.address === token.address)
-      if (notApprovedToken) {
-        notApprovedList.push({
-          key: token.address,
-          transaction: `Approve ${token.symbol}`,
-          status: 'WAITING'
-        })
-      } else {
-        approvedList.push({
-          key: token.address,
-          transaction: `Approve ${token.symbol}`,
-          status: 'APPROVED'
-        })
+        const notApprovedToken = notAprovedTokens.find(_token => _token.address === token.address)
+        if (notApprovedToken) {
+          notApprovedList.push({
+            key: token.address,
+            transaction: `Approve ${token.symbol}`,
+            status: 'WAITING'
+          })
+        } else {
+          approvedList.push({
+            key: token.address,
+            transaction: `Approve ${token.symbol}`,
+            status: 'APPROVED'
+          })
+        }
       }
     }
-  }
 
-  transactionsList.push(...approvedList, ...notApprovedList)
+    transactionsList.push(...approvedList, ...notApprovedList)
 
     transactionsList.push({
       key: 'createPool',
@@ -580,22 +590,63 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         pool.feesSettings,
         web3.utils.padLeft('0x', 64)
       ).send({
-        from: userWalletAddress
+        from: userWalletAddress, maxPriorityFeePerGas: 30e9
       }, callBack)
 
-      dispatch(setPoolData({ id: `${poolData.networkId}${response.pool}`, txHash: tx.transactionHash }))
+      setCompletedData({ id: `${poolData.networkId}${response.pool}`, txHash: tx.transactionHash, networkId: poolData.networkId ?? 137 })
 
       if (pool.isPrivatePool) {
-        const addressList = poolData?.privateAddressList ? poolData.privateAddressList : []
-        await handlePrivateInvestors(response.poolController, addressList)
+        try {
+          const addressList = poolData?.privateAddressList ? poolData.privateAddressList : []
+          const res = await handlePrivateInvestors(response.poolController, addressList)
+          if (!res) {
+            throw new Error("Error for add Private Investors")
+          }
+        } catch (error) {
+          dispatch(setModalAlertText({
+            errorText: "Could not add private investors, but the pool was created sucessfully",
+            solutionText: "Please try adding them in the dashboard later"
+          }))
+
+          setTransactionButtonStatus(TransactionStatus.COMPLETED)
+
+          dispatch(setClear())
+
+          setTimeout(() => {
+            handleNextButton()
+          }, 500);
+          return
+        }
       }
       if (poolData.strategy || poolData.icon?.image_preview) {
         await sendPoolData(response.poolController, poolData.icon?.image_preview || '', poolData.strategy || '', chainId)
       }
 
       setTransactionButtonStatus(TransactionStatus.COMPLETED)
+
+      dispatch(setClear())
+
+      setTimeout(() => {
+        handleNextButton()
+      }, 300);
     } catch (error) {
-      console.error('It was not possible to create pool', error)
+      const _error = error as Error
+      const errorStr = _error.toString().match(/(BAL#\d{0,3})/)
+      const err =  errorStr ? errorStr[0] : _error?.message ?? 'It was not possible to create pool'
+
+      dispatch(setModalAlertText({
+        errorText: err,
+      }))
+      setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
+      setTransactions(prev => prev.map(item => {
+        if (item.status === 'APPROVING') {
+          item.status = 'ERROR'
+        } else if (item.status === 'NEXT') {
+          item.status = 'WAITING'
+        }
+        return item
+      }))
     }
   }
 

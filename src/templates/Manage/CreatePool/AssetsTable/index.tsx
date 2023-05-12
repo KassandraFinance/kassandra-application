@@ -2,6 +2,7 @@ import React from 'react'
 import { useInView } from 'react-intersection-observer'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
+import Link from 'next/link'
 
 import { BNtoDecimal } from '@/utils/numerals'
 import { abbreviateNumber } from '@/utils/abbreviateNumber'
@@ -12,6 +13,7 @@ import { setTokens, TokenType } from '@/store/reducers/poolCreationSlice'
 import InputSearch from '@/components/Inputs/InputSearch'
 import Checkbox from '@/components/Inputs/Checkbox'
 import CoinSummary from '../SelectAssets/CoinSummary'
+import Button from '@/components/Button'
 
 import * as S from './styles'
 
@@ -109,7 +111,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
 
         <S.TBody>
           <S.TrsWrapper>
-            {tokensArr.length > 0 &&
+            {tokensArr.length > 0 ? (
               tokensArr.map((coin, i) => (
                 <S.Tr
                   key={coin.id}
@@ -132,7 +134,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                   </S.Td>
                   <S.Td className="marketCap">
                     $
-                    {priceList && tokenBalance[coin.id.toLowerCase()]
+                    {priceList
                       ? BNtoDecimal(
                           Big(priceList[coin.id.toLowerCase()].usd_market_cap),
                           2
@@ -140,11 +142,12 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                       : 0}
                   </S.Td>
                   <S.Td className="balance">
-                    {tokenBalance[coin.id.toLowerCase()]
+                    {tokenBalance[coin.id.toLowerCase()] &&
+                    tokenBalance[coin.id.toLowerCase()].gt(new BigNumber(0))
                       ? abbreviateNumber(
                           Big(tokenBalance[coin.id.toLowerCase()].toString())
                             .div(Big(10).pow(coin.decimals))
-                            .toString()
+                            .toFixed()
                         )
                       : 0}{' '}
                     <S.SecondaryText>
@@ -182,10 +185,27 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                     />
                   </S.Td>
                 </S.Tr>
-              ))}
+              ))
+            ) : (
+              <S.EmptyListContainer>
+                <p>
+                  The asset you are looking for is not supported by kassandra
+                  whitelist. If you want to add it, create a proposal at the
+                  forum
+                </p>
+                <Link href="https://gov.kassandra.finance/" passHref>
+                  <Button
+                    as="a"
+                    target="_black"
+                    backgroundSecondary
+                    text="Go To The Forum"
+                  />
+                </Link>
+              </S.EmptyListContainer>
+            )}
           </S.TrsWrapper>
 
-          <S.Shadow inView={inView}></S.Shadow>
+          <S.Shadow inView={tokensArr.length > 5 ? inView : true}></S.Shadow>
         </S.TBody>
       </S.Table>
     </S.AssetsTable>

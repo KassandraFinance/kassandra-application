@@ -63,7 +63,7 @@ export const UserDashBoardButton = styled.button`
     display: none;
 
     @media (max-width: 768px) {
-      z-index: 1020;
+      z-index: 1021;
 
       display: flex;
       justify-content: center;

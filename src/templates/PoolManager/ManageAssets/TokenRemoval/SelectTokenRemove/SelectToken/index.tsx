@@ -1,11 +1,18 @@
 import React from 'react'
+import Big from 'big.js'
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setTokenSelection } from '@/store/reducers/removeAssetSlice'
+import { mockTokens } from '@/constants/tokenAddresses'
 
 import * as S from './styles'
 
-const SelectToken = () => {
+interface ISelectTokenProps {
+  priceToken: (address: string) => number;
+  chainId: number;
+}
+
+const SelectToken = ({ priceToken, chainId }: ISelectTokenProps) => {
   const [IsOpenTokenList, setIsOpenTokenList] = React.useState(false)
 
   const dispatch = useAppDispatch()
@@ -58,11 +65,21 @@ const SelectToken = () => {
         itemHeight={poolTokensList.length * 63.3}
       >
         {poolTokensList.map((token, index) => {
+          const balanceInUSD = Big(token.balance)
+            .mul(
+              priceToken(
+                chainId === 5
+                  ? mockTokens[token.address]
+                  : token.address.toLowerCase()
+              ) ?? 0
+            )
+            .toFixed(2)
+
           return (
             <S.SelectTokenContent
               key={token.symbol + index}
               onClick={() => {
-                dispatch(setTokenSelection(token))
+                dispatch(setTokenSelection({ ...token, balanceInUSD }))
                 setIsOpenTokenList(!IsOpenTokenList)
               }}
             >
@@ -72,7 +89,7 @@ const SelectToken = () => {
               </S.TokenInfoContent>
               <S.BalanaceInfoContent>
                 <p>{Number(token.balance).toFixed(2)}</p>
-                <span>${token.balanceUSD && token.balanceUSD}</span>
+                <span>${balanceInUSD}</span>
               </S.BalanaceInfoContent>
             </S.SelectTokenContent>
           )

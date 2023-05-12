@@ -14,8 +14,7 @@ import CoinSummary from '@/templates/Manage/CreatePool/SelectAssets/CoinSummary'
 import InputRadio from '../../../../../components/Inputs/InputRadio'
 import ModalViewCoin from '../../../../../components/Modals/ModalViewCoin'
 
-import arrowLeftBoldIcon from '../../../../../../public/assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '../../../../../../public/assets/utilities/arrow-right-bold.svg'
+import arrowIcon from '../../../../../../public/assets/utilities/arrow-left.svg'
 import eyeShowIcon from '../../../../../../public/assets/utilities/eye-show.svg'
 
 import * as S from './styles'
@@ -162,14 +161,15 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                   type="button"
                   onClick={() => handleCurrentInView(-1)}
                 >
-                  <Image src={arrowLeftBoldIcon} width={16} height={16} />
+                  <Image src={arrowIcon} width={7} height={12} />
                 </S.TableViewButton>
 
                 <S.TableViewButton
                   type="button"
                   onClick={() => handleCurrentInView(1)}
+                  id="arrowRight"
                 >
-                  <Image src={arrowRightBoldIcon} width={16} height={16} />
+                  <Image src={arrowIcon} width={7} height={12} />
                 </S.TableViewButton>
               </S.Th>
             </S.Tr>
@@ -210,38 +210,40 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                     />
                   </S.Td>
                   <S.Td className="price" isView={inViewCollum === 1}>
-                    ${priceList ? priceList[coin.id?.toLowerCase()]?.usd : 0}
+                    $
+                    {priceList
+                      ? priceList[coin.id?.toLowerCase()]?.usd.toFixed(2)
+                      : 0}
                   </S.Td>
                   <S.Td className="marketCap" isView={inViewCollum === 2}>
                     $
                     {priceList
                       ? BNtoDecimal(
-                          Big(
-                            priceList[coin.id?.toLowerCase()]?.usd_market_cap
-                          ),
-                          2
-                        )
+                        Big(
+                          priceList[coin.id?.toLowerCase()]?.usd_market_cap
+                        ),
+                        2
+                      )
                       : 0}
                   </S.Td>
                   <S.Td className="balance" isView={inViewCollum === 3}>
                     {coin.balance
                       ? BNtoDecimal(
-                          Big(coin.balance?.toString()).div(
-                            Big(10).pow(coin.decimals)
-                          ),
-                          2
-                        )
-                      : 0}{' '}
-                    {coin.symbol}
+                        Big(coin.balance?.toString()).div(
+                          Big(10).pow(coin.decimals)
+                        ),
+                        2
+                      )
+                      : 0}
                     <S.SecondaryText>
                       ~$
                       {coin.balance && priceList
                         ? BNtoDecimal(
-                            Big(coin.balance?.toString())
-                              .div(Big(10).pow(coin.decimals))
-                              .mul(Big(priceList[coin.id?.toLowerCase()].usd)),
-                            2
-                          )
+                          Big(coin.balance?.toString())
+                            .div(Big(10).pow(coin.decimals))
+                            .mul(Big(priceList[coin.id?.toLowerCase()].usd)),
+                          2
+                        )
                         : 0}
                     </S.SecondaryText>
                   </S.Td>
@@ -289,11 +291,11 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
               $
               {priceList
                 ? BNtoDecimal(
-                    Big(
-                      priceList[viewToken.id.toLowerCase()]?.usd_market_cap || 0
-                    ),
-                    2
-                  )
+                  Big(
+                    priceList[viewToken.id.toLowerCase()]?.usd_market_cap || 0
+                  ),
+                  2
+                )
                 : 0}
             </Value>
           </ValueContainer>
@@ -307,18 +309,17 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                   Big(10).pow(viewToken.decimals)
                 ),
                 2
-              )}{' '}
-              {viewToken.symbol}
+              )}
             </Value>
             <SecondaryValue>
               ~$
               {priceList && priceList[viewToken.id.toLowerCase()]
                 ? BNtoDecimal(
-                    Big(viewToken.balance.toString())
-                      .div(Big(10).pow(viewToken.decimals))
-                      .mul(Big(priceList[viewToken.id.toLowerCase()].usd || 0)),
-                    2
-                  )
+                  Big(viewToken.balance.toString())
+                    .div(Big(10).pow(viewToken.decimals))
+                    .mul(Big(priceList[viewToken.id.toLowerCase()].usd || 0)),
+                  2
+                )
                 : 0}
             </SecondaryValue>
           </ValueContainer>

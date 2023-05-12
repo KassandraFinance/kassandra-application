@@ -43,24 +43,23 @@ export const AddAssetTable = styled.div`
 
     .select {
       min-width: 1.6rem;
-
-      @media (max-width: 767.98px) {
-        4rem;
-      }
     }
 
     .asset {
       justify-content: flex-start;
+
       width: 100%;
     }
 
     .price {
       min-width: 6.5rem;
+
       text-align: right;
     }
 
     .marketCap {
       min-width: 11rem;
+
       text-align: right;
 
       @media (min-width: 992px) {
@@ -74,6 +73,7 @@ export const AddAssetTable = styled.div`
 
     .balance {
       min-width: 10rem;
+
       text-align: right;
 
       @media (min-width: 992px) {
@@ -98,8 +98,9 @@ export const AddAssetTable = styled.div`
 export const InputWrapper = styled.div`
   ${() => css`
     display: flex;
+
     height: 100%;
-    margin-bottom: 1.3rem;
+    margin-bottom: 1.45rem;
   `}
 `
 
@@ -121,13 +122,9 @@ export const THead = styled(THD)`
 
 export const Tr = styled(TR)`
   ${() => css`
-    gap: 0.6rem;
+    gap: 1.2rem;
 
     height: 6.4rem;
-
-    @media (min-width: 576px) {
-      gap: 1.1rem;
-    }
 
     @media (min-width: 768px) {
       gap: 5rem;
@@ -150,8 +147,12 @@ interface IThProps {
 }
 
 // prettier-ignore
-export const Th = styled(TH)<IThProps>`
+export const Th = styled(TH) <IThProps>`
   ${() => css`
+    #arrowRight {
+      transform: rotate(180deg);
+    }
+
     @media (max-width: 767.98px) {
       animation: ${tableAnim} 0.4s ease;
 
@@ -165,6 +166,7 @@ export const Th = styled(TH)<IThProps>`
     css`
       @media (max-width: 767.98px) {
         display: none;
+
         animation: ${tableAnim} 0.4s ease;
       }
     `}
@@ -181,7 +183,7 @@ interface ITdProps {
 }
 
 // prettier-ignore
-export const Td = styled(TD)<ITdProps>`
+export const Td = styled(TD) <ITdProps>`
   ${() => css`
       animation: ${tableAnim} 0.4s ease;
   `}
@@ -208,10 +210,10 @@ export const TableViewButton = styled.button`
 
     min-width: 2.4rem;
     min-height: 2.4rem;
-
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
     border: none;
+    border-radius: 50%;
+
+    background: rgb(255 255 255 / 0.05);
 
     cursor: pointer;
   `}
@@ -223,8 +225,9 @@ export const ViewButton = styled.button`
     justify-content: center;
     align-items: center;
 
-    background-color: transparent;
     border: none;
+
+    background-color: transparent;
 
     cursor: pointer;
   `}
@@ -242,16 +245,16 @@ export const Shadow = styled.div<IShadowProps>`
 
     width: 100%;
     height: 10.9rem;
+    border-radius: 0 0 8px 8px;
 
-    background: linear-gradient(180deg, rgba(31, 31, 31, 0) 0%, #1f1f1f 100%);
-    border-radius: 0px 0px 8px 8px;
+    background: linear-gradient(180deg, rgb(31 31 31 / 0) 0%, #1f1f1f 100%);
 
     opacity: 1;
     visibility: visible;
     pointer-events: none;
 
-    transition-duration: 300ms;
     transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
     transition-property: opacity visibility;
   `}
   ${({ inView }) => inView && css`

@@ -38,6 +38,7 @@ export const TokenInfoContainer = styled.div`
 
     @media (max-width: 576px) {
       flex-direction: column;
+      gap: 1.6rem;
     }
   `}
 `
@@ -292,6 +293,7 @@ export const NotRebalancingProgress = styled.p`
 
     @media (max-width: 576px) {
       margin-top: 1rem;
+      font-size: ${theme.font.sizes.font12};
     }
   `}
 `

@@ -30,7 +30,6 @@ const usePriceLP = (chainId: number) => {
       return value
     }
 
-
     const getPriceKacyAndLPBalancer = async (priceWETH: number, poolAddress: string) => {
       const _web3 = new Web3(networks[137].rpc)
       const vault = new _web3.eth.Contract((VAULT as unknown) as AbiItem, VAULT_POLYGON)

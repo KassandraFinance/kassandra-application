@@ -39,7 +39,7 @@ export const Container = styled.div<IBorderGradientProps>`
   width: min(47rem, 90%);
   max-height: min-content;
 
-  background-color: #1A1E2C;
+  background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
   border: 0.1rem solid #FFFFFF3B;
   border-radius: 1rem;
 
@@ -190,6 +190,7 @@ export const Tbody = styled.tbody`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 0.5rem;
 
   max-height: 30rem;
   overflow-y: auto;
@@ -204,27 +205,27 @@ export const Tbody = styled.tbody`
   }
 `
 
-interface IShadowProps {
-  inView: boolean;
-}
+// interface IShadowProps {
+//   inView: boolean;
+// }
 
 // eslint-disable-next-line prettier/prettier
-export const shadow = styled.div<IShadowProps>`
-  ${({ inView }) => css`
-    position: absolute;
-    bottom: 3rem;
-    left: 0;
-    right: 0;
+// export const shadow = styled.div<IShadowProps>`
+//   ${({ inView }) => css`
+//     position: absolute;
+//     bottom: 3rem;
+//     left: 3rem;
+//     right: 0;
 
-    display: ${inView ? 'none' : 'block'};
-    height: 5rem;
-    width: 90%;
+//     display: ${inView ? 'none' : 'block'};
+//     height: 5rem;
+//     width: 84%;
 
-    background: linear-gradient(180deg, #1a1e2c20 -100%, #1a1e2c 100%);
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  `}
-`
+//     background: linear-gradient(180deg, #1f1f1f20 0%, #1f1f1f 100%);
+//     background-clip: text;
+//     -webkit-text-fill-color: transparent;
+//   `}
+// `
 
 export const UserData = styled.tr`
   display: flex;
@@ -260,7 +261,8 @@ export const UserVote = styled.td`
 export const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  padding: 0 0 2.4rem;
+  padding: 0 3.2rem 2.4rem;
+  margin-right: 1.2rem;
 `
 
 export const LoadingContainer = styled.div`
