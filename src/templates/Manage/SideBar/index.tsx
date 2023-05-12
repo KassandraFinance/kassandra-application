@@ -34,8 +34,8 @@ import {
 import * as S from './styles'
 
 interface ISideBarProps {
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpen: boolean
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const links = [

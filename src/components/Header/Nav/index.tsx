@@ -17,10 +17,10 @@ import kacyIcon from '../../../../public/assets/logos/kacy-96.svg'
 import * as S from './styles'
 
 interface INavProps {
-  isShowMenu: boolean;
-  showOverlay: boolean;
-  setIsShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>;
+  isShowMenu: boolean
+  showOverlay: boolean
+  setIsShowMenu: () => void
+  setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const Nav = ({
@@ -38,7 +38,7 @@ const Nav = ({
   const path = router.asPath.split('/')
 
   function handleClose() {
-    setIsShowMenu(false)
+    setIsShowMenu()
   }
 
   function animationClose() {
