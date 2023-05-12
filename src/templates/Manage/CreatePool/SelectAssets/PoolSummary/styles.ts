@@ -72,13 +72,12 @@ export const CoinContainer = styled.div`
 `
 
 export const AllocationContainer = styled.div`
-  ${() =>
-    css`
-      display: grid;
-      grid-template-columns: 3.2rem auto 1rem;
-      gap: 1.2rem;
-      align-items: center;
-    `}
+  ${() => css`
+    display: grid;
+    grid-template-columns: 3.2rem auto 1rem;
+    gap: 1.2rem;
+    align-items: center;
+  `}
 `
 
 interface ILockButtonProps {
@@ -184,7 +183,7 @@ export const ProgressValue = styled.div<IProgressValueProps>`
       filter: blur(5px);
     }
   `}
-  ${({theme, value}) => value > 100 && css`
+  ${({ theme, value }) => value > 100 && css`
     width: 100%;
 
     background-color: ${theme.colors.error};
@@ -219,6 +218,12 @@ export const TotalContainer = styled.div<ITotalContainerProps>`
     ${ProgressValue} {
       width: 100%;
 
+      background-color: ${theme.colors.error};
+      background-image: none;
+    }
+  `}
+  ${({ theme, value }) => value < 100 && css`
+    ${ProgressValue} {
       background-color: ${theme.colors.error};
       background-image: none;
     }
