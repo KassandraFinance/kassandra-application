@@ -88,7 +88,6 @@ const SelectAssets = () => {
       // eslint-disable-next-line prettier/prettier
       const contract = new web3.eth.Contract((ERC20ABI as unknown) as AbiItem, token)
       batch.add(contract.methods.balanceOf(wallet).call.request({ from: wallet }, (error: any, balance: string) => {
-        console.log('balance', balance)
         Object.assign(balanceArr, {
           [mockTokens[token] ?? token.toLowerCase()]: new BigNumber(balance)
         })
