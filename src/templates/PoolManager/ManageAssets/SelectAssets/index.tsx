@@ -77,7 +77,7 @@ const SelectAssets = () => {
       setTokensList(data?.tokensByIds.filter(element => element && !data?.pool?.underlying_assets_addresses.includes(mockTokensReverse[element?.id.toLowerCase()]))
       )
     } else {
-      setTokensList(data?.tokensByIds.filter(element => element && !data?.pool?.underlying_assets_addresses.includes(element?.id.toLowerCase()))
+      setTokensList(data?.tokensByIds.filter(element => element && !data?.pool?.underlying_assets_addresses.includes(element?.id))
       )
     }
   }, [data])
@@ -86,6 +86,7 @@ const SelectAssets = () => {
     const getWhitelist = async () => {
       try {
         const web3 = new Web3(networks[chainId].rpc);
+        // eslint-disable-next-line prettier/prettier
         const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[chainId].whiteList);
         const whitelist = await whitelistContract.methods.getTokens(0, 100).call();
 
@@ -106,7 +107,7 @@ const SelectAssets = () => {
         const balanceValue = await balance(wallet)
         balanceArr = {
           ...balanceArr,
-          [mockTokens[token]]: balanceValue
+          [mockTokens[token] ?? token.toLowerCase()]: balanceValue
         }
       }
 
@@ -118,11 +119,9 @@ const SelectAssets = () => {
         return newArr
       })
     }
-    const arr = whitelist ? whitelist : []
-    {
-      if (data) {
-        getBalances(arr)
-      }
+
+    if (data) {
+      getBalances(whitelist ?? [])
     }
   }, [whitelist, wallet, data])
 
