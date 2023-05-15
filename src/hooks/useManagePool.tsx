@@ -20,7 +20,7 @@ const useManagePool = (controllerAddress: string) => {
       }
 
       const withdrawAumFees = async (userWalletAddress: string): Promise<void> => {
-        return controller.methods.withdrawCollectedManagementFees().send({ from: userWalletAddress })
+        return controller.methods.withdrawCollectedManagementFees().send({ from: userWalletAddress, maxPriorityFeePerGas: 30e9 })
       }
 
       return {

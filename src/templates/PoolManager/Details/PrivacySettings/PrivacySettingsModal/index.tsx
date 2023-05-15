@@ -80,7 +80,8 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
     const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
 
       await controller.methods.setPublicPool().send({
-        from: userWalletAddress
+        from: userWalletAddress,
+        maxPriorityFeePerGas: 30e9
       }, callBack)
   }
 
