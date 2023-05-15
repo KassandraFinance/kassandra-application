@@ -38,6 +38,11 @@ const Header = () => {
   const path = router.asPath.split('/')
 
   function handleHamburgerMenu() {
+    const width = window.innerWidth
+    if (width > 768) {
+      return
+    }
+
     setIsShowMenu(!isShowMenu)
     setShowOverlay(true)
     const userDashBoardButton = document.getElementById(
