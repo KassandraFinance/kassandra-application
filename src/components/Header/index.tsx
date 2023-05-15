@@ -36,11 +36,13 @@ const Header = () => {
 
   const router = useRouter()
   const path = router.asPath.split('/')
+  const pathClearQuestionMark = path[1].split('?')
+  const pathClearHashtag = pathClearQuestionMark[0].split('#')
 
   return (
     <>
-      <S.Wrapper id="top" dashBoard={path[1] === 'manage'}>
-        <S.LogoWrapper dashBoard={path[1] === 'manage'}>
+      <S.Wrapper id="top" dashBoard={pathClearHashtag[0] === 'manage'}>
+        <S.LogoWrapper dashBoard={pathClearHashtag[0] === 'manage'}>
           <Link href="/" passHref>
             <a className="logo-desktop">
               <Image src={logoKassandra} alt="Kassandra" />
@@ -54,7 +56,7 @@ const Header = () => {
           </Link>
         </S.LogoWrapper>
 
-        <S.MenuWrapper dashBoard={path[1] === 'manage'}>
+        <S.MenuWrapper dashBoard={pathClearHashtag[0] === 'manage'}>
           <S.HamburgerButton
             onClick={() => {
               setIsShowMenu(!isShowMenu)

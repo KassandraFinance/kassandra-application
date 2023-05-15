@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
-import ModalWaitingList from '../../../components/Modals/ModalWaitingList'
+// import ModalWaitingList from '../../../components/Modals/ModalWaitingList'
 
 import DropdownMenu from '../DropdownMenu'
 import Overlay from '../../Overlay'
@@ -17,10 +17,10 @@ import kacyIcon from '../../../../public/assets/logos/kacy-96.svg'
 import * as S from './styles'
 
 interface INavProps {
-  isShowMenu: boolean;
-  showOverlay: boolean;
-  setIsShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>;
+  isShowMenu: boolean
+  showOverlay: boolean
+  setIsShowMenu: React.Dispatch<React.SetStateAction<boolean>>
+  setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const Nav = ({
@@ -29,8 +29,8 @@ const Nav = ({
   setIsShowMenu,
   setShowOverlay
 }: INavProps) => {
-  const [isModalWaitingList, setIsModalWaitingList] =
-    React.useState<boolean>(false)
+  // const [isModalWaitingList, setIsModalWaitingList] =
+  //   React.useState<boolean>(false)
 
   const { trackEventFunction } = useMatomoEcommerce()
 
@@ -89,7 +89,7 @@ const Nav = ({
             Stake
           </S.MenuLink>
         </Link>
-        {/* <Link href="/manage" passHref>
+        <Link href="/manage" passHref>
           <S.MenuLink
             onClick={() => {
               trackEventFunction('click-on-link', 'manage', 'header')
@@ -98,8 +98,8 @@ const Nav = ({
           >
             Manage
           </S.MenuLink>
-        </Link> */}
-        <S.MenuLink
+        </Link>
+        {/* <S.MenuLink
           onClick={() => {
             setIsModalWaitingList(true)
             trackEventFunction('click-on-link', 'manage', 'header')
@@ -107,7 +107,7 @@ const Nav = ({
           active={router.asPath === '/manage'}
         >
           Manage
-        </S.MenuLink>
+        </S.MenuLink> */}
         <DropdownMenu
           nameOnHeader="DAO"
           isActive={
@@ -171,9 +171,9 @@ const Nav = ({
 
         <MenuFooter />
       </S.Nav>
-      {isModalWaitingList && (
+      {/* {isModalWaitingList && (
         <ModalWaitingList setIsModalWaitingList={setIsModalWaitingList} />
-      )}
+      )} */}
     </>
   )
 }
