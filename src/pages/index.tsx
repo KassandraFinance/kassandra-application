@@ -21,7 +21,7 @@ export default function Index({ poolsKassandra }: IIndexProps) {
         <meta name="title" content="Kassandra - Decentralized Funds" />
         <meta
           name="description"
-          content="Tokenized data-driven investment funds"
+          content="Create, Manage and invest in tokenized crypto portfolios effortlessly."
         />
 
         {/* Open Graph / Facebook */}
@@ -30,7 +30,7 @@ export default function Index({ poolsKassandra }: IIndexProps) {
         <meta property="og:title" content="Kassandra - Decentralized Funds" />
         <meta
           property="og:description"
-          content="Tokenized data-driven investment funds"
+          content="Create, Manage and invest in tokenized crypto portfolios effortlessly."
         />
         <meta
           property="og:image"
@@ -46,7 +46,7 @@ export default function Index({ poolsKassandra }: IIndexProps) {
         />
         <meta
           property="twitter:description"
-          content="Tokenized data-driven investment funds"
+          content="Create, Manage and invest in tokenized crypto portfolios effortlessly."
         />
         <meta
           property="twitter:image"
