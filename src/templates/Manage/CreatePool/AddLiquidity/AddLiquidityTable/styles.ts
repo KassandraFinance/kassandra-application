@@ -33,7 +33,7 @@ export const AddLiquidityTable = styled.div`
     }
 
     ${Tr} {
-      gap: 5.1rem;
+      gap: 3rem;
 
       @media (min-width: 768px) {
         gap: 9.1rem;
@@ -220,6 +220,7 @@ export const Error = styled.p<IErrorProps>`
     font-weight: ${theme.font.weight.light};
     font-size: ${theme.font.sizes.font14};
     line-height: 100%;
+    white-space: nowrap;
 
     opacity: 0;
 

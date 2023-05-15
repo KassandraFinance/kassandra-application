@@ -8,10 +8,9 @@ export const Manage = styled.div`
 `
 
 interface IDashBoardProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const DashBoard = styled.div<IDashBoardProps>`
   ${() => css`
     display: grid;
@@ -39,17 +38,19 @@ export const DashBoard = styled.div<IDashBoardProps>`
       grid-template-columns: 26.4rem 1fr;
     }
   `}
-  ${({ isOpen }) => isOpen && css`
-    grid-template-columns: 100%;
+  ${({ isOpen }) =>
+    isOpen &&
+    css`
+      grid-template-columns: 100%;
 
-    @media (min-width: 768px) {
-      grid-template-columns: 26.4rem calc(100% - 7.4rem);
-    }
+      @media (min-width: 768px) {
+        grid-template-columns: 26.4rem calc(100% - 7.4rem);
+      }
 
-    @media (min-width: 992px) {
-      grid-template-columns: 26.4rem 1fr;
-    }
-  `}
+      @media (min-width: 992px) {
+        grid-template-columns: 26.4rem 1fr;
+      }
+    `}
 `
 
 export const Content = styled.section``
@@ -82,10 +83,9 @@ export const UserDashBoardButton = styled.button`
 `
 
 interface IUserImageWrapperProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const UserImageWrapper = styled.div<IUserImageWrapperProps>`
   ${({ isOpen }) => css`
     position: relative;
@@ -112,10 +112,9 @@ export const UserImageWrapper = styled.div<IUserImageWrapperProps>`
 `
 
 interface ICloseIconWrapperProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const CloseIconWrapper = styled.div<ICloseIconWrapperProps>`
   ${({ isOpen }) => css`
     position: absolute;

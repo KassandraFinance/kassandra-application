@@ -143,6 +143,18 @@ const PoolManager = () => {
     return calc ? calc.toFixed(2) : '0'
   }
 
+  function handleDashBoardButton() {
+    setIsOpen(!isOpen)
+    const top = document.getElementById('top')?.style
+    if (top) {
+      if (isOpen) {
+        top.zIndex = '1020'
+      } else {
+        top.zIndex = '0'
+      }
+    }
+  }
+
   const { data: change } = useSWR([GET_POOL_PRICE], query =>
     request(BACKEND_KASSANDRA, query, {
       id: poolId,
@@ -226,11 +238,11 @@ const PoolManager = () => {
   return (
     <S.PoolManager>
       <S.DashBoard isOpen={isOpen}>
-        {isOpen && <Overlay onClick={() => setIsOpen(!isOpen)} />}
+        {isOpen && <Overlay onClick={handleDashBoardButton} />}
 
         <S.UserDashBoardButton
           id="userDashBoardButton"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={handleDashBoardButton}
         >
           <S.UserImageWrapper isOpen={isOpen}>
             {userWalletAddress.length > 0 ? (
