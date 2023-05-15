@@ -351,7 +351,7 @@ export const Amount = styled.div`
 `
 
 interface ISpanProps {
-  color: 'red' | 'white' | 'amber';
+  color: 'red' | 'white' | 'amber'
 }
 
 const colors = {
@@ -393,7 +393,7 @@ export const SpanLight = styled.span`
 `
 
 interface IPriceImpactWrapperProps {
-  price: string | number;
+  price: string | number
 }
 
 // prettier-ignore
@@ -418,7 +418,7 @@ export const PriceImpactWrapper = styled.span<IPriceImpactWrapperProps>`
 `
 
 interface ISymbolProps {
-  bestValue?: boolean;
+  bestValue?: boolean
 }
 
 // prettier-ignore
@@ -476,8 +476,8 @@ export const Symbol = styled.h3<ISymbolProps>`
 `
 
 interface IButtonMax {
-  isMax?: boolean;
-  maxActive?: boolean;
+  isMax?: boolean
+  maxActive?: boolean
 }
 
 // prettier-ignore
@@ -510,7 +510,7 @@ export const ButtonMax = styled.button<IButtonMax>`
 // ========== DEFAULT INPUT ALL ==========
 
 interface IInputProps {
-  bestValue?: boolean;
+  bestValue?: boolean
 }
 
 // prettier-ignore

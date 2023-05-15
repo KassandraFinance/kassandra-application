@@ -18,7 +18,7 @@ export const Control = styled.li`
 `
 
 interface IControlProps {
-  selected: boolean;
+  selected: boolean
 }
 
 // prettier-ignore

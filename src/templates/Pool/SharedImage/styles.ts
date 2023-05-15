@@ -119,7 +119,7 @@ export const InfoTitle = styled.div`
 `
 
 interface InfoValueProps {
-  color: 'white' | 'green' | 'red';
+  color: 'white' | 'green' | 'red'
 }
 
 const colors = {

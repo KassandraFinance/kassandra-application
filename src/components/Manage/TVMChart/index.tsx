@@ -8,17 +8,17 @@ import SegmentedControls from '../../Inputs/SegmentedControls'
 import * as S from './styles'
 
 type Change = {
-  name: string,
+  name: string
   value: number
 }
 
 type Props = {
-  data: DataType[],
-  selectedPeriod: string,
-  setSelectedPeriod: React.Dispatch<React.SetStateAction<string>>,
-  selectedType?: string,
-  setSelectedType?: React.Dispatch<React.SetStateAction<string>>,
-  changeList: Change[],
+  data: DataType[]
+  selectedPeriod: string
+  setSelectedPeriod: React.Dispatch<React.SetStateAction<string>>
+  selectedType?: string
+  setSelectedType?: React.Dispatch<React.SetStateAction<string>>
+  changeList: Change[]
   dataList?: string[]
 }
 

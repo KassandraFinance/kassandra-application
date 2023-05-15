@@ -14,15 +14,15 @@ import {
 import * as S from './styles'
 
 export type IDataProps = {
-  imageUrl: string,
-  name: string,
-  currentAllocation: number,
+  imageUrl: string
+  name: string
+  currentAllocation: number
   newAllocation: number
 }
 
 interface IAllocationGraphProps {
-  data: IDataProps[];
-  isOpen: boolean;
+  data: IDataProps[]
+  isOpen: boolean
 }
 
 const AllocationGraph = ({ data, isOpen }: IAllocationGraphProps) => {

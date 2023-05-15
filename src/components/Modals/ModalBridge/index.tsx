@@ -37,7 +37,7 @@ const networkList: DataListType[] = [
 ]
 
 interface IModalBridgeProps {
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 Big.RM = 0
@@ -155,16 +155,37 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
       const valueMult = Big(value).mul(Big(10).pow(18)).toFixed(0)
 
       // eslint-disable-next-line prettier/prettier
-      const kacyOFT = new web3.eth.Contract((OFT as unknown) as AbiItem, networks[chainId].kacyOFT);
+      const kacyOFT = new web3.eth.Contract(
+        OFT as unknown as AbiItem,
+        networks[chainId].kacyOFT
+      )
 
-      const fees = await kacyOFT.methods.estimateSendFee(lzChainIds[Number(id)], userWalletAddress, valueMult, false, []).call({
-        from: userWalletAddress,
-      });
+      const fees = await kacyOFT.methods
+        .estimateSendFee(
+          lzChainIds[Number(id)],
+          userWalletAddress,
+          valueMult,
+          false,
+          []
+        )
+        .call({
+          from: userWalletAddress
+        })
 
-      await kacyOFT.methods.sendFrom(userWalletAddress, lzChainIds[Number(id)], userWalletAddress, valueMult, userWalletAddress, '0x0000000000000000000000000000000000000000', []).send({
-        from: userWalletAddress,
-        value: fees.nativeFee
-      })
+      await kacyOFT.methods
+        .sendFrom(
+          userWalletAddress,
+          lzChainIds[Number(id)],
+          userWalletAddress,
+          valueMult,
+          userWalletAddress,
+          '0x0000000000000000000000000000000000000000',
+          []
+        )
+        .send({
+          from: userWalletAddress,
+          value: fees.nativeFee
+        })
     } catch (error) {
       console.log(error)
     }
@@ -213,7 +234,7 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
                 lable=""
                 placeholder="Add token amount"
                 button
-                buttonText='Max'
+                buttonText="Max"
                 onClick={handleMaxClick}
               />
             </S.InputContainer>
@@ -246,8 +267,8 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
             ) : (
               <>
                 {inputFrom &&
-                  inputFrom.id === '43114' &&
-                  Big(value).gt(approvedAmount) ? (
+                inputFrom.id === '43114' &&
+                Big(value).gt(approvedAmount) ? (
                   <Button
                     type="button"
                     text="Approve Kacy"
@@ -255,7 +276,13 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
                     onClick={handleApproveKacy}
                   />
                 ) : (
-                  <Button type="button" text="Bridge" backgroundPrimary onClick={() => inputTo && handleBridge(inputTo.id)} disabledNoEvent={!inputFrom || !inputTo} />
+                  <Button
+                    type="button"
+                    text="Bridge"
+                    backgroundPrimary
+                    onClick={() => inputTo && handleBridge(inputTo.id)}
+                    disabledNoEvent={!inputFrom || !inputTo}
+                  />
                 )}
               </>
             )}

@@ -6,7 +6,7 @@ export const IntroWalletAddress = styled.section`
 `
 
 interface IHorizontalLineProps {
-  none?: boolean;
+  none?: boolean
 }
 
 // prettier-ignore

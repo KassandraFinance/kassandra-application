@@ -24,14 +24,11 @@ export const WebDisabledWrapper = styled.div`
 `
 
 interface IhavePaddingProps {
-  isKacyStatsModal?: boolean;
+  isKacyStatsModal?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
-export const Ul =
-  styled.ul <
-  IhavePaddingProps >
-  `
+export const Ul = styled.ul<IhavePaddingProps>`
   padding-block: ${props => props.isKacyStatsModal && 0} 1.6rem;
 `
 

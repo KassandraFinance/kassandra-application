@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface INftImageProps {
-  imageSize: 'medium' | 'large' | 'small' | 'smallest';
+  imageSize: 'medium' | 'large' | 'small' | 'smallest'
 }
 
 const imageSizes = {

@@ -27,15 +27,15 @@ import arrowSelect from '../../../../../public/assets/utilities/arrow-select-dow
 
 import * as S from '../styles'
 export interface IDateProps {
-  pid: number;
-  nameToken: string;
-  withdrawDelay: string;
-  votingPower: string;
+  pid: number
+  nameToken: string
+  withdrawDelay: string
+  votingPower: string
 }
 
 interface IUndelegateVotingPowerProps {
-  setCurrentModal: React.Dispatch<React.SetStateAction<string>>;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentModal: React.Dispatch<React.SetStateAction<string>>
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const UndelegateVotingPower = ({

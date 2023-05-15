@@ -7,33 +7,33 @@ import TokenWeightInfo from './TokenWeightInfo'
 import * as S from './styles'
 
 export type ITokenProps = {
-  address: string,
-  logo: string,
-  name: string,
-  symbol: string,
+  address: string
+  logo: string
+  name: string
+  symbol: string
   decimals: number
 }
 
 export type IRebalanceWeightsProps = {
-  poolName: string,
-  poolPrice: string,
+  poolName: string
+  poolPrice: string
   listTokenWeights: {
-    token: Omit<ITokenProps, 'decimals'>,
-    previous: string,
-    current: string,
+    token: Omit<ITokenProps, 'decimals'>
+    previous: string
+    current: string
     final: string
   }[]
 } | null
 
 export type IRebancingProgressProps = {
-  started: string,
-  remaning: string,
+  started: string
+  remaning: string
   progress: number
 }
 interface IWeightRebalanceProgressModalProps {
-  handleCloseModal: () => void;
-  rebalanceWeights: IRebalanceWeightsProps;
-  RebalancingProgress: IRebancingProgressProps | null;
+  handleCloseModal: () => void
+  rebalanceWeights: IRebalanceWeightsProps
+  RebalancingProgress: IRebancingProgressProps | null
 }
 
 const WeightRebalanceProgressModal = ({

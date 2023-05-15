@@ -6,7 +6,7 @@ import Overlay from '../../Overlay'
 import * as S from './styles'
 
 interface IModalInstitucionalLinksMobileProps {
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 // eslint-disable-next-line prettier/prettier

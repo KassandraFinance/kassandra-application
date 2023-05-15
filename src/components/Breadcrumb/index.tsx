@@ -5,7 +5,7 @@ import * as S from './styles'
 import Image from 'next/image'
 
 interface IBreadcrumbProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 const Breadcrumb = ({ children }: IBreadcrumbProps) => {

@@ -10,12 +10,12 @@ import NftImage from '../../NftImage'
 import * as S from './styles'
 
 interface IImageProfileProps {
-  address: string;
-  diameter: number;
-  hasAddress: boolean;
-  isLink: boolean;
-  fontSize?: number;
-  tab?: string;
+  address: string
+  diameter: number
+  hasAddress: boolean
+  isLink: boolean
+  fontSize?: number
+  tab?: string
 }
 
 const ImageProfile = ({

@@ -47,7 +47,7 @@ export const TokenPinMobile = styled.div`
 `
 
 interface ITokenPinProps {
-  isActive: boolean;
+  isActive: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

@@ -112,8 +112,8 @@ export const Input = styled.input`
 `
 
 interface ILabelPeriodProps {
-  selectPeriod: boolean;
-  isPrice?: boolean;
+  selectPeriod: boolean
+  isPrice?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -154,13 +154,13 @@ export const LabelPeriod = styled.label<ILabelPeriodProps>`
 `
 
 interface ILabelProps {
-  selected: boolean;
+  selected: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
 export const Label = styled.label<ILabelProps>`
-  border-bottom: 2px solid ${props =>
-    props.selected ? theme.colors.cyan : 'transparent'};
+  border-bottom: 2px solid
+    ${props => (props.selected ? theme.colors.cyan : 'transparent')};
   color: #fff;
   font-size: ${theme.font.sizes.font14};
   text-align: center;

@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
 
 interface IModalBuyKacyProps {
-  modalOpen: boolean;
+  modalOpen: boolean
 }
 
 // prettier-ignore
@@ -121,7 +121,7 @@ export const TermsAndConditionsBody = styled.div`
 `
 
 interface IShadowProps {
-  inView: boolean;
+  inView: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

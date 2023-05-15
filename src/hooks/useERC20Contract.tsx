@@ -4,17 +4,17 @@ import React from 'react'
 import BigNumber from 'bn.js'
 import Web3 from 'web3'
 
-import { AbiItem } from "web3-utils"
-import { Contract } from "web3-eth-contract"
+import { AbiItem } from 'web3-utils'
+import { Contract } from 'web3-eth-contract'
 
 import web3, { EventSubscribe } from '../utils/web3'
-import ERC20ABI from "../constants/abi/ERC20.json"
+import ERC20ABI from '../constants/abi/ERC20.json'
 
 import { TransactionCallback } from '../utils/txWait'
 
 interface Events {
-  Transfer: EventSubscribe;
-  Approval: EventSubscribe;
+  Transfer: EventSubscribe
+  Approval: EventSubscribe
 }
 
 function ERC20Contract(contract: Contract) {
@@ -31,20 +31,22 @@ function ERC20Contract(contract: Contract) {
   ): Promise<boolean> => {
     const chainId = await web3.eth.getChainId()
     try {
-      const gasPrice =  await web3.eth.getGasPrice()
-      return contract.methods.approve(spenderAddress, web3.utils.toTwosComplement(-1)).send(
-        {
-          from: userWalletAddress,
-          gasPrice: gasPrice,
-          maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
-        },
-        callback
-      )
+      const gasPrice = await web3.eth.getGasPrice()
+      return contract.methods
+        .approve(spenderAddress, web3.utils.toTwosComplement(-1))
+        .send(
+          {
+            from: userWalletAddress,
+            gasPrice: gasPrice,
+            maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
+          },
+          callback
+        )
     } catch (e) {
-      console.log("error", e);
+      console.log('error', e)
       return false
     }
-  };
+  }
 
   /* VIEWS */
 
@@ -63,23 +65,30 @@ function ERC20Contract(contract: Contract) {
     return new BigNumber(value)
   }
 
-  const allowance = async (contractAddress: string, userWalletAddress: string): Promise<string> => {
+  const allowance = async (
+    contractAddress: string,
+    userWalletAddress: string
+  ): Promise<string> => {
     try {
-      const allowance: string = await contract.methods.allowance(userWalletAddress, contractAddress).call()
+      const allowance: string = await contract.methods
+        .allowance(userWalletAddress, contractAddress)
+        .call()
       return allowance
     } catch (e) {
       return '0'
     }
-  };
+  }
 
   const balance = async (userAddress: string): Promise<BigNumber> => {
     try {
-      const balance: string = await contract.methods.balanceOf(userAddress).call()
+      const balance: string = await contract.methods
+        .balanceOf(userAddress)
+        .call()
       return new BigNumber(balance)
     } catch (e) {
       return new BigNumber(0)
     }
-  };
+  }
 
   const totalSupply = async (): Promise<BigNumber> => {
     try {
@@ -88,7 +97,7 @@ function ERC20Contract(contract: Contract) {
     } catch (e) {
       return new BigNumber(0)
     }
-  };
+  }
 
   return {
     events,
@@ -100,15 +109,17 @@ function ERC20Contract(contract: Contract) {
     decimals,
     allowance,
     balance,
-    totalSupply,
+    totalSupply
   }
 }
 
 const useERC20Contract = (address: string) => {
-  const [contract, setContract] = React.useState(new web3.eth.Contract((ERC20ABI as unknown) as AbiItem, address))
+  const [contract, setContract] = React.useState(
+    new web3.eth.Contract(ERC20ABI as unknown as AbiItem, address)
+  )
 
   React.useEffect(() => {
-    setContract(new web3.eth.Contract((ERC20ABI as unknown) as AbiItem, address))
+    setContract(new web3.eth.Contract(ERC20ABI as unknown as AbiItem, address))
   }, [address])
 
   return React.useMemo(() => {
@@ -117,7 +128,10 @@ const useERC20Contract = (address: string) => {
 }
 
 export const ERC20 = (address: string, _web3: Web3 = web3) => {
-  const contract = new _web3.eth.Contract((ERC20ABI as unknown) as AbiItem, address)
+  const contract = new _web3.eth.Contract(
+    ERC20ABI as unknown as AbiItem,
+    address
+  )
   return ERC20Contract(contract)
 }
 

@@ -42,35 +42,35 @@ const tabs = [
 
 type GetCommunityPoolsType = {
   pools: {
-    id: string,
-    address: string,
-    logo: string | null,
-    name: string,
-    price_usd: string,
-    symbol: string,
-    total_value_locked_usd: string,
-    is_private_pool: boolean,
+    id: string
+    address: string
+    logo: string | null
+    name: string
+    price_usd: string
+    symbol: string
+    total_value_locked_usd: string
+    is_private_pool: boolean
     factory: {
       pool_count: number
-    },
+    }
     chain: {
       logo: string
-    },
+    }
     now: {
-      close: string,
+      close: string
       timestamp: number
-    }[],
+    }[]
     day: {
-      close: string,
+      close: string
       timestamp: number
-    }[],
+    }[]
     month: {
-      close: string,
+      close: string
       timestamp: number
-    }[],
+    }[]
     volumes: {
       volume_usd: string
-    }[],
+    }[]
     weight_goals: {
       weights: {
         asset: {

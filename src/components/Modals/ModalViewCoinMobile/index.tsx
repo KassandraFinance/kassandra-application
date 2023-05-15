@@ -6,9 +6,9 @@ import { ITokenModalProps } from '../../../templates/Manage/CreatePool/Review/Po
 import * as S from './styles'
 
 interface IModalViewCoinMobileProps {
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  tokenForModal?: ITokenModalProps;
+  modalOpen: boolean
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  tokenForModal?: ITokenModalProps
 }
 
 const ModalViewCoinMobile = ({

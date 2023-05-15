@@ -167,7 +167,7 @@ export const TextProposal = styled.p`
 // `
 
 interface ITypeVote {
-  voteColor: string;
+  voteColor: string
 }
 
 // prettier-ignore
@@ -218,7 +218,7 @@ export const TimeFrame = styled.p`
 `
 
 interface IStateMutability {
-  statusColor: string;
+  statusColor: string
 }
 
 // prettier-ignore

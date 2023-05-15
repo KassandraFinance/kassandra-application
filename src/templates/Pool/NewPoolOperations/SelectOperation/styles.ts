@@ -18,7 +18,7 @@ export const SelectOperation = styled.div`
 `
 
 interface ILineProps {
-  activeLine: boolean;
+  activeLine: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -42,7 +42,7 @@ export const Input = styled.input`
 `
 
 interface ILabelProps {
-  selected: boolean;
+  selected: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -74,7 +74,6 @@ export const Label = styled.label<ILabelProps>`
       font-size: ${theme.font.sizes.font12};
     }
   `}
-
 `
 
 export const TypeWithdraw = styled.div`

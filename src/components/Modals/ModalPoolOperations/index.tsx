@@ -1,18 +1,18 @@
 /* eslint-disable prettier/prettier */
 import React from 'react'
 
-import { networks } from '../../../constants/tokenAddresses';
+import { networks } from '../../../constants/tokenAddresses'
 
-import { useAppSelector } from '../../../store/hooks';
+import { useAppSelector } from '../../../store/hooks'
 
-import SelectOperatorCart from '../../PoolOperations/SelectOperatorCart';
-import { TitlesMobile } from '../../PoolOperations/SelectOperatorMobile';
+import SelectOperatorCart from '../../PoolOperations/SelectOperatorCart'
+import { TitlesMobile } from '../../PoolOperations/SelectOperatorMobile'
 
 import { ChainDetails } from '../../../utils/changeChain'
 
 import { Backdrop, CardOperationsContainerModal } from './styles'
 
-export type Titles = keyof typeof messages;
+export type Titles = keyof typeof messages
 
 const messages = {
   Invest: 'Pay with',
@@ -22,20 +22,19 @@ const messages = {
 
 interface IOperationsProps {
   setInputChecked: React.Dispatch<React.SetStateAction<Titles>>
-  inputCheckedBarMobile: TitlesMobile;
+  inputCheckedBarMobile: TitlesMobile
   setInputCheckedBarMobile: React.Dispatch<React.SetStateAction<TitlesMobile>>
 
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsModaWallet: React.Dispatch<React.SetStateAction<boolean>>;
+  modalOpen: boolean
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setIsModaWallet: React.Dispatch<React.SetStateAction<boolean>>
 
-  poolChain: ChainDetails;
-  poolSymbol:string;
-  crpPoolAddress: string;
-  corePoolAddress: string;
-  productCategories: string[];
+  poolChain: ChainDetails
+  poolSymbol: string
+  crpPoolAddress: string
+  corePoolAddress: string
+  productCategories: string[]
 }
-
 
 const ModalCardOperations = ({
   setInputChecked,
@@ -50,10 +49,12 @@ const ModalCardOperations = ({
   poolSymbol,
   crpPoolAddress,
   corePoolAddress,
-  productCategories,
+  productCategories
 }: IOperationsProps) => {
-  const [inputCheckedMobile, setInputCheckedMobile] = React.useState<Titles>('Invest')
-  const [typeWithdrawCheckedMobile, setTypeWithdrawCheckedMobile] = React.useState<string>('Best_value')
+  const [inputCheckedMobile, setInputCheckedMobile] =
+    React.useState<Titles>('Invest')
+  const [typeWithdrawCheckedMobile, setTypeWithdrawCheckedMobile] =
+    React.useState<string>('Best_value')
 
   const { chainId } = useAppSelector(state => state)
 
@@ -77,7 +78,7 @@ const ModalCardOperations = ({
       case 'Swap':
         return setInputCheckedMobile('Swap')
       default:
-        return;
+        return
     }
   }, [inputCheckedBarMobile])
 
@@ -90,7 +91,7 @@ const ModalCardOperations = ({
       case 'Swap':
         return setInputCheckedBarMobile('Swap')
       default:
-        return;
+        return
     }
   }, [inputCheckedMobile])
 
@@ -101,15 +102,12 @@ const ModalCardOperations = ({
         onClick={() => handleCloseModalPoolOperations()}
       />
 
-      <CardOperationsContainerModal
-        modalOpen={modalOpen}
-      >
+      <CardOperationsContainerModal modalOpen={modalOpen}>
         <SelectOperatorCart
           inputChecked={inputCheckedMobile}
           handleSetInputChecked={handleSetInputChecked}
           typeWithdrawChecked={typeWithdrawCheckedMobile}
           setTypeWithdrawChecked={setTypeWithdrawCheckedMobile}
-
           poolChain={poolChain}
           poolSymbol={poolSymbol}
           crpPoolAddress={crpPoolAddress}

@@ -23,23 +23,23 @@ type SubscribeOptions = {
       | number[]
       | string[]
       | BigNumber[]
-  },
-  fromBlock?: number | string | BigNumber,
+  }
+  fromBlock?: number | string | BigNumber
   topics?: string[]
 }
 
 export type EventCallback = (error: Error, result: EventData) => void
 
 export interface EventSubscribe {
-  (callback?: EventCallback): Subscription<EventCallback>;
+  (callback?: EventCallback): Subscription<EventCallback>
   (
     options?: SubscribeOptions,
     callback?: EventCallback
-  ): Subscription<EventCallback>;
+  ): Subscription<EventCallback>
 }
 
 export interface Events {
-  [key: string]: EventSubscribe;
+  [key: string]: EventSubscribe
 }
 
 export default web3

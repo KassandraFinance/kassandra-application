@@ -92,7 +92,7 @@ export const UserInfoContent = styled.div`
 `
 
 interface IisSelectSeeMoreProps {
-  isSelectSeeMore: boolean;
+  isSelectSeeMore: boolean
 }
 
 // prettier-ignore
@@ -208,7 +208,7 @@ export const DescriptionManagerInfo = styled.p`
   word-break: break-all;
 `
 interface IisSeeMoreProps {
-  isSeeMore: boolean;
+  isSeeMore: boolean
 }
 
 // prettier-ignore
@@ -241,7 +241,7 @@ export const ButtonSeeMore = styled.button<IisSeeMoreProps>`
 `
 
 interface ISocialIconProps {
-  isActiveSocial?: boolean;
+  isActiveSocial?: boolean
 }
 
 // prettier-ignore

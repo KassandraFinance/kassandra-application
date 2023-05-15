@@ -13,17 +13,17 @@ import { CoinGeckoResponseType } from '../../AddLiquidity'
 import * as S from './styles'
 
 interface IPoolSummaryProps {
-  creation?: boolean;
-  coinsList: TokenType[];
-  totalAllocation: number;
+  creation?: boolean
+  coinsList: TokenType[]
+  totalAllocation: number
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement>,
     key: string,
     isLocked: boolean
-  ) => void;
-  onRemoveToken?: (token: TokenType) => void;
-  onLockToken?: (id: string) => void;
-  priceList: CoinGeckoResponseType | undefined;
+  ) => void
+  onRemoveToken?: (token: TokenType) => void
+  onLockToken?: (id: string) => void
+  priceList: CoinGeckoResponseType | undefined
 }
 
 const PoolSummary = ({

@@ -53,7 +53,7 @@ export const TransactionSettingsContainer = styled.div`
   `}
 `
 interface IPriceImpactWrapperProps {
-  price: number;
+  price: number
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -81,7 +81,7 @@ export const PriceImpactWrapper = styled.span<IPriceImpactWrapperProps>`
       font-size: 1.07rem;
     }
   `}
-  `
+`
 
 export const ExchangeRate = styled.div`
   ${() => css`

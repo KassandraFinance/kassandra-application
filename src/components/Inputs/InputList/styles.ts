@@ -14,8 +14,8 @@ export const InputList = styled.div`
 `
 
 interface IDataListProps {
-  height: number;
-  isOpen: boolean;
+  height: number
+  isOpen: boolean
 }
 
 // prettier-ignore
@@ -83,7 +83,7 @@ export const Option = styled.li`
 `
 
 interface IIconWrapperProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 // prettier-ignore

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
 interface IModalBuyKacyProps {
-  modalOpen: boolean;
+  modalOpen: boolean
 }
 
 // prettier-ignore

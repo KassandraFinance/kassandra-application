@@ -114,7 +114,7 @@ export const UserImageContent = styled.div`
   }
 `
 interface isDropdownAddNftProps {
-  isDropdownAddNft: boolean;
+  isDropdownAddNft: boolean
 }
 
 // prettier-ignore
@@ -155,7 +155,7 @@ export const ButtonAddNft = styled.button<isDropdownAddNftProps>`
 `
 
 interface isDropdownAddNftProps {
-  isDropdownAddNft: boolean;
+  isDropdownAddNft: boolean
 }
 
 // prettier-ignore
@@ -176,7 +176,7 @@ export const UserAddNftImage = styled.div<isDropdownAddNftProps>`
 `
 
 interface IUserSocialMidiaProps {
-  isStateSocialMidia: boolean;
+  isStateSocialMidia: boolean
 }
 
 // prettier-ignore
@@ -256,7 +256,7 @@ export const SocialIcon = styled.li`
 `
 
 interface IModalManagerInfoProps {
-  isStateManagerInfo: boolean;
+  isStateManagerInfo: boolean
 }
 
 // prettier-ignore
@@ -341,7 +341,7 @@ export const UserEditInfoButtons = styled.div`
 `
 
 interface IUserSocialAndInfoButtonProps {
-  isStateSocialMidia: boolean;
+  isStateSocialMidia: boolean
 }
 
 // prettier-ignore

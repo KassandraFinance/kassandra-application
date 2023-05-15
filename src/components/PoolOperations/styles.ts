@@ -39,7 +39,7 @@ export const Input = styled.input`
 `
 
 interface ILabelProps {
-  selected: boolean;
+  selected: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -56,8 +56,9 @@ export const Label = styled.label<ILabelProps>`
   text-align: center;
   text-transform: capitalize;
 
-  border-bottom: 0.2rem solid ${props =>
-    props.selected ? theme.colors.cyan : 'rgba(255, 255, 255, 0.15)'};
+  border-bottom: 0.2rem solid
+    ${props =>
+      props.selected ? theme.colors.cyan : 'rgba(255, 255, 255, 0.15)'};
 
   cursor: pointer;
 

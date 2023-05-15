@@ -19,35 +19,35 @@ import * as S from './styles'
 import FeeBreakDown from './FeeBreakDown'
 
 type Fees = {
-  type: 'join' | 'aum',
-  period: number,
-  volume_usd: string,
-  volume_broker_usd: string | null,
+  type: 'join' | 'aum'
+  period: number
+  volume_usd: string
+  volume_broker_usd: string | null
   timestamp: number
 }
 
 export type Pool = {
   manager: {
     id: string
-  },
+  }
 
-  price_usd: string,
-  symbol: string,
-  controller: string,
-  fee_join_manager: string,
-  fee_join_broker: string,
+  price_usd: string
+  symbol: string
+  controller: string
+  fee_join_manager: string
+  fee_join_broker: string
 
-  total_fees_join_manager_usd: string,
-  total_fees_join_broker_usd: string,
+  total_fees_join_manager_usd: string
+  total_fees_join_broker_usd: string
 
-  total_fees_aum_manager_usd: string,
-  total_fees_aum_kassandra_usd: string,
-  fee_aum: string,
-  fee_aum_kassandra: string,
+  total_fees_aum_manager_usd: string
+  total_fees_aum_kassandra_usd: string
+  fee_aum: string
+  fee_aum_kassandra: string
 
-  last_harvest: number,
+  last_harvest: number
 
-  fees: Fees[],
+  fees: Fees[]
 
   lasCollectedAum: Fees[]
 }

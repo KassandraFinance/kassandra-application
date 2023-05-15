@@ -6,23 +6,23 @@ import AllocationGraph from '../AllocationGraph'
 import * as S from './styles'
 
 export type IAllocationListProps = {
-  name: string,
-  symbol: string,
-  logo: string,
-  link: string,
-  currentWeight: number,
+  name: string
+  symbol: string
+  logo: string
+  link: string
+  currentWeight: number
   NewWeight: number
 }
 
 type IDataAllocationGraphProps = {
-  imageUrl: string,
-  name: string,
-  currentAllocation: number,
+  imageUrl: string
+  name: string
+  currentAllocation: number
   newAllocation: number
 }
 
 interface INewAllocationsTableProps {
-  AllocationList: IAllocationListProps[];
+  AllocationList: IAllocationListProps[]
 }
 
 const NewAllocationsTable = ({ AllocationList }: INewAllocationsTableProps) => {

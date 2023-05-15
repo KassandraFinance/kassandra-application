@@ -3,14 +3,14 @@ import React from 'react'
 import * as S from './styles'
 
 interface IInputRadioProps {
-  form?: string;
-  text: string;
-  inputId: string;
-  value?: string;
-  name?: string;
-  required?: boolean;
-  handleClickInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  inputChecked?: boolean;
+  form?: string
+  text: string
+  inputId: string
+  value?: string
+  name?: string
+  required?: boolean
+  handleClickInput: (event: React.ChangeEvent<HTMLInputElement>) => void
+  inputChecked?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

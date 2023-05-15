@@ -5,13 +5,13 @@ import web3 from '../../utils/web3'
 
 interface InputAuth {
   message: {
-    address: string,
-    nonce: string,
-    version?: string,
-    data: unknown,
+    address: string
+    nonce: string
+    version?: string
+    data: unknown
     issuedAt: string
-  };
-  signature: string;
+  }
+  signature: string
 }
 
 const handler = async (request: NextApiRequest, response: NextApiResponse) => {

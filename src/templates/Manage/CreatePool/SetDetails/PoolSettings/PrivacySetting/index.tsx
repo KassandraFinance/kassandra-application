@@ -18,9 +18,9 @@ import closeIcon from '../../../../../../../public/assets/utilities/close-icon.s
 import * as S from './styles'
 
 interface IPoolSettingsProps {
-  inputAddress: string;
-  setInputAddress: React.Dispatch<React.SetStateAction<string>>;
-  handleAddPrivateAddress: () => void;
+  inputAddress: string
+  setInputAddress: React.Dispatch<React.SetStateAction<string>>
+  handleAddPrivateAddress: () => void
 }
 
 const PoolSettings = ({

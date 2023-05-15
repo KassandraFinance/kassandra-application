@@ -155,11 +155,11 @@ const ExecutionPeriod = () => {
           </S.PersonalizePeriod>
           {timeValue
             ? (timeValue > 72 || timeValue < 1) && (
-              <S.ErrorPeriod>
-                The amount of time for the rebalancing process must be higher
-                than 1 and lower than 72 hours
-              </S.ErrorPeriod>
-            )
+                <S.ErrorPeriod>
+                  The amount of time for the rebalancing process must be higher
+                  than 1 and lower than 72 hours
+                </S.ErrorPeriod>
+              )
             : null}
         </S.PersonalizePeriodContainer>
       </S.ExecutionPeriodBody>

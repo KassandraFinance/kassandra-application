@@ -1,8 +1,8 @@
 import * as S from './styles'
 
 interface IChangeProps {
-  title: string;
-  value: number;
+  title: string
+  value: number
 }
 
 const Change = ({ title, value }: IChangeProps) => {

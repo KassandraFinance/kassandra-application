@@ -17,14 +17,14 @@ const dataList = ['1D', '1M', '3M', '6M', '1Y']
 type GetBrokersFees = {
   manager: {
     pools: {
-      num_deposits_broker: string,
-      unique_investors_broker: number,
+      num_deposits_broker: string
+      unique_investors_broker: number
       brokeredDeposits: {
-        volume_usd: string,
+        volume_usd: string
         timestamp: number
-      }[],
+      }[]
       brokersRewards: {
-        volume_broker_usd: string,
+        volume_broker_usd: string
         timestamp: number
       }[]
     }[]
@@ -82,7 +82,7 @@ const BrokersOverview = () => {
 
   function addDeposits(
     deposits: {
-      volume_usd: string,
+      volume_usd: string
       timestamp: number
     }[]
   ) {
@@ -96,7 +96,7 @@ const BrokersOverview = () => {
 
   function addRewards(
     deposits: {
-      volume_broker_usd: string,
+      volume_broker_usd: string
       timestamp: number
     }[]
   ) {

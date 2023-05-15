@@ -2,13 +2,10 @@ import styled from 'styled-components'
 import theme from '../../../../styles/theme'
 
 interface IAssetsContainerProps {
-  isThreeCards: boolean;
+  isThreeCards: boolean
 }
 // eslint-disable-next-line prettier/prettier
-export const AssetsContainer =
-  styled.div <
-  IAssetsContainerProps >
-  `
+export const AssetsContainer = styled.div<IAssetsContainerProps>`
   display: flex;
   flex-wrap: wrap;
   justify-content: ${props =>

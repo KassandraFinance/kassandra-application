@@ -18,22 +18,22 @@ import TokenSelected from '../TokenSelected'
 import * as S from './styles'
 
 interface IGasFeeProps {
-  error: boolean;
-  feeNumber: number;
-  feeString: string;
+  error: boolean
+  feeNumber: number
+  feeString: string
 }
 
 interface IInputAndOutputValueTokenProps {
-  typeAction: string;
-  amountTokenIn: Big | string;
-  setAmountTokenIn: React.Dispatch<React.SetStateAction<Big | string>>;
-  selectedTokenInBalance: Big;
-  setSelectedTokenInBalance: React.Dispatch<React.SetStateAction<Big>>;
-  maxActive?: boolean;
-  setMaxActive?: React.Dispatch<React.SetStateAction<boolean>>;
-  inputAmountTokenRef: React.RefObject<HTMLInputElement>;
-  errorMsg: string;
-  gasFee?: IGasFeeProps;
+  typeAction: string
+  amountTokenIn: Big | string
+  setAmountTokenIn: React.Dispatch<React.SetStateAction<Big | string>>
+  selectedTokenInBalance: Big
+  setSelectedTokenInBalance: React.Dispatch<React.SetStateAction<Big>>
+  maxActive?: boolean
+  setMaxActive?: React.Dispatch<React.SetStateAction<boolean>>
+  inputAmountTokenRef: React.RefObject<HTMLInputElement>
+  errorMsg: string
+  gasFee?: IGasFeeProps
 }
 
 const InputAndOutputValueToken = ({
@@ -55,20 +55,19 @@ const InputAndOutputValueToken = ({
 
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const disabled = userWalletAddress.length === 0 ?
-    "Please connect your wallet by clicking the button below"
-    :
-    chainId !== pool.chain_id ?
-      `Please change to the ${pool.chain.chainName} by clicking the button below`
-      :
-      ""
+  const disabled =
+    userWalletAddress.length === 0
+      ? 'Please connect your wallet by clicking the button below'
+      : chainId !== pool.chain_id
+      ? `Please change to the ${pool.chain.chainName} by clicking the button below`
+      : ''
 
   const isInvestType = typeAction === 'Invest' ? true : false
 
   function handleOnWheel() {
-    if (document.activeElement?.classList.contains("noscroll")) {
+    if (document.activeElement?.classList.contains('noscroll')) {
       // eslint-disable-next-line prettier/prettier
-      (document.activeElement as HTMLElement).blur()
+      ;(document.activeElement as HTMLElement).blur()
     }
   }
 
@@ -77,7 +76,12 @@ const InputAndOutputValueToken = ({
   }
 
   function handleMaxUserBalance() {
-    if (!inputAmountTokenRef || !amountTokenIn || pool.chain_id !== chainId || Big(selectedTokenInBalance).lte(0)) {
+    if (
+      !inputAmountTokenRef ||
+      !amountTokenIn ||
+      pool.chain_id !== chainId ||
+      Big(selectedTokenInBalance).lte(0)
+    ) {
       return
     }
 
@@ -110,17 +114,15 @@ const InputAndOutputValueToken = ({
       return setSelectedTokenInBalance(Big(0))
     }
 
-    (async () => {
-      const userTokenBalance = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.pool_version === 1 ? pool.chain.addressWrapped : undefined)
+    ;(async () => {
+      const userTokenBalance = await getBalanceToken(
+        tokenSelect.address,
+        userWalletAddress,
+        pool.pool_version === 1 ? pool.chain.addressWrapped : undefined
+      )
       setSelectedTokenInBalance(userTokenBalance)
     })()
-  }, [
-    chainId,
-    typeAction,
-    tokenSelect,
-    userWalletAddress,
-    pool
-  ])
+  }, [chainId, typeAction, tokenSelect, userWalletAddress, pool])
 
   return (
     <S.InputAndOutputValueToken>
@@ -128,7 +130,7 @@ const InputAndOutputValueToken = ({
         <S.Top>
           <S.Info>
             <S.Title>{isInvestType ? 'Pay with' : 'Swap to'}</S.Title>
-            {isInvestType ? <TokenSelected/> : <TokenSelect />}
+            {isInvestType ? <TokenSelected /> : <TokenSelect />}
             <S.Span spanlight={true} onClick={() => handleMaxUserBalance()}>
               Balance:{' '}
               {selectedTokenInBalance > new Big(-1)
@@ -162,7 +164,7 @@ const InputAndOutputValueToken = ({
               {isInvestType ? (
                 <S.Input
                   className="noscroll"
-                  readOnly={!isInvestType || disabled.length > 0 }
+                  readOnly={!isInvestType || disabled.length > 0}
                   ref={inputAmountTokenRef}
                   type="number"
                   placeholder="0"
@@ -177,43 +179,47 @@ const InputAndOutputValueToken = ({
                     // Blink bug makes the value come empty if pressing the decimal symbol that is not that of the current locale
                     else if (e.key === '.' || e.key === ',') {
                       // first time value will be ok, if pressing twice it zeroes, we ignore those
-                      if (target.value.length > 0 && target.value.search(/[,.]/) === -1) {
+                      if (
+                        target.value.length > 0 &&
+                        target.value.search(/[,.]/) === -1
+                      ) {
                         target.dataset.lastvalue = target.value
                       }
-                    }
-                    else if (e.key === 'Backspace' || e.key === 'Delete') {
+                    } else if (e.key === 'Backspace' || e.key === 'Delete') {
                       target.dataset.lastvalue = '0'
                     }
                   }}
-                  onChange={
-                    (e: React.ChangeEvent<HTMLInputElement>) => {
-                      let { value } = e.target
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    let { value } = e.target
 
-                      if (value.length === 0) {
-                        value = e.target.dataset.lastvalue as string
-                      }
-                      else if (value[0] === '0') {
-                        e.target.value = value.replace(/^0+/, '')
-                      }
-
-                      if (e.target.value[0] === '.') {
-                        e.target.value = `0${e.target.value}`
-                      }
-
-                      const valueFormatted = decimalToBN(value, tokenSelect.decimals)
-
-                      setMaxActive && setMaxActive(false)
-                      setAmountTokenIn(valueFormatted)
+                    if (value.length === 0) {
+                      value = e.target.dataset.lastvalue as string
+                    } else if (value[0] === '0') {
+                      e.target.value = value.replace(/^0+/, '')
                     }
-                  }
+
+                    if (e.target.value[0] === '.') {
+                      e.target.value = `0${e.target.value}`
+                    }
+
+                    const valueFormatted = decimalToBN(
+                      value,
+                      tokenSelect.decimals
+                    )
+
+                    setMaxActive && setMaxActive(false)
+                    setAmountTokenIn(valueFormatted)
+                  }}
                 />
               ) : (
                 <S.amountTokenOutText>
                   {BNtoDecimal(
-                    Big(amountTokenIn)?.div(Big(10).pow(tokenSelect.decimals)) || new BigNumber(0),
-                      tokenSelect.decimals,
-                      6
-                    ).replace(/\s/g, '')}
+                    Big(amountTokenIn)?.div(
+                      Big(10).pow(tokenSelect.decimals)
+                    ) || new BigNumber(0),
+                    tokenSelect.decimals,
+                    6
+                  ).replace(/\s/g, '')}
                 </S.amountTokenOutText>
               )}
             </Tippy>
@@ -224,7 +230,10 @@ const InputAndOutputValueToken = ({
                   BNtoDecimal(
                     Big(amountTokenIn)
                       .mul(
-                        Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0)
+                        Big(
+                          priceToken(tokenSelect.address.toLocaleLowerCase()) ||
+                            0
+                        )
                       )
                       .div(Big(10).pow(Number(tokenSelect.decimals))),
                     18,
@@ -236,13 +245,13 @@ const InputAndOutputValueToken = ({
         </S.Top>
         {errorMsg !== '' ? (
           <S.ErrorMSG>{errorMsg}</S.ErrorMSG>
-          ) : (
+        ) : (
           <>
             {gasFee && gasFee?.error && (
               <S.GasFeeError>
                 Don’t forget the gas fee! Leave at least some{' '}
-                {gasFee.feeString.slice(0, 8)} {tokenSelect.symbol} on your wallet to ensure a
-                smooth transaction
+                {gasFee.feeString.slice(0, 8)} {tokenSelect.symbol} on your
+                wallet to ensure a smooth transaction
               </S.GasFeeError>
             )}
           </>

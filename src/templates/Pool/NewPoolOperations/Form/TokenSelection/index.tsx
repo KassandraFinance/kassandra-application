@@ -36,17 +36,17 @@ export type IListTokenPricesprops = {
 }
 
 export interface ITokenList1InchProps {
-  symbol: string;
-  name: string;
-  address: string;
-  decimals: number;
-  logoURI: string;
+  symbol: string
+  name: string
+  address: string
+  decimals: number
+  logoURI: string
 }
 
 export interface IUserTokenProps extends ITokenList1InchProps {
-  tokenScore: number;
-  balanceInDollar: number;
-  balance: string;
+  tokenScore: number
+  balanceInDollar: number
+  balance: string
 }
 
 const TokenSelection = () => {

@@ -25,9 +25,8 @@ import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 
 import * as S from './styles'
 
-
 const invertSymbol: { [key: string]: string } = {
-  "WAVAX": "AVAX"
+  WAVAX: 'AVAX'
 }
 
 const typeActivity = {
@@ -37,41 +36,41 @@ const typeActivity = {
 }
 
 type ITokenInfoProps = {
-  id: string,
-  balance_in_pool: string,
-  address: string,
-  name: string,
-  symbol: string,
-  allocation: number,
+  id: string
+  balance_in_pool: string
+  address: string
+  name: string
+  symbol: string
+  allocation: number
   price: number
 }
 
 interface IPoolInfoProps {
-  balance: string;
-  token: ITokenInfoProps;
-  weight_goal_normalized: string;
-  weight_normalized: string;
+  balance: string
+  token: ITokenInfoProps
+  weight_goal_normalized: string
+  weight_normalized: string
 }
 
 interface IActivitiesProps {
-  id: string,
-  address: string,
+  id: string
+  address: string
   // eslint-disable-next-line prettier/prettier
-  type: keyof typeof typeActivity,
-  txHash: string,
-  timestamp: number,
-  symbol: string[] | string,
-  amount: string[],
+  type: keyof typeof typeActivity
+  txHash: string
+  timestamp: number
+  symbol: string[] | string
+  amount: string[]
   price_usd: string[]
 }
 
 interface IPoolProps {
   pool: {
     underlying_assets: IPoolInfoProps[]
-    num_activities: number,
+    num_activities: number
     activities: IActivitiesProps[]
     allActivities: []
-  };
+  }
 }
 
 const ActivityTable = () => {
@@ -80,9 +79,9 @@ const ActivityTable = () => {
 
   const pool = useAppSelector(state => state.pool)
   const { date } = useDate()
-  
+
   const take = 6
-  
+
   const { data } = useSWR<IPoolProps>(
     [GET_ACTIVITY, skip, take, pool.id],
     (query, skip, take, productAddress) =>
@@ -98,12 +97,15 @@ const ActivityTable = () => {
   }
 
   function handleWithdrawAllAsset(amount: string[], price: string[]) {
-    const allAssetTotal = price.slice(1).reduce((accumulator, current, index) => (
-      Big(amount[index + 1] || 0).times(
-        Big(current || 0)
-      ).add(accumulator)), Big(0))
+    const allAssetTotal = price.slice(1).reduce(
+      (accumulator, current, index) =>
+        Big(amount[index + 1] || 0)
+          .times(Big(current || 0))
+          .add(accumulator),
+      Big(0)
+    )
 
-      return BNtoDecimal(allAssetTotal, 18, 3)
+    return BNtoDecimal(allAssetTotal, 18, 3)
   }
 
   React.useEffect(() => {
@@ -148,101 +150,242 @@ const ActivityTable = () => {
                       />
                     </a>
                   </span>
-                  {activity.type === "exit" ? activity.symbol.length > 2 ? <p>All assets</p> : <p>Single asset</p> : null}
+                  {activity.type === 'exit' ? (
+                    activity.symbol.length > 2 ? (
+                      <p>All assets</p>
+                    ) : (
+                      <p>Single asset</p>
+                    )
+                  ) : null}
                 </S.TitleTransaction>
                 <S.TransactionOutAndIn>
                   <span>
-                    {pool.underlying_assets.map((element) => {
-                      if (activity.type === "join" && element.token.symbol === "KACY")
-                      return <Image src={pool.logo} alt="" width={16} height={16} />
-                      
-                      if (activity.type === "exit") {
+                    {pool.underlying_assets.map(element => {
+                      if (
+                        activity.type === 'join' &&
+                        element.token.symbol === 'KACY'
+                      )
+                        return (
+                          <Image
+                            src={pool.logo}
+                            alt=""
+                            width={16}
+                            height={16}
+                          />
+                        )
+
+                      if (activity.type === 'exit') {
                         if (element.token.symbol === activity.symbol[0]) {
-                          return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo  || element.token?.wraps?.logo} alt="" />
+                          return (
+                            <img
+                              style={{ width: '1.6rem', borderRadius: '50%' }}
+                              src={
+                                element.token.logo || element.token?.wraps?.logo
+                              }
+                              alt=""
+                            />
+                          )
                         }
-                        if (activity.symbol.length < 3 && element.token.symbol === invertSymbol[activity.symbol[0]]) {
-                          return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
-                        } 
-                        if (activity.symbol.length > 3 && element.token.symbol === "KACY") {
+                        if (
+                          activity.symbol.length < 3 &&
+                          element.token.symbol ===
+                            invertSymbol[activity.symbol[0]]
+                        ) {
+                          return (
+                            <img
+                              style={{ width: '1.6rem', borderRadius: '50%' }}
+                              src={element.token.logo}
+                              alt=""
+                            />
+                          )
+                        }
+                        if (
+                          activity.symbol.length > 3 &&
+                          element.token.symbol === 'KACY'
+                        ) {
                           return (
                             <S.TokensSymbols>
                               <TokenIcons />
-                              {pool.underlying_assets.length > 3 && <span>+{pool.underlying_assets.length - 3} MORE</span>}
+                              {pool.underlying_assets.length > 3 && (
+                                <span>
+                                  +{pool.underlying_assets.length - 3} MORE
+                                </span>
+                              )}
                             </S.TokensSymbols>
                           )
                         }
                       }
 
-                      if (activity.type === "swap" && element.token.symbol === activity.symbol[1])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
-                      if (activity.type === "swap" && element.token.symbol === invertSymbol[activity.symbol[1]])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
+                      if (
+                        activity.type === 'swap' &&
+                        element.token.symbol === activity.symbol[1]
+                      )
+                        return (
+                          <img
+                            style={{ width: '1.6rem', borderRadius: '50%' }}
+                            src={element.token.logo}
+                            alt=""
+                          />
+                        )
+                      if (
+                        activity.type === 'swap' &&
+                        element.token.symbol ===
+                          invertSymbol[activity.symbol[1]]
+                      )
+                        return (
+                          <img
+                            style={{ width: '1.6rem', borderRadius: '50%' }}
+                            src={element.token.logo}
+                            alt=""
+                          />
+                        )
                     })}
-                    {activity.symbol.length > 2 ? null : BNtoDecimal(
-                      Big(activity.amount[activity.type === "exit" ? 0 : 1] || '0'),
-                      18,
-                      3
-                    )}
+                    {activity.symbol.length > 2
+                      ? null
+                      : BNtoDecimal(
+                          Big(
+                            activity.amount[activity.type === 'exit' ? 0 : 1] ||
+                              '0'
+                          ),
+                          18,
+                          3
+                        )}
                   </span>
-                <p>${activity.type === "exit" && activity.symbol.length > 2?
-                  handleWithdrawAllAsset(activity.amount, activity.price_usd)
-                  :
-                  BNtoDecimal(
-                    Big(activity.amount[1] || 0).times(
-                      Big(activity?.price_usd[1] || 0)
-                    ),
-                    18,
-                    5,
-                    2
-                  )
-                }
-                </p>
+                  <p>
+                    $
+                    {activity.type === 'exit' && activity.symbol.length > 2
+                      ? handleWithdrawAllAsset(
+                          activity.amount,
+                          activity.price_usd
+                        )
+                      : BNtoDecimal(
+                          Big(activity.amount[1] || 0).times(
+                            Big(activity?.price_usd[1] || 0)
+                          ),
+                          18,
+                          5,
+                          2
+                        )}
+                  </p>
                 </S.TransactionOutAndIn>
                 <S.TransactionOutAndIn>
                   <span>
-                    {pool.underlying_assets.map((element) => {
-                      if (activity.type === "join" && element.token.symbol === activity.symbol[0])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.symbol} alt="" />
-                      if (activity.type === "join" && element.token.symbol === invertSymbol[activity.symbol[0]])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
+                    {pool.underlying_assets.map(element => {
+                      if (
+                        activity.type === 'join' &&
+                        element.token.symbol === activity.symbol[0]
+                      )
+                        return (
+                          <img
+                            style={{ width: '1.6rem', borderRadius: '50%' }}
+                            src={element.token.symbol}
+                            alt=""
+                          />
+                        )
+                      if (
+                        activity.type === 'join' &&
+                        element.token.symbol ===
+                          invertSymbol[activity.symbol[0]]
+                      )
+                        return (
+                          <img
+                            style={{ width: '1.6rem', borderRadius: '50%' }}
+                            src={element.token.logo}
+                            alt=""
+                          />
+                        )
 
-
-                      if (activity.type === "exit") {
-                        if (element.token.symbol === "KACY") {
-                          return <Image src={pool.logo} alt="" width={16} height={16} />
+                      if (activity.type === 'exit') {
+                        if (element.token.symbol === 'KACY') {
+                          return (
+                            <Image
+                              src={pool.logo}
+                              alt=""
+                              width={16}
+                              height={16}
+                            />
+                          )
                         } else {
                           null
                         }
                       }
 
-                      if (activity.type === "swap" && element.token.symbol === activity.symbol[0])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
-                      if (activity.type === "swap" && element.token.symbol === invertSymbol[activity.symbol[0]])
-                        return <img style={{ width: "1.6rem", borderRadius: "50%" }} src={element.token.logo} alt="" />
+                      if (
+                        activity.type === 'swap' &&
+                        element.token.symbol === activity.symbol[0]
+                      )
+                        return (
+                          <img
+                            style={{ width: '1.6rem', borderRadius: '50%' }}
+                            src={element.token.logo}
+                            alt=""
+                          />
+                        )
+                      if (
+                        activity.type === 'swap' &&
+                        element.token.symbol ===
+                          invertSymbol[activity.symbol[0]]
+                      )
+                        return (
+                          <img
+                            style={{ width: '1.6rem', borderRadius: '50%' }}
+                            src={element.token.logo}
+                            alt=""
+                          />
+                        )
                     })}
                     {BNtoDecimal(
-                      Big(activity.amount[activity.type === "exit" ? activity.symbol.length > 2 ? 0 : 1 : 0]|| '0'),
+                      Big(
+                        activity.amount[
+                          activity.type === 'exit'
+                            ? activity.symbol.length > 2
+                              ? 0
+                              : 1
+                            : 0
+                        ] || '0'
+                      ),
                       18,
                       3
                     )}
                   </span>
                   <p>
-                    ${BNtoDecimal(
-                      Big(activity.amount[activity.type === "exit" ? activity.symbol.length > 2 ? 0 : 1 : 0] || 0).times(
-                        Big(activity?.price_usd[activity.type === "exit" ? activity.symbol.length > 2 ? 0 : 1 : 0] || 0)
+                    $
+                    {BNtoDecimal(
+                      Big(
+                        activity.amount[
+                          activity.type === 'exit'
+                            ? activity.symbol.length > 2
+                              ? 0
+                              : 1
+                            : 0
+                        ] || 0
+                      ).times(
+                        Big(
+                          activity?.price_usd[
+                            activity.type === 'exit'
+                              ? activity.symbol.length > 2
+                                ? 0
+                                : 1
+                              : 0
+                          ] || 0
+                        )
                       ),
                       18,
                       5,
                       2
                     )}
-                </p>
+                  </p>
                 </S.TransactionOutAndIn>
                 <S.TransactionInfo>
                   <p>{substr(activity?.address)}</p>
                   <span>
-                    {getDateDiff(activity.timestamp * 1000)?.value} {date(getDateDiff(activity.timestamp * 1000))} ago
+                    {getDateDiff(activity.timestamp * 1000)?.value}{' '}
+                    {date(getDateDiff(activity.timestamp * 1000))} ago
                     {/* <ExternalLink hrefLink={`https://snowtrace.io/tx/${activity.txHash}`} text="" /> */}
-                    <ExternalLink hrefNext={`/profile/${activity.address}`} text="" />
+                    <ExternalLink
+                      hrefNext={`/profile/${activity.address}`}
+                      text=""
+                    />
                   </span>
                 </S.TransactionInfo>
               </S.Tr>

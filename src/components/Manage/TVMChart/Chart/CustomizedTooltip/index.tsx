@@ -9,7 +9,7 @@ import { DataType } from '../index'
 import * as S from './styles'
 
 interface ICustomizedTooltip {
-  currentValue: DataType;
+  currentValue: DataType
 }
 
 const CustomizedTooltip = ({

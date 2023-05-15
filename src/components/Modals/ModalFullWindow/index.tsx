@@ -6,8 +6,8 @@ import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
 import * as S from './styles'
 
 interface IModalFullWindowProps {
-  children: ReactNode;
-  handleCloseModal: () => void;
+  children: ReactNode
+  handleCloseModal: () => void
 }
 
 const ModalFullWindow = ({

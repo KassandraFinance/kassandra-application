@@ -10,9 +10,9 @@ import * as S from './styles'
 export type DataListType = string[]
 
 interface IInputListProps {
-  dataList: DataListType;
-  selected: string;
-  onClick: (period: string) => void;
+  dataList: DataListType
+  selected: string
+  onClick: (period: string) => void
 }
 
 const InputList = ({ dataList, selected, onClick }: IInputListProps) => {

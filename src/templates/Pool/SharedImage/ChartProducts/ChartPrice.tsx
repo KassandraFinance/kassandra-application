@@ -17,9 +17,9 @@ import CustomizedAxisTick from './CustomizedAxisTick'
 import { BNtoDecimal } from '../../../../utils/numerals'
 
 interface IChartPriceProps {
-  data: any[];
-  color: string;
-  height?: number;
+  data: any[]
+  color: string
+  height?: number
 }
 
 const tooltipPosition = {

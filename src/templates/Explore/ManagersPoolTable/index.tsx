@@ -52,13 +52,13 @@ type ITvlProps = {
 }
 
 type IManagerAddress = {
-  totalManagers: string[],
+  totalManagers: string[]
   managers: {
-    id: string,
-    pool_count: number,
-    unique_investors: number,
-    total_value_locked_usd: string,
-    TVLDay: ITvlProps[],
+    id: string
+    pool_count: number
+    unique_investors: number
+    total_value_locked_usd: string
+    TVLDay: ITvlProps[]
     TVLMonthly: ITvlProps[]
   }[]
 }
@@ -66,20 +66,20 @@ type IManagerAddress = {
 type IVoteWeightsProps = {
   governances: {
     totalVotingPower: string
-  }[],
+  }[]
   users: {
-    id: string,
+    id: string
     votingPower: string
   }[]
 }
 
 type IManagerListProps = {
-  rank: number,
-  address: string,
-  poolCount: number,
-  valueManaged: string,
-  changeMonthly: string,
-  changeDay: string,
+  rank: number
+  address: string
+  poolCount: number
+  valueManaged: string
+  changeMonthly: string
+  changeDay: string
   voteWeight: string
 }
 

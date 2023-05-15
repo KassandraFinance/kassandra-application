@@ -14,51 +14,51 @@ import priceDown from '@assets/notificationStatus/arrow-descend.svg'
 import * as S from './styles'
 
 export type IRebancingProgressProps = {
-  started: string,
-  remaning: string,
+  started: string
+  remaning: string
   progress: number
 }
 
 export type ITokenProps = {
-  address: string,
-  logo: string,
-  name: string,
-  symbol: string,
+  address: string
+  logo: string
+  name: string
+  symbol: string
   decimals: number
 }
 
 export type IRebalanceWeightsProps = {
-  poolName: string,
-  poolPrice: string,
+  poolName: string
+  poolPrice: string
   listTokenWeights: {
-    token: Omit<ITokenProps, 'decimals'>,
-    previous: string,
-    current: string,
+    token: Omit<ITokenProps, 'decimals'>
+    previous: string
+    current: string
     final: string
   }[]
 } | null
 
 type CoinsMetadataType = {
   [key: string]: {
-    usd: number,
-    usd_24h_change: number,
+    usd: number
+    usd_24h_change: number
     usd_market_cap: number
   }
 }
 export interface IlistTokenWeightsProps {
-  token: ITokenProps;
-  allocation: string;
+  token: ITokenProps
+  allocation: string
   holding: {
     value: Big
-  };
+  }
 }
 interface IIntroReviewProps {
-  RebalancingProgress: IRebancingProgressProps | null;
-  listTokenWeights: IlistTokenWeightsProps[];
-  rebalanceWeights: IRebalanceWeightsProps;
-  countDownDate: string;
-  coingeckoData: CoinsMetadataType;
-  chainId: number;
+  RebalancingProgress: IRebancingProgressProps | null
+  listTokenWeights: IlistTokenWeightsProps[]
+  rebalanceWeights: IRebalanceWeightsProps
+  countDownDate: string
+  coingeckoData: CoinsMetadataType
+  chainId: number
 }
 
 const IntroReview = ({
@@ -70,7 +70,8 @@ const IntroReview = ({
   chainId
 }: IIntroReviewProps) => {
   // eslint-disable-next-line prettier/prettier
-  const [isOpenTokenInfoMobile, setIsOpenTokenInfoMobile] = React.useState(false)
+  const [isOpenTokenInfoMobile, setIsOpenTokenInfoMobile] =
+    React.useState(false)
   const [activeIndex, setActiveIndex] = React.useState(0)
 
   const tokenSeleted = listTokenWeights[activeIndex] ?? {}

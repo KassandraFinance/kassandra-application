@@ -7,7 +7,7 @@ import request from 'graphql-request'
 import BigNumber from 'bn.js'
 
 import { ERC20 } from '../../../../hooks/useERC20Contract'
-import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
+import KassandraWhitelistAbi from '../../../../constants/abi/KassandraWhitelist.json'
 import { useAppSelector } from '../../../../store/hooks'
 import useCoingecko from '@/hooks/useCoingecko'
 import {
@@ -25,25 +25,25 @@ import Steps from '../../../../components/Steps'
 import * as S from './styles'
 
 export type TokensInfoResponseType = {
-  id: string,
-  logo: string,
-  name: string,
-  symbol: string,
-  decimals: number,
+  id: string
+  logo: string
+  name: string
+  symbol: string
+  decimals: number
 }
 
 export type TokensListType = TokensInfoResponseType & { balance?: BigNumber }
 
 export type CoinGeckoAssetsResponseType = {
   [key: string]: {
-    usd: number,
-    usd_24h_change: number,
+    usd: number
+    usd_24h_change: number
     usd_market_cap: number
   }
 }
 
 const SelectAssets = () => {
-  const [whitelist, setWhitelist] = React.useState<string[]>();
+  const [whitelist, setWhitelist] = React.useState<string[]>()
   const [tokensList, setTokensList] = React.useState<TokensListType[]>([])
 
   const router = useRouter()
@@ -51,7 +51,10 @@ const SelectAssets = () => {
   const wallet = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
 
-  const tokensListGoerli = chainId === 5 ? whitelist?.map((token: string) => toChecksumAddress(mockTokens[token])) : whitelist
+  const tokensListGoerli =
+    chainId === 5
+      ? whitelist?.map((token: string) => toChecksumAddress(mockTokens[token]))
+      : whitelist
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -62,11 +65,18 @@ const SelectAssets = () => {
     whitelist: tokensListGoerli
   }
 
-  const { data } = useSWR<({ tokensByIds: TokensInfoResponseType[], pool: { underlying_assets_addresses: string[] } })>([GET_INFO_TOKENS, params], (query, params) =>
+  const { data } = useSWR<{
+    tokensByIds: TokensInfoResponseType[]
+    pool: { underlying_assets_addresses: string[] }
+  }>([GET_INFO_TOKENS, params], (query, params) =>
     request(BACKEND_KASSANDRA, query, params)
   )
 
-  const { data: priceData } = useCoingecko(networks[chainId].coingecko, networks[chainId].nativeCurrency.address, tokensListGoerli ?? [])
+  const { data: priceData } = useCoingecko(
+    networks[chainId].coingecko,
+    networks[chainId].nativeCurrency.address,
+    tokensListGoerli ?? []
+  )
 
   React.useEffect(() => {
     if (!data) {
@@ -74,10 +84,22 @@ const SelectAssets = () => {
     }
 
     if (chainId === 5) {
-      setTokensList(data?.tokensByIds.filter(element => element && !data?.pool?.underlying_assets_addresses.includes(mockTokensReverse[element?.id.toLowerCase()]))
+      setTokensList(
+        data?.tokensByIds.filter(
+          element =>
+            element &&
+            !data?.pool?.underlying_assets_addresses.includes(
+              mockTokensReverse[element?.id.toLowerCase()]
+            )
+        )
       )
     } else {
-      setTokensList(data?.tokensByIds.filter(element => element && !data?.pool?.underlying_assets_addresses.includes(element?.id))
+      setTokensList(
+        data?.tokensByIds.filter(
+          element =>
+            element &&
+            !data?.pool?.underlying_assets_addresses.includes(element?.id)
+        )
       )
     }
   }, [data])
@@ -85,17 +107,22 @@ const SelectAssets = () => {
   React.useEffect(() => {
     const getWhitelist = async () => {
       try {
-        const web3 = new Web3(networks[chainId].rpc);
+        const web3 = new Web3(networks[chainId].rpc)
         // eslint-disable-next-line prettier/prettier
-        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[chainId].whiteList);
-        const whitelist = await whitelistContract.methods.getTokens(0, 100).call();
+        const whitelistContract = new web3.eth.Contract(
+          KassandraWhitelistAbi as unknown as AbiItem,
+          networks[chainId].whiteList
+        )
+        const whitelist = await whitelistContract.methods
+          .getTokens(0, 100)
+          .call()
 
-        setWhitelist(whitelist);
+        setWhitelist(whitelist)
       } catch (error) {
         console.error('It was not possible to get whitelist')
       }
     }
-    getWhitelist();
+    getWhitelist()
   }, [])
 
   React.useEffect(() => {
@@ -145,13 +172,15 @@ const SelectAssets = () => {
             stepNumber: 3,
             stepeTitle: 'review',
             state: 'NEXT'
-          },
+          }
         ]}
       />
 
       <S.TextContainer>
         <S.AddAssetsTitle>Token addition</S.AddAssetsTitle>
-        <S.AddAssetsText>Select from the list the asset that will be added to the pool</S.AddAssetsText>
+        <S.AddAssetsText>
+          Select from the list the asset that will be added to the pool
+        </S.AddAssetsText>
       </S.TextContainer>
 
       <AddAssetTable tokensData={tokensList} priceList={priceData} />

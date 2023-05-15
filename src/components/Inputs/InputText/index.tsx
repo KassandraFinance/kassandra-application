@@ -1,18 +1,18 @@
 import * as S from './styles'
 
 interface IInputTextProps {
-  form?: string;
-  name: string;
-  type: string;
-  value: string;
-  required?: boolean;
-  placeholder: string;
-  minLength: number;
-  maxLength: number;
-  lable: string;
-  error: string;
-  readonly?: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  form?: string
+  name: string
+  type: string
+  value: string
+  required?: boolean
+  placeholder: string
+  minLength: number
+  maxLength: number
+  lable: string
+  error: string
+  readonly?: boolean
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const InputText = ({

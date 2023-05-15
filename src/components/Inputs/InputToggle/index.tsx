@@ -3,9 +3,9 @@ import React from 'react'
 import * as S from './styles'
 
 interface IInputToggleProps {
-  toggleName: string;
-  isChecked: boolean;
-  handleToggleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  toggleName: string
+  isChecked: boolean
+  handleToggleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const InputToggle = ({

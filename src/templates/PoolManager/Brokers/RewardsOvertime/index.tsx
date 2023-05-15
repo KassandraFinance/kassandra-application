@@ -17,23 +17,23 @@ import Loading from '@ui/Loading'
 import * as S from './styles'
 
 type Fees = {
-  type: 'join',
-  period: number,
-  volume_usd: string,
-  volume_broker_usd: string | null,
+  type: 'join'
+  period: number
+  volume_usd: string
+  volume_broker_usd: string | null
   timestamp: number
 }
 
 type VolumesType = {
-  volume_usd: string,
-  swap_pair: string,
+  volume_usd: string
+  swap_pair: string
   timestamp: number
 }
 
 type GetJoinFeesType = {
   manager: {
     pools: {
-      fees: Fees[],
+      fees: Fees[]
       volumes: VolumesType[]
     }[]
   }

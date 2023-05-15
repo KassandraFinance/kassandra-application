@@ -46,13 +46,13 @@ import {
 
 type GetBrokersType = {
   pools: {
-    num_brokers: number,
+    num_brokers: number
 
     brokers: {
-      wallet: string,
-      num_deposits: number,
-      unique_investors: number,
-      deposits_usd: string,
+      wallet: string
+      num_deposits: number
+      unique_investors: number
+      deposits_usd: string
       fees_usd: string
     }[]
   }[]
@@ -117,10 +117,10 @@ const BrokersTable = () => {
     logo: string | null,
     address: string,
     line: {
-      deposits: number,
-      uniqueDeposits: number,
-      amount: string,
-      feeReceived: string,
+      deposits: number
+      uniqueDeposits: number
+      amount: string
+      feeReceived: string
       address: string
     }
   ) {

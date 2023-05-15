@@ -273,7 +273,7 @@ export const NewWeight = styled.td`
 `
 
 interface IIsOpenGraphProps {
-  isOpenGraph: boolean;
+  isOpenGraph: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

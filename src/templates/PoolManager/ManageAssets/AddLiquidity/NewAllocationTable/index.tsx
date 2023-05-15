@@ -14,7 +14,7 @@ import notFound from '../../../../../../public/assets/icons/coming-soon.svg'
 import * as S from './styles'
 
 interface INewAllocationTablePorps {
-  assets?: (AssetType & { newWeight: string })[];
+  assets?: (AssetType & { newWeight: string })[]
 }
 
 const NewAllocationTable = ({ assets }: INewAllocationTablePorps) => {

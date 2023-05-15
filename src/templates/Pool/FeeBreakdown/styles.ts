@@ -100,7 +100,7 @@ export const FeeValue = styled.span`
 `
 
 interface IFeeSmallContainerProps {
-  isCollapsed: boolean;
+  isCollapsed: boolean
 }
 
 // prettier-ignore
@@ -150,7 +150,7 @@ export const FeeValueSmall = styled.span`
 `
 
 interface IOpenBtnProps {
-  isCollapsed: boolean;
+  isCollapsed: boolean
 }
 
 // prettier-ignore

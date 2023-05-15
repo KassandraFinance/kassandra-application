@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import theme from '../../styles/theme'
 
 interface ICardContainerProps {
-  isLink: boolean;
+  isLink: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

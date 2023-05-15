@@ -31,7 +31,7 @@ const PoolImage = () => {
   const [errorMessage, setErrorMessage] = React.useState<string>('')
   const [poolImage, setPoolImage] = React.useState<{
     icon: {
-      image_preview: string,
+      image_preview: string
       image_file: unknown
     }
   }>({

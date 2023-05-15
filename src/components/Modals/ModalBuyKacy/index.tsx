@@ -7,8 +7,8 @@ import Overlay from '../../Overlay'
 import * as S from './styles'
 
 interface IModalBuyKacyProps {
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  modalOpen: boolean
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ModalBuyKacy = ({ modalOpen, setModalOpen }: IModalBuyKacyProps) => {

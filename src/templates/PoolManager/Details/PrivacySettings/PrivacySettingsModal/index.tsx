@@ -21,7 +21,7 @@ import { ToastSuccess } from '@/components/Toastify/toast'
 import * as S from './styles'
 
 interface IPrivacySettingsModal {
-  onClose: () => void;
+  onClose: () => void
 }
 
 const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
@@ -57,7 +57,7 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
     const txReceipt = await waitTransaction(txHash)
 
     if (txReceipt.status) {
-      ToastSuccess("Pool is now public!")
+      ToastSuccess('Pool is now public!')
       onClose()
 
       return true
@@ -77,11 +77,17 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
   async function handleMakePublic(poolControler: string) {
     setIsTransaction(true)
     // eslint-disable-next-line prettier/prettier
-    const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
+    const controller = new web3.eth.Contract(
+      KassandraControlerAbi as unknown as AbiItem,
+      poolControler
+    )
 
-      await controller.methods.setPublicPool().send({
+    await controller.methods.setPublicPool().send(
+      {
         from: userWalletAddress
-      }, callBack)
+      },
+      callBack
+    )
   }
 
   const poolId = Array.isArray(router.query.pool)
@@ -109,22 +115,22 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
           <S.ButtonContainer>
             {poolInfo?.chain_id === chainId ? (
               <>
-              {!isTransaction ?
-                <Button
-                  text="Make it Public"
-                  backgroundSecondary
-                  fullWidth
-                  onClick={() => handleMakePublic(poolInfo.controller)}
-                />
-                :
-                <Button
-                  text='Waiting transaction'
-                  type='button'
-                  backgroundPrimary
-                  disabled
-                  fullWidth
-                />
-              }
+                {!isTransaction ? (
+                  <Button
+                    text="Make it Public"
+                    backgroundSecondary
+                    fullWidth
+                    onClick={() => handleMakePublic(poolInfo.controller)}
+                  />
+                ) : (
+                  <Button
+                    text="Waiting transaction"
+                    type="button"
+                    backgroundPrimary
+                    disabled
+                    fullWidth
+                  />
+                )}
               </>
             ) : (
               <>
@@ -139,7 +145,8 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
                         chainId: networks[poolInfo.chain_id].chainId,
                         chainName: networks[poolInfo.chain_id].chainName,
                         rpcUrls: [networks[poolInfo.chain_id].rpc],
-                        nativeCurrency: networks[poolInfo.chain_id].nativeCurrency
+                        nativeCurrency:
+                          networks[poolInfo.chain_id].nativeCurrency
                       })
                     }
                   />
@@ -147,14 +154,14 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
               </>
             )}
 
-            {!isTransaction &&
-            <Button
-              text="Keep it Private"
-              backgroundBlack
-              fullWidth
-              onClick={onClose}
-            />
-            }
+            {!isTransaction && (
+              <Button
+                text="Keep it Private"
+                backgroundBlack
+                fullWidth
+                onClick={onClose}
+              />
+            )}
           </S.ButtonContainer>
         </S.Content>
       </Modal>
