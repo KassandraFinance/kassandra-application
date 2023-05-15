@@ -102,7 +102,8 @@ const RemoveInvestorModal = ({ onClose, addressesList, setAddressesOfPrivateInve
     const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
 
       await controller.methods.removeAllowedAddresses(investorsList).send({
-        from: userWalletAddress
+        from: userWalletAddress,
+        maxPriorityFeePerGas: 30e9
       }, callBack)
 
       await setAddressesOfPrivateInvestors()
