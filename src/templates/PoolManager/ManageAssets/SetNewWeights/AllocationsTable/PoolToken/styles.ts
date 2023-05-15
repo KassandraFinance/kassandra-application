@@ -83,14 +83,11 @@ export const Line = styled.span`
   `}
 `
 interface IMoreInfoProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
-export const CurrentAmountContainer =
-  styled.td <
-    IMoreInfoProps >
-    `
+export const CurrentAmountContainer = styled.td<IMoreInfoProps>`
   ${({ isOpen }) => css`
     display: flex;
     align-items: center;
@@ -243,7 +240,7 @@ export const ImageContent = styled.span`
 `
 
 interface ILockButtonProps {
-  active: boolean;
+  active: boolean
 }
 
 // prettier-ignore
@@ -292,10 +289,7 @@ export const InputCheckbox = styled.td`
 `
 
 // eslint-disable-next-line prettier/prettier
-export const NewAmount =
-  styled.td <
-    IMoreInfoProps >
-    `
+export const NewAmount = styled.td<IMoreInfoProps>`
   ${({ theme, isOpen }) => css`
     display: flex;
     flex-direction: column;
@@ -337,10 +331,7 @@ export const NewAmount =
 `
 
 // eslint-disable-next-line prettier/prettier
-export const MoreInfoContainer =
-  styled.td <
-    IMoreInfoProps >
-    `
+export const MoreInfoContainer = styled.td<IMoreInfoProps>`
   ${({ theme, isOpen }) => css`
     display: flex;
     align-items: center;

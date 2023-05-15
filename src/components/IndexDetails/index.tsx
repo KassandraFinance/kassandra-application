@@ -5,13 +5,13 @@ import React from 'react'
 import * as S from './styles'
 
 interface ICoinInfoList {
-  symbol: string;
-  image: any;
-  market_data: any;
-  allocation: number;
+  symbol: string
+  image: any
+  market_data: any
+  allocation: number
 }
 interface IIndexDetailsProps {
-  coinInfoList: Array<ICoinInfoList>;
+  coinInfoList: Array<ICoinInfoList>
 }
 
 const IndexDetails = ({ coinInfoList }: IIndexDetailsProps) => {

@@ -10,13 +10,13 @@ import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 import * as S from './styles'
 
 type IPoolDataProps = {
-  logo: string,
-  name: string,
+  logo: string
+  name: string
   chainLogo: string
 }
 interface IAssetsRemovelCardProps {
-  poolInfo: IPoolDataProps;
-  setIsOpenManageAssets: React.Dispatch<React.SetStateAction<boolean>>;
+  poolInfo: IPoolDataProps
+  setIsOpenManageAssets: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const AssetRemovelCard = ({

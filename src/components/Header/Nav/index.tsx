@@ -17,10 +17,10 @@ import kacyIcon from '../../../../public/assets/logos/kacy-96.svg'
 import * as S from './styles'
 
 interface INavProps {
-  isShowMenu: boolean;
-  showOverlay: boolean;
-  setIsShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>;
+  isShowMenu: boolean
+  showOverlay: boolean
+  setIsShowMenu: () => void
+  setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const Nav = ({
@@ -38,7 +38,7 @@ const Nav = ({
   const path = router.asPath.split('/')
 
   function handleClose() {
-    setIsShowMenu(false)
+    setIsShowMenu()
   }
 
   function animationClose() {
@@ -89,7 +89,7 @@ const Nav = ({
             Stake
           </S.MenuLink>
         </Link>
-        {/* <Link href="/manage" passHref>
+        <Link href="/manage" passHref>
           <S.MenuLink
             onClick={() => {
               trackEventFunction('click-on-link', 'manage', 'header')
@@ -98,16 +98,7 @@ const Nav = ({
           >
             Manage
           </S.MenuLink>
-        </Link> */}
-        <S.MenuLink
-          onClick={() => {
-            setIsModalWaitingList(true)
-            trackEventFunction('click-on-link', 'manage', 'header')
-          }}
-          active={router.asPath === '/manage'}
-        >
-          Manage
-        </S.MenuLink>
+        </Link>
         <DropdownMenu
           nameOnHeader="DAO"
           isActive={

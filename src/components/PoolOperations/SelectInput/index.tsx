@@ -10,9 +10,9 @@ import none from '../../../../public/assets/icons/coming-soon.svg'
 import * as S from './styles'
 
 interface ISelectInputProps {
-  poolTokens: ITokenDetails[];
-  setSwapAddress: React.Dispatch<React.SetStateAction<string>>;
-  tokenDetails: ITokenDetails;
+  poolTokens: ITokenDetails[]
+  setSwapAddress: React.Dispatch<React.SetStateAction<string>>
+  tokenDetails: ITokenDetails
 }
 
 const SelectInputDefault = ({

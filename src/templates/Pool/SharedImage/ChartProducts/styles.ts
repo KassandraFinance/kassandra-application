@@ -98,15 +98,12 @@ export const Input = styled.input`
 `
 
 interface ILabelPeriodProps {
-  selectPeriod: boolean;
-  isPrice?: boolean;
+  selectPeriod: boolean
+  isPrice?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
-export const LabelPeriod =
-  styled.label <
-  ILabelPeriodProps >
-  `
+export const LabelPeriod = styled.label<ILabelPeriodProps>`
   background: ${props =>
     props.selectPeriod ? 'transparent' : 'rgba(255, 255, 255, 0.1)'};
 
@@ -143,16 +140,13 @@ export const LabelPeriod =
 `
 
 interface ILabelProps {
-  selected: boolean;
+  selected: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
-export const Label =
-  styled.label <
-  ILabelProps >
-  `
-  border-bottom: 2px solid ${props =>
-    props.selected ? theme.colors.cyan : 'transparent'};
+export const Label = styled.label<ILabelProps>`
+  border-bottom: 2px solid
+    ${props => (props.selected ? theme.colors.cyan : 'transparent')};
   color: #fff;
   font-size: ${theme.font.sizes.font14};
   text-align: center;
@@ -179,14 +173,11 @@ export const Label =
 `
 
 interface IWrapperProps {
-  height: number;
+  height: number
 }
 
 // eslint-disable-next-line prettier/prettier
-export const Wrapper =
-  styled.div <
-  IWrapperProps >
-  `
+export const Wrapper = styled.div<IWrapperProps>`
   background-color: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: 2.5rem;

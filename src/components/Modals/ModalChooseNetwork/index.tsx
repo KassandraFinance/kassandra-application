@@ -12,8 +12,8 @@ import polygon from '../../../../public/assets/logos/polygon.svg'
 import * as S from './styles'
 
 interface IChooseNetworkProps {
-  isOpen: boolean;
-  setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpen: boolean
+  setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ModalChooseNetwork = ({

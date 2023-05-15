@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface IModalAlerText {
-  errorText: string | null;
-  solutionText?: string | null;
+  errorText: string | null
+  solutionText?: string | null
 }
 
 const initialState: IModalAlerText = {

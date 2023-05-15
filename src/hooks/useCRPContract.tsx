@@ -3,27 +3,34 @@
 import React from 'react'
 import BigNumber from 'bn.js'
 
-import { AbiItem } from "web3-utils"
+import { AbiItem } from 'web3-utils'
 
 import web3, { EventSubscribe } from '../utils/web3'
-import ConfigurableRightsPool from "../constants/abi/ConfigurableRightsPool.json"
+import ConfigurableRightsPool from '../constants/abi/ConfigurableRightsPool.json'
 
 import { TransactionCallback } from '../utils/txWait'
 
 interface Events {
-  CapChanged: EventSubscribe;
-  NewTokenCommitted: EventSubscribe;
-  NewStrategy: EventSubscribe;
-  LogCall: EventSubscribe;
-  LogJoin: EventSubscribe;
-  LogExit: EventSubscribe;
+  CapChanged: EventSubscribe
+  NewTokenCommitted: EventSubscribe
+  NewStrategy: EventSubscribe
+  LogCall: EventSubscribe
+  LogJoin: EventSubscribe
+  LogExit: EventSubscribe
 }
 
 const useCRPContract = (address: string) => {
-  const [contract, setContract] = React.useState(new web3.eth.Contract((ConfigurableRightsPool as unknown) as AbiItem, address))
+  const [contract, setContract] = React.useState(
+    new web3.eth.Contract(ConfigurableRightsPool as unknown as AbiItem, address)
+  )
 
   React.useEffect(() => {
-    setContract(new web3.eth.Contract((ConfigurableRightsPool as unknown) as AbiItem, address))
+    setContract(
+      new web3.eth.Contract(
+        ConfigurableRightsPool as unknown as AbiItem,
+        address
+      )
+    )
   }, [address])
 
   return React.useMemo(() => {
@@ -40,10 +47,9 @@ const useCRPContract = (address: string) => {
       walletAddress: string,
       callback: TransactionCallback
     ) => {
-      return contract.methods.joinswapExternAmountIn(tokenIn, tokenAmountIn, minPoolAmountOut).send(
-        { from: walletAddress },
-        callback
-      )
+      return contract.methods
+        .joinswapExternAmountIn(tokenIn, tokenAmountIn, minPoolAmountOut)
+        .send({ from: walletAddress }, callback)
     }
 
     const exitPool = (
@@ -52,10 +58,9 @@ const useCRPContract = (address: string) => {
       walletAddress: string,
       callback: TransactionCallback
     ) => {
-      return contract.methods.exitPool(poolAmountIn, minAmountsOut).send(
-        { from: walletAddress },
-        callback
-      )
+      return contract.methods
+        .exitPool(poolAmountIn, minAmountsOut)
+        .send({ from: walletAddress }, callback)
     }
 
     const exitswapPoolAmountIn = (
@@ -65,10 +70,9 @@ const useCRPContract = (address: string) => {
       walletAddress: string,
       callback: TransactionCallback
     ) => {
-      return contract.methods.exitswapPoolAmountIn(tokenOut, poolAmountIn, minAmountOut).send(
-        { from: walletAddress },
-        callback
-      )
+      return contract.methods
+        .exitswapPoolAmountIn(tokenOut, poolAmountIn, minAmountOut)
+        .send({ from: walletAddress }, callback)
     }
 
     /* CALL */
@@ -79,9 +83,9 @@ const useCRPContract = (address: string) => {
       minPoolAmountOut: BigNumber,
       walletAddress: string
     ) => {
-      return contract.methods.joinswapExternAmountIn(tokenIn, tokenAmountIn, minPoolAmountOut).call(
-        { from: walletAddress }
-      )
+      return contract.methods
+        .joinswapExternAmountIn(tokenIn, tokenAmountIn, minPoolAmountOut)
+        .call({ from: walletAddress })
     }
 
     const tryExitPool = (
@@ -89,9 +93,9 @@ const useCRPContract = (address: string) => {
       minAmountsOut: Array<BigNumber>,
       walletAddress: string
     ) => {
-      return contract.methods.exitPool(poolAmountIn, minAmountsOut).call(
-        { from: walletAddress }
-      )
+      return contract.methods
+        .exitPool(poolAmountIn, minAmountsOut)
+        .call({ from: walletAddress })
     }
 
     const tryExitswapPoolAmountIn = (
@@ -100,9 +104,9 @@ const useCRPContract = (address: string) => {
       minAmountOut: BigNumber,
       walletAddress: string
     ) => {
-      return contract.methods.exitswapPoolAmountIn(tokenOut, poolAmountIn, minAmountOut).call(
-        { from: walletAddress }
-      )
+      return contract.methods
+        .exitswapPoolAmountIn(tokenOut, poolAmountIn, minAmountOut)
+        .call({ from: walletAddress })
     }
 
     return {
@@ -114,7 +118,7 @@ const useCRPContract = (address: string) => {
 
       tryJoinswapExternAmountIn,
       tryExitPool,
-      tryExitswapPoolAmountIn,
+      tryExitswapPoolAmountIn
     }
   }, [contract])
 }

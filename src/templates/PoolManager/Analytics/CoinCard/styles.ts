@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface ICoinCardProps {
-  isShowMore: boolean;
+  isShowMore: boolean
 }
 
 // prettier-ignore
@@ -27,7 +27,7 @@ export const CoinCard = styled.article<ICoinCardProps>`
 `
 
 interface ICoinCardFrontProps {
-  isShowMore: boolean;
+  isShowMore: boolean
 }
 
 // prettier-ignore
@@ -190,7 +190,7 @@ export const Change = styled.span`
 `
 
 interface IShowMoreProps {
-  isShowMore: boolean;
+  isShowMore: boolean
 }
 
 // prettier-ignore
@@ -285,7 +285,7 @@ export const InfoValueWrapper = styled.span`
 `
 
 interface IInfoValueProps {
-  value?: number;
+  value?: number
 }
 
 // prettier-ignore
@@ -308,7 +308,7 @@ export const InfoValue = styled.span<IInfoValueProps>`
 `
 
 interface ICoinCardBackProps {
-  isShowMore: boolean;
+  isShowMore: boolean
 }
 
 // prettier-ignore

@@ -6,10 +6,10 @@ import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
 import * as S from './styles'
 
 interface IModalProps {
-  title: string;
-  titleIcon?: JSX.Element | null;
-  children: ReactNode;
-  onCloseModal: () => void;
+  title: string
+  titleIcon?: JSX.Element | null
+  children: ReactNode
+  onCloseModal: () => void
 }
 
 const Modal = ({

@@ -1,86 +1,86 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface TokenInfo {
-  id: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  is_wrap_token: number;
-  logo?: string;
-  price_usd: string;
+  id: string
+  name: string
+  symbol: string
+  decimals: number
+  is_wrap_token: number
+  logo?: string
+  price_usd: string
   wraps: {
-    id: string,
-    symbol: string,
-    name: string,
-    decimals: number,
-    price_usd: string,
+    id: string
+    symbol: string
+    name: string
+    decimals: number
+    price_usd: string
     logo?: string
-  };
+  }
 }
 
 export interface ChainInfo {
-  id: number;
-  logo?: string;
-  chainName: string;
-  nativeTokenName: string;
-  nativeTokenSymbol: string;
-  nativeTokenDecimals: number;
-  rpcUrls: [string];
-  blockExplorerUrl: string;
-  secondsPerBlock: number;
-  addressWrapped: string;
+  id: number
+  logo?: string
+  chainName: string
+  nativeTokenName: string
+  nativeTokenSymbol: string
+  nativeTokenDecimals: number
+  rpcUrls: [string]
+  blockExplorerUrl: string
+  secondsPerBlock: number
+  addressWrapped: string
 }
 
 export interface WeightsV2 {
-  start_timestamp: number;
-  end_timestamp: number;
+  start_timestamp: number
+  end_timestamp: number
   weights: {
-    weight_normalized: string,
+    weight_normalized: string
     asset: {
       token: {
         id: string
       }
     }
-  }[];
+  }[]
 }
 
 export interface underlyingAssetsInfo {
-  balance: string;
-  weight_goal_normalized: string;
-  weight_normalized: string;
-  token: TokenInfo;
+  balance: string
+  weight_goal_normalized: string
+  weight_normalized: string
+  token: TokenInfo
 }
 
 export interface Partners {
-  logo: string;
-  url: string;
+  logo: string
+  url: string
 }
 export interface IPoolSlice {
-  id: string;
-  address: string;
-  vault: string;
-  vault_id: string;
-  controller: string;
-  chain_id: number;
-  is_private_pool: boolean;
+  id: string
+  address: string
+  vault: string
+  vault_id: string
+  controller: string
+  chain_id: number
+  is_private_pool: boolean
   manager: {
     id: string
-  };
-  chain: ChainInfo;
-  name: string;
-  symbol: string;
-  strategy: string;
-  logo: string;
-  pool_version: number;
-  poolId?: number;
-  url: string;
-  summary?: string;
-  addresses: string[];
-  total_value_locked_usd?: string;
-  partners?: Partners[];
-  underlying_assets_addresses: string[];
-  underlying_assets: underlyingAssetsInfo[];
-  weight_goals: WeightsV2[];
+  }
+  chain: ChainInfo
+  name: string
+  symbol: string
+  strategy: string
+  logo: string
+  pool_version: number
+  poolId?: number
+  url: string
+  summary?: string
+  addresses: string[]
+  total_value_locked_usd?: string
+  partners?: Partners[]
+  underlying_assets_addresses: string[]
+  underlying_assets: underlyingAssetsInfo[]
+  weight_goals: WeightsV2[]
 }
 
 const initialState: IPoolSlice = {

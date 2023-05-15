@@ -13,8 +13,8 @@ import { BNtoDecimal } from '../../../../../utils/numerals'
 import * as S from './styles'
 
 interface IListOfAllAssetProps {
-  amountAllTokenOut: any;
-  balanceAllTokenOut: any;
+  amountAllTokenOut: any
+  balanceAllTokenOut: any
 }
 const ListOfAllAsset = ({
   amountAllTokenOut,

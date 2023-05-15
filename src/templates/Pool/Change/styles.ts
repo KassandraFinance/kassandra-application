@@ -43,14 +43,11 @@ export const Change = styled.div`
 `
 
 interface ITdProps {
-  value: number;
+  value: number
 }
 
 // eslint-disable-next-line prettier/prettier
-export const Td =
-  styled.td <
-  ITdProps >
-  `
+export const Td = styled.td<ITdProps>`
   color: ${props => (props.value > 0 ? theme.colors.green : theme.colors.red)};
   color: ${props =>
     (props.value === 0 || isNaN(props.value)) && theme.colors.snow};

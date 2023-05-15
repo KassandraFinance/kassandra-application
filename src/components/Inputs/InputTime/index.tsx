@@ -3,13 +3,13 @@ import React from 'react'
 import * as S from './styles'
 
 interface IInputTimeProps {
-  form?: string;
-  name: string;
-  min?: number;
-  max?: number;
-  step?: number;
-  InputTimeValue?: number;
-  handleInputTime: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  form?: string
+  name: string
+  min?: number
+  max?: number
+  step?: number
+  InputTimeValue?: number
+  handleInputTime: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const InputTime = ({

@@ -6,7 +6,7 @@ import none from '../../../../public/assets/icons/coming-soon.svg'
 import * as S from './styles'
 
 interface TokenIconsProps {
-  poolInfo: any[];
+  poolInfo: any[]
 }
 
 // const addressChanger: { [key: string]: string } = {

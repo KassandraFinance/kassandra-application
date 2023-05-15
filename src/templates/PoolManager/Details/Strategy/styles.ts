@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { Title } from '@/components/TitleSection/styles'
 
 export const Strategy = styled.div`
   ${() => css``}
@@ -27,10 +28,17 @@ export const TitleWrapper = styled.div`
   ${() => css`
     display: flex;
     gap: 0.8rem;
+    align-items: center;
 
     margin-block: 2.4rem;
     padding-bottom: 1.2rem;
     border-bottom: 0.1rem solid rgb(255 255 255 / 0.1);
+
+    @media (max-width: 768px) {
+      ${Title} {
+        height: 2.4rem;
+      }
+    }
   `}
 `
 

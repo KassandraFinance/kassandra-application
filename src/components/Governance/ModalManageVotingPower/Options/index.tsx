@@ -11,12 +11,12 @@ import logo from '../../../../../public/assets/logos/kacy-64.svg'
 import * as S from '../styles'
 
 interface IOptionsProps {
-  optionsOpen: boolean;
-  setOptionsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data: any;
-  delegateSelected: IDateProps;
-  setDelegateSelected: React.Dispatch<React.SetStateAction<IDateProps>>;
-  undelegate?: boolean;
+  optionsOpen: boolean
+  setOptionsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  data: any
+  delegateSelected: IDateProps
+  setDelegateSelected: React.Dispatch<React.SetStateAction<IDateProps>>
+  undelegate?: boolean
 }
 
 const Options = ({

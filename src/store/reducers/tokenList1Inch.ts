@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface ITokenList1InchProps {
-  symbol: string;
-  name: string;
-  address: string;
-  decimals: number;
-  logoURI: string;
-  tags: string[];
+  symbol: string
+  name: string
+  address: string
+  decimals: number
+  logoURI: string
+  tags: string[]
 }
 
 const initialState: ITokenList1InchProps[] = [

@@ -172,7 +172,7 @@ export const SecondaryText = styled.span`
 `
 
 interface IShadowProps {
-  inView: boolean;
+  inView: boolean
 }
 
 // prettier-ignore

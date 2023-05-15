@@ -6,7 +6,7 @@ import token96 from '../../../public/assets/logos/kacy-96.svg'
 import * as S from './styles'
 
 interface ILoadingProps {
-  marginTop: number;
+  marginTop: number
 }
 
 const Loading = ({ marginTop }: ILoadingProps) => (

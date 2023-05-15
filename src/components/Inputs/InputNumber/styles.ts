@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components'
 
 interface IValidateInputValueProps {
-  value: number;
-  max: number;
-  min: number;
+  value: number
+  max: number
+  min: number
 }
 
 // prettier-ignore
@@ -32,7 +32,7 @@ export const WrapperInputNumber = styled.div<IValidateInputValueProps>`
 `
 
 interface ILabelProps {
-  value: string;
+  value: string
 }
 
 // prettier-ignore

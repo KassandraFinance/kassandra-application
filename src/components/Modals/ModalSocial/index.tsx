@@ -12,8 +12,8 @@ import {
 } from './styles'
 
 interface IModalSocialProps {
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  modalOpen: boolean
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ModalSocial = ({ modalOpen, setModalOpen }: IModalSocialProps) => {

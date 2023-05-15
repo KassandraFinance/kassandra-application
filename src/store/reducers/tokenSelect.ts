@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface ITokenSelectProps {
-  symbol: string;
-  name: string;
-  address: string;
-  decimals: number;
-  logoURI: string;
+  symbol: string
+  name: string
+  address: string
+  decimals: number
+  logoURI: string
 }
 
 const initialState = {

@@ -18,9 +18,9 @@ import tooltip from '../../../public/assets/utilities/tooltip.svg'
 import * as S from './styles'
 
 interface IVotingPowerProps {
-  userWalletAddress: string;
-  yourVotingPowerInProposal?: BigNumber;
-  isMobile?: boolean;
+  userWalletAddress: string
+  yourVotingPowerInProposal?: BigNumber
+  isMobile?: boolean
 }
 
 const VotingPower = ({

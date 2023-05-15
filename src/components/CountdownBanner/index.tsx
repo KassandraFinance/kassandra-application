@@ -7,10 +7,10 @@ import { useCountdown } from '@/hooks/useCountDown'
 import * as S from './styles'
 
 interface ICountdownCallbackParams {
-  days: string;
-  hours: string;
-  minutes: string;
-  seconds: string;
+  days: string
+  hours: string
+  minutes: string
+  seconds: string
 }
 
 const CountdownBanner = () => {

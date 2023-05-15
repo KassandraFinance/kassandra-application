@@ -45,24 +45,24 @@ import {
 
 type GetInvestorsType = {
   pools: {
-    id: string,
-    price_usd: string,
-    supply: string,
-    unique_investors: number,
+    id: string
+    price_usd: string
+    supply: string
+    unique_investors: number
     investors: {
-      id: string,
-      wallet: string,
-      first_deposit_timestamp: number,
-      last_deposit_timestamp: number,
+      id: string
+      wallet: string
+      first_deposit_timestamp: number
+      last_deposit_timestamp: number
       amount: string
     }[]
   }[]
 }
 
 interface IInvestorsTable {
-  skip: number;
-  take: number;
-  setTotalItems: Dispatch<SetStateAction<number>>;
+  skip: number
+  take: number
+  setTotalItems: Dispatch<SetStateAction<number>>
 }
 
 const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
@@ -113,11 +113,11 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
     logo: string | null,
     address: string,
     line: {
-      firstDeposit: string,
-      lastDeposit: string,
-      totalInvested: string,
-      investorShare: string,
-      percentage: string,
+      firstDeposit: string
+      lastDeposit: string
+      totalInvested: string
+      investorShare: string
+      percentage: string
       address: string
     }
   ) {

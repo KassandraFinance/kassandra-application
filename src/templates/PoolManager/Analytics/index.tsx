@@ -66,7 +66,7 @@ const changeList = [
 ]
 
 interface IAnalyticsProps {
-  poolId: string;
+  poolId: string
 }
 
 type Result = {

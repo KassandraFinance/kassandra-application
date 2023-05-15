@@ -57,8 +57,8 @@ export const TBody = styled.div`
 `
 
 interface ICommunityPoolsTBodyProps {
-  tableRowsNumber: number;
-  lineHeight: number;
+  tableRowsNumber: number
+  lineHeight: number
 }
 // eslint-disable-next-line prettier/prettier
 export const TBodyWithHeight = styled(TBody)<ICommunityPoolsTBodyProps>`
@@ -161,7 +161,7 @@ export const PoolInfoContainer = styled.div`
 `
 
 interface ITHProps {
-  isView?: boolean;
+  isView?: boolean
 }
 
 // prettier-ignore
@@ -194,7 +194,7 @@ export const TH = styled.div<ITHProps>`
 `
 
 interface ITDProps {
-  isView?: boolean;
+  isView?: boolean
 }
 
 // prettier-ignore
@@ -227,7 +227,7 @@ export const TD = styled.div<ITDProps>`
 `
 
 interface IColumnTitleProps {
-  align?: 'right' | 'left' | 'center';
+  align?: 'right' | 'left' | 'center'
 }
 
 // prettier-ignore
@@ -252,7 +252,7 @@ export const ColumnTitle = styled.div<IColumnTitleProps>`
 `
 
 interface ITvlButtonSortingProps {
-  isRotateArrow: boolean;
+  isRotateArrow: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -286,11 +286,10 @@ export const THButtonSorting = styled(ColumnTitle)<ITvlButtonSortingProps>`
         transform: rotate(180deg);
       }
     `}
-
 `
 interface IValueProps {
-  value?: number;
-  align?: 'right' | 'left' | 'center';
+  value?: number
+  align?: 'right' | 'left' | 'center'
 }
 
 // prettier-ignore
@@ -422,7 +421,7 @@ export const CoinImageContainer = styled.div`
 `
 
 interface ICoinImageWrapperProps {
-  position: number;
+  position: number
 }
 
 // prettier-ignore

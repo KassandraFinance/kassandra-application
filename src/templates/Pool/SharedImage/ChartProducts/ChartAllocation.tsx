@@ -14,8 +14,8 @@ import CustomizedAxisTick from './CustomizedAxisTick'
 import { dictionary } from './styles'
 
 interface IChartAllocationProps {
-  data: any[];
-  height?: number;
+  data: any[]
+  height?: number
 }
 
 const ChartAllocation = ({ data, height = 360 }: IChartAllocationProps) => {
@@ -27,7 +27,7 @@ const ChartAllocation = ({ data, height = 360 }: IChartAllocationProps) => {
       const res = data.map((item: any) => {
         const weight = item.weights.map(
           (weight: {
-            token: { symbol: string },
+            token: { symbol: string }
             weight_normalized: string
           }) => {
             return {

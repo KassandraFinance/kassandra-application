@@ -21,7 +21,10 @@ import web3 from '../../../utils/web3'
 import { priceDollar } from '../../../utils/priceDollar'
 import { BNtoDecimal, wei } from '../../../utils/numerals'
 import changeChain, { ChainDetails } from '../../../utils/changeChain'
-import waitTransaction, { MetamaskError, TransactionCallback } from '../../../utils/txWait'
+import waitTransaction, {
+  MetamaskError,
+  TransactionCallback
+} from '../../../utils/txWait'
 
 import Button from '../../Button'
 
@@ -43,7 +46,7 @@ const invertToken: { [key: string]: string } = {
   '0xd586e7f844cea2f87f50152665bcbc2c279d8d70':
     '0xFA17fb53da4c837594127b73fFd09fdb15f42C49', //DAI
   '0x50b7545627a5162f82a992c33b87adc75187b218':
-    '0xbbcED92AC9B958F88A501725f080c0360007e858',  //WBTC
+    '0xbbcED92AC9B958F88A501725f080c0360007e858', //WBTC
   '0x60781C2586D68229fde47564546784ab3fACA982':
     '0x19707F26050Dfe7eb3C1b36E49276A088cE98752', // PNG
   '0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5':
@@ -70,14 +73,14 @@ const invertToken: { [key: string]: string } = {
 }
 
 interface IFormProps {
-  typeAction: string;
-  title: Titles;
-  typeWithdrawChecked: string;
-  poolChain: ChainDetails;
-  poolSymbol: string;
-  crpPoolAddress: string;
-  corePoolAddress: string;
-  productCategories: string[];
+  typeAction: string
+  title: Titles
+  typeWithdrawChecked: string
+  poolChain: ChainDetails
+  poolSymbol: string
+  crpPoolAddress: string
+  corePoolAddress: string
+  productCategories: string[]
   setIsModaWallet: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -85,7 +88,7 @@ enum Approval {
   Denied,
   Approved,
   WaitingTransaction,
-  Syncing,
+  Syncing
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -130,9 +133,12 @@ const Form = ({
 
   const [swapOutAddress, setSwapOutAddress] = React.useState('')
   const [swapOutAmount, setSwapOutAmount] = React.useState([new BigNumber(0)])
-  const [swapOutBalance, setSwapOutBalance] = React.useState([new BigNumber(-1)])
+  const [swapOutBalance, setSwapOutBalance] = React.useState([
+    new BigNumber(-1)
+  ])
 
-  const [priceInDollarOnWithdraw, setPriceInDollarOnWithdraw] = React.useState<string>('')
+  const [priceInDollarOnWithdraw, setPriceInDollarOnWithdraw] =
+    React.useState<string>('')
 
   const [priceImpact, setPriceImpact] = React.useState<Big>(Big(0))
 
@@ -144,16 +150,20 @@ const Form = ({
 
   const dispatch = useAppDispatch()
 
-  const { chainId, fees, tokenAddress2Index, userWalletAddress } = useAppSelector(state => state)
+  const { chainId, fees, tokenAddress2Index, userWalletAddress } =
+    useAppSelector(state => state)
 
   const { poolTokens: poolTokensArray } = usePoolTokens()
 
-  const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce();
+  const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
 
   const proxy = useProxy(ProxyContract, crpPoolAddress, corePoolAddress)
   const crpPoolToken = useERC20Contract(crpPoolAddress)
   const corePool = usePoolContract(corePoolAddress)
-  const { convertBalanceYRTtoWrap, convertBalanceWrappedToYRT: convertBalanceWrappedYRT } = useYieldYak()
+  const {
+    convertBalanceYRTtoWrap,
+    convertBalanceWrappedToYRT: convertBalanceWrappedYRT
+  } = useYieldYak()
 
   function clearInput() {
     setSwapInAmount(new BigNumber(0))
@@ -165,7 +175,9 @@ const Form = ({
   }
 
   // calculate invest with output
-  async function calculateInvestAmountIn(investAmoutOut: BigNumber): Promise<void> {
+  async function calculateInvestAmountIn(
+    investAmoutOut: BigNumber
+  ): Promise<void> {
     setErrorMsg('')
     try {
       const [
@@ -176,7 +188,9 @@ const Form = ({
         poolSwapFee
       ] = await Promise.all([
         corePool.balance(invertToken[swapInAddress] ?? swapInAddress),
-        corePool.denormalizedWeight(invertToken[swapInAddress] ?? swapInAddress),
+        corePool.denormalizedWeight(
+          invertToken[swapInAddress] ?? swapInAddress
+        ),
         crpPoolToken.totalSupply(),
         corePool.totalDenormalizedWeight(),
         corePool.swapFee()
@@ -202,7 +216,10 @@ const Form = ({
       } catch (error: any) {
         let investAmoutOutCalc: BigNumber = investAmoutOut
         if (invertToken[swapOutAddress]) {
-          investAmoutOutCalc = await convertBalanceWrappedYRT(investAmoutOut, invertToken[swapOutAddress])
+          investAmoutOutCalc = await convertBalanceWrappedYRT(
+            investAmoutOut,
+            invertToken[swapOutAddress]
+          )
         }
         const newAmountInvestIn = await corePool.calcSingleInGivenPoolOut(
           swapInTotalPoolBalance,
@@ -214,7 +231,10 @@ const Form = ({
         )
         let investAmoutInNormalized: BigNumber = newAmountInvestIn
         if (invertToken[swapInAddress]) {
-          investAmoutInNormalized = await convertBalanceYRTtoWrap(newAmountInvestIn, invertToken[swapInAddress])
+          investAmoutInNormalized = await convertBalanceYRTtoWrap(
+            newAmountInvestIn,
+            invertToken[swapInAddress]
+          )
         }
         if (inputTokenRef.current && newAmountInvestIn) {
           inputTokenRef.current.value = BNtoDecimal(
@@ -234,19 +254,24 @@ const Form = ({
           }
 
           if (errorStr.search('ERR_MAX_IN_RATIO') > -1) {
-            setErrorMsg("The amount can't be more than half of what's in the pool!")
+            setErrorMsg(
+              "The amount can't be more than half of what's in the pool!"
+            )
             return
           }
 
-          if (investAmoutInNormalized.gt(swapInBalance) && Number(investAmoutInNormalized.toString()) > 0) {
+          if (
+            investAmoutInNormalized.gt(swapInBalance) &&
+            Number(investAmoutInNormalized.toString()) > 0
+          ) {
             setErrorMsg('This amount exceeds your balance!')
-            return;
+            return
           }
         }
       }
 
-      let newSwapOutPrice;
-      let pow = new BigNumber(0);
+      let newSwapOutPrice
+      let pow = new BigNumber(0)
       while (!newSwapOutPrice) {
         try {
           const multiplier = new BigNumber(10).pow(pow)
@@ -260,7 +285,7 @@ const Form = ({
           )
           newSwapOutPrice = newSwapOutPrice.mul(multiplier)
         } catch (e) {
-          pow = pow.add(new BigNumber(1));
+          pow = pow.add(new BigNumber(1))
         }
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -268,16 +293,22 @@ const Form = ({
       const errorStr = error.toString()
       if (userWalletAddress.length > 0) {
         if (errorStr.search('ERR_BPOW_BASE_TOO_HIGH') > -1) {
-          ToastWarning("The amount can't be more than half of what's in the pool!")
+          ToastWarning(
+            "The amount can't be more than half of what's in the pool!"
+          )
           return
         }
-        ToastWarning('Could not connect with the blockchain to calculate prices.')
+        ToastWarning(
+          'Could not connect with the blockchain to calculate prices.'
+        )
       }
     }
   }
 
   // calculate swap with output
-  async function calculateSwapAmountIn(swapAmountOut: BigNumber): Promise<void> {
+  async function calculateSwapAmountIn(
+    swapAmountOut: BigNumber
+  ): Promise<void> {
     setErrorMsg('')
     try {
       const [
@@ -289,13 +320,20 @@ const Form = ({
       ] = await Promise.all([
         corePool.balance(invertToken[swapInAddress] ?? swapInAddress),
         corePool.balance(invertToken[swapOutAddress] ?? swapOutAddress),
-        corePool.denormalizedWeight(invertToken[swapInAddress] ?? swapInAddress),
-        corePool.denormalizedWeight(invertToken[swapOutAddress] ?? swapOutAddress),
+        corePool.denormalizedWeight(
+          invertToken[swapInAddress] ?? swapInAddress
+        ),
+        corePool.denormalizedWeight(
+          invertToken[swapOutAddress] ?? swapOutAddress
+        ),
         corePool.swapFee()
       ])
       let swapAmoutOutCalc: BigNumber = swapAmountOut
       if (invertToken[swapOutAddress]) {
-        swapAmoutOutCalc = await convertBalanceWrappedYRT(swapAmountOut, invertToken[swapOutAddress])
+        swapAmoutOutCalc = await convertBalanceWrappedYRT(
+          swapAmountOut,
+          invertToken[swapOutAddress]
+        )
       }
       const [newSwapInAmount] = await Promise.all([
         corePool.calcInGivenOut(
@@ -307,14 +345,23 @@ const Form = ({
           poolSwapFee
         )
       ])
-      const exchangeRateIn = await proxy.exchangeRate(corePoolAddress, invertToken[swapInAddress] ?? swapInAddress)
-      const exchangeRateOut = await proxy.exchangeRate(corePoolAddress, invertToken[swapOutAddress] ?? swapOutAddress)
+      const exchangeRateIn = await proxy.exchangeRate(
+        corePoolAddress,
+        invertToken[swapInAddress] ?? swapInAddress
+      )
+      const exchangeRateOut = await proxy.exchangeRate(
+        corePoolAddress,
+        invertToken[swapOutAddress] ?? swapOutAddress
+      )
 
       const swapIn = newSwapInAmount.mul(exchangeRateOut).div(exchangeRateIn)
       let swapAmoutInNormalized: BigNumber = swapIn
 
       if (invertToken[swapInAddress]) {
-        swapAmoutInNormalized = await convertBalanceYRTtoWrap(swapIn, invertToken[swapInAddress])
+        swapAmoutInNormalized = await convertBalanceYRTtoWrap(
+          swapIn,
+          invertToken[swapInAddress]
+        )
       }
       if (inputTokenRef.current && swapIn) {
         inputTokenRef.current.value = BNtoDecimal(
@@ -326,8 +373,16 @@ const Form = ({
         setPriceImpact(Big(0))
       }
       try {
-        if (userWalletAddress.length > 0 && swapAmoutInNormalized.gt(new BigNumber(0))) {
-          await proxy.trySwapExactAmountIn(swapInAddress, swapAmoutInNormalized, swapOutAddress, userWalletAddress)
+        if (
+          userWalletAddress.length > 0 &&
+          swapAmoutInNormalized.gt(new BigNumber(0))
+        ) {
+          await proxy.trySwapExactAmountIn(
+            swapInAddress,
+            swapAmoutInNormalized,
+            swapOutAddress,
+            userWalletAddress
+          )
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
@@ -339,7 +394,9 @@ const Form = ({
         }
 
         if (errorStr.search('ERR_MAX_IN_RATIO') > -1) {
-          setErrorMsg("The amount can't be more than half of what's in the pool!")
+          setErrorMsg(
+            "The amount can't be more than half of what's in the pool!"
+          )
           return
         }
 
@@ -350,7 +407,7 @@ const Form = ({
 
         if (swapAmoutInNormalized.gt(swapInBalance)) {
           setErrorMsg('This amount exceeds your balance!')
-          return;
+          return
         }
       }
     } catch (error) {
@@ -371,7 +428,10 @@ const Form = ({
         break
       case 'Withdraw':
         newSwapInAddress = crpPoolAddress
-        newSwapOutAddress = typeWithdrawChecked === 'Single_asset' ? poolTokensArray[0].address : ''
+        newSwapOutAddress =
+          typeWithdrawChecked === 'Single_asset'
+            ? poolTokensArray[0].address
+            : ''
         break
       case 'Swap':
         newSwapInAddress = poolTokensArray[0]?.address || ''
@@ -410,9 +470,11 @@ const Form = ({
 
       const results = await Promise.all(newApprovals)
 
-      setApprovals((old) => ({
+      setApprovals(old => ({
         ...old,
-        [title]: results.map((item) => item ? Approval.Approved : Approval.Denied)
+        [title]: results.map(item =>
+          item ? Approval.Approved : Approval.Denied
+        )
       }))
     }
 
@@ -426,13 +488,19 @@ const Form = ({
 
   // get balance of swap in token
   React.useEffect(() => {
-    if (swapInAddress.length === 0 || userWalletAddress.length === 0 || chainId.toString().length === 0 || chainId !== poolChain.chainId) {
+    if (
+      swapInAddress.length === 0 ||
+      userWalletAddress.length === 0 ||
+      chainId.toString().length === 0 ||
+      chainId !== poolChain.chainId
+    ) {
       return
     }
 
     // setSwapInBalance(new BigNumber(-1))
     if (swapInAddress === poolChain.wrapped) {
-      web3.eth.getBalance(userWalletAddress)
+      web3.eth
+        .getBalance(userWalletAddress)
         .then(newBalance => setSwapInBalance(new BigNumber(newBalance)))
 
       return
@@ -442,11 +510,22 @@ const Form = ({
     token
       .balance(userWalletAddress)
       .then(newBalance => setSwapInBalance(newBalance))
-  }, [chainId, newTitle, swapInAddress, userWalletAddress, poolTokensArray, swapOutAddress])
+  }, [
+    chainId,
+    newTitle,
+    swapInAddress,
+    userWalletAddress,
+    poolTokensArray,
+    swapOutAddress
+  ])
 
   // get balance of swap out token
   React.useEffect(() => {
-    if (userWalletAddress.length === 0 || chainId.toString().length === 0 || chainId !== poolChain.chainId) {
+    if (
+      userWalletAddress.length === 0 ||
+      chainId.toString().length === 0 ||
+      chainId !== poolChain.chainId
+    ) {
       return
     }
 
@@ -479,7 +558,8 @@ const Form = ({
     const token = ERC20(swapOutAddress)
 
     if (swapOutAddress === poolChain.wrapped) {
-      web3.eth.getBalance(userWalletAddress)
+      web3.eth
+        .getBalance(userWalletAddress)
         .then(newBalance => setSwapOutBalance([new BigNumber(newBalance)]))
       return
     }
@@ -487,7 +567,13 @@ const Form = ({
     token
       .balance(userWalletAddress)
       .then(newBalance => setSwapOutBalance([newBalance]))
-  }, [chainId, userWalletAddress, poolTokensArray, swapInAddress, swapOutAddress])
+  }, [
+    chainId,
+    userWalletAddress,
+    poolTokensArray,
+    swapInAddress,
+    swapOutAddress
+  ])
 
   React.useEffect(() => {
     const tokens = title === 'Withdraw' ? poolTokensArray.length : 1
@@ -498,9 +584,16 @@ const Form = ({
     if (title === 'Withdraw') return
 
     const avax = poolTokensArray.find(token => token.address === swapInAddress)
-    const balanceMinusFee = swapInBalance.sub(new BigNumber(Number(gasFee.feeNumber)))
+    const balanceMinusFee = swapInBalance.sub(
+      new BigNumber(Number(gasFee.feeNumber))
+    )
 
-    if (avax?.symbol === "AVAX" && swapInAmount.gt(new BigNumber(0)) && swapInAmount.lte(swapInBalance) && swapInAmount.gte(balanceMinusFee)) {
+    if (
+      avax?.symbol === 'AVAX' &&
+      swapInAmount.gt(new BigNumber(0)) &&
+      swapInAmount.lte(swapInBalance) &&
+      swapInAmount.gte(balanceMinusFee)
+    ) {
       setGasFee({ ...gasFee, error: true })
       return
     }
@@ -529,7 +622,6 @@ const Form = ({
       //   userWalletAddress,
       //   swapInAddress,
       //   new BigNumber('0'))
-
       // if (response) {
       //   setGasFee(prevState => ({ ...prevState, feeString: response.feeString, feeNumber: response.feeNumber }))
       // }
@@ -545,7 +637,9 @@ const Form = ({
           poolSwapFee
         ] = await Promise.all([
           corePool.balance(invertToken[swapInAddress] ?? swapInAddress),
-          corePool.denormalizedWeight(invertToken[swapInAddress] ?? swapInAddress),
+          corePool.denormalizedWeight(
+            invertToken[swapInAddress] ?? swapInAddress
+          ),
           crpPoolToken.totalSupply(),
           corePool.totalDenormalizedWeight(),
           corePool.swapFee()
@@ -567,7 +661,10 @@ const Form = ({
         } catch (error: any) {
           let investAmoutInCalc: BigNumber = swapInAmount
           if (invertToken[swapInAddress]) {
-            investAmoutInCalc = await convertBalanceWrappedYRT(swapInAmount, invertToken[swapInAddress])
+            investAmoutInCalc = await convertBalanceWrappedYRT(
+              swapInAmount,
+              invertToken[swapInAddress]
+            )
           }
           const newSwapOutPrice = await corePool.calcPoolOutGivenSingleIn(
             swapInTotalPoolBalance,
@@ -579,7 +676,10 @@ const Form = ({
           )
           let investAmoutOutNormalized: BigNumber = newSwapOutPrice
           if (invertToken[swapOutAddress]) {
-            investAmoutOutNormalized = await convertBalanceYRTtoWrap(newSwapOutPrice, invertToken[swapOutAddress])
+            investAmoutOutNormalized = await convertBalanceYRTtoWrap(
+              newSwapOutPrice,
+              invertToken[swapOutAddress]
+            )
           }
           setSwapOutAmount([investAmoutOutNormalized])
 
@@ -592,19 +692,24 @@ const Form = ({
             }
 
             if (errorStr.search('ERR_MAX_IN_RATIO') > -1) {
-              setErrorMsg("The amount can't be more than half of what's in the pool!")
+              setErrorMsg(
+                "The amount can't be more than half of what's in the pool!"
+              )
               return
             }
 
-            if (swapInAmount.gt(swapInBalance) && Number(swapInAmount.toString()) > 0) {
+            if (
+              swapInAmount.gt(swapInBalance) &&
+              Number(swapInAmount.toString()) > 0
+            ) {
               setErrorMsg('This amount exceeds your balance!')
-              return;
+              return
             }
           }
         }
 
-        let newSwapOutPrice;
-        let pow = new BigNumber(0);
+        let newSwapOutPrice
+        let pow = new BigNumber(0)
 
         while (!newSwapOutPrice) {
           try {
@@ -619,7 +724,7 @@ const Form = ({
             )
             newSwapOutPrice = newSwapOutPrice.mul(multiplier)
           } catch (e) {
-            pow = pow.add(new BigNumber(1));
+            pow = pow.add(new BigNumber(1))
           }
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -627,10 +732,14 @@ const Form = ({
         const errorStr = error.toString()
         if (userWalletAddress.length > 0) {
           if (errorStr.search('ERR_BPOW_BASE_TOO_HIGH') > -1) {
-            ToastWarning("The amount can't be more than half of what's in the pool!")
+            ToastWarning(
+              "The amount can't be more than half of what's in the pool!"
+            )
             return
           }
-          ToastWarning('Could not connect with the blockchain to calculate prices.')
+          ToastWarning(
+            'Could not connect with the blockchain to calculate prices.'
+          )
         }
       }
     }
@@ -668,13 +777,20 @@ const Form = ({
         ] = await Promise.all([
           corePool.balance(invertToken[swapInAddress] ?? swapInAddress),
           corePool.balance(invertToken[swapOutAddress] ?? swapOutAddress),
-          corePool.denormalizedWeight(invertToken[swapInAddress] ?? swapInAddress),
-          corePool.denormalizedWeight(invertToken[swapOutAddress] ?? swapOutAddress),
+          corePool.denormalizedWeight(
+            invertToken[swapInAddress] ?? swapInAddress
+          ),
+          corePool.denormalizedWeight(
+            invertToken[swapOutAddress] ?? swapOutAddress
+          ),
           corePool.swapFee()
         ])
         let swapAmoutInCalc: BigNumber = swapInAmount
         if (invertToken[swapInAddress]) {
-          swapAmoutInCalc = await convertBalanceWrappedYRT(swapInAmount, invertToken[swapInAddress])
+          swapAmoutInCalc = await convertBalanceWrappedYRT(
+            swapInAmount,
+            invertToken[swapInAddress]
+          )
         }
         const [newSwapOutAmount] = await Promise.all([
           corePool.calcOutGivenIn(
@@ -687,18 +803,37 @@ const Form = ({
           )
         ])
 
-        const exchangeRateIn = await proxy.exchangeRate(corePoolAddress, invertToken[swapInAddress] ?? swapInAddress)
-        const exchangeRateOut = await proxy.exchangeRate(corePoolAddress, invertToken[swapOutAddress] ?? swapOutAddress)
+        const exchangeRateIn = await proxy.exchangeRate(
+          corePoolAddress,
+          invertToken[swapInAddress] ?? swapInAddress
+        )
+        const exchangeRateOut = await proxy.exchangeRate(
+          corePoolAddress,
+          invertToken[swapOutAddress] ?? swapOutAddress
+        )
 
-        const swapOut = newSwapOutAmount.mul(exchangeRateIn).div(exchangeRateOut)
+        const swapOut = newSwapOutAmount
+          .mul(exchangeRateIn)
+          .div(exchangeRateOut)
         let swapAmoutOutNormalized: BigNumber = swapOut
         if (invertToken[swapOutAddress]) {
-          swapAmoutOutNormalized = await convertBalanceYRTtoWrap(swapOut, invertToken[swapOutAddress])
+          swapAmoutOutNormalized = await convertBalanceYRTtoWrap(
+            swapOut,
+            invertToken[swapOutAddress]
+          )
         }
         setSwapOutAmount([swapAmoutOutNormalized])
         try {
-          if (userWalletAddress.length > 0 && swapInAmount.gt(new BigNumber(0))) {
-            await proxy.trySwapExactAmountIn(swapInAddress, swapInAmount, swapOutAddress, userWalletAddress)
+          if (
+            userWalletAddress.length > 0 &&
+            swapInAmount.gt(new BigNumber(0))
+          ) {
+            await proxy.trySwapExactAmountIn(
+              swapInAddress,
+              swapInAmount,
+              swapOutAddress,
+              userWalletAddress
+            )
           }
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
@@ -710,7 +845,9 @@ const Form = ({
           }
 
           if (errorStr.search('ERR_MAX_IN_RATIO') > -1) {
-            setErrorMsg("The amount can't be more than half of what's in the pool!")
+            setErrorMsg(
+              "The amount can't be more than half of what's in the pool!"
+            )
             return
           }
 
@@ -721,12 +858,13 @@ const Form = ({
 
           if (swapInAmount.gt(swapInBalance)) {
             setErrorMsg('This amount exceeds your balance!')
-            return;
+            return
           }
         }
-      }
-      catch (e) {
-        ToastWarning('Could not connect with the blockchain to calculate prices.')
+      } catch (e) {
+        ToastWarning(
+          'Could not connect with the blockchain to calculate prices.'
+        )
       }
     }
 
@@ -767,22 +905,16 @@ const Form = ({
       const bigOne = new BigNumber('10').pow(new BigNumber('18'))
       const halfBigOne = bigOne.div(two)
       // calculated fee (bmul)
-      const fee = amountPoolToken
-        .mul(exitFee)
-        .add(halfBigOne)
-        .div(bigOne);
-      const pAiAfterExitFee = amountPoolToken.sub(fee);
+      const fee = amountPoolToken.mul(exitFee).add(halfBigOne).div(bigOne)
+      const pAiAfterExitFee = amountPoolToken.sub(fee)
       const supply = supplyPoolToken.add(one)
       // ratio of the token (bdiv)
-      const ratio = pAiAfterExitFee
-        .mul(bigOne)
-        .add(supply.div(two))
-        .div(supply);
+      const ratio = pAiAfterExitFee.mul(bigOne).add(supply.div(two)).div(supply)
       // amount of tokens (bmul)
       const tokenAmountOut = ratio
         .mul(balanceOut.sub(one))
         .add(halfBigOne)
-        .div(bigOne);
+        .div(bigOne)
 
       return tokenAmountOut
     }
@@ -795,28 +927,40 @@ const Form = ({
 
       if (swapOutAddress === '') {
         const newSwapOutAmount = await Promise.all(
-          poolTokensArray.slice(0, -1).map(async (item: { address: string }) => {
-            const mapTokenAddress = invertToken[item.address]
-            const swapOutTotalPoolBalance = await corePool.balance(mapTokenAddress ?? item.address)
-            const withdrawAmout = getWithdrawAmount(
-              poolSupply,
-              swapInAmount,
-              swapOutTotalPoolBalance,
-              poolExitFee
-            )
-            if (mapTokenAddress) {
-              return await convertBalanceYRTtoWrap(withdrawAmout, mapTokenAddress)
-            }
-            return withdrawAmout
-          })
+          poolTokensArray
+            .slice(0, -1)
+            .map(async (item: { address: string }) => {
+              const mapTokenAddress = invertToken[item.address]
+              const swapOutTotalPoolBalance = await corePool.balance(
+                mapTokenAddress ?? item.address
+              )
+              const withdrawAmout = getWithdrawAmount(
+                poolSupply,
+                swapInAmount,
+                swapOutTotalPoolBalance,
+                poolExitFee
+              )
+              if (mapTokenAddress) {
+                return await convertBalanceYRTtoWrap(
+                  withdrawAmout,
+                  mapTokenAddress
+                )
+              }
+              return withdrawAmout
+            })
         )
 
         setSwapOutAmount(newSwapOutAmount)
 
         try {
-          if (userWalletAddress.length > 0 && swapInAmount.gt(new BigNumber('0'))) {
+          if (
+            userWalletAddress.length > 0 &&
+            swapInAmount.gt(new BigNumber('0'))
+          ) {
             const tokensInPool = await corePool.currentTokens()
-            const tokensWithdraw = tokensInPool.map(token => invertToken[token] ?? token)
+            const tokensWithdraw = tokensInPool.map(
+              token => invertToken[token] ?? token
+            )
 
             await proxy.tryExitPool(
               swapInAmount,
@@ -835,13 +979,13 @@ const Form = ({
           }
 
           if (errorStr.search('below minimum') > -1) {
-            setErrorMsg("This amount is below minimum withdraw!")
+            setErrorMsg('This amount is below minimum withdraw!')
             return
           }
 
           if (swapInAmount.gt(swapInBalance)) {
             setErrorMsg('This amount exceeds your balance!')
-            return;
+            return
           }
         }
 
@@ -856,7 +1000,9 @@ const Form = ({
           poolSwapFee
         ] = await Promise.all([
           corePool.balance(invertToken[swapOutAddress] ?? swapOutAddress),
-          corePool.denormalizedWeight(invertToken[swapOutAddress] ?? swapOutAddress),
+          corePool.denormalizedWeight(
+            invertToken[swapOutAddress] ?? swapOutAddress
+          ),
           corePool.totalDenormalizedWeight(),
           corePool.swapFee()
         ])
@@ -870,22 +1016,29 @@ const Form = ({
             swapInAmount,
             poolSwapFee,
             poolExitFee
-          ),
+          )
         ])
         let withdrawAmoutOut: BigNumber = SingleSwapOutAmount
         if (invertToken[swapOutAddress]) {
-          withdrawAmoutOut = await convertBalanceYRTtoWrap(withdrawAmoutOut, invertToken[swapOutAddress])
+          withdrawAmoutOut = await convertBalanceYRTtoWrap(
+            withdrawAmoutOut,
+            invertToken[swapOutAddress]
+          )
         }
         setSwapOutAmount([withdrawAmoutOut])
-      }
-      catch (e) {
+      } catch (e) {
         if (userWalletAddress.length > 0) {
-          ToastWarning('Could not connect with the blockchain to calculate prices.')
+          ToastWarning(
+            'Could not connect with the blockchain to calculate prices.'
+          )
         }
       }
 
       try {
-        if (userWalletAddress.length > 0 && swapInAmount.gt(new BigNumber('0'))) {
+        if (
+          userWalletAddress.length > 0 &&
+          swapInAmount.gt(new BigNumber('0'))
+        ) {
           await proxy.tryExitswapPoolAmountIn(
             swapOutAddress,
             swapInAmount,
@@ -903,18 +1056,20 @@ const Form = ({
         }
 
         if (errorStr.search('ERR_MAX_OUT_RATIO') > -1) {
-          setErrorMsg("The amount you are trying to obtain can't be more than a third of what's in the pool!")
+          setErrorMsg(
+            "The amount you are trying to obtain can't be more than a third of what's in the pool!"
+          )
           return
         }
 
         if (errorStr.search('below minimum') > -1) {
-          setErrorMsg("This amount is below minimum withdraw!")
+          setErrorMsg('This amount is below minimum withdraw!')
           return
         }
 
         if (swapInAmount.gt(swapInBalance)) {
           setErrorMsg('This amount exceeds your balance!')
-          return;
+          return
         }
       }
     }
@@ -928,21 +1083,34 @@ const Form = ({
   const tokenOutIndex = tokenAddress2Index[swapOutAddress]
 
   const approvalCallback = React.useCallback(
-    (tokenSymbol: string, tokenAddress: string, tabTitle: Titles): TransactionCallback => {
+    (
+      tokenSymbol: string,
+      tokenAddress: string,
+      tabTitle: Titles
+    ): TransactionCallback => {
       return async (error: MetamaskError, txHash: string) => {
         if (error) {
           if (error.code === 4001) {
-            dispatch(setModalAlertText({ errorText: `Approval of ${tokenSymbol} cancelled` }))
+            dispatch(
+              setModalAlertText({
+                errorText: `Approval of ${tokenSymbol} cancelled`
+              })
+            )
             return
           }
 
-          dispatch(setModalAlertText({ errorText: `Failed to approve ${tokenSymbol}. Please try again later.` }))
+          dispatch(
+            setModalAlertText({
+              errorText: `Failed to approve ${tokenSymbol}. Please try again later.`
+            })
+          )
           return
         }
 
-        setApprovals((old) => {
+        setApprovals(old => {
           const approvals = Array.from(old[tabTitle])
-          approvals[tokenAddress2Index[tokenAddress]] = Approval.WaitingTransaction
+          approvals[tokenAddress2Index[tokenAddress]] =
+            Approval.WaitingTransaction
 
           return {
             ...old,
@@ -951,7 +1119,7 @@ const Form = ({
         })
         ToastWarning(`Waiting approval of ${tokenSymbol}...`)
         const txReceipt = await waitTransaction(txHash)
-        setApprovals((old) => {
+        setApprovals(old => {
           const approvals = Array.from(old[tabTitle])
           approvals[tokenAddress2Index[tokenAddress]] = Approval.Syncing
 
@@ -962,15 +1130,20 @@ const Form = ({
         })
 
         if (txReceipt.status) {
-          ToastSuccess(`Approval of ${tokenSymbol} confirmed, wait while we sync with the latest block of the blockchain.`)
-          const approved = false;
+          ToastSuccess(
+            `Approval of ${tokenSymbol} confirmed, wait while we sync with the latest block of the blockchain.`
+          )
+          const approved = false
 
           while (!approved) {
-            await ERC20(tokenAddress).allowance(ProxyContract, userWalletAddress);
-            await new Promise(r => setTimeout(r, 200)); // sleep
+            await ERC20(tokenAddress).allowance(
+              ProxyContract,
+              userWalletAddress
+            )
+            await new Promise(r => setTimeout(r, 200)) // sleep
           }
 
-          setApprovals((old) => {
+          setApprovals(old => {
             const approvals = Array.from(old[tabTitle])
             approvals[tokenAddress2Index[tokenAddress]] = Approval.Approved
 
@@ -983,7 +1156,7 @@ const Form = ({
           return
         }
 
-        setApprovals((old) => {
+        setApprovals(old => {
           const approvals = Array.from(old[tabTitle])
           approvals[tokenAddress2Index[tokenAddress]] = Approval.Denied
 
@@ -1004,11 +1177,19 @@ const Form = ({
           trackCancelBuying()
 
           if (error.code === 4001) {
-            dispatch(setModalAlertText({ errorText: `Investment in ${tokenSymbol} cancelled` }))
+            dispatch(
+              setModalAlertText({
+                errorText: `Investment in ${tokenSymbol} cancelled`
+              })
+            )
             return
           }
 
-          dispatch(setModalAlertText({ errorText: `Failed to invest in ${tokenSymbol}. Please try again later.` }))
+          dispatch(
+            setModalAlertText({
+              errorText: `Failed to invest in ${tokenSymbol}. Please try again later.`
+            })
+          )
           return
         }
 
@@ -1032,11 +1213,19 @@ const Form = ({
           trackCancelBuying()
 
           if (error.code === 4001) {
-            dispatch(setModalAlertText({ errorText: `Withdrawal of ${tokenSymbol} cancelled` }))
+            dispatch(
+              setModalAlertText({
+                errorText: `Withdrawal of ${tokenSymbol} cancelled`
+              })
+            )
             return
           }
 
-          dispatch(setModalAlertText({ errorText: `Failed to withdraw ${tokenSymbol}. Please try again later.` }))
+          dispatch(
+            setModalAlertText({
+              errorText: `Failed to withdraw ${tokenSymbol}. Please try again later.`
+            })
+          )
           return
         }
 
@@ -1058,19 +1247,31 @@ const Form = ({
       return async (error: MetamaskError, txHash: string) => {
         if (error) {
           if (error.code === 4001) {
-            dispatch(setModalAlertText({ errorText: `Swap of ${tokenInSymbol} to ${tokenOutSymbol} cancelled` }))
+            dispatch(
+              setModalAlertText({
+                errorText: `Swap of ${tokenInSymbol} to ${tokenOutSymbol} cancelled`
+              })
+            )
             return
           }
 
-          dispatch(setModalAlertText({ errorText: `Failed to swap ${tokenInSymbol} to ${tokenOutSymbol}. Please try again later.` }))
+          dispatch(
+            setModalAlertText({
+              errorText: `Failed to swap ${tokenInSymbol} to ${tokenOutSymbol}. Please try again later.`
+            })
+          )
           return
         }
 
-        ToastWarning(`Confirming swap of ${tokenInSymbol} to ${tokenOutSymbol}...`)
+        ToastWarning(
+          `Confirming swap of ${tokenInSymbol} to ${tokenOutSymbol}...`
+        )
         const txReceipt = await waitTransaction(txHash)
 
         if (txReceipt.status) {
-          ToastSuccess(`Swap of ${tokenInSymbol} to ${tokenOutSymbol} confirmed`)
+          ToastSuccess(
+            `Swap of ${tokenInSymbol} to ${tokenOutSymbol} confirmed`
+          )
           return
         }
       }
@@ -1097,31 +1298,35 @@ const Form = ({
         tabTitleInput
         // eslint-disable-next-line prettier/prettier
       } = e.target as HTMLFormElement & {
-        approved: HTMLInputElement;
-        category: HTMLInputElement;
-        swapInAmountInput: HTMLInputElement;
-        swapOutAmountInput: HTMLInputElement;
-        swapInAddressInput: HTMLInputElement;
-        swapOutAddressInput: HTMLInputElement;
-        swapInSymbol: HTMLInputElement;
-        swapOutSymbol: HTMLInputElement;
-        walletAddress: HTMLInputElement;
-        amountUSD: HTMLInputElement;
-        slippageInput: HTMLInputElement;
-        tabTitleInput: HTMLInputElement;
+        approved: HTMLInputElement
+        category: HTMLInputElement
+        swapInAmountInput: HTMLInputElement
+        swapOutAmountInput: HTMLInputElement
+        swapInAddressInput: HTMLInputElement
+        swapOutAddressInput: HTMLInputElement
+        swapInSymbol: HTMLInputElement
+        swapOutSymbol: HTMLInputElement
+        walletAddress: HTMLInputElement
+        amountUSD: HTMLInputElement
+        slippageInput: HTMLInputElement
+        tabTitleInput: HTMLInputElement
       }
       const tabTitle = tabTitleInput.value as Titles
       const amountInUSD = parseFloat(amountUSD.value)
       const swapInAmountVal = new BigNumber(swapInAmountInput.value)
-      const swapOutAmountVal = swapOutAmountInput.value.split(',').map(
-        item => new BigNumber(item)
-      )
+      const swapOutAmountVal = swapOutAmountInput.value
+        .split(',')
+        .map(item => new BigNumber(item))
       const swapInAddressVal = swapInAddressInput.value
       const swapOutAddressVal = swapOutAddressInput.value
       const slippageVal = slippageInput.value
 
-      const slippageExp = new BigNumber(10).pow(new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0)))
-      const slippageBase = slippageExp.sub(new BigNumber(slippageVal.replace('.', '')))
+      const slippageExp = new BigNumber(10).pow(
+        new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0))
+      )
+      const slippageBase = slippageExp.sub(
+        new BigNumber(slippageVal.replace('.', ''))
+      )
 
       try {
         switch (category.value) {
@@ -1134,7 +1339,12 @@ const Form = ({
               )
               return
             }
-            trackBuying(crpPoolAddress, poolSymbol, amountInUSD, productCategories)
+            trackBuying(
+              crpPoolAddress,
+              poolSymbol,
+              amountInUSD,
+              productCategories
+            )
             // proxy.joinswapExternAmountIn(
             //   swapInAddressVal,
             //   swapInAmountVal,
@@ -1145,7 +1355,12 @@ const Form = ({
             return
 
           case 'Withdraw':
-            trackBuying(crpPoolAddress, poolSymbol, -1 * amountInUSD, productCategories)
+            trackBuying(
+              crpPoolAddress,
+              poolSymbol,
+              -1 * amountInUSD,
+              productCategories
+            )
             if (approved.value === '0') {
               ERC20(crpPoolAddress).approve(
                 ProxyContract,
@@ -1165,28 +1380,31 @@ const Form = ({
               return
             }
 
-            corePool.currentTokens()
-              .then(async tokens => {
-                const swapOutAmounts = []
+            corePool.currentTokens().then(async tokens => {
+              const swapOutAmounts = []
 
-                for (let i = 0; i < tokens.length; i++) {
-                  swapOutAmounts.push(
-                    swapOutAmountVal[tokenAddress2Index[invertToken[tokens[i]] ?? tokens[i]]]
-                      .mul(slippageBase)
-                      .div(slippageExp)
-                  )
-                }
-
-                const tokensInPool = await corePool.currentTokens()
-                const tokensWithdraw = tokensInPool.map(token => invertToken[token] ?? token)
-                proxy.exitPool(
-                  swapInAmountVal,
-                  tokensWithdraw,
-                  swapOutAmounts,
-                  walletAddress.value,
-                  withdrawCallback(swapInSymbol.value, -1 * amountInUSD)
+              for (let i = 0; i < tokens.length; i++) {
+                swapOutAmounts.push(
+                  swapOutAmountVal[
+                    tokenAddress2Index[invertToken[tokens[i]] ?? tokens[i]]
+                  ]
+                    .mul(slippageBase)
+                    .div(slippageExp)
                 )
-              })
+              }
+
+              const tokensInPool = await corePool.currentTokens()
+              const tokensWithdraw = tokensInPool.map(
+                token => invertToken[token] ?? token
+              )
+              proxy.exitPool(
+                swapInAmountVal,
+                tokensWithdraw,
+                swapOutAmounts,
+                walletAddress.value,
+                withdrawCallback(swapInSymbol.value, -1 * amountInUSD)
+              )
+            })
             return
 
           case 'Swap':
@@ -1218,9 +1436,15 @@ const Form = ({
           default:
         }
       } catch (error) {
-        dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
+        dispatch(
+          setModalAlertText({
+            errorText: 'Could not connect with the Blockchain!'
+          })
+        )
       }
-    }, [tokenAddress2Index])
+    },
+    [tokenAddress2Index]
+  )
 
   React.useEffect(() => {
     const handleWallectConnect = () => {
@@ -1242,22 +1466,35 @@ const Form = ({
       setPriceImpact(Big(0))
       return
     }
-    const amountInput = Big(Number(inputTokenRef.current.value)).mul(Big(10).pow(poolTokensArray[tokenInIndex]
-      ? poolTokensArray[tokenInIndex]?.decimals.toNumber()
-      : 18))
+    const amountInput = Big(Number(inputTokenRef.current.value)).mul(
+      Big(10).pow(
+        poolTokensArray[tokenInIndex]
+          ? poolTokensArray[tokenInIndex]?.decimals.toNumber()
+          : 18
+      )
+    )
     if (amountInput.gt(0) && parseFloat(swapOutAmount[0].toString()) > 0) {
       const usdAmountIn = amountInput
         .mul(Big(priceDollar(swapInAddress, poolTokensArray)))
         .div(Big(10).pow(Number(poolTokensArray[tokenInIndex]?.decimals || 18)))
       const usdAmountOut = Big(swapOutAmount[0].toString())
         .mul(Big(priceDollar(swapOutAddress, poolTokensArray)))
-        .div(Big(10).pow(Number(poolTokensArray[tokenAddress2Index[swapOutAddress]]?.decimals || 18)))
+        .div(
+          Big(10).pow(
+            Number(
+              poolTokensArray[tokenAddress2Index[swapOutAddress]]?.decimals ||
+                18
+            )
+          )
+        )
 
       const subValue = usdAmountIn.sub(usdAmountOut)
       if (usdAmountIn.gt(0)) {
         const valuePriceImpact = subValue.div(usdAmountIn).mul(100)
 
-        valuePriceImpact.gt(0) ? setPriceImpact(valuePriceImpact) : setPriceImpact(Big(0))
+        valuePriceImpact.gt(0)
+          ? setPriceImpact(valuePriceImpact)
+          : setPriceImpact(Big(0))
       }
     } else {
       setPriceImpact(Big(0))
@@ -1266,60 +1503,93 @@ const Form = ({
 
   return (
     <S.FormContainer onSubmit={submitAction}>
-      <input type="hidden" name="approved" value={Number(approvals[title][tokenInIndex] === Approval.Approved || 0)} />
+      <input
+        type="hidden"
+        name="approved"
+        value={Number(
+          approvals[title][tokenInIndex] === Approval.Approved || 0
+        )}
+      />
       <input type="hidden" name="category" value={title} />
-      <input type="hidden" name="swapInAmountInput" value={swapInAmount.toString()} />
-      <input type="hidden" name="swapOutAmountInput" value={swapOutAmount.toString()} />
+      <input
+        type="hidden"
+        name="swapInAmountInput"
+        value={swapInAmount.toString()}
+      />
+      <input
+        type="hidden"
+        name="swapOutAmountInput"
+        value={swapOutAmount.toString()}
+      />
       <input type="hidden" name="swapInAddressInput" value={swapInAddress} />
       <input type="hidden" name="swapOutAddressInput" value={swapOutAddress} />
-      <input type="hidden" name="swapInSymbol" value={poolTokensArray[tokenInIndex]?.symbol || ''} />
-      <input type="hidden" name="swapOutSymbol" value={poolTokensArray[tokenOutIndex]?.symbol || ''} />
+      <input
+        type="hidden"
+        name="swapInSymbol"
+        value={poolTokensArray[tokenInIndex]?.symbol || ''}
+      />
+      <input
+        type="hidden"
+        name="swapOutSymbol"
+        value={poolTokensArray[tokenOutIndex]?.symbol || ''}
+      />
       <input type="hidden" name="walletAddress" value={userWalletAddress} />
       <input type="hidden" name="slippageInput" value={slippage.value} />
       <input type="hidden" name="tabTitleInput" value={title} />
-      <input type="hidden" name="amountUSD" value={
-        title === "Invest"
-          ? Big((swapOutAmount[0] || 0).toString())
-            .div(
-              Big(10).pow(poolTokensArray[tokenOutIndex]?.decimals.toNumber() || 0)
-            )
-            .mul(
-              Big(priceDollar(swapOutAddress, poolTokensArray))
-            )
-            .toString()
-          : Big((swapInAmount || 0).toString())
-            .div(
-              Big(10).pow(poolTokensArray[tokenInIndex]?.decimals.toNumber() || 0)
-            )
-            .mul(
-              Big(priceDollar(swapInAddress, poolTokensArray))
-            )
-            .toString()
-      } />
+      <input
+        type="hidden"
+        name="amountUSD"
+        value={
+          title === 'Invest'
+            ? Big((swapOutAmount[0] || 0).toString())
+                .div(
+                  Big(10).pow(
+                    poolTokensArray[tokenOutIndex]?.decimals.toNumber() || 0
+                  )
+                )
+                .mul(Big(priceDollar(swapOutAddress, poolTokensArray)))
+                .toString()
+            : Big((swapInAmount || 0).toString())
+                .div(
+                  Big(10).pow(
+                    poolTokensArray[tokenInIndex]?.decimals.toNumber() || 0
+                  )
+                )
+                .mul(Big(priceDollar(swapInAddress, poolTokensArray)))
+                .toString()
+        }
+      />
       <InputTokens
         clearInput={clearInput}
         inputRef={inputTokenRef}
         actionString={typeAction}
         title={title}
-        decimals={poolTokensArray[tokenInIndex] ? poolTokensArray[tokenInIndex].decimals : new BigNumber(18)}
+        decimals={
+          poolTokensArray[tokenInIndex]
+            ? poolTokensArray[tokenInIndex].decimals
+            : new BigNumber(18)
+        }
         swapBalance={swapInBalance}
         swapAmount={swapInAmount}
         setSwapAmount={setSwapInAmount}
         // Text Input
         disabled={
           userWalletAddress.length === 0
-            ? "Please connect your wallet by clicking the button below"
+            ? 'Please connect your wallet by clicking the button below'
             : chainId !== poolChain.chainId
-              ? `Please change to the ${poolChain.chainName} by clicking the button below`
-              : ""
+            ? `Please change to the ${poolChain.chainName} by clicking the button below`
+            : ''
         }
         // Select Input
         poolTokens={
           title === 'Withdraw'
             ? [poolTokensArray[poolTokensArray.length - 1]]
             : poolTokensArray
-              .slice(0, -1)
-              .filter((token: { address: string }) => token.address !== swapOutAddress)
+                .slice(0, -1)
+                .filter(
+                  (token: { address: string }) =>
+                    token.address !== swapOutAddress
+                )
         }
         tokenDetails={poolTokensArray[tokenInIndex]}
         setSwapAddress={setSwapInAddress}
@@ -1330,34 +1600,54 @@ const Form = ({
         swapInAddress={swapInAddress}
       />
 
-      {title === 'Swap' ?
+      {title === 'Swap' ? (
         <Tippy content="Trade places for swap-in and swap-out token">
-          <S.SwapButton type="button" onClick={() => {
-            trackEventFunction('click-on-button', 'swap-token', 'operations-invest')
-            setSwapInAddress(swapOutAddress)
-            setSwapOutAddress(swapInAddress)
-            if (inputTokenRef && inputTokenRef?.current && swapOutAmount.length > 0) {
-              inputTokenRef.current.value = BNtoDecimal(
-                swapOutAmount[0],
-                Number(poolTokensArray[tokenAddress2Index[swapOutAddress]]?.decimals) || 18
-              ).replace(/\s/g, '')
-            }
-            setSwapInAmount(swapOutAmount[0])
-            setSwapOutAmount([swapInAmount])
-          }} >
+          <S.SwapButton
+            type="button"
+            onClick={() => {
+              trackEventFunction(
+                'click-on-button',
+                'swap-token',
+                'operations-invest'
+              )
+              setSwapInAddress(swapOutAddress)
+              setSwapOutAddress(swapInAddress)
+              if (
+                inputTokenRef &&
+                inputTokenRef?.current &&
+                swapOutAmount.length > 0
+              ) {
+                inputTokenRef.current.value = BNtoDecimal(
+                  swapOutAmount[0],
+                  Number(
+                    poolTokensArray[tokenAddress2Index[swapOutAddress]]
+                      ?.decimals
+                  ) || 18
+                ).replace(/\s/g, '')
+              }
+              setSwapInAmount(swapOutAmount[0])
+              setSwapOutAmount([swapInAmount])
+            }}
+          >
             <img src="/assets/icons/arrow-down.svg" alt="" />
             <img src="/assets/icons/arrow-down.svg" alt="" />
           </S.SwapButton>
         </Tippy>
-        :
-        <img src="/assets/icons/arrow-down.svg" alt="" style={{ margin: '12px 0' }} />
-      }
+      ) : (
+        <img
+          src="/assets/icons/arrow-down.svg"
+          alt=""
+          style={{ margin: '12px 0' }}
+        />
+      )}
 
       {title === 'Withdraw' && typeWithdrawChecked === 'Best_value' ? (
         <InputBestValue
           poolTokenDetails={poolTokensArray
             .slice(0, -1)
-            .filter((token: { address: string }) => token.address !== swapInAddress)}
+            .filter(
+              (token: { address: string }) => token.address !== swapInAddress
+            )}
           poolTokensArray={poolTokensArray}
           swapOutAmount={swapOutAmount}
           swapOutBalance={swapOutBalance}
@@ -1370,46 +1660,46 @@ const Form = ({
             isWithdraw={title}
             actionString="Swap to"
             swapBalance={swapOutBalance[0]}
-            decimals={poolTokensArray[tokenAddress2Index[swapOutAddress]]?.decimals || new BigNumber(18)}
+            decimals={
+              poolTokensArray[tokenAddress2Index[swapOutAddress]]?.decimals ||
+              new BigNumber(18)
+            }
             swapAmount={swapOutAmount[0]}
             swapOutAddress={swapOutAddress}
             poolTokensArray={poolTokensArray}
-            disabled={userWalletAddress.length === 0
-              ? "Please connect your wallet by clicking the button below"
-              : chainId !== poolChain.chainId
+            disabled={
+              userWalletAddress.length === 0
+                ? 'Please connect your wallet by clicking the button below'
+                : chainId !== poolChain.chainId
                 ? `Please change to the ${poolChain.chainName} by clicking the button below`
-                : ""}
+                : ''
+            }
             // Select Input
             poolTokens={
               title === 'Invest'
                 ? [poolTokensArray[poolTokensArray.length - 1]]
                 : poolTokensArray
-                  .slice(0, -1)
-                  .filter((token: { address: string }) => token.address !== swapInAddress)
+                    .slice(0, -1)
+                    .filter(
+                      (token: { address: string }) =>
+                        token.address !== swapInAddress
+                    )
             }
             tokenDetails={poolTokensArray[tokenOutIndex]}
             // swapInAmount={swapInAmount}
             swapInAddress={swapInAddress}
             setSwapAddress={setSwapOutAddress}
             setSwapOutAmount={setSwapOutAmount}
-            calculateAmountIn={title === 'Swap' ? calculateSwapAmountIn : calculateInvestAmountIn}
+            calculateAmountIn={
+              title === 'Swap' ? calculateSwapAmountIn : calculateInvestAmountIn
+            }
             setMaxActive={setMaxActive}
             maxActive={maxActive}
           />
           <S.ExchangeRate>
             <S.SpanLight>Price Impact:</S.SpanLight>
-            <S.PriceImpactWrapper price={BNtoDecimal(
-              priceImpact,
-              18,
-              2,
-              2
-            )}>
-              {BNtoDecimal(
-                priceImpact,
-                18,
-                2,
-                2
-              )}%
+            <S.PriceImpactWrapper price={BNtoDecimal(priceImpact, 18, 2, 2)}>
+              {BNtoDecimal(priceImpact, 18, 2, 2)}%
             </S.PriceImpactWrapper>
           </S.ExchangeRate>
         </>
@@ -1421,10 +1711,7 @@ const Form = ({
       </S.ExchangeRate>
 
       <S.TransactionSettingsOptions>
-        <TransactionSettings
-          slippage={slippage}
-          setSlippage={setSlippage}
-        />
+        <TransactionSettings slippage={slippage} setSlippage={setSlippage} />
       </S.TransactionSettingsOptions>
       {userWalletAddress.length === 0 && walletConnect === null ? (
         <Button
@@ -1433,78 +1720,96 @@ const Form = ({
           fullWidth
           type="button"
           onClick={() => setIsModaWallet(true)}
-          text='Connect Wallet'
+          text="Connect Wallet"
         />
-      ) : (
-        chainId === poolChain.chainId ? (
-          <Button
-            className="btn-submit"
-            backgroundPrimary
-            disabledNoEvent={
-              (
-                approvals[title].length === 0
-              ) || (
-                approvals[title][tokenInIndex] > Approval.Approved
-              ) || (
-                approvals[title][tokenInIndex] === Approval.Approved && (
-                  swapInAmount.toString() === "0" ||
-                  swapOutAmount[0].toString() === "0" ||
-                  errorMsg.length > 0
-                )
-              )
-            }
-            fullWidth
-            type="submit"
-            text={
-              approvals[title][tokenInIndex] === Approval.Approved ?
-                swapInAmount.toString() !== '0' || inputTokenRef?.current?.value !== null ?
-                  title === "Withdraw" ?
-                    typeWithdrawChecked === "Best_value" ?
-                      `${title} ${'$' + priceInDollarOnWithdraw}`
-                      :
-                      `${title} ${'$' +
+      ) : chainId === poolChain.chainId ? (
+        <Button
+          className="btn-submit"
+          backgroundPrimary
+          disabledNoEvent={
+            approvals[title].length === 0 ||
+            approvals[title][tokenInIndex] > Approval.Approved ||
+            (approvals[title][tokenInIndex] === Approval.Approved &&
+              (swapInAmount.toString() === '0' ||
+                swapOutAmount[0].toString() === '0' ||
+                errorMsg.length > 0))
+          }
+          fullWidth
+          type="submit"
+          text={
+            approvals[title][tokenInIndex] === Approval.Approved
+              ? swapInAmount.toString() !== '0' ||
+                inputTokenRef?.current?.value !== null
+                ? title === 'Withdraw'
+                  ? typeWithdrawChecked === 'Best_value'
+                    ? `${title} ${'$' + priceInDollarOnWithdraw}`
+                    : `${title} ${
+                        '$' +
+                        BNtoDecimal(
+                          Big(swapOutAmount[0].toString())
+                            .mul(
+                              Big(priceDollar(swapOutAddress, poolTokensArray))
+                            )
+                            .div(
+                              Big(10).pow(
+                                Number(
+                                  poolTokensArray[
+                                    tokenAddress2Index[swapOutAddress]
+                                  ]?.decimals || 18
+                                )
+                              )
+                            ),
+                          18,
+                          2,
+                          2
+                        )
+                      }`
+                  : `${title} ${
+                      '$' +
                       BNtoDecimal(
-                        Big((swapOutAmount[0]).toString())
-                          .mul(Big(priceDollar(swapOutAddress, poolTokensArray)))
-                          .div(Big(10).pow(Number(poolTokensArray[tokenAddress2Index[swapOutAddress]]?.decimals || 18))),
+                        Big((swapOutAmount[0] || 0).toString())
+                          .mul(
+                            Big(priceDollar(swapOutAddress, poolTokensArray))
+                          )
+                          .div(
+                            Big(10).pow(
+                              Number(
+                                poolTokensArray[
+                                  tokenAddress2Index[swapOutAddress]
+                                ]?.decimals || 18
+                              )
+                            )
+                          ),
                         18,
                         2,
                         2
                       )
-                      }`
-                    :
-                    `${title} ${'$' + BNtoDecimal(
-                      Big((swapOutAmount[0] || 0).toString())
-                        .mul(Big(priceDollar(swapOutAddress, poolTokensArray)))
-                        .div(Big(10).pow(Number(poolTokensArray[tokenAddress2Index[swapOutAddress]]?.decimals || 18))),
-                      18,
-                      2,
-                      2
-                    )
                     }`
-                  :
-                  `${title}`
-                :
-                approvals[title][tokenInIndex] === Approval.WaitingTransaction
-                  ? 'Approving...'
-                  : approvals[title][tokenInIndex] === undefined || approvals[title][tokenInIndex] === Approval.Syncing
-                    ? 'Syncing with Blockchain...'
-                    : 'Approve'
-            }
-          />
-        ) : (
-          <Button
-            className="btn-submit"
-            backgroundPrimary
-            fullWidth
-            type="button"
-            onClick={() => changeChain(poolChain)}
-            disabled={walletConnect ? true : false}
-            text={walletConnect ? `Change manually to ${poolChain.chainName}` : `Change to ${poolChain.chainName}`}
-          />
-        )
+                : `${title}`
+              : approvals[title][tokenInIndex] === Approval.WaitingTransaction
+              ? 'Approving...'
+              : approvals[title][tokenInIndex] === undefined ||
+                approvals[title][tokenInIndex] === Approval.Syncing
+              ? 'Syncing with Blockchain...'
+              : 'Approve'
+          }
+        />
+      ) : (
+        <Button
+          className="btn-submit"
+          backgroundPrimary
+          fullWidth
+          type="button"
+          onClick={() => changeChain(poolChain)}
+          disabled={walletConnect ? true : false}
+          text={
+            walletConnect
+              ? `Change manually to ${poolChain.chainName}`
+              : `Change to ${poolChain.chainName}`
+          }
+        />
       )}
-    </S.FormContainer >
+    </S.FormContainer>
   )
 }
 

@@ -74,7 +74,7 @@ export const InputsRadioContent = styled.span`
 `
 
 interface IPrivateAddressContainerProps {
-  isShow: boolean;
+  isShow: boolean
 }
 
 // prettier-ignore
@@ -118,8 +118,8 @@ export const PrivateAddressContainer = styled.div<IPrivateAddressContainerProps>
 `
 
 interface IInputAddressContainerProps {
-  hasValue: boolean;
-  isValid: boolean;
+  hasValue: boolean
+  isValid: boolean
 }
 
 // prettier-ignore
@@ -298,7 +298,7 @@ export const ClosePrivateAddress = styled.div`
 `
 
 interface IErrorProps {
-  isValid: boolean;
+  isValid: boolean
 }
 
 // prettier-ignore

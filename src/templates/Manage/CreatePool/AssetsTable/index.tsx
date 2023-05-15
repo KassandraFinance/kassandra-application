@@ -23,9 +23,9 @@ import {
 } from '../SelectAssets'
 
 interface IAssetsTable {
-  tokensData: TokensInfoResponseType[] | undefined;
-  tokenBalance: { [key: string]: BigNumber };
-  priceList: CoinGeckoAssetsResponseType | undefined;
+  tokensData: TokensInfoResponseType[] | undefined
+  tokenBalance: { [key: string]: BigNumber }
+  priceList: CoinGeckoAssetsResponseType | undefined
 }
 
 const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {

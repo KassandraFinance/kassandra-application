@@ -22,7 +22,7 @@ import * as S from './styles'
 
 export type CoinGeckoResponseType = {
   [key: string]: {
-    usd: number,
+    usd: number
     usd_24h_change: number
   }
 }

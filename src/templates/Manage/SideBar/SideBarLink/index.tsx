@@ -3,12 +3,12 @@ import Link from 'next/link'
 import * as S from './styles'
 
 interface ISideBarLinkProps {
-  name: string;
-  icon: JSX.Element;
-  link: string;
-  isOpen: boolean;
-  disabled?: boolean;
-  isActive: boolean;
+  name: string
+  icon: JSX.Element
+  link: string
+  isOpen: boolean
+  disabled?: boolean
+  isActive: boolean
 }
 
 const SideBarLink = ({

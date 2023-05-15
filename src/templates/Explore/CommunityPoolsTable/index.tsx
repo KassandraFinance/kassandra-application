@@ -24,32 +24,32 @@ import {
 } from '@ui/Modals/ModalViewCoin/styles'
 
 type IPoolsInfosProps = {
-  id: string,
-  address: string,
-  logo: string | null,
-  name: string,
-  price_usd: string,
-  symbol: string,
-  total_value_locked_usd: string,
-  is_private_pool: boolean,
+  id: string
+  address: string
+  logo: string | null
+  name: string
+  price_usd: string
+  symbol: string
+  total_value_locked_usd: string
+  is_private_pool: boolean
   chain: {
     logo: string
-  },
+  }
   now: {
-    close: string,
+    close: string
     timestamp: number
-  }[],
+  }[]
   day: {
-    close: string,
+    close: string
     timestamp: number
-  }[],
+  }[]
   month: {
-    close: string,
+    close: string
     timestamp: number
-  }[],
+  }[]
   volumes: {
     volume_usd: string
-  }[],
+  }[]
   weight_goals: {
     weights: {
       asset: {
@@ -67,11 +67,11 @@ export enum communityPoolSorting {
 }
 
 interface ICommunityPoolsTableProps {
-  pools?: IPoolsInfosProps[];
-  communityPoolSorted: communityPoolSorting;
+  pools?: IPoolsInfosProps[]
+  communityPoolSorted: communityPoolSorting
   setCommunityPoolSorted: React.Dispatch<
     React.SetStateAction<communityPoolSorting>
-  >;
+  >
 }
 
 const CommunityPoolsTable = ({
@@ -86,17 +86,17 @@ const CommunityPoolsTable = ({
     name: ''
   })
   const [viewPool, setViewPool] = React.useState<{
-    price: string,
-    tvl: string,
+    price: string
+    tvl: string
     assets: {
       asset: {
         token: {
           logo: string | null
         }
       }
-    }[],
-    volume: string,
-    monthly: string,
+    }[]
+    volume: string
+    monthly: string
     '24h': string
   }>({
     price: '',

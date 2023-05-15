@@ -37,6 +37,26 @@ const Header = () => {
   const router = useRouter()
   const path = router.asPath.split('/')
 
+  function handleHamburgerMenu() {
+    const width = window.innerWidth
+    if (width > 768) {
+      return
+    }
+
+    setIsShowMenu(!isShowMenu)
+    setShowOverlay(true)
+    const userDashBoardButton = document.getElementById(
+      'userDashBoardButton'
+    )?.style
+    if (userDashBoardButton) {
+      if (isShowMenu) {
+        userDashBoardButton.zIndex = '1021'
+      } else {
+        userDashBoardButton.zIndex = '0'
+      }
+    }
+  }
+
   return (
     <>
       <S.Wrapper id="top" dashBoard={path[1] === 'manage'}>
@@ -55,12 +75,7 @@ const Header = () => {
         </S.LogoWrapper>
 
         <S.MenuWrapper dashBoard={path[1] === 'manage'}>
-          <S.HamburgerButton
-            onClick={() => {
-              setIsShowMenu(!isShowMenu)
-              setShowOverlay(true)
-            }}
-          >
+          <S.HamburgerButton id="hamburgerButton" onClick={handleHamburgerMenu}>
             <S.HamburgerMenu isShowMenu={isShowMenu}>
               <div></div>
               <div></div>
@@ -71,7 +86,7 @@ const Header = () => {
           <Nav
             isShowMenu={isShowMenu}
             showOverlay={showOverlay}
-            setIsShowMenu={setIsShowMenu}
+            setIsShowMenu={handleHamburgerMenu}
             setShowOverlay={setShowOverlay}
           />
 

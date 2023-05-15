@@ -12,34 +12,34 @@ import WeightChangeAssetList from './WeightChangeAssetList'
 import * as S from './styles'
 
 export type ActivityInfo = {
-  amount: string,
-  symbol: string,
-  value: string,
-  logo: string,
-  weight?: string,
+  amount: string
+  symbol: string
+  value: string
+  logo: string
+  weight?: string
   newWeight?: string
 }
 
 export interface IActivityCardProps {
-  actionType: actionsType;
-  date: Date;
-  scan: string;
-  wallet: string;
-  activityInfo: ActivityInfo[];
-  txHash: string;
-  managerAddress: string;
+  actionType: actionsType
+  date: Date
+  scan: string
+  wallet: string
+  activityInfo: ActivityInfo[]
+  txHash: string
+  managerAddress: string
   pool: {
-    name: string,
-    symbol: string,
+    name: string
+    symbol: string
     logo: string
-  };
+  }
 
   sharesRedeemed?: {
-    amount: string,
+    amount: string
     value: string
-  };
+  }
 
-  newBalancePool?: ActivityInfo[];
+  newBalancePool?: ActivityInfo[]
 }
 
 export enum actionsType {
@@ -52,7 +52,7 @@ export enum actionsType {
 
 const activityProps: Record<
   actionsType,
-  { title: string, icon: string, subTitle?: string, titleShares?: string }
+  { title: string; icon: string; subTitle?: string; titleShares?: string }
 > = {
   [actionsType.DEPOSIT]: {
     title: 'Deposit',

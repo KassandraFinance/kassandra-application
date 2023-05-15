@@ -7,8 +7,8 @@ import Overlay from '../../Overlay'
 import * as S from './styles'
 
 interface IModalLanguagesProps {
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  modalOpen: boolean
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ModalLanguages = ({ modalOpen, setModalOpen }: IModalLanguagesProps) => {

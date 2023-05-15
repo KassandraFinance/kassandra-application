@@ -17,8 +17,8 @@ import PoolToken, { AssetType } from './PoolToken'
 import * as S from './styles'
 
 interface IAllocationsTableProps {
-  priceToken: (address: string) => number | undefined;
-  chainId: number;
+  priceToken: (address: string) => number | undefined
+  chainId: number
 }
 
 const AllocationsTable = ({ priceToken, chainId }: IAllocationsTableProps) => {

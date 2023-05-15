@@ -67,7 +67,7 @@ export const Amount = styled.div`
   }
 `
 interface ISpanProps {
-  spanlight?: boolean;
+  spanlight?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -169,8 +169,8 @@ export const Input = styled.input`
 `
 
 interface IButtonMax {
-  isMax?: boolean;
-  maxActive?: boolean;
+  isMax?: boolean
+  maxActive?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

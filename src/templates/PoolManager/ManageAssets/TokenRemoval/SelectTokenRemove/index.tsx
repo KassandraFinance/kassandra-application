@@ -20,19 +20,23 @@ enum colorType {
 }
 
 type IPoolInfoProps = {
-  name: string,
-  symbol: string,
+  name: string
+  symbol: string
   logo?: string
 }
 
 interface ISelectTokenRemoveProps {
-  poolInfo: IPoolInfoProps;
-  chainId: number;
-  priceToken: (address: string) => number;
+  poolInfo: IPoolInfoProps
+  chainId: number
+  priceToken: (address: string) => number
 }
 
 // eslint-disable-next-line prettier/prettier
-const SelectTokenRemove = ({ poolInfo, priceToken, chainId }: ISelectTokenRemoveProps) => {
+const SelectTokenRemove = ({
+  poolInfo,
+  priceToken,
+  chainId
+}: ISelectTokenRemoveProps) => {
   const { tokenSelection, lpNeeded } = useAppSelector(
     state => state.removeAsset
   )

@@ -9,14 +9,14 @@ import walletIcon from '../../../../../../public/assets/utilities/wallet.svg'
 import * as S from './styles'
 
 interface ICoinSummaryProps {
-  coinName: string;
-  coinSymbol: string;
-  coinImage: string;
-  chainImage?: string;
-  price: number | null;
-  url?: string | null;
-  balance?: number | null;
-  table?: boolean;
+  coinName: string
+  coinSymbol: string
+  coinImage: string
+  chainImage?: string
+  price: number | null
+  url?: string | null
+  balance?: number | null
+  table?: boolean
 }
 
 const CoinSummary = ({

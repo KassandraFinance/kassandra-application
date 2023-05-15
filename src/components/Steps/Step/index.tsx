@@ -3,9 +3,9 @@ import * as S from './styles'
 export type StateType = 'CURRENT' | 'PREVIOUS' | 'NEXT'
 
 interface IStepProps {
-  stepNumber: number;
-  stepTitle: string;
-  state: StateType;
+  stepNumber: number
+  stepTitle: string
+  state: StateType
 }
 
 const Step = ({ stepNumber, stepTitle, state }: IStepProps) => {

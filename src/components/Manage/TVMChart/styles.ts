@@ -35,7 +35,7 @@ export const SelectChartTypeContainer = styled.div`
 `
 
 interface IControlProps {
-  selected: boolean;
+  selected: boolean
 }
 
 // prettier-ignore

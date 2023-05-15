@@ -6,11 +6,11 @@ import clearIcon from '../../../../public/assets/utilities/clear.svg'
 import * as S from './styles'
 
 interface IInputFilterProps {
-  name: string;
-  placeholder: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onClear: () => void;
+  name: string
+  placeholder: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onClear: () => void
 }
 
 const InputFilter = ({

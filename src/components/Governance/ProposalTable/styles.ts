@@ -173,7 +173,7 @@ export const TextProposal = styled.p`
 `
 
 interface IStatusProposalColor {
-  statusColor: string;
+  statusColor: string
 }
 
 // prettier-ignore

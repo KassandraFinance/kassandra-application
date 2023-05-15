@@ -20,10 +20,10 @@ import { GET_INFO_POOL } from '../graphql'
 import * as S from './styles'
 
 interface ITokenAssetOutProps {
-  typeAction: string;
-  amountTokenOut?: Big;
-  outAssetBalance: Big;
-  setOutAssetBalance: React.Dispatch<React.SetStateAction<Big>>;
+  typeAction: string
+  amountTokenOut?: Big
+  outAssetBalance: Big
+  setOutAssetBalance: React.Dispatch<React.SetStateAction<Big>>
 }
 
 const TokenAssetOut = ({

@@ -2,36 +2,36 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Big from 'big.js'
 
 type TokenType = {
-  id: string,
-  name: string,
-  symbol: string,
-  logo: string,
-  image: string,
+  id: string
+  name: string
+  symbol: string
+  logo: string
+  image: string
   decimals: number
 }
 
 export type AssetType = {
-  weight_normalized: string,
+  weight_normalized: string
   token: {
-    decimals: number,
-    id: string,
-    logo?: string,
-    name: string,
+    decimals: number
+    id: string
+    logo?: string
+    name: string
     symbol: string
   }
 }
 
 interface IAddAssetsProps {
-  token: TokenType;
-  poolId: string;
-  tvl: string;
-  controller: string;
+  token: TokenType
+  poolId: string
+  tvl: string
+  controller: string
   liquidit: {
-    amount: string,
-    allocation: string,
+    amount: string
+    allocation: string
     price: number
-  };
-  weights: (AssetType & { newWeight: string })[];
+  }
+  weights: (AssetType & { newWeight: string })[]
 }
 
 const initialState: IAddAssetsProps = {

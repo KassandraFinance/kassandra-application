@@ -36,7 +36,7 @@ export const LineRemovedTokenReview = styled.li`
 `
 
 interface IValueTextProps {
-  color?: string;
+  color?: string
 }
 
 // eslint-disable-next-line prettier/prettier

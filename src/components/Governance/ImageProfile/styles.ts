@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
 interface IImageProps {
-  fontSize: number | undefined;
+  fontSize: number | undefined
 }
 
 // eslint-disable-next-line prettier/prettier

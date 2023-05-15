@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
 
 interface IBorderGradientProps {
-  modalOpen: boolean;
+  modalOpen: boolean
 }
 
 // prettier-ignore

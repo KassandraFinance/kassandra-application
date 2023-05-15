@@ -23,8 +23,8 @@ import { GET_GOVERNANCES } from './graphql'
 import * as S from './styles'
 
 interface IGovernancesProps {
-  totalVotingPower: BigNumber;
-  votingAddresses: number;
+  totalVotingPower: BigNumber
+  votingAddresses: number
 }
 
 export const Overview = () => {

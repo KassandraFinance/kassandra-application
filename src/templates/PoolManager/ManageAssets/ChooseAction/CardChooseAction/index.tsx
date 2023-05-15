@@ -5,13 +5,13 @@ import { chooseActionStep } from '..'
 import * as S from './styles'
 
 interface ICardChooseActionProps {
-  ImageUrl: string;
-  title: string;
-  paragraph: string;
-  NumberActive: number;
-  isActive: chooseActionStep;
-  isDisable?: boolean;
-  setChooseActionSelect: React.Dispatch<React.SetStateAction<chooseActionStep>>;
+  ImageUrl: string
+  title: string
+  paragraph: string
+  NumberActive: number
+  isActive: chooseActionStep
+  isDisable?: boolean
+  setChooseActionSelect: React.Dispatch<React.SetStateAction<chooseActionStep>>
 }
 
 const CardChooseAction = ({

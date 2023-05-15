@@ -18,15 +18,15 @@ import CustomLegend from './CustomLegend'
 import * as S from './styles'
 
 export type FeeGraph = {
-  totalFeesToManager: string,
-  feesJoinManager: string,
-  feesAumManager: string,
+  totalFeesToManager: string
+  feesJoinManager: string
+  feesAumManager: string
   timestamp: number
 }[]
 
 type Props = {
-  fees: FeeGraph,
-  title: string,
+  fees: FeeGraph
+  title: string
   legend: Record<string, string>
 }
 

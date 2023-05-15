@@ -52,65 +52,65 @@ const options: OptionsFilter[] = [
 
 type Asset = {
   token: {
-    logo: string,
-    symbol: string,
+    logo: string
+    symbol: string
     wraps: {
-      symbol: string,
+      symbol: string
       logo: string
     }
   }
 }
 
 type Activity = {
-  id: string,
-  type: 'join' | 'exit',
-  symbol: string[],
-  amount: string[],
-  price_usd: string[],
-  txHash: string,
-  timestamp: number,
+  id: string
+  type: 'join' | 'exit'
+  symbol: string[]
+  amount: string[]
+  price_usd: string[]
+  txHash: string
+  timestamp: number
   address: string
 }
 
 export type Result = {
   pool: {
-    name: string,
-    symbol: string,
-    logo: string,
-    underlying_assets: Asset[],
+    name: string
+    symbol: string
+    logo: string
+    underlying_assets: Asset[]
     chain: {
       blockExplorerUrl: string
-    },
+    }
     manager: {
       id: string
-    },
-    activities: Activity[],
+    }
+    activities: Activity[]
     weight_goals: {
-      id: string,
-      txHash: string,
-      type: 'rebalance' | 'add' | 'removed',
-      end_timestamp: number,
+      id: string
+      txHash: string
+      type: 'rebalance' | 'add' | 'removed'
+      end_timestamp: number
       previous: {
         weights: {
-          weight_normalized: string,
+          weight_normalized: string
           asset: {
             token: {
               symbol: string
             }
           }
         }[]
-      },
+      }
       token: {
-        symbol: string,
-        logo: string,
+        symbol: string
+        logo: string
         price_usd: string
-      },
+      }
       weights: {
-        weight_normalized: string,
+        weight_normalized: string
         asset: {
-          balance: string,
+          balance: string
           token: {
-            symbol: string,
+            symbol: string
             logo: string
           }
         }
@@ -120,23 +120,23 @@ export type Result = {
 }
 
 export type ActivityCardProps = {
-  key: string,
-  actionType: actionsType,
-  date: Date,
-  wallet: string,
-  txHash: string,
-  activityInfo: ActivityInfo[],
-  newBalancePool?: ActivityInfo[],
+  key: string
+  actionType: actionsType
+  date: Date
+  wallet: string
+  txHash: string
+  activityInfo: ActivityInfo[]
+  newBalancePool?: ActivityInfo[]
   sharesRedeemed?: {
-    amount: string,
+    amount: string
     value: string
   }
 }
 
 type RequestParams = {
-  first: number,
-  skip: number,
-  id: string,
+  first: number
+  skip: number
+  id: string
   options: string[]
 }
 

@@ -10,7 +10,7 @@ export const StakeCard = styled.div`
 `
 
 interface IBorderGradientProps {
-  stakeWithVotingPower: boolean;
+  stakeWithVotingPower: boolean
 }
 
 // prettier-ignore
@@ -52,7 +52,7 @@ export const BorderGradient = styled.div<IBorderGradientProps>`
 `
 
 interface IInterBackgroundProps {
-  stakeWithVotingPower: boolean;
+  stakeWithVotingPower: boolean
 }
 
 // prettier-ignore
@@ -205,7 +205,7 @@ export const InfosStaking = styled.div`
 `
 
 interface IButtonContainerProps {
-  stakeWithVotingPower: boolean;
+  stakeWithVotingPower: boolean
 }
 
 // prettier-ignore
@@ -247,8 +247,8 @@ export const StakeContainer = styled.div`
 `
 
 interface IButtonDetailsProps {
-  isDetails: boolean;
-  isConnect: boolean;
+  isDetails: boolean
+  isConnect: boolean
 }
 
 // prettier-ignore
