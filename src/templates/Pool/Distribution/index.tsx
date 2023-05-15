@@ -25,7 +25,7 @@ const Distribution = () => {
     [key: string]: Big
   }>()
   const [yieldYakFarm, setYieldYakFarm] = React.useState<
-    { address: string, platform: string }[]
+    { address: string; platform: string }[]
   >([])
 
   const { convertBalanceYRTtoWrap } = useYieldYak()

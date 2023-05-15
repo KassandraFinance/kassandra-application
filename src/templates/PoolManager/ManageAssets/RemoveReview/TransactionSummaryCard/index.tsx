@@ -81,7 +81,7 @@ const TransactionSummaryCard = () => {
                 )}{' '}
                 {tokenSelection.symbol}
               </p>
-              <span>$ {tokenSelection.balanceUSD}</span>
+              <span>$ {tokenSelection.balanceInUSD}</span>
             </S.ReceivedInfo>
           </S.RemovalInformation>
 

@@ -44,25 +44,25 @@ import tooltip from '../../../public/assets/utilities/tooltip.svg'
 import * as S from './styles'
 
 export interface IfarmInfoYYProps {
-  urlFarmContract: string;
-  farmName: string;
+  urlFarmContract: string
+  farmName: string
 }
 
 interface InfoPool {
-  tvl: string;
-  swapFees: string;
-  withdrawFees: string;
-  volume: string;
-  price: string;
-  decimals: number;
+  tvl: string
+  swapFees: string
+  withdrawFees: string
+  volume: string
+  price: string
+  decimals: number
 }
 
 export interface IPriceAndChangeTokens {
   [key: string]: {
-    change: number,
-    price: number,
+    change: number
+    price: number
     image: string
-  };
+  }
 }
 
 const Pool = () => {

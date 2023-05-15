@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { IOperations } from '../../../../services/IOperation';
+import { IOperations } from '../../../../services/IOperation'
 
 interface IOperationModel {
-  operation: IOperations;
+  operation: IOperations
   priceToken: (address: string) => number | undefined
 }
 
@@ -11,8 +11,8 @@ interface IOperationModel {
 export const PoolOperationContext = React.createContext({} as IOperationModel)
 
 interface IDepsProviderProvider {
-  children: React.ReactNode;
-  operation: IOperationModel;
+  children: React.ReactNode
+  operation: IOperationModel
 }
 
 export function OperationProvider({

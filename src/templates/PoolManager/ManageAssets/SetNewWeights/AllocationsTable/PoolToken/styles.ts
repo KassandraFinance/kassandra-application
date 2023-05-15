@@ -8,6 +8,7 @@ export const TokenInfo = styled.td`
 
     @media (max-width: 745px) {
       grid-area: tokenInfo;
+      gap: 0.8rem;
     }
   `}
 `
@@ -18,6 +19,8 @@ export const TokenNameContainer = styled.div`
     flex-direction: column;
     justify-content: center;
     gap: 0.4rem;
+
+    width: 100%;
 
     > p {
       color: #bdbdbd;
@@ -69,7 +72,7 @@ export const TokenName = styled.a`
 export const Line = styled.span`
   ${() => css`
     display: none;
-    margin-left: 0.9rem;
+    margin-left: auto;
     height: 1.4rem;
 
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -80,7 +83,7 @@ export const Line = styled.span`
   `}
 `
 interface IMoreInfoProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -186,16 +189,21 @@ export const Allocation = styled.td`
 
 export const Arrow = styled.td`
   ${() => css`
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: flex-start;
 
+    width: 3.2rem;
+
     @media (max-width: 650px) {
       justify-content: center;
     }
+
     @media (max-width: 745px) {
       grid-area: arrow;
       justify-content: center;
+      width: 1.5rem;
     }
   `}
 `
@@ -232,7 +240,7 @@ export const ImageContent = styled.span`
 `
 
 interface ILockButtonProps {
-  active: boolean;
+  active: boolean
 }
 
 // prettier-ignore

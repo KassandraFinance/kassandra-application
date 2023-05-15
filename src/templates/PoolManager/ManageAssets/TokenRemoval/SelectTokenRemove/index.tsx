@@ -1,7 +1,10 @@
 import React from 'react'
 import Blockies from 'react-blockies'
+import Big from 'big.js'
 
 import { BNtoDecimal } from '@/utils/numerals'
+
+import { mockTokens } from '@/constants/tokenAddresses'
 
 import { useAppSelector } from '@/store/hooks'
 
@@ -17,16 +20,23 @@ enum colorType {
 }
 
 type IPoolInfoProps = {
-  name: string,
-  symbol: string,
+  name: string
+  symbol: string
   logo?: string
 }
 
 interface ISelectTokenRemoveProps {
-  poolInfo: IPoolInfoProps;
+  poolInfo: IPoolInfoProps
+  chainId: number
+  priceToken: (address: string) => number
 }
 
-const SelectTokenRemove = ({ poolInfo }: ISelectTokenRemoveProps) => {
+// eslint-disable-next-line prettier/prettier
+const SelectTokenRemove = ({
+  poolInfo,
+  priceToken,
+  chainId
+}: ISelectTokenRemoveProps) => {
   const { tokenSelection, lpNeeded } = useAppSelector(
     state => state.removeAsset
   )
@@ -61,7 +71,7 @@ const SelectTokenRemove = ({ poolInfo }: ISelectTokenRemoveProps) => {
 
   return (
     <S.SelectTokenRemove>
-      <SelectToken />
+      <SelectToken priceToken={priceToken} chainId={chainId} />
       <S.RemovedTokenReviewCard>
         <S.LineRemovedTokenReview>
           <S.ValueText>Allocation</S.ValueText>
@@ -91,9 +101,20 @@ const SelectTokenRemove = ({ poolInfo }: ISelectTokenRemoveProps) => {
             ) : (
               <S.AllocationAndHoldingValue>---</S.AllocationAndHoldingValue>
             )}
-            {tokenSelection.balanceUSD !== '0' ? (
+            {tokenSelection.balance !== '' ? (
               <S.TextBalance>
-                ${Number(tokenSelection.balanceUSD).toFixed(2)}
+                $
+                {Big(tokenSelection?.balance ?? 0)
+                  .mul(
+                    Big(
+                      priceToken(
+                        chainId === 5
+                          ? mockTokens[tokenSelection.address]
+                          : tokenSelection.address.toLowerCase()
+                      ) ?? 0
+                    )
+                  )
+                  .toFixed(2)}
               </S.TextBalance>
             ) : (
               <S.TextBalance>---</S.TextBalance>

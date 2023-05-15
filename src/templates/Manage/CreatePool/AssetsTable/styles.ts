@@ -1,3 +1,4 @@
+import { Input } from '@/components/Inputs/InputText/styles'
 import styled, { css } from 'styled-components'
 
 export const AssetsTable = styled.div`
@@ -55,6 +56,12 @@ export const AssetsTable = styled.div`
 export const SearchWrapper = styled.div`
   ${() => css`
     margin-bottom: 2.4rem;
+
+    ${Input} {
+      &:valid {
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+    }
   `}
 `
 
@@ -165,7 +172,7 @@ export const SecondaryText = styled.span`
 `
 
 interface IShadowProps {
-  inView: boolean;
+  inView: boolean
 }
 
 // prettier-ignore
@@ -191,6 +198,29 @@ export const Shadow = styled.div<IShadowProps>`
   ${({ inView }) => inView && css`
     opacity: 0;
     visibility: hidden;
+  `}
+`
+
+export const EmptyListContainer = styled.div`
+  ${({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2rem;
+
+    height: 41.1rem;
+    padding-inline: 3.5rem;
+
+    p {
+      color: ${theme.colors.white};
+      font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font14};
+      line-height: 1.8rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-align: center;
+    }
   `}
 `
 

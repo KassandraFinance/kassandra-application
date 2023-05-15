@@ -72,17 +72,16 @@ export const CoinContainer = styled.div`
 `
 
 export const AllocationContainer = styled.div`
-  ${() =>
-    css`
-      display: grid;
-      grid-template-columns: 3.2rem auto 1rem;
-      gap: 1.2rem;
-      align-items: center;
-    `}
+  ${() => css`
+    display: grid;
+    grid-template-columns: 3.2rem auto 1rem;
+    gap: 1.2rem;
+    align-items: center;
+  `}
 `
 
 interface ILockButtonProps {
-  active: boolean;
+  active: boolean
 }
 
 // prettier-ignore
@@ -127,6 +126,8 @@ export const LockButton = styled.button<ILockButtonProps>`
 
 export const RemoveButton = styled.button`
   ${() => css`
+    position: relative;
+
     width: 1rem;
     height: 1rem;
     border: none;
@@ -151,7 +152,7 @@ export const ProgressBar = styled.div`
 `
 
 interface IProgressValueProps {
-  value: number;
+  value: number
 }
 
 // prettier-ignore
@@ -184,7 +185,7 @@ export const ProgressValue = styled.div<IProgressValueProps>`
       filter: blur(5px);
     }
   `}
-  ${({theme, value}) => value > 100 && css`
+  ${({ theme, value }) => value > 100 && css`
     width: 100%;
 
     background-color: ${theme.colors.error};
@@ -193,7 +194,7 @@ export const ProgressValue = styled.div<IProgressValueProps>`
 `
 
 interface ITotalContainerProps {
-  value: number;
+  value: number
 }
 
 // prettier-ignore
@@ -219,6 +220,12 @@ export const TotalContainer = styled.div<ITotalContainerProps>`
     ${ProgressValue} {
       width: 100%;
 
+      background-color: ${theme.colors.error};
+      background-image: none;
+    }
+  `}
+  ${({ theme, value }) => value < 100 && css`
+    ${ProgressValue} {
       background-color: ${theme.colors.error};
       background-image: none;
     }

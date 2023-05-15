@@ -11,14 +11,14 @@ import ExternalLink from '../ExternalLink'
 import * as S from './styles'
 
 interface IKacyMarketDataProps {
-  price: number;
-  marketCap: Big;
-  supply: Big;
-  kacyPercentage: number;
+  price: number
+  marketCap: Big
+  supply: Big
+  kacyPercentage: number
 }
 
 interface IKacyOverviewProps {
-  kacyMarketData: IKacyMarketDataProps;
+  kacyMarketData: IKacyMarketDataProps
 }
 
 const KacyOverview = ({ kacyMarketData }: IKacyOverviewProps) => {

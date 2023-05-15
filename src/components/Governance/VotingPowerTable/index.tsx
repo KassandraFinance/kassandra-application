@@ -16,19 +16,19 @@ import * as S from './styles'
 import Loading from '../../Loading'
 
 interface IVotingPowerRankProps {
-  address: string;
-  votingPower: Big;
-  voteWeight: string;
-  votes: number;
-  proposalsCreated: number;
-  name?: string;
-  image?: string;
-  isNFT?: boolean;
+  address: string
+  votingPower: Big
+  voteWeight: string
+  votes: number
+  proposalsCreated: number
+  name?: string
+  image?: string
+  isNFT?: boolean
 }
 
 interface IVotingPowerProps {
-  skip?: number;
-  take: number;
+  skip?: number
+  take: number
 }
 
 export const VotingPowerTable = ({ skip = 0, take }: IVotingPowerProps) => {
@@ -67,9 +67,9 @@ export const VotingPowerTable = ({ skip = 0, take }: IVotingPowerProps) => {
       if (data) {
         const users = data.users.map(
           async (user: {
-            id: string,
-            votingPower: string,
-            votes: [],
+            id: string
+            votingPower: string
+            votes: []
             proposals: []
           }) => {
             const response = await fetch(`/api/profile/${user.id}`)

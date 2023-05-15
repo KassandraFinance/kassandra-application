@@ -2,11 +2,11 @@ import styled from 'styled-components'
 import theme from '../../../styles/theme'
 
 interface IInputProps {
-  bestValue?: boolean;
+  bestValue?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
-export const Input = styled.input <IInputProps>`
+export const Input = styled.input<IInputProps>`
   width: 100%;
   margin: 0.8rem 0;
 

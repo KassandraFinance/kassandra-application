@@ -16,21 +16,21 @@ import arrowDown from '../../../../public/assets/utilities/arrow-select-down.svg
 import * as S from './styles'
 
 type INftDataProps = {
-  token_address: string,
-  token_id: string,
-  contract_type: string,
-  name: string,
-  symbol: string,
-  description: string,
-  nftName: string,
+  token_address: string
+  token_id: string
+  contract_type: string
+  name: string
+  symbol: string
+  description: string
+  nftName: string
   chain: string
 }
 
 interface IOperationsProps {
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  userData: UserProps;
-  NftUrl: string;
+  modalOpen: boolean
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  userData: UserProps
+  NftUrl: string
 }
 
 const ChainLink: { [key: string]: string } = {

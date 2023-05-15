@@ -5,7 +5,7 @@ import { Cell, Label, Pie, PieChart } from 'recharts'
 import * as S from './styles'
 
 interface IRebalancingProgressGraphProps {
-  ProgressValue: number;
+  ProgressValue: number
 }
 
 const RebalancingProgressGraph = ({

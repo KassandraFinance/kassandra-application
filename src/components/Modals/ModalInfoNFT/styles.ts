@@ -28,7 +28,7 @@ export const ImageContainerNft = styled.div`
 `
 
 interface INftImageProps {
-  isOpenDetails: boolean;
+  isOpenDetails: boolean
 }
 
 // prettier-ignore
@@ -62,7 +62,7 @@ export const NftImage = styled.img<INftImageProps>`
   }
 `
 interface IButtonViewProps {
-  isOpenDetails: boolean;
+  isOpenDetails: boolean
 }
 
 // prettier-ignore
@@ -143,8 +143,8 @@ export const ButtonViewNftDetails = styled.div`
 `
 
 interface IModalInfoNftContainerProps {
-  modalOpen: boolean;
-  isOpenDetails: boolean;
+  modalOpen: boolean
+  isOpenDetails: boolean
 }
 
 // prettier-ignore
@@ -211,7 +211,7 @@ export const ModalInfoNftContent = styled.div`
   height: 100vh;
   max-width: 55rem;
 
-  background-color: #232734;
+  background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
 
   z-index: 1050;
 
@@ -283,7 +283,7 @@ export const SocialIconsContainer = styled.ul`
 `
 
 interface ISocialIconProps {
-  isActiveSocial?: boolean;
+  isActiveSocial?: boolean
 }
 
 // prettier-ignore

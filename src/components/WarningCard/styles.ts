@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface IWarningCardProps {
-  showCard: boolean;
+  showCard: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

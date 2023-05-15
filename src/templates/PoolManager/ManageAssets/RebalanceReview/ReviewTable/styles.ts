@@ -4,9 +4,9 @@ export const ReviewTable = styled.div`
   ${() => css`
     width: 100%;
     padding: 3.2rem;
-
-    background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
+
+    background: rgb(255 255 255 / 0.05);
 
     @media (max-width: 576px) {
       padding: 1.6rem;
@@ -17,12 +17,12 @@ export const ReviewTable = styled.div`
 export const PoolInfoContainer = styled.div`
   ${() => css`
     display: flex;
-    align-items: center;
     gap: 2.6rem;
-    padding-bottom: 2.4rem;
-    margin-bottom: 2.4rem;
+    align-items: center;
 
-    border-bottom: 0.1rem solid rgba(255, 255, 255, 0.5);
+    margin-bottom: 2.4rem;
+    padding-bottom: 2.4rem;
+    border-bottom: 0.1rem solid rgb(255 255 255 / 0.5);
 
     @media (max-width: 576px) {
       justify-content: space-between;
@@ -34,23 +34,24 @@ export const PoolInfo = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     gap: 0.8rem;
+    align-items: flex-start;
 
     p {
-      font-size: ${theme.font.sizes.font24};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font24};
       line-height: 100%;
     }
 
     span {
-      background: rgba(0, 0, 0, 0.19);
-      border-radius: 8px;
       padding: 0.8rem 1.1rem;
+      border-radius: 8px;
 
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font12};
       line-height: 100%;
+
+      background: rgb(0 0 0 / 0.19);
     }
 
     @media (max-width: 576px) {
@@ -61,11 +62,11 @@ export const PoolInfo = styled.div`
 
 export const TableContainer = styled.table`
   ${() => css`
+    overflow: hidden;
+
     width: 100%;
     margin-bottom: 2.4rem;
-
     border-collapse: collapse;
-    overflow: hidden;
   `}
 `
 
@@ -75,14 +76,15 @@ export const Thead = styled.thead`
   `}
 `
 interface IIsViewProps {
-  isView?: number;
+  isView?: number
 }
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const TrHead = styled.tr<IIsViewProps>`
   ${({ isView }) => css`
     display: flex;
     justify-content: space-between;
+
     width: 100%;
 
     th:nth-child(2) {
@@ -91,29 +93,31 @@ export const TrHead = styled.tr<IIsViewProps>`
       @media (max-width: 630px) {
         margin-left: 6rem;
       }
+
       @media (max-width: 576px) {
         display: ${isView === 3 || isView === 4 ? 'none' : 'flex'};
+
         margin-left: 0;
       }
     }
   `}
 `
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const Th = styled.th<IIsViewProps>`
   ${({ theme, isView }) => css`
     display: flex;
+    gap: 0.7rem;
     justify-content: center;
     align-items: center;
-    gap: 0.7rem;
 
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
     line-height: 104%;
 
     strong {
-      font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font14};
       line-height: 104%;
     }
 
@@ -127,23 +131,32 @@ export const Th = styled.th<IIsViewProps>`
       strong {
         display: none;
       }
+
       :first-child {
         display: none;
       }
+
       .currentWeight {
         display: ${isView === 1 ? 'block' : 'none'};
+
         animation: ${tableAnim} 0.4s ease;
       }
+
       .assetAmount {
         display: ${isView === 2 ? 'block' : 'none'};
+
         animation: ${tableAnim} 0.4s ease;
       }
+
       .newWeight {
         display: ${isView === 3 ? 'block' : 'none'};
+
         animation: ${tableAnim} 0.4s ease;
       }
+
       .newAssetAmount {
         display: ${isView === 4 ? 'block' : 'none'};
+
         animation: ${tableAnim} 0.4s ease;
       }
     }
@@ -159,17 +172,17 @@ export const ReviewThImg = styled.th`
       align-items: center;
 
       padding: 0.6rem 0.85rem;
-      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid transparent;
       border-radius: 50%;
 
-      border: 0.1rem solid transparent;
+      background: rgb(255 255 255 / 0.05);
 
       cursor: pointer;
 
       transition: border 0.3s ease;
 
       &:hover {
-        border: 0.1rem solid rgba(255, 255, 255, 0.3);
+        border: 1px solid rgb(255 255 255 / 0.3);
       }
     }
 
@@ -179,8 +192,8 @@ export const ReviewThImg = styled.th`
 
     @media (max-width: 576px) {
       display: flex;
-      align-items: center;
       gap: 0.8rem;
+      align-items: center;
     }
   `}
 `
@@ -198,10 +211,10 @@ export const TrBody = styled.tr`
     display: grid;
     grid-template-columns: 1fr 1fr 8rem 1fr;
     align-items: center;
-    margin-top: 2.4rem;
 
+    margin-top: 2.4rem;
     padding-bottom: 1.6rem;
-    border-bottom: 0.1rem solid rgba(255, 255, 255, 0.3);
+    border-bottom: 0.1rem solid rgb(255 255 255 / 0.3);
 
     #eyeIcon {
       display: none;
@@ -209,6 +222,7 @@ export const TrBody = styled.tr`
       @media (max-width: 576px) {
         display: flex;
         justify-content: center;
+
         cursor: pointer;
       }
     }
@@ -227,8 +241,8 @@ export const TokenNameContainer = styled.td`
 
     p {
       color: #bdbdbd;
-      font-size: ${theme.font.sizes.font12};
       font-weight: ${theme.font.weight.light};
+      font-size: ${theme.font.sizes.font12};
       line-height: 104%;
     }
   `}
@@ -237,12 +251,12 @@ export const TokenNameContainer = styled.td`
 export const TokenName = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     gap: 0.4rem;
+    align-items: center;
 
     color: #fcfcfc;
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font14};
     line-height: 104%;
   `}
 `
@@ -250,15 +264,15 @@ export const TokenName = styled.div`
 export const Arrow = styled.td`
   ${() => css`
     display: flex;
-    align-items: center;
     justify-content: flex-end;
+    align-items: center;
 
     img {
       margin-left: 5rem;
 
       @media (max-width: 1110px) {
-        margin-left: 0;
         max-width: 3.2rem;
+        margin-left: 0;
       }
     }
 
@@ -273,71 +287,74 @@ export const Arrow = styled.td`
 `
 
 interface IIsOpenGraphProps {
-  isOpenGraph: boolean;
+  isOpenGraph: boolean
 }
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const VisualInformation = styled.button<IIsOpenGraphProps>`
   ${({ theme, isOpenGraph }) => css`
     display: flex;
-    align-items: center;
     gap: 0.8rem;
-    margin: 0 auto;
+    align-items: center;
 
-    background-color: transparent;
+    margin: 0 auto;
     border: none;
 
-    font-family: 'Rubik';
-    color: #ffffff;
-    font-size: ${theme.font.sizes.font16};
+    color: #fff;
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font16};
+    font-family: Rubik, sans-serif;
     line-height: 104%;
+
+    background-color: transparent;
 
     cursor: pointer;
 
     img {
-      transform: rotate(${isOpenGraph ? '180deg' : '0'});
-
       transition: transform 0.3s ease;
+      transform: rotate(${isOpenGraph ? '180deg' : '0'});
     }
   `}
 `
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const CurrentWeightContainer = styled.td<IIsViewProps>`
   ${({ theme, isView }) => css`
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+
     text-align: center;
 
     > p {
       width: 100%;
-      text-align: center;
       padding-right: 0.8rem;
-      font-size: ${theme.font.sizes.font16};
+
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font16};
       line-height: 104%;
+      text-align: center;
     }
 
     @media (max-width: 576px) {
       display: ${isView === 1 || isView === 2 ? 'flex' : 'none'};
       justify-content: flex-end;
 
+      animation: ${tableAnim} 0.4s ease;
+
       > p {
         display: ${isView === 1 ? 'flex' : 'none'};
+
         width: auto;
-        margin-right: 4rem;
       }
 
       ${CurrentWeight} {
         display: ${isView === 2 ? 'flex' : 'none'};
         justify-content: flex-end;
-        margin-right: 4rem;
+
+        margin-right: 1rem;
         border-left: none;
       }
-
-      animation: ${tableAnim} 0.4s ease;
     }
   `}
 `
@@ -345,17 +362,18 @@ export const CurrentWeightContainer = styled.td<IIsViewProps>`
 export const CurrentWeight = styled.div`
   ${({ theme }) => css`
     display: flex;
-    justify-content: center;
-    padding-left: 1.6rem;
-    width: 100%;
     gap: 0.4rem;
+    justify-content: center;
 
+    width: 100%;
+    padding-left: 1.6rem;
     border-left: 1px solid #ccc;
+
     text-align: center;
 
     p {
-      font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font16};
       line-height: 104%;
     }
 
@@ -365,7 +383,7 @@ export const CurrentWeight = styled.div`
   `}
 `
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const NewWeightContainer = styled.td<IIsViewProps>`
   ${({ theme, isView }) => css`
     display: flex;
@@ -374,11 +392,10 @@ export const NewWeightContainer = styled.td<IIsViewProps>`
     > p {
       width: 100%;
       padding-right: 1.6rem;
-
       border-right: 1px solid #ccc;
 
-      font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font16};
       line-height: 104%;
       text-align: center;
     }
@@ -386,16 +403,18 @@ export const NewWeightContainer = styled.td<IIsViewProps>`
     @media (max-width: 576px) {
       display: ${isView === 3 || isView === 4 ? 'flex' : 'none'};
       justify-content: flex-end;
-      margin-right: 4rem;
+
+      margin-right: 1rem;
 
       animation: ${tableAnim} 0.4s ease;
 
       > p {
         display: ${isView === 3 ? 'flex' : 'none'};
-        padding-right: 0;
-        width: auto;
 
+        width: auto;
+        padding-right: 0;
         border-right: none;
+
         text-align: center;
       }
 
@@ -410,36 +429,38 @@ export const NewWeightContainer = styled.td<IIsViewProps>`
 export const NewWeight = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+
     width: 100%;
 
     > p {
-      font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font16};
       line-height: 104%;
     }
   `}
 `
 
-// eslint-disable-next-line prettier/prettier
+// prettier-ignore
 export const MobileEyeContainer = styled.td<IIsViewProps>`
   ${({ theme, isView }) => css`
     width: 100%;
 
     color: #fcfcfc;
-    font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font16};
     line-height: 104%;
     text-align: center;
 
     :first-child {
       display: flex;
-      align-items: center;
       gap: 0.8rem;
+      align-items: center;
 
       text-align: start;
     }
+
     :last-child {
       text-align: end;
     }

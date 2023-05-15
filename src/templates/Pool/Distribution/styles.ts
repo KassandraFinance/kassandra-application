@@ -149,9 +149,9 @@ export const isThereNoYieldyak = styled.p`
 `
 
 interface ICoinProps {
-  width?: number;
-  change24h?: boolean;
-  negative?: boolean;
+  width?: number
+  change24h?: boolean
+  negative?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

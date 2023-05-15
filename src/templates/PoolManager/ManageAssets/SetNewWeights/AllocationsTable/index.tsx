@@ -17,10 +17,11 @@ import PoolToken, { AssetType } from './PoolToken'
 import * as S from './styles'
 
 interface IAllocationsTableProps {
-  priceToken: (address: string) => number | undefined;
+  priceToken: (address: string) => number | undefined
+  chainId: number
 }
 
-const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
+const AllocationsTable = ({ priceToken, chainId }: IAllocationsTableProps) => {
   const dispatch = useAppDispatch()
 
   const totalWeight = useAppSelector(state => state.rebalanceAssets.totalWeight)
@@ -196,6 +197,13 @@ const AllocationsTable = ({ priceToken }: IAllocationsTableProps) => {
                 newTokensValues={newTokensWights}
                 handleLockStatus={handleLockStatus}
                 handleCalcNewWeights={handleCalcNewWeights}
+                priceToken={
+                  priceToken(
+                    chainId === 5
+                      ? mockTokens[item.token.address].toLowerCase()
+                      : item.token.address.toLowerCase()
+                  ) || 0
+                }
               />
             </S.TrBody>
           )

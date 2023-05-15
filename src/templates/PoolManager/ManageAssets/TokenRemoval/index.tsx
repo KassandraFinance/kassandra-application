@@ -3,10 +3,7 @@ import { AbiItem } from 'web3-utils'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
 
-import {
-  mockTokens,
-  networks
-} from '@/constants/tokenAddresses'
+import { mockTokens, networks } from '@/constants/tokenAddresses'
 import ManagedPool from '@/constants/abi/ManagedPool.json'
 
 import {
@@ -34,7 +31,7 @@ const TokenRemoval = () => {
 
   const dispatch = useAppDispatch()
   const { weights, tokenSelection } = useAppSelector(state => state.removeAsset)
-  const userWalletAddress  = useAppSelector(state => state.userWalletAddress)
+  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -43,7 +40,7 @@ const TokenRemoval = () => {
   const { poolAssets } = usePoolAssets(poolId)
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
-  const { data: coingeckoData, priceToken } = useCoingecko(
+  const { priceToken } = useCoingecko(
     networks[poolInfo?.chain_id ?? 137]?.coingecko,
     poolInfo?.chain.addressWrapped ?? '',
     handleMockToken(poolInfo?.underlying_assets_addresses ?? [])
@@ -51,7 +48,7 @@ const TokenRemoval = () => {
 
   function handleMockToken(tokenList: string[]) {
     const mockTokensList = tokenList?.map(item => {
-      return mockTokens[item]
+      return mockTokens[item] ?? item
     })
 
     return mockTokensList
@@ -60,15 +57,18 @@ const TokenRemoval = () => {
   async function handleCheckLpNeeded(allocation: string, poolPrice: string) {
     if (tokenSelection.address === '' || !poolInfo) return
 
-    const userBalance = await ERC20(poolInfo.address).balance(
-      userWalletAddress
-    )
+    const userBalance = await ERC20(poolInfo.address).balance(userWalletAddress)
 
     let totalSupply = Big(0)
     try {
       // eslint-disable-next-line prettier/prettier
-      const managedPool = new web3.eth.Contract((ManagedPool as unknown) as AbiItem, poolInfo.address);
-      const currentPoolSupply = await managedPool.methods.getActualSupply().call()
+      const managedPool = new web3.eth.Contract(
+        ManagedPool as unknown as AbiItem,
+        poolInfo.address
+      )
+      const currentPoolSupply = await managedPool.methods
+        .getActualSupply()
+        .call()
 
       totalSupply = Big(currentPoolSupply).div(Big(10).pow(18))
     } catch (error) {
@@ -96,21 +96,19 @@ const TokenRemoval = () => {
     if (!poolAssets) return
 
     const poolInfo = poolAssets.map(item => {
-        return {
-          address: item.token.id,
-          name: item.token.name,
-          symbol: item.token.symbol,
-          logo: item.token.logo,
-          decimals: item.token.decimals,
-          balance: item.balance,
-          weight: item.weight_normalized ?? 0,
-          balanceUSD: Big(item.balance).mul(priceToken(mockTokens[item.token.id] ?? 0) ?? 0).toFixed(2)
-        }
+      return {
+        address: item.token.id,
+        name: item.token.name,
+        symbol: item.token.symbol,
+        logo: item.token.logo,
+        decimals: item.token.decimals,
+        balance: item.balance,
+        weight: item.weight_normalized ?? 0
       }
-    )
+    })
 
     dispatch(setPoolTokensList(poolInfo))
-  }, [coingeckoData])
+  }, [])
 
   React.useEffect(() => {
     if (!poolInfo) return
@@ -122,25 +120,24 @@ const TokenRemoval = () => {
     if (tokenSelection.address === '' || !poolAssets) return
 
     const poolWeightInfo = poolAssets.map(item => {
-        // eslint-disable-next-line prettier/prettier
-        const currentWeight = item.weight_normalized ?? '0'
-        const isSelectedToken = tokenSelection.address === item.token.id
+      // eslint-disable-next-line prettier/prettier
+      const currentWeight = item.weight_normalized ?? '0'
+      const isSelectedToken = tokenSelection.address === item.token.id
 
-        return {
-          weight_normalized: currentWeight,
-          newWeight: isSelectedToken
-            ? '0'
-            : handleCalcNewWeight(currentWeight, tokenSelection.weight),
-          token: {
-            decimals: item.token.decimals,
-            id: item.token.id,
-            logo: item.token.logo,
-            name: item.token.name,
-            symbol: item.token.symbol
-          }
+      return {
+        weight_normalized: currentWeight,
+        newWeight: isSelectedToken
+          ? '0'
+          : handleCalcNewWeight(currentWeight, tokenSelection.weight),
+        token: {
+          decimals: item.token.decimals,
+          id: item.token.id,
+          logo: item.token.logo,
+          name: item.token.name,
+          symbol: item.token.symbol
         }
       }
-    )
+    })
 
     dispatch(
       setWeight(
@@ -175,11 +172,15 @@ const TokenRemoval = () => {
         <p>Select the token you wish to be removed from the pool</p>
 
         <S.SelectTokenAndTableAllocation>
-          <SelectTokenRemove poolInfo={{
-            name: poolInfo?.name ?? '',
-            symbol: poolInfo?.symbol ?? '',
-            logo: poolInfo?.logo
-          }}/>
+          <SelectTokenRemove
+            chainId={poolInfo?.chain_id ?? 137}
+            priceToken={priceToken}
+            poolInfo={{
+              name: poolInfo?.name ?? '',
+              symbol: poolInfo?.symbol ?? '',
+              logo: poolInfo?.logo
+            }}
+          />
           <NewAllocationTable
             assets={tokenSelection.address === '' ? undefined : weights}
           />

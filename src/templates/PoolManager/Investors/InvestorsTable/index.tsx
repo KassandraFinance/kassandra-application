@@ -18,8 +18,7 @@ import { ToastInfo } from '@/components/Toastify/toast'
 import ImageProfile from '@/components/Governance/ImageProfile'
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 
-import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
+import arrowIcon from '@assets/utilities/arrow-left.svg'
 import eyeShowIcon from '@assets/utilities/eye-show.svg'
 
 import * as S from './styles'
@@ -45,27 +44,25 @@ import {
 } from '@ui/Modals/ModalViewCoin/styles'
 
 type GetInvestorsType = {
-  manager: {
-    pools: {
-      id: string,
-      price_usd: string,
-      supply: string,
-      unique_investors: number,
-      investors: {
-        id: string,
-        wallet: string,
-        first_deposit_timestamp: number,
-        last_deposit_timestamp: number,
-        amount: string
-      }[]
+  pools: {
+    id: string
+    price_usd: string
+    supply: string
+    unique_investors: number
+    investors: {
+      id: string
+      wallet: string
+      first_deposit_timestamp: number
+      last_deposit_timestamp: number
+      amount: string
     }[]
-  }
+  }[]
 }
 
 interface IInvestorsTable {
-  skip: number;
-  take: number;
-  setTotalItems: Dispatch<SetStateAction<number>>;
+  skip: number
+  take: number
+  setTotalItems: Dispatch<SetStateAction<number>>
 }
 
 const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
@@ -116,11 +113,11 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
     logo: string | null,
     address: string,
     line: {
-      firstDeposit: string,
-      lastDeposit: string,
-      totalInvested: string,
-      investorShare: string,
-      percentage: string,
+      firstDeposit: string
+      lastDeposit: string
+      totalInvested: string
+      investorShare: string
+      percentage: string
       address: string
     }
   ) {
@@ -141,7 +138,9 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
   )
 
   // eslint-disable-next-line prettier/prettier
-  function handleClickCopyToClipboard(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+  function handleClickCopyToClipboard(
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) {
     event.preventDefault()
     ToastInfo('Copy address')
   }
@@ -151,7 +150,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
       return
     }
 
-    setTotalItems(data.manager.pools[0].unique_investors - 1)
+    setTotalItems(data.pools[0]?.unique_investors - 1)
   }, [data])
 
   return (
@@ -175,7 +174,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
             <ColumnTitle align="right">Investor Share</ColumnTitle>
           </TH>
           <TH isView={inViewCollum === 5}>
-            <ColumnTitle align="right">Percentage</ColumnTitle>
+            <ColumnTitle align="right">share %</ColumnTitle>
           </TH>
           <TH isView={inViewCollum === 6}>
             <ColumnTitle align="right">Address</ColumnTitle>
@@ -183,11 +182,11 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
           <TH>
             <TableViewButtonContainer>
               <TableViewButton onClick={() => handleCurrentInView(-1, 6)}>
-                <Image src={arrowLeftBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </TableViewButton>
 
               <TableViewButton onClick={() => handleCurrentInView(1, 6)}>
-                <Image src={arrowRightBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </TableViewButton>
             </TableViewButtonContainer>
           </TH>
@@ -195,7 +194,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
       </THead>
 
       <TBody>
-        {data?.manager?.pools[0]?.investors.map((investor, index) => {
+        {data?.pools[0]?.investors.map((investor, index) => {
           const firstDeposit = getDateDiff(
             investor.first_deposit_timestamp * 1000
           )
@@ -233,7 +232,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
                     <Value>
                       $
                       {Big(investor.amount)
-                        .mul(data.manager.pools[0].price_usd)
+                        .mul(data?.pools[0]?.price_usd || 0)
                         .toFixed(2)}
                     </Value>
                   </TD>
@@ -244,7 +243,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
                     <Value>
                       {Big(investor.amount)
                         .mul(100)
-                        .div(data.manager.pools[0].supply)
+                        .div(data?.pools[0]?.supply || 0)
                         .toFixed(2)}
                       %
                     </Value>
@@ -279,11 +278,11 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
                       handleView(investor.wallet, '', investor.wallet, {
                         percentage: Big(investor.amount)
                           .mul(100)
-                          .div(data.manager.pools[0].supply)
+                          .div(data?.pools[0]?.supply || 0)
                           .toFixed(2),
                         investorShare: Big(investor.amount).toFixed(2),
                         totalInvested: Big(investor.amount)
-                          .mul(data.manager.pools[0].price_usd)
+                          .mul(data?.pools[0]?.price_usd || 0)
                           .toFixed(2),
                         lastDeposit: `${lastDeposit?.value} ${lastDeposit?.string}`,
                         firstDeposit: `${firstDeposit?.value} ${firstDeposit?.string}`,
@@ -338,7 +337,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
           </ValueContainer>
         </TableLine>
         <TableLine>
-          <TableLineTitle>Percentage</TableLineTitle>
+          <TableLineTitle>share %</TableLineTitle>
 
           <ValueContainer>
             <V>{lineData.percentage}%</V>

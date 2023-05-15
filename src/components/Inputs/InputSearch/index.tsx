@@ -5,10 +5,10 @@ import searchIcon from '../../../../public/assets/utilities/search.svg'
 import * as S from './styles'
 
 interface IInputSearchProps {
-  name: string;
-  placeholder: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  name: string
+  placeholder: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const InputSearch = ({

@@ -6,9 +6,9 @@ import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 
 export type GetManagerPoolsType = {
   pools: {
-    id: string,
-    logo: string | null,
-    name: string,
+    id: string
+    logo: string | null
+    name: string
     chain: {
       logo: string
     }

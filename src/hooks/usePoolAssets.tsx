@@ -10,40 +10,40 @@ import { getWeightsNormalizedV2 } from '@/utils/updateAssetsToV2'
 
 export type GetPoolAssetsType = {
   pool: {
-    pool_version: number,
+    pool_version: number
     underlying_assets: {
-      balance: string,
-      weight_goal_normalized: string,
-      weight_normalized: string,
+      balance: string
+      weight_goal_normalized: string
+      weight_normalized: string
       token: {
-        decimals: number,
-        id: string,
-        is_wrap_token: number,
-        logo: string,
-        name: string,
-        price_usd: string,
-        symbol: string,
+        decimals: number
+        id: string
+        is_wrap_token: number
+        logo: string
+        name: string
+        price_usd: string
+        symbol: string
         wraps: {
-          id: string,
-          decimals: number,
-          price_usd: string,
-          symbol: string,
-          name: string,
+          id: string
+          decimals: number
+          price_usd: string
+          symbol: string
+          name: string
           logo: string
         }
       }
-    }[],
+    }[]
     weight_goals: {
-      end_timestamp: number,
-      start_timestamp: number,
+      end_timestamp: number
+      start_timestamp: number
       weights: {
-        weight_normalized: string,
+        weight_normalized: string
         asset: {
           token: {
-            decimals: number,
-            id: string,
-            name: string,
-            price_usd: string,
+            decimals: number
+            id: string
+            name: string
+            price_usd: string
             symbol: string
           }
         }
@@ -104,7 +104,10 @@ function usePoolAssets(poolId: string) {
     (query, poolId) =>
       request(BACKEND_KASSANDRA, query, {
         id: poolId
-      })
+      }),
+    {
+      refreshInterval: 60000
+    }
   )
 
   return React.useMemo(() => {

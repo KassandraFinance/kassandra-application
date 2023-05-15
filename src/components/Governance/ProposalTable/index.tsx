@@ -32,22 +32,22 @@ const statsPrimaryProposalLibColor: { [key: string]: string } = {
 }
 
 interface IProposalsListProps {
-  id: string;
-  number: number;
-  targets: [];
-  values: [];
-  signatures: [];
-  startBlock: string;
-  endBlock: string;
-  description: string;
-  created: string;
-  state: string[];
-  timeToEndProposal: string;
+  id: string
+  number: number
+  targets: []
+  values: []
+  signatures: []
+  startBlock: string
+  endBlock: string
+  description: string
+  created: string
+  state: string[]
+  timeToEndProposal: string
 }
 
 interface IProposalTableProps {
-  skip?: number;
-  take: number;
+  skip?: number
+  take: number
 }
 
 export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {

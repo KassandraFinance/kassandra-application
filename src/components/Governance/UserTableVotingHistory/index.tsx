@@ -32,29 +32,29 @@ const statsSecundaryProposalLibColor: { [key: string]: string } = {
 // }
 
 interface IProposalsTableProps {
-  id: string;
-  number: number;
-  support: boolean;
-  targets: [];
-  values: [];
-  signatures: [];
-  startBlock: string;
-  description: string;
-  timestamp: any;
-  state: any[];
-  endBlock: string;
-  created: string;
-  timeToEndProposal: string;
+  id: string
+  number: number
+  support: boolean
+  targets: []
+  values: []
+  signatures: []
+  startBlock: string
+  description: string
+  timestamp: any
+  state: any[]
+  endBlock: string
+  created: string
+  timeToEndProposal: string
 }
 
 interface IProposalsListProps {
-  support: boolean;
-  proposal: IProposalsTableProps;
+  support: boolean
+  proposal: IProposalsTableProps
 }
 
 interface IUserTableProps {
-  userAddressUrl: string | string[] | undefined;
-  userWalletAddress: string | string[] | undefined;
+  userAddressUrl: string | string[] | undefined
+  userWalletAddress: string | string[] | undefined
 }
 
 // eslint-disable-next-line prettier/prettier

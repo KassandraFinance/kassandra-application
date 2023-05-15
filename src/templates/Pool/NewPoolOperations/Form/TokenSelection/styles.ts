@@ -78,7 +78,7 @@ export const InputContent = styled.div`
 `
 
 interface IDeleteSearchProps {
-  isShowIcon: boolean;
+  isShowIcon: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

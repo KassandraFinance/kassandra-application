@@ -5,16 +5,16 @@ import { PieChart, Pie, Cell, Label } from 'recharts'
 import * as S from './styles'
 
 type IDataProps = {
-  image: string,
-  symbol: string,
+  image: string
+  symbol: string
   value: number
 }
 
 interface IPieChartAllocationsProps {
-  data: IDataProps[];
-  activeIndex: number;
-  setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
-  isRebalancing?: boolean;
+  data: IDataProps[]
+  activeIndex: number
+  setActiveIndex: React.Dispatch<React.SetStateAction<number>>
+  isRebalancing?: boolean
 }
 
 const Chart = ({

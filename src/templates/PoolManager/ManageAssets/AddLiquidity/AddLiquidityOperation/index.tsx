@@ -38,17 +38,17 @@ export type CoinGeckoAssetsResponseType = {
 
 export type GetPoolTokensType = {
   pool: {
-    address: string,
-    chainId: number,
-    logo: string,
-    name: string,
-    price_usd: string,
-    symbol: string,
-    total_value_locked_usd: string,
-    controller: string,
+    address: string
+    chainId: number
+    logo: string
+    name: string
+    price_usd: string
+    symbol: string
+    total_value_locked_usd: string
+    controller: string
     chain: {
       logo: string
-    },
+    }
     weight_goals: {
       weights: AssetType[]
     }[]
@@ -67,7 +67,7 @@ const AddLiquidityOperation = () => {
   const dispatch = useAppDispatch()
 
   const token = useAppSelector(state => state.addAsset.token)
-  const chainId = useAppSelector(state => state.addAsset.chainId)
+  const chainId = useAppSelector(state => state.chainId)
   const liquidit = useAppSelector(state => state.addAsset.liquidit)
   const wallet = useAppSelector(state => state.userWalletAddress)
 

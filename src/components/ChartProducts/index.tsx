@@ -145,7 +145,7 @@ const ChartProducts = () => {
   React.useEffect(() => {
     if (data) {
       const newTVL = data?.pool?.total_value_locked.map(
-        (item: { timestamp: number, close: string }) => {
+        (item: { timestamp: number; close: string }) => {
           return {
             timestamp: item.timestamp,
             value: Number(item.close)
@@ -154,7 +154,7 @@ const ChartProducts = () => {
       )
 
       const newPrice = data?.pool?.price_candles.map(
-        (item: { timestamp: number, close: string }) => {
+        (item: { timestamp: number; close: string }) => {
           return {
             timestamp: item.timestamp,
             close: Number(item.close)

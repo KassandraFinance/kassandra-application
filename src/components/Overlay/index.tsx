@@ -1,9 +1,9 @@
 import * as S from './styles'
 
 interface IOverlayProps {
-  isOpen?: boolean;
-  onClick: () => void;
-  onAnimationEnd?: () => void;
+  isOpen?: boolean
+  onClick: () => void
+  onAnimationEnd?: () => void
 }
 
 const Overlay = ({

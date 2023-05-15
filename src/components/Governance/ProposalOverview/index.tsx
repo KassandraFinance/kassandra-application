@@ -10,8 +10,8 @@ import PieChart from './PieChart'
 import * as S from './styles'
 
 export interface IStateProposalListProps {
-  stateProposal: string;
-  proposalVote: number;
+  stateProposal: string
+  proposalVote: number
 }
 
 const ProposalOverview = () => {
@@ -22,7 +22,8 @@ const ProposalOverview = () => {
   ]
 
   // eslint-disable-next-line prettier/prettier
-  const [stateProposalsList, setStateProposalsList] = React.useState<IStateProposalListProps[]>(proposalArray)
+  const [stateProposalsList, setStateProposalsList] =
+    React.useState<IStateProposalListProps[]>(proposalArray)
   const [proposalTotal, setProposalTotal] = React.useState(0)
   const [isLoadingProposal, setIsLoadingProposal] = React.useState(true)
 

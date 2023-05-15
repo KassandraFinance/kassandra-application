@@ -3,9 +3,9 @@ import Image from 'next/image'
 import * as S from './styles'
 
 interface IStepCardProps {
-  icon: any;
-  title: string;
-  text: string;
+  icon: any
+  title: string
+  text: string
 }
 
 const StepCard = ({ icon, title, text }: IStepCardProps) => {

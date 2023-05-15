@@ -18,8 +18,7 @@ import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 import ImageProfile from '@/components/Governance/ImageProfile'
 
 import eyeShowIcon from '@assets/utilities/eye-show.svg'
-import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
+import arrowIcon from '@assets/utilities/arrow-left.svg'
 import tooltip from '@assets/utilities/tooltip.svg'
 
 import * as S from './styles'
@@ -53,13 +52,13 @@ type ITvlProps = {
 }
 
 type IManagerAddress = {
-  totalManagers: string[],
+  totalManagers: string[]
   managers: {
-    id: string,
-    pool_count: number,
-    unique_investors: number,
-    total_value_locked_usd: string,
-    TVLDay: ITvlProps[],
+    id: string
+    pool_count: number
+    unique_investors: number
+    total_value_locked_usd: string
+    TVLDay: ITvlProps[]
     TVLMonthly: ITvlProps[]
   }[]
 }
@@ -67,20 +66,20 @@ type IManagerAddress = {
 type IVoteWeightsProps = {
   governances: {
     totalVotingPower: string
-  }[],
+  }[]
   users: {
-    id: string,
+    id: string
     votingPower: string
   }[]
 }
 
 type IManagerListProps = {
-  rank: number,
-  address: string,
-  poolCount: number,
-  valueManaged: string,
-  changeMonthly: string,
-  changeDay: string,
+  rank: number
+  address: string
+  poolCount: number
+  valueManaged: string
+  changeMonthly: string
+  changeDay: string
   voteWeight: string
 }
 
@@ -274,11 +273,11 @@ const ManagersPoolTable = () => {
           <TH>
             <TableViewButtonContainer>
               <TableViewButton onClick={() => handleCurrentInView(-1)}>
-                <Image src={arrowLeftBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </TableViewButton>
 
               <TableViewButton onClick={() => handleCurrentInView(1)}>
-                <Image src={arrowRightBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </TableViewButton>
             </TableViewButtonContainer>
           </TH>

@@ -7,8 +7,8 @@ import UndelegateVotingPower from './UndelegateVotingPower'
 import * as S from './styles'
 
 interface IModalManageVotingPowerProps {
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  modalOpen: boolean
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ModalManageVotingPower = ({

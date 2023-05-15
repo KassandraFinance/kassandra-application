@@ -129,8 +129,8 @@ export const ButtonWrapper = styled.div`
 `
 
 interface IButtonNetworkProps {
-  borderColor: string;
-  selected: boolean;
+  borderColor: string
+  selected: boolean
 }
 
 // prettier-ignore

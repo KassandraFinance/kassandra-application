@@ -14,7 +14,7 @@ export const Backdrop = styled.div`
 `
 
 interface IModalContainerProps {
-  modalOpen: boolean;
+  modalOpen: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -28,8 +28,7 @@ export const ModalContainer = styled.div<IModalContainerProps>`
   width: 44rem;
   display: ${props => (props.modalOpen ? 'block' : 'none')};
 
-  background-color: rgba(31, 31, 31, 0.8);
-  border: 1.5px solid #FFFFFF40;
+  border: 1.5px solid #ffffff40;
   border-radius: 10px;
 
   @media (max-width: 440px) {
@@ -47,7 +46,7 @@ export const Header = styled.div`
   align-items: center;
   padding: 2.4rem;
 
-  background-color: #1f1f1fb8;
+  background-color: #1f2226;
   border-bottom: 1px solid #ffffff40;
   border-radius: 10px 10px 0 0;
 
@@ -90,7 +89,7 @@ export const Content = styled.div`
   color: ${theme.colors.snow};
   font-weight: ${theme.font.weight.light};
 
-  background: #1f2937;
+  background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
   border-radius: 0 0 10px 10px;
 
   @media (max-width: 440px) {
@@ -111,7 +110,7 @@ export const Content = styled.div`
 `
 
 interface ISelectProps {
-  optionsOpen: boolean;
+  optionsOpen: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -140,7 +139,7 @@ export const Select = styled.button<ISelectProps>`
 `
 
 interface IError {
-  error: boolean;
+  error: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -152,7 +151,7 @@ export const Error = styled.span<IError>`
 `
 
 interface IInput {
-  error: boolean;
+  error: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -184,8 +183,8 @@ export const Input = styled.input<IInput>`
   }
 
   &:focus {
-    outline: 1px solid ${props =>
-      props.error ? theme.colors.red : theme.colors.snow};
+    outline: 1px solid
+      ${props => (props.error ? theme.colors.red : theme.colors.snow)};
   }
 `
 
@@ -242,13 +241,12 @@ export const Selected = styled.div`
 `
 
 interface IModalProps {
-  isOpenOption?: boolean;
-  undelegate?: boolean;
+  isOpenOption?: boolean
+  undelegate?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
-export const Modal = styled.div<IModalProps>
-  `
+export const Modal = styled.div<IModalProps>`
   position: absolute;
   top: ${props => (props.undelegate ? '25.7rem' : '29.3rem')};
   left: 2.4rem;

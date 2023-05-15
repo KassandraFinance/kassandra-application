@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import React from 'react'
 
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce';
+import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import * as S from './styles'
 
-export type TitlesMobile = keyof typeof messages;
+export type TitlesMobile = keyof typeof messages
 
 const messages = {
   Invest: 'Pay with',
@@ -15,10 +15,10 @@ const messages = {
 }
 
 interface ISelectOperatorMobileProps {
-  inputCheckedBarMobile: TitlesMobile;
-  setInputCheckedBarMobile: React.Dispatch<React.SetStateAction<TitlesMobile>>;
+  inputCheckedBarMobile: TitlesMobile
+  setInputCheckedBarMobile: React.Dispatch<React.SetStateAction<TitlesMobile>>
 
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const SelectOperatorMobile = ({
@@ -55,7 +55,11 @@ const SelectOperatorMobile = ({
             id="WithdrawMobile"
             onChange={() => {
               setInputCheckedBarMobile('Withdraw')
-              trackEventFunction('click-on-tab', 'withdraw','operations-invest')
+              trackEventFunction(
+                'click-on-tab',
+                'withdraw',
+                'operations-invest'
+              )
             }}
             checked={inputCheckedBarMobile === 'Withdraw'}
           />
@@ -64,7 +68,7 @@ const SelectOperatorMobile = ({
             selectedMobile={inputCheckedBarMobile === 'Withdraw'}
             htmlFor="WithdrawMobile"
             onClick={() => setModalOpen(true)}
-            >
+          >
             Withdraw
           </S.LabelMobile>
 
@@ -74,7 +78,7 @@ const SelectOperatorMobile = ({
             id="SwapMobile"
             onChange={() => {
               setInputCheckedBarMobile('Swap')
-              trackEventFunction('click-on-tab', 'swap','operations-invest')
+              trackEventFunction('click-on-tab', 'swap', 'operations-invest')
             }}
             checked={inputCheckedBarMobile === 'Swap'}
           />

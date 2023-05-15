@@ -7,22 +7,21 @@ export enum lockToken {
 }
 
 type INewTokensWeights = {
-  newWeight: Big,
-  newAmount: Big,
-  newAmountUSD: Big,
-  lockPercentage: lockToken,
+  newWeight: Big
+  newAmount: Big
+  newAmountUSD: Big
+  lockPercentage: lockToken
   alreadyCalculated: boolean
 }
 
 export type AssetType = {
-  currentWeight: Big,
-  currentAmount: Big,
-  currentAmountUSD: Big,
+  currentWeight: Big
+  currentAmount: Big
   token: {
-    address: string,
-    decimals: number,
-    logo: string | undefined,
-    name: string,
+    address: string
+    decimals: number
+    logo: string | undefined
+    name: string
     symbol: string
   }
 }
@@ -32,10 +31,10 @@ export type IPeriodProps = {
 }
 
 interface IRebalanceAssetsProps {
-  poolTokensList: AssetType[];
-  periodSelect: number;
-  totalWeight: Big;
-  newTokensWights: Record<string, INewTokensWeights>;
+  poolTokensList: AssetType[]
+  periodSelect: number
+  totalWeight: Big
+  newTokensWights: Record<string, INewTokensWeights>
 }
 
 const initialState: IRebalanceAssetsProps = {

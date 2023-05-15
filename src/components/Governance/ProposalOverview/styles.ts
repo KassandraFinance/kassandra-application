@@ -70,7 +70,7 @@ export const Status = styled.ul`
 `
 
 interface IProposalStateProps {
-  ProposalState: string;
+  ProposalState: string
 }
 
 // prettier-ignore

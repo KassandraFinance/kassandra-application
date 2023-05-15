@@ -5,8 +5,8 @@ import React from 'react'
 import { XAxis, YAxis, AreaChart, Area, ResponsiveContainer } from 'recharts'
 
 interface IChartPriceProps {
-  areaChartData: any[];
-  color: string;
+  areaChartData: any[]
+  color: string
 }
 
 const FundAreaChart = ({ areaChartData, color }: IChartPriceProps) => {

@@ -29,34 +29,35 @@ export const VotginCards = styled.div`
 export const VotingDataCard = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   gap: 1.5rem;
-
-  background: rgba(255, 255, 255, 0.05);
-  border: 0.1rem solid rgba(255, 255, 255, 0.2);
-  border-radius: 1.2rem;
+  justify-content: space-between;
 
   padding: 2.3rem;
+  border-radius: 12px;
+
+  background: rgb(255 255 255 / 0.05);
+
   @media (max-width: 700px) {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
     padding: ${theme.spacings.space18};
-    border-radius: 0.8rem;
+    border-radius: 8px;
   }
 `
 
 export const TextVoting = styled.span`
   display: flex;
-  align-items: center;
   gap: 0.8rem;
+  align-items: center;
 
-  font-size: ${theme.font.sizes.font14};
-  font-weight: ${theme.font.weight.medium};
-  line-height: 115%;
   height: 1.6rem;
+
   color: ${theme.colors.grayDisabled};
-  //text-align: center;
+  font-weight: ${theme.font.weight.medium};
+  font-size: ${theme.font.sizes.font14};
+  line-height: 115%;
 
   @media (max-width: 960px) {
     font-size: ${theme.font.sizes.font14};
@@ -64,27 +65,23 @@ export const TextVoting = styled.span`
 `
 
 export const Tooltip = styled.div`
-  //margin-top: -1px;
-  //margin-left: 8px;
+  z-index: 19;
 
   padding: 0.1rem;
-
-  //position: relative;
-  z-index: 19;
 `
 
 export const ValueVoting = styled.span`
-  font-size: ${theme.font.sizes.font32};
   font-weight: ${theme.font.weight.medium};
-
-  //margin-top: ${theme.spacings.space24};
+  font-size: ${theme.font.sizes.font32};
 
   @media (max-width: 960px) {
     font-size: ${theme.font.sizes.font24};
   }
+
   @media (max-width: 700px) {
-    font-size: ${theme.font.sizes.font18};
     margin-top: 0;
+
+    font-size: ${theme.font.sizes.font18};
   }
 `
 
@@ -96,35 +93,27 @@ export const Links = styled.div`
   max-width: 36rem;
   margin-top: 1.6rem;
 
-  @media (max-width: 700px) {
-    max-width: 100%;
-  }
-
   a {
     display: flex;
     align-items: center;
-    transition: 200ms;
 
     color: ${theme.colors.snow};
-    font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font16};
     text-decoration: none;
 
-    @media (max-width: 960px) {
-      font-size: ${theme.font.sizes.font14};
-    }
-    @media (max-width: 700px) {
-      font-size: ${theme.font.sizes.font12};
-    }
+    transition: 200ms;
 
     &:hover {
       color: ${theme.colors.cyan};
+
       cursor: pointer;
     }
 
     svg {
       margin-left: ${theme.spacings.space8};
     }
+
     &:hover {
       > svg {
         path {
@@ -132,5 +121,17 @@ export const Links = styled.div`
         }
       }
     }
+
+    @media (max-width: 960px) {
+      font-size: ${theme.font.sizes.font14};
+    }
+
+    @media (max-width: 700px) {
+      font-size: ${theme.font.sizes.font12};
+    }
+  }
+
+  @media (max-width: 700px) {
+    max-width: 100%;
   }
 `

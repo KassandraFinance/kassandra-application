@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface IMenuProps {
-  isShowMenu: boolean;
+  isShowMenu: boolean
 }
 
 // prettier-ignore
@@ -50,7 +50,7 @@ export const Nav = styled.nav<IMenuProps>`
 `
 
 interface IMenuLinkProps {
-  active: boolean;
+  active: boolean
 }
 
 // prettier-ignore

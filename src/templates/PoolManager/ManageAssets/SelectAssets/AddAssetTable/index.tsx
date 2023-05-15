@@ -14,8 +14,7 @@ import CoinSummary from '@/templates/Manage/CreatePool/SelectAssets/CoinSummary'
 import InputRadio from '../../../../../components/Inputs/InputRadio'
 import ModalViewCoin from '../../../../../components/Modals/ModalViewCoin'
 
-import arrowLeftBoldIcon from '../../../../../../public/assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '../../../../../../public/assets/utilities/arrow-right-bold.svg'
+import arrowIcon from '../../../../../../public/assets/utilities/arrow-left.svg'
 import eyeShowIcon from '../../../../../../public/assets/utilities/eye-show.svg'
 
 import * as S from './styles'
@@ -33,8 +32,8 @@ import {
 } from '../../SelectAssets'
 
 interface IAddAssestsTableProps {
-  tokensData: (TokensInfoResponseType & { balance?: BigNumber })[] | undefined;
-  priceList: CoinGeckoAssetsResponseType | undefined;
+  tokensData: (TokensInfoResponseType & { balance?: BigNumber })[] | undefined
+  priceList: CoinGeckoAssetsResponseType | undefined
 }
 
 const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
@@ -162,14 +161,15 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                   type="button"
                   onClick={() => handleCurrentInView(-1)}
                 >
-                  <Image src={arrowLeftBoldIcon} width={16} height={16} />
+                  <Image src={arrowIcon} width={7} height={12} />
                 </S.TableViewButton>
 
                 <S.TableViewButton
                   type="button"
                   onClick={() => handleCurrentInView(1)}
+                  id="arrowRight"
                 >
-                  <Image src={arrowRightBoldIcon} width={16} height={16} />
+                  <Image src={arrowIcon} width={7} height={12} />
                 </S.TableViewButton>
               </S.Th>
             </S.Tr>
@@ -210,7 +210,10 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                     />
                   </S.Td>
                   <S.Td className="price" isView={inViewCollum === 1}>
-                    ${priceList ? priceList[coin.id?.toLowerCase()]?.usd : 0}
+                    $
+                    {priceList
+                      ? priceList[coin.id?.toLowerCase()]?.usd.toFixed(2)
+                      : 0}
                   </S.Td>
                   <S.Td className="marketCap" isView={inViewCollum === 2}>
                     $
@@ -231,8 +234,7 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                           ),
                           2
                         )
-                      : 0}{' '}
-                    {coin.symbol}
+                      : 0}
                     <S.SecondaryText>
                       ~$
                       {coin.balance && priceList
@@ -307,8 +309,7 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                   Big(10).pow(viewToken.decimals)
                 ),
                 2
-              )}{' '}
-              {viewToken.symbol}
+              )}
             </Value>
             <SecondaryValue>
               ~$

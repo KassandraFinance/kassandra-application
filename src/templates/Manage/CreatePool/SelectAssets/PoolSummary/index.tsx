@@ -1,29 +1,29 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { TokenType } from '../../../../../store/reducers/poolCreationSlice'
+import { TokenType } from '@/store/reducers/poolCreationSlice'
 
 import CoinSummary from '../CoinSummary'
-import InputNumberRight from '../../../../../components/Inputs/InputNumberRight'
+import InputNumberRight from '@/components/Inputs/InputNumberRight'
 
-import closeIcon from '../../../../../../public/assets/utilities/close-icon.svg'
+import closeIcon from '@assets/utilities/close-icon.svg'
 
 import { CoinGeckoResponseType } from '../../AddLiquidity'
 
 import * as S from './styles'
 
 interface IPoolSummaryProps {
-  creation?: boolean;
-  coinsList: TokenType[];
-  totalAllocation: number;
+  creation?: boolean
+  coinsList: TokenType[]
+  totalAllocation: number
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement>,
     key: string,
     isLocked: boolean
-  ) => void;
-  onRemoveToken?: (token: TokenType) => void;
-  onLockToken?: (id: string) => void;
-  priceList: CoinGeckoResponseType | undefined;
+  ) => void
+  onRemoveToken?: (token: TokenType) => void
+  onLockToken?: (id: string) => void
+  priceList: CoinGeckoResponseType | undefined
 }
 
 const PoolSummary = ({
@@ -116,8 +116,16 @@ const PoolSummary = ({
                       placeholder="100%"
                       lable={`${coin.name} allocation`}
                       required
-                      min="1"
-                      max="99"
+                      min={
+                        totalAllocation < 100
+                          ? (parseFloat(coin.allocation) + 1).toString()
+                          : '1'
+                      }
+                      max={
+                        totalAllocation > 100
+                          ? (parseFloat(coin.allocation) - 1).toString()
+                          : '99'
+                      }
                       value={coin.allocation.toString()}
                       onChange={event =>
                         onChange(event, coin.symbol, coin.isLocked)
@@ -128,7 +136,7 @@ const PoolSummary = ({
                       type="button"
                       onClick={() => onRemoveToken(coin)}
                     >
-                      <Image src={closeIcon} />
+                      <Image src={closeIcon} layout="fill" />
                     </S.RemoveButton>
                   </S.AllocationContainer>
                   {Number(coin.allocation) < 1 && (

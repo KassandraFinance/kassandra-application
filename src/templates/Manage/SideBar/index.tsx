@@ -5,7 +5,10 @@ import { useRouter } from 'next/router'
 
 import useManagerPools from '@/hooks/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { setToFirstStep } from '@/store/reducers/poolCreationSlice'
+import {
+  setToFirstStep,
+  setBackStepNumber
+} from '@/store/reducers/poolCreationSlice'
 
 import substr from '../../../utils/substr'
 
@@ -31,8 +34,8 @@ import {
 import * as S from './styles'
 
 interface ISideBarProps {
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpen: boolean
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const links = [
@@ -76,6 +79,9 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
   function handleCreatePool() {
     if (poolCreattionChainId === 0 && stepNumber > 0) {
       dispatch(setToFirstStep())
+    }
+    if (stepNumber >= 6) {
+      dispatch(setBackStepNumber())
     }
     setIsCreatePool(true)
   }

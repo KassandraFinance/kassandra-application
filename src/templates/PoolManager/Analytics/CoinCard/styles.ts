@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface ICoinCardProps {
-  isShowMore: boolean;
+  isShowMore: boolean
 }
 
 // prettier-ignore
@@ -27,7 +27,7 @@ export const CoinCard = styled.article<ICoinCardProps>`
 `
 
 interface ICoinCardFrontProps {
-  isShowMore: boolean;
+  isShowMore: boolean
 }
 
 // prettier-ignore
@@ -110,6 +110,10 @@ export const ImageWrapper = styled.div`
 
     background-color: rgb(189 189 189 / 0.1);
     mix-blend-mode: normal;
+
+    img {
+      border-radius: 50%;
+    }
   `}
 `
 
@@ -186,7 +190,7 @@ export const Change = styled.span`
 `
 
 interface IShowMoreProps {
-  isShowMore: boolean;
+  isShowMore: boolean
 }
 
 // prettier-ignore
@@ -273,11 +277,15 @@ export const InfoValueWrapper = styled.span`
     display: flex;
     gap: 0.4rem;
     align-items: center;
+
+    img {
+      border-radius: 50%;
+    }
   `}
 `
 
 interface IInfoValueProps {
-  value?: number;
+  value?: number
 }
 
 // prettier-ignore
@@ -300,7 +308,7 @@ export const InfoValue = styled.span<IInfoValueProps>`
 `
 
 interface ICoinCardBackProps {
-  isShowMore: boolean;
+  isShowMore: boolean
 }
 
 // prettier-ignore

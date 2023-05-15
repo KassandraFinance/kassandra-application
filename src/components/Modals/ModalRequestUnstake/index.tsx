@@ -23,14 +23,14 @@ import Modal from '../Modal'
 import * as S from './styles'
 
 interface IModalRequestUnstakeProps {
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  pid: number;
-  votingMultiplier: string;
-  yourStake: BigNumber;
-  symbol: string;
-  userWalletAddress: string;
-  stakedUntil: (pid: number, walletAddress: string) => Promise<string>;
+  modalOpen: boolean
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  pid: number
+  votingMultiplier: string
+  yourStake: BigNumber
+  symbol: string
+  userWalletAddress: string
+  stakedUntil: (pid: number, walletAddress: string) => Promise<string>
 }
 
 const ModalRequestUnstake = ({

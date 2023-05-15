@@ -10,8 +10,7 @@ import { calcChange } from '@/utils/numerals'
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 
 import notFoundIcon from '@assets/icons/coming-soon.svg'
-import arrowLeftBoldIcon from '@assets/utilities/arrow-left-bold.svg'
-import arrowRightBoldIcon from '@assets/utilities/arrow-right-bold.svg'
+import arrowIcon from '@assets/utilities/arrow-left.svg'
 import eyeShowIcon from '@assets/utilities/eye-show.svg'
 import comingSoonIcon from '@assets/icons/coming-soon.svg'
 import Loading from '@/components/Loading'
@@ -25,32 +24,32 @@ import {
 } from '@ui/Modals/ModalViewCoin/styles'
 
 type IPoolsInfosProps = {
-  id: string,
-  address: string,
-  logo: string | null,
-  name: string,
-  price_usd: string,
-  symbol: string,
-  total_value_locked_usd: string,
-  is_private_pool: boolean,
+  id: string
+  address: string
+  logo: string | null
+  name: string
+  price_usd: string
+  symbol: string
+  total_value_locked_usd: string
+  is_private_pool: boolean
   chain: {
     logo: string
-  },
+  }
   now: {
-    close: string,
+    close: string
     timestamp: number
-  }[],
+  }[]
   day: {
-    close: string,
+    close: string
     timestamp: number
-  }[],
+  }[]
   month: {
-    close: string,
+    close: string
     timestamp: number
-  }[],
+  }[]
   volumes: {
     volume_usd: string
-  }[],
+  }[]
   weight_goals: {
     weights: {
       asset: {
@@ -68,11 +67,11 @@ export enum communityPoolSorting {
 }
 
 interface ICommunityPoolsTableProps {
-  pools?: IPoolsInfosProps[];
-  communityPoolSorted: communityPoolSorting;
+  pools?: IPoolsInfosProps[]
+  communityPoolSorted: communityPoolSorting
   setCommunityPoolSorted: React.Dispatch<
     React.SetStateAction<communityPoolSorting>
-  >;
+  >
 }
 
 const CommunityPoolsTable = ({
@@ -87,17 +86,17 @@ const CommunityPoolsTable = ({
     name: ''
   })
   const [viewPool, setViewPool] = React.useState<{
-    price: string,
-    tvl: string,
+    price: string
+    tvl: string
     assets: {
       asset: {
         token: {
           logo: string | null
         }
       }
-    }[],
-    volume: string,
-    monthly: string,
+    }[]
+    volume: string
+    monthly: string
     '24h': string
   }>({
     price: '',
@@ -216,11 +215,11 @@ const CommunityPoolsTable = ({
           <S.TH>
             <S.TableViewButtonContainer>
               <S.TableViewButton onClick={() => handleCurrentInView(-1)}>
-                <Image src={arrowLeftBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </S.TableViewButton>
 
               <S.TableViewButton onClick={() => handleCurrentInView(1)}>
-                <Image src={arrowRightBoldIcon} width={16} height={16} />
+                <Image src={arrowIcon} width={7} height={12} />
               </S.TableViewButton>
             </S.TableViewButtonContainer>
           </S.TH>

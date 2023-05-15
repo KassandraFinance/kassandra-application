@@ -46,7 +46,7 @@ export default {
     redAvalanche: '#E84142',
     purplePolygon: '#8247E5',
     error: '#E8372C',
-    success: '#2CE878',
+    success: '#2CE878'
   },
   spacings: {
     space8: '0.8rem',
@@ -57,7 +57,6 @@ export default {
     space40: '4.0rem',
     space48: '4.8rem',
     space56: '5.6rem'
-
   },
   layers: {
     base: 10,

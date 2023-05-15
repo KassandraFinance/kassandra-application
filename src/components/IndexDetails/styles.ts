@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import theme from '../../styles/theme'
 
 interface IToggleList {
-  showMore: boolean;
+  showMore: boolean
 }
 
 export const IndexDetailsContainer = styled.section`
@@ -38,20 +38,20 @@ export const Table = styled.table`
 // eslint-disable-next-line prettier/prettier
 export const Tr = styled.tr<IToggleList>`
   display: grid;
-  grid-template-columns: .5fr repeat(3, 3fr) 2fr;
+  grid-template-columns: 0.5fr repeat(3, 3fr) 2fr;
   justify-items: center;
   height: 38px;
   margin: 16px 0;
   @media (max-width: 660px) {
-    grid-template-columns: .5fr 3fr 4fr repeat(2, 2fr);
+    grid-template-columns: 0.5fr 3fr 4fr repeat(2, 2fr);
     gap: 16px;
     width: 600px;
   }
   @media (max-width: 660px) {
     width: 500px;
   }
-  &:nth-child(n+6){
-    display:  ${props => (props.showMore ? 'none' : 'grid')};
+  &:nth-child(n + 6) {
+    display: ${props => (props.showMore ? 'none' : 'grid')};
   }
 `
 
@@ -66,8 +66,8 @@ export const Th = styled.th`
   `}
 `
 interface ITdProps {
-  change24h: boolean;
-  negative?: boolean;
+  change24h: boolean
+  negative?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -87,7 +87,7 @@ export const Td = styled.td<ITdProps>`
 `
 
 interface ICoinProps {
-  width: number;
+  width: number
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -118,7 +118,7 @@ export const WrapperToggle = styled.div`
 // eslint-disable-next-line prettier/prettier
 export const ToggleList = styled.a<IToggleList>`
   position: relative;
-  font-size:${theme.font.sizes.font16};
+  font-size: ${theme.font.sizes.font16};
   color: ${theme.colors.cyan};
   cursor: pointer;
   align-content: center;
@@ -127,26 +127,26 @@ export const ToggleList = styled.a<IToggleList>`
     margin-left: 8px;
     transition-duration: 200ms;
   }
-      &:hover {
-      &::after {
-        content: '';
-        max-width: 100%;
-        text-align: left;
-        position: absolute;
-        display: block;
-        height: 0.1rem;
-        background-color: ${theme.colors.cyan};
-        animation: hoverAnimation 0.3s forwards;
+  &:hover {
+    &::after {
+      content: '';
+      max-width: 100%;
+      text-align: left;
+      position: absolute;
+      display: block;
+      height: 0.1rem;
+      background-color: ${theme.colors.cyan};
+      animation: hoverAnimation 0.3s forwards;
+    }
+    @keyframes hoverAnimation {
+      from {
+        width: 0;
+        left: 50%;
       }
-      @keyframes hoverAnimation {
-        from {
-          width: 0;
-          left: 50%;
-        }
-        to {
-          width: 100%;
-          left: 0;
-        }
+      to {
+        width: 100%;
+        left: 0;
       }
     }
+  }
 `

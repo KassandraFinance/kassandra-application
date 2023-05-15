@@ -1,38 +1,28 @@
 import styled, { css, keyframes } from 'styled-components'
 
-interface IPrivacySetting {
-  isOpen: boolean;
-  height: number;
-}
-
-// prettier-ignore
-export const PrivacySetting = styled.div<IPrivacySetting>`
+export const PrivacySetting = styled.div`
   ${() => css`
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    overflow: hidden;
-
     width: 100%;
-    height: 27.8rem;
     margin-top: 2.4rem;
-    margin-bottom: 12rem;
+    margin-bottom: 3rem;
     padding: 2.4rem;
     border-radius: 8px;
 
     background: rgb(255 255 255 / 0.05);
 
-    transition: height 0.8s ease;
-
     @media (min-width: 576px) and (max-width: 992px) {
       margin-top: 0;
     }
   `}
-  ${({ isOpen, height }) =>
-    isOpen &&
-    css`
-      height: ${36.022 + height}rem;
-    `}
+`
+
+export const PrivacySettingContainer = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow: hidden;
+  `}
 `
 
 export const PoolSettingTitle = styled.h4`
@@ -72,7 +62,7 @@ export const InputsRadioContent = styled.span`
     margin-top: 1.6rem;
 
     p {
-      margin-top: 0.8rem;
+      margin-top: 1.2rem;
       margin-left: 2rem;
 
       color: ${theme.colors.white};
@@ -84,18 +74,26 @@ export const InputsRadioContent = styled.span`
 `
 
 interface IPrivateAddressContainerProps {
-  isShow: boolean;
+  isShow: boolean
 }
 
 // prettier-ignore
 export const PrivateAddressContainer = styled.div<IPrivateAddressContainerProps>`
   ${({ theme }) => css`
-    opacity: 0;
-    visibility: hidden;
+    display: grid;
+    grid-template-rows: 0fr;
 
-    transition-timing-function: ease-in-out;
+    margin-top: 1rem;
+
+    opacity: 0;
+
+    transition-timing-function: ease;
     transition-duration: 300ms;
-    transition-property: opacity visibility;
+    transition-property: grid-template-rows opacity;
+
+    > div {
+      overflow: hidden;
+    }
 
     p:first-child {
       margin-top: 0.6rem;
@@ -109,14 +107,19 @@ export const PrivateAddressContainer = styled.div<IPrivateAddressContainerProps>
     }
   `}
   ${({ isShow }) => isShow && css`
-      opacity: 1;
-      visibility: visible;
+    grid-template-rows: 1fr;
+
+    opacity: 1;
+
+    > div {
+      overflow: visible;
+    }
   `}
 `
 
 interface IInputAddressContainerProps {
-  hasValue: boolean;
-  isValid: boolean;
+  hasValue: boolean
+  isValid: boolean
 }
 
 // prettier-ignore
@@ -295,7 +298,7 @@ export const ClosePrivateAddress = styled.div`
 `
 
 interface IErrorProps {
-  isValid: boolean;
+  isValid: boolean
 }
 
 // prettier-ignore

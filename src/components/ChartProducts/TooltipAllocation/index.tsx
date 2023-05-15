@@ -4,7 +4,7 @@ import { getDate } from '../../../utils/date'
 
 import * as S from './styles'
 
-const TooltipAllocation = (props: { payload: any, label: any }) => {
+const TooltipAllocation = (props: { payload: any; label: any }) => {
   const { payload, label } = props
   const [currentDate, setCurrentDate] = React.useState('')
 
@@ -22,7 +22,7 @@ const TooltipAllocation = (props: { payload: any, label: any }) => {
         {payload &&
           payload.map(
             (
-              entry: { color: string, name: string, value: any, payload: any },
+              entry: { color: string; name: string; value: any; payload: any },
               index: any
             ) => (
               <li key={`item-${index}`} style={{ color: entry.color }}>

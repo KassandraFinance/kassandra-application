@@ -1,19 +1,19 @@
 import * as S from './styles'
 
 interface IInputNumberRightProps {
-  form?: string;
-  name: string;
-  type: string;
-  value: string;
-  required?: boolean;
-  placeholder: string;
-  min: string;
-  max: string | 'any';
-  lable: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  button?: boolean;
-  buttonText?: string;
-  onClick?: () => void;
+  form?: string
+  name: string
+  type: string
+  value: string
+  required?: boolean
+  placeholder: string
+  min: string
+  max: string | 'any'
+  lable: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  button?: boolean
+  buttonText?: string
+  onClick?: () => void
 }
 
 const InputNumberRight = ({

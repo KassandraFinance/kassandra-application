@@ -9,6 +9,10 @@ export const TokenAssetOut = styled.div`
     border-radius: 1rem;
 
     background: rgb(31 31 31 / 0.72);
+
+    @media (max-width: 960px) {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
   `}
 `
 
@@ -95,7 +99,7 @@ export const PriceDolar = styled.span`
 `
 
 interface ITokenProps {
-  bestValue?: boolean;
+  bestValue?: boolean
 }
 
 // prettier-ignore

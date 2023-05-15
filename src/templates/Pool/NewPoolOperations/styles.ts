@@ -24,7 +24,7 @@ export const PoolOperationsContainer = styled.div`
 `
 
 interface ISelectOperationProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -39,7 +39,7 @@ export const TokenSelectionContainer = styled.div<ISelectOperationProps>`
       left: 50%;
       transform: translate(-50%, -50%);
 
-      background-color: rgb(31, 41, 55);
+      background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
       border: 0.2rem solid rgba(255, 255, 255, 0.25);
       border-radius: 1.2rem;
       z-index: 1041;

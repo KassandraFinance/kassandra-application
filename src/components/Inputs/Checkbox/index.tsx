@@ -1,13 +1,13 @@
 import * as S from './styles'
 
 interface ICheckboxProps {
-  form?: string;
-  name: string;
-  checked: boolean;
-  label: string;
-  showLabel?: boolean;
-  required?: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  form?: string
+  name: string
+  checked: boolean
+  label: string
+  showLabel?: boolean
+  required?: boolean
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const Checkbox = ({

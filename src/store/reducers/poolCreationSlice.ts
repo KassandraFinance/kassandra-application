@@ -4,54 +4,54 @@ import Big from 'big.js'
 import { CoinGeckoResponseType } from '../../templates/Manage/CreatePool/AddLiquidity'
 
 export type TokenType = {
-  icon: string,
-  name: string,
-  symbol: string,
-  url: string,
-  address: string,
-  decimals: number,
-  allocation: string,
-  amount: string,
+  icon: string
+  name: string
+  symbol: string
+  url: string
+  address: string
+  decimals: number
+  allocation: string
+  amount: string
   isLocked: boolean
 }
 
 export type PoolData = {
-  id?: string,
-  txHash?: string,
-  termsAndConditions?: boolean,
-  network?: string,
-  networkId?: number,
-  poolName?: string,
-  poolSymbol?: string,
+  id?: string
+  txHash?: string
+  termsAndConditions?: boolean
+  network?: string
+  networkId?: number
+  poolName?: string
+  poolSymbol?: string
   icon?: {
-    image_preview: string,
+    image_preview: string
     image_file: unknown
-  },
-  strategy?: string,
-  privacy?: string,
-  tokens?: TokenType[],
+  }
+  strategy?: string
+  privacy?: string
+  tokens?: TokenType[]
   privateAddressList?: {
     address: string
-  }[],
+  }[]
   fees?: {
     [key: string]: {
-      isChecked: boolean,
-      feeRate?: string,
-      brokerCommision?: number,
+      isChecked: boolean
+      feeRate?: string
+      brokerCommision?: number
       managerShare?: number
     }
   }
 }
 
 export interface IPoolCreationDataState {
-  stepNumber: number;
-  isValid: boolean;
-  createPoolData: PoolData;
+  stepNumber: number
+  isValid: boolean
+  createPoolData: PoolData
 }
 
 function handleAllocation(
   tokensList: TokenType[],
-  tokenAllocation?: { token: string, allocation: string }
+  tokenAllocation?: { token: string; allocation: string }
 ) {
   const maxAllocation = Big(100)
   let allocationAmount = Big(0)
@@ -258,7 +258,7 @@ export const poolCreationSlice = createSlice({
     },
     setAllocation: (
       state,
-      action: PayloadAction<{ token: string, allocation: string }>
+      action: PayloadAction<{ token: string; allocation: string }>
     ) => {
       const tokensArr = state.createPoolData.tokens
         ? state.createPoolData.tokens
@@ -268,8 +268,8 @@ export const poolCreationSlice = createSlice({
     setLiquidity: (
       state,
       action: PayloadAction<{
-        token: string,
-        liquidity: string,
+        token: string
+        liquidity: string
         tokenPriceList: CoinGeckoResponseType
       }>
     ) => {
@@ -357,7 +357,7 @@ export const poolCreationSlice = createSlice({
     },
     setFee: (
       state,
-      action: PayloadAction<{ inputName: string, inputValue: string }>
+      action: PayloadAction<{ inputName: string; inputValue: string }>
     ) => {
       const feesList = state.createPoolData.fees
         ? state.createPoolData.fees
@@ -391,7 +391,7 @@ export const poolCreationSlice = createSlice({
     },
     setRefferalFee: (
       state,
-      action: PayloadAction<{ inputName: string, inputValue: number }>
+      action: PayloadAction<{ inputName: string; inputValue: number }>
     ) => {
       const fessList = state.createPoolData.fees
         ? state.createPoolData.fees

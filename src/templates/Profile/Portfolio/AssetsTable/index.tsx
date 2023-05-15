@@ -12,39 +12,39 @@ import comingSoonIcon from '@assets/icons/coming-soon.svg'
 import * as S from './styles'
 
 export interface IChangeType {
-  [key: string]: string;
+  [key: string]: string
 }
 
 export interface IPriceType {
-  [key: string]: string;
+  [key: string]: string
 }
 
 export interface IBalanceType {
-  [key: string]: BigNumber;
+  [key: string]: BigNumber
 }
 
 export interface IParamsType {
-  id: string[];
-  day: number;
-  month: number;
+  id: string[]
+  day: number
+  month: number
 }
 
 interface IAssetsTableProps {
-  pools: PoolProps[];
+  pools: PoolProps[]
 }
 
 type PoolProps = {
-  id: string,
-  address: string,
-  name: string,
-  symbol: string,
-  logo: string,
-  changeDay: string,
-  changeMonth: string,
-  price: string,
-  tvl: string,
-  balance: string,
-  balanceInUSD: string,
+  id: string
+  address: string
+  name: string
+  symbol: string
+  logo: string
+  changeDay: string
+  changeMonth: string
+  price: string
+  tvl: string
+  balance: string
+  balanceInUSD: string
   logoChain: string
 }
 

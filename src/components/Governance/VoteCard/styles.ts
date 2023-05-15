@@ -87,7 +87,7 @@ export const Link = styled.a`
   }
 `
 interface IVoteBarProps {
-  VotingState: string;
+  VotingState: string
 }
 
 // prettier-ignore

@@ -20,24 +20,24 @@ import Modal from '../Modal'
 import * as S from './styles'
 
 interface IModalUserEditInfoProps {
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  userData: UserEditInfoFormProps;
-  setUserImage: React.Dispatch<React.SetStateAction<any>>;
-  setUserData: React.Dispatch<React.SetStateAction<UserEditInfoFormProps>>;
+  modalOpen: boolean
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  userData: UserEditInfoFormProps
+  setUserImage: React.Dispatch<React.SetStateAction<any>>
+  setUserData: React.Dispatch<React.SetStateAction<UserEditInfoFormProps>>
   imageUser: {
-    url: string,
+    url: string
     isNFT: boolean
-  };
+  }
 }
 
 type UserEditInfoFormProps = {
-  nickname: string,
-  twitter: string,
-  website: string,
-  telegram: string,
-  discord: string,
-  description: string,
+  nickname: string
+  twitter: string
+  website: string
+  telegram: string
+  discord: string
+  description: string
   nft: NftDetailsProps | undefined
 }
 

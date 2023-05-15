@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
-import ModalWaitingList from '../../../components/Modals/ModalWaitingList'
+// import ModalWaitingList from '../../../components/Modals/ModalWaitingList'
 
 import DropdownMenu from '../DropdownMenu'
 import Overlay from '../../Overlay'
@@ -17,10 +17,10 @@ import kacyIcon from '../../../../public/assets/logos/kacy-96.svg'
 import * as S from './styles'
 
 interface INavProps {
-  isShowMenu: boolean;
-  showOverlay: boolean;
-  setIsShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>;
+  isShowMenu: boolean
+  showOverlay: boolean
+  setIsShowMenu: () => void
+  setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const Nav = ({
@@ -29,16 +29,18 @@ const Nav = ({
   setIsShowMenu,
   setShowOverlay
 }: INavProps) => {
-  const [isModalWaitingList, setIsModalWaitingList] =
-    React.useState<boolean>(false)
+  // const [isModalWaitingList, setIsModalWaitingList] =
+  //   React.useState<boolean>(false)
 
   const { trackEventFunction } = useMatomoEcommerce()
 
   const router = useRouter()
   const path = router.asPath.split('/')
+  const pathClearQuestionMark = path[1].split('?')
+  const pathClearHashtag = pathClearQuestionMark[0].split('#')
 
   function handleClose() {
-    setIsShowMenu(false)
+    setIsShowMenu()
   }
 
   function animationClose() {
@@ -89,25 +91,16 @@ const Nav = ({
             Stake
           </S.MenuLink>
         </Link>
-        {/* <Link href="/manage" passHref>
+        <Link href="/manage" passHref>
           <S.MenuLink
             onClick={() => {
               trackEventFunction('click-on-link', 'manage', 'header')
             }}
-            active={path[1] === 'manage'}
+            active={pathClearHashtag[0] === 'manage'}
           >
             Manage
           </S.MenuLink>
-        </Link> */}
-        <S.MenuLink
-          onClick={() => {
-            setIsModalWaitingList(true)
-            trackEventFunction('click-on-link', 'manage', 'header')
-          }}
-          active={router.asPath === '/manage'}
-        >
-          Manage
-        </S.MenuLink>
+        </Link>
         <DropdownMenu
           nameOnHeader="DAO"
           isActive={
@@ -171,9 +164,9 @@ const Nav = ({
 
         <MenuFooter />
       </S.Nav>
-      {isModalWaitingList && (
+      {/* {isModalWaitingList && (
         <ModalWaitingList setIsModalWaitingList={setIsModalWaitingList} />
-      )}
+      )} */}
     </>
   )
 }

@@ -2,8 +2,8 @@ import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
 
 interface IBorderGradientProps {
-  stakeInKacy: boolean;
-  unstaking: string;
+  stakeInKacy: boolean
+  unstaking: string
 }
 
 // prettier-ignore
@@ -15,15 +15,9 @@ export const BorderGradient = styled.div<IBorderGradientProps>`
 
   width: 30rem;
   max-height: 100%;
-  padding: 0.1rem;
-  border-radius: ${theme.border.radius};
 
-  background: ${props =>
-    props.unstaking === 'unstaking'
-      ? 'rgba(255, 255, 255, 0.4)'
-      : props.stakeInKacy
-      ? 'linear-gradient(-45deg, #E843C4 0%, #F79640 100%)'
-      : `linear-gradient(-45deg, ${theme.colors.blue} 0%, ${theme.colors.cyan} 100%)`};
+  border-radius: ${theme.border.radius};
+  border: 1px solid rgba(255, 255, 255, 0.25);
 
   transform: translate(-50%, -50%);
 `
@@ -33,17 +27,16 @@ export const BackgroundBlack = styled.div`
   height: 100%;
   border-radius: ${theme.border.radius};
 
-  background-color: #1f2937;
+  background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
 `
 
 export const InterBackground = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   width: 100%;
-  height: 7.2rem;
-  padding: 0 1.6rem;
+  height: 6.8rem;
+  padding: 0 2rem;
   border-bottom: 0.1rem solid rgb(255 255 255 / 0.4);
   border-top-left-radius: 0.6rem;
   border-top-right-radius: 0.6rem;
@@ -78,6 +71,7 @@ export const Amount = styled.div`
   text-align: right;
 
   background-color: rgb(31 31 31 / 0.72);
+  border: 2px solid #ffffff15;
 
   span {
     display: block;

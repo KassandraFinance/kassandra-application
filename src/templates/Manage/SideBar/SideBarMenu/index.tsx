@@ -12,10 +12,10 @@ import arrowIcon from '../../../../../public/assets/utilities/arrow-select-down.
 import * as S from './styles'
 
 interface ISideBarMenuProps {
-  title: string;
-  icon: any;
-  isSideBarOpen: boolean;
-  isActive: boolean;
+  title: string
+  icon: any
+  isSideBarOpen: boolean
+  isActive: boolean
 }
 
 const SideBarMenu = ({

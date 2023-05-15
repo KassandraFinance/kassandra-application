@@ -22,32 +22,32 @@ import ModalInfoNFT from '../../Modals/ModalInfoNFT'
 import * as S from './styles'
 
 export type NftDetailsProps = {
-  contractType?: string,
-  collectionName?: string,
-  symbol?: string,
-  tokenAddress?: string,
-  tokenId?: string,
-  chain?: string,
-  nftName?: string,
+  contractType?: string
+  collectionName?: string
+  symbol?: string
+  tokenAddress?: string
+  tokenId?: string
+  chain?: string
+  nftName?: string
   nftDescription?: string
 }
 
 export type UserProps = {
-  nickname: string,
-  twitter: string,
-  website: string,
-  telegram: string,
-  discord: string,
-  description: string,
+  nickname: string
+  twitter: string
+  website: string
+  telegram: string
+  discord: string
+  description: string
   image?: {
-    url: string,
+    url: string
     isNFT: false
-  },
+  }
   nft: NftDetailsProps | undefined
 }
 
 interface IUserDescriptionProps {
-  userWalletUrl: string | string[] | undefined;
+  userWalletUrl: string | string[] | undefined
 }
 
 const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {

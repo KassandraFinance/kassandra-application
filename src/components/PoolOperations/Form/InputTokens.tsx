@@ -18,34 +18,34 @@ import tricrypto from '../../../../public/assets/logos/tricrypto-with-fund.svg'
 import * as S from './styles'
 
 interface IGasFee {
-  error: boolean;
-  feeNumber: number;
-  feeString: string;
+  error: boolean
+  feeNumber: number
+  feeString: string
 }
 
 interface IInputEthProps {
-  title: string;
-  isWithdraw?: string;
-  actionString: string;
-  swapBalance: BigNumber;
-  decimals: BigNumber;
-  poolTokensArray?: ITokenDetails[];
-  clearInput?: () => void;
-  inputRef?: React.RefObject<HTMLInputElement>;
-  swapAmount: BigNumber;
-  setSwapAmount?: React.Dispatch<React.SetStateAction<BigNumber>>;
-  setSwapOutAmount?: React.Dispatch<React.SetStateAction<BigNumber[]>>;
-  setMaxActive: React.Dispatch<React.SetStateAction<boolean>>;
-  maxActive: boolean;
-  swapOutAddress?: string;
-  disabled: string;
-  poolTokens: ITokenDetails[];
-  tokenDetails: ITokenDetails;
-  swapInAddress?: string;
-  setSwapAddress: React.Dispatch<React.SetStateAction<string>>;
-  calculateAmountIn?: (amoutOut: BigNumber) => Promise<void>;
-  gasFee?: IGasFee;
-  errorMsg?: string;
+  title: string
+  isWithdraw?: string
+  actionString: string
+  swapBalance: BigNumber
+  decimals: BigNumber
+  poolTokensArray?: ITokenDetails[]
+  clearInput?: () => void
+  inputRef?: React.RefObject<HTMLInputElement>
+  swapAmount: BigNumber
+  setSwapAmount?: React.Dispatch<React.SetStateAction<BigNumber>>
+  setSwapOutAmount?: React.Dispatch<React.SetStateAction<BigNumber[]>>
+  setMaxActive: React.Dispatch<React.SetStateAction<boolean>>
+  maxActive: boolean
+  swapOutAddress?: string
+  disabled: string
+  poolTokens: ITokenDetails[]
+  tokenDetails: ITokenDetails
+  swapInAddress?: string
+  setSwapAddress: React.Dispatch<React.SetStateAction<string>>
+  calculateAmountIn?: (amoutOut: BigNumber) => Promise<void>
+  gasFee?: IGasFee
+  errorMsg?: string
 }
 
 const InputTokens = ({

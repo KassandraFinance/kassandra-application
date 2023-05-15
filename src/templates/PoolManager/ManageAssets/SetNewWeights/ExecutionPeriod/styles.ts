@@ -25,11 +25,18 @@ export const ExecutionTitle = styled.div`
     align-items: center;
 
     h3 {
+      position: relative;
+
       font-weight: ${theme.font.weight.normal};
       font-size: ${theme.font.sizes.font14};
       line-height: 1.6rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
+
+      img {
+        position: absolute;
+        bottom: 0;
+      }
     }
   `}
 `

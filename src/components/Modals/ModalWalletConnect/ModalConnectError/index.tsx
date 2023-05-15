@@ -10,17 +10,17 @@ import * as S from './styles'
 
 type ProviderType = {
   [key: string]: {
-    icon: string,
+    icon: string
     name: string
   }
 }
 
 interface IWalletConnectingProps {
-  provider: string;
-  metaMaskError: string;
-  handleCloseModal(): void;
-  handleConnect(): void;
-  cleanError: () => void;
+  provider: string
+  metaMaskError: string
+  handleCloseModal(): void
+  handleConnect(): void
+  cleanError: () => void
 }
 
 const ModalConnectError = ({

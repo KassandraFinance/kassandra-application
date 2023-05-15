@@ -15,6 +15,9 @@ export const TokenAssetIn = styled.form`
 
     min-width: 38rem;
 
+    @media (max-width: 960px) {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
     @media (max-width: 450px) {
       min-width: 30rem;
     }
@@ -166,8 +169,8 @@ export const Input = styled.input`
 `
 
 interface IButtonMax {
-  isMax?: boolean;
-  maxActive?: boolean;
+  isMax?: boolean
+  maxActive?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

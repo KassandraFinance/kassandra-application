@@ -9,43 +9,45 @@ import { BNtoDecimal } from '@/utils/numerals'
 import InputNumber from '../../../../../../components/Inputs/InputNumber'
 
 import * as S from './styles'
+import Image from 'next/image'
 
 export type AssetType = {
-  currentWeight: Big,
-  currentAmount: Big,
-  currentAmountUSD: Big,
+  currentWeight: Big
+  currentAmount: Big
   token: {
-    address: string,
-    decimals: number,
-    logo: string | undefined,
-    name: string,
+    address: string
+    decimals: number
+    logo: string | undefined
+    name: string
     symbol: string
   }
 }
 
 type INewTokensWeights = {
-  newWeight: Big,
-  newAmount: Big,
-  newAmountUSD: Big,
-  lockPercentage: lockToken,
+  newWeight: Big
+  newAmount: Big
+  newAmountUSD: Big
+  lockPercentage: lockToken
   alreadyCalculated: boolean
 }
 interface IPoolTokensProps {
-  tokenInfo: AssetType;
-  newTokensValues: Record<string, INewTokensWeights>;
-  handleLockStatus: (address: string, status: lockToken) => void;
-  handleCalcNewWeights: (value: number, tokenInfo: AssetType) => void;
+  tokenInfo: AssetType
+  newTokensValues: Record<string, INewTokensWeights>
+  priceToken: number
+  handleLockStatus: (address: string, status: lockToken) => void
+  handleCalcNewWeights: (value: number, tokenInfo: AssetType) => void
 }
 
 const PoolToken = ({
   tokenInfo,
   newTokensValues,
   handleLockStatus,
-  handleCalcNewWeights
+  handleCalcNewWeights,
+  priceToken
 }: IPoolTokensProps) => {
   const [moreInfo, setMoreInfo] = React.useState(false)
 
-  const { currentAmount, currentAmountUSD, currentWeight, token } = tokenInfo
+  const { currentAmount, currentWeight, token } = tokenInfo
   const {
     alreadyCalculated,
     lockPercentage,
@@ -95,15 +97,15 @@ const PoolToken = ({
         <S.CurrentAmount>
           <p>Amount</p>
           <span>{BNtoDecimal(currentAmount, token.decimals, 2)}</span>
-          <p>~${BNtoDecimal(currentAmountUSD, 2)}</p>
+          <p>~${BNtoDecimal(currentAmount.mul(priceToken), 2)}</p>
         </S.CurrentAmount>
         <S.AmountLine />
       </S.CurrentAmountContainer>
       <S.Allocation>
-        <p>{currentWeight.toFixed(2)}%</p>
+        <p>{currentWeight.toFixed(1)}%</p>
       </S.Allocation>
       <S.Arrow>
-        <img src="/assets/utilities/arrow-right.svg" alt="" width={32} />
+        <Image src="/assets/utilities/arrow-right.svg" alt="" layout="fill" />
       </S.Arrow>
       <S.NewAllocation>
         <InputNumber

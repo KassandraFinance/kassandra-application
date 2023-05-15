@@ -1,13 +1,8 @@
 import styled, { css } from 'styled-components'
-import { ModalBody } from '@/components/Modals/Modal/styles'
 import { Image } from '@/components/Governance/ImageProfile/styles'
 
 export const RemoveInvestorModal = styled.div`
-  ${() => css`
-    ${ModalBody} {
-      background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
-    }
-  `}
+  ${() => css``}
 `
 
 export const Content = styled.div`

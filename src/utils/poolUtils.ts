@@ -47,7 +47,10 @@ export const getTokenWrapped = (
 }
 
 // eslint-disable-next-line prettier/prettier
-export const checkTokenInThePool = (underlyingAssets: underlyingAssetsInfo[], address: string) => {
+export const checkTokenInThePool = (
+  underlyingAssets: underlyingAssetsInfo[],
+  address: string
+) => {
   const tokensChecked = underlyingAssets.map(item => {
     if (item.token.is_wrap_token === 1) {
       return {

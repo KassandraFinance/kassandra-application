@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
 import { setModalWalletActive } from '../../../../store/reducers/modalWalletActive'
 
 import { BNtoDecimal } from '../../../../utils/numerals'
-import changeChain from '../../../../utils/changeChain'
 import { networks } from '../../../../constants/tokenAddresses'
 
 import Overlay from '../../../Overlay'
@@ -21,15 +20,15 @@ import polygonIcon from '../../../../../public/assets/logos/polygon.svg'
 import * as S from './styles'
 
 interface IKacyProps {
-  price: number;
-  supply: number;
-  kacyStaked: BigNumber;
-  kacyUnclaimed: BigNumber;
-  kacyWallet: Record<number, BigNumber>;
-  kacyTotal: BigNumber;
-  setIsModalKacy: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsModalBridge: React.Dispatch<React.SetStateAction<boolean>>;
+  price: number
+  supply: number
+  kacyStaked: BigNumber
+  kacyUnclaimed: Record<number, BigNumber>
+  kacyWallet: Record<number, BigNumber>
+  kacyTotal: BigNumber
+  setIsModalKacy: React.Dispatch<React.SetStateAction<boolean>>
+  setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>
+  setIsModalBridge: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const Kacy = ({
@@ -44,7 +43,6 @@ const Kacy = ({
   setIsModalBridge
 }: IKacyProps) => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const chainId = useAppSelector(state => state.chainId)
 
   const connect = process.browser && localStorage.getItem('walletconnect')
   const dispatch = useAppDispatch()
@@ -119,11 +117,11 @@ const Kacy = ({
                 <S.Li>
                   Unclaimed
                   <S.Value>
-                    {BNtoDecimal(kacyUnclaimed, 18, 2)}
+                    {BNtoDecimal(kacyUnclaimed[43114], 18, 2)}
                     <span>
                       ~
                       {BNtoDecimal(
-                        Big(kacyUnclaimed.toString())
+                        Big(kacyUnclaimed[43114].toString())
                           .mul(price)
                           .div(Big(10).pow(18)),
                         6,
@@ -167,6 +165,24 @@ const Kacy = ({
                 <S.Line />
               </S.ChainContainer>
               <S.Ul>
+                <S.Li>
+                  Unclaimed
+                  <S.Value>
+                    {BNtoDecimal(kacyUnclaimed[137], 18, 2)}
+                    <span>
+                      ~
+                      {BNtoDecimal(
+                        Big(kacyUnclaimed[137].toString())
+                          .mul(price)
+                          .div(Big(10).pow(18)),
+                        6,
+                        2,
+                        2
+                      )}{' '}
+                      USD
+                    </span>
+                  </S.Value>
+                </S.Li>
                 <S.Li>
                   Wallet
                   <S.Value>

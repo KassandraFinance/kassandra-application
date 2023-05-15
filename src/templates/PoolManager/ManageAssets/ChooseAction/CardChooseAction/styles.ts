@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface ICardChooseActionProps {
-  isActive: boolean;
+  isActive: boolean
 }
 // eslint-disable-next-line prettier/prettier
 export const CardChooseAction = styled.button<ICardChooseActionProps>`

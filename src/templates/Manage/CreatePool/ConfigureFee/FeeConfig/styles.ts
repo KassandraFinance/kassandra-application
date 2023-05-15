@@ -62,15 +62,12 @@ export const ManagementHeader = styled.span`
 `
 
 interface IIsAddressProps {
-  isAddress: boolean;
-  value: number;
+  isAddress: boolean
+  value: number
 }
 
 // eslint-disable-next-line prettier/prettier
-export const WrapperInput =
-  styled.div <
-  IIsAddressProps >
-  `
+export const WrapperInput = styled.div<IIsAddressProps>`
   ${({ theme, isAddress }) => css`
     display: flex;
     flex-direction: column;
@@ -131,15 +128,12 @@ export const CardWrapperTitle = styled.h3`
 `
 
 interface IWrapperInputFeeProps {
-  isAddress: boolean;
-  value: number;
+  isAddress: boolean
+  value: number
 }
 
 // eslint-disable-next-line prettier/prettier
-export const WrapperInputFee =
-  styled.span <
-  IWrapperInputFeeProps >
-  `
+export const WrapperInputFee = styled.span<IWrapperInputFeeProps>`
   ${({ theme, isAddress }) => css`
     display: flex;
     flex-direction: column;
@@ -318,7 +312,7 @@ export const WithdrawFeeParagraph = styled.h3`
 `
 
 interface IFeeContainerProps {
-  isFeeChecked?: boolean;
+  isFeeChecked?: boolean
 }
 
 // prettier-ignore

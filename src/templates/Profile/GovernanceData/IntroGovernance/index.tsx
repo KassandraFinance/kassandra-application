@@ -24,8 +24,8 @@ import tooltip from '../../../../../public/assets/utilities/tooltip.svg'
 import * as S from './styles'
 
 type IIntroWalletAddressProps = {
-  address: string | string[] | undefined,
-  userReceivedTotal: Big,
+  address: string | string[] | undefined
+  userReceivedTotal: Big
   userDelegatingTotal: Big
 }
 

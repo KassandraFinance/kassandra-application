@@ -47,7 +47,7 @@ export const Title = styled.h5`
 `
 
 interface IValueProps {
-  status: NumberStatus;
+  status: NumberStatus
 }
 
 // prettier-ignore

@@ -18,9 +18,9 @@ import closeIcon from '../../../../../../../public/assets/utilities/close-icon.s
 import * as S from './styles'
 
 interface IPoolSettingsProps {
-  inputAddress: string;
-  setInputAddress: React.Dispatch<React.SetStateAction<string>>;
-  handleAddPrivateAddress: () => void;
+  inputAddress: string
+  setInputAddress: React.Dispatch<React.SetStateAction<string>>
+  handleAddPrivateAddress: () => void
 }
 
 const PoolSettings = ({
@@ -55,124 +55,126 @@ const PoolSettings = ({
   }, [inputAddress, buttonRef])
 
   return (
-    <S.PrivacySetting
-      isOpen={poolData.privacy === 'private'}
-      height={
-        poolData.privateAddressList && poolData.privateAddressList.length > 0
-          ? Math.ceil(poolData.privateAddressList.length / 2) * 4.4 + 3
-          : 0
-      }
-    >
-      <S.PoolSettingTitle>Privacy Setting</S.PoolSettingTitle>
-      <S.PoolSettingParagraph>
-        Choose who can invest in the managed pool you are creating.
-      </S.PoolSettingParagraph>
+    <S.PrivacySetting>
+      <S.PrivacySettingContainer>
+        <S.PoolSettingTitle>Privacy Setting</S.PoolSettingTitle>
+        <S.PoolSettingParagraph>
+          Choose who can invest in the managed pool you are creating.
+        </S.PoolSettingParagraph>
 
-      <S.InputsRadioContainer>
-        <S.InputsRadioContent>
-          <InputRadio
-            text="Public"
-            inputId="public"
-            value="public"
-            inputChecked={poolData.privacy === 'public'}
-            handleClickInput={handleClickInput}
-          />
-          <p>Anyone can invest in the pool.</p>
-        </S.InputsRadioContent>
-        <S.InputsRadioContent>
-          <InputRadio
-            text="Private"
-            inputId="private"
-            value="private"
-            inputChecked={poolData.privacy === 'private'}
-            handleClickInput={handleClickInput}
-          />
-          <p>
-            Manually select the addresses which can invest in the managed pool.
-          </p>
-        </S.InputsRadioContent>
-      </S.InputsRadioContainer>
-
+        <S.InputsRadioContainer>
+          <S.InputsRadioContent>
+            <InputRadio
+              text="Public"
+              inputId="public"
+              value="public"
+              inputChecked={poolData.privacy === 'public'}
+              handleClickInput={handleClickInput}
+            />
+            <p>Anyone can invest in the pool.</p>
+          </S.InputsRadioContent>
+          <S.InputsRadioContent>
+            <InputRadio
+              text="Private"
+              inputId="private"
+              value="private"
+              inputChecked={poolData.privacy === 'private'}
+              handleClickInput={handleClickInput}
+            />
+            <p>
+              Manually select the addresses which can invest in the managed
+              pool.
+            </p>
+          </S.InputsRadioContent>
+        </S.InputsRadioContainer>
+      </S.PrivacySettingContainer>
       <S.PrivateAddressContainer isShow={poolData.privacy === 'private'}>
-        <p>inform the addresses that can invest</p>
+        <div>
+          <p>inform the addresses that can invest</p>
 
-        <S.InputAddressContainer
-          isValid={isAddress(inputAddress)}
-          hasValue={inputAddress.length > 0}
-        >
-          <input
-            form="poolCreationForm"
-            id="inputAddress"
-            name="inputAddress"
-            placeholder="Enter address..."
-            value={inputAddress}
-            onChange={event => handlePrivateAddress(event)}
-            ref={InputRef}
-            required={
-              poolData.privateAddressList &&
-              poolData?.privateAddressList?.length < 1 === true &&
-              poolData.privacy === 'private'
-            }
-          />
+          <S.InputAddressContainer
+            isValid={isAddress(inputAddress)}
+            hasValue={inputAddress.length > 0}
+          >
+            <input
+              form="poolCreationForm"
+              id="inputAddress"
+              name="inputAddress"
+              placeholder="Enter address..."
+              value={inputAddress}
+              onChange={event => handlePrivateAddress(event)}
+              ref={InputRef}
+              required={
+                poolData.privateAddressList &&
+                poolData?.privateAddressList?.length < 1 === true &&
+                poolData.privacy === 'private'
+              }
+            />
 
-          {isAddress(inputAddress) && (
-            <S.HasAddress>
-              {poolData.privateAddressList?.some(
-                wallet => wallet.address === inputAddress
-              ) ? (
-                <p>Wallet address already exists.</p>
-              ) : (
+            {isAddress(inputAddress) && (
+              <S.HasAddress>
+                {poolData.privateAddressList?.some(
+                  wallet => wallet.address === inputAddress
+                ) ? (
+                  <p>Wallet address already exists.</p>
+                ) : (
+                  <button
+                    ref={buttonRef}
+                    onClick={() => {
+                      handleAddPrivateAddress(), InputRef.current?.focus()
+                    }}
+                    onBlur={() => setInputAddress('')}
+                  >
+                    <strong>add:</strong> &quot;{inputAddress}&quot;
+                  </button>
+                )}
+              </S.HasAddress>
+            )}
+          </S.InputAddressContainer>
+
+          <S.Error
+            isValid={inputAddress.length > 0 ? isAddress(inputAddress) : true}
+          >
+            Invalid address.
+          </S.Error>
+          {poolData.privateAddressList?.length !== 0 && (
+            <>
+              <S.PrivateAddressList>
+                {poolData.privateAddressList &&
+                  poolData.privateAddressList.map((wallet, index) => {
+                    return (
+                      <S.PrivateAddress key={wallet.address + index}>
+                        <Tippy content={wallet.address}>
+                          <p>{substr(wallet.address)}</p>
+                        </Tippy>
+                        <span
+                          onClick={() =>
+                            dispatch(removePrivateAddress(wallet.address))
+                          }
+                        >
+                          <Image
+                            src={closeIcon}
+                            alt=""
+                            width={10}
+                            height={10}
+                          />
+                        </span>
+                      </S.PrivateAddress>
+                    )
+                  })}
+              </S.PrivateAddressList>
+              <S.ClosePrivateAddress>
                 <button
-                  ref={buttonRef}
-                  onClick={() => {
-                    handleAddPrivateAddress(), InputRef.current?.focus()
-                  }}
-                  onBlur={() => setInputAddress('')}
+                  onClick={() =>
+                    dispatch(setPoolData({ privateAddressList: [] }))
+                  }
                 >
-                  <strong>add:</strong> &quot;{inputAddress}&quot;
+                  Clear All
                 </button>
-              )}
-            </S.HasAddress>
+              </S.ClosePrivateAddress>
+            </>
           )}
-        </S.InputAddressContainer>
-
-        <S.Error
-          isValid={inputAddress.length > 0 ? isAddress(inputAddress) : true}
-        >
-          Invalid address.
-        </S.Error>
-        {poolData.privateAddressList?.length !== 0 && (
-          <>
-            <S.PrivateAddressList>
-              {poolData.privateAddressList &&
-                poolData.privateAddressList.map((wallet, index) => {
-                  return (
-                    <S.PrivateAddress key={wallet.address + index}>
-                      <Tippy content={wallet.address}>
-                        <p>{substr(wallet.address)}</p>
-                      </Tippy>
-                      <span
-                        onClick={() =>
-                          dispatch(removePrivateAddress(wallet.address))
-                        }
-                      >
-                        <Image src={closeIcon} alt="" width={10} height={10} />
-                      </span>
-                    </S.PrivateAddress>
-                  )
-                })}
-            </S.PrivateAddressList>
-            <S.ClosePrivateAddress>
-              <button
-                onClick={() =>
-                  dispatch(setPoolData({ privateAddressList: [] }))
-                }
-              >
-                Clear All
-              </button>
-            </S.ClosePrivateAddress>
-          </>
-        )}
+        </div>
       </S.PrivateAddressContainer>
     </S.PrivacySetting>
   )

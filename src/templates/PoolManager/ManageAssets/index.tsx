@@ -18,9 +18,7 @@ import Kacupe from '@/constants/abi/KassandraController.json'
 import { BNtoDecimal } from '../../../utils/numerals'
 import waitTransaction, { MetamaskError } from '../../../utils/txWait'
 
-import {
-  networks
-} from '../../../constants/tokenAddresses'
+import { networks } from '../../../constants/tokenAddresses'
 
 import TokenRemoval from './TokenRemoval'
 import RemoveReview from './RemoveReview'
@@ -63,7 +61,9 @@ interface IManageAssetsProps {
 
 const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const [step, setStep] = React.useState(0)
-  const [actionSelected, setActionSelected] = React.useState(chooseActionStep.Default)
+  const [actionSelected, setActionSelected] = React.useState(
+    chooseActionStep.Default
+  )
   const [transactions, setTransactions] = React.useState<
     TransactionsListType[]
   >([])
@@ -78,15 +78,12 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const token = useAppSelector(state => state.addAsset.token)
   const tokenLiquidity = useAppSelector(state => state.addAsset.liquidit)
 
-  const { tokenSelection } = useAppSelector(
-    state => state.removeAsset
-  )
-  const lpNeeded = useAppSelector(
-    state => state.removeAsset.lpNeeded
-  )
+  const { tokenSelection } = useAppSelector(state => state.removeAsset)
+  const lpNeeded = useAppSelector(state => state.removeAsset.lpNeeded)
   const { periodSelect, newTokensWights } = useAppSelector(
     state => state.rebalanceAssets
   )
+  const chainId = useAppSelector(state => state.chainId)
 
   const router = useRouter()
 
@@ -94,14 +91,14 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-
   const { poolAssets } = usePoolAssets(poolId)
-  const { poolInfo } = usePoolInfo(
-    userWalletAddress,
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
-  const { data: priceData } = useCoingecko(networks[poolInfo?.chain_id ?? 137].coingecko, networks[poolInfo?.chain_id ?? 137].nativeCurrency.address, [token.id])
+  const { data: priceData } = useCoingecko(
+    networks[poolInfo?.chain_id ?? 137].coingecko,
+    networks[poolInfo?.chain_id ?? 137].nativeCurrency.address,
+    [token.id]
+  )
 
   const buttonTextActionAdd = {
     [TransactionStatus.START]: `Start ${token.symbol} Addition`,
@@ -243,7 +240,11 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     />,
     <AssetRemovelCard
       key="AssetRemovelCard"
-      poolInfo={{ name: poolInfo?.name ?? '', chainLogo: poolInfo?.chain.logo ?? '', logo: poolInfo?.logo ?? '' }}
+      poolInfo={{
+        name: poolInfo?.name ?? '',
+        chainLogo: poolInfo?.chain.logo ?? '',
+        logo: poolInfo?.logo ?? ''
+      }}
       setIsOpenManageAssets={setIsOpenManageAssets}
     />
   ]
@@ -263,7 +264,11 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       onCancel={() => setStep(prev => prev - 1)}
       onComfirm={() => setStep(prev => prev + 1)}
     />,
-    <RebalanceSuccess key="RebalanceSuccess" time={periodSelect} setIsOpenManageAssets={setIsOpenManageAssets} />
+    <RebalanceSuccess
+      key="RebalanceSuccess"
+      time={periodSelect}
+      setIsOpenManageAssets={setIsOpenManageAssets}
+    />
   ]
 
   const chosenAction = {
@@ -320,15 +325,19 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     if (!poolAssets || !poolInfo) return
     setTransactionButtonStatus(TransactionStatus.WAITING)
 
-    setTransactions([{
-      key: 'Rebalance',
-      transaction: 'Rebalance Pool',
-      status: 'APPROVING'
-    }])
+    setTransactions([
+      {
+        key: 'Rebalance',
+        transaction: 'Rebalance Pool',
+        status: 'APPROVING'
+      }
+    ])
 
     const weightsArray: string[] = []
     poolInfo.underlying_assets_addresses.forEach(item => {
-      weightsArray.push(newTokensWights[item].newWeight.mul(Big(10).pow(16)).toFixed())
+      weightsArray.push(
+        newTokensWights[item].newWeight.mul(Big(10).pow(16)).toFixed()
+      )
     })
 
     try {
@@ -337,26 +346,32 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       const oneHourInTimestamp = 3600000
 
       const currentDateAdded = currentDate + threeMinutesInTimestamp
-      const periodSelectedFormatted = new Date(currentDateAdded + (oneHourInTimestamp * periodSelect)).getTime()
+      const periodSelectedFormatted = new Date(
+        currentDateAdded + oneHourInTimestamp * periodSelect
+      ).getTime()
 
       // eslint-disable-next-line prettier/prettier
-      const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, poolInfo.controller);
-      await poolController.methods.updateWeightsGradually(
-        Math.floor(currentDateAdded / 1000),
-        Math.floor(periodSelectedFormatted / 1000),
-        poolInfo.underlying_assets_addresses,
-        weightsArray
-      ).send(
-        {
-          from: userWalletAddress
-        },
-        callBack
+      const poolController = new web3.eth.Contract(
+        Kacupe as unknown as AbiItem,
+        poolInfo.controller
       )
-
+      await poolController.methods
+        .updateWeightsGradually(
+          Math.floor(currentDateAdded / 1000),
+          Math.floor(periodSelectedFormatted / 1000),
+          poolInfo.underlying_assets_addresses,
+          weightsArray
+        )
+        .send(
+          {
+            from: userWalletAddress,
+            maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
+          },
+          callBack
+        )
     } catch (error) {
       console.log(error)
     }
-
   }
 
   async function handleRemoveToken() {
@@ -381,7 +396,9 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       )
 
       let amount = BNtoDecimal(lpNeeded.value, 4)
-      amount = `${amount.slice(0, amount.length - 1)}${Number(amount[amount.length - 1]) + 1}`
+      amount = `${amount.slice(0, amount.length - 1)}${
+        Number(amount[amount.length - 1]) + 1
+      }`
       await handleApproveToken({
         address: poolInfo.address,
         amount: lpNeeded.value.mul(Big(10).pow(18)).toFixed(0),
@@ -407,7 +424,10 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
     try {
       // eslint-disable-next-line prettier/prettier
-      const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, poolInfo.controller);
+      const poolController = new web3.eth.Contract(
+        Kacupe as unknown as AbiItem,
+        poolInfo.controller
+      )
       await poolController.methods
         .removeToken(
           tokenSelection.address,
@@ -416,7 +436,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         )
         .send(
           {
-            from: userWalletAddress
+            from: userWalletAddress,
+            maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
           },
           callBack
         )
@@ -429,9 +450,9 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     error: MetamaskError,
     txHash: string,
     approve?: {
-      token: { amount: string, normalizedAmount: string, symbol: string },
-      contractApprove: string,
-      oldAllowance: string,
+      token: { amount: string; normalizedAmount: string; symbol: string }
+      contractApprove: string
+      oldAllowance: string
       allowance: (_to: string, _from: string) => Promise<string>
     }
   ): Promise<boolean> {
@@ -469,17 +490,25 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         for (let index = 0; index < 100; index++) {
           await new Promise(r => setTimeout(r, 500))
 
-          const amountApproved = await approve.allowance(approve.contractApprove, txReceipt.from)
-          if (amountApproved !== approve.oldAllowance && amountApproved !== '0') {
+          const amountApproved = await approve.allowance(
+            approve.contractApprove,
+            txReceipt.from
+          )
+          if (
+            amountApproved !== approve.oldAllowance &&
+            amountApproved !== '0'
+          ) {
             if (Big(amountApproved).lt(approve.token.amount)) {
-              setTransactions(prev => prev.map(item => {
-                if (item.status === 'APPROVING') {
-                  item.status = 'ERROR'
-                } else if (item.status === 'NEXT') {
-                  item.status = 'WAITING'
-                }
-                return item
-              }))
+              setTransactions(prev =>
+                prev.map(item => {
+                  if (item.status === 'APPROVING') {
+                    item.status = 'ERROR'
+                  } else if (item.status === 'NEXT') {
+                    item.status = 'WAITING'
+                  }
+                  return item
+                })
+              )
 
               setTransactionButtonStatus(TransactionStatus.CONTINUE)
 
@@ -495,14 +524,16 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
             break
           } else if (index === 99) {
-            setTransactions(prev => prev.map(item => {
-              if (item.status === 'APPROVING') {
-                item.status = 'ERROR'
-              } else if (item.status === 'NEXT') {
-                item.status = 'WAITING'
-              }
-              return item
-            }))
+            setTransactions(prev =>
+              prev.map(item => {
+                if (item.status === 'APPROVING') {
+                  item.status = 'ERROR'
+                } else if (item.status === 'NEXT') {
+                  item.status = 'WAITING'
+                }
+                return item
+              })
+            )
             setTransactionButtonStatus(TransactionStatus.CONTINUE)
             dispatch(
               setModalAlertText({
@@ -520,7 +551,11 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       setTransactions(prev =>
         prev.map((item, index) => {
           if (item.status === 'APPROVING') {
-            if (item.key === 'addToken' || item.key === 'RemoveToken' || item.key === 'Rebalance') {
+            if (
+              item.key === 'addToken' ||
+              item.key === 'RemoveToken' ||
+              item.key === 'Rebalance'
+            ) {
               setIsCompleted(true)
             }
             transactionIndex = index
@@ -570,20 +605,40 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     }
   }
 
-  async function handleApproveToken(token: { address: string, amount: string, symbol: string, normalizedAmount: string }) {
+  async function handleApproveToken(token: {
+    address: string
+    amount: string
+    symbol: string
+    normalizedAmount: string
+  }) {
     if (!poolInfo) return false
     const { approve, allowance } = ERC20(token.address)
-    const oldAllowance = await allowance(poolInfo?.controller, userWalletAddress)
+    const oldAllowance = await allowance(
+      poolInfo?.controller,
+      userWalletAddress
+    )
     await new Promise<boolean>(resolve => {
-      approve(poolInfo?.controller, userWalletAddress,
-        (error: MetamaskError, txHash: string) => callBack(error, txHash, { allowance, contractApprove: poolInfo?.controller, oldAllowance, token }).then(result => {
-          resolve(result)
-        }))
+      approve(
+        poolInfo?.controller,
+        userWalletAddress,
+        (error: MetamaskError, txHash: string) =>
+          callBack(error, txHash, {
+            allowance,
+            contractApprove: poolInfo?.controller,
+            oldAllowance,
+            token
+          }).then(result => {
+            resolve(result)
+          })
+      )
     })
   }
 
   async function handleAddToken() {
     if (!poolInfo) return
+
+    const tokenAdd =
+      chainId === 5 ? mockTokensReverse[token.id.toLowerCase()] : token.id
 
     setTransactionButtonStatus(TransactionStatus.WAITING)
 
@@ -605,7 +660,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
       try {
         await handleApproveToken({
-          address: mockTokensReverse[token.id.toLowerCase()],
+          address: tokenAdd,
           amount: Big(tokenLiquidity.amount)
             .mul(Big(10).pow(token.decimals))
             .toFixed(0),
@@ -642,10 +697,13 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         .toFixed(0)
 
       // eslint-disable-next-line prettier/prettier
-      const poolController = new web3.eth.Contract((Kacupe as unknown) as AbiItem, poolInfo.controller);
+      const poolController = new web3.eth.Contract(
+        Kacupe as unknown as AbiItem,
+        poolInfo.controller
+      )
       const response = await poolController.methods
         .addToken(
-          mockTokensReverse[token.id.toLowerCase()],
+          tokenAdd,
           allocation,
           tokenToAddBalance,
           userWalletAddress,
@@ -653,7 +711,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         )
         .send(
           {
-            from: userWalletAddress
+            from: userWalletAddress,
+            maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
           },
           callBack
         )
@@ -667,11 +726,13 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     event.preventDefault()
 
     if (actionSelected === chooseActionStep.Rebalance && step === 2) {
-      setTransactions([{
-        key: 'Rebalance',
-        transaction: 'Rebalance Pool',
-        status: 'NEXT'
-      }])
+      setTransactions([
+        {
+          key: 'Rebalance',
+          transaction: 'Rebalance Pool',
+          status: 'NEXT'
+        }
+      ])
     }
     if (actionSelected === chooseActionStep.Remove && step === 1) {
       if (!poolInfo) return
@@ -688,7 +749,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     }
     if (actionSelected === chooseActionStep.Add && step === 2) {
       getTransactionsList(
-        mockTokensReverse[token.id.toLowerCase()],
+        chainId === 5 ? mockTokensReverse[token.id.toLowerCase()] : token.id,
         poolInfo.controller,
         'Add',
         'addToken',
@@ -698,28 +759,32 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       // getTransactionsList(mockTokensReverse[token.id.toLowerCase()])
     }
 
-    if (actionSelected > 0 && step < 4 || (actionSelected === chooseActionStep.Add && step < 5)) {
+    if (
+      (actionSelected > 0 && step < 4) ||
+      (actionSelected === chooseActionStep.Add && step < 5)
+    ) {
       setStep(prev => prev + 1)
     }
   }
 
   return (
     <S.ManageAssets>
-      <ModalFullWindow
-        handleCloseModal={() => setIsOpenManageAssets(false)}
-      >
+      <ModalFullWindow handleCloseModal={() => setIsOpenManageAssets(false)}>
         <form id="manageAssetsForm" onSubmit={handleSubmit}>
           {step === 0 ? (
             <ChooseAction
               poolId={poolId}
               actionSelected={actionSelected}
               setActionSelected={setActionSelected}
-              amountTokenInPool={poolInfo?.underlying_assets_addresses.length ?? 0}
+              amountTokenInPool={
+                poolInfo?.underlying_assets_addresses.length ?? 0
+              }
             />
           ) : (
             chosenAction[actionSelected]
           )}
-          {((step < 4 && actionSelected === chooseActionStep.Add) || step < 3) && (
+          {((step < 4 && actionSelected === chooseActionStep.Add) ||
+            step < 3) && (
             <ContainerButton
               form="manageAssetsForm"
               backButtonDisabled={step < 1}

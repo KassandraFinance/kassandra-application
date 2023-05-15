@@ -40,7 +40,12 @@ import Activity from './Activity'
 import Brokers from './Brokers'
 import Details from './Details'
 
-import gear from '../../../public/assets/icons/gear.svg'
+import gear from '@assets/icons/gear.svg'
+import userIcon from '@assets/icons/user.svg'
+import avalancheIcon from '@assets/logos/avax.png'
+import polygonIcon from '@assets/logos/polygon.svg'
+import walletIcon from '@assets/utilities/wallet.svg'
+import closeIcon from '@assets/utilities/close-icon.svg'
 
 import {
   analyticsIcon,
@@ -95,6 +100,7 @@ const tabs = [
 const PoolManager = () => {
   const [isOpenManageAssets, setIsOpenManageAssets] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
+  const [networkIcon, setNetworkIcon] = React.useState(avalancheIcon)
   const [openModal, setOpenModal] = React.useState(false)
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
@@ -137,6 +143,18 @@ const PoolManager = () => {
     return calc ? calc.toFixed(2) : '0'
   }
 
+  function handleDashBoardButton() {
+    setIsOpen(!isOpen)
+    const top = document.getElementById('top')?.style
+    if (top) {
+      if (isOpen) {
+        top.zIndex = '1020'
+      } else {
+        top.zIndex = '0'
+      }
+    }
+  }
+
   const { data: change } = useSWR([GET_POOL_PRICE], query =>
     request(BACKEND_KASSANDRA, query, {
       id: poolId,
@@ -147,6 +165,8 @@ const PoolManager = () => {
       year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365)
     })
   )
+
+  const { image } = useAppSelector(state => state.user)
 
   React.useEffect(() => {
     if (isManager) {
@@ -205,10 +225,48 @@ const PoolManager = () => {
     }
   }, [change])
 
+  React.useEffect(() => {
+    if (43114 === chainId && userWalletAddress.length > 0) {
+      setNetworkIcon(avalancheIcon)
+    } else if (137 === chainId && userWalletAddress.length > 0) {
+      setNetworkIcon(polygonIcon)
+    } else {
+      return
+    }
+  }, [chainId, userWalletAddress])
+
   return (
     <S.PoolManager>
       <S.DashBoard isOpen={isOpen}>
-        {isOpen && <Overlay onClick={() => setIsOpen(!isOpen)} />}
+        {isOpen && <Overlay onClick={handleDashBoardButton} />}
+
+        <S.UserDashBoardButton
+          id="userDashBoardButton"
+          onClick={handleDashBoardButton}
+        >
+          <S.UserImageWrapper isOpen={isOpen}>
+            {userWalletAddress.length > 0 ? (
+              <>
+                <img
+                  src={image?.profilePic ? image.profilePic : userIcon.src}
+                  width={20}
+                  height={20}
+                />
+
+                <S.NetworkImageWrapper>
+                  <Image src={networkIcon} />
+                </S.NetworkImageWrapper>
+              </>
+            ) : (
+              <Image src={walletIcon} />
+            )}
+          </S.UserImageWrapper>
+
+          <S.CloseIconWrapper isOpen={isOpen}>
+            <Image src={closeIcon} />
+          </S.CloseIconWrapper>
+        </S.UserDashBoardButton>
+
         <SideBar isOpen={isOpen} setIsOpen={setIsOpen} />
 
         <div></div>
@@ -293,6 +351,7 @@ const PoolManager = () => {
                       }`}
                       backgroundSecondary
                       size="large"
+                      className="btn-manage-assets"
                       onClick={() =>
                         changeChain({
                           chainId: networks[poolInfo.chain_id].chainId,
@@ -322,6 +381,7 @@ const PoolManager = () => {
                           backgroundSecondary
                           size="large"
                           text="Manage Assets"
+                          fullWidth
                           image={gear.src}
                           onClick={() => setIsOpenManageAssets(true)}
                           disabledNoEvent={currentTime < endRebalanceTime}

@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface ISideBarMenuProps {
-  isActive: boolean;
+  isActive: boolean
 }
 
 // prettier-ignore
@@ -37,7 +37,7 @@ export const Title = styled.div`
 `
 
 interface ITitleIconProps {
-  isActive: boolean;
+  isActive: boolean
 }
 
 // prettier-ignore
@@ -81,8 +81,8 @@ export const TitleIcon = styled.div<ITitleIconProps>`
 `
 
 interface ITitleTextProps {
-  isSideBarOpen: boolean;
-  isActive: boolean;
+  isSideBarOpen: boolean
+  isActive: boolean
 }
 
 // prettier-ignore
@@ -120,7 +120,7 @@ export const TitleText = styled.p<ITitleTextProps>`
 `
 
 interface IOpenButtonProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 // prettier-ignore
@@ -148,9 +148,9 @@ export const OpenButton = styled.div<IOpenButtonProps>`
 `
 
 interface IPoolContainerProps {
-  isOpen: boolean;
-  isSideBarOpen: boolean;
-  height: number;
+  isOpen: boolean
+  isSideBarOpen: boolean
+  height: number
 }
 
 // prettier-ignore
@@ -230,7 +230,7 @@ export const PoolIcon = styled.div`
 `
 
 interface IPoolNameProps {
-  active: boolean;
+  active: boolean
 }
 
 // prettier-ignore
@@ -260,7 +260,7 @@ export const PoolName = styled.div<IPoolNameProps>`
 `
 
 interface IPoolStatusProps {
-  active: boolean;
+  active: boolean
 }
 
 // prettier-ignore

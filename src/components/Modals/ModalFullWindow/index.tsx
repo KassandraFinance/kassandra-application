@@ -6,8 +6,8 @@ import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
 import * as S from './styles'
 
 interface IModalFullWindowProps {
-  children: ReactNode;
-  handleCloseModal: () => void;
+  children: ReactNode
+  handleCloseModal: () => void
 }
 
 const ModalFullWindow = ({
@@ -22,10 +22,20 @@ const ModalFullWindow = ({
       style.zIndex = '0'
     }
 
+    const userDashBoardButton = document.getElementById(
+      'userDashBoardButton'
+    )?.style
+    if (userDashBoardButton) {
+      userDashBoardButton.zIndex = '0'
+    }
+
     return () => {
       document.body.style.overflowY = 'auto'
       if (style) {
         style.zIndex = '1020'
+      }
+      if (userDashBoardButton) {
+        userDashBoardButton.zIndex = '1021'
       }
     }
   }, [])

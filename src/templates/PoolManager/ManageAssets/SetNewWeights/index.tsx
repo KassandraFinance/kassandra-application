@@ -36,18 +36,22 @@ const SetNewWeights = () => {
   const { poolAssets } = usePoolAssets(poolId)
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
-  const { data: coingeckoData, priceToken } = useCoingecko(
+  const { priceToken } = useCoingecko(
     networks[poolInfo?.chain_id ?? 137]?.coingecko,
     poolInfo?.chain.addressWrapped ?? '',
     handleMockToken(poolAssets ?? [])
   )
 
   function handleMockToken(tokenList: any) {
-    const mockTokensList = tokenList?.map((item: string) => {
-      return mockTokens[item]
-    })
-
-    return mockTokensList
+    if (poolInfo?.chain_id === 5) {
+      return tokenList?.map((item: any) => {
+        return mockTokens[item.token.id]
+      })
+    } else {
+      return tokenList?.map((item: any) => {
+        return item.token.id
+      })
+    }
   }
 
   React.useEffect(() => {
@@ -56,11 +60,6 @@ const SetNewWeights = () => {
     const poolTokensList = poolAssets.map(item => {
       return {
         currentAmount: Big(item.balance),
-        currentAmountUSD: Big(
-          Big(item.balance).mul(
-            priceToken(mockTokens[item.token.id] ?? item.token.id) ?? 0
-          )
-        ),
         currentWeight: Big(Number(item.weight_normalized) * 100 ?? 0),
         token: {
           decimals: item.token.decimals,
@@ -73,7 +72,7 @@ const SetNewWeights = () => {
     })
 
     dispatch(setPoolTokensList(poolTokensList))
-  }, [coingeckoData])
+  }, [])
 
   React.useEffect(() => {
     if (!poolAssets) return
@@ -100,7 +99,7 @@ const SetNewWeights = () => {
 
     dispatch(setTotalWeight(totalWeight))
     dispatch(setNewTokensWights(newWeights))
-  }, [coingeckoData])
+  }, [])
 
   return (
     <S.SetNewWeights>
@@ -125,7 +124,10 @@ const SetNewWeights = () => {
         <p>Define the new Allocations of the assets that make up the pool</p>
 
         <S.AllocationsAndExecutionPeriod>
-          <AllocationsTable priceToken={priceToken} />
+          <AllocationsTable
+            priceToken={priceToken}
+            chainId={poolInfo?.chain_id || 0}
+          />
           <ExecutionPeriod />
         </S.AllocationsAndExecutionPeriod>
       </S.SetNewWeightsBody>

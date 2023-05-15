@@ -17,26 +17,26 @@ import ExternalLink from '../../ExternalLink'
 import * as S from './styles'
 
 interface IInfoStakeStaticProps {
-  votingMultiplier: string;
-  startDate: string;
-  endDate: string;
-  kacyRewards: BigNumber;
-  withdrawDelay: any;
+  votingMultiplier: string
+  startDate: string
+  endDate: string
+  kacyRewards: BigNumber
+  withdrawDelay: any
 }
 
 interface IDetailsProps {
-  pid: number;
-  hasExpired: boolean;
-  infoStakeStatic: IInfoStakeStaticProps;
-  stakingToken: string;
-  decimals: string;
-  symbol: string;
-  poolPrice: Big;
-  kacyPrice: Big;
-  link: string;
-  setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  stakingAddress: string;
-  chainId: number;
+  pid: number
+  hasExpired: boolean
+  infoStakeStatic: IInfoStakeStaticProps
+  stakingToken: string
+  decimals: string
+  symbol: string
+  poolPrice: Big
+  kacyPrice: Big
+  link: string
+  setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>
+  stakingAddress: string
+  chainId: number
 }
 
 const Details = ({

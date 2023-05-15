@@ -3,9 +3,9 @@ import React from 'react'
 import * as S from './styles'
 
 interface INftImageProps {
-  NftUrl: string;
-  imageSize: 'medium' | 'large' | 'small' | 'smallest';
-  openModalNFT?: React.Dispatch<React.SetStateAction<boolean>>;
+  NftUrl: string
+  imageSize: 'medium' | 'large' | 'small' | 'smallest'
+  openModalNFT?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const NftImage = ({ NftUrl, imageSize, openModalNFT }: INftImageProps) => {

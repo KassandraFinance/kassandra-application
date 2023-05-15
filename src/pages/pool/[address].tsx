@@ -14,37 +14,44 @@ import Pool from '../../templates/Pool'
 import { getWeightsNormalizedV2 } from '../../utils/updateAssetsToV2'
 
 interface IParams extends ParsedUrlQuery {
-  address: string;
+  address: string
 }
 
 interface IPoolProps {
-  pool: IPoolSlice;
+  pool: IPoolSlice
 }
 
 const Index = ({ pool }: IPoolProps) => {
   const dispatch = useAppDispatch()
 
   if (pool.chain_id === 43114) {
-    const renameWavax = pool.underlying_assets.find(asset => asset.token.symbol === 'WAVAX');
+    const renameWavax = pool.underlying_assets.find(
+      asset => asset.token.symbol === 'WAVAX'
+    )
     if (renameWavax) {
       renameWavax.token.symbol = 'AVAX'
       renameWavax.token.name = 'Avalanche'
     }
   }
-  let underlying_assets = [...pool.underlying_assets].sort((a, b) => a.token.id > b.token.id ? 1 : -1)
+  let underlying_assets = [...pool.underlying_assets].sort((a, b) =>
+    a.token.id > b.token.id ? 1 : -1
+  )
 
   if (pool.pool_version === 2) {
     try {
-      const assetsV2 = getWeightsNormalizedV2(pool.weight_goals, underlying_assets)
+      const assetsV2 = getWeightsNormalizedV2(
+        pool.weight_goals,
+        underlying_assets
+      )
       if (assetsV2) {
         underlying_assets = assetsV2
       }
     } catch (error) {
       console.log(error)
-     }
+    }
   }
 
-  const poolWithSortedTokens = {...pool, underlying_assets}
+  const poolWithSortedTokens = { ...pool, underlying_assets }
   dispatch(setPool(poolWithSortedTokens))
 
   return (
@@ -151,7 +158,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   return { paths, fallback: 'blocking' }
 }
 
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getStaticProps: GetStaticProps = async context => {
   // eslint-disable-next-line prettier/prettier
   const { address } = context.params as IParams
 
@@ -179,10 +186,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
     if (!pool) throw new Error('pool not found')
 
-    return { props: { pool }, revalidate:  300 }
+    return { props: { pool }, revalidate: 300 }
   } catch (error) {
     console.log(error)
-    return { notFound: true, revalidate:  60 }
+    return { notFound: true, revalidate: 60 }
   }
 }
 

@@ -9,9 +9,9 @@ import { ITokenList1InchProps } from '..'
 import * as S from './styles'
 
 interface ITokenPinProps {
-  tokenPinList: ITokenList1InchProps[];
-  setTokenPinList: React.Dispatch<React.SetStateAction<ITokenList1InchProps[]>>;
-  tokenList1Inch: ITokenList1InchProps[];
+  tokenPinList: ITokenList1InchProps[]
+  setTokenPinList: React.Dispatch<React.SetStateAction<ITokenList1InchProps[]>>
+  tokenList1Inch: ITokenList1InchProps[]
 }
 
 const TokenPin = ({
@@ -78,12 +78,12 @@ const TokenPin = ({
                 alt=""
                 width={16}
                 height={16}
-                onError={(event) => {
-                // eslint-disable-next-line prettier/prettier
-                const target = event.target as HTMLImageElement
-                target.onerror = null
-                target.src = `/assets/icons/coming-soon.svg`
-              }}
+                onError={event => {
+                  // eslint-disable-next-line prettier/prettier
+                  const target = event.target as HTMLImageElement
+                  target.onerror = null
+                  target.src = `/assets/icons/coming-soon.svg`
+                }}
               />
               <p>{token.symbol}</p>
             </S.TokenPinNameContent>

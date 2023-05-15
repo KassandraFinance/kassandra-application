@@ -10,8 +10,12 @@ export const CoinSummary = styled.div`
 
 export const ImageWrapper = styled.div`
   ${() => css`
+    position: relative;
+
     min-width: 2.4rem;
+    max-width: 2.4rem;
     min-height: 2.4rem;
+    max-height: 2.4rem;
 
     img {
       overflow: hidden;
@@ -46,7 +50,7 @@ export const Name = styled.span`
 `
 
 interface ISymbolProps {
-  table: boolean;
+  table: boolean
 }
 
 // prettier-ignore

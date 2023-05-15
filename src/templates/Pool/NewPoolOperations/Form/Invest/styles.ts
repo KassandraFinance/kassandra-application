@@ -139,7 +139,7 @@ export const TransactionSettings = styled.div`
 `
 
 interface IPriceImpactWrapperProps {
-  price: number;
+  price: number
 }
 
 // prettier-ignore

@@ -15,7 +15,7 @@ export async function subscribeToEvents(
     'connect',
     (
       error: unknown,
-      payload: { params: { accounts: [], chainId: number }[] }
+      payload: { params: { accounts: []; chainId: number }[] }
     ) => {
       if (error) {
         console.log(error)
@@ -34,7 +34,7 @@ export async function subscribeToEvents(
     'session_update',
     (
       error: unknown,
-      payload: { params: { accounts: [], chainId: number }[] }
+      payload: { params: { accounts: []; chainId: number }[] }
     ) => {
       if (error) {
         console.log(error)
@@ -60,7 +60,7 @@ export async function subscribeToEvents(
     'wc_sessionUpdate',
     (
       error: unknown,
-      payload: { params: { accounts: [], chainId: number }[] }
+      payload: { params: { accounts: []; chainId: number }[] }
     ) => {
       if (error) {
         console.log(error)
@@ -77,7 +77,7 @@ export async function subscribeToEvents(
     'call_request',
     (
       error: unknown,
-      payload: { params: { accounts: [], chainId: number }[] }
+      payload: { params: { accounts: []; chainId: number }[] }
     ) => {
       if (error) {
         console.log(error)

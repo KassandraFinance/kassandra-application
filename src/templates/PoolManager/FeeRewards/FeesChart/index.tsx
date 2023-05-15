@@ -11,21 +11,22 @@ import {
 } from 'recharts'
 
 import { BNtoDecimal } from '@/utils/numerals'
+import { abbreviateNumber } from '@/utils/abbreviateNumber'
 
 import CustomLegend from './CustomLegend'
 
 import * as S from './styles'
 
 export type FeeGraph = {
-  totalFeesToManager: string,
-  feesJoinManager: string,
-  feesAumManager: string,
+  totalFeesToManager: string
+  feesJoinManager: string
+  feesAumManager: string
   timestamp: number
 }[]
 
 type Props = {
-  fees: FeeGraph,
-  title: string,
+  fees: FeeGraph
+  title: string
   legend: Record<string, string>
 }
 
@@ -86,6 +87,12 @@ const FeesChart = ({ fees, title, legend }: Props) => {
             stroke="#c4c4c4"
             tickLine={false}
             axisLine={false}
+            tickFormatter={item => {
+              if (Number(item) < 100) {
+                return item
+              }
+              return abbreviateNumber(item)
+            }}
           />
           <CartesianGrid
             strokeDasharray="0"

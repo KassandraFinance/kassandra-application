@@ -5,8 +5,8 @@ import stepIcon from '../../../../../public/assets/iconGradient/step.svg'
 import * as S from './styles'
 
 interface ICreatePoolHeaderProps {
-  title: string;
-  icon?: JSX.Element;
+  title: string
+  icon?: JSX.Element
 }
 
 const CreatePoolHeader = ({ title, icon }: ICreatePoolHeaderProps) => {

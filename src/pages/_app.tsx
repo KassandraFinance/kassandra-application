@@ -36,6 +36,8 @@ const instance = createInstance({
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
   const path = router.asPath.split('/')
+  const pathClearQuestionMark = path[1].split('?')
+  const pathClearHashtag = pathClearQuestionMark[0].split('#')
 
   return (
     <ReduxProvider>
@@ -96,11 +98,12 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               fetcher: url => fetch(url).then(res => res.json())
             }}
           >
-            {path[1] !== 'manage' ? <Header /> : null}
+            {pathClearHashtag[0] !== 'manage' ? <Header /> : null}
 
             <Component {...pageProps} />
           </SWRConfig>
-          {router.pathname === '/404' || path[1] === 'manage' ? null : (
+          {router.pathname === '/404' ||
+          pathClearHashtag[0] === 'manage' ? null : (
             <Footer />
           )}
         </ThemeProvider>

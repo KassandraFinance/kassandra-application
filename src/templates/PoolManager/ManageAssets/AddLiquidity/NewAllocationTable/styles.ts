@@ -42,8 +42,9 @@ export const NewAllocationTable = styled.div`
 
       > div {
         overflow: hidden;
-        white-space: nowrap;
+
         text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       @media (max-width: 575.98px) {
@@ -65,11 +66,13 @@ export const NewAllocationTable = styled.div`
 
     .allocation {
       align-items: center;
+
       min-width: 7rem;
     }
 
     .newAllocation {
       align-items: center;
+
       min-width: 7rem;
 
       @media (min-width: 576px) {
@@ -84,7 +87,12 @@ export const Table = styled(T)`
 `
 
 export const THead = styled(THD)`
-  ${() => css``}
+  ${() => css`
+    > div {
+      height: 100%;
+      padding: 0;
+    }
+  `}
 `
 
 export const Tr = styled(TR)`
@@ -100,16 +108,16 @@ export const Th = styled(TH)`
 `
 
 interface ITBodyProps {
-  height: number;
+  height: number
 }
-// eslint-disable-next-line prettier/prettier
-export const TBody = styled(TB)<ITBodyProps>`
+// prettier-ignore
+export const TBody = styled(TB) <ITBodyProps>`
   ${({ height }) => css`
     height: ${height}rem;
     max-height: 41.4rem;
 
-    transition-duration: 600ms;
     transition-timing-function: ease;
+    transition-duration: 600ms;
     transition-property: height max-height opacity;
   `}
 `
@@ -117,12 +125,11 @@ export const TBody = styled(TB)<ITBodyProps>`
 export const Td = styled(TD)`
   ${() => css``}
 `
-// eslint-disable-next-line prettier/prettier
 export const textContainer = styled.span`
   ${() => css`
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 
     width: 100%;
     height: 30.5rem;
@@ -139,8 +146,8 @@ export const text = styled.p`
     font-size: ${theme.font.sizes.font12};
     line-height: 1.6rem;
     letter-spacing: 0.3em;
-    text-transform: uppercase;
     text-align: center;
+    text-transform: uppercase;
   `}
 `
 

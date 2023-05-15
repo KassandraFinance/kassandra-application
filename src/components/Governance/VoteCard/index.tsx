@@ -15,14 +15,14 @@ import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 import * as S from './styles'
 
 interface IVoteCardProps {
-  yourVotingPowerInProposal: BigNumber;
-  typeVote: string;
-  percentage: string;
-  totalVotingPower: string;
-  proposalState: string;
-  userVote: IUserVotedProps;
-  handleVote: (voteType: string) => void;
-  onClickLink: React.MouseEventHandler;
+  yourVotingPowerInProposal: BigNumber
+  typeVote: string
+  percentage: string
+  totalVotingPower: string
+  proposalState: string
+  userVote: IUserVotedProps
+  handleVote: (voteType: string) => void
+  onClickLink: React.MouseEventHandler
 }
 
 const VoteCard = ({

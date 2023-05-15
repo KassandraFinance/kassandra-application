@@ -10,18 +10,19 @@ import substr from '../../../utils/substr'
 import ModalKacy from '../../Modals/ModalKacy'
 import Button from '../../Button'
 
-import { disconnectedIcon, avalancheIcon, polygonIcon } from './SvgButtons'
+import { disconnectedIcon, avalancheIcon } from './SvgButtons'
+import polygon from '@assets/logos/polygon.svg'
 
 import * as S from './styles'
 
 interface IHeaderButtonsProps {
-  setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 type styles = {
-  icon: any,
-  network: string,
-  color: string,
+  icon: any
+  network: string
+  color: string
   fillColor: string
 }
 
@@ -49,7 +50,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       fillColor: '#E84142'
     },
     '137': {
-      icon: polygonIcon,
+      icon: <img src={polygon.src} />,
       network: 'Polygon',
       color: '#7B3FE4',
       fillColor: 'white'

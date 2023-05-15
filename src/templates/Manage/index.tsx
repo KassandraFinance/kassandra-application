@@ -4,18 +4,18 @@ import Image from 'next/image'
 import useManagerPools from '@/hooks/useManagerPools'
 import { useAppSelector } from '@/store/hooks'
 
-import Overlay from '../../components/Overlay'
-import Header from '../../components/Header'
+import Overlay from '@/components/Overlay'
+import Header from '@/components/Header'
 
 import GetStarted from './GetStarted'
 import Overview from './Overview'
 import SideBar from './SideBar'
 
-import userIcon from '../../../public/assets/icons/user.svg'
-import avalancheIcon from '../../../public/assets/logos/avax.png'
-import polygonIcon from '../../../public/assets/logos/polygon.svg'
-import walletIcon from '../../../public/assets/utilities/wallet.svg'
-import closeIcon from '../../../public/assets/utilities/close-icon.svg'
+import userIcon from '@assets/icons/user.svg'
+import avalancheIcon from '@assets/logos/avax.png'
+import polygonIcon from '@assets/logos/polygon.svg'
+import walletIcon from '@assets/utilities/wallet.svg'
+import closeIcon from '@assets/utilities/close-icon.svg'
 
 import * as S from './styles'
 
@@ -28,6 +28,18 @@ const Manage = () => {
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const { managerPools } = useManagerPools(userWalletAddress)
+
+  function handleDashBoardButton() {
+    setIsOpen(!isOpen)
+    const top = document.getElementById('top')?.style
+    if (top) {
+      if (isOpen) {
+        top.zIndex = '1020'
+      } else {
+        top.zIndex = '0'
+      }
+    }
+  }
 
   React.useEffect(() => {
     if (43114 === chainId && userWalletAddress.length > 0) {
@@ -42,14 +54,17 @@ const Manage = () => {
   return (
     <S.Manage>
       <S.DashBoard isOpen={isOpen}>
-        {isOpen && <Overlay onClick={() => setIsOpen(!isOpen)} />}
+        {isOpen && <Overlay onClick={handleDashBoardButton} />}
 
-        <S.UserDashBoardButton onClick={() => setIsOpen(!isOpen)}>
+        <S.UserDashBoardButton
+          id="userDashBoardButton"
+          onClick={handleDashBoardButton}
+        >
           <S.UserImageWrapper isOpen={isOpen}>
             {userWalletAddress.length > 0 ? (
               <>
                 <img
-                  src={image.profilePic ? image.profilePic : userIcon.src}
+                  src={image?.profilePic ? image.profilePic : userIcon.src}
                   width={20}
                   height={20}
                 />

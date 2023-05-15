@@ -2,39 +2,42 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Big from 'big.js'
 
 type TokenType = {
-  address: string,
-  name: string,
-  symbol: string,
-  logo: string | undefined,
-  balance: string,
-  balanceUSD?: string,
-  weight: string,
+  address: string
+  name: string
+  symbol: string
+  logo: string | undefined
+  balance: string
+  weight: string
   decimals: number
 }
 
+interface ITokenSelectionProps extends TokenType {
+  balanceInUSD: string
+}
+
 export type AssetType = {
-  weight_normalized: string,
-  newWeight: string,
+  weight_normalized: string
+  newWeight: string
   token: {
-    decimals: number,
-    id: string,
-    logo: string | undefined,
-    name: string,
+    decimals: number
+    id: string
+    logo: string | undefined
+    name: string
     symbol: string
   }
 }
 
 export type ILpNeededProps = {
-  value: Big,
-  valueInDollar: Big,
+  value: Big
+  valueInDollar: Big
   balanceInWallet: Big
 }
 
 interface IRemoveAssetProps {
-  poolTokensList: TokenType[];
-  weights: AssetType[];
-  tokenSelection: TokenType;
-  lpNeeded: ILpNeededProps;
+  poolTokensList: TokenType[]
+  weights: AssetType[]
+  tokenSelection: ITokenSelectionProps
+  lpNeeded: ILpNeededProps
 }
 
 const initialState: IRemoveAssetProps = {
@@ -46,7 +49,7 @@ const initialState: IRemoveAssetProps = {
     symbol: '',
     logo: '',
     balance: '',
-    balanceUSD: '0',
+    balanceInUSD: '',
     weight: '0',
     decimals: 0
   },
@@ -61,7 +64,7 @@ export const poolCreationSlice = createSlice({
   name: 'removeAsset',
   initialState,
   reducers: {
-    setTokenSelection: (state, action: PayloadAction<TokenType>) => {
+    setTokenSelection: (state, action: PayloadAction<ITokenSelectionProps>) => {
       state.tokenSelection = action.payload
     },
     setPoolTokensList: (state, action: PayloadAction<TokenType[]>) => {

@@ -14,14 +14,19 @@ export enum chooseActionStep {
 }
 
 interface IChooseActionProps {
-  poolId: string;
-  actionSelected: chooseActionStep;
-  setActionSelected: React.Dispatch<React.SetStateAction<chooseActionStep>>;
-  amountTokenInPool: number;
+  poolId: string
+  actionSelected: chooseActionStep
+  setActionSelected: React.Dispatch<React.SetStateAction<chooseActionStep>>
+  amountTokenInPool: number
 }
 
 // eslint-disable-next-line prettier/prettier
-const ChooseAction = ({ poolId, actionSelected, setActionSelected, amountTokenInPool }: IChooseActionProps) => {
+const ChooseAction = ({
+  poolId,
+  actionSelected,
+  setActionSelected,
+  amountTokenInPool
+}: IChooseActionProps) => {
   return (
     <S.ChooseAction>
       <S.Header>

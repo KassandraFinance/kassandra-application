@@ -14,14 +14,14 @@ import SelectOperatorMobile, { TitlesMobile } from './SelectOperatorMobile'
 import * as S from './styles'
 
 interface IOperationsProps {
-  poolChain: ChainDetails;
-  poolSymbol: string;
-  crpPoolAddress: string;
-  corePoolAddress: string;
-  productCategories: string[];
+  poolChain: ChainDetails
+  poolSymbol: string
+  crpPoolAddress: string
+  corePoolAddress: string
+  productCategories: string[]
 }
 
-export type Titles = keyof typeof messages;
+export type Titles = keyof typeof messages
 
 const messages = {
   Invest: 'Pay with',
@@ -37,10 +37,13 @@ const PoolOperations = ({
   productCategories
 }: IOperationsProps) => {
   const [inputChecked, setInputChecked] = React.useState<Titles>('Invest')
-  const [inputCheckedBarMobile, setInputCheckedBarMobile] = React.useState<TitlesMobile>('Disable')
-  const [typeWithdrawChecked, setTypeWithdrawChecked] = React.useState<string>('Best_value')
+  const [inputCheckedBarMobile, setInputCheckedBarMobile] =
+    React.useState<TitlesMobile>('Disable')
+  const [typeWithdrawChecked, setTypeWithdrawChecked] =
+    React.useState<string>('Best_value')
 
-  const [isModalPoolOperations, setIsModalPoolOperations] = React.useState<boolean>(false)
+  const [isModalPoolOperations, setIsModalPoolOperations] =
+    React.useState<boolean>(false)
   const [isModalWallet, setIsModaWallet] = React.useState<boolean>(false)
 
   const { chainId } = useAppSelector(state => state)
@@ -59,7 +62,6 @@ const PoolOperations = ({
           modalOpen={isModalPoolOperations}
           setModalOpen={setIsModalPoolOperations}
           setIsModaWallet={setIsModaWallet}
-
           poolChain={poolChain}
           poolSymbol={poolSymbol}
           crpPoolAddress={crpPoolAddress}
@@ -75,7 +77,6 @@ const PoolOperations = ({
               typeWithdrawChecked={typeWithdrawChecked}
               setTypeWithdrawChecked={setTypeWithdrawChecked}
               setIsModaWallet={setIsModaWallet}
-
               poolChain={poolChain}
               poolSymbol={poolSymbol}
               crpPoolAddress={crpPoolAddress}

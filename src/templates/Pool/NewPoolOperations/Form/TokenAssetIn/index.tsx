@@ -1,31 +1,31 @@
 import React from 'react'
 import Tippy from '@tippyjs/react'
-import Big from 'big.js';
+import Big from 'big.js'
 import Blockies from 'react-blockies'
 
 import { useAppSelector } from '../../../../../store/hooks'
 
-import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce';
+import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
 
-import { BNtoDecimal } from '../../../../../utils/numerals';
-import { decimalToBN } from '../../../../../utils/poolUtils';
+import { BNtoDecimal } from '../../../../../utils/numerals'
+import { decimalToBN } from '../../../../../utils/poolUtils'
 
 import * as S from './styles'
 
 type IPoolPriceUSDProps = {
-  price_usd: string,
+  price_usd: string
   decimals: number
 }
 interface ITokenAssetInProps {
-  amountTokenIn: string | Big;
-  setamountTokenIn: React.Dispatch<React.SetStateAction<string | Big>>;
-  poolPriceUSD: IPoolPriceUSDProps;
-  maxActive: boolean;
-  setMaxActive: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedTokenInBalance: Big;
-  inputAmountTokenRef: React.RefObject<HTMLInputElement>;
-  errorMsg: string;
-  disabled: string;
+  amountTokenIn: string | Big
+  setamountTokenIn: React.Dispatch<React.SetStateAction<string | Big>>
+  poolPriceUSD: IPoolPriceUSDProps
+  maxActive: boolean
+  setMaxActive: React.Dispatch<React.SetStateAction<boolean>>
+  selectedTokenInBalance: Big
+  inputAmountTokenRef: React.RefObject<HTMLInputElement>
+  errorMsg: string
+  disabled: string
 }
 
 const TokenAssetIn = ({
@@ -38,7 +38,7 @@ const TokenAssetIn = ({
   inputAmountTokenRef,
   errorMsg,
   disabled
- }: ITokenAssetInProps) => {
+}: ITokenAssetInProps) => {
   const { pool, userWalletAddress } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
 
@@ -47,7 +47,12 @@ const TokenAssetIn = ({
   }
 
   function handleMaxUserBalance() {
-    if (!inputAmountTokenRef || !amountTokenIn || userWalletAddress.length === 0 || !Big(selectedTokenInBalance).gt(0)) {
+    if (
+      !inputAmountTokenRef ||
+      !amountTokenIn ||
+      userWalletAddress.length === 0 ||
+      !Big(selectedTokenInBalance).gt(0)
+    ) {
       return
     }
 
@@ -76,26 +81,21 @@ const TokenAssetIn = ({
             <span>
               {pool.logo ? (
                 <img src={pool.logo} alt="" width={22} height={22} />
-                ) : (
-                  <Blockies
-                    className="poolIcon"
-                    seed={pool.name}
-                    size={8}
-                    scale={3}
-                  />
-                )}
+              ) : (
+                <Blockies
+                  className="poolIcon"
+                  seed={pool.name}
+                  size={8}
+                  scale={3}
+                />
+              )}
             </span>
             <S.Symbol>{pool.symbol}</S.Symbol>
           </S.Token>
           <S.Span onClick={() => handleMaxUserBalance()}>
             Balance:{' '}
             {selectedTokenInBalance > new Big(-1)
-              ? BNtoDecimal(
-                  selectedTokenInBalance.div(
-                    Big(10).pow(18)
-                  ),
-                  18
-                )
+              ? BNtoDecimal(selectedTokenInBalance.div(Big(10).pow(18)), 18)
               : '...'}
           </S.Span>
         </S.PoolInfo>
@@ -134,35 +134,34 @@ const TokenAssetIn = ({
                 // Blink bug makes the value come empty if pressing the decimal symbol that is not that of the current locale
                 else if (e.key === '.' || e.key === ',') {
                   // first time value will be ok, if pressing twice it zeroes, we ignore those
-                  if (target.value.length > 0 && target.value.search(/[,.]/) === -1) {
+                  if (
+                    target.value.length > 0 &&
+                    target.value.search(/[,.]/) === -1
+                  ) {
                     target.dataset.lastvalue = target.value
                   }
-                }
-                else if (e.key === 'Backspace' || e.key === 'Delete') {
+                } else if (e.key === 'Backspace' || e.key === 'Delete') {
                   target.dataset.lastvalue = '0'
                 }
               }}
-              onChange={
-                (e: React.ChangeEvent<HTMLInputElement>) => {
-                  let { value } = e.target
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                let { value } = e.target
 
-                  if (value.length === 0) {
-                    value = e.target.dataset.lastvalue as string
-                  }
-                  else if (value[0] === '0') {
-                    e.target.value = value.replace(/^0+/, '')
-                  }
-
-                  if (e.target.value[0] === '.') {
-                    e.target.value = `0${e.target.value}`
-                  }
-
-                  const valueFormatted = decimalToBN(value)
-
-                  setMaxActive(false)
-                  setamountTokenIn(valueFormatted)
+                if (value.length === 0) {
+                  value = e.target.dataset.lastvalue as string
+                } else if (value[0] === '0') {
+                  e.target.value = value.replace(/^0+/, '')
                 }
-              }
+
+                if (e.target.value[0] === '.') {
+                  e.target.value = `0${e.target.value}`
+                }
+
+                const valueFormatted = decimalToBN(value)
+
+                setMaxActive(false)
+                setamountTokenIn(valueFormatted)
+              }}
             />
           </Tippy>
           <p className="price-dolar">
@@ -171,9 +170,7 @@ const TokenAssetIn = ({
               'USD: ' +
                 BNtoDecimal(
                   Big(amountTokenIn.toString())
-                    .mul(
-                      poolPriceUSD?.price_usd || 0
-                    )
+                    .mul(poolPriceUSD?.price_usd || 0)
                     .div(Big(10).pow(Number(poolPriceUSD?.decimals || 18))),
                   18,
                   2,
@@ -182,10 +179,9 @@ const TokenAssetIn = ({
           </p>
         </S.AmountContainer>
       </S.Body>
-      {errorMsg && errorMsg !== '' && (
-        <S.ErrorMSG>{errorMsg}</S.ErrorMSG>
-      )}
-  </S.TokenAssetIn>)
+      {errorMsg && errorMsg !== '' && <S.ErrorMSG>{errorMsg}</S.ErrorMSG>}
+    </S.TokenAssetIn>
+  )
 }
 
 export default TokenAssetIn

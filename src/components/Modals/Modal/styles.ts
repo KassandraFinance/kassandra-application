@@ -70,7 +70,7 @@ export const ModalBody = styled.div`
   ${() => css`
     padding: 2.4rem;
 
-    background-color: #1f2937;
+    background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
     border-radius: 0 0 1.2rem 1.2rem;
   `}
 `

@@ -9,8 +9,8 @@ import useStakingContract from '../../../hooks/useStakingContract'
 import * as S from './styles'
 
 interface IWithdrawDateProps {
-  pid: number;
-  userWalletAddress: string;
+  pid: number
+  userWalletAddress: string
 }
 
 const WithdrawDate = ({ pid, userWalletAddress }: IWithdrawDateProps) => {

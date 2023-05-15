@@ -6,11 +6,15 @@
  * @returns {boolean} true if the token has been added, false otherwise
  */
 
- declare let window: {
-  ethereum: any,
+declare let window: {
+  ethereum: any
 }
 
-export const registerToken = async (tokenAddress: string, tokenSymbol: string, tokenDecimals: number) => {
+export const registerToken = async (
+  tokenAddress: string,
+  tokenSymbol: string,
+  tokenDecimals: number
+) => {
   const tokenAdded = await window.ethereum.request({
     method: 'wallet_watchAsset',
     params: {
@@ -18,9 +22,9 @@ export const registerToken = async (tokenAddress: string, tokenSymbol: string, t
       options: {
         address: tokenAddress,
         symbol: tokenSymbol,
-        decimals: tokenDecimals,
-      },
-    },
+        decimals: tokenDecimals
+      }
+    }
   })
 
   return tokenAdded

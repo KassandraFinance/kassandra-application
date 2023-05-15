@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface IAddress2Index {
-  [key: string]: number;
+  [key: string]: number
 }
 
 const initialState: IAddress2Index = {}

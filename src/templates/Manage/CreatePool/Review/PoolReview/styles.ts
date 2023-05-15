@@ -263,7 +263,7 @@ export const PrivateAddressList = styled.div`
 `
 
 interface IPrivateAddressprops {
-  hasBorder: boolean;
+  hasBorder: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -336,7 +336,7 @@ export const ReviewThead = styled.div`
 `
 
 interface IIsViewProps {
-  isView?: boolean;
+  isView?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

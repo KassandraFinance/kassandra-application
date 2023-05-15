@@ -8,7 +8,7 @@ export const ModalContent = styled.div`
 
   text-align: center;
 
-  background: rgba(31, 41, 55, 0.96);
+  background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
   backdrop-filter: blur(0.4rem);
 
   p:first-child {

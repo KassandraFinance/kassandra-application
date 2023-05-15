@@ -10,8 +10,8 @@ import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
 import * as S from './styles'
 
 interface ITermsAndConditionsProps {
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  modalOpen: boolean
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const TermsAndConditions = ({

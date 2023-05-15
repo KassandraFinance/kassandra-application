@@ -12,13 +12,13 @@ import BigNumber from 'bn.js'
 import * as S from './styles'
 
 interface IKacyEarnedProps {
-  pid: number;
-  userWalletAddress: string;
-  kacyEarned: BigNumber;
-  setKacyEarned: React.Dispatch<React.SetStateAction<BigNumber>>;
-  kacyPrice: Big;
-  stakingAddress: string;
-  chainId: number;
+  pid: number
+  userWalletAddress: string
+  kacyEarned: BigNumber
+  setKacyEarned: React.Dispatch<React.SetStateAction<BigNumber>>
+  kacyPrice: Big
+  stakingAddress: string
+  chainId: number
 }
 
 const KacyEarned = ({

@@ -86,7 +86,7 @@ export const ValueUSD = styled.div`
 `
 
 interface IChangeProps {
-  change: number;
+  change: number
 }
 
 // prettier-ignore

@@ -7,7 +7,7 @@ import Modal from '../Modal'
 import * as S from './styles'
 
 interface IModalWaitingListProps {
-  setIsModalWaitingList: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsModalWaitingList: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ModalWaitingList = ({

@@ -14,15 +14,15 @@ import * as S from './styles'
 
 type ProviderType = {
   [key: string]: {
-    icon: string,
+    icon: string
     name: string
   }
 }
 
 interface IWalletConnectingProps {
-  provider: string;
-  isConnected: boolean;
-  handleCloseModal(): void;
+  provider: string
+  isConnected: boolean
+  handleCloseModal(): void
 }
 
 const WalletConnecting = ({

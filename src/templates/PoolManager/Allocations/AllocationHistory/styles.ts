@@ -13,6 +13,10 @@ export const AllocationHistory = styled.div`
       padding-bottom: 1rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
+
+    @media (max-width: 576px) {
+      margin-top: 0;
+    }
   `}
 `
 
@@ -39,6 +43,10 @@ export const WasNoAllocationsChange = styled.div`
     letter-spacing: 0.3em;
     text-transform: uppercase;
     text-align: center;
+
+    @media (max-width: 576px) {
+      font-size: ${theme.font.sizes.font12};
+    }
   `}
 `
 
