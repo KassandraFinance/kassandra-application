@@ -108,7 +108,6 @@ const AddInvestorModal = ({
     investorsList: string[]
   ) {
     setIsTransaction(true)
-    // eslint-disable-next-line prettier/prettier
     const controller = new web3.eth.Contract(
       KassandraControlerAbi as unknown as AbiItem,
       poolControler
@@ -116,7 +115,8 @@ const AddInvestorModal = ({
 
     await controller.methods.addAllowedAddresses(investorsList).send(
       {
-        from: userWalletAddress
+        from: userWalletAddress,
+        maxPriorityFeePerGas: 30e9
       },
       callBack
     )

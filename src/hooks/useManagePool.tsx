@@ -36,7 +36,7 @@ const useManagePool = (controllerAddress: string) => {
     ): Promise<void> => {
       return controller.methods
         .withdrawCollectedManagementFees()
-        .send({ from: userWalletAddress })
+        .send({ from: userWalletAddress, maxPriorityFeePerGas: 30e9 })
     }
 
     return {

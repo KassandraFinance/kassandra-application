@@ -76,7 +76,6 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
 
   async function handleMakePublic(poolControler: string) {
     setIsTransaction(true)
-    // eslint-disable-next-line prettier/prettier
     const controller = new web3.eth.Contract(
       KassandraControlerAbi as unknown as AbiItem,
       poolControler
@@ -84,7 +83,8 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
 
     await controller.methods.setPublicPool().send(
       {
-        from: userWalletAddress
+        from: userWalletAddress,
+        maxPriorityFeePerGas: 30e9
       },
       callBack
     )
