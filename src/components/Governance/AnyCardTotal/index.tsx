@@ -4,14 +4,19 @@ import tooltip from '../../../../public/assets/utilities/tooltip.svg'
 import * as S from './styles'
 
 interface IAnyCardProps {
-  text: string;
-  textTitle: string;
-  TooltipText: string;
-  isDolar?: boolean;
+  text: string
+  textTitle: string
+  TooltipText: string
+  isDolar?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
-const AnyCardTotal = ({ textTitle, text, TooltipText, isDolar }: IAnyCardProps) => {
+const AnyCardTotal = ({
+  textTitle,
+  text,
+  TooltipText,
+  isDolar
+}: IAnyCardProps) => {
   return (
     <S.TotalValuesCards>
       <span>

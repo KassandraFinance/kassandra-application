@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components'
 
 interface IHeaderButtonsProps {
-  networkColor: string;
-  fillColor: string;
+  networkColor: string
+  fillColor: string
 }
 
 // prettier-ignore

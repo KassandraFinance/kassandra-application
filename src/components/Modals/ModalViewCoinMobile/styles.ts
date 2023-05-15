@@ -2,8 +2,8 @@ import styled, { css, keyframes } from 'styled-components'
 import theme from '../../../styles/theme'
 
 interface IModalBuyKacyProps {
-  modalOpen: boolean;
-  isAnimation: boolean;
+  modalOpen: boolean
+  isAnimation: boolean
 }
 
 // prettier-ignore

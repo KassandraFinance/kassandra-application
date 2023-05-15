@@ -25,13 +25,13 @@ import { GET_POOL } from './graphql'
 import * as S from './styles'
 
 interface InfoPool {
-  tvl: string;
-  price: string;
+  tvl: string
+  price: string
 }
 
 interface IFundCardProps {
-  poolAddress: string;
-  link?: string;
+  poolAddress: string
+  link?: string
 }
 
 const FundCard = ({ poolAddress, link }: IFundCardProps) => {
@@ -73,7 +73,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
 
     if (data?.pool) {
       const newPrice = data?.pool?.price_candles.map(
-        (item: { timestamp: number, close: string }) => {
+        (item: { timestamp: number; close: string }) => {
           return {
             timestamp: item.timestamp,
             close: Number(item.close)

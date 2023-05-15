@@ -20,36 +20,36 @@ import assetDistribution from '../../../../../public/assets/iconGradient/assets-
 import * as S from './styles'
 
 export type ActivityInfo = {
-  amount: string,
-  symbol: string,
-  value: string,
-  logo: string,
-  weight?: string,
+  amount: string
+  symbol: string
+  value: string
+  logo: string
+  weight?: string
   newWeight?: string
 }
 
 export type IPoolInfo = {
-  name: string,
-  symbol: string,
-  logo: string,
+  name: string
+  symbol: string
+  logo: string
   blockExplorerUrl: string
 }
 
 export type ActivityCardProps = {
-  key: string,
-  actionType: actionsType,
-  date: Date,
-  wallet: string,
-  txHash: string,
-  activityInfo: ActivityInfo[],
-  newBalancePool?: ActivityInfo[],
+  key: string
+  actionType: actionsType
+  date: Date
+  wallet: string
+  txHash: string
+  activityInfo: ActivityInfo[]
+  newBalancePool?: ActivityInfo[]
   sharesRedeemed?: {
-    amount: string,
+    amount: string
     value: string
   }
 }
 interface IAllocationHistoryProps {
-  poolInfo: IPoolInfo;
+  poolInfo: IPoolInfo
 }
 
 const AllocationHistory = ({ poolInfo }: IAllocationHistoryProps) => {

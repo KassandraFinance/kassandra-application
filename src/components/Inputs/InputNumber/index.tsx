@@ -3,13 +3,13 @@ import React from 'react'
 import * as S from './styles'
 
 interface IInputNumberProps {
-  form?: string;
-  name: string;
-  min?: number;
-  max?: number;
-  step?: number;
-  InputNumberValue: number;
-  handleInputNumber: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  form?: string
+  name: string
+  min?: number
+  max?: number
+  step?: number
+  InputNumberValue: number
+  handleInputNumber: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const InputNumber = ({

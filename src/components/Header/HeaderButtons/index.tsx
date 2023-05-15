@@ -15,13 +15,13 @@ import { disconnectedIcon, avalancheIcon, polygonIcon } from './SvgButtons'
 import * as S from './styles'
 
 interface IHeaderButtonsProps {
-  setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 type styles = {
-  icon: any,
-  network: string,
-  color: string,
+  icon: any
+  network: string
+  color: string
   fillColor: string
 }
 

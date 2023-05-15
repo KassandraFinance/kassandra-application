@@ -8,12 +8,12 @@ import none from '../../../../public/assets/icons/coming-soon.svg'
 import * as S from './styles'
 
 type ITokenInfoProps = {
-  id: string,
-  balance_in_pool: string,
-  address: string,
-  name: string,
-  symbol: string,
-  allocation: number,
+  id: string
+  balance_in_pool: string
+  address: string
+  name: string
+  symbol: string
+  allocation: number
   price: number
 }
 

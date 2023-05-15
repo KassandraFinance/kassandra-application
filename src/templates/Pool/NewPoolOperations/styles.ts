@@ -24,7 +24,7 @@ export const PoolOperationsContainer = styled.div`
 `
 
 interface ISelectOperationProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

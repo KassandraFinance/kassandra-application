@@ -5,53 +5,53 @@ import { BNtoDecimal } from '@/utils/numerals'
 import { ActivityCardProps, activityProps } from '../Activity'
 
 type IActivityProps = {
-  id: string,
-  type: 'join' | 'exit',
-  symbol: string[],
-  amount: string[],
-  price_usd: string[],
-  txHash: string,
-  timestamp: number,
+  id: string
+  type: 'join' | 'exit'
+  symbol: string[]
+  amount: string[]
+  price_usd: string[]
+  txHash: string
+  timestamp: number
   address: string
 }
 
 type IUnderlyingAssetsProps = {
   token: {
-    logo: string,
-    symbol: string,
+    logo: string
+    symbol: string
     wraps: {
-      symbol: string,
+      symbol: string
       logo: string
     }
   }
 }
 
 type IWeightGoalsProps = {
-  id: string,
-  type: 'rebalance' | 'add' | 'removed',
-  txHash: string,
-  end_timestamp: number,
+  id: string
+  type: 'rebalance' | 'add' | 'removed'
+  txHash: string
+  end_timestamp: number
   previous: {
     weights: {
-      weight_normalized: string,
+      weight_normalized: string
       asset: {
         token: {
           symbol: string
         }
       }
     }[]
-  },
+  }
   token: {
-    symbol: string,
-    logo: string,
+    symbol: string
+    logo: string
     price_usd: string
-  },
+  }
   weights: {
-    weight_normalized: string,
+    weight_normalized: string
     asset: {
-      balance: string,
+      balance: string
       token: {
-        symbol: string,
+        symbol: string
         logo: string
       }
     }

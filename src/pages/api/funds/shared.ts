@@ -8,7 +8,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse) => {
   const { method } = request
   const { id } = request.query
   const fundId = Array.isArray(id) ? id[0] : id
-  const { image, id: param }: { image: string, id: string } = request.body
+  const { image, id: param }: { image: string; id: string } = request.body
 
   try {
     await NextCors(request, response, {

@@ -6,10 +6,10 @@ import Button from '../../../../components/Button'
 import * as S from './styles'
 
 interface ITransactionFinalized {
-  title: string;
-  image: any;
-  onCLick: () => void;
-  children: ReactNode;
+  title: string
+  image: any
+  onCLick: () => void
+  children: ReactNode
 }
 
 const TransactionFinalized = ({

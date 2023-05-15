@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface IFeesSlice {
-  Invest: string;
-  Withdraw: string;
-  Swap: string;
+  Invest: string
+  Withdraw: string
+  Swap: string
 }
 
 const initialState: IFeesSlice = {

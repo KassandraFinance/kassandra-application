@@ -46,8 +46,8 @@ export const ProductDetails = styled.div`
 `
 
 interface IIntroProps {
-  introMobile: boolean;
-  introDesktop: boolean;
+  introMobile: boolean
+  introDesktop: boolean
 }
 
 // prettier-ignore
@@ -106,7 +106,7 @@ export const SymbolAndMade = styled.div`
 `
 
 interface INameAndSymbolProps {
-  introMobile?: boolean;
+  introMobile?: boolean
 }
 
 // prettier-ignore

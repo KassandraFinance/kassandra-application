@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface IIsOpenTokenInfoProps {
-  isOpenTokenInfo: boolean;
+  isOpenTokenInfo: boolean
 }
 // eslint-disable-next-line prettier/prettier
 export const TokenWeightInfo = styled.div<IIsOpenTokenInfoProps>`
@@ -43,7 +43,6 @@ export const TokenWeightInfo = styled.div<IIsOpenTokenInfoProps>`
         min-height: 20rem;
       }
     `}
-
 `
 
 export const TokenInfoContainer = styled.div`

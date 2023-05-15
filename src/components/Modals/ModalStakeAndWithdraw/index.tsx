@@ -28,20 +28,20 @@ import Overlay from '../../Overlay'
 import * as S from './styles'
 
 interface IModalStakeProps {
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  pid: number;
-  decimals: string;
-  stakingToken: string;
-  productCategories: string | string[];
-  symbol: string;
-  stakeTransaction: string;
-  setStakeTransaction: React.Dispatch<React.SetStateAction<string>>;
-  link: string;
-  amountApproved: Big;
-  updateAllowance: () => Promise<void>;
-  handleApprove: () => Promise<void>;
-  stakingAddress: string;
-  chain: number;
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  pid: number
+  decimals: string
+  stakingToken: string
+  productCategories: string | string[]
+  symbol: string
+  stakeTransaction: string
+  setStakeTransaction: React.Dispatch<React.SetStateAction<string>>
+  link: string
+  amountApproved: Big
+  updateAllowance: () => Promise<void>
+  handleApprove: () => Promise<void>
+  stakingAddress: string
+  chain: number
 }
 
 const ModalStakeAndWithdraw = ({

@@ -15,21 +15,21 @@ import { IInfoStaked } from '../'
 import * as S from './styles'
 
 interface IYourStakeProps {
-  pid: number;
-  userWalletAddress: string;
-  infoStaked: IInfoStaked;
-  setInfoStaked: React.Dispatch<React.SetStateAction<IInfoStaked>>;
-  stakeWithVotingPower: boolean;
-  poolPrice: Big;
-  kacyPrice: Big;
-  stakeWithLockPeriod: boolean;
-  lockPeriod: number;
-  availableWithdraw: Big;
-  stakingAddress: string;
+  pid: number
+  userWalletAddress: string
+  infoStaked: IInfoStaked
+  setInfoStaked: React.Dispatch<React.SetStateAction<IInfoStaked>>
+  stakeWithVotingPower: boolean
+  poolPrice: Big
+  kacyPrice: Big
+  stakeWithLockPeriod: boolean
+  lockPeriod: number
+  availableWithdraw: Big
+  stakingAddress: string
   chain: {
-    id: number,
+    id: number
     logo: string
-  };
+  }
 }
 
 const YourStake = ({

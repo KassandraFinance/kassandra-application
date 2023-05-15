@@ -25,23 +25,23 @@ export enum TransactionStatus {
 export type StatusType = 'WAITING' | 'APPROVED' | 'APPROVING' | 'NEXT' | 'ERROR'
 
 export type TransactionsListType = {
-  key: string,
-  transaction: string,
+  key: string
+  transaction: string
   status: StatusType
 }
 
 export type ButtonTextProps = Record<TransactionStatus, string>
 
 interface IModalTransactionsProps {
-  title: string;
-  transactions: TransactionsListType[];
-  isCompleted: boolean;
-  transactionButtonStatus: TransactionStatus;
-  buttonText: ButtonTextProps;
-  onStart: () => Promise<void>;
-  onCancel: () => void;
-  onComfirm: () => void;
-  networkId?: number | null;
+  title: string
+  transactions: TransactionsListType[]
+  isCompleted: boolean
+  transactionButtonStatus: TransactionStatus
+  buttonText: ButtonTextProps
+  onStart: () => Promise<void>
+  onCancel: () => void
+  onComfirm: () => void
+  networkId?: number | null
 }
 
 const ModalTransactions = ({

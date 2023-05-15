@@ -15,7 +15,7 @@ import web3, { provider } from '../utils/web3'
 
 // eslint-disable-next-line prettier/prettier
 declare let window: {
-  ethereum: any,
+  ethereum: any
   location: {
     reload: (noCache?: boolean) => void
   }
@@ -28,10 +28,10 @@ const useConnect = () => {
   const [isConnected, setIsConnected] = React.useState(false)
   const [metaMaskError, setMetaMaskError] = React.useState<string | null>(null)
   const [metamaskInstalled, setMetamaskInstalled] = React.useState(false)
-  
+
   const dispatch = useAppDispatch()
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  
+
   const handleAccountsChanged = React.useCallback(accounts => {
     try {
       if (accounts.length === 0 || accounts[0] === undefined) {
@@ -68,7 +68,9 @@ const useConnect = () => {
 
   const connect = React.useCallback(async () => {
     try {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      })
 
       handleAccountsChanged(accounts)
       setIsConnected(true)
@@ -91,13 +93,18 @@ const useConnect = () => {
         handleAccountsChanged(accounts)
         setIsConnected(true)
         dispatch(setChainId(chainId))
-        subscribeToEvents(provider, handleAccountsChanged, handleChainChanged, handleDisconnected)
+        subscribeToEvents(
+          provider,
+          handleAccountsChanged,
+          handleChainChanged,
+          handleDisconnected
+        )
       }
       return
     }
   }, [])
 
-  const startApp = React.useCallback(async (providerMetaMask) => {
+  const startApp = React.useCallback(async providerMetaMask => {
     if (connector.connected) {
       return
     }

@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 type ImageType = {
-  profilePic: string,
+  profilePic: string
   isNFT: boolean
 }
 
 interface IUserDataState {
-  nickName: string;
-  image: ImageType;
+  nickName: string
+  image: ImageType
 }
 
 const initialState: IUserDataState = {

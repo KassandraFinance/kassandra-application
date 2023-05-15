@@ -60,46 +60,46 @@ import * as S from './styles'
 import useCoingecko from '@/hooks/useCoingecko'
 
 export interface IInfoStaked {
-  yourStake: BigNumber;
-  withdrawable: boolean;
-  votingMultiplier: string;
-  startDate: string;
-  endDate: string;
-  kacyRewards: BigNumber;
-  yourDailyKacyReward: BigNumber;
-  withdrawDelay: any;
-  totalStaked: BigNumber;
-  hasExpired: boolean;
-  unstake: boolean;
-  apr: BigNumber;
-  stakingToken: string;
-  vestingPeriod: string;
-  lockPeriod: string;
+  yourStake: BigNumber
+  withdrawable: boolean
+  votingMultiplier: string
+  startDate: string
+  endDate: string
+  kacyRewards: BigNumber
+  yourDailyKacyReward: BigNumber
+  withdrawDelay: any
+  totalStaked: BigNumber
+  hasExpired: boolean
+  unstake: boolean
+  apr: BigNumber
+  stakingToken: string
+  vestingPeriod: string
+  lockPeriod: string
 }
 
 interface IStakingProps {
-  pid: number;
-  symbol: string;
-  stakingAddress: string;
+  pid: number
+  symbol: string
+  stakingAddress: string
   chain: {
-    id: number,
+    id: number
     logo: string
-  };
+  }
   properties: {
     logo: {
-      src: string,
+      src: string
       style: {
         width: string
       }
-    },
-    addressProviderReserves?: string,
-    title?: string,
+    }
+    addressProviderReserves?: string
+    title?: string
     link?: string
-  };
-  stakeWithVotingPower: boolean;
-  stakeWithLockPeriod: boolean;
-  isLP: boolean;
-  address?: string;
+  }
+  stakeWithVotingPower: boolean
+  stakeWithLockPeriod: boolean
+  isLP: boolean
+  address?: string
 }
 
 const StakeCard = ({

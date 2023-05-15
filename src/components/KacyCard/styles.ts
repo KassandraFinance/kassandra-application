@@ -217,7 +217,7 @@ export const TokenInfo = styled.div`
 `
 
 interface IKacyPriceProps {
-  isValuePercentage: boolean;
+  isValuePercentage: boolean
 }
 // eslint-disable-next-line prettier/prettier
 export const Price = styled.div<IKacyPriceProps>`

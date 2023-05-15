@@ -28,21 +28,21 @@ import IntroReview, {
 import * as S from './styles'
 
 type IWeightGoalsProps = {
-  id: string,
-  type: 'add' | 'rebalance' | 'removed',
-  end_timestamp: number,
-  start_timestamp: number,
+  id: string
+  type: 'add' | 'rebalance' | 'removed'
+  end_timestamp: number
+  start_timestamp: number
   token: {
-    symbol: string,
-    logo: string,
+    symbol: string
+    logo: string
     price_usd: string
-  },
+  }
   weights: {
-    weight_normalized: string,
+    weight_normalized: string
     asset: {
-      balance: string,
+      balance: string
       token: {
-        symbol: string,
+        symbol: string
         logo: string
       }
     }
@@ -51,28 +51,28 @@ type IWeightGoalsProps = {
 
 interface IAllocationProps {
   pool: {
-    logo: string,
-    name: string,
-    symbol: string,
-    price_usd: string,
-    chain_id: number,
-    weight_goals: IWeightGoalsProps[],
+    logo: string
+    name: string
+    symbol: string
+    price_usd: string
+    chain_id: number
+    weight_goals: IWeightGoalsProps[]
     chain: {
-      blockExplorerUrl: string,
+      blockExplorerUrl: string
       addressWrapped: string
     }
-  };
+  }
 }
 
 type CoinGeckoResponseType = {
   [key: string]: {
-    usd: number,
+    usd: number
     usd_24h_change: number
   }
 }
 
 interface IAllocationsProps {
-  countDownDate: string;
+  countDownDate: string
 }
 const Allocations = ({ countDownDate }: IAllocationsProps) => {
   const [RebalancingProgress, setRebalancingProgress] =

@@ -7,18 +7,18 @@ import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 import * as S from './styles'
 
 type tabs = {
-  text: string,
-  asPathText: string,
-  icon?: StaticImageData,
+  text: string
+  asPathText: string
+  icon?: StaticImageData
   svg?: JSX.Element
 }
 
 interface ISelectTabsProps {
-  tabs: tabs[];
-  isSelect: string | string[] | undefined;
+  tabs: tabs[]
+  isSelect: string | string[] | undefined
   setIsSelect: React.Dispatch<
     React.SetStateAction<string | string[] | undefined>
-  >;
+  >
 }
 
 const SelectTabs = ({ tabs, isSelect, setIsSelect }: ISelectTabsProps) => {

@@ -9,20 +9,17 @@ import gearButton from '../../../../../../public/assets/icons/gear-button.svg'
 import * as S from './styles'
 
 interface Slippage {
-  value: string;
-  custom: string;
-  isCustom: boolean;
+  value: string
+  custom: string
+  isCustom: boolean
 }
 
 interface Inputs {
-  slippage: Slippage;
-  setSlippage: React.Dispatch<React.SetStateAction<Slippage>>;
+  slippage: Slippage
+  setSlippage: React.Dispatch<React.SetStateAction<Slippage>>
 }
 
-const TransactionSettings = ({
-  slippage,
-  setSlippage,
-}: Inputs) => {
+const TransactionSettings = ({ slippage, setSlippage }: Inputs) => {
   const [isModalSettings, setIsModalSettings] = React.useState<boolean>(false)
 
   function handleCloseModal() {
@@ -34,7 +31,6 @@ const TransactionSettings = ({
 
     return SlippageValue.toFixed(1)
   }
-
 
   return (
     <S.TransactionSettings>
@@ -54,8 +50,16 @@ const TransactionSettings = ({
 
       <S.TransactionContentOptions>
         <label>{handleFormattedOptionsValue(slippage.value)}%</label>
-        <button type="button" onClick={() => setIsModalSettings(!isModalSettings)}>
-          <Image src={gearButton.src} alt="gear button" width={20} height={20} />
+        <button
+          type="button"
+          onClick={() => setIsModalSettings(!isModalSettings)}
+        >
+          <Image
+            src={gearButton.src}
+            alt="gear button"
+            width={20}
+            height={20}
+          />
         </button>
 
         {isModalSettings ? (
@@ -67,15 +71,15 @@ const TransactionSettings = ({
                   type="radio"
                   name="slippageTolerance"
                   checked={!slippage.isCustom && slippage.value === '0.1'}
-                  onChange={() => setSlippage(prev => ({
-                    ...prev,
-                    value: "0.1",
-                    isCustom: false
-                  }))}
+                  onChange={() =>
+                    setSlippage(prev => ({
+                      ...prev,
+                      value: '0.1',
+                      isCustom: false
+                    }))
+                  }
                 />
-                <label htmlFor="slip01">
-                  0.1%
-                </label>
+                <label htmlFor="slip01">0.1%</label>
               </S.TransactionOption>
               <S.TransactionOption>
                 <input
@@ -83,15 +87,15 @@ const TransactionSettings = ({
                   type="radio"
                   name="slippageTolerance"
                   checked={!slippage.isCustom && slippage.value === '0.5'}
-                  onChange={() => setSlippage(prev => ({
-                    ...prev,
-                    value: "0.5",
-                    isCustom: false
-                  }))}
+                  onChange={() =>
+                    setSlippage(prev => ({
+                      ...prev,
+                      value: '0.5',
+                      isCustom: false
+                    }))
+                  }
                 />
-                <label htmlFor="slip05">
-                  0.5%
-                </label>
+                <label htmlFor="slip05">0.5%</label>
               </S.TransactionOption>
               <S.TransactionOption>
                 <input
@@ -99,15 +103,15 @@ const TransactionSettings = ({
                   type="radio"
                   name="slippageTolerance"
                   checked={!slippage.isCustom && slippage.value === '1'}
-                  onChange={() => setSlippage(prev => ({
-                    ...prev,
-                    value: "1",
-                    isCustom: false
-                  }))}
+                  onChange={() =>
+                    setSlippage(prev => ({
+                      ...prev,
+                      value: '1',
+                      isCustom: false
+                    }))
+                  }
                 />
-                <label htmlFor="slip10">
-                  1.0%
-                </label>
+                <label htmlFor="slip10">1.0%</label>
               </S.TransactionOption>
               <S.TransactionOption>
                 <input
@@ -115,14 +119,16 @@ const TransactionSettings = ({
                   type="radio"
                   name="slippageTolerance"
                   checked={slippage.isCustom}
-                  onChange={() => setSlippage(prev => ({
-                    ...prev,
-                    value: slippage.custom,
-                    isCustom: true
-                  }))}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      document.getElementById("slipCustomInput")?.focus()
+                  onChange={() =>
+                    setSlippage(prev => ({
+                      ...prev,
+                      value: slippage.custom,
+                      isCustom: true
+                    }))
+                  }
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      document.getElementById('slipCustomInput')?.focus()
                     }
                   }}
                 />
@@ -138,22 +144,27 @@ const TransactionSettings = ({
                     max={100}
                     onFocus={() => {
                       // eslint-disable-next-line prettier/prettier
-                      const radio = document.getElementById("slipCustom") as HTMLInputElement
+                      const radio = document.getElementById(
+                        'slipCustom'
+                      ) as HTMLInputElement
 
                       if (radio) {
                         radio.checked = true
                       }
                     }}
-                    onChange={(e) => setSlippage({
-                      custom: e.target.value || '2.0',
-                      value: e.target.value || '2.0',
-                      isCustom: true
-                    })}
+                    onChange={e =>
+                      setSlippage({
+                        custom: e.target.value || '2.0',
+                        value: e.target.value || '2.0',
+                        isCustom: true
+                      })
+                    }
                   />
                 </Tippy>
                 <span>%</span>
                 <label htmlFor="slipCustom">
-                  Custom slippage, current value: {slippage.custom}%. Press enter to edit.
+                  Custom slippage, current value: {slippage.custom}%. Press
+                  enter to edit.
                 </label>
                 <label htmlFor="slipCustomInput">
                   Custom slippage percentage
@@ -161,10 +172,9 @@ const TransactionSettings = ({
               </S.TransactionOption>
             </S.TransactionOptions>
           </fieldset>
-        )
-          :
-          (<></>)
-        }
+        ) : (
+          <></>
+        )}
       </S.TransactionContentOptions>
     </S.TransactionSettings>
   )

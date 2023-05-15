@@ -1,6 +1,6 @@
 interface IDateProps {
-  value: number;
-  string: string;
+  value: number
+  string: string
 }
 
 const useDate = () => {

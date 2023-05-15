@@ -5,8 +5,8 @@ export type AllPerformancePeriod = {
 }
 
 export interface IPerformanceValues {
-  title: string;
-  allPerformancePeriod?: AllPerformancePeriod;
+  title: string
+  allPerformancePeriod?: AllPerformancePeriod
 }
 
 const initialState: IPerformanceValues = {

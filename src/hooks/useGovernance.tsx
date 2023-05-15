@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import React from 'react'
-import { AbiItem } from "web3-utils"
+import { AbiItem } from 'web3-utils'
 import Web3 from 'web3'
 
 import { TransactionCallback } from '../utils/txWait'
 
-import Governance from "../constants/abi/Governance.json"
+import Governance from '../constants/abi/Governance.json'
 import { networks } from '@/constants/tokenAddresses'
 
 import approved from '../../public/assets/notificationStatus/approved.svg'
@@ -16,22 +16,26 @@ import queued from '../../public/assets/notificationStatus/queued.svg'
 import votingOpen from '../../public/assets/notificationStatus/voting-open.svg'
 
 const valuesStateProposal = [
-  ["Active", "Pending", queued, '0'],
-  ["Active", "Voting Open", votingOpen, '1'],
-  ["Failed", "Canceled", cancelled, '2'],
-  ["Failed", "Defeated", failed, '3'],
-  ["Succeeded", "Succeeded", approved, '4'],
-  ["Succeeded", "Queued", queued, '5'],
-  ["Failed", "Expired", failed, '6'],
-  ["Succeeded", "Executed", executed, '7']
+  ['Active', 'Pending', queued, '0'],
+  ['Active', 'Voting Open', votingOpen, '1'],
+  ['Failed', 'Canceled', cancelled, '2'],
+  ['Failed', 'Defeated', failed, '3'],
+  ['Succeeded', 'Succeeded', approved, '4'],
+  ['Succeeded', 'Queued', queued, '5'],
+  ['Failed', 'Expired', failed, '6'],
+  ['Succeeded', 'Executed', executed, '7']
 ]
 
 const useGovernance = (address: string) => {
   const web3 = new Web3(networks[43114].rpc)
-  const [contract, setContract] = React.useState(new web3.eth.Contract((Governance as unknown) as AbiItem, address))
+  const [contract, setContract] = React.useState(
+    new web3.eth.Contract(Governance as unknown as AbiItem, address)
+  )
 
   React.useEffect(() => {
-    setContract(new web3.eth.Contract((Governance as unknown) as AbiItem, address))
+    setContract(
+      new web3.eth.Contract(Governance as unknown as AbiItem, address)
+    )
   }, [address])
 
   return React.useMemo(() => {
@@ -59,12 +63,15 @@ const useGovernance = (address: string) => {
       return events
     }
 
-    const castVote = async (proposalId: number, vote: boolean, userWalletAddress: string, callback: TransactionCallback) => {
-      await contract.methods.castVote(proposalId, vote)
-        .send(
-          { from: userWalletAddress },
-          callback
-        )
+    const castVote = async (
+      proposalId: number,
+      vote: boolean,
+      userWalletAddress: string,
+      callback: TransactionCallback
+    ) => {
+      await contract.methods
+        .castVote(proposalId, vote)
+        .send({ from: userWalletAddress }, callback)
     }
 
     return {

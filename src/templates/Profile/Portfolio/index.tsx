@@ -24,70 +24,70 @@ import { IAssetsValueWalletProps, IKacyLpPool } from '../'
 import * as S from './styles'
 
 type IpriceInDolarProps = {
-  assetsToken: Big,
+  assetsToken: Big
   tokenizedFunds: Big
 }
 
 interface IProfileProps {
-  profileAddress: string;
-  assetsValueInWallet: IAssetsValueWalletProps;
-  cardstakesPool: IKacyLpPool[];
-  priceToken: IPriceToken;
-  myFunds: ImyFundsType;
-  priceInDolar: IpriceInDolarProps;
-  poolsAddresses: string[];
+  profileAddress: string
+  assetsValueInWallet: IAssetsValueWalletProps
+  cardstakesPool: IKacyLpPool[]
+  priceToken: IPriceToken
+  myFunds: ImyFundsType
+  priceInDolar: IpriceInDolarProps
+  poolsAddresses: string[]
   setPriceInDolar: React.Dispatch<
     React.SetStateAction<{
-      assetsToken: Big,
-      totalInvestmented: Big,
+      assetsToken: Big
+      totalInvestmented: Big
       tokenizedFunds: Big
     }>
-  >;
+  >
 }
 
 interface ImyFundsType {
-  [key: string]: string;
+  [key: string]: string
 }
 export interface IBalanceType {
-  [key: string]: BigNumber;
+  [key: string]: BigNumber
 }
 
 type PoolProps = {
-  id: string,
-  address: string,
-  name: string,
-  symbol: string,
-  logo: string,
-  logoChain: string,
-  changeDay: string,
-  changeMonth: string,
-  price: string,
-  tvl: string,
-  balance: string,
+  id: string
+  address: string
+  name: string
+  symbol: string
+  logo: string
+  logoChain: string
+  changeDay: string
+  changeMonth: string
+  price: string
+  tvl: string
+  balance: string
   balanceInUSD: string
 }
 
 type PoolResponse = {
-  id: string,
-  now: { close: number }[],
-  day: { close: number }[],
-  month: { close: number }[],
-  price_usd: string,
-  total_value_locked_usd: string,
-  address: string,
-  name: string,
-  symbol: string,
-  logo: string,
+  id: string
+  now: { close: number }[]
+  day: { close: number }[]
+  month: { close: number }[]
+  price_usd: string
+  total_value_locked_usd: string
+  address: string
+  name: string
+  symbol: string
+  logo: string
   investors?: {
     amount: string
-  }[],
+  }[]
   chain?: {
     logo: string
   }
 }
 
 type Response = {
-  pools: Array<PoolResponse>,
+  pools: Array<PoolResponse>
   managedPools: Array<PoolResponse>
 }
 

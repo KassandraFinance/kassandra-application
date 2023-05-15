@@ -15,7 +15,7 @@ export const Step = styled.div`
 `
 
 interface IPositonProps {
-  state: StateType;
+  state: StateType
 }
 
 // prettier-ignore
@@ -98,7 +98,7 @@ export const TickWrapper = styled.div`
 `
 
 interface ITextProps {
-  state: StateType;
+  state: StateType
 }
 
 // prettier-ignore

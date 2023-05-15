@@ -21,11 +21,11 @@ import Modal from '../Modal'
 import * as S from './styles'
 
 interface IModalRequestUnstakeProps {
-  openStakeAndWithdraw: (transaction: 'staking' | 'unstaking') => void;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  pid: number;
-  staking: boolean;
-  symbol: string;
+  openStakeAndWithdraw: (transaction: 'staking' | 'unstaking') => void
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  pid: number
+  staking: boolean
+  symbol: string
 }
 
 const ModalCancelUnstake = ({

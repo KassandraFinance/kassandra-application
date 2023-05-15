@@ -14,7 +14,7 @@ export const Backdrop = styled.div`
 `
 
 interface IModalCardOperationsProps {
-  modalOpen: boolean;
+  modalOpen: boolean
 }
 
 // prettier-ignore

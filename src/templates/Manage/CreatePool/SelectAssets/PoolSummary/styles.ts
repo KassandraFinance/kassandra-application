@@ -81,7 +81,7 @@ export const AllocationContainer = styled.div`
 `
 
 interface ILockButtonProps {
-  active: boolean;
+  active: boolean
 }
 
 // prettier-ignore
@@ -152,7 +152,7 @@ export const ProgressBar = styled.div`
 `
 
 interface IProgressValueProps {
-  value: number;
+  value: number
 }
 
 // prettier-ignore
@@ -194,7 +194,7 @@ export const ProgressValue = styled.div<IProgressValueProps>`
 `
 
 interface ITotalContainerProps {
-  value: number;
+  value: number
 }
 
 // prettier-ignore

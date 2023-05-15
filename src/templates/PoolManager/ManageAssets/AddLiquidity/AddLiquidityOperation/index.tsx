@@ -38,17 +38,17 @@ export type CoinGeckoAssetsResponseType = {
 
 export type GetPoolTokensType = {
   pool: {
-    address: string,
-    chainId: number,
-    logo: string,
-    name: string,
-    price_usd: string,
-    symbol: string,
-    total_value_locked_usd: string,
-    controller: string,
+    address: string
+    chainId: number
+    logo: string
+    name: string
+    price_usd: string
+    symbol: string
+    total_value_locked_usd: string
+    controller: string
     chain: {
       logo: string
-    },
+    }
     weight_goals: {
       weights: AssetType[]
     }[]

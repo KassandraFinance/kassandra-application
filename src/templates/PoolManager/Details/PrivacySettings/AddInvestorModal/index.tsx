@@ -5,9 +5,7 @@ import { isAddress, AbiItem } from 'web3-utils'
 
 import web3 from '@/utils/web3'
 import substr from '@/utils/substr'
-import waitTransaction, {
-  MetamaskError
-} from '@/utils/txWait'
+import waitTransaction, { MetamaskError } from '@/utils/txWait'
 import changeChain from '@/utils/changeChain'
 import { networks } from '@/constants/tokenAddresses'
 
@@ -28,11 +26,14 @@ import closeIcon from '@assets/utilities/close-icon.svg'
 import * as S from './styles'
 
 interface IAddInvestorModalProps {
-  onClose: () => void;
-  setAddressesOfPrivateInvestors: () => Promise<void>;
+  onClose: () => void
+  setAddressesOfPrivateInvestors: () => Promise<void>
 }
 
-const AddInvestorModal = ({ onClose, setAddressesOfPrivateInvestors }: IAddInvestorModalProps) => {
+const AddInvestorModal = ({
+  onClose,
+  setAddressesOfPrivateInvestors
+}: IAddInvestorModalProps) => {
   const [value, setValue] = React.useState('')
   const [investorsList, setInvestorsList] = React.useState<string[]>([])
   const [isTransaction, setIsTransaction] = React.useState(false)
@@ -62,15 +63,10 @@ const AddInvestorModal = ({ onClose, setAddressesOfPrivateInvestors }: IAddInves
     setInvestorsList(prev => prev.filter(item => item !== address))
   }
 
-  async function callBack(
-    error: MetamaskError,
-    txHash: string,
-  ) {
+  async function callBack(error: MetamaskError, txHash: string) {
     if (error) {
       if (error.code === 4001) {
-        dispatch(
-          setModalAlertText({ errorText: `Approval cancelled` })
-        )
+        dispatch(setModalAlertText({ errorText: `Approval cancelled` }))
 
         setIsTransaction(false)
         return false
@@ -89,15 +85,17 @@ const AddInvestorModal = ({ onClose, setAddressesOfPrivateInvestors }: IAddInves
     const txReceipt = await waitTransaction(txHash)
 
     if (txReceipt.status) {
-      ToastSuccess("Investors add!")
+      ToastSuccess('Investors add!')
       setIsTransaction(false)
       setInvestorsList([])
 
       return true
     } else {
-      dispatch(setModalAlertText({
-        errorText: 'Transaction reverted'
-      }))
+      dispatch(
+        setModalAlertText({
+          errorText: 'Transaction reverted'
+        })
+      )
 
       setIsTransaction(false)
 
@@ -105,16 +103,24 @@ const AddInvestorModal = ({ onClose, setAddressesOfPrivateInvestors }: IAddInves
     }
   }
 
-  async function handlePrivateInvestors(poolControler: string, investorsList: string[]) {
+  async function handlePrivateInvestors(
+    poolControler: string,
+    investorsList: string[]
+  ) {
     setIsTransaction(true)
-    // eslint-disable-next-line prettier/prettier
-    const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
+    const controller = new web3.eth.Contract(
+      KassandraControlerAbi as unknown as AbiItem,
+      poolControler
+    )
 
-      await controller.methods.addAllowedAddresses(investorsList).send({
+    await controller.methods.addAllowedAddresses(investorsList).send(
+      {
         from: userWalletAddress,
         maxPriorityFeePerGas: 30e9
-      }, callBack)
-      await setAddressesOfPrivateInvestors()
+      },
+      callBack
+    )
+    await setAddressesOfPrivateInvestors()
   }
 
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
@@ -167,48 +173,49 @@ const AddInvestorModal = ({ onClose, setAddressesOfPrivateInvestors }: IAddInves
             ))}
           </S.Addresses>
 
-          {
-          poolInfo?.chain_id === chainId ?
-          <>
-          {!isTransaction ?
-            <Button
-              text="Add Investor"
-              type='button'
-              backgroundSecondary
-              fullWidth
-              disabledNoEvent={investorsList.length < 1}
-              onClick={() => handlePrivateInvestors(poolInfo.controller, investorsList)}
-            />
-            :
-            <Button
-              text='Waiting transaction'
-              type='button'
-              backgroundPrimary
-              disabled
-              fullWidth
-            />
-          }
-          </>
-          :
-          <>
-            {poolInfo?.chain_id &&
-            <Button
-              text={`Connect to ${networks[poolInfo.chain_id].chainName}`}
-              type='button'
-              backgroundPrimary
-              fullWidth
-              onClick={() =>
-                changeChain({
-                  chainId: networks[poolInfo.chain_id].chainId,
-                  chainName: networks[poolInfo.chain_id].chainName,
-                  rpcUrls: [networks[poolInfo.chain_id].rpc],
-                  nativeCurrency: networks[poolInfo.chain_id].nativeCurrency
-                })
-              }
-            />
-            }
-          </>
-          }
+          {poolInfo?.chain_id === chainId ? (
+            <>
+              {!isTransaction ? (
+                <Button
+                  text="Add Investor"
+                  type="button"
+                  backgroundSecondary
+                  fullWidth
+                  disabledNoEvent={investorsList.length < 1}
+                  onClick={() =>
+                    handlePrivateInvestors(poolInfo.controller, investorsList)
+                  }
+                />
+              ) : (
+                <Button
+                  text="Waiting transaction"
+                  type="button"
+                  backgroundPrimary
+                  disabled
+                  fullWidth
+                />
+              )}
+            </>
+          ) : (
+            <>
+              {poolInfo?.chain_id && (
+                <Button
+                  text={`Connect to ${networks[poolInfo.chain_id].chainName}`}
+                  type="button"
+                  backgroundPrimary
+                  fullWidth
+                  onClick={() =>
+                    changeChain({
+                      chainId: networks[poolInfo.chain_id].chainId,
+                      chainName: networks[poolInfo.chain_id].chainName,
+                      rpcUrls: [networks[poolInfo.chain_id].rpc],
+                      nativeCurrency: networks[poolInfo.chain_id].nativeCurrency
+                    })
+                  }
+                />
+              )}
+            </>
+          )}
         </S.Content>
       </Modal>
     </S.AddInvestorModal>

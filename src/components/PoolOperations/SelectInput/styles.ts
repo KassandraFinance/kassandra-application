@@ -15,7 +15,7 @@ export const Backdrop = styled.div`
 `
 
 interface ISelectedProps {
-  openOptions: boolean;
+  openOptions: boolean
 }
 
 // prettier-ignore

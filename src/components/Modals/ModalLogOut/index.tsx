@@ -14,9 +14,9 @@ import theme from '../../../styles/theme'
 import * as S from './styles'
 
 interface IModalLogOutProps {
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  userWalletAddress: string;
+  modalOpen: boolean
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  userWalletAddress: string
 }
 
 const ModalLogOut = ({

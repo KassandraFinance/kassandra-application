@@ -3,10 +3,10 @@ import Button from '../Button'
 import * as S from './styles'
 
 interface IContainerButtonProps {
-  form: string;
-  backButtonDisabled: boolean;
-  onBack: () => void;
-  onNext: () => void;
+  form: string
+  backButtonDisabled: boolean
+  onBack: () => void
+  onNext: () => void
 }
 
 const ContainerButton = ({

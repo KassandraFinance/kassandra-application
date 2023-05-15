@@ -154,7 +154,7 @@ const wrapperModifiers = {
 
   backgroundVote: (
     theme: DefaultTheme,
-    { voteState, type }: { voteState: string, type: string }
+    { voteState, type }: { voteState: string; type: string }
   ) => {
     switch (voteState) {
       case 'against':

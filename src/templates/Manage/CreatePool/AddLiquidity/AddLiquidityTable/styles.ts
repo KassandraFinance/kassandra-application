@@ -153,8 +153,8 @@ export const Available = styled.span`
 `
 
 interface IInputWrapperProps {
-  isBiggerThanZero: boolean;
-  isBiggerThanBalance: boolean;
+  isBiggerThanZero: boolean
+  isBiggerThanBalance: boolean
 }
 
 // prettier-ignore
@@ -207,7 +207,7 @@ export const MaxButton = styled.button`
 `
 
 interface IErrorProps {
-  isError: boolean;
+  isError: boolean
 }
 
 // prettier-ignore

@@ -7,22 +7,22 @@ import * as S from './styles'
 
 interface ITokenWithNetworkImage {
   tokenImage: {
-    url: string,
-    width?: number,
-    height?: number,
+    url: string
+    width?: number
+    height?: number
     withoutBorder?: boolean
-  };
+  }
   networkImage?: {
-    url?: string,
-    width?: number,
-    height?: number,
+    url?: string
+    width?: number
+    height?: number
     withoutBorder?: boolean
-  };
+  }
   blockies?: {
-    seedName: string,
-    size: number,
+    seedName: string
+    size: number
     scale: number
-  };
+  }
 }
 
 const TokenWithNetworkImage = ({

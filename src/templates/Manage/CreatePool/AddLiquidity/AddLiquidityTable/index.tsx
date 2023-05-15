@@ -21,12 +21,12 @@ import {
 import { CoinGeckoResponseType } from '..'
 
 interface IAddLiquidityTableProps {
-  coinsList: TokenType[];
-  tokensBalance: { [key: string]: BigNumber };
-  priceList: CoinGeckoResponseType | undefined;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onInputMaxClick: (token: string, liquidity: string) => void;
-  onMaxClick: (priceList: CoinGeckoResponseType) => void;
+  coinsList: TokenType[]
+  tokensBalance: { [key: string]: BigNumber }
+  priceList: CoinGeckoResponseType | undefined
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onInputMaxClick: (token: string, liquidity: string) => void
+  onMaxClick: (priceList: CoinGeckoResponseType) => void
 }
 
 const AddLiquidityTable = ({

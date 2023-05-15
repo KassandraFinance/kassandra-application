@@ -20,7 +20,7 @@ export const ChangeTitle = styled.div`
 `
 
 interface IChangeValueProps {
-  value: number;
+  value: number
 }
 
 // prettier-ignore

@@ -19,7 +19,7 @@ export const Backdrop = styled.div`
 `
 
 interface ISelectedProps {
-  openOptions: boolean;
+  openOptions: boolean
 }
 
 // prettier-ignore
@@ -89,7 +89,7 @@ export const TokenLogo = styled.span`
 `
 
 interface IopenOptionsProps {
-  openOptions: boolean;
+  openOptions: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

@@ -3,13 +3,13 @@ import Step, { StateType } from './Step'
 import * as S from './styles'
 
 export type StepsType = {
-  stepNumber: number,
-  stepeTitle: string,
+  stepNumber: number
+  stepeTitle: string
   state: StateType
 }
 
 interface IStepsProps {
-  steps: StepsType[];
+  steps: StepsType[]
 }
 
 const Steps = ({ steps }: IStepsProps) => {

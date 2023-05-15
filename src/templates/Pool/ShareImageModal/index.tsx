@@ -12,11 +12,11 @@ import { v4 } from 'uuid'
 import * as S from './styles'
 
 interface ShareImageProps {
-  openModal: boolean;
-  setOpenModal: (value: boolean) => void;
-  children: ReactNode;
-  poolId: string;
-  productName: string;
+  openModal: boolean
+  setOpenModal: (value: boolean) => void
+  children: ReactNode
+  poolId: string
+  productName: string
 }
 
 const ShareImageModal = ({

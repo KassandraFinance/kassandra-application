@@ -76,7 +76,7 @@ export const Thead = styled.thead`
   `}
 `
 interface IIsViewProps {
-  isView?: number;
+  isView?: number
 }
 
 // prettier-ignore
@@ -287,7 +287,7 @@ export const Arrow = styled.td`
 `
 
 interface IIsOpenGraphProps {
-  isOpenGraph: boolean;
+  isOpenGraph: boolean
 }
 
 // prettier-ignore

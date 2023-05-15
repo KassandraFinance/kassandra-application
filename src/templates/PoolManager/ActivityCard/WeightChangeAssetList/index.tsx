@@ -7,15 +7,15 @@ import Overlay from '@/components/Overlay'
 import * as S from './styles'
 
 export type AssetInfoList = {
-  symbol: string,
-  logo: string,
-  weight?: string,
+  symbol: string
+  logo: string
+  weight?: string
   newWeight?: string
 }
 
 interface IWeightChangeAssetListProps {
-  assetInfoList: AssetInfoList[];
-  take?: number;
+  assetInfoList: AssetInfoList[]
+  take?: number
 }
 
 const WeightChangeAssetList = ({

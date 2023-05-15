@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface ISideBarLinkProps {
-  isActive: boolean;
+  isActive: boolean
 }
 
 // prettier-ignore
@@ -51,7 +51,7 @@ export const Wrapper = styled.div`
 `
 
 interface IIconProps {
-  isActive: boolean;
+  isActive: boolean
 }
 
 // prettier-ignore
@@ -105,8 +105,8 @@ export const Icon = styled.div<IIconProps>`
 `
 
 interface ITitleProps {
-  isOpen: boolean;
-  isActive: boolean;
+  isOpen: boolean
+  isActive: boolean
 }
 
 // prettier-ignore

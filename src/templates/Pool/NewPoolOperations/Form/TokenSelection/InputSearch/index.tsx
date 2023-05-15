@@ -3,13 +3,12 @@ import React from 'react'
 import * as S from './styles'
 
 interface IInputSearchProps {
-  searchToken: string;
-  setSearchToken: React.Dispatch<React.SetStateAction<string>>;
+  searchToken: string
+  setSearchToken: React.Dispatch<React.SetStateAction<string>>
 }
 
 // eslint-disable-next-line prettier/prettier
-const InputSearch = ({ searchToken, setSearchToken  }: IInputSearchProps) => {
-
+const InputSearch = ({ searchToken, setSearchToken }: IInputSearchProps) => {
   function handleSearchToken(text: string) {
     setSearchToken(text.trim().toLocaleLowerCase())
   }

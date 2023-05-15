@@ -15,35 +15,35 @@ import tooltip from '../../../../../public/assets/utilities/tooltip.svg'
 import * as S from './styles'
 
 export interface IKacyLpPool {
-  pid: number;
-  symbol: string;
-  poolName: string;
+  pid: number
+  symbol: string
+  poolName: string
   properties?: {
     logo: {
-      src: string,
+      src: string
       style: {
         width: string
       }
-    },
-    title?: string,
+    }
+    title?: string
     link?: string
-  };
-  amount: BigNumber;
-  chainLogo: string;
+  }
+  amount: BigNumber
+  chainLogo: string
 }
 
 export interface IPriceToken {
-  [key: string]: Big;
+  [key: string]: Big
 }
 
 export interface IAssetsValueWalletProps {
-  [key: number]: BigNumber;
+  [key: number]: BigNumber
 }
 
 interface IStakingTableProps {
-  profileAddress: string;
-  cardstakesPoolNew: IKacyLpPool[];
-  priceToken: IPriceToken;
+  profileAddress: string
+  cardstakesPoolNew: IKacyLpPool[]
+  priceToken: IPriceToken
 }
 
 const namePools: { [key: string]: string } = {

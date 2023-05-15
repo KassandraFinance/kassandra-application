@@ -28,22 +28,22 @@ import logo from '../../../../../public/assets/logos/kacy-64.svg'
 import * as S from '../styles'
 
 export interface IDateProps {
-  pid: number;
-  nameToken: string;
-  withdrawDelay: string;
-  votingPower: string;
+  pid: number
+  nameToken: string
+  withdrawDelay: string
+  votingPower: string
 }
 
 interface IDelegateVotingPowerProps {
-  setCurrentModal: React.Dispatch<React.SetStateAction<string>>;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentModal: React.Dispatch<React.SetStateAction<string>>
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface PoolData {
-  withdrawDelay: number;
-  votingPower: string;
-  pid: number | undefined;
-  nameToken: string;
+  withdrawDelay: number
+  votingPower: string
+  pid: number | undefined
+  nameToken: string
 }
 
 const DelegateVotingPower = ({

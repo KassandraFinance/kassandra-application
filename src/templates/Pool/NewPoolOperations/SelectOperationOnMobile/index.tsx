@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
 import React from 'react'
-import { Titles } from '..';
+import { Titles } from '..'
 
-import useMatomoEcommerce from '../../../../hooks/useMatomoEcommerce';
+import useMatomoEcommerce from '../../../../hooks/useMatomoEcommerce'
 
 import * as S from './styles'
 
-export type TitlesMobile = keyof typeof messages;
+export type TitlesMobile = keyof typeof messages
 
 const messages = {
   Invest: 'Pay with',
@@ -16,17 +16,17 @@ const messages = {
 }
 
 interface ISelectOperationOnMobileProps {
-  setInputChecked: React.Dispatch<React.SetStateAction<Titles>>;
-  inputCheckedBarMobile: TitlesMobile;
-  setInputCheckedBarMobile: React.Dispatch<React.SetStateAction<TitlesMobile>>;
-  setisOpenPoolOperationMobile: React.Dispatch<React.SetStateAction<boolean>>;
+  setInputChecked: React.Dispatch<React.SetStateAction<Titles>>
+  inputCheckedBarMobile: TitlesMobile
+  setInputCheckedBarMobile: React.Dispatch<React.SetStateAction<TitlesMobile>>
+  setisOpenPoolOperationMobile: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const SelectOperationOnMobile = ({
   setInputChecked,
   inputCheckedBarMobile,
   setInputCheckedBarMobile,
-  setisOpenPoolOperationMobile,
+  setisOpenPoolOperationMobile
 }: ISelectOperationOnMobileProps) => {
   const { trackEventFunction } = useMatomoEcommerce()
   // const [inputCheckedBarMobile, setInputCheckedBarMobile] = React.useState<TitlesMobile>('Disable')
@@ -60,7 +60,11 @@ const SelectOperationOnMobile = ({
             onChange={() => {
               setInputChecked('Withdraw')
               setInputCheckedBarMobile('Withdraw')
-              trackEventFunction('click-on-tab', 'withdraw','operations-invest')
+              trackEventFunction(
+                'click-on-tab',
+                'withdraw',
+                'operations-invest'
+              )
             }}
             onClick={() => setisOpenPoolOperationMobile(true)}
             checked={inputCheckedBarMobile === 'Withdraw'}
@@ -69,7 +73,7 @@ const SelectOperationOnMobile = ({
           <S.LabelMobile
             selectedMobile={inputCheckedBarMobile === 'Withdraw'}
             htmlFor="WithdrawMobile"
-            >
+          >
             Withdraw
           </S.LabelMobile>
         </S.SelectOperationOnMobile>

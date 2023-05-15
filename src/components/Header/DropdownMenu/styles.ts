@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 interface IDropdownProps {
-  isActive: boolean;
+  isActive: boolean
 }
 
 export const DropdownMenu = styled.div`
@@ -91,8 +91,8 @@ export const DropButton = styled.button<IDropdownProps>`
 `
 
 interface IMenuWrapperProps {
-  isDropdown: boolean;
-  adaptToResponsiveSize?: boolean;
+  isDropdown: boolean
+  adaptToResponsiveSize?: boolean
 }
 
 // prettier-ignore

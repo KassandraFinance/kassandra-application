@@ -14,7 +14,7 @@ import Overlay from '../../Overlay'
 import ModalWithMobile from '../ModalWithMobile'
 import SelectTabs from '@/components/SelectTabs'
 
-import KassandraWhitelistAbi from "../../../constants/abi/KassandraWhitelist.json";
+import KassandraWhitelistAbi from '../../../constants/abi/KassandraWhitelist.json'
 
 import polygonIcon from '@assets/logos/matic.svg'
 import ethIcon from '@assets/logos/eth-logo.svg'
@@ -37,19 +37,17 @@ const tabs = [
 ]
 
 interface IModalAvailableAssetsProps {
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 type ITokenProps = {
-  name: string,
-  symbol: string,
+  name: string
+  symbol: string
   logo: string
 }
 
-const ModalAvailableAssets = ({
-  setModalOpen
-}: IModalAvailableAssetsProps) => {
-  const [whitelist, setWhitelist] = React.useState<string[]>();
+const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
+  const [whitelist, setWhitelist] = React.useState<string[]>()
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
   >('5')
@@ -67,13 +65,22 @@ const ModalAvailableAssets = ({
 
     const getWhitelist = async () => {
       try {
-        const web3 = new Web3(networks[chainId].rpc);
+        const web3 = new Web3(networks[chainId].rpc)
         // eslint-disable-next-line prettier/prettier
-        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[chainId].whiteList);
-        const whitelist = await whitelistContract.methods.getTokens(0, 100).call();
+        const whitelistContract = new web3.eth.Contract(
+          KassandraWhitelistAbi as unknown as AbiItem,
+          networks[chainId].whiteList
+        )
+        const whitelist = await whitelistContract.methods
+          .getTokens(0, 100)
+          .call()
 
         if (chainId === 5) {
-          setWhitelist(whitelist.map((token: string) => toChecksumAddress(mockTokens[token])));
+          setWhitelist(
+            whitelist.map((token: string) =>
+              toChecksumAddress(mockTokens[token])
+            )
+          )
         } else {
           setWhitelist(whitelist)
         }
@@ -81,7 +88,7 @@ const ModalAvailableAssets = ({
         console.error(Error)
       }
     }
-    getWhitelist();
+    getWhitelist()
   }, [isSelectTab])
 
   const { data } = useSWR([GET_INFO_TOKENS, whitelist], (query, whitelist) =>
@@ -99,7 +106,8 @@ const ModalAvailableAssets = ({
         onCloseModal={() => setModalOpen(false)}
       >
         <>
-          <SelectTabs tabs={tabs}
+          <SelectTabs
+            tabs={tabs}
             isSelect={isSelectTab}
             setIsSelect={setIsSelectTab}
           />
@@ -107,17 +115,19 @@ const ModalAvailableAssets = ({
           <S.ModalAvailableAssetsContent hasToken={data && data.tokensByIds}>
             {data && data.tokensByIds ? (
               data.tokensByIds.map((token: ITokenProps, index: number) => {
-                return token && (
-                  <Link
-                    key={token.name + index}
-                    href={`https://heimdall-frontend.vercel.app/coins/${token.symbol.toLocaleLowerCase()}`}
-                    passHref
-                  >
-                    <S.tokenContent target="_blank">
-                      <img src={token.logo} alt="" width={24} height={24} />
-                      <p>{token.name}</p>
-                    </S.tokenContent>
-                  </Link>
+                return (
+                  token && (
+                    <Link
+                      key={token.name + index}
+                      href={`https://heimdall-frontend.vercel.app/coins/${token.symbol.toLocaleLowerCase()}`}
+                      passHref
+                    >
+                      <S.tokenContent target="_blank">
+                        <img src={token.logo} alt="" width={24} height={24} />
+                        <p>{token.name}</p>
+                      </S.tokenContent>
+                    </Link>
+                  )
                 )
               })
             ) : (

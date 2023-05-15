@@ -43,7 +43,7 @@ export const Transaction = styled.div`
 `
 
 interface ITransactionTextProps {
-  status: StatusType;
+  status: StatusType
 }
 
 // prettier-ignore

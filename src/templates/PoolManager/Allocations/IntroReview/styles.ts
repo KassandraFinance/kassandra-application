@@ -147,7 +147,7 @@ export const PriceDayValue = styled.div`
 `
 
 interface IPriceChangeProps {
-  changePrice: number;
+  changePrice: number
 }
 
 // eslint-disable-next-line prettier/prettier

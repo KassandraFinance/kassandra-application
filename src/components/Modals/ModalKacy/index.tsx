@@ -22,10 +22,10 @@ import kacyIcon from '../../../../public/assets/logos/kacy-96.svg'
 import * as S from './styles'
 
 interface IKacyMarketDataProps {
-  price: number;
-  marketCap: number;
-  supply: number;
-  kacyPercentage: number;
+  price: number
+  marketCap: number
+  supply: number
+  kacyPercentage: number
 }
 
 const KACY_MULTICHAIN = [

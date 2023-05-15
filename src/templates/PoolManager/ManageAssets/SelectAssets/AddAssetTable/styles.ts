@@ -143,7 +143,7 @@ export const Tr = styled(TR)`
 `
 
 interface IThProps {
-  isView?: boolean;
+  isView?: boolean
 }
 
 // prettier-ignore
@@ -179,7 +179,7 @@ export const TBody = styled(TB)`
 `
 
 interface ITdProps {
-  isView?: boolean;
+  isView?: boolean
 }
 
 // prettier-ignore
@@ -234,7 +234,7 @@ export const ViewButton = styled.button`
 `
 
 interface IShadowProps {
-  inView: boolean;
+  inView: boolean
 }
 
 // prettier-ignore

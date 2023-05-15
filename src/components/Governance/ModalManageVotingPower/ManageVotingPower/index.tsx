@@ -4,7 +4,7 @@ import React from 'react'
 import * as S from './styles'
 
 interface IManageVotingPowerProps {
-  setCurrentModal: React.Dispatch<React.SetStateAction<string>>;
+  setCurrentModal: React.Dispatch<React.SetStateAction<string>>
 }
 
 const ManageVotingPower = ({ setCurrentModal }: IManageVotingPowerProps) => {

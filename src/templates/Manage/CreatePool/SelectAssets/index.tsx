@@ -15,9 +15,13 @@ import {
   TokenType
 } from '../../../../store/reducers/poolCreationSlice'
 
-import ERC20ABI from "@/constants/abi/ERC20.json"
-import KassandraWhitelistAbi from "../../../../constants/abi/KassandraWhitelist.json";
-import { BACKEND_KASSANDRA, mockTokens, networks } from '../../../../constants/tokenAddresses'
+import ERC20ABI from '@/constants/abi/ERC20.json'
+import KassandraWhitelistAbi from '../../../../constants/abi/KassandraWhitelist.json'
+import {
+  BACKEND_KASSANDRA,
+  mockTokens,
+  networks
+} from '../../../../constants/tokenAddresses'
 import { GET_INFO_TOKENS } from './graphql'
 
 import Steps from '../../../../components/Steps'
@@ -29,22 +33,22 @@ import * as S from './styles'
 
 export type CoinGeckoAssetsResponseType = {
   [key: string]: {
-    usd: number,
-    usd_24h_change: number,
+    usd: number
+    usd_24h_change: number
     usd_market_cap: number
   }
 }
 
 export type TokensInfoResponseType = {
-  id: string,
-  logo: string,
-  name: string,
-  symbol: string,
-  decimals: number,
+  id: string
+  logo: string
+  name: string
+  symbol: string
+  decimals: number
 }
 
 const SelectAssets = () => {
-  const [whitelist, setWhitelist] = React.useState<string[]>();
+  const [whitelist, setWhitelist] = React.useState<string[]>()
   const [tokenBalance, setTokenBalance] = React.useState<{
     [key: string]: BigNumber
   }>({})
@@ -60,24 +64,33 @@ const SelectAssets = () => {
 
   const tokensList = tokensSummary ? tokensSummary : []
 
-  const tokensListGoerli = networkId === 5 ? whitelist?.map((token: string) => toChecksumAddress(mockTokens[token])) : whitelist
+  const tokensListGoerli =
+    networkId === 5
+      ? whitelist?.map((token: string) => toChecksumAddress(mockTokens[token]))
+      : whitelist
 
   let totalAllocation = Big(0)
   for (const token of tokensList) {
     totalAllocation = totalAllocation.plus(token.allocation)
   }
 
-  const { data } = useSWR<{ tokensByIds: TokensInfoResponseType[] }>([GET_INFO_TOKENS, tokensListGoerli], (query, whitelist) =>
-    request(BACKEND_KASSANDRA, query, {
-      whitelist
-    })
+  const { data } = useSWR<{ tokensByIds: TokensInfoResponseType[] }>(
+    [GET_INFO_TOKENS, tokensListGoerli],
+    (query, whitelist) =>
+      request(BACKEND_KASSANDRA, query, {
+        whitelist
+      })
   )
 
   const tokensListFiltered = data?.tokensByIds.filter(element => {
     return element !== null
   })
 
-  const { data: priceData } = useCoingecko(networks[networkId ?? 137].coingecko, networks[networkId ?? 137].nativeCurrency.address, tokensListGoerli ?? [''])
+  const { data: priceData } = useCoingecko(
+    networks[networkId ?? 137].coingecko,
+    networks[networkId ?? 137].nativeCurrency.address,
+    tokensListGoerli ?? ['']
+  )
 
   async function getBalances(tokensList: string[]) {
     const web3 = new Web3(networks[networkId ?? 137].rpc)
@@ -86,19 +99,30 @@ const SelectAssets = () => {
     const balanceArr = {}
     for (const token of tokensList) {
       // eslint-disable-next-line prettier/prettier
-      const contract = new web3.eth.Contract((ERC20ABI as unknown) as AbiItem, token)
-      batch.add(contract.methods.balanceOf(wallet).call.request({ from: wallet }, (error: any, balance: string) => {
-        Object.assign(balanceArr, {
-          [mockTokens[token] ?? token.toLowerCase()]: new BigNumber(balance)
-        })
-      }))
+      const contract = new web3.eth.Contract(
+        ERC20ABI as unknown as AbiItem,
+        token
+      )
+      batch.add(
+        contract.methods
+          .balanceOf(wallet)
+          .call.request({ from: wallet }, (error: any, balance: string) => {
+            Object.assign(balanceArr, {
+              [mockTokens[token] ?? token.toLowerCase()]: new BigNumber(balance)
+            })
+          })
+      )
     }
     batch.execute()
 
     setTokenBalance(balanceArr)
   }
 
-  function handleInput(e: React.ChangeEvent<HTMLInputElement>, key: string, isLocked: boolean) {
+  function handleInput(
+    e: React.ChangeEvent<HTMLInputElement>,
+    key: string,
+    isLocked: boolean
+  ) {
     let allocation = e.target.value
 
     if (allocation.length > 0) {
@@ -128,22 +152,26 @@ const SelectAssets = () => {
     dispatch(setTokenLock(id))
   }
 
-
   React.useEffect(() => {
     const getWhitelist = async () => {
       try {
-        const web3 = new Web3(networks[networkId ?? 137].rpc);
+        const web3 = new Web3(networks[networkId ?? 137].rpc)
 
         // eslint-disable-next-line prettier/prettier
-        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[networkId ?? 137].whiteList);
-        const whitelist = await whitelistContract.methods.getTokens(0, 100).call();
+        const whitelistContract = new web3.eth.Contract(
+          KassandraWhitelistAbi as unknown as AbiItem,
+          networks[networkId ?? 137].whiteList
+        )
+        const whitelist = await whitelistContract.methods
+          .getTokens(0, 100)
+          .call()
 
-        setWhitelist(whitelist);
+        setWhitelist(whitelist)
       } catch (error) {
         console.error('It was not possible to get whitelist')
       }
     }
-    getWhitelist();
+    getWhitelist()
   }, [])
 
   React.useEffect(() => {
@@ -186,7 +214,11 @@ const SelectAssets = () => {
         ]}
       />
       <S.PoolContainer>
-        <AssetsTable tokensData={tokensListFiltered} priceList={priceData} tokenBalance={tokenBalance} />
+        <AssetsTable
+          tokensData={tokensListFiltered}
+          priceList={priceData}
+          tokenBalance={tokenBalance}
+        />
 
         <PoolSummary
           coinsList={tokensList}

@@ -17,11 +17,11 @@ import none from '../../../../public/assets/icons/coming-soon.svg'
 import * as S from './styles'
 
 interface IInputBestValueProps {
-  poolTokenDetails: ITokenDetails[];
-  poolTokensArray: ITokenDetails[];
-  swapOutAmount: BigNumber[];
-  swapOutBalance: BigNumber[];
-  setPriceInDollarOnWithdraw: React.Dispatch<React.SetStateAction<string>>;
+  poolTokenDetails: ITokenDetails[]
+  poolTokensArray: ITokenDetails[]
+  swapOutAmount: BigNumber[]
+  swapOutBalance: BigNumber[]
+  setPriceInDollarOnWithdraw: React.Dispatch<React.SetStateAction<string>>
 }
 
 const InputBestValue = ({

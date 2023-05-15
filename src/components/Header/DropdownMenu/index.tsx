@@ -9,18 +9,18 @@ import pickaxe from '../../../../public/assets/icons/pickaxe.svg'
 import * as S from './styles'
 
 interface ILinkPage {
-  name: string;
-  href: string;
-  disabled?: boolean;
-  newTab?: boolean;
+  name: string
+  href: string
+  disabled?: boolean
+  newTab?: boolean
 }
 
 interface IDropdownProps {
-  nameOnHeader: string;
-  linkPage: Array<ILinkPage>;
-  isActive?: boolean;
-  adaptToResponsiveSize?: boolean;
-  onClick: () => void;
+  nameOnHeader: string
+  linkPage: Array<ILinkPage>
+  isActive?: boolean
+  adaptToResponsiveSize?: boolean
+  onClick: () => void
 }
 
 const DropdownMenu = ({

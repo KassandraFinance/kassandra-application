@@ -6,14 +6,14 @@ import * as S from './styles'
 import Link from 'next/link'
 
 interface IItemInformationProps {
-  name: string;
-  description: string;
-  userWalletAddress?: string;
-  ImageUrl?: string;
-  title?: string;
-  tokenName?: string;
-  newWeight?: string;
-  weight?: string;
+  name: string
+  description: string
+  userWalletAddress?: string
+  ImageUrl?: string
+  title?: string
+  tokenName?: string
+  newWeight?: string
+  weight?: string
 }
 
 const ItemInformation = (props: IItemInformationProps) => {
@@ -28,7 +28,7 @@ const ItemInformation = (props: IItemInformationProps) => {
             <Jazzicon
               seed={jsNumberForAddress(
                 String(props.userWalletAddress) ||
-                '0x1111111111111111111111111111111111111111'
+                  '0x1111111111111111111111111111111111111111'
               )}
               diameter={32}
             />

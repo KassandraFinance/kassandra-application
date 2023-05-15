@@ -11,7 +11,7 @@ export const ModalAvailableAssets = styled.div`
 `
 
 interface IAvailableAssetsProps {
-  hasToken: boolean;
+  hasToken: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

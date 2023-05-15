@@ -11,15 +11,15 @@ import * as S from './styles'
 
 interface IModalViewCoinProps {
   title: {
-    logo: string,
-    name: string,
+    logo: string
+    name: string
     address?: string
-  };
-  isOpen: boolean;
-  isBlockies?: boolean;
-  isJazzicon?: boolean;
-  onClick: () => void;
-  children: ReactNode;
+  }
+  isOpen: boolean
+  isBlockies?: boolean
+  isJazzicon?: boolean
+  onClick: () => void
+  children: ReactNode
 }
 
 const ModalViewCoin = ({

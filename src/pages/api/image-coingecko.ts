@@ -9,8 +9,8 @@ type IImagesProps = {
 
 type IInfoTokenProps = {
   [key: string]: {
-    image: string,
-    change: number,
+    image: string
+    change: number
     price: number
   }
 }

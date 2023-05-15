@@ -14,21 +14,21 @@ import Loading from '@/components/Loading'
 import * as S from './styles'
 
 interface IPoolAssetsProps {
-  poolId: string;
-  chainId: number;
+  poolId: string
+  chainId: number
 }
 
 type Result = {
-  id: string,
-  contractAddress: string,
-  contractName: string,
-  name: string,
-  symbol: string,
-  price: string,
-  image: string,
-  priceChangePercentage7d: number,
-  volume: number,
-  marketCap: number,
+  id: string
+  contractAddress: string
+  contractName: string
+  name: string
+  symbol: string
+  price: string
+  image: string
+  priceChangePercentage7d: number
+  volume: number
+  marketCap: number
   sparkline: string[]
 }
 

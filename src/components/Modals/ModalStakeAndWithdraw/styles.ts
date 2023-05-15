@@ -2,8 +2,8 @@ import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
 
 interface IBorderGradientProps {
-  stakeInKacy: boolean;
-  unstaking: string;
+  stakeInKacy: boolean
+  unstaking: string
 }
 
 // prettier-ignore

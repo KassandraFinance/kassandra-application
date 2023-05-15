@@ -14,10 +14,10 @@ import Button from '../Button'
 import * as S from './styles'
 
 interface IWeb3DisabledProps {
-  textButton?: string;
-  textHeader: string;
-  bodyText: string;
-  type: string;
+  textButton?: string
+  textHeader: string
+  bodyText: string
+  type: string
 }
 
 const Web3Disabled = ({
@@ -28,18 +28,18 @@ const Web3Disabled = ({
 }: IWeb3DisabledProps) => {
   const dispatch = useAppDispatch()
   function getFunction(type: string) {
-    const {chainId, chainName, rpc, nativeCurrency } = networks[43114]
+    const { chainId, chainName, rpc, nativeCurrency } = networks[43114]
     switch (type) {
       case 'connect':
         dispatch(setModalWalletActive(true))
         break
       case 'changeChain':
         changeChain({
-            chainId,
-            chainName,
-            rpcUrls: [rpc],
-            nativeCurrency
-          })
+          chainId,
+          chainName,
+          rpcUrls: [rpc],
+          nativeCurrency
+        })
         break
       default:
         break

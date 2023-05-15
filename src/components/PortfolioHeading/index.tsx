@@ -9,10 +9,10 @@ import tooltip from '../../../public/assets/utilities/tooltip.svg'
 import * as S from './styles'
 
 interface IPortfolioHeadingProps {
-  image: string;
-  title: string;
-  usd: string;
-  tippy: string;
+  image: string
+  title: string
+  usd: string
+  tippy: string
 }
 
 const PortfolioHeading = ({

@@ -15,14 +15,14 @@ import arrowNegative from '../../../public/assets/notificationStatus/arrow-desce
 import * as S from './styles'
 
 interface IKacyMarketDataProps {
-  price: number;
-  marketCap: Big;
-  supply: Big;
-  kacyPercentage: number;
+  price: number
+  marketCap: Big
+  supply: Big
+  kacyPercentage: number
 }
 
 interface IKacyCardProps {
-  kacyMarketData: IKacyMarketDataProps;
+  kacyMarketData: IKacyMarketDataProps
 }
 
 const KacyCard = ({ kacyMarketData }: IKacyCardProps) => {

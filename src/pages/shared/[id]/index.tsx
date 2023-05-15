@@ -77,7 +77,7 @@ const Page = ({ id }: Props) => {
 }
 
 interface Fund extends ParsedUrlQuery {
-  id: string;
+  id: string
 }
 
 export const getServerSideProps = async (
