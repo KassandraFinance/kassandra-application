@@ -16,8 +16,8 @@ import SelectTabs from '@/components/SelectTabs'
 
 import KassandraWhitelistAbi from '../../../constants/abi/KassandraWhitelist.json'
 
-import polygonIcon from '@assets/logos/matic.svg'
-import ethIcon from '@assets/logos/eth-logo.svg'
+import polygonIcon from '@assets/logos/polygon.svg'
+// import ethIcon from '@assets/logos/eth-logo.svg'
 
 import * as S from './styles'
 

@@ -38,7 +38,7 @@ export const InputMobile = styled.input`
 `
 
 interface ILabelMobileProps {
-  selectedMobile: boolean;
+  selectedMobile: boolean
 }
 
 // prettier-ignore

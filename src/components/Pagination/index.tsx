@@ -3,16 +3,16 @@ import ReactPaginate from 'react-paginate'
 import * as S from './styles'
 
 interface IPaginationProp {
-  take: number;
-  skip: number;
-  totalItems: number;
-  page?: number;
+  take: number
+  skip: number
+  totalItems: number
+  page?: number
   handlePageClick: (
     data: {
       selected: number
     },
     take: number
-  ) => void;
+  ) => void
 }
 
 const Pagination = ({

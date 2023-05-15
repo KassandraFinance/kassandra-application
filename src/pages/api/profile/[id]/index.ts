@@ -6,27 +6,27 @@ import prisma from '../../../../libs/prisma'
 
 type NftProps =
   | {
-      contractType?: string,
-      collectionName?: string,
-      symbol?: string,
-      tokenAddress?: string,
-      tokenId?: string,
-      chain?: string,
-      nftName?: string,
+      contractType?: string
+      collectionName?: string
+      symbol?: string
+      tokenAddress?: string
+      tokenId?: string
+      chain?: string
+      nftName?: string
       nftDescription?: string
     }
   | undefined
 
 interface UserInput {
-  nickname?: string;
-  twitter?: string;
-  website?: string;
-  telegram?: string;
-  discord?: string;
-  description?: string;
-  image?: string;
-  isNFT?: boolean;
-  nft: NftProps;
+  nickname?: string
+  twitter?: string
+  website?: string
+  telegram?: string
+  discord?: string
+  description?: string
+  image?: string
+  isNFT?: boolean
+  nft: NftProps
 }
 
 export const config = {

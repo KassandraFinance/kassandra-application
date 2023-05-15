@@ -12,30 +12,30 @@ import * as S from './styles'
 import Image from 'next/image'
 
 export type AssetType = {
-  currentWeight: Big,
-  currentAmount: Big,
+  currentWeight: Big
+  currentAmount: Big
   token: {
-    address: string,
-    decimals: number,
-    logo: string | undefined,
-    name: string,
+    address: string
+    decimals: number
+    logo: string | undefined
+    name: string
     symbol: string
   }
 }
 
 type INewTokensWeights = {
-  newWeight: Big,
-  newAmount: Big,
-  newAmountUSD: Big,
-  lockPercentage: lockToken,
+  newWeight: Big
+  newAmount: Big
+  newAmountUSD: Big
+  lockPercentage: lockToken
   alreadyCalculated: boolean
 }
 interface IPoolTokensProps {
-  tokenInfo: AssetType;
-  newTokensValues: Record<string, INewTokensWeights>;
-  priceToken: number;
-  handleLockStatus: (address: string, status: lockToken) => void;
-  handleCalcNewWeights: (value: number, tokenInfo: AssetType) => void;
+  tokenInfo: AssetType
+  newTokensValues: Record<string, INewTokensWeights>
+  priceToken: number
+  handleLockStatus: (address: string, status: lockToken) => void
+  handleCalcNewWeights: (value: number, tokenInfo: AssetType) => void
 }
 
 const PoolToken = ({

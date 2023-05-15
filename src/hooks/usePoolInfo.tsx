@@ -6,32 +6,32 @@ import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 
 export type GetPoolInfoType = {
   pools: {
-    address: string,
-    chain_id: number,
-    id: string,
-    logo: string,
-    name: string,
-    poolId: number | null,
-    controller: string,
-    price_usd: string,
-    pool_version: number,
-    symbol: string,
-    total_value_locked_usd: string,
-    vault: string,
-    is_private_pool: boolean,
-    decimals: number,
+    address: string
+    chain_id: number
+    id: string
+    logo: string
+    name: string
+    poolId: number | null
+    controller: string
+    price_usd: string
+    pool_version: number
+    symbol: string
+    total_value_locked_usd: string
+    vault: string
+    is_private_pool: boolean
+    decimals: number
     chain: {
-      addressWrapped: string,
-      blockExplorerUrl: string,
-      chainName: string,
-      id: string,
-      logo: string,
-      nativeTokenDecimals: number,
-      nativeTokenName: string,
-      nativeTokenSymbol: string,
-      secondsPerBlock: number,
+      addressWrapped: string
+      blockExplorerUrl: string
+      chainName: string
+      id: string
+      logo: string
+      nativeTokenDecimals: number
+      nativeTokenName: string
+      nativeTokenSymbol: string
+      secondsPerBlock: number
       rpcUrls: string[]
-    },
+    }
     underlying_assets_addresses: string[]
   }[]
 }

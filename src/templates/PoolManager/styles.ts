@@ -9,7 +9,7 @@ export const PoolManager = styled.div`
 `
 
 interface IDashBoardProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 // prettier-ignore
@@ -247,7 +247,7 @@ export const UserDashBoardButton = styled.button`
 `
 
 interface IUserImageWrapperProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 // prettier-ignore
@@ -288,7 +288,7 @@ export const NetworkImageWrapper = styled.div`
 `
 
 interface ICloseIconWrapperProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 // prettier-ignore

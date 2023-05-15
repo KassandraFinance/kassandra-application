@@ -24,12 +24,16 @@ import { ToastSuccess } from '@/components/Toastify/toast'
 import * as S from './styles'
 
 interface IRemoveInvestorModal {
-  onClose: () => void;
-  addressesList: Array<string>;
-  setAddressesOfPrivateInvestors: () => Promise<void>;
+  onClose: () => void
+  addressesList: Array<string>
+  setAddressesOfPrivateInvestors: () => Promise<void>
 }
 
-const RemoveInvestorModal = ({ onClose, addressesList, setAddressesOfPrivateInvestors }: IRemoveInvestorModal) => {
+const RemoveInvestorModal = ({
+  onClose,
+  addressesList,
+  setAddressesOfPrivateInvestors
+}: IRemoveInvestorModal) => {
   const [searchValue, setSearchValue] = React.useState('')
   const [investorsList, setInvestorsList] = React.useState<string[]>([])
   const [isTransaction, setIsTransaction] = React.useState(false)
@@ -78,7 +82,7 @@ const RemoveInvestorModal = ({ onClose, addressesList, setAddressesOfPrivateInve
     const txReceipt = await waitTransaction(txHash)
 
     if (txReceipt.status) {
-      ToastSuccess("Investors removed!")
+      ToastSuccess('Investors removed!')
       setIsTransaction(false)
       setInvestorsList([])
 
@@ -96,16 +100,25 @@ const RemoveInvestorModal = ({ onClose, addressesList, setAddressesOfPrivateInve
     }
   }
 
-  async function handleRemoveInvestors(poolControler: string, investorsList: string[]) {
+  async function handleRemoveInvestors(
+    poolControler: string,
+    investorsList: string[]
+  ) {
     setIsTransaction(true)
-    // eslint-disable-next-line prettier/prettier
-    const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
+    const controller = new web3.eth.Contract(
+      KassandraControlerAbi as unknown as AbiItem,
+      poolControler
+    )
 
-      await controller.methods.removeAllowedAddresses(investorsList).send({
-        from: userWalletAddress
-      }, callBack)
+    await controller.methods.removeAllowedAddresses(investorsList).send(
+      {
+        from: userWalletAddress,
+        maxPriorityFeePerGas: 30e9
+      },
+      callBack
+    )
 
-      await setAddressesOfPrivateInvestors()
+    await setAddressesOfPrivateInvestors()
   }
 
   const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
@@ -158,22 +171,25 @@ const RemoveInvestorModal = ({ onClose, addressesList, setAddressesOfPrivateInve
 
           {poolInfo?.chain_id === chainId ? (
             <>
-            {!isTransaction ?
-              <Button text="Remove Investors"
-                backgroundSecondary
-                fullWidth
-                disabledNoEvent={investorsList.length < 1}
-                onClick={() => handleRemoveInvestors(poolInfo.controller, investorsList)}
-              />
-              :
-              <Button
-                text='Waiting transaction'
-                type='button'
-                backgroundPrimary
-                disabled
-                fullWidth
-              />
-            }
+              {!isTransaction ? (
+                <Button
+                  text="Remove Investors"
+                  backgroundSecondary
+                  fullWidth
+                  disabledNoEvent={investorsList.length < 1}
+                  onClick={() =>
+                    handleRemoveInvestors(poolInfo.controller, investorsList)
+                  }
+                />
+              ) : (
+                <Button
+                  text="Waiting transaction"
+                  type="button"
+                  backgroundPrimary
+                  disabled
+                  fullWidth
+                />
+              )}
             </>
           ) : (
             <>

@@ -6,8 +6,8 @@ import { IStateProposalListProps } from '.'
 import * as S from './styles'
 
 interface ProposalDataProps {
-  proposalData: IStateProposalListProps[];
-  proposalTotal: number;
+  proposalData: IStateProposalListProps[]
+  proposalTotal: number
 }
 
 const chartProps = {
@@ -18,7 +18,9 @@ const chartProps = {
 
 const Chart = ({ proposalData, proposalTotal }: ProposalDataProps) => {
   // eslint-disable-next-line prettier/prettier
-  const [proposalStateData, setProposalStateData] = React.useState([{ name: '', value: 0, fill: '' }])
+  const [proposalStateData, setProposalStateData] = React.useState([
+    { name: '', value: 0, fill: '' }
+  ])
 
   const handleCheckChartColor = (ProspData: IStateProposalListProps) => {
     switch (ProspData.stateProposal) {

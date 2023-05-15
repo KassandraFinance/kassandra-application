@@ -7,48 +7,48 @@ import AVAXLogo from '../../../public/assets/logos/avalanche.svg'
 import bscLogo from '../../../public/assets/logos/bsc.svg'
 import cronosLogo from '../../../public/assets/logos/cronos.svg'
 import fantomLogo from '../../../public/assets/logos/fantom.svg'
-import maticLogo from '../../../public/assets/logos/matic.svg'
+import maticLogo from '../../../public/assets/logos/polygon.svg'
 
 import * as S from './styles'
 
 interface IUserNFTsProps {
-  address: string;
+  address: string
   setUserImageModal: React.Dispatch<
     React.SetStateAction<{
-      image_preview: string,
-      image_file?: any,
+      image_preview: string
+      image_file?: any
       isNFTPreviewModal: boolean
     }>
-  >;
+  >
 
-  isDropdownAddNft: boolean;
-  setIsDropdownAddNft: React.Dispatch<React.SetStateAction<boolean>>;
-  inputRefModal: React.RefObject<HTMLInputElement>;
+  isDropdownAddNft: boolean
+  setIsDropdownAddNft: React.Dispatch<React.SetStateAction<boolean>>
+  inputRefModal: React.RefObject<HTMLInputElement>
   setUserNftDetails: React.Dispatch<
     React.SetStateAction<INftDetailsListProps | undefined>
-  >;
+  >
 }
 
 type INftDetailsProps = {
-  contract_type: string,
-  name: string,
-  symbol: string,
-  token_address: string,
-  token_hash: string,
+  contract_type: string
+  name: string
+  symbol: string
+  token_address: string
+  token_hash: string
   token_id: string
 }
 
 interface INftDetailsDataProps extends INftDetailsProps {
-  metadata: string;
+  metadata: string
 }
 
 export interface INftDetailsListProps extends INftDetailsProps {
-  chain: string;
+  chain: string
   metadata: {
-    image: string | undefined,
-    name: string,
+    image: string | undefined
+    name: string
     description: string
-  };
+  }
 }
 
 const chains = ['eth', 'avalanche', 'bsc', 'matic', 'fantom', 'cronos']

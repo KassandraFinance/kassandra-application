@@ -3,8 +3,8 @@ import React from 'react'
 import { BarChart, XAxis, YAxis, Bar, ResponsiveContainer } from 'recharts'
 
 interface IBarChartProps {
-  poolObject: any;
-  poolInfo: any[];
+  poolObject: any
+  poolInfo: any[]
 }
 
 const FundBarChart = ({ poolObject, poolInfo }: IBarChartProps) => {

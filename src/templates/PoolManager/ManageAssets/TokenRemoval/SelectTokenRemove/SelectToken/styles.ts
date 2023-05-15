@@ -13,8 +13,8 @@ export const Backdrop = styled.div`
 `
 
 interface ISelectTokenProps {
-  isOpen: boolean;
-  itemHeight: number;
+  isOpen: boolean
+  itemHeight: number
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -83,7 +83,7 @@ export const SelectTokenContainer = styled.ul<ISelectTokenProps>`
 `
 
 interface IArrowContentProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

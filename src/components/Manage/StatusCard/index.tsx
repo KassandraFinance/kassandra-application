@@ -5,12 +5,12 @@ import * as S from './styles'
 export type NumberStatus = 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL'
 
 interface IStatusCardProps {
-  title: string;
-  value: string;
-  status?: NumberStatus;
-  dataList?: DataListType;
-  selected?: string;
-  onClick?: (period: string) => void;
+  title: string
+  value: string
+  status?: NumberStatus
+  dataList?: DataListType
+  selected?: string
+  onClick?: (period: string) => void
 }
 
 const StatusCard = ({

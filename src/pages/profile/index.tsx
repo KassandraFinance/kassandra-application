@@ -2,7 +2,6 @@ import React from 'react'
 import Head from 'next/head'
 import detectEthereumProvider from '@metamask/detect-provider'
 
-import Header from '../../components/Header'
 import Web3Disabled from '../../components/Web3Disabled'
 
 export default function Index() {
@@ -35,8 +34,6 @@ export default function Index() {
       </Head>
 
       <>
-        <Header />
-
         {!hasEthereumProvider ? (
           <Web3Disabled
             textButton="Connect Wallet"

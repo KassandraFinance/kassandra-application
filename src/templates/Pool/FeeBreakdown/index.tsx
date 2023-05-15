@@ -7,11 +7,11 @@ import iconBar from '@assets/iconGradient/product-bar.svg'
 import * as S from './styles'
 
 interface IFeeBreakdownProps {
-  feeJoinBroker: string;
-  feeJoinManager: string;
-  feeAum: string;
-  feeAumKassandra: string;
-  withdrawFee: string;
+  feeJoinBroker: string
+  feeJoinManager: string
+  feeAum: string
+  feeAumKassandra: string
+  withdrawFee: string
 }
 
 const FeeBreakdown = ({

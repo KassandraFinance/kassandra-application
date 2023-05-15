@@ -5,12 +5,12 @@ import Button from '../Button'
 import * as S from './styles'
 
 interface IAnyCardProps {
-  text: string;
-  button?: boolean;
-  buttonText?: string;
-  link?: string;
-  button2?: boolean;
-  onClick?: () => void;
+  text: string
+  button?: boolean
+  buttonText?: string
+  link?: string
+  button2?: boolean
+  onClick?: () => void
 }
 
 const AnyCard = ({

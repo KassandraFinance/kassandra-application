@@ -99,7 +99,7 @@ export const PriceDolar = styled.span`
 `
 
 interface ITokenProps {
-  bestValue?: boolean;
+  bestValue?: boolean
 }
 
 // prettier-ignore

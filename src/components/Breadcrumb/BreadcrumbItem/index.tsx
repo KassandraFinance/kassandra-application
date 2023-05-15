@@ -4,9 +4,9 @@ import { ReactNode } from 'react'
 import * as S from './styles'
 
 interface IBreadcrumbItemProps {
-  href: string;
-  children: ReactNode;
-  isLastPage?: boolean;
+  href: string
+  children: ReactNode
+  isLastPage?: boolean
 }
 
 const BreadcrumbItem = ({

@@ -16,24 +16,24 @@ import avaxLogo from '../../../../public/assets/logos/avax.png'
 import * as S from './styles'
 
 interface IUserVotingPowerProps {
-  pool: string;
-  votingPower: Big;
-  kacy: Big;
+  pool: string
+  votingPower: Big
+  kacy: Big
   from: {
     id: string
-  };
+  }
   to: {
     id: string
-  };
-  image: string;
-  name: string;
-  isNFT: boolean;
+  }
+  image: string
+  name: string
+  isNFT: boolean
 }
 
 interface IOwnAndReceivedTableProps {
-  userAddressUrl: string | string[] | undefined;
-  userVotingPower: IUserVotingPowerProps[];
-  isDelegationTable: boolean;
+  userAddressUrl: string | string[] | undefined
+  userVotingPower: IUserVotingPowerProps[]
+  isDelegationTable: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

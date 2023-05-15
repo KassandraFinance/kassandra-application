@@ -20,12 +20,12 @@ import {
 import * as S from './styles'
 
 interface ISharedImageProps {
-  crpPoolAddress: string;
-  totalValueLocked: string;
-  socialIndex: string;
-  productName: string;
-  poolLogo: string;
-  tokens: underlyingAssetsInfo[];
+  crpPoolAddress: string
+  totalValueLocked: string
+  socialIndex: string
+  productName: string
+  poolLogo: string
+  tokens: underlyingAssetsInfo[]
 }
 
 const SharedImage = ({
@@ -86,7 +86,7 @@ const SharedImage = ({
                 <S.InfoValue color="red">
                   {
                     performanceValues.allPerformancePeriod[
-                    performanceValues.title
+                      performanceValues.title
                     ]
                   }
                   %
@@ -96,7 +96,7 @@ const SharedImage = ({
                   +
                   {
                     performanceValues.allPerformancePeriod[
-                    performanceValues.title
+                      performanceValues.title
                     ]
                   }
                   %

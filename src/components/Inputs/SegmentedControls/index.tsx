@@ -5,9 +5,9 @@ import * as S from './styles'
 export type DataListType = string[]
 
 interface ISegmentedControlsProps {
-  dataList: DataListType;
-  selected: string;
-  onClick: (period: string) => void;
+  dataList: DataListType
+  selected: string
+  onClick: (period: string) => void
 }
 
 const SegmentedControls = ({

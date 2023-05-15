@@ -10,7 +10,7 @@ import createFundSucess from '@assets/iconGradient/sucess.svg'
 import * as S from './styles'
 
 interface IPoolCreatedProps {
-  data: { id: string, networkId: number, txHash: string };
+  data: { id: string; networkId: number; txHash: string }
 }
 
 const PoolCreated = ({ data }: IPoolCreatedProps) => {

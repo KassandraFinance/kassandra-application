@@ -3,10 +3,9 @@ import { HeaderButtons } from './HeaderButtons/styles'
 import theme from '../../styles/theme'
 
 interface IWrapperProps {
-  dashBoard: boolean;
+  dashBoard: boolean
 }
 
-// prettier-ignore
 export const Wrapper = styled.div<IWrapperProps>`
   position: relative;
 
@@ -32,24 +31,25 @@ export const Wrapper = styled.div<IWrapperProps>`
     padding-inline: 1.6rem;
   }
 
-  ${({ dashBoard }) => dashBoard && css`
-    z-index: 1020;
+  ${({ dashBoard }) =>
+    dashBoard &&
+    css`
+      z-index: 1020;
 
-    justify-content: flex-end;
+      justify-content: flex-end;
 
-    margin-inline: auto 2.4rem;
+      margin-inline: auto 2.4rem;
 
-    @media (max-width: 1200px) {
-      padding-inline: 0;
-    }
-  `}
+      @media (max-width: 1200px) {
+        padding-inline: 0;
+      }
+    `}
 `
 
 interface ILogoWrapper {
-  dashBoard: boolean;
+  dashBoard: boolean
 }
 
-// prettier-ignore
 export const LogoWrapper = styled.div<ILogoWrapper>`
   .logo-desktop {
     @media (max-width: 992px) {
@@ -65,28 +65,31 @@ export const LogoWrapper = styled.div<ILogoWrapper>`
 
   cursor: pointer;
 
-  ${({ dashBoard }) => dashBoard && css`
+  ${({ dashBoard }) =>
+    dashBoard &&
+    css`
       display: none;
     `}
 `
 
 interface IMenuWrapperProps {
-  dashBoard: boolean;
+  dashBoard: boolean
 }
 
-// prettier-ignore
 export const MenuWrapper = styled.div<IMenuWrapperProps>`
   ${() => css`
     display: flex;
     gap: 2rem;
   `}
-  ${({ dashBoard }) => dashBoard && css`
-    @media (max-width: 991.98px) {
-      ${HeaderButtons} {
-        display: none;
+  ${({ dashBoard }) =>
+    dashBoard &&
+    css`
+      @media (max-width: 991.98px) {
+        ${HeaderButtons} {
+          display: none;
+        }
       }
-    }
-  `}
+    `}
 `
 
 export const MenuLinkDisable = styled.a`
@@ -199,10 +202,9 @@ export const HamburgerButton = styled.button`
 `
 
 interface IHambuergerMenuProps {
-  isShowMenu: boolean;
+  isShowMenu: boolean
 }
 
-// prettier-ignore
 export const HamburgerMenu = styled.div<IHambuergerMenuProps>`
   ${() => css`
     @media (max-width: 768px) {
@@ -241,12 +243,13 @@ export const HamburgerMenu = styled.div<IHambuergerMenuProps>`
 
         width: 1.2rem;
       }
-
     }
   `}
 
-  ${({ isShowMenu }) => isShowMenu && css`
-       div:first-child {
+  ${({ isShowMenu }) =>
+    isShowMenu &&
+    css`
+      div:first-child {
         top: -0.1rem;
 
         transform: rotateZ(45deg);
@@ -266,5 +269,5 @@ export const HamburgerMenu = styled.div<IHambuergerMenuProps>`
 
         transform: rotateZ(-45deg);
       }
-  `}
+    `}
 `

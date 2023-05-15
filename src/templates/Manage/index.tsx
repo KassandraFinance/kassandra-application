@@ -29,6 +29,18 @@ const Manage = () => {
 
   const { managerPools } = useManagerPools(userWalletAddress)
 
+  function handleDashBoardButton() {
+    setIsOpen(!isOpen)
+    const top = document.getElementById('top')?.style
+    if (top) {
+      if (isOpen) {
+        top.zIndex = '1020'
+      } else {
+        top.zIndex = '0'
+      }
+    }
+  }
+
   React.useEffect(() => {
     if (43114 === chainId && userWalletAddress.length > 0) {
       setNetworkIcon(avalancheIcon)
@@ -42,11 +54,11 @@ const Manage = () => {
   return (
     <S.Manage>
       <S.DashBoard isOpen={isOpen}>
-        {isOpen && <Overlay onClick={() => setIsOpen(!isOpen)} />}
+        {isOpen && <Overlay onClick={handleDashBoardButton} />}
 
         <S.UserDashBoardButton
           id="userDashBoardButton"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={handleDashBoardButton}
         >
           <S.UserImageWrapper isOpen={isOpen}>
             {userWalletAddress.length > 0 ? (

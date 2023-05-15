@@ -13,13 +13,13 @@ import * as S from './styles'
 
 interface IMarkdownEditorProps {
   // eslint-disable-next-line prettier/prettier
-  handleEditorChange: ({ text }: {
-    text: string;
-  }) => void
+  handleEditorChange: ({ text }: { text: string }) => void
 }
 
 const MarkdownEditor = ({ handleEditorChange }: IMarkdownEditorProps) => {
-  const strategyText = useAppSelector(state => state.poolCreation.createPoolData.strategy)
+  const strategyText = useAppSelector(
+    state => state.poolCreation.createPoolData.strategy
+  )
 
   return (
     <S.MarkdownEditor>

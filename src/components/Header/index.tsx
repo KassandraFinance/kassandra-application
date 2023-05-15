@@ -39,6 +39,26 @@ const Header = () => {
   const pathClearQuestionMark = path[1].split('?')
   const pathClearHashtag = pathClearQuestionMark[0].split('#')
 
+  function handleHamburgerMenu() {
+    const width = window.innerWidth
+    if (width > 768) {
+      return
+    }
+
+    setIsShowMenu(!isShowMenu)
+    setShowOverlay(true)
+    const userDashBoardButton = document.getElementById(
+      'userDashBoardButton'
+    )?.style
+    if (userDashBoardButton) {
+      if (isShowMenu) {
+        userDashBoardButton.zIndex = '1021'
+      } else {
+        userDashBoardButton.zIndex = '0'
+      }
+    }
+  }
+
   return (
     <>
       <S.Wrapper id="top" dashBoard={pathClearHashtag[0] === 'manage'}>
@@ -73,7 +93,7 @@ const Header = () => {
           <Nav
             isShowMenu={isShowMenu}
             showOverlay={showOverlay}
-            setIsShowMenu={setIsShowMenu}
+            setIsShowMenu={handleHamburgerMenu}
             setShowOverlay={setShowOverlay}
           />
 

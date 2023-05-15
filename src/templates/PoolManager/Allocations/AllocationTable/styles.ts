@@ -1,7 +1,7 @@
 import styled, { css, keyframes } from 'styled-components'
 
 interface IIsViewProps {
-  isView?: number;
+  isView?: number
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -196,7 +196,7 @@ export const PriceContent = styled.td`
 `
 
 interface IPriceChangeProps {
-  changePrice: number;
+  changePrice: number
 }
 
 // eslint-disable-next-line prettier/prettier

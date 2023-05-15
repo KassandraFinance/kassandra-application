@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 export interface ITokenImages {
-  [key: string]: string;
+  [key: string]: string
 }
 
 const initialState: ITokenImages = {}

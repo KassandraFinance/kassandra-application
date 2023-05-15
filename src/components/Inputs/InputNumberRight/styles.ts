@@ -29,10 +29,9 @@ export const InputContainer = styled.div`
 `
 
 interface IInputProps {
-  button: boolean;
+  button: boolean
 }
 
-// prettier-ignore
 export const Input = styled.input<IInputProps>`
   ${({ theme }) => css`
     width: 100%;
@@ -76,19 +75,21 @@ export const Input = styled.input<IInputProps>`
       border: 1px solid ${theme.colors.error};
     }
   `}
-  ${({ button }) => button && css`
-    border-right: none;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-
-    &:valid:not([value='']) {
+  ${({ button }) =>
+    button &&
+    css`
       border-right: none;
-    }
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
 
-    &:invalid:not([value='']) {
-      border-right: none;
-    }
-  `}
+      &:valid:not([value='']) {
+        border-right: none;
+      }
+
+      &:invalid:not([value='']) {
+        border-right: none;
+      }
+    `}
 `
 
 export const PlaceholderWrapper = styled.span`

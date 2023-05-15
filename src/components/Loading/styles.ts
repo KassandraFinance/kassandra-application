@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components'
 
 interface IImgLoadingProps {
-  marginTop: number;
+  marginTop: number
 }
 
 // eslint-disable-next-line prettier/prettier

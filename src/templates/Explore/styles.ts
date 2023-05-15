@@ -30,14 +30,11 @@ export const LoadingContainer = styled.div`
 `
 
 interface ICardContainerProps {
-  loading: boolean;
+  loading: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
-export const CardContainer =
-  styled.div <
-  ICardContainerProps >
-  `
+export const CardContainer = styled.div<ICardContainerProps>`
   display: ${props => (props.loading ? 'none' : 'grid')};
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2.4rem;
@@ -46,9 +43,9 @@ export const CardContainer =
   margin-inline: auto;
   margin-top: 2.4rem;
 
-   @media (min-width: 768px) {
-      max-width: 100%;
-    }
+  @media (min-width: 768px) {
+    max-width: 100%;
+  }
 `
 
 export const ComunitFundsContainer = styled.section`

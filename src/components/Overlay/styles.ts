@@ -1,7 +1,7 @@
 import styled, { css, keyframes } from 'styled-components'
 
 interface IOverlayProps {
-  isShowMenu: boolean;
+  isShowMenu: boolean
 }
 
 // prettier-ignore

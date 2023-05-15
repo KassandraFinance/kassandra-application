@@ -59,75 +59,75 @@ import * as S from './styles'
 interface IRequestDataProposal {
   proposal: [
     {
-      number: number,
-      description: string,
-      forVotes: Big,
-      againstVotes: Big,
-      startBlock: string,
-      endBlock: string,
-      quorum: string,
-      canceled: string,
-      queued: string,
-      values: [],
-      calldatas: [],
-      created: string,
-      eta: string,
-      executed: string,
-      signatures: [],
-      targets: [],
+      number: number
+      description: string
+      forVotes: Big
+      againstVotes: Big
+      startBlock: string
+      endBlock: string
+      quorum: string
+      canceled: string
+      queued: string
+      values: []
+      calldatas: []
+      created: string
+      eta: string
+      executed: string
+      signatures: []
+      targets: []
       proposer: {
         id: string
-      },
+      }
       votes: [
         {
-          support: boolean,
+          support: boolean
           voter: {
             id: string
           }
         }
       ]
     }
-  ];
+  ]
 }
 
 export interface ModalProps {
-  voteType: string;
-  percentage: string;
-  totalVotingPower: string;
-  checkAllVoterModal: boolean;
+  voteType: string
+  percentage: string
+  totalVotingPower: string
+  checkAllVoterModal: boolean
 }
 
 export interface IUserVotedProps {
-  voted: boolean;
-  support: boolean | null;
-  userWalletAddress: string;
-  yourVotingPowerInProposal: BigNumber;
+  voted: boolean
+  support: boolean | null
+  userWalletAddress: string
+  yourVotingPowerInProposal: BigNumber
 }
 
 export interface IVotesProps {
-  support: boolean | null;
+  support: boolean | null
   voter: {
     id: string
-  };
+  }
 }
 
 export interface IProposalProps {
-  forVotes: Big;
-  againstVotes: Big;
-  proposer: string;
-  number: number;
-  quorum: string;
-  description: string;
-  votingPower: Big;
-  values: string[];
-  calldatas: string[];
-  signatures: string[];
-  targets: string[];
-  created: string;
-  eta: string;
-  executed: string;
-  votingClose: string;
-  votingOpen: string;
+  forVotes: Big
+  againstVotes: Big
+  proposer: string
+  number: number
+  quorum: string
+  description: string
+  votingPower: Big
+  values: string[]
+  calldatas: string[]
+  signatures: string[]
+  targets: string[]
+  created: string
+  eta: string
+  executed: string
+  votingClose: string
+  votingOpen: string
 }
 
 const statslibColor: { [key: string]: string } = {

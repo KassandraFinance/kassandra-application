@@ -2,8 +2,8 @@
 import styled, { css } from 'styled-components'
 
 interface IwithoutBorderProps {
-  withoutBorder?: boolean;
-  isRound?: boolean;
+  withoutBorder?: boolean
+  isRound?: boolean
 }
 
 // prettier-ignore

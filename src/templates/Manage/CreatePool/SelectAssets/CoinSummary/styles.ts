@@ -50,7 +50,7 @@ export const Name = styled.span`
 `
 
 interface ISymbolProps {
-  table: boolean;
+  table: boolean
 }
 
 // prettier-ignore

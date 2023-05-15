@@ -13,7 +13,7 @@ import * as S from './styles'
 type GetDepositFeeType = {
   manager: {
     pools: {
-      fee_join_broker: string,
+      fee_join_broker: string
       fee_join_manager: string
     }[]
   }

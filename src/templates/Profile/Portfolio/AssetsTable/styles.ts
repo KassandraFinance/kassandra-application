@@ -166,7 +166,7 @@ export const NetworkWrapper = styled.div`
 `
 
 interface IChangeProps {
-  change: number;
+  change: number
 }
 
 // prettier-ignore

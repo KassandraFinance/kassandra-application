@@ -19,7 +19,7 @@ import * as S from './styles'
 interface INavProps {
   isShowMenu: boolean
   showOverlay: boolean
-  setIsShowMenu: React.Dispatch<React.SetStateAction<boolean>>
+  setIsShowMenu: () => void
   setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -36,9 +36,11 @@ const Nav = ({
 
   const router = useRouter()
   const path = router.asPath.split('/')
+  const pathClearQuestionMark = path[1].split('?')
+  const pathClearHashtag = pathClearQuestionMark[0].split('#')
 
   function handleClose() {
-    setIsShowMenu(false)
+    setIsShowMenu()
   }
 
   function animationClose() {
@@ -94,20 +96,11 @@ const Nav = ({
             onClick={() => {
               trackEventFunction('click-on-link', 'manage', 'header')
             }}
-            active={path[1] === 'manage'}
+            active={pathClearHashtag[0] === 'manage'}
           >
             Manage
           </S.MenuLink>
         </Link>
-        {/* <S.MenuLink
-          onClick={() => {
-            setIsModalWaitingList(true)
-            trackEventFunction('click-on-link', 'manage', 'header')
-          }}
-          active={router.asPath === '/manage'}
-        >
-          Manage
-        </S.MenuLink> */}
         <DropdownMenu
           nameOnHeader="DAO"
           isActive={

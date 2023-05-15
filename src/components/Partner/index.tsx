@@ -2,8 +2,8 @@ import React from 'react'
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 export interface PartnerData {
-  href: string;
-  logo: string;
+  href: string
+  logo: string
 }
 
 const Partner = ({ href, logo }: PartnerData) => {

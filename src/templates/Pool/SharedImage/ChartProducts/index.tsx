@@ -20,8 +20,8 @@ import * as S from './styles'
 const arrPeriod: string[] = ['1W', '1M', '3M', '1Y']
 
 interface IChartProductsProps {
-  crpPoolAddress: string;
-  height: number;
+  crpPoolAddress: string
+  height: number
 }
 
 const ChartProducts = ({ crpPoolAddress, height }: IChartProductsProps) => {
@@ -120,7 +120,7 @@ const ChartProducts = ({ crpPoolAddress, height }: IChartProductsProps) => {
   React.useEffect(() => {
     if (data) {
       const newTVL = data?.pool.total_value_locked.map(
-        (item: { timestamp: number, close: string }) => {
+        (item: { timestamp: number; close: string }) => {
           return {
             timestamp: item.timestamp,
             value: Number(item.close)
@@ -129,7 +129,7 @@ const ChartProducts = ({ crpPoolAddress, height }: IChartProductsProps) => {
       )
 
       const newPrice = data?.pool.price_candles.map(
-        (item: { timestamp: number, close: string }) => {
+        (item: { timestamp: number; close: string }) => {
           return {
             timestamp: item.timestamp,
             close: Number(item.close)

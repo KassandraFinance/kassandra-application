@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import theme from '../../styles/theme'
 
 interface IVotingPowerProps {
-  isMobile?: boolean;
+  isMobile?: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

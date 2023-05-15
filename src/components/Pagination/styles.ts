@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import theme from '../../styles/theme'
 
 interface IPaginateContainerProps {
-  totalItems: boolean;
+  totalItems: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -80,7 +80,6 @@ export const PaginateContainer = styled.div<IPaginateContainerProps>`
   .paginate__previous,
   .paginate__next {
     display: flex;
-
   }
 
   .paginate__link__previous,

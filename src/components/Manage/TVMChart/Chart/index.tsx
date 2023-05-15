@@ -13,13 +13,13 @@ import CustomizedTooltip from './CustomizedTooltip'
 import * as S from './styles'
 
 export type DataType = {
-  close: string,
+  close: string
   timestamp: number
 }
 
 interface IChartProps {
-  data: DataType[];
-  color: string;
+  data: DataType[]
+  color: string
 }
 
 const Chart = ({ data, color }: IChartProps) => {

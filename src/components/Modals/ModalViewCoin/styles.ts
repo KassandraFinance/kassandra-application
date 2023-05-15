@@ -9,7 +9,7 @@ export const ModalViewCoin = styled.div`
 `
 
 interface IModalCoinProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 // prettier-ignore

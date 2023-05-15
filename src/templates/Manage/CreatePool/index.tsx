@@ -330,7 +330,10 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     investorsList: { address: string }[]
   ): Promise<boolean> {
     // eslint-disable-next-line prettier/prettier
-    const controller = new web3.eth.Contract((KassandraControlerAbi as unknown) as AbiItem, poolControler)
+    const controller = new web3.eth.Contract(
+      KassandraControlerAbi as unknown as AbiItem,
+      poolControler
+    )
 
     const result = await new Promise<boolean>(resolve => {
       controller.methods

@@ -20,10 +20,10 @@ import ModalViewCoinMobile from '../../../../../components/Modals/ModalViewCoinM
 import * as S from './styles'
 
 export type ITokenModalProps = {
-  icon: string,
-  name: string,
+  icon: string
+  name: string
   tokenData: {
-    name: string,
+    name: string
     value: string
   }[]
 }

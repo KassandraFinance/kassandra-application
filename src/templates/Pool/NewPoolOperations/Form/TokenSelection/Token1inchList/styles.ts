@@ -130,7 +130,7 @@ export const NotFoundTokenContent = styled.div`
   `}
 `
 interface IShowShadowProps {
-  isShowShadow: boolean;
+  isShowShadow: boolean
 }
 
 // eslint-disable-next-line prettier/prettier

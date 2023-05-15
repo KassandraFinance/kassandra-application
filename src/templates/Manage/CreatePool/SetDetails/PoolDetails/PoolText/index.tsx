@@ -1,8 +1,8 @@
 import * as S from './styles'
 
 interface IPoolTextProps {
-  title: string;
-  text: string;
+  title: string
+  text: string
 }
 
 const PoolText = ({ title, text }: IPoolTextProps) => {

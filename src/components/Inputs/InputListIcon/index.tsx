@@ -8,17 +8,17 @@ import arrowDownThin from '../../../../public/assets/utilities/arrow-down-thin.s
 import * as S from './styles'
 
 export type DataListType = {
-  icon: JSX.Element,
-  name: string,
+  icon: JSX.Element
+  name: string
   id: string
 }
 
 interface IInputListIconProps {
-  dataList: DataListType[];
-  selected: DataListType | undefined;
-  title: string;
-  ignoreItem?: string;
-  onClick: (data: DataListType) => void;
+  dataList: DataListType[]
+  selected: DataListType | undefined
+  title: string
+  ignoreItem?: string
+  onClick: (data: DataListType) => void
 }
 
 const InputListIcon = ({

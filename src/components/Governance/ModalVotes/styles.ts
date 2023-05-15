@@ -25,7 +25,7 @@ export const Backdrop = styled.div`
 `
 
 interface IBorderGradientProps {
-  modalOpen: boolean;
+  modalOpen: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -40,7 +40,7 @@ export const Container = styled.div<IBorderGradientProps>`
   max-height: min-content;
 
   background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
-  border: 0.1rem solid #FFFFFF3B;
+  border: 0.1rem solid #ffffff3b;
   border-radius: 1rem;
 
   z-index: 21;
@@ -108,7 +108,7 @@ export const VoteBar = styled.div`
 `
 
 interface IVoteBarProps {
-  VotingState: string;
+  VotingState: string
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -129,13 +129,14 @@ export const ProgressBar = styled.progress<IVoteBarProps>`
 
   ::-webkit-progress-value {
     border-radius: 3rem;
-    box-shadow: 0 0 1rem ${props => {
-      if (props.VotingState === 'For') {
-        return '#2CE878'
-      } else {
-        return '#EA3224'
-      }
-    }};;
+    box-shadow: 0 0 1rem
+      ${props => {
+        if (props.VotingState === 'For') {
+          return '#2CE878'
+        } else {
+          return '#EA3224'
+        }
+      }};
     background: ${props => {
       if (props.VotingState === 'For') {
         return '#2CE878'
@@ -147,13 +148,14 @@ export const ProgressBar = styled.progress<IVoteBarProps>`
 
   ::-moz-progress-bar {
     border-radius: 3rem;
-    box-shadow: 0 0 1rem ${props => {
-      if (props.VotingState === 'For') {
-        return '#2CE878'
-      } else {
-        return '#EA3224'
-      }
-    }};;
+    box-shadow: 0 0 1rem
+      ${props => {
+        if (props.VotingState === 'For') {
+          return '#2CE878'
+        } else {
+          return '#EA3224'
+        }
+      }};
     background: ${props => {
       if (props.VotingState === 'For') {
         return '#2CE878'

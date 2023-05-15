@@ -126,7 +126,7 @@ const Overview = () => {
 
   function handleWithdraws(
     withdraws: {
-      timestamp: number,
+      timestamp: number
       volume_usd: string
     }[]
   ) {

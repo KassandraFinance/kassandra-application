@@ -29,17 +29,17 @@ import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 import * as S from './styles'
 
 interface IMyAssetProps {
-  chain: ChainInfo;
-  poolToken: string;
-  symbol: string;
-  price: string;
-  pid?: number;
-  decimals: number;
+  chain: ChainInfo
+  poolToken: string
+  symbol: string
+  price: string
+  pid?: number
+  decimals: number
 }
 
 export interface IPriceLPToken {
-  kacy: Big;
-  fund: Big;
+  kacy: Big
+  fund: Big
 }
 
 const MyAsset = ({

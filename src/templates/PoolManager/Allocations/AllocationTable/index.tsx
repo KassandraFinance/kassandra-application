@@ -18,19 +18,19 @@ import * as S from './styles'
 
 type CoinsMetadataType = {
   [key: string]: {
-    usd: number,
-    usd_24h_change: number,
+    usd: number
+    usd_24h_change: number
     usd_market_cap: number
   }
 }
 
 type IAllocationDataProps = {
   token: {
-    address: string,
-    logo: string,
+    address: string
+    logo: string
     symbol: string
-  },
-  allocation: string,
+  }
+  allocation: string
   holding: {
     value: Big
     // valueUSD: Big
@@ -46,10 +46,10 @@ type IAllocationDataProps = {
 }
 
 interface IAllocationTableProps {
-  allocationData: IAllocationDataProps[];
-  isRebalance: boolean;
-  coingeckoData: CoinsMetadataType;
-  chainId: number;
+  allocationData: IAllocationDataProps[]
+  isRebalance: boolean
+  coingeckoData: CoinsMetadataType
+  chainId: number
 }
 
 const AllocationTable = ({

@@ -76,25 +76,25 @@ export const COINS_METADATA =
   process.env.NEXT_PUBLIC_COINS_METADATA ?? 'http://localhost:3001'
 
 type CurrencyDetails = {
-  name: string,
-  symbol: string,
-  decimals: number,
+  name: string
+  symbol: string
+  decimals: number
   address: string
 }
 
 type NetworkType = Record<
   number,
   {
-    chainName: string,
-    chainId: number,
-    kacyAddress?: string,
-    rpc: string,
-    coingecko: string,
-    whiteList: string,
-    factory: string,
-    privateInvestor: string,
-    nativeCurrency: CurrencyDetails,
-    blockExplorer: string,
+    chainName: string
+    chainId: number
+    kacyAddress?: string
+    rpc: string
+    coingecko: string
+    whiteList: string
+    factory: string
+    privateInvestor: string
+    nativeCurrency: CurrencyDetails
+    blockExplorer: string
     kacyOFT: string
   }
 >

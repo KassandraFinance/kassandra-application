@@ -49,7 +49,7 @@ export const TabsContainer = styled.div`
 `
 
 interface ITabsButtonProps {
-  isActiveTab?: boolean;
+  isActiveTab?: boolean
 }
 
 // prettier-ignore

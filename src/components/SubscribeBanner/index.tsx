@@ -6,13 +6,13 @@ import { ToastSuccess } from '../Toastify/toast'
 import * as S from './styles'
 
 interface IFormSignUpParams {
-  name?: string;
-  email?: string;
+  name?: string
+  email?: string
 }
 
 interface IOnChangeFormParam {
-  key: string;
-  value: string;
+  key: string
+  value: string
 }
 const SubscribeBanner = () => {
   const { trackEventFunction } = useMatomoEcommerce()

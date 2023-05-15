@@ -7,10 +7,10 @@ import Form from '../Form'
 import * as S from './styles'
 
 interface ISelectOperationProps {
-  inputChecked: string;
-  setInputChecked: React.Dispatch<React.SetStateAction<'Withdraw' | 'Invest'>>;
-  typeWithdrawChecked: string;
-  setTypeWithdrawChecked: React.Dispatch<React.SetStateAction<string>>;
+  inputChecked: string
+  setInputChecked: React.Dispatch<React.SetStateAction<'Withdraw' | 'Invest'>>
+  typeWithdrawChecked: string
+  setTypeWithdrawChecked: React.Dispatch<React.SetStateAction<string>>
 }
 
 const SelectOperation = ({

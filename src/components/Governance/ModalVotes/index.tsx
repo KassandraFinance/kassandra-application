@@ -21,23 +21,23 @@ import Loading from '../../Loading'
 import * as S from './styles'
 
 interface IModalVotes {
-  voteType: string;
-  percentage: string;
-  totalVotingPower: string;
-  checkAllVoterModal: boolean;
-  isModalOpen: boolean;
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  userVote: IUserVotedProps;
-  proposalState: string;
-  handleVote: (voteType: string) => void;
+  voteType: string
+  percentage: string
+  totalVotingPower: string
+  checkAllVoterModal: boolean
+  isModalOpen: boolean
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  userVote: IUserVotedProps
+  proposalState: string
+  handleVote: (voteType: string) => void
 }
 
 interface IModalVotesList {
-  support: boolean;
+  support: boolean
   voter: {
     id: string
-  };
-  votingPower: BigNumber;
+  }
+  votingPower: BigNumber
 }
 
 const ModalVotes = ({
@@ -52,7 +52,9 @@ const ModalVotes = ({
   handleVote
 }: IModalVotes) => {
   // eslint-disable-next-line prettier/prettier
-  const [modalVotesList, setModalVotesList] = React.useState<IModalVotesList[]>([])
+  const [modalVotesList, setModalVotesList] = React.useState<IModalVotesList[]>(
+    []
+  )
   const [isLoading, setIsLoading] = React.useState(true)
 
   // const { ref, inView } = useInView({

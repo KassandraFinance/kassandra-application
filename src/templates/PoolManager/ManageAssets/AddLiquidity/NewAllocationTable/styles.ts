@@ -108,7 +108,7 @@ export const Th = styled(TH)`
 `
 
 interface ITBodyProps {
-  height: number;
+  height: number
 }
 // prettier-ignore
 export const TBody = styled(TB) <ITBodyProps>`

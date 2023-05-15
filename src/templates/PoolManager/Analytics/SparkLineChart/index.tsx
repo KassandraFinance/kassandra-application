@@ -7,8 +7,8 @@ export type sparkData = {
 }
 
 interface ISparkLineChartProps {
-  data: sparkData[];
-  color: string;
+  data: sparkData[]
+  color: string
 }
 
 const SparkLineChart = ({ data, color }: ISparkLineChartProps) => {

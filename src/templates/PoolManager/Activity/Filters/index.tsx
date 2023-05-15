@@ -6,15 +6,15 @@ import Checkbox from '@/components/Inputs/Checkbox'
 import * as S from './styles'
 
 export type OptionsFilter = {
-  name: string,
+  name: string
   key: string
 }
 
 type Props = {
-  options: OptionsFilter[],
-  handleCheckbox: (key: string) => void,
-  handleClear: () => void,
-  optionsSelected: string[],
+  options: OptionsFilter[]
+  handleCheckbox: (key: string) => void
+  handleClear: () => void
+  optionsSelected: string[]
   handleSelectAll?: (options: OptionsFilter[]) => void
 }
 

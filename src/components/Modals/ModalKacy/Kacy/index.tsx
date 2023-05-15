@@ -20,15 +20,15 @@ import polygonIcon from '../../../../../public/assets/logos/polygon.svg'
 import * as S from './styles'
 
 interface IKacyProps {
-  price: number;
-  supply: number;
-  kacyStaked: BigNumber;
-  kacyUnclaimed: Record<number, BigNumber>;
-  kacyWallet: Record<number, BigNumber>;
-  kacyTotal: BigNumber;
-  setIsModalKacy: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsModalBridge: React.Dispatch<React.SetStateAction<boolean>>;
+  price: number
+  supply: number
+  kacyStaked: BigNumber
+  kacyUnclaimed: Record<number, BigNumber>
+  kacyWallet: Record<number, BigNumber>
+  kacyTotal: BigNumber
+  setIsModalKacy: React.Dispatch<React.SetStateAction<boolean>>
+  setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>
+  setIsModalBridge: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const Kacy = ({

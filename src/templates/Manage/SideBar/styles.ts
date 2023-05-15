@@ -3,10 +3,9 @@ import { HeaderButtons } from '../../../components/Header/HeaderButtons/styles'
 import { Wrapper } from '../../../components/Button/styles'
 
 interface ISideBarProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const SideBar = styled.div<ISideBarProps>`
   ${() => css`
     position: fixed;
@@ -15,7 +14,7 @@ export const SideBar = styled.div<ISideBarProps>`
     left: 0;
     z-index: 1020;
 
-    overflow: hidden;
+    overflow-x: hidden;
 
     width: 0;
     border-radius: 0 8px 8px 0;
@@ -36,13 +35,15 @@ export const SideBar = styled.div<ISideBarProps>`
       width: 26.4rem;
     }
   `}
-  ${({ isOpen }) => isOpen && css`
+  ${({ isOpen }) =>
+    isOpen &&
+    css`
       width: 26.4rem;
 
       @media (min-width: 768px) {
         width: 26.4rem;
       }
-  `}
+    `}
 `
 
 export const SideBarHeader = styled.div`
@@ -66,10 +67,9 @@ export const SideBarHeader = styled.div`
 `
 
 interface IImageWrapperProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const ImageWrapper = styled.a<IImageWrapperProps>`
   ${() => css`
     margin-top: -0.4rem;
@@ -103,21 +103,22 @@ export const ImageWrapper = styled.a<IImageWrapperProps>`
       }
     }
   `}
-  ${({ isOpen }) => isOpen && css`
-    margin-left: -0.5rem;
+  ${({ isOpen }) =>
+    isOpen &&
+    css`
+      margin-left: -0.5rem;
 
-    svg {
-      .letters {
-        opacity: 1;
+      svg {
+        .letters {
+          opacity: 1;
+        }
       }
-    }
-  `}
+    `}
 `
 interface IUserInfoContainerProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const UserInfoContainer = styled.div<IUserInfoContainerProps>`
   ${({ theme, isOpen }) => css`
     display: flex;
@@ -197,10 +198,9 @@ export const UserNameWrapper = styled.div`
 `
 
 interface IUserNameProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const UserName = styled.div<IUserNameProps>`
   ${({ theme, isOpen }) => css`
     color: ${theme.colors.white};
@@ -226,10 +226,9 @@ export const UserName = styled.div<IUserNameProps>`
 `
 
 interface IUserHeaderTitleProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const UserHeaderTitle = styled.div<IUserHeaderTitleProps>`
   ${({ theme, isOpen }) => css`
     color: ${theme.colors.white};
@@ -259,8 +258,10 @@ export const SideBarBody = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1.6rem;
+    overflow-x: hidden;
+    overflow-y: auto;
 
-    height: 100%;
+    height: fit-content;
     margin-top: 1.6rem;
     padding-bottom: 2.8rem;
   `}
@@ -272,7 +273,6 @@ export const SideBarContainer = styled.div`
     flex-direction: column;
     gap: 2.4rem;
 
-    height: 100%;
     padding-inline: 2.4rem;
 
     @media (max-width: 992px) {
@@ -291,10 +291,9 @@ export const LinksContainer = styled.div`
 `
 
 interface ILineProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const Line = styled.span<ILineProps>`
   ${() => css`
     display: inline-block;
@@ -313,9 +312,11 @@ export const Line = styled.span<ILineProps>`
       margin-inline: 2.6rem;
     }
   `}
-  ${({ isOpen }) => isOpen && css`
-    margin-inline: 1.6rem;
-  `}
+  ${({ isOpen }) =>
+    isOpen &&
+    css`
+      margin-inline: 1.6rem;
+    `}
 `
 
 export const TextWrapper = styled.div`
@@ -325,10 +326,9 @@ export const TextWrapper = styled.div`
 `
 
 interface ITextProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const Text = styled.p<ITextProps>`
   ${({ theme }) => css`
     width: 22rem;
@@ -353,10 +353,12 @@ export const Text = styled.p<ITextProps>`
       pointer-events: visible;
     }
   `}
-  ${({ isOpen }) => isOpen && css`
-    opacity: 1;
-    pointer-events: visible;
-  `}
+  ${({ isOpen }) =>
+    isOpen &&
+    css`
+      opacity: 1;
+      pointer-events: visible;
+    `}
 `
 
 export const OpenButton = styled.button`
@@ -390,33 +392,33 @@ export const OpenButton = styled.button`
 `
 
 interface IImageWrapperProps {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const ImageCloseButtonWrapper = styled.div<IImageWrapperProps>`
   ${({ isOpen }) => css`
-      width: 1.6rem;
-      height: 1.6rem;
+    width: 1.6rem;
+    height: 1.6rem;
 
-      transition-timing-function: ease;
-      transition-duration: 500ms;
-      transition-property: transform;
-      transform: ${isOpen ? 'rotateZ(180deg)' : 'rotateZ(0deg)'} ;
-      transform-origin: center;
+    transition-timing-function: ease;
+    transition-duration: 500ms;
+    transition-property: transform;
+    transform: ${isOpen ? 'rotateZ(180deg)' : 'rotateZ(0deg)'};
+    transform-origin: center;
   `}
 `
 
 interface IButtonWrapper {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
-// prettier-ignore
 export const ButtonWrapper = styled.div<IButtonWrapper>`
   ${() => css`
     width: 100%;
   `}
-  ${({ isOpen }) => !isOpen && css`
+  ${({ isOpen }) =>
+    !isOpen &&
+    css`
       ${Wrapper} {
         justify-content: space-between;
 
@@ -438,9 +440,8 @@ export const ButtonWrapper = styled.div<IButtonWrapper>`
         @media (min-width: 992px) {
           display: none;
         }
-
       }
-  `}
+    `}
 `
 
 export const PlusIconWrapper = styled.div`

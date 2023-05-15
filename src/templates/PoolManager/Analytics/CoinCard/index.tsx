@@ -15,19 +15,19 @@ import comingSoon from '../../../../../public/assets/icons/coming-soon.svg'
 import * as S from './styles'
 
 interface ICoinCardProps {
-  image: string;
-  name: string;
-  symbol: string;
-  sparkLine: sparkData[];
-  priceChangeIn7d: string;
-  marketCap: number;
-  price: string;
-  dataList?: string[];
+  image: string
+  name: string
+  symbol: string
+  sparkLine: sparkData[]
+  priceChangeIn7d: string
+  marketCap: number
+  price: string
+  dataList?: string[]
   period?: {
-    time: number,
-    frame: string,
+    time: number
+    frame: string
     abvFrame: string
-  };
+  }
 }
 
 const CoinCard = ({
@@ -49,9 +49,7 @@ const CoinCard = ({
   if (Big(priceChangeIn7d).gt(0)) {
     color = '#2CE878'
     changeIcon = arrowAscendIcon
-  } else if (
-    Big(priceChangeIn7d).lt(0)
-  ) {
+  } else if (Big(priceChangeIn7d).lt(0)) {
     color = '#E8372C'
     changeIcon = arrowDescendIcon
   } else {
@@ -65,7 +63,7 @@ const CoinCard = ({
     let index = 0
     const data = sparkLine.reduce((acc, _value, i) => {
       if (!acc[index]) {
-        acc.push({close: '0'})
+        acc.push({ close: '0' })
       }
 
       if (i === aggIndex) {
@@ -76,7 +74,7 @@ const CoinCard = ({
         acc.push({ close: _value.close })
       }
       return acc
-    // eslint-disable-next-line prettier/prettier
+      // eslint-disable-next-line prettier/prettier
     }, [] as sparkData[])
     return calcVolatility(data)
   }, [])

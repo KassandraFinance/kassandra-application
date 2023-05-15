@@ -5,7 +5,11 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Tippy from '@tippyjs/react'
 
-import { addressNativeToken1Inch, BACKEND_KASSANDRA, URL_1INCH } from '../../../../../constants/tokenAddresses'
+import {
+  addressNativeToken1Inch,
+  BACKEND_KASSANDRA,
+  URL_1INCH
+} from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -45,13 +49,12 @@ import { GET_INFO_POOL } from '../graphql'
 import * as S from './styles'
 
 // eslint-disable-next-line prettier/prettier
-export type Titles = keyof typeof messages;
+export type Titles = keyof typeof messages
 
 const messages = {
   Invest: 'Pay with',
-  Withdraw: 'Send',
+  Withdraw: 'Send'
 }
-
 
 enum Approval {
   Denied,
@@ -63,10 +66,9 @@ enum Approval {
 // eslint-disable-next-line prettier/prettier
 type Approvals = { [key in Titles]: Approval[] }
 
-
 interface IInvestProps {
-  typeAction: Titles;
-  privateInvestors: string[];
+  typeAction: Titles
+  privateInvestors: string[]
 }
 
 const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
@@ -118,24 +120,41 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
 
   async function handle1Inch() {
-    const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(pool.underlying_assets)
-    const tokenWrappedAddress = getTokenWrapped(pool.underlying_assets, tokenWithHigherLiquidityPool.address)
+    const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(
+      pool.underlying_assets
+    )
+    const tokenWrappedAddress = getTokenWrapped(
+      pool.underlying_assets,
+      tokenWithHigherLiquidityPool.address
+    )
 
     const response = await fetch(
-      `${URL_1INCH}${pool.chain_id}/swap?fromTokenAddress=${tokenSelect.address
-      }&toTokenAddress=${tokenWrappedAddress
-      }&amount=${Big(amountTokenIn).toFixed()}&fromAddress=${operation.contractAddress || '0x84f154A845784Ca37Ae962504250a618EB4859dc'
+      `${URL_1INCH}${pool.chain_id}/swap?fromTokenAddress=${
+        tokenSelect.address
+      }&toTokenAddress=${tokenWrappedAddress}&amount=${Big(
+        amountTokenIn
+      ).toFixed()}&fromAddress=${
+        operation.contractAddress ||
+        '0x84f154A845784Ca37Ae962504250a618EB4859dc'
       }&slippage=1&disableEstimate=true`
     )
     const data = await response.json()
 
     setTrasactionData(data?.tx?.data)
-    return { amountTokenIn: data.toTokenAmount || 0, transactionDataTx: data?.tx?.data }
+    return {
+      amountTokenIn: data.toTokenAmount || 0,
+      transactionDataTx: data?.tx?.data
+    }
   }
 
   async function handleTokenSelected() {
-    const tokensChecked = checkTokenInThePool(pool.underlying_assets, tokenSelect.address)
-    const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(pool.underlying_assets)
+    const tokensChecked = checkTokenInThePool(
+      pool.underlying_assets,
+      tokenSelect.address
+    )
+    const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(
+      pool.underlying_assets
+    )
 
     const tokenAddressOrYRT =
       tokensChecked?.is_wraps === 1
@@ -146,7 +165,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       tokensChecked && tokenAddressOrYRT
         ? tokenAddressOrYRT
         : tokenWithHigherLiquidityPool?.address
-
 
     let data1Inch = { amountTokenIn, transactionDataTx: '' }
     if (!tokensChecked) {
@@ -169,12 +187,14 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
     setAmountApproved(Big(allowance))
     if (addressNativeToken1Inch !== tokenSelect.address) {
-      setApprovals((old) => ({
+      setApprovals(old => ({
         ...old,
-        [typeAction]: Big(allowance).gte(amountTokenIn) ? [Approval.Approved] : [Approval.Denied]
+        [typeAction]: Big(allowance).gte(amountTokenIn)
+          ? [Approval.Approved]
+          : [Approval.Denied]
       }))
     } else {
-      setApprovals((old) => ({
+      setApprovals(old => ({
         ...old,
         [typeAction]: [Approval.Approved]
       }))
@@ -235,7 +255,10 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
               operation.contractAddress,
               userWalletAddress
             )
-            if (amountApproved.toFixed() !== Big(allowance).toFixed() || amountApproved.gte(amountTokenIn)) {
+            if (
+              amountApproved.toFixed() !== Big(allowance).toFixed() ||
+              amountApproved.gte(amountTokenIn)
+            ) {
               await updateAllowance()
               approved = true
             }
@@ -261,11 +284,19 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           trackCancelBuying()
 
           if (error.code === 4001) {
-            dispatch(setModalAlertText({ errorText: `Investment in ${tokenSymbol} cancelled` }))
+            dispatch(
+              setModalAlertText({
+                errorText: `Investment in ${tokenSymbol} cancelled`
+              })
+            )
             return
           }
 
-          dispatch(setModalAlertText({ errorText: `Failed to invest in ${tokenSymbol}. Please try again later.` }))
+          dispatch(
+            setModalAlertText({
+              errorText: `Failed to invest in ${tokenSymbol}. Please try again later.`
+            })
+          )
           return
         }
 
@@ -279,10 +310,18 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           for (let index = 0; index < 100; index++) {
             await new Promise(r => setTimeout(r, 500))
             amountPool = await getBalanceToken(pool.address, userWalletAddress)
-            if (amountPool.toFixed() !== outAssetBalance.toFixed() && amountPool.gt(0)) break
+            if (
+              amountPool.toFixed() !== outAssetBalance.toFixed() &&
+              amountPool.gt(0)
+            )
+              break
           }
 
-          const amountToken = await getBalanceToken(tokenSelect.address, userWalletAddress, pool.pool_version === 1 ? pool.chain.addressWrapped : undefined)
+          const amountToken = await getBalanceToken(
+            tokenSelect.address,
+            userWalletAddress,
+            pool.pool_version === 1 ? pool.chain.addressWrapped : undefined
+          )
           const allowance = await ERC20(tokenSelect.address).allowance(
             operation.contractAddress,
             userWalletAddress
@@ -304,52 +343,73 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     []
   )
 
-  const submitAction =
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
+  const submitAction = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
 
-      const slippageVal = slippage.value
+    const slippageVal = slippage.value
 
-      const slippageExp = new BigNumber(10).pow(new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0)))
-      const slippageBase = slippageExp.sub(new BigNumber(slippageVal.replace('.', '')))
+    const slippageExp = new BigNumber(10).pow(
+      new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0))
+    )
+    const slippageBase = slippageExp.sub(
+      new BigNumber(slippageVal.replace('.', ''))
+    )
 
-      try {
-        if (approvals[typeAction][0] === 0 && tokenSelect.address !== addressNativeToken1Inch) {
-          ERC20(tokenSelect.address).approve(
-            operation.contractAddress,
-            userWalletAddress,
-            approvalCallback(tokenSelect.symbol, tokenSelect.address, typeAction)
-          )
-          return
-        }
-
-        trackBuying(pool.id, pool.symbol, data?.pool?.price_usd, pool.chain.chainName)
-
-        operation.joinswapExternAmountIn({
-          tokenInAddress: tokenSelect.address,
-          tokenAmountIn: new BigNumber(Big(amountTokenIn).toFixed()),
-          minPoolAmountOut: new BigNumber(amountTokenOut.toFixed(0)).mul(slippageBase).div(slippageExp),
+    try {
+      if (
+        approvals[typeAction][0] === 0 &&
+        tokenSelect.address !== addressNativeToken1Inch
+      ) {
+        ERC20(tokenSelect.address).approve(
+          operation.contractAddress,
           userWalletAddress,
-          data: trasactionData,
-          hasTokenInPool: !!checkTokenInThePool(pool.underlying_assets, tokenSelect.address),
-          transactionCallback: investCallback(
-            pool.symbol,
-            Number(BNtoDecimal(
+          approvalCallback(tokenSelect.symbol, tokenSelect.address, typeAction)
+        )
+        return
+      }
+
+      trackBuying(
+        pool.id,
+        pool.symbol,
+        data?.pool?.price_usd,
+        pool.chain.chainName
+      )
+
+      operation.joinswapExternAmountIn({
+        tokenInAddress: tokenSelect.address,
+        tokenAmountIn: new BigNumber(Big(amountTokenIn).toFixed()),
+        minPoolAmountOut: new BigNumber(amountTokenOut.toFixed(0))
+          .mul(slippageBase)
+          .div(slippageExp),
+        userWalletAddress,
+        data: trasactionData,
+        hasTokenInPool: !!checkTokenInThePool(
+          pool.underlying_assets,
+          tokenSelect.address
+        ),
+        transactionCallback: investCallback(
+          pool.symbol,
+          Number(
+            BNtoDecimal(
               Big(amountTokenOut.toFixed())
                 .mul(data?.pool?.price_usd || 0)
                 .div(Big(10).pow(data?.pool?.decimals)),
               18,
               2,
               2
-            ))
+            )
           )
+        )
+      })
+      return
+    } catch (error) {
+      dispatch(
+        setModalAlertText({
+          errorText: 'Could not connect with the Blockchain!'
         })
-        return
-      } catch (error) {
-
-        dispatch(setModalAlertText({ errorText: 'Could not connect with the Blockchain!' }))
-      }
+      )
     }
+  }
   // get contract approval of tokens
 
   // verificar se o token está aprovado
@@ -418,16 +478,20 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       try {
         const tokenSelected = await handleTokenSelected()
 
-        const { investAmountOut, transactionError } = await operation.calcInvestAmountOut({
-          tokenSelected,
-          tokenInAddress: tokenSelect.address,
-          userWalletAddress,
-          minAmountOut: new BigNumber('0'),
-          selectedTokenInBalance,
-          amountTokenIn: Big(amountTokenIn)
-        })
+        const { investAmountOut, transactionError } =
+          await operation.calcInvestAmountOut({
+            tokenSelected,
+            tokenInAddress: tokenSelect.address,
+            userWalletAddress,
+            minAmountOut: new BigNumber('0'),
+            selectedTokenInBalance,
+            amountTokenIn: Big(amountTokenIn)
+          })
 
-        const valueFormatted = decimalToBN(inputAmountTokenRef.current.value, tokenSelect.decimals)
+        const valueFormatted = decimalToBN(
+          inputAmountTokenRef.current.value,
+          tokenSelect.decimals
+        )
 
         if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
 
@@ -457,7 +521,10 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     }
 
     const verifyIsApproved = () => {
-      if (amountApproved.lt(amountTokenIn) && addressNativeToken1Inch !== tokenSelect.address) {
+      if (
+        amountApproved.lt(amountTokenIn) &&
+        addressNativeToken1Inch !== tokenSelect.address
+      ) {
         setApprovals(old => ({
           ...old,
           [typeAction]: [Approval.Denied]
@@ -495,7 +562,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
       if (usdAmountIn.gt(0)) {
         const valuePriceImpact = subValue.div(usdAmountIn).mul(100)
-        valuePriceImpact.gt(0) ? setPriceImpact(valuePriceImpact) : setPriceImpact(Big(0))
+        valuePriceImpact.gt(0)
+          ? setPriceImpact(valuePriceImpact)
+          : setPriceImpact(Big(0))
       }
     } else {
       setPriceImpact(Big(0))
@@ -503,13 +572,18 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   }, [tokenSelect, amountTokenOut])
 
   React.useEffect(() => {
-    if (tokenSelect.name !== pool.chain.nativeTokenName || Big(amountTokenIn).lte(0)) return
+    if (
+      tokenSelect.name !== pool.chain.nativeTokenName ||
+      Big(amountTokenIn).lte(0)
+    )
+      return
 
     const gasFeeBig = Big(String(gasFee?.feeNumber) || '0')
 
     const balanceMinusFee = Big(amountTokenIn).sub(gasFeeBig)
 
-    if (tokenSelect.name === pool.chain.nativeTokenName &&
+    if (
+      tokenSelect.name === pool.chain.nativeTokenName &&
       Big(amountTokenIn).lte(selectedTokenInBalance) &&
       Big(amountTokenIn).gte(balanceMinusFee)
     ) {
@@ -549,25 +623,23 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       <S.TransactionSettingsContainer>
         <S.ExchangeRate>
           <S.SpanLight>Price Impact:</S.SpanLight>
-          <S.PriceImpactWrapper price={Number(BNtoDecimal(
-            priceImpact,
-            18,
-            2,
-            2
-          )) ?? 0}>
-            {BNtoDecimal(
-              priceImpact,
-              18,
-              2,
-              2
-            )}%
+          <S.PriceImpactWrapper
+            price={Number(BNtoDecimal(priceImpact, 18, 2, 2)) ?? 0}
+          >
+            {BNtoDecimal(priceImpact, 18, 2, 2)}%
           </S.PriceImpactWrapper>
         </S.ExchangeRate>
         <S.ExchangeRate>
           {/* <S.SpanLight>{title} fee:</S.SpanLight>
           <S.SpanLight>{fees[title]}%</S.SpanLight> */}
           <S.SpanLight>Invest fee:</S.SpanLight>
-          <S.SpanLight>{Big(data?.pool?.fee_join_manager || '0').add(data?.pool?.fee_join_broker || '0').mul(100).toFixed(2)}%</S.SpanLight>
+          <S.SpanLight>
+            {Big(data?.pool?.fee_join_manager || '0')
+              .add(data?.pool?.fee_join_broker || '0')
+              .mul(100)
+              .toFixed(2)}
+            %
+          </S.SpanLight>
         </S.ExchangeRate>
       </S.TransactionSettingsContainer>
       <S.TransactionSettingsOptions>
@@ -583,16 +655,17 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           text="Connect Wallet"
         />
       ) : chainId === pool.chain_id ? (
-        pool.is_private_pool && !privateInvestors.some(address => address === userWalletAddress) ? (
+        pool.is_private_pool &&
+        !privateInvestors.some(address => address === userWalletAddress) ? (
           <Tippy
             allowHTML={true}
             content={[
               <S.PrivatePoolTooltip key="poolPrivate">
-                This is a <strong key="privatePool">Private Pool</strong>, the manager decided to limit the addresses that can invest in it
-              </S.PrivatePoolTooltip>,
+                This is a <strong key="privatePool">Private Pool</strong>, the
+                manager decided to limit the addresses that can invest in it
+              </S.PrivatePoolTooltip>
             ]}
           >
-
             <span style={{ width: '100%' }}>
               <Button
                 className="btn-submit"
@@ -601,8 +674,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
                 type="button"
                 text="Private Pool"
                 disabledNoEvent
-                image='/assets/utilities/lock.svg'
-                />
+                image="/assets/utilities/lock.svg"
+              />
             </span>
           </Tippy>
         ) : (
@@ -610,8 +683,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
             className="btn-submit"
             backgroundPrimary
             disabledNoEvent={
-              (approvals[typeAction].length === 0) ||
-              (approvals[typeAction][0] > Approval.Approved) ||
+              approvals[typeAction].length === 0 ||
+              approvals[typeAction][0] > Approval.Approved ||
               (approvals[typeAction][0] === Approval.Approved &&
                 (amountTokenIn.toString() === '0' ||
                   amountTokenOut.toString() === '0' ||
@@ -623,27 +696,24 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
               approvals[typeAction][0] === Approval.Approved
                 ? amountTokenIn.toString() !== '0' ||
                   inputAmountTokenRef?.current?.value !== null
-                  ?
-                  `${typeAction} ${'$' +
-                  BNtoDecimal(
-                    Big(amountTokenIn.toString())
-                      .mul(
-                        Big(priceToken(tokenSelect.address) || 0)
-
+                  ? `${typeAction} ${
+                      '$' +
+                      BNtoDecimal(
+                        Big(amountTokenIn.toString())
+                          .mul(Big(priceToken(tokenSelect.address) || 0))
+                          .div(Big(10).pow(Number(tokenSelect.decimals))),
+                        18,
+                        2,
+                        2
                       )
-                      .div(Big(10).pow(Number(tokenSelect.decimals))),
-                    18,
-                    2,
-                    2
-                  )
-                  }`
+                    }`
                   : `${typeAction}`
                 : approvals[typeAction][0] === Approval.WaitingTransaction
-                  ? 'Approving...'
-                  : approvals[typeAction][0] === undefined ||
-                    approvals[typeAction][0] === Approval.Syncing
-                    ? 'Syncing with Blockchain...'
-                    : 'Approve'
+                ? 'Approving...'
+                : approvals[typeAction][0] === undefined ||
+                  approvals[typeAction][0] === Approval.Syncing
+                ? 'Syncing with Blockchain...'
+                : 'Approve'
             }
           />
         )
@@ -653,18 +723,24 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           backgroundPrimary
           fullWidth
           type="button"
-          onClick={() => changeChain({
-            chainId: pool.chain.id,
-            chainName: pool.chain.chainName,
-            rpcUrls: pool.chain.rpcUrls,
-            nativeCurrency: {
-              decimals: pool.chain.nativeTokenDecimals,
-              name: pool.chain.nativeTokenName,
-              symbol: pool.chain.nativeTokenSymbol
-            }
-          })}
+          onClick={() =>
+            changeChain({
+              chainId: pool.chain.id,
+              chainName: pool.chain.chainName,
+              rpcUrls: pool.chain.rpcUrls,
+              nativeCurrency: {
+                decimals: pool.chain.nativeTokenDecimals,
+                name: pool.chain.nativeTokenName,
+                symbol: pool.chain.nativeTokenSymbol
+              }
+            })
+          }
           disabled={walletConnect ? true : false}
-          text={walletConnect ? `Change manually to ${pool.chain.chainName}` : `Change to ${pool.chain.chainName}`}
+          text={
+            walletConnect
+              ? `Change manually to ${pool.chain.chainName}`
+              : `Change to ${pool.chain.chainName}`
+          }
         />
       )}
     </S.Invest>

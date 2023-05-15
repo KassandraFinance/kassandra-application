@@ -582,8 +582,8 @@ export const ProposalStatus = styled.div`
   max-width: 114rem;
 `
 interface IImageProps {
-  isBefore: boolean;
-  isComplete: boolean;
+  isBefore: boolean
+  isComplete: boolean
 }
 // prettier-ignore
 export const LineBetweenImages = styled.div<IImageProps>`

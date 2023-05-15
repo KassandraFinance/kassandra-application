@@ -5,8 +5,8 @@ import Button from '../../../../components/Button'
 import * as S from './styles'
 
 interface IRebalanceSuccessProps {
-  time: number;
-  setIsOpenManageAssets: React.Dispatch<React.SetStateAction<boolean>>;
+  time: number
+  setIsOpenManageAssets: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const RebalanceSuccess = ({

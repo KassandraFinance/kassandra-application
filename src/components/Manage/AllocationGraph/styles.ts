@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components'
 
 interface IAllocationGraphProps {
-  isOpen: boolean;
-  height: number;
+  isOpen: boolean
+  height: number
 }
 
 // prettier-ignore
@@ -136,7 +136,7 @@ export const CustomTooltipContent = styled.ul`
 `
 
 interface CustomTooltipItensProps {
-  textColor: string;
+  textColor: string
 }
 
 // prettier-ignore

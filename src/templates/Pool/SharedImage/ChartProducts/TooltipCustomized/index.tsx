@@ -7,9 +7,9 @@ import * as S from './styles'
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
 interface ITooltipCustomizedPRops {
-  chart: string;
-  payload: any[];
-  currentPrice?: { close?: string, timestamp: number, value?: string };
+  chart: string
+  payload: any[]
+  currentPrice?: { close?: string; timestamp: number; value?: string }
 }
 
 const TooltipCustomized = (props: ITooltipCustomizedPRops) => {

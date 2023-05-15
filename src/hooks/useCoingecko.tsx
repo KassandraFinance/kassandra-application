@@ -10,24 +10,24 @@ import useKacyPrice from './useKacyPrice'
 
 type CoinsMetadataType = {
   [key: string]: {
-    usd: number,
-    usd_24h_change: number,
+    usd: number
+    usd_24h_change: number
     usd_market_cap: number
   }
 }
 
 type CoinsMetadataResultType = {
-  id: string,
-  contractAddress: string,
-  contractName: string,
-  name: string,
-  symbol: string,
-  price: string,
-  image: string,
-  priceChangeIn24h: number,
-  priceChangePercentage7d: number,
-  volume: number,
-  marketCap: number,
+  id: string
+  contractAddress: string
+  contractName: string
+  name: string
+  symbol: string
+  price: string
+  image: string
+  priceChangeIn24h: number
+  priceChangePercentage7d: number
+  volume: number
+  marketCap: number
   sparkline: string[]
 }[]
 

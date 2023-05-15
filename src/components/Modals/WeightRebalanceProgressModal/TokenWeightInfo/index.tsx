@@ -7,16 +7,17 @@ import { ITokenProps } from '..'
 
 interface ITokenWeightInfoProps {
   token: {
-    token: Omit<ITokenProps, 'decimals'>,
-    previous: string,
-    current: string,
+    token: Omit<ITokenProps, 'decimals'>
+    previous: string
+    current: string
     final: string
-  };
+  }
 }
 
 const TokenWeightInfo = ({ token }: ITokenWeightInfoProps) => {
   // eslint-disable-next-line prettier/prettier
-  const [isOpenTokenInfoMobile, setIsOpenTokenInfoMobile] = React.useState(false)
+  const [isOpenTokenInfoMobile, setIsOpenTokenInfoMobile] =
+    React.useState(false)
 
   return (
     <S.TokenWeightInfo

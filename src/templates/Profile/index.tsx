@@ -25,7 +25,12 @@ import {
   KacyPoligon,
   WETH_POLYGON
 } from '../../constants/tokenAddresses'
-import { LP_KACY_AVAX_PNG, LP_KACY_AVAX_JOE, allPools, KACY_WETH } from '../../constants/pools'
+import {
+  LP_KACY_AVAX_PNG,
+  LP_KACY_AVAX_JOE,
+  allPools,
+  KACY_WETH
+} from '../../constants/pools'
 
 import Breadcrumb from '../../components/Breadcrumb'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
@@ -73,33 +78,33 @@ const tabs = [
 ]
 
 export interface IKacyLpPool {
-  pid: number;
-  symbol: string;
-  poolName: string;
-  address: string;
+  pid: number
+  symbol: string
+  poolName: string
+  address: string
   properties?: {
     logo: {
-      src: string,
+      src: string
       style: {
         width: string
       }
-    },
-    title?: string,
+    }
+    title?: string
     link?: string
-  };
-  amount: BigNumber;
-  chainLogo: string;
+  }
+  amount: BigNumber
+  chainLogo: string
 }
 export interface IAssetsValueWalletProps {
-  [key: string]: BigNumber;
+  [key: string]: BigNumber
 }
 
 export interface IPriceToken {
-  [key: string]: Big;
+  [key: string]: Big
 }
 
 interface ImyFundsType {
-  [key: string]: string;
+  [key: string]: string
 }
 
 type Response = {
@@ -145,7 +150,9 @@ const Profile = () => {
 
   const votingPower = useVotingPower(Staking)
   const { getUserInfo } = useStakingContract(Staking)
-  const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(chain.chainId)
+  const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(
+    chain.chainId
+  )
 
   const profileAddress = router.query.profileAddress
   const isSelectQueryTab = router.query.tab
@@ -155,7 +162,9 @@ const Profile = () => {
       : profileAddress
     : ''
 
-  const { data } = useSWR<Response>([GET_PROFILE], query => request(BACKEND_KASSANDRA, query))
+  const { data } = useSWR<Response>([GET_PROFILE], query =>
+    request(BACKEND_KASSANDRA, query)
+  )
 
   const { priceToken: getPriceToken } = useCoingecko(
     networks[137].coingecko,
@@ -163,9 +172,18 @@ const Profile = () => {
     [WETH_POLYGON, KacyPoligon]
   )
 
-  async function getTokenAmountInPool(pid: number, stakingContract: string, chain: number) {
+  async function getTokenAmountInPool(
+    pid: number,
+    stakingContract: string,
+    chain: number
+  ) {
     try {
-      const userInfoResponse = await getUserInfo(pid, profileAddress, stakingContract, chain)
+      const userInfoResponse = await getUserInfo(
+        pid,
+        profileAddress,
+        stakingContract,
+        chain
+      )
 
       return new BigNumber(userInfoResponse.amount)
     } catch (error) {
@@ -194,7 +212,11 @@ const Profile = () => {
   }
 
   async function getLiquidityPoolPriceInDollar() {
-    const { kacyPriceInDollar, priceLP } = await getPriceKacyAndLP(LP_KACY_AVAX_PNG, LPDaiAvax, true)
+    const { kacyPriceInDollar, priceLP } = await getPriceKacyAndLP(
+      LP_KACY_AVAX_PNG,
+      LPDaiAvax,
+      true
+    )
     if (priceLP) {
       setPriceToken(prevState => ({
         ...prevState,
@@ -204,11 +226,15 @@ const Profile = () => {
     }
 
     if (priceLP) {
-      const priceLPJoe = await getPriceKacyAndLP(LP_KACY_AVAX_JOE, LPDaiAvax, true)
+      const priceLPJoe = await getPriceKacyAndLP(
+        LP_KACY_AVAX_JOE,
+        LPDaiAvax,
+        true
+      )
       if (priceLPJoe.priceLP) {
         setPriceToken(prevState => ({
           ...prevState,
-          'LP-JOE': priceLPJoe.priceLP,
+          'LP-JOE': priceLPJoe.priceLP
         }))
       }
     }
@@ -219,7 +245,7 @@ const Profile = () => {
       if (priceLPbal) {
         setPriceToken(prevState => ({
           ...prevState,
-          'KACY-WETH': priceLPbal,
+          'KACY-WETH': priceLPbal
         }))
       }
     }
@@ -240,7 +266,11 @@ const Profile = () => {
     const ids: Array<string> = []
     await Promise.all(
       allPools.map(async pool => {
-        const tokenAmountInPool = await getTokenAmountInPool(pool.pid, pool.stakingContract, pool.chain.id)
+        const tokenAmountInPool = await getTokenAmountInPool(
+          pool.pid,
+          pool.stakingContract,
+          pool.chain.id
+        )
         ids.push(pool.address)
 
         if (pool.symbol === 'KACY') {
@@ -275,7 +305,7 @@ const Profile = () => {
     getBalanceInWallet(ids)
   }
 
-  const handleAccountChange = ((account: string[]) => {
+  const handleAccountChange = (account: string[]) => {
     const tabSelect = isSelectQueryTab ? isSelectQueryTab : 'portfolio'
 
     router.push(
@@ -286,7 +316,7 @@ const Profile = () => {
       undefined,
       { scroll: false, shallow: false }
     )
-  })
+  }
 
   React.useEffect(() => {
     if (hasEthereumProvider) {
@@ -308,8 +338,7 @@ const Profile = () => {
           ...prevState,
           [pool.address]: pool.address
         }))
-      }
-      )
+      })
     }
   }, [data, walletUserString])
 
@@ -353,12 +382,15 @@ const Profile = () => {
             ? pool.amount.add(assetsValueInWallet[pool.address])
             : pool.amount
           ).toString()
-        ).mul(priceToken[pool.symbol]).div(Big(10).pow(18))
+        )
+          .mul(priceToken[pool.symbol])
+          .div(Big(10).pow(18))
 
         if (pool.address === myFunds[pool.address]) {
           tokenAmountInAssetsToken = tokenAmountInAssetsToken.add(tokenAmount)
         } else {
-          tokenAmountInTokenizedFunds = tokenAmountInTokenizedFunds.add(tokenAmount)
+          tokenAmountInTokenizedFunds =
+            tokenAmountInTokenizedFunds.add(tokenAmount)
         }
       })
     }
@@ -370,7 +402,6 @@ const Profile = () => {
   }, [profileAddress, priceToken, assetsValueInWallet, chainId])
 
   React.useEffect(() => {
-
     async function getVotingPower() {
       const currentVotes = await votingPower.currentVotes(profileAddress)
 
@@ -403,7 +434,9 @@ const Profile = () => {
         <>
           <S.TotalValuesCardsContainer>
             <AnyCardTotal
-                text={String(BNtoDecimal(priceInDolar.totalInvestmented, 6, 2, 2) || 0)}
+              text={String(
+                BNtoDecimal(priceInDolar.totalInvestmented, 6, 2, 2) || 0
+              )}
               TooltipText="The amount in US Dollars that this address has in investments with Kassandra. This considers tokens, funds, LP, and staked assets."
               textTitle="HOLDINGS"
               isDolar={true}
@@ -425,22 +458,24 @@ const Profile = () => {
             setIsSelect={setIsSelectTab}
           />
           {isSelectTab === tabs[0].asPathText ? (
-            data && <Portfolio
-              profileAddress={
-                typeof profileAddress === 'undefined'
-                  ? ''
-                  : typeof profileAddress === 'string'
+            data && (
+              <Portfolio
+                profileAddress={
+                  typeof profileAddress === 'undefined'
+                    ? ''
+                    : typeof profileAddress === 'string'
                     ? profileAddress
                     : ''
-              }
-              assetsValueInWallet={assetsValueInWallet}
-              cardstakesPool={cardstakesPool}
-              priceToken={priceToken}
-              myFunds={myFunds}
-              priceInDolar={priceInDolar}
-              poolsAddresses={data.pools.map(pool => pool.address)}
-              setPriceInDolar={setPriceInDolar}
-            />
+                }
+                assetsValueInWallet={assetsValueInWallet}
+                cardstakesPool={cardstakesPool}
+                priceToken={priceToken}
+                myFunds={myFunds}
+                priceInDolar={priceInDolar}
+                poolsAddresses={data.pools.map(pool => pool.address)}
+                setPriceInDolar={setPriceInDolar}
+              />
+            )
           ) : isSelectTab === tabs[1].asPathText ? (
             <ManagedFunds />
           ) : isSelectTab === tabs[2].asPathText ? (
