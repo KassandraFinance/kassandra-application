@@ -7,7 +7,7 @@ import AVAXLogo from '../../../public/assets/logos/avalanche.svg'
 import bscLogo from '../../../public/assets/logos/bsc.svg'
 import cronosLogo from '../../../public/assets/logos/cronos.svg'
 import fantomLogo from '../../../public/assets/logos/fantom.svg'
-import maticLogo from '../../../public/assets/logos/matic.svg'
+import maticLogo from '../../../public/assets/logos/polygon.svg'
 
 import * as S from './styles'
 
