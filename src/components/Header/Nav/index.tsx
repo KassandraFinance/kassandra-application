@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
-import ModalWaitingList from '../../../components/Modals/ModalWaitingList'
+// import ModalWaitingList from '../../../components/Modals/ModalWaitingList'
 
 import DropdownMenu from '../DropdownMenu'
 import Overlay from '../../Overlay'
@@ -29,13 +29,15 @@ const Nav = ({
   setIsShowMenu,
   setShowOverlay
 }: INavProps) => {
-  const [isModalWaitingList, setIsModalWaitingList] =
-    React.useState<boolean>(false)
+  // const [isModalWaitingList, setIsModalWaitingList] =
+  //   React.useState<boolean>(false)
 
   const { trackEventFunction } = useMatomoEcommerce()
 
   const router = useRouter()
   const path = router.asPath.split('/')
+  const pathClearQuestionMark = path[1].split('?')
+  const pathClearHashtag = pathClearQuestionMark[0].split('#')
 
   function handleClose() {
     setIsShowMenu()
@@ -94,7 +96,7 @@ const Nav = ({
             onClick={() => {
               trackEventFunction('click-on-link', 'manage', 'header')
             }}
-            active={path[1] === 'manage'}
+            active={pathClearHashtag[0] === 'manage'}
           >
             Manage
           </S.MenuLink>
@@ -162,9 +164,9 @@ const Nav = ({
 
         <MenuFooter />
       </S.Nav>
-      {isModalWaitingList && (
+      {/* {isModalWaitingList && (
         <ModalWaitingList setIsModalWaitingList={setIsModalWaitingList} />
-      )}
+      )} */}
     </>
   )
 }

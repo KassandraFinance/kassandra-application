@@ -17,18 +17,18 @@ import SelectTabs from '@/components/SelectTabs'
 import KassandraWhitelistAbi from '../../../constants/abi/KassandraWhitelist.json'
 
 import polygonIcon from '@assets/logos/polygon.svg'
-import ethIcon from '@assets/logos/eth-logo.svg'
+// import ethIcon from '@assets/logos/eth-logo.svg'
 
 import * as S from './styles'
 
 import { mockTokens, networks } from '../../../constants/tokenAddresses'
 
 const tabs = [
-  {
-    asPathText: '5',
-    text: 'Goerly',
-    icon: ethIcon
-  },
+  // {
+  //   asPathText: '5',
+  //   text: 'Goerly',
+  //   icon: ethIcon
+  // },
   {
     asPathText: '137',
     text: 'Polygon',
@@ -50,7 +50,7 @@ const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
   const [whitelist, setWhitelist] = React.useState<string[]>()
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
-  >('5')
+  >('137')
 
   React.useEffect(() => {
     if (!isSelectTab) {
@@ -67,10 +67,7 @@ const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
       try {
         const web3 = new Web3(networks[chainId].rpc)
         // eslint-disable-next-line prettier/prettier
-        const whitelistContract = new web3.eth.Contract(
-          KassandraWhitelistAbi as unknown as AbiItem,
-          networks[chainId].whiteList
-        )
+        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[chainId].whiteList);
         const whitelist = await whitelistContract.methods
           .getTokens(0, 100)
           .call()

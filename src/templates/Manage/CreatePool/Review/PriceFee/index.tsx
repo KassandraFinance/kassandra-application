@@ -5,8 +5,10 @@ import Web3 from 'web3'
 
 import { COINGECKO_API } from '@/constants/tokenAddresses'
 
-import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
-import { setTermsAndConditions } from '../../../../../store/reducers/poolCreationSlice'
+// import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
+import { useAppSelector } from '../../../../../store/hooks'
+
+// import { setTermsAndConditions } from '../../../../../store/reducers/poolCreationSlice'
 import { networks } from '@/constants/tokenAddresses'
 
 // import Checkbox from '../../../../../components/Inputs/Checkbox'
@@ -15,14 +17,14 @@ import { networks } from '@/constants/tokenAddresses'
 import * as S from './styles'
 
 const PriceFee = () => {
-  const [isOpenTermsAndConditions, setOpenTermsAndConditions] =
-    React.useState(true)
+  // const [isOpenTermsAndConditions, setOpenTermsAndConditions] =
+  //   React.useState(false)
   const [estimateGas, setEstimateGas] = React.useState({
     price: 0,
     gas: ''
   })
 
-  const dispatch = useAppDispatch()
+  // const dispatch = useAppDispatch()
   // const termsAndConditions = useAppSelector(
   //   state => state.poolCreation.createPoolData.termsAndConditions
   // )
@@ -31,9 +33,9 @@ const PriceFee = () => {
     state => state.poolCreation.createPoolData.networkId
   )
 
-  function handleClick() {
-    dispatch(setTermsAndConditions())
-  }
+  // function handleClick() {
+  //   dispatch(setTermsAndConditions())
+  // }
 
   const { data } = useSWR(
     `${COINGECKO_API}/simple/price?ids=wmatic&vs_currencies=usd`

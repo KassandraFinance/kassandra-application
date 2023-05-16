@@ -36,6 +36,8 @@ const Header = () => {
 
   const router = useRouter()
   const path = router.asPath.split('/')
+  const pathClearQuestionMark = path[1].split('?')
+  const pathClearHashtag = pathClearQuestionMark[0].split('#')
 
   function handleHamburgerMenu() {
     const width = window.innerWidth
@@ -59,8 +61,8 @@ const Header = () => {
 
   return (
     <>
-      <S.Wrapper id="top" dashBoard={path[1] === 'manage'}>
-        <S.LogoWrapper dashBoard={path[1] === 'manage'}>
+      <S.Wrapper id="top" dashBoard={pathClearHashtag[0] === 'manage'}>
+        <S.LogoWrapper dashBoard={pathClearHashtag[0] === 'manage'}>
           <Link href="/" passHref>
             <a className="logo-desktop">
               <Image src={logoKassandra} alt="Kassandra" />
@@ -74,8 +76,13 @@ const Header = () => {
           </Link>
         </S.LogoWrapper>
 
-        <S.MenuWrapper dashBoard={path[1] === 'manage'}>
-          <S.HamburgerButton id="hamburgerButton" onClick={handleHamburgerMenu}>
+        <S.MenuWrapper dashBoard={pathClearHashtag[0] === 'manage'}>
+          <S.HamburgerButton
+            onClick={() => {
+              setIsShowMenu(!isShowMenu)
+              setShowOverlay(true)
+            }}
+          >
             <S.HamburgerMenu isShowMenu={isShowMenu}>
               <div></div>
               <div></div>
