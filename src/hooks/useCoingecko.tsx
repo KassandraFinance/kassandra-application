@@ -24,7 +24,7 @@ type CoinsMetadataResultType = {
   symbol: string
   price: string
   image: string
-  priceChangeIn24h: number
+  priceChangePercentage24h: number
   priceChangePercentage7d: number
   volume: number
   marketCap: number
@@ -45,6 +45,7 @@ const useCoingecko = (
       '&addressesSeparatedByComma=' +
       `${tokenAddresses.slice(0, 130).toString().toLowerCase()}`
   )
+  console.log(dataOne)
 
   const { data: dataTwo } = useSWR<CoinsMetadataResultType>(
     tokenAddresses.length > 130
@@ -64,7 +65,7 @@ const useCoingecko = (
       Object.assign(data, {
         [token.contractAddress]: {
           usd: token.price,
-          usd_24h_change: token.priceChangeIn24h,
+          usd_24h_change: token.priceChangePercentage24h,
           usd_market_cap: token.marketCap
         }
       })
@@ -75,7 +76,7 @@ const useCoingecko = (
       Object.assign(data, {
         [token.contractAddress]: {
           usd: token.price,
-          usd_24h_change: token.priceChangeIn24h,
+          usd_24h_change: token.priceChangePercentage24h,
           usd_market_cap: token.marketCap
         }
       })
