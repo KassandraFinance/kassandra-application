@@ -45,7 +45,6 @@ const useCoingecko = (
       '&addressesSeparatedByComma=' +
       `${tokenAddresses.slice(0, 130).toString().toLowerCase()}`
   )
-  console.log(dataOne)
 
   const { data: dataTwo } = useSWR<CoinsMetadataResultType>(
     tokenAddresses.length > 130
