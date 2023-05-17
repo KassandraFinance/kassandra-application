@@ -18,19 +18,25 @@ export default function Index({ poolsKassandra }: IIndexProps) {
       <Head>
         {/* Primary Meta Tags */}
         <title>Kassandra</title>
-        <meta name="title" content="Kassandra - Decentralized Funds" />
+        <meta
+          name="title"
+          content="Kassandra DAO - Tokenized crypto portfolios"
+        />
         <meta
           name="description"
-          content="Create, Manage and invest in tokenized crypto portfolios effortlessly."
+          content="Find a strategy that suits your investment needs."
         />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dev.kassandra.finance/" />
-        <meta property="og:title" content="Kassandra - Decentralized Funds" />
+        <meta
+          property="og:title"
+          content="Kassandra DAO - Tokenized crypto portfolios"
+        />
         <meta
           property="og:description"
-          content="Create, Manage and invest in tokenized crypto portfolios effortlessly."
+          content="Find a strategy that suits your investment needs."
         />
         <meta
           property="og:image"
@@ -42,11 +48,11 @@ export default function Index({ poolsKassandra }: IIndexProps) {
         <meta property="twitter:url" content="https://dev.kassandra.finance/" />
         <meta
           property="twitter:title"
-          content="Kassandra - Decentralized Funds"
+          content="Kassandra DAO - Tokenized crypto portfolios"
         />
         <meta
           property="twitter:description"
-          content="Create, Manage and invest in tokenized crypto portfolios effortlessly."
+          content="Find a strategy that suits your investment needs."
         />
         <meta
           property="twitter:image"
