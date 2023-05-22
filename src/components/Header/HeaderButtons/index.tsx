@@ -70,7 +70,6 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   React.useEffect(() => {
     if (wallet) {
       const chainId = wallet.chains[0].id
-      console.log(wallet)
       setNetwork(chainStyle[chainId] ?? chainStyle.notSuported)
     } else {
       setNetwork(chainStyle.disconect)

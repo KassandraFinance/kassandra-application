@@ -6,7 +6,7 @@ import { request } from 'graphql-request'
 
 import { GovernorAlpha, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
 
-import useGovernance from '../../../hooks/useGovernance'
+import useGov from '../../../hooks/useGov'
 
 import AnyCard from '../../AnyCard'
 
@@ -75,7 +75,7 @@ export const UserTableVotingHistory = ({
     })
   )
 
-  const governance = useGovernance(GovernorAlpha)
+  const governance = useGov(GovernorAlpha)
 
   async function handleAddStateOnProposal(proposals: IProposalsListProps[]) {
     const proposal = proposals.map((prop: IProposalsListProps) => {

@@ -1,33 +1,24 @@
 import React from 'react'
 import Image from 'next/image'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import { networks } from '../../constants/tokenAddresses'
+import TitleSection from '@/components/TitleSection'
+import Overview from '@/components/Governance/Overview'
+import ProposalTable from '@/components/Governance/ProposalTable'
+import VotingPowerTable from '@/components/Governance/VotingPowerTable'
+import ExternalLink from '@/components/ExternalLink'
+import Breadcrumb from '@/components/Breadcrumb'
+import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
 
-import { useAppSelector } from '../../store/hooks'
-import useConnect from '../../hooks/useConnect'
-
-import TitleSection from '../../components/TitleSection'
-import Overview from '../../components/Governance/Overview'
-import ProposalTable from '../../components/Governance/ProposalTable'
-import VotingPowerTable from '../../components/Governance/VotingPowerTable'
-import ExternalLink from '../../components/ExternalLink'
-import Breadcrumb from '../../components/Breadcrumb'
-import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
-import Web3Disabled from '../../components/Web3Disabled'
-
-import overview from '../../../public/assets/iconGradient/section-title-eye.svg'
-import proposals from '../../../public/assets/iconGradient/details.svg'
-import votingPower from '../../../public/assets/iconGradient/voting-power-rank.svg'
-import externalLink from '../../../public/assets/utilities/external-link.svg'
+import overview from '@assets/iconGradient/section-title-eye.svg'
+import proposals from '@assets/iconGradient/details.svg'
+import votingPower from '@assets/iconGradient/voting-power-rank.svg'
+import externalLink from '@assets/utilities/external-link.svg'
 
 import * as S from './styles'
 
 const Gov = () => {
-  const { chainId, userWalletAddress } = useAppSelector(state => state)
-  const { metamaskInstalled } = useConnect()
-
-  const chain = networks[43114]
-
+  const [{ wallet }] = useConnectWallet()
   const take = 5
 
   return (
@@ -39,52 +30,36 @@ const Gov = () => {
         </BreadcrumbItem>
       </Breadcrumb>
       <S.VoteContent>
-        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
-        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
-          <Web3Disabled
-            textButton={`Connect to ${chain.chainName}`}
-            textHeader="Your wallet is set to the wrong network."
-            bodyText={`Please switch to the ${chain.chainName} network to have access to governance`}
-            type="changeChain"
-          />
-        ) : (
-          <>
-            <TitleSection image={overview} title="Overview" />
-            <Overview />
-            <S.OverViewLinks>
-              <ExternalLink hrefNext="farm?tab=stake" text="Obtain more" />
-              <ExternalLink
-                hrefNext={`/profile/${userWalletAddress}?tab=governance-data`}
-                text="Manage Delegation"
-              />
-            </S.OverViewLinks>
-            <S.TitleAndLinkContent>
-              <TitleSection image={proposals} title="Recent Proposals" />
-              <S.LinkForum
-                href="https://gov.kassandra.finance/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span>Discuss the proposals at the Forum</span>
-                <Image src={externalLink} alt="" />
-              </S.LinkForum>
-            </S.TitleAndLinkContent>
-            <ProposalTable take={take} />
+        <TitleSection image={overview} title="Overview" />
+        <Overview />
+        <S.OverViewLinks>
+          <ExternalLink hrefNext="farm?tab=stake" text="Obtain more" />
+          {wallet ? (
             <ExternalLink
-              hrefNext="/gov/proposals"
-              text="Check more proposals"
+              hrefNext={`/profile/${wallet.accounts[0].address}?tab=governance-data`}
+              text="Manage Delegation"
             />
-            <TitleSection
-              image={votingPower}
-              title="Voting Power Leaderboard"
-            />
-            <VotingPowerTable take={take} />
-            <ExternalLink
-              hrefNext="/gov/leaderboard?page=1"
-              text="Check leaderboard"
-            />
-          </>
-        )}
+          ) : null}
+        </S.OverViewLinks>
+        <S.TitleAndLinkContent>
+          <TitleSection image={proposals} title="Recent Proposals" />
+          <S.LinkForum
+            href="https://gov.kassandra.finance/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>Discuss the proposals at the Forum</span>
+            <Image src={externalLink} alt="" />
+          </S.LinkForum>
+        </S.TitleAndLinkContent>
+        <ProposalTable take={take} />
+        <ExternalLink hrefNext="/gov/proposals" text="Check more proposals" />
+        <TitleSection image={votingPower} title="Voting Power Leaderboard" />
+        <VotingPowerTable take={take} />
+        <ExternalLink
+          hrefNext="/gov/leaderboard?page=1"
+          text="Check leaderboard"
+        />
       </S.VoteContent>
     </>
   )
