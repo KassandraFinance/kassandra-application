@@ -5,6 +5,9 @@ import { BrowserProvider, JsonRpcProvider, Contract } from 'ethers'
 import Governance from '@/constants/abi/Governance.json'
 import { networks } from '@/constants/tokenAddresses'
 
+import useTxStatus from './useTxStatus'
+import useTransactionError from './useTransactionError'
+
 import approved from '@assets/notificationStatus/approved.svg'
 import cancelled from '@assets/notificationStatus/cancelled.svg'
 import executed from '@assets/notificationStatus/executed.svg'
@@ -25,8 +28,10 @@ const valuesStateProposal = [
 
 const useGov = (address: string) => {
   const [{ wallet }] = useConnectWallet()
-  const rpcURL = networks[43114].rpc
+  const { txNotification } = useTxStatus()
+  const { transactionErrors } = useTransactionError()
 
+  const rpcURL = networks[43114].rpc
   const readProvider = new JsonRpcProvider(rpcURL)
 
   const [contract, setContract] = React.useState({
@@ -76,9 +81,12 @@ const useGov = (address: string) => {
     }
 
     const castVote = async (proposalId: number, vote: boolean) => {
-      const tx = await contract.send.castVote(proposalId, vote)
-
-      tx.wait()
+      try {
+        const tx = await contract.send.castVote(proposalId, vote)
+        await txNotification(tx)
+      } catch (error) {
+        transactionErrors(error)
+      }
     }
 
     return {
