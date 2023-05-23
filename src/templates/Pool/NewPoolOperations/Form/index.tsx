@@ -14,8 +14,9 @@ import {
   ProxyInvestV2
 } from '../../../../constants/tokenAddresses'
 
-import operationV1 from '../../../../services/operationV1'
-import operationV2 from '../../../../services/operationV2'
+import operationV1 from '@/services/operationV1'
+import operationV2 from '@/services/operationV2'
+import { ParaSwap } from '@/services/ParaSwap'
 
 import Invest from './Invest'
 import Withdraw from './Withdraw'
@@ -54,7 +55,8 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
     controller: pool.controller,
     vault: pool.vault,
     tokens: pool.underlying_assets,
-    tokensAddresses: pool.underlying_assets_addresses
+    tokensAddresses: pool.underlying_assets_addresses,
+    chainId: pool.chain_id.toString()
   }
 
   const tokenAddresses = tokenList1Inch.map(token => token.address)
@@ -72,9 +74,15 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
           poolInfo,
           corePoolContract(pool.vault),
           ERC20(pool.address),
-          YieldYakContract()
+          YieldYakContract(),
+          new ParaSwap()
         )
-      : new operationV2(ProxyInvestV2, BalancerHelpers, poolInfo)
+      : new operationV2(
+          ProxyInvestV2,
+          BalancerHelpers,
+          poolInfo,
+          new ParaSwap()
+        )
 
   const setAddressesOfPrivateInvestors = async () => {
     const network = networks[pool?.chain_id ?? 137]

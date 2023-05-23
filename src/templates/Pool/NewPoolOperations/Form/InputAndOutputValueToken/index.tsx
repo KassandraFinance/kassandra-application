@@ -11,6 +11,7 @@ import { useAppSelector } from '../../../../../store/hooks'
 import PoolOperationContext from '../PoolOperationContext'
 
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
+import { useDebounce } from '@/hooks/useDebounce'
 
 import TokenSelect from '../TokenSelect'
 import TokenSelected from '../TokenSelected'
@@ -53,27 +54,29 @@ const InputAndOutputValueToken = ({
   )
   const { priceToken } = React.useContext(PoolOperationContext)
 
-  const { trackEventFunction } = useMatomoEcommerce()
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let { value } = e.target
 
-  const disabled =
-    userWalletAddress.length === 0
-      ? 'Please connect your wallet by clicking the button below'
-      : chainId !== pool.chain_id
-      ? `Please change to the ${pool.chain.chainName} by clicking the button below`
-      : ''
-
-  const isInvestType = typeAction === 'Invest' ? true : false
-
-  function handleOnWheel() {
-    if (document.activeElement?.classList.contains('noscroll')) {
-      // eslint-disable-next-line prettier/prettier
-      ;(document.activeElement as HTMLElement).blur()
+    if (value.length === 0) {
+      value = e.target.dataset.lastvalue as string
+    } else if (value[0] === '0') {
+      e.target.value = value.replace(/^0+/, '')
     }
+
+    if (e.target.value[0] === '.') {
+      e.target.value = `0${e.target.value}`
+    }
+
+    const valueFormatted = decimalToBN(value, tokenSelect.decimals)
+
+    setMaxActive && setMaxActive(false)
+    setAmountTokenIn(valueFormatted)
   }
 
-  function wei2String(input: Big) {
-    return input.div(Big(10).pow(Number(tokenSelect.decimals)))
-  }
+  const debounce = useDebounce<React.ChangeEvent<HTMLInputElement>>(
+    handleOnChange,
+    1500
+  )
 
   function handleMaxUserBalance() {
     if (
@@ -101,6 +104,30 @@ const InputAndOutputValueToken = ({
       setAmountTokenIn(selectedTokenInBalance)
       setMaxActive(true)
     }
+  }
+
+  const debounceMax = useDebounce(handleMaxUserBalance, 1500)
+
+  const { trackEventFunction } = useMatomoEcommerce()
+
+  const disabled =
+    userWalletAddress.length === 0
+      ? 'Please connect your wallet by clicking the button below'
+      : chainId !== pool.chain_id
+      ? `Please change to the ${pool.chain.chainName} by clicking the button below`
+      : ''
+
+  const isInvestType = typeAction === 'Invest' ? true : false
+
+  function handleOnWheel() {
+    if (document.activeElement?.classList.contains('noscroll')) {
+      // eslint-disable-next-line prettier/prettier
+      ;(document.activeElement as HTMLElement).blur()
+    }
+  }
+
+  function wei2String(input: Big) {
+    return input.div(Big(10).pow(Number(tokenSelect.decimals)))
   }
 
   // get balance of swap in token
@@ -131,7 +158,7 @@ const InputAndOutputValueToken = ({
           <S.Info>
             <S.Title>{isInvestType ? 'Pay with' : 'Swap to'}</S.Title>
             {isInvestType ? <TokenSelected /> : <TokenSelect />}
-            <S.Span spanlight={true} onClick={() => handleMaxUserBalance()}>
+            <S.Span spanlight={true} onClick={debounceMax}>
               Balance:{' '}
               {selectedTokenInBalance > new Big(-1)
                 ? BNtoDecimal(
@@ -189,27 +216,7 @@ const InputAndOutputValueToken = ({
                       target.dataset.lastvalue = '0'
                     }
                   }}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    let { value } = e.target
-
-                    if (value.length === 0) {
-                      value = e.target.dataset.lastvalue as string
-                    } else if (value[0] === '0') {
-                      e.target.value = value.replace(/^0+/, '')
-                    }
-
-                    if (e.target.value[0] === '.') {
-                      e.target.value = `0${e.target.value}`
-                    }
-
-                    const valueFormatted = decimalToBN(
-                      value,
-                      tokenSelect.decimals
-                    )
-
-                    setMaxActive && setMaxActive(false)
-                    setAmountTokenIn(valueFormatted)
-                  }}
+                  onChange={debounce}
                 />
               ) : (
                 <S.amountTokenOutText>

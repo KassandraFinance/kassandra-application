@@ -14,7 +14,8 @@ export const checkTokenWithHigherLiquidityPool = (
 
     return {
       address: item.token.id,
-      normalizedWeight: normalizedWeightToken
+      normalizedWeight: normalizedWeightToken,
+      isWrap: item.token.is_wrap_token
     }
   })
 
@@ -36,14 +37,27 @@ export const getTokenWrapped = (
   address: string
 ) => {
   const tokenAddresses = underlyingAssets.find(
-    item => item.token.id.toLocaleLowerCase() === address.toLocaleLowerCase()
+    item =>
+      address.toLowerCase() === item.token.wraps?.id.toLowerCase() ||
+      address.toLowerCase() === item.token.id.toLowerCase()
   )
-
   if (tokenAddresses?.token.wraps) {
-    return tokenAddresses?.token.wraps.id
+    return {
+      token: {
+        id: tokenAddresses.token.wraps.id,
+        decimals: tokenAddresses.token.wraps.decimals
+      },
+      weight_normalized: tokenAddresses.weight_normalized
+    }
+  } else if (tokenAddresses) {
+    return {
+      token: {
+        id: tokenAddresses.token.id,
+        decimals: tokenAddresses.token.decimals
+      },
+      weight_normalized: tokenAddresses.weight_normalized ?? '0'
+    }
   }
-
-  return address
 }
 
 // eslint-disable-next-line prettier/prettier

@@ -29,11 +29,12 @@ import {
 } from '../utils/poolUtils'
 
 import web3 from '../utils/web3'
+import { GetAmountsParams, ISwapProvider } from './ISwapProvider'
 
 export interface ItokenSelectedProps {
   tokenInAddress: string
-  newAmountTokenIn: string | Big
-  transactionDataTx: string
+  newAmountsTokenIn: string[]
+  transactionsDataTx: string[]
   isWrap: number | undefined
 }
 export default class operationV1 implements IOperations {
@@ -46,6 +47,7 @@ export default class operationV1 implements IOperations {
   ER20Contract: ReturnType<typeof ERC20>
   yieldYakContract: ReturnType<typeof YieldYakContract>
   poolInfo: IPoolInfoProps
+  swapProvider: ISwapProvider
 
   constructor(
     proxyAddress: string,
@@ -53,9 +55,10 @@ export default class operationV1 implements IOperations {
     _poolInfo: IPoolInfoProps,
     _corePoolContract: ReturnType<typeof corePoolContract>,
     _ER20Contract: ReturnType<typeof ERC20>,
-    _yieldYakContract: ReturnType<typeof YieldYakContract>
+    _yieldYakContract: ReturnType<typeof YieldYakContract>,
+    _swapProvider: ISwapProvider
   ) {
-    // eslint-disable-next-line prettier/prettier
+    this.swapProvider = _swapProvider
     this.contract = new web3.eth.Contract(
       HermesProxy as unknown as AbiItem,
       proxyAddress
@@ -67,6 +70,17 @@ export default class operationV1 implements IOperations {
     this.yieldYakContract = _yieldYakContract
     this.withdrawContract = proxyAddress
     this.poolInfo = _poolInfo
+  }
+
+  async getDatasTx() {
+    return this.swapProvider.getDatasTx(
+      this.poolInfo.chainId,
+      this.contractAddress
+    )
+  }
+
+  async getAmountsOut(params: GetAmountsParams) {
+    return await this.swapProvider.getAmountsOut(params)
   }
 
   async getInfoPool(tokenInAddress: string) {
@@ -136,15 +150,16 @@ export default class operationV1 implements IOperations {
         tokenExchange
       )
 
+      const datas = await this.getDatasTx()
       const investAmountOut = await this.contract.methods
         .joinswapExternAmountInWithSwap(
           this.crpPool,
           tokenInAddress,
           new BigNumber(amountTokenIn.toFixed()),
-          tokenWrappedAddress,
+          tokenWrappedAddress?.token.id,
           minAmountOut,
           this.referral,
-          tokenSelected.transactionDataTx
+          datas[0]
         )
         .call({ from: userWalletAddress, value: avaxValue })
 
@@ -154,7 +169,7 @@ export default class operationV1 implements IOperations {
       }
     } catch (error: any) {
       let investAmoutInCalc: BigNumber = new BigNumber(
-        Big(tokenSelected.newAmountTokenIn).toFixed()
+        Big(tokenSelected.newAmountsTokenIn[0]).toFixed()
       )
 
       if (tokenSelected.isWrap) {
@@ -187,7 +202,7 @@ export default class operationV1 implements IOperations {
       }
       if (
         Big(amountTokenIn).gt(selectedTokenInBalance) &&
-        Number(tokenSelected.newAmountTokenIn.toString()) > 0
+        Number(tokenSelected.newAmountsTokenIn[0].toString()) > 0
       ) {
         transactionError = 'This amount exceeds your balance!'
       }
@@ -229,6 +244,8 @@ export default class operationV1 implements IOperations {
       return res
     }
 
+    const datas = await this.getDatasTx()
+
     const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(
       this.poolInfo.tokens
     )
@@ -242,10 +259,10 @@ export default class operationV1 implements IOperations {
         this.crpPool,
         tokenInAddress,
         tokenAmountIn,
-        tokenWrappedAddress,
+        tokenWrappedAddress?.token.id,
         minPoolAmountOut,
         this.referral,
-        data
+        datas[0]
       )
       .send({ from: userWalletAddress, value: avaxValue }, transactionCallback)
 
