@@ -5,6 +5,7 @@ import Big from 'big.js'
 import { ItokenSelectedProps } from './operationV1'
 import { underlyingAssetsInfo } from '../store/reducers/pool'
 import { TransactionCallback } from '../utils/txWait'
+import { GetAmountsParams, GetAmountsResult } from './ISwapProvider'
 
 export interface IOperations {
   contractAddress: string
@@ -24,6 +25,8 @@ export interface IOperations {
   exitswapPoolAllTokenAmountIn: (
     params: ExitSwapPoolAllTokenAmountInParams
   ) => Promise<void>
+  getDatasTx: () => Promise<Array<string>>
+  getAmountsOut: (params: GetAmountsParams) => Promise<GetAmountsResult>
 }
 
 export type IPoolInfoProps = {
@@ -33,6 +36,7 @@ export type IPoolInfoProps = {
   vault: string
   tokens: underlyingAssetsInfo[]
   tokensAddresses: string[]
+  chainId: string
 }
 
 export type CalcAmountOutParams = {

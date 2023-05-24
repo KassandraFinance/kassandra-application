@@ -119,7 +119,10 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
   const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
 
-  async function handle1Inch() {
+  async function handleParaswap(): Promise<{
+    amountsTokenIn: string[]
+    transactionsDataTx: string[]
+  }> {
     const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(
       pool.underlying_assets
     )
@@ -128,12 +131,62 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       tokenWithHigherLiquidityPool.address
     )
 
+    const { fromAddress, fromDecimals } =
+      tokenSelect.address === addressNativeToken1Inch && pool.chain_id === 137
+        ? {
+            fromAddress: pool.chain.addressWrapped,
+            fromDecimals: pool.chain.nativeTokenDecimals
+          }
+        : {
+            fromAddress: tokenSelect.address,
+            fromDecimals: tokenSelect.decimals
+          }
+
+    const sortAddresses = [...pool.underlying_assets].sort((a, b) =>
+      a.token.id.toLowerCase() > b.token.id.toLowerCase() ? 1 : -1
+    )
+    const { amountsTokenIn, transactionsDataTx } =
+      await operation.getAmountsOut({
+        destTokens:
+          pool.chain_id === 43114 && tokenWrappedAddress
+            ? [{ ...tokenWrappedAddress, weight_normalized: '1' }]
+            : sortAddresses,
+        srcToken: fromAddress,
+        srcDecimals: fromDecimals.toString(),
+        amount: amountTokenIn.toString(),
+        chainId: pool.chain_id.toString()
+      })
+
+    setTrasactionData(['0x'])
+
+    return {
+      amountsTokenIn,
+      transactionsDataTx
+    }
+  }
+
+  async function handle1Inch(): Promise<{
+    amountsTokenIn: string[]
+    transactionsDataTx: string[]
+  }> {
+    const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(
+      pool.underlying_assets
+    )
+    const tokenWrappedAddress = getTokenWrapped(
+      pool.underlying_assets,
+      tokenWithHigherLiquidityPool.address
+    )
+    let toAddress = tokenWrappedAddress?.token.id
+    if (pool.address === '0x38918142779e2CD1189cBd9e932723C968363D1E') {
+      toAddress = '0x62edc0692BD897D2295872a9FFCac5425011c661'
+    }
+
     const response = await fetch(
       `${URL_1INCH}${pool.chain_id}/swap?fromTokenAddress=${
         tokenSelect.address
-      }&toTokenAddress=${tokenWrappedAddress}&amount=${Big(
-        amountTokenIn
-      ).toFixed()}&fromAddress=${
+      }&toTokenAddress=${toAddress}&amount=${Big(amountTokenIn).toFixed(
+        0
+      )}&fromAddress=${
         operation.contractAddress ||
         '0x84f154A845784Ca37Ae962504250a618EB4859dc'
       }&slippage=1&disableEstimate=true`
@@ -142,8 +195,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
     setTrasactionData(data?.tx?.data)
     return {
-      amountTokenIn: data.toTokenAmount || 0,
-      transactionDataTx: data?.tx?.data
+      amountsTokenIn: [data.toTokenAmount || 0],
+      transactionsDataTx: [data?.tx?.data]
     }
   }
 
@@ -166,16 +219,24 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         ? tokenAddressOrYRT
         : tokenWithHigherLiquidityPool?.address
 
-    let data1Inch = { amountTokenIn, transactionDataTx: '' }
-    if (!tokensChecked) {
+    let data1Inch = {
+      amountsTokenIn: [Big(amountTokenIn).toFixed()],
+      transactionsDataTx: ['']
+    }
+    if (pool.pool_version === 2) {
+      console.log('check')
+      data1Inch = await handleParaswap()
+    } else if (!tokensChecked) {
       data1Inch = await handle1Inch()
     }
 
     return {
       tokenInAddress,
-      newAmountTokenIn: data1Inch.amountTokenIn,
-      transactionDataTx: data1Inch.transactionDataTx,
-      isWrap: tokensChecked?.is_wraps
+      newAmountsTokenIn: data1Inch.amountsTokenIn,
+      transactionsDataTx: data1Inch.transactionsDataTx,
+      isWrap: tokensChecked
+        ? tokensChecked.is_wraps
+        : tokenWithHigherLiquidityPool.isWrap
     }
   }
 
@@ -449,6 +510,14 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       return
     }
 
+    if (!(inputAmountTokenRef && inputAmountTokenRef.current !== null)) return
+
+    const valueFormatted = decimalToBN(
+      inputAmountTokenRef.current.value,
+      tokenSelect.decimals
+    )
+    if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
+
     if (chainId !== pool.chain_id) {
       setAmountTokenOut(Big(0))
       return
@@ -476,6 +545,12 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       if (!(inputAmountTokenRef && inputAmountTokenRef.current !== null)) return
 
       try {
+        const valueFormatted = decimalToBN(
+          inputAmountTokenRef.current.value,
+          tokenSelect.decimals
+        )
+        if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
+
         const tokenSelected = await handleTokenSelected()
 
         const { investAmountOut, transactionError } =
@@ -488,20 +563,13 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
             amountTokenIn: Big(amountTokenIn)
           })
 
-        const valueFormatted = decimalToBN(
-          inputAmountTokenRef.current.value,
-          tokenSelect.decimals
-        )
-
-        if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
-
         setAmountTokenOut(Big(investAmountOut.toString()))
         if (transactionError) {
           setErrorMsg(transactionError)
         }
 
         if (tokenSelect.name === pool.chain.nativeTokenName) {
-          await generateEstimatedGas(tokenSelected.transactionDataTx)
+          await generateEstimatedGas(tokenSelected.transactionsDataTx[0])
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
