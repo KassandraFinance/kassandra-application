@@ -227,6 +227,11 @@ export default class operationV2 implements IOperations {
         ? tokenAmountIn
         : new BigNumber(0)
 
+    const tokenIn =
+      tokenInAddress === addressNativeToken1Inch
+        ? '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
+        : tokenInAddress
+
     const datas = await this.getDatasTx()
 
     const res = await this.contract.methods
@@ -235,7 +240,7 @@ export default class operationV2 implements IOperations {
           recipient: userWalletAddress,
           referrer: this.referral,
           controller: this.poolInfo.controller,
-          tokenIn: tokenInAddress,
+          tokenIn,
           tokenAmountIn: tokenAmountIn.toString(),
           tokenExchange,
           minTokenAmountOut: minPoolAmountOut.toString()

@@ -20,7 +20,7 @@ export class ParaSwap implements ISwapProvider {
         destToken: tx.destToken,
         destDecimals: tx.destDecimals,
         srcAmount: tx.srcAmount,
-        destAmount: tx.destAmount,
+        destAmount: Big(tx.destAmount).mul('0.99').toFixed(0),
         userAddress: proxy,
         partner: tx.partner,
         receiver: proxy
@@ -63,7 +63,7 @@ export class ParaSwap implements ISwapProvider {
         network: chainId
       })
       const resJson = await fetch(`${this.baseUrl}/prices?${query}`)
-      const response = await resJson.json()
+      const response = resJson.json()
       return response
     })
 

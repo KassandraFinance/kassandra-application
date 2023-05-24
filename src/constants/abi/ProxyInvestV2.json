@@ -94,6 +94,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getWETH",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "contract IVault",
@@ -103,6 +116,11 @@
       {
         "internalType": "address",
         "name": "swapProvider",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IWETH",
+        "name": "WETH",
         "type": "address"
       }
     ],
@@ -222,14 +240,14 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct ProxyInvest.ProxyParams",
+        "internalType": "struct ProxyInvestV2.ProxyParams",
         "name": "params",
         "type": "tuple"
       },
       {
-        "internalType": "bytes",
+        "internalType": "bytes[]",
         "name": "data",
-        "type": "bytes"
+        "type": "bytes[]"
       }
     ],
     "name": "joinPoolExactTokenInWithSwap",

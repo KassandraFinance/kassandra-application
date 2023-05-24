@@ -176,13 +176,17 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       pool.underlying_assets,
       tokenWithHigherLiquidityPool.address
     )
+    let toAddress = tokenWrappedAddress?.token.id
+    if (pool.address === '0x38918142779e2CD1189cBd9e932723C968363D1E') {
+      toAddress = '0x62edc0692BD897D2295872a9FFCac5425011c661'
+    }
 
     const response = await fetch(
       `${URL_1INCH}${pool.chain_id}/swap?fromTokenAddress=${
         tokenSelect.address
-      }&toTokenAddress=${tokenWrappedAddress?.token.id}&amount=${Big(
-        amountTokenIn
-      ).toFixed(0)}&fromAddress=${
+      }&toTokenAddress=${toAddress}&amount=${Big(amountTokenIn).toFixed(
+        0
+      )}&fromAddress=${
         operation.contractAddress ||
         '0x84f154A845784Ca37Ae962504250a618EB4859dc'
       }&slippage=1&disableEstimate=true`
@@ -219,9 +223,13 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       amountsTokenIn: [Big(amountTokenIn).toFixed()],
       transactionsDataTx: ['']
     }
-    if (!tokensChecked || pool.pool_version === 2) {
+    if (pool.pool_version === 2) {
+      console.log('check')
       data1Inch = await handleParaswap()
+    } else if (!tokensChecked) {
+      data1Inch = await handle1Inch()
     }
+
     return {
       tokenInAddress,
       newAmountsTokenIn: data1Inch.amountsTokenIn,

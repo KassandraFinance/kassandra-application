@@ -75,7 +75,7 @@ const InputAndOutputValueToken = ({
 
   const debounce = useDebounce<React.ChangeEvent<HTMLInputElement>>(
     handleOnChange,
-    1500
+    500
   )
 
   function handleMaxUserBalance() {
@@ -106,7 +106,7 @@ const InputAndOutputValueToken = ({
     }
   }
 
-  const debounceMax = useDebounce(handleMaxUserBalance, 1500)
+  const debounceMax = useDebounce(handleMaxUserBalance, 500)
 
   const { trackEventFunction } = useMatomoEcommerce()
 

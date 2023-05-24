@@ -149,17 +149,19 @@ export default class operationV1 implements IOperations {
         this.poolInfo.tokens,
         tokenExchange
       )
-
-      const datas = await this.getDatasTx()
+      let toAddress = tokenWrappedAddress?.token.id
+      if (this.crpPool === '0x38918142779e2CD1189cBd9e932723C968363D1E') {
+        toAddress = '0x62edc0692BD897D2295872a9FFCac5425011c661'
+      }
       const investAmountOut = await this.contract.methods
         .joinswapExternAmountInWithSwap(
           this.crpPool,
           tokenInAddress,
           new BigNumber(amountTokenIn.toFixed()),
-          tokenWrappedAddress?.token.id,
+          toAddress,
           minAmountOut,
           this.referral,
-          datas[0]
+          tokenSelected.transactionsDataTx[0]
         )
         .call({ from: userWalletAddress, value: avaxValue })
 
@@ -244,8 +246,6 @@ export default class operationV1 implements IOperations {
       return res
     }
 
-    const datas = await this.getDatasTx()
-
     const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(
       this.poolInfo.tokens
     )
@@ -254,15 +254,20 @@ export default class operationV1 implements IOperations {
       tokenExchange
     )
 
+    let toAddress = tokenWrappedAddress?.token.id
+    if (this.crpPool === '0x38918142779e2CD1189cBd9e932723C968363D1E') {
+      toAddress = '0x62edc0692BD897D2295872a9FFCac5425011c661'
+    }
+
     const res = await this.contract.methods
       .joinswapExternAmountInWithSwap(
         this.crpPool,
         tokenInAddress,
         tokenAmountIn,
-        tokenWrappedAddress?.token.id,
+        toAddress,
         minPoolAmountOut,
         this.referral,
-        datas[0]
+        data
       )
       .send({ from: userWalletAddress, value: avaxValue }, transactionCallback)
 
