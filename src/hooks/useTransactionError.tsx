@@ -8,20 +8,23 @@ export const useTransactionError = () => {
 
   function transactionErrors(error: unknown) {
     if (isError(error, 'ACTION_REJECTED')) {
-      console.log('CAIU AQUII')
       dispatch(setModalAlertText({ errorText: 'Transaction cancelled' }))
+      return error.code
     }
 
     if (isError(error, 'CALL_EXCEPTION')) {
       dispatch(setModalAlertText({ errorText: 'Transaction reverted' }))
+      return error.code
     }
 
     if (isError(error, 'INSUFFICIENT_FUNDS')) {
       dispatch(setModalAlertText({ errorText: '' }))
+      return error.code
     }
 
     if (isError(error, 'NONCE_EXPIRED')) {
       dispatch(setModalAlertText({ errorText: '' }))
+      return error.code
     }
   }
 
