@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setNickName, setProfilePic } from '../../../store/reducers/userSlice'
@@ -79,7 +80,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   React.useEffect(() => {
     if (!wallet) return
 
-    fetch(`/api/profile/${wallet.accounts[0].address}`)
+    fetch(`/api/profile/${getAddress(wallet.accounts[0].address)}`)
       .then(res => res.json())
       .then(data => {
         const { nickname, image, isNFT } = data
@@ -107,7 +108,10 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
 
       <ModalKacy />
       {wallet ? (
-        <Link href={`/profile/${wallet.accounts[0].address}`} passHref>
+        <Link
+          href={`/profile/${getAddress(wallet.accounts[0]?.address)}`}
+          passHref
+        >
           <Button
             className="button-wallet"
             icon={
@@ -178,7 +182,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
             text={
               nickName.length > 0
                 ? nickName
-                : substr(wallet.accounts[0].address)
+                : substr(getAddress(wallet.accounts[0].address))
             }
           />
         </Link>
