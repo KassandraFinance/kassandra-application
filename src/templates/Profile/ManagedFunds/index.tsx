@@ -1,5 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import useManagerPools from '@/hooks/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
@@ -19,7 +20,7 @@ const ManagedFunds = () => {
 
   const dispatch = useAppDispatch()
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
   const poolCreattionChainId = useAppSelector(
     state => state.poolCreation.createPoolData.networkId
@@ -33,7 +34,8 @@ const ManagedFunds = () => {
     ? ''
     : profileAddress
 
-  const isPoolOwner = userWalletAddress === profileWalletAddress
+  const isPoolOwner =
+    wallet?.accounts[0].address === profileWalletAddress.toLowerCase()
 
   const { managerPools } = useManagerPools(profileWalletAddress)
 

@@ -4,11 +4,11 @@ import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { SUBGRAPH_URL, Staking } from '../../../constants/tokenAddresses'
 import { GET_USER } from './graphql'
 
-import { useAppSelector } from '../../../store/hooks'
 import useStakingContract from '../../../hooks/useStakingContract'
 
 import TitleSection from '../../../components/TitleSection'
@@ -44,9 +44,6 @@ interface IGovernanceDataProps {
 }
 
 const GovernanceData = ({ address }: IGovernanceDataProps) => {
-  const router = useRouter()
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
   const [totalUserReceived, setUserReceived] = React.useState(Big(0))
   const [totalUserDelegating, setUserDelegating] = React.useState(Big(0))
   const [userReceivedFromVP, setUserReceivedFromVP] = React.useState<
@@ -56,6 +53,8 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
     IUserVotingPowerProps[]
   >([])
 
+  const router = useRouter()
+  const [{ wallet }] = useConnectWallet()
   const { userInfo } = useStakingContract(Staking)
 
   const { data } = useSWR([GET_USER], query =>
@@ -140,7 +139,7 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
       handleFromDelegated()
       handleRereceived()
     }
-  }, [data, userWalletAddress, address, router])
+  }, [data, wallet?.accounts[0].address, address, router])
 
   return (
     <>
@@ -192,7 +191,7 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
 
         <UserTableVotingHistory
           userAddressUrl={address}
-          userWalletAddress={userWalletAddress}
+          userWalletAddress={wallet?.accounts[0].address}
         />
       </S.VoteContent>
     </>

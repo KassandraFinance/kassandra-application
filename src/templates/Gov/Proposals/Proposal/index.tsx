@@ -25,7 +25,7 @@ import { GET_PROPOSAL } from './graphql'
 import { BNtoDecimal } from '@/utils/numerals'
 
 import useGov from '@/hooks/useGov'
-import useVotingPower from '@/hooks/useVotingPower'
+import useVotingPower from '@/hooks/useVotings'
 
 // import { setModalAlertText } from '@/store/reducers/modalAlertText'
 

@@ -3,14 +3,14 @@ import Image from 'next/image'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 import Tippy from '@tippyjs/react'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import AnyCard from '../../../../components/AnyCard'
-import TokenWithNetworkImage from '../../../../components/TokenWithNetworkImage'
+import AnyCard from '@/components/AnyCard'
+import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
-import { BNtoDecimal } from '../../../../utils/numerals'
-import { useAppSelector } from '../../../../store/hooks'
+import { BNtoDecimal } from '@/utils/numerals'
 
-import tooltip from '../../../../../public/assets/utilities/tooltip.svg'
+import tooltip from '@assets/utilities/tooltip.svg'
 
 import * as S from './styles'
 
@@ -53,13 +53,12 @@ const namePools: { [key: string]: string } = {
   'KACY-WETH': 'by Kassandra & Balancer'
 }
 
-// eslint-disable-next-line prettier/prettier
 const AssetsCard = ({
   profileAddress,
   priceToken,
   cardstakesPoolNew
 }: IStakingTableProps) => {
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
 
   return (
     <>
@@ -128,7 +127,7 @@ const AssetsCard = ({
             )
           })}
         </S.AssetsContainer>
-      ) : profileAddress === userWalletAddress ? (
+      ) : profileAddress.toLowerCase() === wallet?.accounts[0].address ? (
         <AnyCard
           text="It seems you have not staked any KACY"
           button={true}
