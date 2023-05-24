@@ -56,6 +56,7 @@ const useGov = (address: string) => {
   }, [wallet])
 
   return React.useMemo(() => {
+    // Read functions
     const proposalCount = async () => {
       const value = await contract.read.proposalCount()
       return value
@@ -80,6 +81,7 @@ const useGov = (address: string) => {
       return events
     }
 
+    // Write functions
     const castVote = async (proposalId: number, vote: boolean) => {
       try {
         const tx = await contract.send.castVote(proposalId, vote)
@@ -93,8 +95,9 @@ const useGov = (address: string) => {
       proposalCount,
       proposals,
       stateProposals,
-      castVote,
-      pastEvents
+      pastEvents,
+
+      castVote
     }
   }, [contract])
 }
