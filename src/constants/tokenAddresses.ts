@@ -46,8 +46,7 @@ export const ProxyContract =
 export const ProxyInvestV2 = '0x77F18A3963796Dd252EbEF15C9eadfE229c7c89a' // Polygon
 export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Polygon
 
-export const addressNativeToken1Inch =
-  '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+export const NATIVE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export const VAULT_POLYGON = '0xBA12222222228d8Ba445958a75a0704d566BF2C8'
 
@@ -70,6 +69,7 @@ export const BACKEND_KASSANDRA =
   process.env.NEXT_PUBLIC_BACKEND_KASSANDRA ?? 'http://localhost:3001'
 
 export const URL_1INCH = 'https://api.1inch.io/v5.0/'
+export const URL_PARASWAP = 'https://apiv5.paraswap.io'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 export const COINS_METADATA =

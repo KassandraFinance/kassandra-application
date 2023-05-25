@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 
 import {
-  addressNativeToken1Inch,
+  NATIVE_ADDRESS,
   COINS_METADATA,
   Kacy,
   KacyPoligon
@@ -90,7 +90,7 @@ const useCoingecko = (
 
   const priceToken = (address: string) => {
     let _address = address
-    if (address === addressNativeToken1Inch) {
+    if (address === NATIVE_ADDRESS) {
       _address = nativeAddress
     }
 
