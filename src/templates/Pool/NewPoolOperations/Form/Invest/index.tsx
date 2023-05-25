@@ -6,7 +6,7 @@ import { request } from 'graphql-request'
 import Tippy from '@tippyjs/react'
 
 import {
-  addressNativeToken1Inch,
+  NATIVE_ADDRESS,
   BACKEND_KASSANDRA,
   URL_1INCH
 } from '../../../../../constants/tokenAddresses'
@@ -63,7 +63,6 @@ enum Approval {
   Syncing
 }
 
-// eslint-disable-next-line prettier/prettier
 type Approvals = { [key in Titles]: Approval[] }
 
 interface IInvestProps {
@@ -73,7 +72,6 @@ interface IInvestProps {
 
 const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const [maxActive, setMaxActive] = React.useState<boolean>(false)
-  // const [isReload, setIsReload] = React.useState<boolean>(false)
   const [amountTokenIn, setAmountTokenIn] = React.useState<Big | string>(Big(0))
   const [amountTokenOut, setAmountTokenOut] = React.useState<Big>(Big(0))
   const [amountApproved, setAmountApproved] = React.useState(Big(0))
@@ -132,7 +130,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     )
 
     const { fromAddress, fromDecimals } =
-      tokenSelect.address === addressNativeToken1Inch && pool.chain_id === 137
+      tokenSelect.address === NATIVE_ADDRESS && pool.chain_id === 137
         ? {
             fromAddress: pool.chain.addressWrapped,
             fromDecimals: pool.chain.nativeTokenDecimals
@@ -247,7 +245,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     )
 
     setAmountApproved(Big(allowance))
-    if (addressNativeToken1Inch !== tokenSelect.address) {
+    if (NATIVE_ADDRESS !== tokenSelect.address) {
       setApprovals(old => ({
         ...old,
         [typeAction]: Big(allowance).gte(amountTokenIn)
@@ -419,7 +417,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     try {
       if (
         approvals[typeAction][0] === 0 &&
-        tokenSelect.address !== addressNativeToken1Inch
+        tokenSelect.address !== NATIVE_ADDRESS
       ) {
         ERC20(tokenSelect.address).approve(
           operation.contractAddress,
@@ -591,7 +589,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     const verifyIsApproved = () => {
       if (
         amountApproved.lt(amountTokenIn) &&
-        addressNativeToken1Inch !== tokenSelect.address
+        NATIVE_ADDRESS !== tokenSelect.address
       ) {
         setApprovals(old => ({
           ...old,

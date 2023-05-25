@@ -16,7 +16,7 @@ import {
   IPoolInfoProps,
   JoinSwapAmountInParams
 } from './IOperation'
-import { addressNativeToken1Inch } from '../constants/tokenAddresses'
+import { NATIVE_ADDRESS } from '../constants/tokenAddresses'
 
 import { ERC20 } from '../hooks/useERC20Contract'
 import { corePoolContract } from '../hooks/usePoolContract'
@@ -109,21 +109,12 @@ export default class operationV1 implements IOperations {
     amountTokenIn,
     tokenInAddress
   }: CalcAmountOutParams) {
-    const {
-      denormalizedWeight,
-      poolSupply,
-      poolSwapFee,
-      poolTotalDenormalizedWeight,
-      totalPoolBalance
-    } = await this.getInfoPool(tokenSelected.tokenInAddress)
     const checkedTokenInPool = checkTokenInThePool(
       this.poolInfo.tokens,
       tokenInAddress
     )
     const avaxValue =
-      tokenInAddress === addressNativeToken1Inch
-        ? amountTokenIn
-        : new BigNumber(0)
+      tokenInAddress === NATIVE_ADDRESS ? amountTokenIn : new BigNumber(0)
 
     try {
       if (checkedTokenInPool) {
@@ -170,15 +161,30 @@ export default class operationV1 implements IOperations {
         transactionError: undefined
       }
     } catch (error: any) {
+      let tokenIn = tokenSelected.tokenInAddress
+      if (
+        this.crpPool === '0x38918142779e2CD1189cBd9e932723C968363D1E' &&
+        !checkedTokenInPool
+      ) {
+        tokenIn = '0x62edc0692BD897D2295872a9FFCac5425011c661'
+      }
+      const {
+        denormalizedWeight,
+        poolSupply,
+        poolSwapFee,
+        poolTotalDenormalizedWeight,
+        totalPoolBalance
+      } = await this.getInfoPool(tokenIn)
+
       let investAmoutInCalc: BigNumber = new BigNumber(
         Big(tokenSelected.newAmountsTokenIn[0]).toFixed()
       )
 
-      if (tokenSelected.isWrap) {
+      if (tokenSelected.isWrap && checkedTokenInPool) {
         investAmoutInCalc =
           await this.yieldYakContract.convertBalanceWrappedToYRT(
             investAmoutInCalc,
-            tokenSelected.tokenInAddress
+            tokenIn
           )
       }
 
@@ -225,9 +231,7 @@ export default class operationV1 implements IOperations {
     transactionCallback
   }: JoinSwapAmountInParams) {
     const avaxValue =
-      tokenInAddress === addressNativeToken1Inch
-        ? tokenAmountIn
-        : new BigNumber(0)
+      tokenInAddress === NATIVE_ADDRESS ? tokenAmountIn : new BigNumber(0)
 
     if (hasTokenInPool) {
       const res = await this.contract.methods
@@ -286,9 +290,7 @@ export default class operationV1 implements IOperations {
       tokenInAddress
     )
     const avaxValue =
-      tokenInAddress === addressNativeToken1Inch
-        ? amountTokenIn
-        : new BigNumber(0)
+      tokenInAddress === NATIVE_ADDRESS ? amountTokenIn : new BigNumber(0)
     const tokenWithHigherLiquidity = checkTokenWithHigherLiquidityPool(
       this.poolInfo.tokens
     )

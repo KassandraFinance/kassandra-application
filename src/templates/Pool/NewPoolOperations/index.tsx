@@ -13,7 +13,6 @@ import SelectOperationOnMobile, {
 
 import * as S from './styles'
 
-// eslint-disable-next-line prettier/prettier
 export type Titles = keyof typeof messages
 
 const messages = {
@@ -34,15 +33,15 @@ const NewPoolOperations = () => {
 
   const dispatch = useAppDispatch()
   const { modalWalletActive } = useAppSelector(state => state)
-  const { tokenList1Inch } = useAppSelector(state => state)
+  const { tokenListSwapProvider } = useAppSelector(state => state)
 
   React.useEffect(() => {
     if (inputChecked === 'Withdraw') return
 
-    const nativeToken = tokenList1Inch.find(
+    const nativeToken = tokenListSwapProvider.find(
       token => token?.tags && token.tags[0] === 'native'
     )
-    dispatch(setTokenSelect(nativeToken ?? tokenList1Inch[0]))
+    dispatch(setTokenSelect(nativeToken ?? tokenListSwapProvider[0]))
   }, [inputChecked])
 
   React.useEffect(() => {

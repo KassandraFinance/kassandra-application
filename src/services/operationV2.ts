@@ -20,11 +20,8 @@ import {
   IPoolInfoProps,
   JoinSwapAmountInParams
 } from './IOperation'
-import {
-  checkTokenInThePool,
-  checkTokenWithHigherLiquidityPool
-} from '../utils/poolUtils'
-import { addressNativeToken1Inch } from '../constants/tokenAddresses'
+import { checkTokenWithHigherLiquidityPool } from '../utils/poolUtils'
+import { NATIVE_ADDRESS } from '../constants/tokenAddresses'
 import { GetAmountsParams, ISwapProvider } from './ISwapProvider'
 
 export interface ItokenSelectedProps {
@@ -223,12 +220,10 @@ export default class operationV2 implements IOperations {
       this.poolInfo.tokens
     )
     const nativeValue =
-      tokenInAddress === addressNativeToken1Inch
-        ? tokenAmountIn
-        : new BigNumber(0)
+      tokenInAddress === NATIVE_ADDRESS ? tokenAmountIn : new BigNumber(0)
 
     const tokenIn =
-      tokenInAddress === addressNativeToken1Inch
+      tokenInAddress === NATIVE_ADDRESS
         ? '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
         : tokenInAddress
 

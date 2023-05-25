@@ -1,8 +1,9 @@
+import { URL_PARASWAP } from '@/constants/tokenAddresses'
 import { ISwapProvider, GetAmountsParams } from './ISwapProvider'
 import Big from 'big.js'
 
 export class ParaSwap implements ISwapProvider {
-  private readonly baseUrl = 'https://apiv5.paraswap.io'
+  private readonly baseUrl = URL_PARASWAP
   private txs: Array<any> = []
 
   private formatParams(queryParams: Record<string, string>) {

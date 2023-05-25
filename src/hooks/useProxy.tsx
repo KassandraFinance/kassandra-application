@@ -5,7 +5,7 @@ import BigNumber from 'bn.js'
 import { AbiItem } from 'web3-utils'
 
 import HermesProxy from '../constants/abi/HermesProxy.json'
-import { addressNativeToken1Inch } from '../constants/tokenAddresses'
+import { NATIVE_ADDRESS } from '../constants/tokenAddresses'
 
 import web3 from '../utils/web3'
 import { TransactionCallback } from '../utils/txWait'
@@ -67,7 +67,7 @@ const useProxy = (address: string, crpPool: string, coreAddress: string) => {
       const tokensChecked = await checkTokenInThePool(tokenIn)
       // const wrapped = await contract.methods.wNativeToken().call()
       const avaxValue =
-        tokenIn === addressNativeToken1Inch ? tokenAmountIn : new BigNumber(0)
+        tokenIn === NATIVE_ADDRESS ? tokenAmountIn : new BigNumber(0)
 
       if (tokensChecked) {
         const res = await contract.methods
@@ -281,7 +281,7 @@ const useProxy = (address: string, crpPool: string, coreAddress: string) => {
     ) => {
       const tokensChecked = await checkTokenInThePool(tokenIn)
       const avaxValue =
-        tokenIn === addressNativeToken1Inch ? amountTokenIn : new BigNumber(0)
+        tokenIn === NATIVE_ADDRESS ? amountTokenIn : new BigNumber(0)
       const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(
         pool.underlying_assets
       )
