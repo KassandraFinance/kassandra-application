@@ -28,7 +28,6 @@ import useCoingecko from '../../../../hooks/useCoingecko'
 
 import * as S from './styles'
 
-// eslint-disable-next-line prettier/prettier
 export type Titles = keyof typeof messages
 
 const messages = {
@@ -44,7 +43,7 @@ interface IFormProps {
 const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   const [privateInvestors, setPrivateInvestors] = React.useState<string[]>([])
 
-  const { pool, tokenList1Inch, userWalletAddress } = useAppSelector(
+  const { pool, tokenListSwapProvider, userWalletAddress } = useAppSelector(
     state => state
   )
   const poolId = pool.id.slice(pool.chain_id.toString().length)
@@ -59,7 +58,7 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
     chainId: pool.chain_id.toString()
   }
 
-  const tokenAddresses = tokenList1Inch.map(token => token.address)
+  const tokenAddresses = tokenListSwapProvider.map(token => token.address)
   const { priceToken } = useCoingecko(
     platform[pool.chain_id],
     pool.chain.addressWrapped?.toLowerCase(),

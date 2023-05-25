@@ -17,7 +17,7 @@ import poolCreationReducer from './reducers/poolCreationSlice'
 import tokenSelectionActiveReducer from './reducers/tokenSelectionActive'
 import tokenSelectReducer from './reducers/tokenSelect'
 import poolReducer from './reducers/pool'
-import tokenList1InchReducer from './reducers/tokenList1Inch'
+import tokenListSwapProviderReducer from './reducers/tokenListSwapProvider'
 import modalWalletActiveReducer from './reducers/modalWalletActive'
 import addAssetReducer from './reducers/addAssetSlice'
 import removeAssetReducer from './reducers/removeAssetSlice'
@@ -44,7 +44,7 @@ export const rootReducer = combineReducers({
   tokenSelectionActive: tokenSelectionActiveReducer,
   tokenSelect: tokenSelectReducer,
   pool: poolReducer,
-  tokenList1Inch: tokenList1InchReducer,
+  tokenListSwapProvider: tokenListSwapProviderReducer,
   modalWalletActive: modalWalletActiveReducer,
   addAsset: addAssetReducer,
   removeAsset: removeAssetReducer,

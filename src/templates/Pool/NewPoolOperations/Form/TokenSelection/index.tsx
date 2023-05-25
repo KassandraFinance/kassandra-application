@@ -2,30 +2,32 @@ import React from 'react'
 import Big from 'big.js'
 import { isAddress } from 'web3-utils'
 import { stringSimilarity } from 'string-similarity-js'
+import Web3 from 'web3'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setTokenSelectionActive } from '../../../../../store/reducers/tokenSelectionActive'
 
 import useCoingecko from '../../../../../hooks/useCoingecko'
+import { useBatchRequest } from '@/hooks/useBatchRequest'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import {
-  addressNativeToken1Inch,
-  platform,
-  URL_1INCH_BALANCE
+  NATIVE_ADDRESS,
+  networks,
+  platform
 } from '../../../../../constants/tokenAddresses'
 
 import TokenPin from './TokenPin'
 import InputSearch from './InputSearch'
-import Token1inchList from './Token1inchList'
+import TokensSwapProviderList from './TokensSwapProviderList'
 import Loading from '../../../../../components/Loading'
 
 import * as S from './styles'
 
 export type IListbalanceTokenprops = {
   [key: string]: {
-    balance: number
+    balance: string
   }
 }
 
@@ -35,7 +37,7 @@ export type IListTokenPricesprops = {
   }
 }
 
-export interface ITokenList1InchProps {
+export interface ITokenListSwapProviderProps {
   symbol: string
   name: string
   address: string
@@ -43,7 +45,7 @@ export interface ITokenList1InchProps {
   logoURI: string
 }
 
-export interface IUserTokenProps extends ITokenList1InchProps {
+export interface IUserTokenProps extends ITokenListSwapProviderProps {
   tokenScore: number
   balanceInDollar: number
   balance: string
@@ -53,38 +55,37 @@ const TokenSelection = () => {
   const [searchToken, setSearchToken] = React.useState('')
   const [loading, setLoading] = React.useState(true)
   const [tokenPinList, setTokenPinList] = React.useState<
-    ITokenList1InchProps[]
+    ITokenListSwapProviderProps[]
   >([])
   const [balanceToken, setBalanceToken] =
     React.useState<IListbalanceTokenprops>({
       ['']: {
-        balance: 0
+        balance: '0'
       }
     })
 
   const dispatch = useAppDispatch()
-  const { userWalletAddress, tokenList1Inch, pool, chainId } = useAppSelector(
-    state => state
-  )
+  const { userWalletAddress, tokenListSwapProvider, pool, chainId } =
+    useAppSelector(state => state)
+  const { batchRequestBalance } = useBatchRequest()
 
-  const tokenAddresses = tokenList1Inch.map(token => token.address)
+  const tokenAddresses = tokenListSwapProvider.map(token => token.address)
   const { priceToken } = useCoingecko(
     platform[pool.chain_id],
     pool.chain.addressWrapped,
     tokenAddresses
   )
 
-  // eslint-disable-next-line prettier/prettier
   function handleUserTokensBalance(
-    newTokenList1inch: ITokenList1InchProps[],
+    newTokenList: ITokenListSwapProviderProps[],
     isWithScore = false
   ) {
-    const userTokensBalance = newTokenList1inch.map(token => {
+    const userTokensBalance = newTokenList.map(token => {
       const score = isWithScore
         ? stringSimilarity(token.symbol + token.name, searchToken)
         : 0
       const checkToken =
-        token.address === addressNativeToken1Inch
+        token.address === NATIVE_ADDRESS
           ? pool.chain.addressWrapped.toLocaleLowerCase()
           : token.address
 
@@ -107,19 +108,21 @@ const TokenSelection = () => {
     return userTokensBalance
   }
 
-  function handleTokenListFiltering(newTokenList1inch: ITokenList1InchProps[]) {
+  function handleTokenListFiltering(
+    newTokenList: ITokenListSwapProviderProps[]
+  ) {
     if (isAddress(searchToken)) {
-      const token1inchFilteredByAddress = newTokenList1inch.filter(
+      const tokensFilteredByAddress = newTokenList.filter(
         token => token.address === searchToken
       )
-      const token1inchWithBalance: IUserTokenProps[] = handleUserTokensBalance(
-        token1inchFilteredByAddress
+      const tokensWithBalance: IUserTokenProps[] = handleUserTokensBalance(
+        tokensFilteredByAddress
       )
 
-      return token1inchWithBalance
+      return tokensWithBalance
     }
 
-    const tokenFiltered = newTokenList1inch.filter(
+    const tokenFiltered = newTokenList.filter(
       token =>
         token.symbol.toLocaleLowerCase().includes(searchToken) ||
         token.name.toLocaleLowerCase().includes(searchToken)
@@ -154,11 +157,9 @@ const TokenSelection = () => {
     return userTokensBalanceFiltered
   }
 
-  // eslint-disable-next-line prettier/prettier
   function handleTokenListFilteringBybalance(
-    tokenArray: ITokenList1InchProps[]
+    tokenArray: ITokenListSwapProviderProps[]
   ) {
-    // eslint-disable-next-line prettier/prettier
     const tokenArrayFormated: IUserTokenProps[] =
       handleUserTokensBalance(tokenArray)
 
@@ -169,25 +170,26 @@ const TokenSelection = () => {
     })
   }
 
-  // eslint-disable-next-line prettier/prettier
-  const filteredToken =
-    searchToken.length > 1
-      ? handleTokenListFiltering(tokenList1Inch)
-      : handleTokenListFilteringBybalance(tokenList1Inch)
-
   async function handleFetchBalance() {
     if (chainId !== pool.chain_id) return
 
     try {
-      const response = await fetch(
-        `${URL_1INCH_BALANCE}/${pool.chain_id}/allowancesAndBalances/0x1111111254eeb25477b68fb85ed929f73a960582/${userWalletAddress}?tokensFetchType=listedTokens`
+      const balances = await batchRequestBalance(
+        new Web3(networks[pool.chain_id].rpc),
+        tokenListSwapProvider.map(token => token.address),
+        userWalletAddress
       )
-      const listTokenBalanceInWallet = await response.json()
-      setBalanceToken(listTokenBalanceInWallet)
+
+      setBalanceToken(balances)
     } catch (error) {
       console.log(error)
     }
   }
+
+  const filteredToken =
+    searchToken.length > 1
+      ? handleTokenListFiltering(tokenListSwapProvider)
+      : handleTokenListFilteringBybalance(tokenListSwapProvider)
 
   React.useEffect(() => {
     if (userWalletAddress) {
@@ -223,7 +225,7 @@ const TokenSelection = () => {
         <TokenPin
           tokenPinList={tokenPinList}
           setTokenPinList={setTokenPinList}
-          tokenList1Inch={tokenList1Inch}
+          tokenListSwapProvider={tokenListSwapProvider}
         />
 
         {loading ? (
@@ -231,8 +233,7 @@ const TokenSelection = () => {
             <Loading marginTop={0} />
           </S.LoadingContainer>
         ) : (
-          <Token1inchList
-            searchToken={searchToken}
+          <TokensSwapProviderList
             listBalanceToken={balanceToken}
             filteredToken={filteredToken}
             tokenPinList={tokenPinList}
