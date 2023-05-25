@@ -2,8 +2,7 @@ import React from 'react'
 import { useConnectWallet } from '@web3-onboard/react'
 import { BrowserProvider, JsonRpcProvider, Contract } from 'ethers'
 
-import useTxStatus from './useTxStatus'
-import useTransactionError from './useTransactionError'
+import useTransaction from './useTransaction'
 
 import StakingContract from '../constants/abi/Staking.json'
 import { networks } from '@/constants/tokenAddresses'
@@ -11,8 +10,7 @@ import { networks } from '@/constants/tokenAddresses'
 const useVotingPower = (address: string) => {
   // Get user wallet
   const [{ wallet }] = useConnectWallet()
-  const { txNotification } = useTxStatus()
-  const { transactionErrors } = useTransactionError()
+  const { txNotification, transactionErrors } = useTransaction()
 
   // Set read rpc
   const rpcURL = networks[43114].rpc

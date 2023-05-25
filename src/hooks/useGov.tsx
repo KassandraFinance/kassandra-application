@@ -5,8 +5,7 @@ import { BrowserProvider, JsonRpcProvider, Contract } from 'ethers'
 import Governance from '@/constants/abi/Governance.json'
 import { networks } from '@/constants/tokenAddresses'
 
-import useTxStatus from './useTxStatus'
-import useTransactionError from './useTransactionError'
+import useTransaction from './useTransaction'
 
 import approved from '@assets/notificationStatus/approved.svg'
 import cancelled from '@assets/notificationStatus/cancelled.svg'
@@ -28,8 +27,7 @@ const valuesStateProposal = [
 
 const useGov = (address: string) => {
   const [{ wallet }] = useConnectWallet()
-  const { txNotification } = useTxStatus()
-  const { transactionErrors } = useTransactionError()
+  const { txNotification, transactionErrors } = useTransaction()
 
   const rpcURL = networks[43114].rpc
   const readProvider = new JsonRpcProvider(rpcURL)
