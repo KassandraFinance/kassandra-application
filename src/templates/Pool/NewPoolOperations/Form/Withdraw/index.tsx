@@ -79,12 +79,12 @@ const Withdraw = ({
   const [amountApproved, setAmountApproved] = React.useState(Big(0))
   const [errorMsg, setErrorMsg] = React.useState('')
   const [maxActive, setMaxActive] = React.useState<boolean>(false)
-  const [amountAllTokenOut, setamountAllTokenOut] = React.useState<BigNumber[]>(
-    []
-  )
+  const [amountAllTokenOut, setamountAllTokenOut] = React.useState<
+    Record<string, BigNumber>
+  >({})
   const [balanceAllTokenOut, setbalanceAllTokenOut] = React.useState<
-    BigNumber[]
-  >([])
+    Record<string, BigNumber>
+  >({})
   const [walletConnect, setWalletConnect] = React.useState<string | null>(null)
   const [priceImpact, setPriceImpact] = React.useState<Big>(Big(0))
   const [priceInDollarOnWithdraw, setPriceInDollarOnWithdraw] =
@@ -314,14 +314,20 @@ const Withdraw = ({
   }
 
   const getUserBalanceAllToken = async () => {
-    const newSwapOutBalance = await Promise.all(
-      pool.underlying_assets.map(async item => {
-        if (item.token.id === pool.chain.addressWrapped) {
+    const newSwapOutBalance: Record<string, BigNumber> = {}
+    await Promise.all(
+      pool.underlying_assets.map(async asset => {
+        if (asset.token.id === pool.chain.addressWrapped) {
           const balance = await web3.eth.getBalance(userWalletAddress)
-          return new BigNumber(balance)
+          Object.assign(newSwapOutBalance, {
+            [asset.token.id]: new BigNumber(balance)
+          })
+          return
         }
-        const token = ERC20(item.token.wraps?.id ?? item.token.id)
-        return token.balance(userWalletAddress)
+        const token = ERC20(asset.token.wraps?.id ?? asset.token.id)
+        Object.assign(newSwapOutBalance, {
+          [asset.token.id]: await token.balance(userWalletAddress)
+        })
       })
     )
 
@@ -349,9 +355,7 @@ const Withdraw = ({
     }
 
     if (chainId !== pool.chain_id || Big(amountTokenIn).lte(0)) {
-      setamountAllTokenOut(
-        Array(pool.underlying_assets.length).fill(new BigNumber(0))
-      )
+      setamountAllTokenOut({})
       setAmountTokenOut(new Big(0))
       setErrorMsg('')
       updateAllowance()
@@ -389,7 +393,7 @@ const Withdraw = ({
 
           if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
 
-          setamountAllTokenOut(withdrawAllAmoutOut ?? [])
+          setamountAllTokenOut(withdrawAllAmoutOut ?? {})
           transactionError && setErrorMsg(transactionError)
 
           return
@@ -479,7 +483,7 @@ const Withdraw = ({
             : current.token.id.toLocaleLowerCase()
         )
 
-        return Big((amountAllTokenOut[index] || 0).toString())
+        return Big((amountAllTokenOut[current.token.id] || 0).toString())
           .mul(Big(priceUSD || 0))
           .div(Big(10).pow(Number(current.token.decimals)))
           .add(accumulator)
@@ -497,9 +501,7 @@ const Withdraw = ({
       chainId !== pool.chain_id ||
       typeWithdraw === 'Best_Value'
     ) {
-      return setbalanceAllTokenOut(
-        Array(pool.underlying_assets.length).fill(new BigNumber(0))
-      )
+      return setbalanceAllTokenOut({})
     }
 
     getUserBalanceAllToken()
@@ -652,7 +654,7 @@ const Withdraw = ({
                   (typeWithdraw === 'Single_asset' &&
                     amountTokenOut.toString() === '0') ||
                   (typeWithdraw === 'Best_value' &&
-                    amountAllTokenOut.length === 0) ||
+                    Object.values(amountAllTokenOut).length === 0) ||
                   errorMsg.length > 0))
             }
             fullWidth

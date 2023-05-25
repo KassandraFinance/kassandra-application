@@ -13,8 +13,8 @@ import { BNtoDecimal } from '../../../../../utils/numerals'
 import * as S from './styles'
 
 interface IListOfAllAssetProps {
-  amountAllTokenOut: any
-  balanceAllTokenOut: any
+  amountAllTokenOut: Record<string, BigNumber>
+  balanceAllTokenOut: Record<string, BigNumber>
 }
 const ListOfAllAsset = ({
   amountAllTokenOut,
@@ -24,11 +24,11 @@ const ListOfAllAsset = ({
 
   const { priceToken } = React.useContext(PoolOperationContext)
 
-  const ListTokenWithBalance = pool.underlying_assets.map((item, index) => {
+  const ListTokenWithBalance = pool.underlying_assets.map(item => {
     return {
       ...item,
-      amount: amountAllTokenOut[index],
-      balance: balanceAllTokenOut[index]
+      amount: amountAllTokenOut[item.token.id],
+      balance: balanceAllTokenOut[item.token.id]
     }
   })
   const tokenSorting = [...ListTokenWithBalance].sort(
@@ -77,7 +77,7 @@ const ListOfAllAsset = ({
                   value={
                     '$' +
                     BNtoDecimal(
-                      Big(item.amount || 0)
+                      Big(item.amount?.toString() || 0)
                         .mul(
                           Big(
                             priceToken(

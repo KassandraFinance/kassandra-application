@@ -10,7 +10,8 @@ module.exports = {
       'tokens.1inch.io',
       'storage.cloud.google.com',
       'storage.googleapis.com',
-      'app.kassandra.finance'
+      'app.kassandra.finance',
+      'cdn.paraswap.io'
     ]
   }
 }

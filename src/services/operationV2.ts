@@ -363,6 +363,7 @@ export default class operationV2 implements IOperations {
     userWalletAddress,
     selectedTokenInBalance
   }: CalcAllOutGivenPoolInParams) {
+    const withdrawAllAmoutOut: Record<string, BigNumber> = {}
     const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
     const userData = web3.eth.abi.encodeParameters(
       ['uint256', 'uint256'],
@@ -390,6 +391,13 @@ export default class operationV2 implements IOperations {
 
       allAmountsOut = response.amountsOut.slice(1, response.amountsOut.length)
 
+      const _length = this.poolInfo.tokensAddresses.length
+      for (let i = 0; i < _length; i++) {
+        Object.assign(withdrawAllAmoutOut, {
+          [this.poolInfo.tokensAddresses[i]]: new BigNumber(allAmountsOut[i])
+        })
+      }
+
       await this.vaultBalancer.methods
         .exitPool(
           this.poolInfo.id,
@@ -400,9 +408,7 @@ export default class operationV2 implements IOperations {
         .call({ from: userWalletAddress })
 
       return {
-        withdrawAllAmoutOut: allAmountsOut.map(
-          (item: string) => new BigNumber(item)
-        ),
+        withdrawAllAmoutOut,
         transactionError: undefined
       }
     } catch (error: any) {
@@ -421,9 +427,7 @@ export default class operationV2 implements IOperations {
       }
 
       return {
-        withdrawAllAmoutOut: allAmountsOut.map(
-          (item: string) => new BigNumber(item)
-        ),
+        withdrawAllAmoutOut,
         transactionError
       }
     }
@@ -495,9 +499,9 @@ export default class operationV2 implements IOperations {
         [1, tokenAmountIn.toString()]
       )
 
-      const minAmountsOutTokens = amountAllTokenOut.map(item => {
-        return item.mul(slippageBase).div(slippageExp).toString()
-      })
+      const minAmountsOutTokens = this.poolInfo.tokensAddresses.map(item =>
+        amountAllTokenOut[item].mul(slippageBase).div(slippageExp).toString()
+      )
 
       const request = {
         assets,

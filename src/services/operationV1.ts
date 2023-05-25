@@ -448,7 +448,7 @@ export default class operationV1 implements IOperations {
     userWalletAddress,
     selectedTokenInBalance
   }: CalcAllOutGivenPoolInParams) {
-    let withdrawAllAmoutOut = [new BigNumber('0')]
+    const withdrawAllAmoutOut: Record<string, BigNumber> = {}
     let transactionError: string | undefined = undefined
     const tokensInPool = this.poolInfo.tokens.map(
       item => item.token.wraps?.id ?? item.token.id
@@ -458,25 +458,28 @@ export default class operationV1 implements IOperations {
       const poolSupply = await this.ER20Contract.totalSupply()
       const exitFee = await this.corePoolContract.exitFee()
 
-      withdrawAllAmoutOut = await Promise.all(
+      await Promise.all(
         this.poolInfo.tokens.map(async item => {
           const swapOutTotalPoolBalance = await this.corePoolContract.balance(
             item.token.id
           )
 
-          const withdrawAmout = this.getWithdrawAmount(
+          let withdrawAmout = this.getWithdrawAmount(
             poolSupply,
             new BigNumber(poolAmountIn.toFixed()),
             swapOutTotalPoolBalance,
             exitFee
           )
           if (item.token.wraps) {
-            return await this.yieldYakContract.convertBalanceYRTtoWrap(
+            withdrawAmout = await this.yieldYakContract.convertBalanceYRTtoWrap(
               withdrawAmout,
               item.token.id
             )
           }
-          return withdrawAmout
+
+          Object.assign(withdrawAllAmoutOut, {
+            [item.token.id]: withdrawAmout
+          })
         })
       )
 
@@ -543,23 +546,17 @@ export default class operationV1 implements IOperations {
     userWalletAddress,
     transactionCallback
   }: ExitSwapPoolAllTokenAmountInParams) {
-    this.corePoolContract.currentTokens().then(async tokens => {
-      const swapOutAmounts = []
+    const swapOutAmounts = this.poolInfo.tokens.map(asset =>
+      amountAllTokenOut[asset.token.id].mul(slippageBase).div(slippageExp)
+    )
 
-      for (let i = 0; i < tokens.length; i++) {
-        swapOutAmounts.push(
-          amountAllTokenOut[i].mul(slippageBase).div(slippageExp)
-        )
-      }
+    const tokensWithdraw = this.poolInfo.tokens.map(token =>
+      token.token.wraps ? token.token.wraps.id : token.token.id
+    )
 
-      const tokensWithdraw = this.poolInfo.tokens.map(token =>
-        token.token.wraps ? token.token.wraps.id : token.token.id
-      )
-
-      const res = await this.contract.methods
-        .exitPool(this.crpPool, tokenAmountIn, tokensWithdraw, swapOutAmounts)
-        .send({ from: userWalletAddress }, transactionCallback)
-      return res
-    })
+    const res = await this.contract.methods
+      .exitPool(this.crpPool, tokenAmountIn, tokensWithdraw, swapOutAmounts)
+      .send({ from: userWalletAddress }, transactionCallback)
+    return res
   }
 }
