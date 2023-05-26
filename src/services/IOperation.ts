@@ -97,7 +97,7 @@ export type CalcAllOutGivenPoolInParams = {
 }
 
 export type CalcAllOutGivenPoolInResult = {
-  withdrawAllAmoutOut: BigNumber[] | undefined
+  withdrawAllAmoutOut: Record<string, BigNumber> | undefined
   transactionError: string | undefined
 }
 
@@ -111,7 +111,7 @@ export type ExitSwapPoolAmountInParams = {
 
 export type ExitSwapPoolAllTokenAmountInParams = {
   tokenAmountIn: BigNumber
-  amountAllTokenOut: BigNumber[]
+  amountAllTokenOut: Record<string, BigNumber>
   slippageBase: BigNumber
   slippageExp: BigNumber
   userWalletAddress: string
