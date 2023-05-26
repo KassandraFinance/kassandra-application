@@ -222,7 +222,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       transactionsDataTx: ['']
     }
     if (pool.pool_version === 2) {
-      console.log('check')
       data1Inch = await handleParaswap()
     } else if (!tokensChecked) {
       data1Inch = await handle1Inch()
