@@ -91,8 +91,6 @@ const TokensSwapProviderList = ({
   }
 
   const CurrencyRow = React.useMemo(() => {
-    console.log('memo ', listBalanceToken)
-    console.log('render memo')
     return React.memo(function CurrencyRow({
       index,
       style
