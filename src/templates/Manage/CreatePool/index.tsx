@@ -3,26 +3,27 @@ import Big from 'big.js'
 import { AbiItem, keccak256 } from 'web3-utils'
 import web3 from '../../../utils/web3'
 import crypto from 'crypto'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import { useAppSelector, useAppDispatch } from '../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
   setBackStepNumber,
   setNextStepNumber,
   setToFirstStep,
   setClear
-} from '../../../store/reducers/poolCreationSlice'
-import { setModalAlertText } from '../../../store/reducers/modalAlertText'
-import { ERC20 } from '../../../hooks/useERC20Contract'
-import waitTransaction, { MetamaskError } from '../../../utils/txWait'
+} from '@/store/reducers/poolCreationSlice'
+import { setModalAlertText } from '@/store/reducers/modalAlertText'
+import { ERC20 } from '@/hooks/useERC20Contract'
+import waitTransaction, { MetamaskError } from '@/utils/txWait'
 
-import KassandraManagedControllerFactoryAbi from '../../../constants/abi/KassandraManagedControllerFactory.json'
-import KassandraControlerAbi from '../../../constants/abi/KassandraController.json'
+import KassandraManagedControllerFactoryAbi from '@/constants/abi/KassandraManagedControllerFactory.json'
+import KassandraControlerAbi from '@/constants/abi/KassandraController.json'
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { SAVE_POOL } from './graphql'
 import Web3 from 'web3'
 
-import ContainerButton from '../../../components/ContainerButton'
-import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
+import ContainerButton from '@/components/ContainerButton'
+import ModalFullWindow from '@/components/Modals/ModalFullWindow'
 import StepGuide from './StepGuide'
 import SetDetails from './SetDetails'
 import SelectAssets from './SelectAssets'
@@ -33,7 +34,7 @@ import PoolCreated from './PoolCreated'
 import ModalTransactions, {
   TransactionStatus,
   TransactionsListType
-} from '../../../components/Modals/ModalTransactions'
+} from '@/components/Modals/ModalTransactions'
 
 import * as S from './styles'
 
@@ -80,10 +81,11 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     txHash: ''
   })
 
+  const [{ wallet }] = useConnectWallet()
+
   const dispatch = useAppDispatch()
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
   const poolData = useAppSelector(state => state.poolCreation.createPoolData)
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
 
   const buttonText = {
@@ -124,6 +126,10 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   }
 
   async function getIsAproved(tokens: Array<Token>) {
+    if (!wallet?.provider) {
+      return
+    }
+
     const tokensNotAproved: Array<Token> = []
     for (const token of tokens) {
       const { allowance } = ERC20(
@@ -132,7 +138,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       )
       const amountApproved = await allowance(
         networks[poolData.networkId ?? 137].factory,
-        userWalletAddress
+        wallet?.accounts[0].address
       )
       if (Big(amountApproved).lt(token.amount)) {
         tokensNotAproved.push(token)
@@ -298,15 +304,19 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   }
 
   async function handleApproveTokens(notAprovedTokens: Array<Token>) {
+    if (!wallet?.provider) {
+      return
+    }
+
     for (const token of notAprovedTokens) {
       const { approve, allowance } = ERC20(token.address)
       const factory = networks[poolData.networkId ?? 137].factory
-      const oldAllowance = await allowance(factory, userWalletAddress)
+      const oldAllowance = await allowance(factory, wallet?.accounts[0].address)
 
       const approved = await new Promise<boolean>(resolve => {
         approve(
           factory,
-          userWalletAddress,
+          wallet.accounts[0].address,
           (error: MetamaskError, txHash: string) =>
             callBack(error, txHash, {
               token,
@@ -329,7 +339,10 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     poolControler: string,
     investorsList: { address: string }[]
   ): Promise<boolean> {
-    // eslint-disable-next-line prettier/prettier
+    if (!wallet?.provider) {
+      return false
+    }
+
     const controller = new web3.eth.Contract(
       KassandraControlerAbi as unknown as AbiItem,
       poolControler
@@ -340,7 +353,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         .addAllowedAddresses(investorsList.map(investor => investor.address))
         .send(
           {
-            from: userWalletAddress,
+            from: wallet.accounts[0].address,
             maxPriorityFeePerGas: 30e9
           },
           (error: MetamaskError, txHash: string) =>
@@ -474,12 +487,16 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     chainId: number
   ) {
     try {
+      if (!wallet?.provider) {
+        return
+      }
+
       const nonce = crypto.randomBytes(12).toString('base64')
       const logoToSign = logo ? keccak256(logo) : ''
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
       const signature = await web3.eth.personal.sign(
         message,
-        userWalletAddress,
+        wallet?.accounts[0].address,
         nonce
       )
 
@@ -691,7 +708,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           web3.utils.padLeft('0x', 64)
         )
         .call({
-          from: userWalletAddress
+          from: wallet?.accounts[0].address
         })
 
       const tx = await factoryContract.methods
@@ -707,7 +724,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         )
         .send(
           {
-            from: userWalletAddress,
+            from: wallet?.accounts[0].address,
             maxPriorityFeePerGas: 30e9
           },
           callBack

@@ -3,11 +3,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Blockies from 'react-blockies'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import { useAppSelector } from '@/store/hooks'
 import useManagerPools from '@/hooks/useManagerPools'
 
-import arrowIcon from '../../../../../public/assets/utilities/arrow-select-down.svg'
+import arrowIcon from '@assets/utilities/arrow-select-down.svg'
 
 import * as S from './styles'
 
@@ -26,11 +26,12 @@ const SideBarMenu = ({
 }: ISideBarMenuProps) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(true)
 
+  const [{ wallet }] = useConnectWallet()
+
   const router = useRouter()
   const poolQuery = router.query.pool
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const { managerPools } = useManagerPools(userWalletAddress)
+  const { managerPools } = useManagerPools(wallet?.accounts[0].address || '')
 
   function handleOpenMenu() {
     setIsOpen(prev => !prev)

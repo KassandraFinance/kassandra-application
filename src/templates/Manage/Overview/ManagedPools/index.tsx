@@ -1,6 +1,6 @@
 import React from 'react'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import { useAppSelector } from '@/store/hooks'
 import useManagerPools, { GetManagerPoolsType } from '@/hooks/useManagerPools'
 
 import FundCard from '@ui/FundCard'
@@ -11,9 +11,9 @@ import * as S from './styles'
 const ManagedPools = () => {
   const [filter, setFilter] = React.useState('')
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
 
-  const { managerPools } = useManagerPools(userWalletAddress)
+  const { managerPools } = useManagerPools(wallet?.accounts[0].address || '')
 
   function handleFilter(e: React.ChangeEvent<HTMLInputElement>) {
     setFilter(e.target.value)

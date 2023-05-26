@@ -1,7 +1,9 @@
+/* eslint-disable react/no-unescaped-entities */
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import useManagerPools from '@/hooks/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
@@ -10,18 +12,18 @@ import {
   setBackStepNumber
 } from '@/store/reducers/poolCreationSlice'
 
-import substr from '../../../utils/substr'
+import substr from '@/utils/substr'
 
-import HeaderButtons from '../../../components/Header/HeaderButtons'
-import ModalChooseNetwork from '../../../components/Modals/ModalChooseNetwork'
-import Button from '../../../components/Button'
+import HeaderButtons from '@/components/Header/HeaderButtons'
+import ModalChooseNetwork from '@/components/Modals/ModalChooseNetwork'
+import Button from '@/components/Button'
 import SideBarMenu from './SideBarMenu'
 import CreatePool from '../CreatePool'
 import SideBarLink from './SideBarLink'
 
-import userIcon from '../../../../public/assets/icons/user.svg'
-import arrow from '../../../../public/assets/utilities/arrow-right-bold.svg'
-import plusIcon from '../../../../public/assets/utilities/plus.svg'
+import userIcon from '@assets/icons/user.svg'
+import arrow from '@assets/utilities/arrow-right-bold.svg'
+import plusIcon from '@assets/utilities/plus.svg'
 import {
   overview,
   profile,
@@ -62,7 +64,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
   const [isChooseNetwork, setIsChooseNetwork] = React.useState(false)
   const [isCreatePool, setIsCreatePool] = React.useState(false)
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
+
   const { nickName, image } = useAppSelector(state => state.user)
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
   const poolCreattionChainId = useAppSelector(
@@ -74,7 +77,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
   const dispatch = useAppDispatch()
 
-  const { managerPools } = useManagerPools(userWalletAddress)
+  const { managerPools } = useManagerPools(wallet?.accounts[0].address || '')
 
   function handleCreatePool() {
     if (poolCreattionChainId === 0 && stepNumber > 0) {
@@ -304,8 +307,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
           </S.ImageWrapper>
         </Link>
         <S.UserInfoContainer isOpen={isOpen}>
-          {userWalletAddress.length > 0 ? (
-            <Link href={`/profile/${userWalletAddress}`}>
+          {wallet?.provider ? (
+            <Link href={`/profile/${wallet.accounts[0].address}`}>
               <S.UserHeader>
                 <S.UserImage>
                   <img
@@ -317,7 +320,9 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
                 <S.UserNameWrapper>
                   <S.UserName isOpen={isOpen}>
-                    {nickName.length > 0 ? nickName : substr(userWalletAddress)}
+                    {nickName.length > 0
+                      ? nickName
+                      : substr(wallet.accounts[0].address)}
                   </S.UserName>
 
                   <S.UserHeaderTitle isOpen={isOpen}>
@@ -338,7 +343,9 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
               <S.UserNameWrapper>
                 <S.UserName isOpen={isOpen}>
-                  {nickName.length > 0 ? nickName : substr(userWalletAddress)}
+                  {nickName.length > 0
+                    ? nickName
+                    : substr(wallet?.accounts[0].address || '')}
                 </S.UserName>
 
                 <S.UserHeaderTitle isOpen={isOpen}>Dashboard</S.UserHeaderTitle>
@@ -353,9 +360,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
       <S.Line isOpen={isOpen} />
 
       <S.SideBarBody>
-        {userWalletAddress.length === 42 &&
-        managerPools &&
-        managerPools.pools.length > 0 ? (
+        {wallet?.provider && managerPools && managerPools.pools.length > 0 ? (
           <>
             <SideBarLink
               name="Overview"
@@ -401,7 +406,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
         )}
         <S.SideBarContainer>
           <S.ButtonWrapper isOpen={isOpen}>
-            {userWalletAddress.length === 42 &&
+            {wallet?.provider &&
               managerPools &&
               managerPools.pools.length > 0 && (
                 <Button

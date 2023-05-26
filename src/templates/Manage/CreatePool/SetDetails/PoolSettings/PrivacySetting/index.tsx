@@ -1,7 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
 import Tippy from '@tippyjs/react'
-import { isAddress } from 'web3-utils'
+import { isAddress } from 'ethers'
+
+import substr from '@/utils/substr'
 
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
@@ -9,11 +11,9 @@ import {
   removePrivateAddress
 } from '@/store/reducers/poolCreationSlice'
 
-import substr from '@/utils/substr'
+import InputRadio from '@/components/Inputs/InputRadio'
 
-import InputRadio from '../../../../../../components/Inputs/InputRadio'
-
-import closeIcon from '../../../../../../../public/assets/utilities/close-icon.svg'
+import closeIcon from '@assets/utilities/close-icon.svg'
 
 import * as S from './styles'
 

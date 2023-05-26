@@ -7,7 +7,7 @@ import { useAppSelector } from '../../store/hooks'
 
 import Nav from './Nav'
 import ModalAlert from '../Modals/ModalAlert'
-import ModalLogOut from '../Modals/ModalLogOut'
+// import ModalLogOut from '../Modals/ModalLogOut'
 import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalInstitucionalLinksMobile from '../Modals/ModalInstitucionalLinksMobile'
 import ModalChooseNetwork from '../Modals/ModalChooseNetwork'
@@ -23,7 +23,7 @@ export type MenuProps = {
 }
 
 const Header = () => {
-  const [isModalLogout, setIsModalLogout] = React.useState<boolean>(false)
+  // const [isModalLogout, setIsModalLogout] = React.useState<boolean>(false)
   const [isModalSocialMedia, setIsModalSocialMedia] =
     React.useState<boolean>(false)
   const [isShowMenu, setIsShowMenu] = React.useState(false)
@@ -31,7 +31,7 @@ const Header = () => {
   const [isChooseNetwork, setIsChooseNetwork] = React.useState(false)
 
   const modalWalletActive = useAppSelector(state => state.modalWalletActive)
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
 
   const router = useRouter()
@@ -107,11 +107,13 @@ const Header = () => {
 
       {modalWalletActive && <ModalWalletConnect />}
 
-      <ModalLogOut
-        modalOpen={isModalLogout}
-        setModalOpen={setIsModalLogout}
-        userWalletAddress={userWalletAddress}
-      />
+      {
+        // <ModalLogOut
+        //   modalOpen={isModalLogout}
+        //   setModalOpen={setIsModalLogout}
+        //   userWalletAddress={userWalletAddress}
+        // />
+      }
 
       {isError && <ModalAlert />}
 
