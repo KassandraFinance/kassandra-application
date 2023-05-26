@@ -137,7 +137,10 @@ const Pool = () => {
     const formatTokensSwapProvider = tokensSwapProvider.map(token => ({
       address: token.address,
       decimals: token.decimals,
-      logoURI: token.img,
+      logoURI:
+        token.img === 'https://cdn.paraswap.io/token/token.png'
+          ? ''
+          : token.img,
       name: token.symbol,
       symbol: token.symbol
     }))
