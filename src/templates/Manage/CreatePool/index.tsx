@@ -13,7 +13,8 @@ import {
   setClear
 } from '@/store/reducers/poolCreationSlice'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
-import { ERC20 } from '@/hooks/useERC20Contract'
+// import { ERC20 } from '@/hooks/useERC20Contract'
+import { ERC20 } from '@/hooks/useERC20'
 import waitTransaction, { MetamaskError } from '@/utils/txWait'
 
 import KassandraManagedControllerFactoryAbi from '@/constants/abi/KassandraManagedControllerFactory.json'
@@ -134,7 +135,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     for (const token of tokens) {
       const { allowance } = ERC20(
         token.address,
-        new Web3(networks[poolData.networkId ?? 137].rpc)
+        networks[poolData.networkId ?? 137].rpc
       )
       const amountApproved = await allowance(
         networks[poolData.networkId ?? 137].factory,

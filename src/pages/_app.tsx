@@ -40,9 +40,9 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const pathClearHashtag = pathClearQuestionMark[0].split('#')
 
   return (
-    <ReduxProvider>
-      <MatomoProvider value={instance}>
-        <Web3OnboardProvider web3Onboard={web3Onboard}>
+    <Web3OnboardProvider web3Onboard={web3Onboard}>
+      <ReduxProvider>
+        <MatomoProvider value={instance}>
           <ThemeProvider theme={theme}>
             <Head>
               <title>Kassandra</title>
@@ -85,9 +85,9 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               <Footer />
             )}
           </ThemeProvider>
-        </Web3OnboardProvider>
-      </MatomoProvider>
-    </ReduxProvider>
+        </MatomoProvider>
+      </ReduxProvider>
+    </Web3OnboardProvider>
   )
 }
 
