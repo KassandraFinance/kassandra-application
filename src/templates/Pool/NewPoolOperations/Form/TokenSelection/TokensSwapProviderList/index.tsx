@@ -4,7 +4,7 @@ import { FixedSizeList as List, ListOnScrollProps } from 'react-window'
 import {
   IListbalanceTokenprops,
   IUserTokenProps,
-  ITokenList1InchProps
+  ITokenListSwapProviderProps
 } from '..'
 
 import { useAppDispatch, useAppSelector } from '../../../../../../store/hooks'
@@ -15,10 +15,11 @@ import * as S from './styles'
 
 interface IToken1inchListProps {
   filteredToken: IUserTokenProps[]
-  searchToken: string
   listBalanceToken: IListbalanceTokenprops
-  tokenPinList: ITokenList1InchProps[]
-  setTokenPinList: React.Dispatch<React.SetStateAction<ITokenList1InchProps[]>>
+  tokenPinList: ITokenListSwapProviderProps[]
+  setTokenPinList: React.Dispatch<
+    React.SetStateAction<ITokenListSwapProviderProps[]>
+  >
 }
 
 export type ITokenPinprops = {
@@ -30,9 +31,8 @@ interface ICurrencyRowProps {
   style: React.CSSProperties
 }
 
-const Token1inchList = ({
+const TokensSwapProviderList = ({
   filteredToken,
-  searchToken,
   listBalanceToken,
   tokenPinList,
   setTokenPinList
@@ -41,7 +41,7 @@ const Token1inchList = ({
   const [isShowShadow, setisShowShadow] = React.useState(true)
 
   const dispatch = useAppDispatch()
-  const { pool, userWalletAddress } = useAppSelector(state => state)
+  const { pool } = useAppSelector(state => state)
 
   const TokenListContainerRef = React.useRef<HTMLDivElement>(null)
 
@@ -68,7 +68,8 @@ const Token1inchList = ({
     const hasStorage = localStorage.getItem(`tokenSelection-${pool.chain_id}`)
     const tokenPinfiltered = hasStorage && JSON.parse(hasStorage)
     const checkTokenPin = tokenPinfiltered?.some(
-      (tokenPin: ITokenList1InchProps) => tokenPin.address === token.address
+      (tokenPin: ITokenListSwapProviderProps) =>
+        tokenPin.address === token.address
     )
 
     if (checkTokenPin) {
@@ -112,7 +113,6 @@ const Token1inchList = ({
               width={24}
               height={24}
               onError={event => {
-                // eslint-disable-next-line prettier/prettier
                 const target = event.target as HTMLImageElement
                 target.onerror = null
                 target.src = `/assets/icons/coming-soon.svg`
@@ -169,7 +169,7 @@ const Token1inchList = ({
         </S.Token>
       )
     })
-  }, [searchToken, listBalanceToken, tokenPinList, userWalletAddress])
+  }, [tokenPinList, filteredToken])
 
   React.useEffect(() => {
     function watchWidth() {
@@ -214,4 +214,4 @@ const Token1inchList = ({
   )
 }
 
-export default Token1inchList
+export default TokensSwapProviderList

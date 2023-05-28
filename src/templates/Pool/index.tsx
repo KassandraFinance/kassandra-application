@@ -12,11 +12,11 @@ import { BNtoDecimal } from '../../utils/numerals'
 import substr from '@/utils/substr'
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
-import { setTokenList1Inch } from '../../store/reducers/tokenList1Inch'
+import { setTokensSwapProvider } from '../../store/reducers/tokenListSwapProvider'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
-import { BACKEND_KASSANDRA, URL_1INCH } from '../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA, URL_PARASWAP } from '../../constants/tokenAddresses'
 
 import { GET_INFO_POOL } from './graphql'
 
@@ -65,6 +65,14 @@ export interface IPriceAndChangeTokens {
   }
 }
 
+type ResTokenSwapProvider = {
+  address: string
+  decimals: number
+  img: string
+  network: number
+  symbol: string
+}
+
 const Pool = () => {
   const [profileName, setProfileName] = React.useState(null)
   const [openModal, setOpenModal] = React.useState(false)
@@ -99,43 +107,51 @@ const Pool = () => {
     }
   }
 
-  async function getTokenList1Inch() {
-    const res = await fetch(`${URL_1INCH}${pool.chain_id}/tokens`)
-    const json = await res.json()
-    const listToken1Linch = json.tokens
-    const listTokenPool = {}
-    const listTokensWithinPool = [...pool.underlying_assets].sort(
+  async function getTokensForOperations() {
+    const resJson = await fetch(`${URL_PARASWAP}/tokens/${pool.chain_id}`)
+    const response = await resJson.json()
+    const tokensSwapProvider = response.tokens as ResTokenSwapProvider[]
+    const tokenAddressesSwapProvider = tokensSwapProvider.map(
+      token => token.address
+    )
+    const poolAssets = [...pool.underlying_assets].sort(
       (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
     )
 
-    listTokensWithinPool.forEach(item => {
-      if (item.token.is_wrap_token) {
-        Object.assign(listTokenPool, {
-          [item.token.wraps.id.toLowerCase()]: {
-            address: item.token.wraps.id.toLowerCase(),
-            decimals: item.token.wraps.decimals,
-            logoURI: item.token.wraps.logo,
-            name: item.token.wraps.name,
-            symbol: item.token.wraps.symbol
-          }
-        })
-        return
+    const formatPoolTokens = poolAssets.map(asset => {
+      const address = asset.token.wraps?.id ?? asset.token.id
+      const decimals = asset.token.wraps?.decimals ?? asset.token.decimals
+      const logoURI = asset.token.wraps?.logo ?? asset.token.logo ?? ''
+      const name = asset.token.wraps?.name ?? asset.token.name
+      const symbol = asset.token.wraps?.symbol ?? asset.token.symbol
+
+      return {
+        address: address.toLowerCase(),
+        decimals,
+        logoURI,
+        name,
+        symbol
       }
-      Object.assign(listTokenPool, {
-        [item.token.id.toLowerCase()]: {
-          address: item.token.id.toLowerCase(),
-          decimals: item.token.decimals,
-          logoURI: item.token.logo,
-          name: item.token.name,
-          symbol: item.token.symbol
-        }
-      })
-      return
     })
 
-    const listToken = { ...listTokenPool, ...listToken1Linch }
+    const formatTokensSwapProvider = tokensSwapProvider.map(token => ({
+      address: token.address,
+      decimals: token.decimals,
+      logoURI:
+        token.img === 'https://cdn.paraswap.io/token/token.png'
+          ? ''
+          : token.img,
+      name: token.symbol,
+      symbol: token.symbol
+    }))
 
-    dispatch(setTokenList1Inch(Object.values(listToken)))
+    for (const token of formatPoolTokens) {
+      if (!tokenAddressesSwapProvider.includes(token.address)) {
+        formatTokensSwapProvider.push(token)
+      }
+    }
+
+    dispatch(setTokensSwapProvider(formatTokensSwapProvider))
   }
 
   React.useEffect(() => {
@@ -146,8 +162,12 @@ const Pool = () => {
 
   React.useEffect(() => {
     if (pool) {
-      getTokenList1Inch()
-      trackProductPageView(pool.id, pool.symbol, pool.name)
+      try {
+        getTokensForOperations()
+        trackProductPageView(pool.id, pool.symbol, pool.name)
+      } catch (error) {
+        console.log(error)
+      }
     }
   }, [pool])
 

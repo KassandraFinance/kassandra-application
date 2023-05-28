@@ -4,20 +4,22 @@ import { useAppDispatch, useAppSelector } from '../../../../../../store/hooks'
 import { setTokenSelect } from '../../../../../../store/reducers/tokenSelect'
 import { setTokenSelectionActive } from '../../../../../../store/reducers/tokenSelectionActive'
 
-import { ITokenList1InchProps } from '..'
+import { ITokenListSwapProviderProps } from '..'
 
 import * as S from './styles'
 
 interface ITokenPinProps {
-  tokenPinList: ITokenList1InchProps[]
-  setTokenPinList: React.Dispatch<React.SetStateAction<ITokenList1InchProps[]>>
-  tokenList1Inch: ITokenList1InchProps[]
+  tokenPinList: ITokenListSwapProviderProps[]
+  setTokenPinList: React.Dispatch<
+    React.SetStateAction<ITokenListSwapProviderProps[]>
+  >
+  tokenListSwapProvider: ITokenListSwapProviderProps[]
 }
 
 const TokenPin = ({
   tokenPinList,
   setTokenPinList,
-  tokenList1Inch
+  tokenListSwapProvider
 }: ITokenPinProps) => {
   const [activeDeletePin, setactiveDeletePin] = React.useState<boolean>(false)
 
@@ -39,13 +41,13 @@ const TokenPin = ({
     if (!process.browser) return
 
     const hasStorage = localStorage.getItem(`tokenSelection-${pool.chain_id}`)
-    const hasStorages: ITokenList1InchProps[] =
+    const hasStorages: ITokenListSwapProviderProps[] =
       hasStorage && JSON.parse(hasStorage)
 
     if (hasStorages?.length >= 0) {
       setTokenPinList(hasStorages)
     } else {
-      const tokenSearch = tokenList1Inch.slice(0, 6)
+      const tokenSearch = tokenListSwapProvider.slice(0, 6)
       localStorage.setItem(
         `tokenSelection-${pool.chain_id}`,
         JSON.stringify(tokenSearch)
@@ -79,7 +81,6 @@ const TokenPin = ({
                 width={16}
                 height={16}
                 onError={event => {
-                  // eslint-disable-next-line prettier/prettier
                   const target = event.target as HTMLImageElement
                   target.onerror = null
                   target.src = `/assets/icons/coming-soon.svg`
