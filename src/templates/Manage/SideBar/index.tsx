@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import useManagerPools from '@/hooks/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
@@ -77,7 +78,10 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
   const dispatch = useAppDispatch()
 
-  const { managerPools } = useManagerPools(wallet?.accounts[0].address || '')
+  const { managerPools } = useManagerPools(
+    wallet?.provider ? getAddress(wallet?.accounts[0].address) : ''
+  )
+  console.log(managerPools)
 
   function handleCreatePool() {
     if (poolCreattionChainId === 0 && stepNumber > 0) {

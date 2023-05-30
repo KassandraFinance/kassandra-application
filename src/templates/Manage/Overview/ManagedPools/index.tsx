@@ -1,5 +1,6 @@
 import React from 'react'
 import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import useManagerPools, { GetManagerPoolsType } from '@/hooks/useManagerPools'
 
@@ -13,7 +14,9 @@ const ManagedPools = () => {
 
   const [{ wallet }] = useConnectWallet()
 
-  const { managerPools } = useManagerPools(wallet?.accounts[0].address || '')
+  const { managerPools } = useManagerPools(
+    wallet?.provider ? getAddress(wallet?.accounts[0].address) : ''
+  )
 
   function handleFilter(e: React.ChangeEvent<HTMLInputElement>) {
     setFilter(e.target.value)

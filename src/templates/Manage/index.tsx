@@ -1,6 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import useManagerPools from '@/hooks/useManagerPools'
 import { useAppSelector } from '@/store/hooks'
@@ -28,7 +29,9 @@ const Manage = () => {
 
   const { image } = useAppSelector(state => state.user)
 
-  const { managerPools } = useManagerPools(wallet?.accounts[0]?.address || '')
+  const { managerPools } = useManagerPools(
+    wallet?.provider ? getAddress(wallet?.accounts[0]?.address) : ''
+  )
 
   function handleDashBoardButton() {
     setIsOpen(!isOpen)

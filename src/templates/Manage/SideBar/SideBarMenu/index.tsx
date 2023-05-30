@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Blockies from 'react-blockies'
 import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import useManagerPools from '@/hooks/useManagerPools'
 
@@ -31,7 +32,9 @@ const SideBarMenu = ({
   const router = useRouter()
   const poolQuery = router.query.pool
 
-  const { managerPools } = useManagerPools(wallet?.accounts[0].address || '')
+  const { managerPools } = useManagerPools(
+    wallet?.provider ? getAddress(wallet?.accounts[0].address) : ''
+  )
 
   function handleOpenMenu() {
     setIsOpen(prev => !prev)
