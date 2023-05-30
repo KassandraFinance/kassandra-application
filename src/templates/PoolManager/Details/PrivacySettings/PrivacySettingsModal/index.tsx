@@ -1,22 +1,16 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { AbiItem } from 'web3-utils'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
-import web3 from '@/utils/web3'
-import waitTransaction, { MetamaskError } from '@/utils/txWait'
 import { networks } from '@/constants/tokenAddresses'
-import changeChain from '@/utils/changeChain'
 
-import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { setModalAlertText } from '@/store/reducers/modalAlertText'
 import usePoolInfo from '@/hooks/usePoolInfo'
-
-import KassandraControlerAbi from '@/constants/abi/KassandraController.json'
+import useManagePool from '@/hooks/useManagePoolEthers'
 
 import Button from '@/components/Button'
 import Modal from '@/components/Modals/Modal'
 import Overlay from '@/components/Overlay'
-import { ToastSuccess } from '@/components/Toastify/toast'
 
 import * as S from './styles'
 
@@ -27,74 +21,39 @@ interface IPrivacySettingsModal {
 const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
   const [isTransaction, setIsTransaction] = React.useState(false)
 
-  const dispatch = useAppDispatch()
   const router = useRouter()
-
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const chainId = useAppSelector(state => state.chainId)
-
-  async function callBack(error: MetamaskError, txHash: string) {
-    if (error) {
-      if (error.code === 4001) {
-        dispatch(setModalAlertText({ errorText: `Approval cancelled` }))
-
-        setIsTransaction(false)
-
-        return false
-      }
-
-      dispatch(
-        setModalAlertText({
-          errorText: error.message
-        })
-      )
-
-      setIsTransaction(false)
-
-      return false
-    }
-
-    const txReceipt = await waitTransaction(txHash)
-
-    if (txReceipt.status) {
-      ToastSuccess('Pool is now public!')
-      onClose()
-
-      return true
-    } else {
-      dispatch(
-        setModalAlertText({
-          errorText: 'Transaction reverted'
-        })
-      )
-
-      setIsTransaction(false)
-
-      return false
-    }
-  }
-
-  async function handleMakePublic(poolControler: string) {
-    setIsTransaction(true)
-    const controller = new web3.eth.Contract(
-      KassandraControlerAbi as unknown as AbiItem,
-      poolControler
-    )
-
-    await controller.methods.setPublicPool().send(
-      {
-        from: userWalletAddress,
-        maxPriorityFeePerGas: 30e9
-      },
-      callBack
-    )
-  }
-
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
+  const [{ wallet }] = useConnectWallet()
+  const [{ connectedChain }, setChain] = useSetChain()
+  const { poolInfo } = usePoolInfo(
+    wallet ? getAddress(wallet.accounts[0].address) : '',
+    poolId
+  )
+  const { setPublicPool } = useManagePool(poolInfo?.controller ?? '')
+
+  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+
+  async function handleMakePublic() {
+    setIsTransaction(true)
+
+    async function handleSuccess() {
+      setIsTransaction(false)
+      onClose()
+    }
+
+    function handleFail() {
+      setIsTransaction(false)
+    }
+
+    const text = {
+      success: 'Pool is now public!'
+    }
+
+    await setPublicPool(handleSuccess, handleFail, text)
+  }
 
   return (
     <S.PrivacySettingsModal>
@@ -109,7 +68,7 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
           </S.Text>
 
           <S.WarningText>
-            You can't undo this action. Are you sure you want to proceed?
+            You can&apos;t undo this action. Are you sure you want to proceed?
           </S.WarningText>
 
           <S.ButtonContainer>
@@ -120,7 +79,7 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
                     text="Make it Public"
                     backgroundSecondary
                     fullWidth
-                    onClick={() => handleMakePublic(poolInfo.controller)}
+                    onClick={() => handleMakePublic()}
                   />
                 ) : (
                   <Button
@@ -141,12 +100,8 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
                     fullWidth
                     type="button"
                     onClick={() =>
-                      changeChain({
-                        chainId: networks[poolInfo.chain_id].chainId,
-                        chainName: networks[poolInfo.chain_id].chainName,
-                        rpcUrls: [networks[poolInfo.chain_id].rpc],
-                        nativeCurrency:
-                          networks[poolInfo.chain_id].nativeCurrency
+                      setChain({
+                        chainId: `0x${poolInfo.chain_id.toString(16)}`
                       })
                     }
                   />

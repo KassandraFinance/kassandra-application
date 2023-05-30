@@ -1,25 +1,20 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { isAddress, AbiItem } from 'web3-utils'
+import { getAddress, isAddress } from 'ethers'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
-import web3 from '@/utils/web3'
 import substr from '@/utils/substr'
-import waitTransaction, { MetamaskError } from '@/utils/txWait'
-import changeChain from '@/utils/changeChain'
 import { networks } from '@/constants/tokenAddresses'
 
-import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { setModalAlertText } from '@/store/reducers/modalAlertText'
-import usePoolInfo from '@/hooks/usePoolInfo'
+import useManagePool from '@/hooks/useManagePoolEthers'
 
-import KassandraControlerAbi from '@/constants/abi/KassandraController.json'
+import usePoolInfo from '@/hooks/usePoolInfo'
 
 import Button from '@/components/Button'
 import InputText from '@/components/Inputs/InputText'
 import Modal from '@/components/Modals/Modal'
 import Overlay from '@/components/Overlay'
-import { ToastSuccess } from '@/components/Toastify/toast'
 
 import closeIcon from '@assets/utilities/close-icon.svg'
 
@@ -28,11 +23,13 @@ import * as S from './styles'
 interface IAddInvestorModalProps {
   onClose: () => void
   setAddressesOfPrivateInvestors: () => Promise<void>
+  privateInvestorsAlreadyAdded: string[]
 }
 
 const AddInvestorModal = ({
   onClose,
-  setAddressesOfPrivateInvestors
+  setAddressesOfPrivateInvestors,
+  privateInvestorsAlreadyAdded
 }: IAddInvestorModalProps) => {
   const [value, setValue] = React.useState('')
   const [investorsList, setInvestorsList] = React.useState<string[]>([])
@@ -40,15 +37,19 @@ const AddInvestorModal = ({
 
   const buttonRef = React.useRef<HTMLButtonElement>(null)
 
-  const dispatch = useAppDispatch()
   const router = useRouter()
-
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const chainId = useAppSelector(state => state.chainId)
-
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
+
+  const [{ wallet }] = useConnectWallet()
+  const [{ connectedChain }, setChain] = useSetChain()
+  const { poolInfo } = usePoolInfo(
+    wallet ? getAddress(wallet.accounts[0].address) : '',
+    poolId
+  )
+  const { addAllowedAddresses } = useManagePool(poolInfo?.controller ?? '')
+  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
 
   function handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
     setValue(event.target.value)
@@ -63,67 +64,26 @@ const AddInvestorModal = ({
     setInvestorsList(prev => prev.filter(item => item !== address))
   }
 
-  async function callBack(error: MetamaskError, txHash: string) {
-    if (error) {
-      if (error.code === 4001) {
-        dispatch(setModalAlertText({ errorText: `Approval cancelled` }))
-
-        setIsTransaction(false)
-        return false
-      }
-
-      dispatch(
-        setModalAlertText({
-          errorText: error.message
-        })
-      )
-
-      setIsTransaction(false)
-      return false
-    }
-
-    const txReceipt = await waitTransaction(txHash)
-
-    if (txReceipt.status) {
-      ToastSuccess('Investors add!')
-      setIsTransaction(false)
-      setInvestorsList([])
-
-      return true
-    } else {
-      dispatch(
-        setModalAlertText({
-          errorText: 'Transaction reverted'
-        })
-      )
-
-      setIsTransaction(false)
-
-      return false
-    }
-  }
-
-  async function handlePrivateInvestors(
-    poolControler: string,
-    investorsList: string[]
-  ) {
+  async function handlePrivateInvestors(investorsList: string[]) {
     setIsTransaction(true)
-    const controller = new web3.eth.Contract(
-      KassandraControlerAbi as unknown as AbiItem,
-      poolControler
-    )
 
-    await controller.methods.addAllowedAddresses(investorsList).send(
-      {
-        from: userWalletAddress,
-        maxPriorityFeePerGas: 30e9
-      },
-      callBack
-    )
-    await setAddressesOfPrivateInvestors()
+    async function handleSuccess() {
+      setInvestorsList([])
+      setIsTransaction(false)
+      onClose()
+      await setAddressesOfPrivateInvestors()
+    }
+
+    function handleFail() {
+      setIsTransaction(false)
+    }
+
+    const text = {
+      success: 'Investors add!'
+    }
+
+    await addAllowedAddresses(investorsList, handleSuccess, handleFail, text)
   }
-
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
   React.useEffect(() => {
     if (isAddress(value) && buttonRef.current !== null) {
@@ -150,7 +110,8 @@ const AddInvestorModal = ({
           />
           {isAddress(value) && (
             <S.HasAddress>
-              {investorsList?.some(wallet => wallet === value) ? (
+              {investorsList?.some(wallet => wallet === value) ||
+              privateInvestorsAlreadyAdded.some(wallet => wallet === value) ? (
                 <p>Wallet address already exists.</p>
               ) : (
                 <button ref={buttonRef} onClick={handleInvestorsList}>
@@ -182,9 +143,7 @@ const AddInvestorModal = ({
                   backgroundSecondary
                   fullWidth
                   disabledNoEvent={investorsList.length < 1}
-                  onClick={() =>
-                    handlePrivateInvestors(poolInfo.controller, investorsList)
-                  }
+                  onClick={() => handlePrivateInvestors(investorsList)}
                 />
               ) : (
                 <Button
@@ -205,12 +164,7 @@ const AddInvestorModal = ({
                   backgroundPrimary
                   fullWidth
                   onClick={() =>
-                    changeChain({
-                      chainId: networks[poolInfo.chain_id].chainId,
-                      chainName: networks[poolInfo.chain_id].chainName,
-                      rpcUrls: [networks[poolInfo.chain_id].rpc],
-                      nativeCurrency: networks[poolInfo.chain_id].nativeCurrency
-                    })
+                    setChain({ chainId: `0x${poolInfo.chain_id.toString(16)}` })
                   }
                 />
               )}

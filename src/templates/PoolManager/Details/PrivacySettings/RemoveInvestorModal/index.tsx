@@ -1,17 +1,16 @@
 import React from 'react'
+import Big from 'big.js'
+import useSWR from 'swr'
+import { getAddress } from 'ethers'
 import { useRouter } from 'next/router'
-import { AbiItem } from 'web3-utils'
+import { request } from 'graphql-request'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
-import web3 from '@/utils/web3'
-import waitTransaction, { MetamaskError } from '@/utils/txWait'
-import changeChain from '@/utils/changeChain'
-import { networks } from '@/constants/tokenAddresses'
+import { GET_INVESTORS_AMOUNT } from './graphql'
+import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 
-import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { setModalAlertText } from '@/store/reducers/modalAlertText'
 import usePoolInfo from '@/hooks/usePoolInfo'
-
-import KassandraControlerAbi from '@/constants/abi/KassandraController.json'
+import useManagePool from '@/hooks/useManagePoolEthers'
 
 import Button from '@/components/Button'
 import InputSearch from '@/components/Inputs/InputSearch'
@@ -19,7 +18,6 @@ import Modal from '@/components/Modals/Modal'
 import Overlay from '@/components/Overlay'
 import ImageProfile from '@/components/Governance/ImageProfile'
 import Checkbox from '@/components/Inputs/Checkbox'
-import { ToastSuccess } from '@/components/Toastify/toast'
 
 import * as S from './styles'
 
@@ -38,15 +36,28 @@ const RemoveInvestorModal = ({
   const [investorsList, setInvestorsList] = React.useState<string[]>([])
   const [isTransaction, setIsTransaction] = React.useState(false)
 
-  const dispatch = useAppDispatch()
   const router = useRouter()
-
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const chainId = useAppSelector(state => state.chainId)
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
+
+  const { data } = useSWR([GET_INVESTORS_AMOUNT], query =>
+    request(BACKEND_KASSANDRA, query, {
+      id: poolId,
+      investorsAddresses: addressesList
+    })
+  )
+
+  const [{ wallet }] = useConnectWallet()
+  const [{ connectedChain }, setChain] = useSetChain()
+  const { poolInfo } = usePoolInfo(
+    wallet ? getAddress(wallet.accounts[0].address) : '',
+    poolId
+  )
+  const { removeAllowedAddresses } = useManagePool(poolInfo?.controller ?? '')
+
+  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchValue(e.target.value)
@@ -60,68 +71,26 @@ const RemoveInvestorModal = ({
     }
   }
 
-  async function callBack(error: MetamaskError, txHash: string) {
-    if (error) {
-      if (error.code === 4001) {
-        dispatch(setModalAlertText({ errorText: `Approval cancelled` }))
+  async function handleRemoveInvestors(investorsList: string[]) {
+    setIsTransaction(true)
 
-        setIsTransaction(false)
-        return false
-      }
-
-      dispatch(
-        setModalAlertText({
-          errorText: error.message
-        })
-      )
-
-      setIsTransaction(false)
-      return false
-    }
-
-    const txReceipt = await waitTransaction(txHash)
-
-    if (txReceipt.status) {
-      ToastSuccess('Investors removed!')
+    async function handleSuccess() {
       setIsTransaction(false)
       setInvestorsList([])
-
-      return true
-    } else {
-      dispatch(
-        setModalAlertText({
-          errorText: 'Transaction reverted'
-        })
-      )
-
-      setIsTransaction(false)
-
-      return false
+      onClose()
+      await setAddressesOfPrivateInvestors()
     }
+
+    function handleFail() {
+      setIsTransaction(false)
+    }
+
+    const text = {
+      success: 'Investors removed!'
+    }
+
+    await removeAllowedAddresses(investorsList, handleSuccess, handleFail, text)
   }
-
-  async function handleRemoveInvestors(
-    poolControler: string,
-    investorsList: string[]
-  ) {
-    setIsTransaction(true)
-    const controller = new web3.eth.Contract(
-      KassandraControlerAbi as unknown as AbiItem,
-      poolControler
-    )
-
-    await controller.methods.removeAllowedAddresses(investorsList).send(
-      {
-        from: userWalletAddress,
-        maxPriorityFeePerGas: 30e9
-      },
-      callBack
-    )
-
-    await setAddressesOfPrivateInvestors()
-  }
-
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
 
   return (
     <S.RemoveInvestorModal>
@@ -147,26 +116,34 @@ const RemoveInvestorModal = ({
               <S.TableTitle>Deposits</S.TableTitle>
             </S.TableHeader>
 
-            {addressesList.map(address => (
-              <S.InvestorContainer key={address}>
-                <Checkbox
-                  name={address}
-                  label={address}
-                  showLabel={false}
-                  checked={investorsList.includes(address)}
-                  onChange={handleCheckbox}
-                />
+            {addressesList.map(address => {
+              const value = data
+                ? data.investors.find(
+                    (wallet: any) => wallet?.wallet === address
+                  )
+                : 0
 
-                <ImageProfile
-                  address={address}
-                  diameter={20}
-                  hasAddress
-                  isLink={false}
-                />
+              return (
+                <S.InvestorContainer key={address}>
+                  <Checkbox
+                    name={address}
+                    label={address}
+                    showLabel={false}
+                    checked={investorsList.includes(address)}
+                    onChange={handleCheckbox}
+                  />
 
-                <S.Value>$ 3,4567</S.Value>
-              </S.InvestorContainer>
-            ))}
+                  <ImageProfile
+                    address={address}
+                    diameter={20}
+                    hasAddress
+                    isLink={false}
+                  />
+
+                  <S.Value>$ {Big(value?.amount ?? 0).toFixed(2)}</S.Value>
+                </S.InvestorContainer>
+              )
+            })}
           </S.Investors>
 
           {poolInfo?.chain_id === chainId ? (
@@ -177,9 +154,7 @@ const RemoveInvestorModal = ({
                   backgroundSecondary
                   fullWidth
                   disabledNoEvent={investorsList.length < 1}
-                  onClick={() =>
-                    handleRemoveInvestors(poolInfo.controller, investorsList)
-                  }
+                  onClick={() => handleRemoveInvestors(investorsList)}
                 />
               ) : (
                 <Button
@@ -200,12 +175,7 @@ const RemoveInvestorModal = ({
                   fullWidth
                   type="button"
                   onClick={() =>
-                    changeChain({
-                      chainId: networks[poolInfo.chain_id].chainId,
-                      chainName: networks[poolInfo.chain_id].chainName,
-                      rpcUrls: [networks[poolInfo.chain_id].rpc],
-                      nativeCurrency: networks[poolInfo.chain_id].nativeCurrency
-                    })
+                    setChain({ chainId: `0x${poolInfo.chain_id.toString(16)}` })
                   }
                 />
               )}
