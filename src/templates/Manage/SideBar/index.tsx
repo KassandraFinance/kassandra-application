@@ -81,7 +81,6 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
   const { managerPools } = useManagerPools(
     wallet?.provider ? getAddress(wallet?.accounts[0].address) : ''
   )
-  console.log(managerPools)
 
   function handleCreatePool() {
     if (poolCreattionChainId === 0 && stepNumber > 0) {
