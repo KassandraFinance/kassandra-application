@@ -38,7 +38,8 @@ const useTransaction = () => {
       if (callbacks?.onSuccess) {
         await callbacks.onSuccess()
       }
-      return receipt.status
+
+      return receipt
     } else {
       // If status code 1 or null send transaction failed modal
       dispatch(
@@ -49,7 +50,8 @@ const useTransaction = () => {
       if (callbacks?.onFail) {
         await callbacks.onFail()
       }
-      return receipt?.status || 0
+
+      return receipt
     }
   }
 
