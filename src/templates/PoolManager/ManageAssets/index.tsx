@@ -4,6 +4,7 @@ import Big from 'big.js'
 import web3 from '../../../utils/web3'
 import { AbiItem } from 'web3-utils'
 import { useRouter } from 'next/router'
+import useManagePool from '@/hooks/useManagePoolEthers'
 
 import { ERC20 } from '../../../hooks/useERC20Contract'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
@@ -52,6 +53,8 @@ import {
 } from './ReviewAddAsset/TransactionSummary/styles'
 
 import * as S from './styles'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 Big.RM = 0
 
@@ -74,7 +77,9 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
   const dispatch = useAppDispatch()
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
+  const [{ connectedChain }, setChain] = useSetChain()
+  // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const token = useAppSelector(state => state.addAsset.token)
   const tokenLiquidity = useAppSelector(state => state.addAsset.liquidit)
 
@@ -92,7 +97,11 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     : router.query.pool ?? ''
 
   const { poolAssets } = usePoolAssets(poolId)
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
+  const { poolInfo } = usePoolInfo(
+    wallet ? getAddress(wallet.accounts[0].address) : '',
+    poolId
+  )
+  const managePool = useManagePool(poolInfo?.controller ?? '')
 
   const { data: priceData } = useCoingecko(
     networks[poolInfo?.chain_id ?? 137].coingecko,
@@ -287,10 +296,15 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     amountToAprove: string,
     poolSymbol?: string
   ) {
+    if (!wallet) return
+
     const transactionsList: TransactionsListType[] = []
 
     const { allowance } = ERC20(tokenId)
-    const amountApproved = await allowance(controller, userWalletAddress)
+    const amountApproved = await allowance(
+      controller,
+      wallet?.accounts[0].address
+    )
 
     if (Big(amountApproved).gte(amountToAprove)) {
       transactionsList.push({
@@ -340,6 +354,13 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       )
     })
 
+    // function handleSuccess() {
+    //   console.log('handleSuccess')
+    // }
+    // function handleFail() {
+    //   console.log('handleFail')
+    // }
+
     try {
       const currentDate = new Date().getTime()
       const threeMinutesInTimestamp = 180000
@@ -350,32 +371,38 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         currentDateAdded + oneHourInTimestamp * periodSelect
       ).getTime()
 
-      // eslint-disable-next-line prettier/prettier
-      const poolController = new web3.eth.Contract(
-        Kacupe as unknown as AbiItem,
-        poolInfo.controller
+      await managePool.rebalancePool(
+        Math.floor(currentDateAdded / 1000),
+        Math.floor(periodSelectedFormatted / 1000),
+        poolInfo.underlying_assets_addresses,
+        weightsArray
       )
-      await poolController.methods
-        .updateWeightsGradually(
-          Math.floor(currentDateAdded / 1000),
-          Math.floor(periodSelectedFormatted / 1000),
-          poolInfo.underlying_assets_addresses,
-          weightsArray
-        )
-        .send(
-          {
-            from: userWalletAddress,
-            maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
-          },
-          callBack
-        )
+      // eslint-disable-next-line prettier/prettier
+      // const poolController = new web3.eth.Contract(
+      //   Kacupe as unknown as AbiItem,
+      //   poolInfo.controller
+      // )
+      // await poolController.methods
+      //   .updateWeightsGradually(
+      //     Math.floor(currentDateAdded / 1000),
+      //     Math.floor(periodSelectedFormatted / 1000),
+      //     poolInfo.underlying_assets_addresses,
+      //     weightsArray
+      //   )
+      //   .send(
+      //     {
+      //       from: userWalletAddress,
+      //       maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
+      //     },
+      //     callBack
+      //   )
     } catch (error) {
       console.log(error)
     }
   }
 
   async function handleRemoveToken() {
-    if (!poolInfo) return
+    if (!poolInfo || !wallet) return
 
     setTransactionButtonStatus(TransactionStatus.WAITING)
 
@@ -422,28 +449,39 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       return
     }
 
-    try {
-      // eslint-disable-next-line prettier/prettier
-      const poolController = new web3.eth.Contract(
-        Kacupe as unknown as AbiItem,
-        poolInfo.controller
-      )
-      await poolController.methods
-        .removeToken(
-          tokenSelection.address,
-          userWalletAddress,
-          userWalletAddress
-        )
-        .send(
-          {
-            from: userWalletAddress,
-            maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
-          },
-          callBack
-        )
-    } catch (error) {
-      console.log(error)
-    }
+    // function handleSuccess() {
+    //   console.log('handleSuccess')
+    // }
+    // function handleFail() {
+    //   console.log('handleFail')
+    // }
+
+    await managePool.removeToken(
+      tokenSelection.address,
+      wallet?.accounts[0].address
+    )
+    // try {
+    //   // eslint-disable-next-line prettier/prettier
+    //   const poolController = new web3.eth.Contract(
+    //     Kacupe as unknown as AbiItem,
+    //     poolInfo.controller
+    //   )
+    //   await poolController.methods
+    //     .removeToken(
+    //       tokenSelection.address,
+    //       userWalletAddress,
+    //       userWalletAddress
+    //     )
+    //     .send(
+    //       {
+    //         from: userWalletAddress,
+    //         maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
+    //       },
+    //       callBack
+    //     )
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
 
   async function callBack(
@@ -611,16 +649,16 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     symbol: string
     normalizedAmount: string
   }) {
-    if (!poolInfo) return false
+    if (!poolInfo || !wallet) return false
     const { approve, allowance } = ERC20(token.address)
     const oldAllowance = await allowance(
       poolInfo?.controller,
-      userWalletAddress
+      wallet.accounts[0].address
     )
     await new Promise<boolean>(resolve => {
       approve(
         poolInfo?.controller,
-        userWalletAddress,
+        wallet.accounts[0].address,
         (error: MetamaskError, txHash: string) =>
           callBack(error, txHash, {
             allowance,
@@ -635,7 +673,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   }
 
   async function handleAddToken() {
-    if (!poolInfo) return
+    if (!poolInfo || !wallet) return
 
     const tokenAdd =
       chainId === 5 ? mockTokensReverse[token.id.toLowerCase()] : token.id
@@ -696,26 +734,32 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         .mul(Big(10).pow(token.decimals))
         .toFixed(0)
 
-      // eslint-disable-next-line prettier/prettier
-      const poolController = new web3.eth.Contract(
-        Kacupe as unknown as AbiItem,
-        poolInfo.controller
+      await managePool.addToken(
+        tokenAdd,
+        allocation,
+        tokenToAddBalance,
+        wallet.accounts[0].address
       )
-      const response = await poolController.methods
-        .addToken(
-          tokenAdd,
-          allocation,
-          tokenToAddBalance,
-          userWalletAddress,
-          userWalletAddress
-        )
-        .send(
-          {
-            from: userWalletAddress,
-            maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
-          },
-          callBack
-        )
+      // eslint-disable-next-line prettier/prettier
+      // const poolController = new web3.eth.Contract(
+      //   Kacupe as unknown as AbiItem,
+      //   poolInfo.controller
+      // )
+      // const response = await poolController.methods
+      //   .addToken(
+      //     tokenAdd,
+      //     allocation,
+      //     tokenToAddBalance,
+      //     userWalletAddress,
+      //     userWalletAddress
+      //   )
+      //   .send(
+      //     {
+      //       from: userWalletAddress,
+      //       maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
+      //     },
+      //     callBack
+      //   )
     } catch (error) {
       console.log('Error', error)
     }

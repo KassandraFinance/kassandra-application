@@ -1,6 +1,8 @@
 import React from 'react'
 import Big from 'big.js'
 import { useRouter } from 'next/router'
+import { getAddress } from 'ethers'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { useAppSelector } from '@/store/hooks'
 import usePoolInfo from '@/hooks/usePoolInfo'
@@ -14,7 +16,7 @@ import * as S from './styles'
 const TransactionSummaryCard = () => {
   const router = useRouter()
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
   const { tokenSelection, lpNeeded } = useAppSelector(
     state => state.removeAsset
   )
@@ -23,7 +25,10 @@ const TransactionSummaryCard = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
+  const { poolInfo } = usePoolInfo(
+    wallet ? getAddress(wallet.accounts[0].address) : '',
+    poolId
+  )
 
   return (
     <S.TransactionSummaryCard>
