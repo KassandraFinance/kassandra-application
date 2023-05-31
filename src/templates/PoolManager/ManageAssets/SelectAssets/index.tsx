@@ -5,6 +5,7 @@ import Web3 from 'web3'
 import { AbiItem, toChecksumAddress } from 'web3-utils'
 import request from 'graphql-request'
 import BigNumber from 'bn.js'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { ERC20 } from '../../../../hooks/useERC20Contract'
 import KassandraWhitelistAbi from '../../../../constants/abi/KassandraWhitelist.json'
@@ -48,7 +49,7 @@ const SelectAssets = () => {
 
   const router = useRouter()
 
-  const wallet = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
   const chainId = useAppSelector(state => state.chainId)
 
   const tokensListGoerli =
@@ -127,11 +128,13 @@ const SelectAssets = () => {
 
   React.useEffect(() => {
     async function getBalances(tokensList: string[]) {
+      if (!wallet) return
+
       type BalanceType = Record<string, BigNumber>
       let balanceArr: BalanceType = {}
       for (const token of tokensList) {
         const { balance } = ERC20(token)
-        const balanceValue = await balance(wallet)
+        const balanceValue = await balance(wallet.accounts[0].address)
         balanceArr = {
           ...balanceArr,
           [mockTokens[token] ?? token.toLowerCase()]: balanceValue
