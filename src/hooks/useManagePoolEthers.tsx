@@ -1,233 +1,516 @@
 import React from 'react'
 import { useConnectWallet } from '@web3-onboard/react'
-import { BrowserProvider, Contract, JsonRpcProvider } from 'ethers'
+import {
+  BrowserProvider,
+  Contract,
+  ContractTransactionReceipt,
+  ContractTransactionResponse,
+  ErrorCode,
+  JsonRpcProvider
+} from 'ethers'
+import { WalletState } from '@web3-onboard/core'
 
 import { networks } from '@/constants/tokenAddresses'
-
 import KassandraController from '@/constants/abi/KassandraController.json'
 
-import useTransaction from './useTransaction'
+import useTransaction, { CallbacksType, MessageType } from './useTransaction'
 
-type IMessageProps = {
-  pending?: string
-  error?: string
-  sucess?: string
+type ContractType = {
+  read: Contract
+  send: Contract
 }
 
-const useManagePool = (controllerAddress: string, chainId = 137) => {
-  // Get user wallet
+function managePoolFunctions(
+  controller: ContractType,
+  txNotification: (
+    tx: ContractTransactionResponse,
+    message?: MessageType | undefined,
+    callbacks?: CallbacksType | undefined
+  ) => Promise<ContractTransactionReceipt | null>,
+  transactionErrors: (
+    error: unknown,
+    onFail?: (() => void | Promise<void>) | undefined
+  ) => Promise<ErrorCode | undefined>
+) {
+  // Read functions
+  const getAumFeesToManagerAndKassandra = async (
+    userWalletAddress: string
+  ): Promise<{
+    feesToManager: string
+    feesToKassandra: string
+  }> => {
+    return await controller.read.withdrawCollectedManagementFees.staticCall({
+      from: userWalletAddress
+    })
+  }
+
+  // Write functions
+  const withdrawAumFees = async (onSuccess: () => void): Promise<void> => {
+    try {
+      const tx = await controller.send.withdrawCollectedManagementFees()
+      // Check transaction receipt and send notification if success
+      await txNotification(tx, {}, { onSuccess: onSuccess })
+    } catch (error) {
+      // check error and send error modal
+      transactionErrors(error)
+    }
+  }
+
+  const addAllowedAddresses = async (
+    investorsList: string[],
+    onSuccess: () => void,
+    onFail: () => void,
+    transactionText: MessageType
+  ) => {
+    try {
+      const tx = await controller.send.addAllowedAddresses(investorsList)
+      // Check transaction receipt and send notification if success
+      await txNotification(tx, transactionText, { onSuccess, onFail })
+    } catch (error) {
+      console.log(error)
+      // check error and send error modal
+      transactionErrors(error, onFail)
+    }
+  }
+
+  const removeAllowedAddresses = async (
+    investorsList: string[],
+    onSuccess: () => void,
+    onFail: () => void,
+    transactionText: MessageType
+  ) => {
+    try {
+      const tx = await controller.send.removeAllowedAddresses(investorsList)
+      // Check transaction receipt and send notification if success
+      await txNotification(tx, transactionText, { onSuccess, onFail })
+    } catch (error) {
+      console.log(error)
+      // check error and send error modal
+      transactionErrors(error, onFail)
+    }
+  }
+
+  const setPublicPool = async (
+    onSuccess: () => void,
+    onFail: () => void,
+    transactionText: {
+      success?: string
+    }
+  ) => {
+    try {
+      const tx = await controller.send.setPublicPool()
+      // Check transaction receipt and send notification if success
+      await txNotification(
+        tx,
+        { sucess: transactionText.success },
+        { onSuccess, onFail }
+      )
+    } catch (error) {
+      console.log(error)
+      // check error and send error modal
+      transactionErrors(error, onFail)
+    }
+  }
+
+  const rebalancePool = async (
+    currentDateAdded: number,
+    periodSelected: number,
+    assetsAddresses: string[],
+    weightsList: string[]
+
+    // onSuccess: () => void,
+    // onFail: () => void,
+    // transactionText: {
+    //   success?: string
+    // }
+  ) => {
+    try {
+      const tx = await controller.send.updateWeightsGradually(
+        currentDateAdded,
+        periodSelected,
+        assetsAddresses,
+        weightsList
+      )
+      // Check transaction receipt and send notification if success
+      console.log('TX AWAIT', tx.await())
+      // await txNotification(
+      //   tx,
+      //   { sucess: transactionText.success },
+      //   { onSuccess, onFail }
+      // )
+    } catch (error) {
+      console.log(error)
+      // check error and send error modal
+      // transactionErrors(error, onFail)
+    }
+  }
+
+  const removeToken = async (
+    selectedTokenAddress: string,
+    userWalletAddress: string
+    // onSuccess: () => void,
+    // onFail: () => void,
+    // transactionText: {
+    //   success?: string
+    // }
+  ) => {
+    try {
+      const tx = await controller.send.removeToken(
+        selectedTokenAddress,
+        userWalletAddress,
+        userWalletAddress
+      )
+      // Check transaction receipt and send notification if success
+      // await txNotification(
+      //   tx,
+      //   { sucess: transactionText.success },
+      //   { onSuccess, onFail }
+      // )
+    } catch (error) {
+      console.log(error)
+      // check error and send error modal
+      // transactionErrors(error, onFail)
+    }
+  }
+
+  const addToken = async (
+    selectedTokenAddress: string,
+    allocation: string,
+    tokenToAddBalance: string,
+    userWalletAddress: string
+    // onSuccess: () => void,
+    // onFail: () => void,
+    // transactionText: {
+    //   success?: string
+    // }
+  ) => {
+    try {
+      const tx = await controller.send.addToken(
+        selectedTokenAddress,
+        allocation,
+        tokenToAddBalance,
+        userWalletAddress,
+        userWalletAddress
+      )
+      // Check transaction receipt and send notification if success
+      // await txNotification(
+      //   tx,
+      //   { sucess: transactionText.success },
+      //   { onSuccess, onFail }
+      // )
+    } catch (error) {
+      console.log(error)
+      // check error and send error modal
+      // transactionErrors(error, onFail)
+    }
+  }
+
+  return {
+    getAumFeesToManagerAndKassandra,
+    withdrawAumFees,
+    addAllowedAddresses,
+    removeAllowedAddresses,
+    setPublicPool,
+    rebalancePool,
+    removeToken,
+    addToken
+  }
+}
+
+// const useManagePool = (controllerAddress: string, chainId = 137) => {
+//   // Get user wallet
+//   const [{ wallet }] = useConnectWallet()
+//   const { txNotification, transactionErrors } = useTransaction()
+
+//   const rpcURL = networks[chainId].rpc
+//   const readProvider = new JsonRpcProvider(rpcURL)
+
+//   const [controller, setController] = React.useState({
+//     send: new Contract(controllerAddress, KassandraController, readProvider),
+//     read: new Contract(controllerAddress, KassandraController, readProvider)
+//   })
+
+//   React.useEffect(() => {
+//     // if user is connected set write provider
+//     if (!wallet) return
+
+//     const sendProvider = new BrowserProvider(wallet.provider)
+//     async function signContranct() {
+//       const signer = await sendProvider.getSigner()
+
+//       setController({
+//         send: new Contract(controllerAddress, KassandraController, signer),
+//         read: new Contract(controllerAddress, KassandraController, readProvider)
+//       })
+//     }
+
+//     signContranct()
+//   }, [wallet, controllerAddress])
+
+//   return React.useMemo(() => {
+//     // Read functions
+//     const getAumFeesToManagerAndKassandra = async (): Promise<{
+//       feesToManager: string
+//       feesToKassandra: string
+//     }> => {
+//       return await controller.read.withdrawCollectedManagementFees.staticCall({
+//         from: wallet?.accounts[0].address
+//       })
+//     }
+
+//     // Write functions
+//     const withdrawAumFees = async (onSuccess: () => void): Promise<void> => {
+//       try {
+//         const tx = await controller.send.withdrawCollectedManagementFees()
+//         // Check transaction receipt and send notification if success
+//         await txNotification(tx, {}, { onSuccess: onSuccess })
+//       } catch (error) {
+//         // check error and send error modal
+//         transactionErrors(error)
+//       }
+//     }
+
+//     const addAllowedAddresses = async (
+//       investorsList: string[],
+//       onSuccess: () => void,
+//       onFail: () => void,
+//       transactionText: IMessageProps
+//     ) => {
+//       try {
+//         const tx = await controller.send.addAllowedAddresses(investorsList)
+//         // Check transaction receipt and send notification if success
+//         await txNotification(tx, transactionText, { onSuccess, onFail })
+//       } catch (error) {
+//         console.log(error)
+//         // check error and send error modal
+//         transactionErrors(error, onFail)
+//       }
+//     }
+
+//     const removeAllowedAddresses = async (
+//       investorsList: string[],
+//       onSuccess: () => void,
+//       onFail: () => void,
+//       transactionText: IMessageProps
+//     ) => {
+//       try {
+//         const tx = await controller.send.removeAllowedAddresses(investorsList)
+//         // Check transaction receipt and send notification if success
+//         await txNotification(tx, transactionText, { onSuccess, onFail })
+//       } catch (error) {
+//         console.log(error)
+//         // check error and send error modal
+//         transactionErrors(error, onFail)
+//       }
+//     }
+
+//     const setPublicPool = async (
+//       onSuccess: () => void,
+//       onFail: () => void,
+//       transactionText: {
+//         success?: string
+//       }
+//     ) => {
+//       try {
+//         const tx = await controller.send.setPublicPool()
+//         // Check transaction receipt and send notification if success
+//         await txNotification(
+//           tx,
+//           { sucess: transactionText.success },
+//           { onSuccess, onFail }
+//         )
+//       } catch (error) {
+//         console.log(error)
+//         // check error and send error modal
+//         transactionErrors(error, onFail)
+//       }
+//     }
+
+//     const rebalancePool = async (
+//       currentDateAdded: number,
+//       periodSelected: number,
+//       assetsAddresses: string[],
+//       weightsList: string[]
+
+//       // onSuccess: () => void,
+//       // onFail: () => void,
+//       // transactionText: {
+//       //   success?: string
+//       // }
+//     ) => {
+//       try {
+//         const tx = await controller.send.updateWeightsGradually(
+//           currentDateAdded,
+//           periodSelected,
+//           assetsAddresses,
+//           weightsList
+//         )
+//         // Check transaction receipt and send notification if success
+//         console.log('TX AWAIT', tx.await())
+//         // await txNotification(
+//         //   tx,
+//         //   { sucess: transactionText.success },
+//         //   { onSuccess, onFail }
+//         // )
+//       } catch (error) {
+//         console.log(error)
+//         // check error and send error modal
+//         // transactionErrors(error, onFail)
+//       }
+//     }
+
+//     const removeToken = async (
+//       selectedTokenAddress: string,
+//       userWalletAddress: string
+//       // onSuccess: () => void,
+//       // onFail: () => void,
+//       // transactionText: {
+//       //   success?: string
+//       // }
+//     ) => {
+//       try {
+//         const tx = await controller.send.removeToken(
+//           selectedTokenAddress,
+//           userWalletAddress,
+//           userWalletAddress
+//         )
+//         // Check transaction receipt and send notification if success
+//         // await txNotification(
+//         //   tx,
+//         //   { sucess: transactionText.success },
+//         //   { onSuccess, onFail }
+//         // )
+//       } catch (error) {
+//         console.log(error)
+//         // check error and send error modal
+//         // transactionErrors(error, onFail)
+//       }
+//     }
+
+//     const addToken = async (
+//       selectedTokenAddress: string,
+//       allocation: string,
+//       tokenToAddBalance: string,
+//       userWalletAddress: string
+//       // onSuccess: () => void,
+//       // onFail: () => void,
+//       // transactionText: {
+//       //   success?: string
+//       // }
+//     ) => {
+//       try {
+//         const tx = await controller.send.addToken(
+//           selectedTokenAddress,
+//           allocation,
+//           tokenToAddBalance,
+//           userWalletAddress,
+//           userWalletAddress
+//         )
+//         // Check transaction receipt and send notification if success
+//         // await txNotification(
+//         //   tx,
+//         //   { sucess: transactionText.success },
+//         //   { onSuccess, onFail }
+//         // )
+//       } catch (error) {
+//         console.log(error)
+//         // check error and send error modal
+//         // transactionErrors(error, onFail)
+//       }
+//     }
+
+//     return {
+//       getAumFeesToManagerAndKassandra,
+//       withdrawAumFees,
+//       addAllowedAddresses,
+//       removeAllowedAddresses,
+//       setPublicPool,
+
+//       rebalancePool,
+//       removeToken,
+//       addToken
+//     }
+//   }, [controller])
+// }
+
+const useManagePool = (
+  controllerAddress: string,
+  rpcURL = networks[137].rpc
+) => {
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
 
-  const rpcURL = networks[chainId].rpc
   const readProvider = new JsonRpcProvider(rpcURL)
 
-  const [controller, setController] = React.useState({
+  const [contract, setContract] = React.useState({
     send: new Contract(controllerAddress, KassandraController, readProvider),
     read: new Contract(controllerAddress, KassandraController, readProvider)
   })
 
   React.useEffect(() => {
-    // if user is connected set write provider
-    if (!wallet) return
+    if (!wallet?.provider) {
+      return
+    }
 
     const sendProvider = new BrowserProvider(wallet.provider)
     async function signContranct() {
       const signer = await sendProvider.getSigner()
 
-      setController({
+      setContract({
         send: new Contract(controllerAddress, KassandraController, signer),
         read: new Contract(controllerAddress, KassandraController, readProvider)
       })
     }
 
     signContranct()
-  }, [wallet, controllerAddress])
+  }, [controllerAddress, rpcURL, wallet])
 
   return React.useMemo(() => {
-    // Read functions
-    const getAumFeesToManagerAndKassandra = async (): Promise<{
-      feesToManager: string
-      feesToKassandra: string
-    }> => {
-      return await controller.read.withdrawCollectedManagementFees.staticCall({
-        from: wallet?.accounts[0].address
-      })
-    }
+    return managePoolFunctions(contract, txNotification, transactionErrors)
+  }, [contract])
+}
 
-    // Write functions
-    const withdrawAumFees = async (onSuccess: () => void): Promise<void> => {
-      try {
-        const tx = await controller.send.withdrawCollectedManagementFees()
-        // Check transaction receipt and send notification if success
-        await txNotification(tx, {}, { onSuccess: onSuccess })
-      } catch (error) {
-        // check error and send error modal
-        transactionErrors(error)
-      }
-    }
+type ParamsType = {
+  wallet: WalletState | null
+  txNotification: (
+    tx: ContractTransactionResponse,
+    message?: MessageType | undefined,
+    callbacks?: CallbacksType | undefined
+  ) => Promise<ContractTransactionReceipt | null>
+  transactionErrors: (
+    error: unknown,
+    onFail?: (() => void | Promise<void>) | undefined
+  ) => Promise<ErrorCode | undefined>
+}
 
-    const addAllowedAddresses = async (
-      investorsList: string[],
-      onSuccess: () => void,
-      onFail: () => void,
-      transactionText: IMessageProps
-    ) => {
-      try {
-        const tx = await controller.send.addAllowedAddresses(investorsList)
-        // Check transaction receipt and send notification if success
-        await txNotification(tx, transactionText, { onSuccess, onFail })
-      } catch (error) {
-        console.log(error)
-        // check error and send error modal
-        transactionErrors(error, onFail)
-      }
-    }
+export const managePool = (
+  address: string,
+  rpcUrl = networks[137].rpc,
+  params: ParamsType
+) => {
+  const readProvider = new JsonRpcProvider(rpcUrl)
+  const contract: ContractType = {
+    read: new Contract(address, KassandraController, readProvider),
+    send: new Contract(address, KassandraController, readProvider)
+  }
 
-    const removeAllowedAddresses = async (
-      investorsList: string[],
-      onSuccess: () => void,
-      onFail: () => void,
-      transactionText: IMessageProps
-    ) => {
-      try {
-        const tx = await controller.send.removeAllowedAddresses(investorsList)
-        // Check transaction receipt and send notification if success
-        await txNotification(tx, transactionText, { onSuccess, onFail })
-      } catch (error) {
-        console.log(error)
-        // check error and send error modal
-        transactionErrors(error, onFail)
-      }
-    }
+  async function signContranct(sendProvider: BrowserProvider) {
+    const signer = await sendProvider.getSigner()
 
-    const setPublicPool = async (
-      onSuccess: () => void,
-      onFail: () => void,
-      transactionText: {
-        success?: string
-      }
-    ) => {
-      try {
-        const tx = await controller.send.setPublicPool()
-        // Check transaction receipt and send notification if success
-        await txNotification(
-          tx,
-          { sucess: transactionText.success },
-          { onSuccess, onFail }
-        )
-      } catch (error) {
-        console.log(error)
-        // check error and send error modal
-        transactionErrors(error, onFail)
-      }
-    }
+    contract.send = new Contract(address, KassandraController, signer)
+  }
 
-    const rebalancePool = async (
-      currentDateAdded: number,
-      periodSelected: number,
-      assetsAddresses: string[],
-      weightsList: string[]
+  if (params.wallet?.provider) {
+    const sendProvider = new BrowserProvider(params.wallet.provider)
 
-      // onSuccess: () => void,
-      // onFail: () => void,
-      // transactionText: {
-      //   success?: string
-      // }
-    ) => {
-      try {
-        const tx = await controller.send.updateWeightsGradually(
-          currentDateAdded,
-          periodSelected,
-          assetsAddresses,
-          weightsList
-        )
-        // Check transaction receipt and send notification if success
-        console.log('TX AWAIT', tx.await())
-        // await txNotification(
-        //   tx,
-        //   { sucess: transactionText.success },
-        //   { onSuccess, onFail }
-        // )
-      } catch (error) {
-        console.log(error)
-        // check error and send error modal
-        // transactionErrors(error, onFail)
-      }
-    }
+    signContranct(sendProvider)
+  }
 
-    const removeToken = async (
-      selectedTokenAddress: string,
-      userWalletAddress: string
-      // onSuccess: () => void,
-      // onFail: () => void,
-      // transactionText: {
-      //   success?: string
-      // }
-    ) => {
-      try {
-        const tx = await controller.send.removeToken(
-          selectedTokenAddress,
-          userWalletAddress,
-          userWalletAddress
-        )
-        // Check transaction receipt and send notification if success
-        // await txNotification(
-        //   tx,
-        //   { sucess: transactionText.success },
-        //   { onSuccess, onFail }
-        // )
-      } catch (error) {
-        console.log(error)
-        // check error and send error modal
-        // transactionErrors(error, onFail)
-      }
-    }
-
-    const addToken = async (
-      selectedTokenAddress: string,
-      allocation: string,
-      tokenToAddBalance: string,
-      userWalletAddress: string
-      // onSuccess: () => void,
-      // onFail: () => void,
-      // transactionText: {
-      //   success?: string
-      // }
-    ) => {
-      try {
-        const tx = await controller.send.addToken(
-          selectedTokenAddress,
-          allocation,
-          tokenToAddBalance,
-          userWalletAddress,
-          userWalletAddress
-        )
-        // Check transaction receipt and send notification if success
-        // await txNotification(
-        //   tx,
-        //   { sucess: transactionText.success },
-        //   { onSuccess, onFail }
-        // )
-      } catch (error) {
-        console.log(error)
-        // check error and send error modal
-        // transactionErrors(error, onFail)
-      }
-    }
-
-    return {
-      getAumFeesToManagerAndKassandra,
-      withdrawAumFees,
-      addAllowedAddresses,
-      removeAllowedAddresses,
-      setPublicPool,
-
-      rebalancePool,
-      removeToken,
-      addToken
-    }
-  }, [controller])
+  return managePoolFunctions(
+    contract,
+    params.txNotification,
+    params.transactionErrors
+  )
 }
 
 export default useManagePool
