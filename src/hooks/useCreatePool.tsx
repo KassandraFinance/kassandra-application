@@ -13,6 +13,7 @@ import useTransaction, {
   MessageType
 } from '@/hooks/useTransaction'
 import { networks } from '@/constants/tokenAddresses'
+
 type PoolCreationType = {
   name: string | undefined
   symbol: string | undefined
@@ -67,8 +68,8 @@ const useCreatePool = (address: string) => {
         pool.whitelist,
         pool.maxAmountsIn,
         pool.settingsParams,
-        pool.feesSettings
-        // zeroPadValue('0x', 64)
+        pool.feesSettings,
+        zeroPadValue('0x', 64)
       )
 
       const tx = await contract.send.create(
@@ -78,8 +79,8 @@ const useCreatePool = (address: string) => {
         pool.whitelist,
         pool.maxAmountsIn,
         pool.settingsParams,
-        pool.feesSettings
-        // zeroPadValue('0x', 64)
+        pool.feesSettings,
+        zeroPadValue('0x', 64)
       )
 
       const receipt = await txNotification(tx, message, callbacks)
