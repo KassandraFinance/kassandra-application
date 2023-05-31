@@ -1,28 +1,30 @@
 import React from 'react'
 import Big from 'big.js'
-import { AbiItem, keccak256 } from 'web3-utils'
+import { AbiItem } from 'web3-utils'
 import web3 from '../../../utils/web3'
-import crypto from 'crypto'
+import { useConnectWallet } from '@web3-onboard/react'
+import { keccak256 } from 'ethers'
 
-import { useAppSelector, useAppDispatch } from '../../../store/hooks'
+import useSignMessage from '@/hooks/useSignMessage'
+import useCreatePool from '@/hooks/useCreatePool'
+import useTransaction from '@/hooks/useTransaction'
+import { ERC20 } from '@/hooks/useERC20'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
   setBackStepNumber,
   setNextStepNumber,
   setToFirstStep,
   setClear
-} from '../../../store/reducers/poolCreationSlice'
-import { setModalAlertText } from '../../../store/reducers/modalAlertText'
-import { ERC20 } from '../../../hooks/useERC20Contract'
-import waitTransaction, { MetamaskError } from '../../../utils/txWait'
+} from '@/store/reducers/poolCreationSlice'
+import { setModalAlertText } from '@/store/reducers/modalAlertText'
+import waitTransaction, { MetamaskError } from '@/utils/txWait'
 
-import KassandraManagedControllerFactoryAbi from '../../../constants/abi/KassandraManagedControllerFactory.json'
-import KassandraControlerAbi from '../../../constants/abi/KassandraController.json'
+import KassandraControlerAbi from '@/constants/abi/KassandraController.json'
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { SAVE_POOL } from './graphql'
-import Web3 from 'web3'
 
-import ContainerButton from '../../../components/ContainerButton'
-import ModalFullWindow from '../../../components/Modals/ModalFullWindow'
+import ContainerButton from '@/components/ContainerButton'
+import ModalFullWindow from '@/components/Modals/ModalFullWindow'
 import StepGuide from './StepGuide'
 import SetDetails from './SetDetails'
 import SelectAssets from './SelectAssets'
@@ -33,14 +35,11 @@ import PoolCreated from './PoolCreated'
 import ModalTransactions, {
   TransactionStatus,
   TransactionsListType
-} from '../../../components/Modals/ModalTransactions'
+} from '@/components/Modals/ModalTransactions'
 
 import * as S from './styles'
 
-import {
-  mockTokens,
-  mockTokensReverse
-} from '../../../constants/tokenAddresses'
+import { mockTokens, mockTokensReverse } from '@/constants/tokenAddresses'
 
 export const mockTokensList: string[] = [
   '0x841a91e3De1202b7b750f464680068aAa0d0EA35',
@@ -80,11 +79,15 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     txHash: ''
   })
 
+  const [{ wallet }] = useConnectWallet()
+  const { txNotification, transactionErrors } = useTransaction()
+
   const dispatch = useAppDispatch()
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
   const poolData = useAppSelector(state => state.poolCreation.createPoolData)
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const chainId = useAppSelector(state => state.chainId)
+
+  const { create } = useCreatePool(networks[poolData.networkId || 137].factory)
+  const { signMessage } = useSignMessage()
 
   const buttonText = {
     [TransactionStatus.START]: 'Start pool creation',
@@ -124,15 +127,24 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   }
 
   async function getIsAproved(tokens: Array<Token>) {
+    if (!wallet?.provider) {
+      return []
+    }
+
     const tokensNotAproved: Array<Token> = []
     for (const token of tokens) {
       const { allowance } = ERC20(
         token.address,
-        new Web3(networks[poolData.networkId ?? 137].rpc)
+        networks[poolData.networkId ?? 137].rpc,
+        {
+          wallet: null,
+          txNotification: txNotification,
+          transactionErrors: transactionErrors
+        }
       )
       const amountApproved = await allowance(
         networks[poolData.networkId ?? 137].factory,
-        userWalletAddress
+        wallet?.accounts[0].address
       )
       if (Big(amountApproved).lt(token.amount)) {
         tokensNotAproved.push(token)
@@ -297,39 +309,179 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }
   }
 
-  async function handleApproveTokens(notAprovedTokens: Array<Token>) {
-    for (const token of notAprovedTokens) {
-      const { approve, allowance } = ERC20(token.address)
-      const factory = networks[poolData.networkId ?? 137].factory
-      const oldAllowance = await allowance(factory, userWalletAddress)
+  function handleSuccess() {
+    let transactionIndex = -100
+    setTransactions(prev =>
+      prev.map((item, index) => {
+        if (item.status === 'APPROVING') {
+          if (item.key === 'createPool') {
+            setIsPoolCreated(true)
+          }
+          transactionIndex = index
 
-      const approved = await new Promise<boolean>(resolve => {
-        approve(
-          factory,
-          userWalletAddress,
-          (error: MetamaskError, txHash: string) =>
-            callBack(error, txHash, {
-              token,
-              contractApprove: factory,
-              oldAllowance,
-              allowance
-            }).then(result => {
-              resolve(result)
-            })
-        )
+          return {
+            ...item,
+            status: 'APPROVED'
+          }
+        } else if (index === transactionIndex + 1) {
+          return {
+            ...item,
+            status: 'APPROVING'
+          }
+        } else if (index === transactionIndex + 2) {
+          return {
+            ...item,
+            status: 'NEXT'
+          }
+        } else {
+          return item
+        }
       })
+    )
 
-      if (!approved) {
+    return
+  }
+
+  function handleFail() {
+    setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
+    setTransactions(prev =>
+      prev.map(item => {
+        if (item.status === 'APPROVING') {
+          item.status = 'ERROR'
+        } else if (item.status === 'NEXT') {
+          item.status = 'WAITING'
+        }
+        return item
+      })
+    )
+
+    return
+  }
+
+  async function handleApproveSuccess(approve: {
+    token: { amount: string; normalizedAmount: string; symbol: string }
+    contractApprove: string
+    oldAllowance: string
+    allowance: (_to: string, _from: string) => Promise<string>
+  }) {
+    if (!wallet?.provider) {
+      return false
+    }
+
+    for (let index = 0; index < 100; index++) {
+      await new Promise(r => setTimeout(r, 500))
+
+      const amountApproved = await approve.allowance(
+        approve.contractApprove,
+        wallet.accounts[0].address
+      )
+      if (amountApproved !== approve.oldAllowance && amountApproved !== '0') {
+        if (Big(amountApproved).lt(approve.token.amount)) {
+          setTransactions(prev =>
+            prev.map(item => {
+              if (item.status === 'APPROVING') {
+                item.status = 'ERROR'
+              } else if (item.status === 'NEXT') {
+                item.status = 'WAITING'
+              }
+              return item
+            })
+          )
+
+          setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
+          dispatch(
+            setModalAlertText({
+              errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
+              solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
+            })
+          )
+
+          return false
+        }
+
+        break
+      } else if (index === 99) {
+        setTransactions(prev =>
+          prev.map(item => {
+            if (item.status === 'APPROVING') {
+              item.status = 'ERROR'
+            } else if (item.status === 'NEXT') {
+              item.status = 'WAITING'
+            }
+            return item
+          })
+        )
+        setTransactionButtonStatus(TransactionStatus.CONTINUE)
+        dispatch(
+          setModalAlertText({
+            errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
+            solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
+          })
+        )
+
+        return false
+      }
+    }
+
+    handleSuccess()
+    return true
+  }
+
+  async function handleApproveTokens(notAprovedTokens: Array<Token>) {
+    if (!wallet?.provider) {
+      return
+    }
+
+    let status = false
+    for (const token of notAprovedTokens) {
+      const { approve, allowance } = ERC20(
+        token.address,
+        networks[poolData.networkId ?? 137].rpc,
+        {
+          wallet: wallet,
+          txNotification: txNotification,
+          transactionErrors: transactionErrors
+        }
+      )
+
+      const factory = networks[poolData.networkId ?? 137].factory
+      const oldAllowance = await allowance(factory, wallet?.accounts[0].address)
+
+      const receipt = await approve(
+        factory,
+        {},
+        {
+          onFail: handleFail
+        }
+      )
+
+      if (receipt?.status === 1) {
+        status = await handleApproveSuccess({
+          token,
+          contractApprove: factory,
+          oldAllowance,
+          allowance
+        })
+      }
+
+      if (!status) {
         break
       }
     }
+
+    return status
   }
 
   async function handlePrivateInvestors(
     poolControler: string,
     investorsList: { address: string }[]
   ): Promise<boolean> {
-    // eslint-disable-next-line prettier/prettier
+    if (!wallet?.provider) {
+      return false
+    }
+
     const controller = new web3.eth.Contract(
       KassandraControlerAbi as unknown as AbiItem,
       poolControler
@@ -340,7 +492,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         .addAllowedAddresses(investorsList.map(investor => investor.address))
         .send(
           {
-            from: userWalletAddress,
+            from: wallet.accounts[0].address,
             maxPriorityFeePerGas: 30e9
           },
           (error: MetamaskError, txHash: string) =>
@@ -474,14 +626,13 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     chainId: number
   ) {
     try {
-      const nonce = crypto.randomBytes(12).toString('base64')
+      if (!wallet?.provider) {
+        return
+      }
+
       const logoToSign = logo ? keccak256(logo) : ''
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
-      const signature = await web3.eth.personal.sign(
-        message,
-        userWalletAddress,
-        nonce
-      )
+      const signature = await signMessage(message)
 
       const body = {
         controller,
@@ -517,8 +668,17 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         return
       }
     } catch (error) {
+      setTransactions(prev => {
+        prev[prev.length - 1].status = 'ERROR'
+        return prev
+      })
+
       console.error(error)
     }
+    setTransactions(prev => {
+      prev[prev.length - 1].status = 'ERROR'
+      return prev
+    })
 
     dispatch(
       setModalAlertText({
@@ -614,10 +774,10 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           arr.push(notApprovedToken)
         }
       }
-      try {
-        await handleApproveTokens(arr)
-      } catch (error) {
-        console.log(error)
+
+      const status = await handleApproveTokens(arr)
+      if (!status) {
+        return
       }
     }
 
@@ -674,88 +834,75 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }
 
     try {
-      const factoryContract = new web3.eth.Contract(
-        KassandraManagedControllerFactoryAbi as unknown as AbiItem,
-        networks[poolData.networkId ?? 137].factory
+      const { response, receipt } = await create(
+        pool,
+        {},
+        { onFail: handleFail, onSuccess: handleSuccess }
       )
 
-      const response = await factoryContract.methods
-        .create(
-          pool.name,
-          pool.symbol,
-          pool.isPrivatePool,
-          pool.whitelist,
-          pool.maxAmountsIn,
-          pool.settingsParams,
-          pool.feesSettings,
-          web3.utils.padLeft('0x', 64)
-        )
-        .call({
-          from: userWalletAddress
+      // const tx = await factoryContract.methods
+      //   .create(
+      //     pool.name,
+      //     pool.symbol,
+      //     pool.isPrivatePool,
+      //     pool.whitelist,
+      //     pool.maxAmountsIn,
+      //     pool.settingsParams,
+      //     pool.feesSettings,
+      //     web3.utils.padLeft('0x', 64)
+      //   )
+      //   .send(
+      //     {
+      //       from: wallet?.accounts[0].address,
+      //       maxPriorityFeePerGas: 30e9
+      //     },
+      //     callBack
+      //   )
+
+      if (receipt?.status === 1) {
+        setCompletedData({
+          id: `${poolData.networkId}${response.pool}`,
+          txHash: receipt?.hash || '',
+          networkId: poolData.networkId ?? 137
         })
-
-      const tx = await factoryContract.methods
-        .create(
-          pool.name,
-          pool.symbol,
-          pool.isPrivatePool,
-          pool.whitelist,
-          pool.maxAmountsIn,
-          pool.settingsParams,
-          pool.feesSettings,
-          web3.utils.padLeft('0x', 64)
-        )
-        .send(
-          {
-            from: userWalletAddress,
-            maxPriorityFeePerGas: 30e9
-          },
-          callBack
-        )
-
-      setCompletedData({
-        id: `${poolData.networkId}${response.pool}`,
-        txHash: tx.transactionHash,
-        networkId: poolData.networkId ?? 137
-      })
-
-      if (pool.isPrivatePool) {
-        try {
-          const addressList = poolData?.privateAddressList
-            ? poolData.privateAddressList
-            : []
-          const res = await handlePrivateInvestors(
-            response.poolController,
-            addressList
-          )
-          if (!res) {
-            throw new Error('Error for add Private Investors')
-          }
-        } catch (error) {
-          dispatch(
-            setModalAlertText({
-              errorText:
-                'Could not add private investors, but the pool was created sucessfully',
-              solutionText: 'Please try adding them in the dashboard later'
-            })
-          )
-
-          setTransactionButtonStatus(TransactionStatus.COMPLETED)
-
-          dispatch(setClear())
-
-          setTimeout(() => {
-            handleNextButton()
-          }, 500)
-          return
-        }
       }
+      // if (pool.isPrivatePool) {
+      //   try {
+      //     const addressList = poolData?.privateAddressList
+      //       ? poolData.privateAddressList
+      //       : []
+      //     const res = await handlePrivateInvestors(
+      //       response.poolController,
+      //       addressList
+      //     )
+      //     if (!res) {
+      //       throw new Error('Error for add Private Investors')
+      //     }
+      //   } catch (error) {
+      //     dispatch(
+      //       setModalAlertText({
+      //         errorText:
+      //           'Could not add private investors, but the pool was created sucessfully',
+      //         solutionText: 'Please try adding them in the dashboard later'
+      //       })
+      //     )
+
+      //     setTransactionButtonStatus(TransactionStatus.COMPLETED)
+
+      //     dispatch(setClear())
+
+      //     setTimeout(() => {
+      //       handleNextButton()
+      //     }, 500)
+      //     return
+      //   }
+      // }
       if (poolData.strategy || poolData.icon?.image_preview) {
         await sendPoolData(
           response.poolController,
           poolData.icon?.image_preview || '',
           poolData.strategy || '',
-          chainId
+          poolData.networkId || 137
         )
       }
 
@@ -773,23 +920,23 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         ? errorStr[0]
         : _error?.message ?? 'It was not possible to create pool'
 
-      dispatch(
-        setModalAlertText({
-          errorText: err
-        })
-      )
-      setTransactionButtonStatus(TransactionStatus.CONTINUE)
+      // dispatch(
+      //   setModalAlertText({
+      //     errorText: err
+      //   })
+      // )
+      // setTransactionButtonStatus(TransactionStatus.CONTINUE)
 
-      setTransactions(prev =>
-        prev.map(item => {
-          if (item.status === 'APPROVING') {
-            item.status = 'ERROR'
-          } else if (item.status === 'NEXT') {
-            item.status = 'WAITING'
-          }
-          return item
-        })
-      )
+      // setTransactions(prev =>
+      //   prev.map(item => {
+      //     if (item.status === 'APPROVING') {
+      //       item.status = 'ERROR'
+      //     } else if (item.status === 'NEXT') {
+      //       item.status = 'WAITING'
+      //     }
+      //     return item
+      //   })
+      // )
     }
   }
 

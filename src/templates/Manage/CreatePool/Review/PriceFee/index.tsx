@@ -1,67 +1,55 @@
 import React from 'react'
-import BigNumber from 'bn.js'
 import useSWR from 'swr'
-import Web3 from 'web3'
 
-import { COINGECKO_API } from '@/constants/tokenAddresses'
-
-// import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
-import { useAppSelector } from '../../../../../store/hooks'
-
-// import { setTermsAndConditions } from '../../../../../store/reducers/poolCreationSlice'
-import { networks } from '@/constants/tokenAddresses'
-
-// import Checkbox from '../../../../../components/Inputs/Checkbox'
-// import TermsAndConditions from '../../../../../components/Modals/TermsAndConditions'
+import useGasFee from '@/hooks/useGasFee'
+import { useAppSelector } from '@/store/hooks'
+import { COINGECKO_API, networks } from '@/constants/tokenAddresses'
 
 import * as S from './styles'
 
 const PriceFee = () => {
-  // const [isOpenTermsAndConditions, setOpenTermsAndConditions] =
-  //   React.useState(false)
   const [estimateGas, setEstimateGas] = React.useState({
     price: 0,
     gas: ''
   })
 
-  // const dispatch = useAppDispatch()
-  // const termsAndConditions = useAppSelector(
-  //   state => state.poolCreation.createPoolData.termsAndConditions
-  // )
-
   const networkId = useAppSelector(
     state => state.poolCreation.createPoolData.networkId
   )
-
-  // function handleClick() {
-  //   dispatch(setTermsAndConditions())
-  // }
+  const { gasFee } = useGasFee(networkId || 137)
 
   const { data } = useSWR(
     `${COINGECKO_API}/simple/price?ids=wmatic&vs_currencies=usd`
   )
 
   React.useEffect(() => {
-    const web3 = new Web3(networks[networkId ?? 137].rpc)
-    const getGasFee = async () => {
-      try {
-        const estimateGasUsed = new BigNumber(7_805_975)
-        const baseFee = (await web3.eth.getBlock('latest')).baseFeePerGas
+    // const web3 = new Web3(networks[networkId || 137].rpc)
+    // const getGasFee = async () => {
+    //   try {
+    //     const estimateGasUsed = new BigNumber(7_805_975)
+    //     const baseFee = (await web3.eth.getBlock('latest')).baseFeePerGas
+    //     console.log('baseFee', baseFee)
 
-        const gas = web3.utils
-          .fromWei(
-            estimateGasUsed.mul(
-              new BigNumber(baseFee ?? 0)
-                .mul(new BigNumber(13))
-                .div(new BigNumber(10))
-            ),
-            'ether'
-          )
-          .slice(0, 5)
-        setEstimateGas(old => ({ ...old, gas: gas.toString() }))
-      } catch (error) {
-        console.error('Error', error)
-      }
+    //     const gas = web3.utils
+    //       .fromWei(
+    //         estimateGasUsed.mul(
+    //           new BigNumber(baseFee ?? 0)
+    //             .mul(new BigNumber(13))
+    //             .div(new BigNumber(10))
+    //         ),
+    //         'ether'
+    //       )
+    //       .slice(0, 5)
+    //     console.log('gas', gas)
+    //     setEstimateGas(old => ({ ...old, gas: gas.toString() }))
+    //   } catch (error) {
+    //     console.error('Error', error)
+    //   }
+    // }
+
+    async function getGasFee() {
+      const gas = await gasFee(7_805_975)
+      setEstimateGas(old => ({ ...old, gas: Number(gas).toFixed(6) }))
     }
 
     getGasFee()
@@ -86,7 +74,7 @@ const PriceFee = () => {
               </span>
               {data && (
                 <p>
-                  ${(data?.wmatic?.usd * Number(estimateGas.gas)).toFixed(2)}{' '}
+                  ${(data?.wmatic?.usd * Number(estimateGas.gas)).toFixed(6)}{' '}
                   USD
                 </p>
               )}

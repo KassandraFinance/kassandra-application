@@ -1,5 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import useManagerPools from '@/hooks/useManagerPools'
 import { useAppSelector } from '@/store/hooks'
@@ -23,11 +25,13 @@ const Manage = () => {
   const [isOpen, setIsOpen] = React.useState(false)
   const [networkIcon, setNetworkIcon] = React.useState(avalancheIcon)
 
-  const { image } = useAppSelector(state => state.user)
-  const chainId = useAppSelector(state => state.chainId)
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
 
-  const { managerPools } = useManagerPools(userWalletAddress)
+  const { image } = useAppSelector(state => state.user)
+
+  const { managerPools } = useManagerPools(
+    wallet?.provider ? getAddress(wallet?.accounts[0]?.address) : ''
+  )
 
   function handleDashBoardButton() {
     setIsOpen(!isOpen)
@@ -42,14 +46,16 @@ const Manage = () => {
   }
 
   React.useEffect(() => {
-    if (43114 === chainId && userWalletAddress.length > 0) {
-      setNetworkIcon(avalancheIcon)
-    } else if (137 === chainId && userWalletAddress.length > 0) {
-      setNetworkIcon(polygonIcon)
-    } else {
-      return
+    if (wallet?.provider) {
+      if ('0xa86a' === wallet?.chains[0].id) {
+        setNetworkIcon(avalancheIcon)
+      } else if ('0x89' === wallet?.chains[0].id) {
+        setNetworkIcon(polygonIcon)
+      } else {
+        return
+      }
     }
-  }, [chainId, userWalletAddress])
+  }, [wallet])
 
   return (
     <S.Manage>
@@ -61,7 +67,7 @@ const Manage = () => {
           onClick={handleDashBoardButton}
         >
           <S.UserImageWrapper isOpen={isOpen}>
-            {userWalletAddress.length > 0 ? (
+            {wallet?.provider ? (
               <>
                 <img
                   src={image?.profilePic ? image.profilePic : userIcon.src}
@@ -89,9 +95,7 @@ const Manage = () => {
 
         <S.Content>
           <Header />
-          {userWalletAddress.length === 42 &&
-          managerPools &&
-          managerPools.pools.length > 0 ? (
+          {wallet?.provider && managerPools && managerPools.pools.length > 0 ? (
             <Overview />
           ) : (
             <GetStarted />
