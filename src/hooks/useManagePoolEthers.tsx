@@ -267,7 +267,7 @@ type ParamsType = {
   ) => Promise<ErrorCode | undefined>
 }
 
-export const managePool = (
+export const managePool = async (
   address: string,
   rpcUrl = networks[137].rpc,
   params: ParamsType
@@ -287,7 +287,7 @@ export const managePool = (
   if (params.wallet?.provider) {
     const sendProvider = new BrowserProvider(params.wallet.provider)
 
-    signContranct(sendProvider)
+    await signContranct(sendProvider)
   }
 
   return managePoolFunctions(
