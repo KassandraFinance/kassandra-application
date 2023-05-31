@@ -27,6 +27,7 @@ type Fees = {
 }
 
 export type Pool = {
+  chain_id: number
   manager: {
     id: string
   }
