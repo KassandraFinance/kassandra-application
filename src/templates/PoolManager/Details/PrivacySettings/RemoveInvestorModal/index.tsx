@@ -85,11 +85,9 @@ const RemoveInvestorModal = ({
       setIsTransaction(false)
     }
 
-    const text = {
-      success: 'Investors removed!'
-    }
-
-    await removeAllowedAddresses(investorsList, handleSuccess, handleFail, text)
+    await removeAllowedAddresses(investorsList, handleSuccess, handleFail, {
+      sucess: 'Investors removed!'
+    })
   }
 
   return (

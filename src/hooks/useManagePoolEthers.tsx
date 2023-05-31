@@ -8,6 +8,12 @@ import KassandraController from '@/constants/abi/KassandraController.json'
 
 import useTransaction from './useTransaction'
 
+type IMessageProps = {
+  pending?: string
+  error?: string
+  sucess?: string
+}
+
 const useManagePool = (controllerAddress: string, chainId = 137) => {
   // Get user wallet
   const [{ wallet }] = useConnectWallet()
@@ -49,6 +55,7 @@ const useManagePool = (controllerAddress: string, chainId = 137) => {
       })
     }
 
+    // Write functions
     const withdrawAumFees = async (onSuccess: () => void): Promise<void> => {
       try {
         const tx = await controller.send.withdrawCollectedManagementFees()
@@ -60,23 +67,16 @@ const useManagePool = (controllerAddress: string, chainId = 137) => {
       }
     }
 
-    // Write functions
     const addAllowedAddresses = async (
       investorsList: string[],
       onSuccess: () => void,
       onFail: () => void,
-      transactionText: {
-        success?: string
-      }
+      transactionText: IMessageProps
     ) => {
       try {
         const tx = await controller.send.addAllowedAddresses(investorsList)
         // Check transaction receipt and send notification if success
-        await txNotification(
-          tx,
-          { sucess: transactionText.success },
-          { onSuccess, onFail }
-        )
+        await txNotification(tx, transactionText, { onSuccess, onFail })
       } catch (error) {
         console.log(error)
         // check error and send error modal
@@ -88,18 +88,12 @@ const useManagePool = (controllerAddress: string, chainId = 137) => {
       investorsList: string[],
       onSuccess: () => void,
       onFail: () => void,
-      transactionText: {
-        success?: string
-      }
+      transactionText: IMessageProps
     ) => {
       try {
         const tx = await controller.send.removeAllowedAddresses(investorsList)
         // Check transaction receipt and send notification if success
-        await txNotification(
-          tx,
-          { sucess: transactionText.success },
-          { onSuccess, onFail }
-        )
+        await txNotification(tx, transactionText, { onSuccess, onFail })
       } catch (error) {
         console.log(error)
         // check error and send error modal
@@ -129,12 +123,109 @@ const useManagePool = (controllerAddress: string, chainId = 137) => {
       }
     }
 
+    const rebalancePool = async (
+      currentDateAdded: number,
+      periodSelected: number,
+      assetsAddresses: string[],
+      weightsList: string[]
+
+      // onSuccess: () => void,
+      // onFail: () => void,
+      // transactionText: {
+      //   success?: string
+      // }
+    ) => {
+      try {
+        const tx = await controller.send.updateWeightsGradually(
+          currentDateAdded,
+          periodSelected,
+          assetsAddresses,
+          weightsList
+        )
+        // Check transaction receipt and send notification if success
+        console.log('TX AWAIT', tx.await())
+        // await txNotification(
+        //   tx,
+        //   { sucess: transactionText.success },
+        //   { onSuccess, onFail }
+        // )
+      } catch (error) {
+        console.log(error)
+        // check error and send error modal
+        // transactionErrors(error, onFail)
+      }
+    }
+
+    const removeToken = async (
+      selectedTokenAddress: string,
+      userWalletAddress: string
+      // onSuccess: () => void,
+      // onFail: () => void,
+      // transactionText: {
+      //   success?: string
+      // }
+    ) => {
+      try {
+        const tx = await controller.send.removeToken(
+          selectedTokenAddress,
+          userWalletAddress,
+          userWalletAddress
+        )
+        // Check transaction receipt and send notification if success
+        // await txNotification(
+        //   tx,
+        //   { sucess: transactionText.success },
+        //   { onSuccess, onFail }
+        // )
+      } catch (error) {
+        console.log(error)
+        // check error and send error modal
+        // transactionErrors(error, onFail)
+      }
+    }
+
+    const addToken = async (
+      selectedTokenAddress: string,
+      allocation: string,
+      tokenToAddBalance: string,
+      userWalletAddress: string
+      // onSuccess: () => void,
+      // onFail: () => void,
+      // transactionText: {
+      //   success?: string
+      // }
+    ) => {
+      try {
+        const tx = await controller.send.addToken(
+          selectedTokenAddress,
+          allocation,
+          tokenToAddBalance,
+          userWalletAddress,
+          userWalletAddress
+        )
+        // Check transaction receipt and send notification if success
+        // await txNotification(
+        //   tx,
+        //   { sucess: transactionText.success },
+        //   { onSuccess, onFail }
+        // )
+      } catch (error) {
+        console.log(error)
+        // check error and send error modal
+        // transactionErrors(error, onFail)
+      }
+    }
+
     return {
       getAumFeesToManagerAndKassandra,
       withdrawAumFees,
       addAllowedAddresses,
       removeAllowedAddresses,
-      setPublicPool
+      setPublicPool,
+
+      rebalancePool,
+      removeToken,
+      addToken
     }
   }, [controller])
 }

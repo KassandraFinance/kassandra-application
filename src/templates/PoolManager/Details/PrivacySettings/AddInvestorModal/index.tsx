@@ -78,11 +78,9 @@ const AddInvestorModal = ({
       setIsTransaction(false)
     }
 
-    const text = {
-      success: 'Investors add!'
-    }
-
-    await addAllowedAddresses(investorsList, handleSuccess, handleFail, text)
+    await addAllowedAddresses(investorsList, handleSuccess, handleFail, {
+      sucess: 'Investors add!'
+    })
   }
 
   React.useEffect(() => {
