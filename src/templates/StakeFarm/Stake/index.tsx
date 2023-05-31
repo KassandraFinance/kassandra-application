@@ -6,7 +6,6 @@ import { Staking } from '@/constants/tokenAddresses'
 
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import useStaking from '@/hooks/useStaking'
-import { useAppSelector } from '@/store/hooks'
 
 import StakeCard from '@/components/StakeCard'
 

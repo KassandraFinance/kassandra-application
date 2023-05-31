@@ -17,17 +17,19 @@ import {
   LPDaiAvax,
   WETH_POLYGON,
   networks
-} from '../../constants/tokenAddresses'
-import { LP_KACY_AVAX_PNG } from '../../constants/pools'
+} from '@/constants/tokenAddresses'
+import { LP_KACY_AVAX_PNG } from '@/constants/pools'
 
-import usePriceLP from '../../hooks/usePriceLP'
-import useStakingContract from '../../hooks/useStakingContract'
-import { ERC20 } from '../../hooks/useERC20Contract'
-import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setModalAlertText } from '@/store/reducers/modalAlertText'
+import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
 
-import { useAppSelector, useAppDispatch } from '../../store/hooks'
-import { setModalAlertText } from '../../store/reducers/modalAlertText'
-import { setModalWalletActive } from '../../store/reducers/modalWalletActive'
+import usePriceLP from '@/hooks/usePriceLP'
+import useCoingecko from '@/hooks/useCoingecko'
+import { ERC20 } from '@/hooks/useERC20Contract'
+import useStakingContract from '@/hooks/useStakingContract'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
+import useStaking from '@/hooks/useStaking'
 
 import { GET_INFO_POOL } from './graphql'
 
@@ -36,7 +38,7 @@ import { BNtoDecimal } from '@/utils/numerals'
 import waitTransaction, {
   MetamaskError,
   TransactionCallback
-} from '../../utils/txWait'
+} from '@/utils/txWait'
 import changeChain from '@/utils/changeChain'
 
 import Button from '../Button'
@@ -53,11 +55,10 @@ import YourStake from './YourStake'
 import WithdrawDate from './WithdrawDate'
 import KacyEarned from './KacyEarned'
 
-import infoCyanIcon from '../../../public/assets/notificationStatus/info.svg'
-import tooltip from '../../../public/assets/utilities/tooltip.svg'
+import infoCyanIcon from '@assets/notificationStatus/info.svg'
+import tooltip from '@assets/utilities/tooltip.svg'
 
 import * as S from './styles'
-import useCoingecko from '@/hooks/useCoingecko'
 
 export interface IInfoStaked {
   yourStake: BigNumber
@@ -153,7 +154,7 @@ const StakeCard = ({
     vestingPeriod: '...',
     lockPeriod: '...'
   })
-  const networkChain = networks[chain.id]
+  const networkChain = networks[43113]
   const { userWalletAddress, chainId } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
 
@@ -168,6 +169,8 @@ const StakeCard = ({
     stakingAddress,
     networkChain.chainId
   )
+
+  // const staking = useStaking(stakingAddress, networkChain.chainId)
 
   const { data } = useSWR(
     [GET_INFO_POOL, address],

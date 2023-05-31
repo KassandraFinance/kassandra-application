@@ -153,6 +153,24 @@ export const networks: NetworkType = {
       symbol: 'AVAX',
       decimals: 18
     }
+  },
+  '43113': {
+    chainId: 43113,
+    chainName: 'Avalanche',
+    rpc: 'https://api.avax-test.network/ext/C/rpc',
+    kacyAddress: Kacy,
+    blockExplorer: 'https://testnet.snowtrace.io',
+    coingecko: 'avalanche',
+    whiteList: '',
+    factory: '',
+    privateInvestor: '',
+    kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
+    nativeCurrency: {
+      address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+      name: 'Avalanche',
+      symbol: 'AVAX',
+      decimals: 18
+    }
   }
 }
 
