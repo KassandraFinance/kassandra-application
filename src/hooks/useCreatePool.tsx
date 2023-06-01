@@ -61,6 +61,8 @@ const useCreatePool = (address: string) => {
     callbacks?: CallbacksType
   ) {
     try {
+      const salt = zeroPadValue('0x', 32)
+
       const response = await contract.send.create.staticCall(
         pool.name,
         pool.symbol,
@@ -69,7 +71,7 @@ const useCreatePool = (address: string) => {
         pool.maxAmountsIn,
         pool.settingsParams,
         pool.feesSettings,
-        zeroPadValue('0x', 64)
+        salt
       )
 
       const tx = await contract.send.create(
@@ -80,7 +82,7 @@ const useCreatePool = (address: string) => {
         pool.maxAmountsIn,
         pool.settingsParams,
         pool.feesSettings,
-        zeroPadValue('0x', 64)
+        salt
       )
 
       const receipt = await txNotification(tx, message, callbacks)
