@@ -55,9 +55,13 @@ const RemoveInvestorModal = ({
     wallet ? getAddress(wallet.accounts[0].address) : '',
     poolId
   )
-  const { removeAllowedAddresses } = useManagePool(poolInfo?.controller ?? '')
 
   const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+
+  const { removeAllowedAddresses } = useManagePool(
+    poolInfo?.controller ?? '',
+    networks[chainId].rpc
+  )
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchValue(e.target.value)

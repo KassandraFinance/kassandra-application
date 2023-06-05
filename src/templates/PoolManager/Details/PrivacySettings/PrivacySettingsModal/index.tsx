@@ -32,9 +32,13 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
     wallet ? getAddress(wallet.accounts[0].address) : '',
     poolId
   )
-  const { setPublicPool } = useManagePool(poolInfo?.controller ?? '')
 
   const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+
+  const { setPublicPool } = useManagePool(
+    poolInfo?.controller ?? '',
+    networks[chainId].rpc
+  )
 
   async function handleMakePublic() {
     setIsTransaction(true)

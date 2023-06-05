@@ -48,8 +48,13 @@ const AddInvestorModal = ({
     wallet ? getAddress(wallet.accounts[0].address) : '',
     poolId
   )
-  const { addAllowedAddresses } = useManagePool(poolInfo?.controller ?? '')
+
   const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+
+  const { addAllowedAddresses } = useManagePool(
+    poolInfo?.controller ?? '',
+    networks[chainId].rpc
+  )
 
   function handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
     setValue(event.target.value)
