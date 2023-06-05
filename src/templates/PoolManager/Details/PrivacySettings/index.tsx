@@ -2,13 +2,12 @@ import React from 'react'
 import Image from 'next/image'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { useRouter } from 'next/router'
-import { AbiItem } from 'web3-utils'
-import Web3 from 'web3'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
-import { useAppSelector } from '@/store/hooks'
 import usePoolInfo from '@/hooks/usePoolInfo'
+import usePrivateInvestors from '@/hooks/usePrivateInvestors'
 
-import PrivateInvestors from '@/constants/abi/PrivateInvestors.json'
 import { networks } from '@/constants/tokenAddresses'
 
 import Button from '@/components/Button'
@@ -30,30 +29,35 @@ const PrivacySettings = () => {
   const [isRemoveInvestorModal, setIsRemoveInvestorModal] =
     React.useState(false)
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
 
   const router = useRouter()
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  function handleEditClick() {
-    setIsPrivacyModal(true)
-  }
-
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
+  const { poolInfo } = usePoolInfo(
+    wallet ? getAddress(wallet.accounts[0].address) : '',
+    poolId
+  )
+  const { privateAddresses } = usePrivateInvestors(
+    networks[poolInfo?.chain_id ?? 137].privateInvestor,
+    poolInfo?.chain_id ?? 137
+  )
 
   const setAddressesOfPrivateInvestors = async () => {
-    const network = networks[poolInfo?.chain_id ?? 137]
-    const _web3 = new Web3(network.rpc)
-    const privateInvestorsContract = new _web3.eth.Contract(
-      PrivateInvestors as unknown as AbiItem,
-      network.privateInvestor
-    )
-    const addresses = await privateInvestorsContract.methods
-      .getInvestors(poolInfo?.address, 0, 100)
-      .call()
-    setPrivateInvestors(addresses)
+    if (!poolInfo) return
+
+    try {
+      const addresses = await privateAddresses(poolInfo.address)
+      setPrivateInvestors(addresses)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  function handleEditClick() {
+    setIsPrivacyModal(true)
   }
 
   React.useEffect(() => {
@@ -61,7 +65,7 @@ const PrivacySettings = () => {
     ;(async () => {
       await setAddressesOfPrivateInvestors()
     })()
-  }, [userWalletAddress, poolInfo])
+  }, [wallet, poolInfo])
 
   return (
     <S.PrivacySettings>
@@ -147,6 +151,7 @@ const PrivacySettings = () => {
         <AddInvestorModal
           onClose={() => setIsAddInvestorModal(false)}
           setAddressesOfPrivateInvestors={setAddressesOfPrivateInvestors}
+          privateInvestorsAlreadyAdded={privateInvestors}
         />
       )}
 

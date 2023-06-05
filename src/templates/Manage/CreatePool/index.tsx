@@ -1,13 +1,12 @@
 import React from 'react'
 import Big from 'big.js'
-import { AbiItem } from 'web3-utils'
-import web3 from '../../../utils/web3'
 import { useConnectWallet } from '@web3-onboard/react'
 import { keccak256 } from 'ethers'
 
 import useSignMessage from '@/hooks/useSignMessage'
 import useCreatePool from '@/hooks/useCreatePool'
 import useTransaction from '@/hooks/useTransaction'
+import { managePool } from '@/hooks/useManagePoolEthers'
 import { ERC20 } from '@/hooks/useERC20'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
@@ -17,9 +16,7 @@ import {
   setClear
 } from '@/store/reducers/poolCreationSlice'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
-import waitTransaction, { MetamaskError } from '@/utils/txWait'
 
-import KassandraControlerAbi from '@/constants/abi/KassandraController.json'
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { SAVE_POOL } from './graphql'
 
@@ -152,161 +149,6 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }
 
     return tokensNotAproved
-  }
-
-  async function callBack(
-    error: MetamaskError,
-    txHash: string,
-    approve?: {
-      token: { amount: string; normalizedAmount: string; symbol: string }
-      contractApprove: string
-      oldAllowance: string
-      allowance: (_to: string, _from: string) => Promise<string>
-    }
-  ) {
-    if (error) {
-      setTransactions(prev =>
-        prev.map(item => {
-          if (item.status === 'APPROVING') {
-            item.status = 'ERROR'
-          } else if (item.status === 'NEXT') {
-            item.status = 'WAITING'
-          }
-          return item
-        })
-      )
-
-      setTransactionButtonStatus(TransactionStatus.CONTINUE)
-
-      if (error.code === 4001) {
-        dispatch(setModalAlertText({ errorText: `Approval cancelled` }))
-
-        return false
-      }
-
-      dispatch(
-        setModalAlertText({
-          errorText: error.message
-        })
-      )
-      return false
-    }
-
-    const txReceipt = await waitTransaction(txHash)
-
-    if (txReceipt.status) {
-      if (approve) {
-        for (let index = 0; index < 100; index++) {
-          await new Promise(r => setTimeout(r, 500))
-
-          const amountApproved = await approve.allowance(
-            approve.contractApprove,
-            txReceipt.from
-          )
-          if (
-            amountApproved !== approve.oldAllowance &&
-            amountApproved !== '0'
-          ) {
-            if (Big(amountApproved).lt(approve.token.amount)) {
-              setTransactions(prev =>
-                prev.map(item => {
-                  if (item.status === 'APPROVING') {
-                    item.status = 'ERROR'
-                  } else if (item.status === 'NEXT') {
-                    item.status = 'WAITING'
-                  }
-                  return item
-                })
-              )
-
-              setTransactionButtonStatus(TransactionStatus.CONTINUE)
-
-              dispatch(
-                setModalAlertText({
-                  errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
-                  solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
-                })
-              )
-
-              return false
-            }
-
-            break
-          } else if (index === 99) {
-            setTransactions(prev =>
-              prev.map(item => {
-                if (item.status === 'APPROVING') {
-                  item.status = 'ERROR'
-                } else if (item.status === 'NEXT') {
-                  item.status = 'WAITING'
-                }
-                return item
-              })
-            )
-            setTransactionButtonStatus(TransactionStatus.CONTINUE)
-            dispatch(
-              setModalAlertText({
-                errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
-                solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
-              })
-            )
-
-            return false
-          }
-        }
-      }
-      let transactionIndex = -100
-      setTransactions(prev =>
-        prev.map((item, index) => {
-          if (item.status === 'APPROVING') {
-            if (item.key === 'createPool') {
-              setIsPoolCreated(true)
-            }
-            transactionIndex = index
-
-            return {
-              ...item,
-              status: 'APPROVED'
-            }
-          } else if (index === transactionIndex + 1) {
-            return {
-              ...item,
-              status: 'APPROVING'
-            }
-          } else if (index === transactionIndex + 2) {
-            return {
-              ...item,
-              status: 'NEXT'
-            }
-          } else {
-            return item
-          }
-        })
-      )
-
-      return true
-    } else {
-      dispatch(
-        setModalAlertText({
-          errorText: 'Transaction reverted'
-        })
-      )
-
-      setTransactions(prev =>
-        prev.map(item => {
-          if (item.status === 'APPROVING') {
-            item.status = 'ERROR'
-          } else if (item.status === 'NEXT') {
-            item.status = 'WAITING'
-          }
-
-          return item
-        })
-      )
-      setTransactionButtonStatus(TransactionStatus.CONTINUE)
-
-      return false
-    }
   }
 
   function handleSuccess() {
@@ -477,31 +319,36 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   async function handlePrivateInvestors(
     poolControler: string,
     investorsList: { address: string }[]
-  ): Promise<boolean> {
+  ) {
     if (!wallet?.provider) {
       return false
     }
 
-    const controller = new web3.eth.Contract(
-      KassandraControlerAbi as unknown as AbiItem,
-      poolControler
-    )
-
-    const result = await new Promise<boolean>(resolve => {
-      controller.methods
-        .addAllowedAddresses(investorsList.map(investor => investor.address))
-        .send(
-          {
-            from: wallet.accounts[0].address,
-            maxPriorityFeePerGas: 30e9
-          },
-          (error: MetamaskError, txHash: string) =>
-            callBack(error, txHash).then(res => {
-              resolve(res)
-            })
-        )
+    const { addAllowedAddresses } = await managePool(poolControler, undefined, {
+      wallet: wallet,
+      txNotification: txNotification,
+      transactionErrors: transactionErrors
     })
-    return result
+
+    await addAllowedAddresses(
+      investorsList.map(investor => investor.address),
+      handleSuccess,
+      () => {
+        handleFail
+        setTransactionButtonStatus(TransactionStatus.COMPLETED)
+
+        dispatch(setClear())
+
+        setTimeout(() => {
+          handleNextButton()
+        }, 500)
+        return
+      },
+      {
+        error:
+          'Could not add private investors, but the pool was created sucessfully'
+      }
+    )
   }
 
   async function getTransactionsList() {
@@ -833,70 +680,45 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }
     }
 
-    try {
-      const { response, receipt } = await create(
-        pool,
-        {},
-        { onFail: handleFail, onSuccess: handleSuccess }
-      )
+    const { response, receipt } = await create(
+      pool,
+      {},
+      { onFail: handleFail, onSuccess: handleSuccess }
+    )
 
-      // const tx = await factoryContract.methods
-      //   .create(
-      //     pool.name,
-      //     pool.symbol,
-      //     pool.isPrivatePool,
-      //     pool.whitelist,
-      //     pool.maxAmountsIn,
-      //     pool.settingsParams,
-      //     pool.feesSettings,
-      //     web3.utils.padLeft('0x', 64)
-      //   )
-      //   .send(
-      //     {
-      //       from: wallet?.accounts[0].address,
-      //       maxPriorityFeePerGas: 30e9
-      //     },
-      //     callBack
-      //   )
+    // const tx = await factoryContract.methods
+    //   .create(
+    //     pool.name,
+    //     pool.symbol,
+    //     pool.isPrivatePool,
+    //     pool.whitelist,
+    //     pool.maxAmountsIn,
+    //     pool.settingsParams,
+    //     pool.feesSettings,
+    //     web3.utils.padLeft('0x', 64)
+    //   )
+    //   .send(
+    //     {
+    //       from: wallet?.accounts[0].address,
+    //       maxPriorityFeePerGas: 30e9
+    //     },
+    //     callBack
+    //   )
 
-      if (receipt?.status === 1) {
-        setCompletedData({
-          id: `${poolData.networkId}${response.pool}`,
-          txHash: receipt?.hash || '',
-          networkId: poolData.networkId ?? 137
-        })
+    if (receipt?.status === 1) {
+      setCompletedData({
+        id: `${poolData.networkId}${response.pool}`,
+        txHash: receipt?.hash || '',
+        networkId: poolData.networkId ?? 137
+      })
+
+      if (pool.isPrivatePool) {
+        const addressList = poolData?.privateAddressList
+          ? poolData.privateAddressList
+          : []
+        await handlePrivateInvestors(response.poolController, addressList)
       }
-      // if (pool.isPrivatePool) {
-      //   try {
-      //     const addressList = poolData?.privateAddressList
-      //       ? poolData.privateAddressList
-      //       : []
-      //     const res = await handlePrivateInvestors(
-      //       response.poolController,
-      //       addressList
-      //     )
-      //     if (!res) {
-      //       throw new Error('Error for add Private Investors')
-      //     }
-      //   } catch (error) {
-      //     dispatch(
-      //       setModalAlertText({
-      //         errorText:
-      //           'Could not add private investors, but the pool was created sucessfully',
-      //         solutionText: 'Please try adding them in the dashboard later'
-      //       })
-      //     )
 
-      //     setTransactionButtonStatus(TransactionStatus.COMPLETED)
-
-      //     dispatch(setClear())
-
-      //     setTimeout(() => {
-      //       handleNextButton()
-      //     }, 500)
-      //     return
-      //   }
-      // }
       if (poolData.strategy || poolData.icon?.image_preview) {
         await sendPoolData(
           response.poolController,
@@ -913,30 +735,6 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       setTimeout(() => {
         handleNextButton()
       }, 300)
-    } catch (error) {
-      const _error = error as Error
-      const errorStr = _error.toString().match(/(BAL#\d{0,3})/)
-      const err = errorStr
-        ? errorStr[0]
-        : _error?.message ?? 'It was not possible to create pool'
-
-      // dispatch(
-      //   setModalAlertText({
-      //     errorText: err
-      //   })
-      // )
-      // setTransactionButtonStatus(TransactionStatus.CONTINUE)
-
-      // setTransactions(prev =>
-      //   prev.map(item => {
-      //     if (item.status === 'APPROVING') {
-      //       item.status = 'ERROR'
-      //     } else if (item.status === 'NEXT') {
-      //       item.status = 'WAITING'
-      //     }
-      //     return item
-      //   })
-      // )
     }
   }
 

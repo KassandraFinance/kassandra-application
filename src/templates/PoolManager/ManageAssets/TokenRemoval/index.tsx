@@ -2,6 +2,8 @@ import React from 'react'
 import { AbiItem } from 'web3-utils'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import { mockTokens, networks } from '@/constants/tokenAddresses'
 import ManagedPool from '@/constants/abi/ManagedPool.json'
@@ -31,14 +33,17 @@ const TokenRemoval = () => {
 
   const dispatch = useAppDispatch()
   const { weights, tokenSelection } = useAppSelector(state => state.removeAsset)
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
   const { poolAssets } = usePoolAssets(poolId)
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
+  const [{ wallet }] = useConnectWallet()
+  const { poolInfo } = usePoolInfo(
+    wallet ? getAddress(wallet.accounts[0].address) : '',
+    poolId
+  )
 
   const { priceToken } = useCoingecko(
     networks[poolInfo?.chain_id ?? 137]?.coingecko,
@@ -55,9 +60,11 @@ const TokenRemoval = () => {
   }
 
   async function handleCheckLpNeeded(allocation: string, poolPrice: string) {
-    if (tokenSelection.address === '' || !poolInfo) return
+    if (tokenSelection.address === '' || !poolInfo || !wallet) return
 
-    const userBalance = await ERC20(poolInfo.address).balance(userWalletAddress)
+    const userBalance = await ERC20(poolInfo.address).balance(
+      wallet.accounts[0].address
+    )
 
     let totalSupply = Big(0)
     try {
