@@ -7,7 +7,7 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import substr from '@/utils/substr'
 import { networks } from '@/constants/tokenAddresses'
 
-import useManagePool from '@/hooks/useManagePoolEthers'
+import useManagePoolController from '@/hooks/useManagePoolController'
 
 import usePoolInfo from '@/hooks/usePoolInfo'
 
@@ -48,7 +48,7 @@ const AddInvestorModal = ({
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 
-  const { addAllowedAddresses } = useManagePool(
+  const { addAllowedAddresses } = useManagePoolController(
     poolInfo?.controller ?? '',
     networks[chainId].rpc
   )

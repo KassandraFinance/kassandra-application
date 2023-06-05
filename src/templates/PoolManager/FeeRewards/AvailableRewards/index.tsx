@@ -6,7 +6,7 @@ import { networks } from '@/constants/tokenAddresses'
 
 import Button from '@/components/Button'
 
-import useManagePool from '@/hooks/useManagePoolEthers'
+import useManagePoolController from '@/hooks/useManagePoolController'
 
 import { getDateDiff } from '@/utils/date'
 import { BNtoDecimal } from '@/utils/numerals'
@@ -30,10 +30,8 @@ const AvailableRewards = ({ pool }: Props) => {
     : { string: 'days', value: 0 }
 
   const [{ wallet }] = useConnectWallet()
-  const { getAumFeesToManagerAndKassandra, withdrawAumFees } = useManagePool(
-    pool.controller,
-    networks[pool.chain_id].rpc
-  )
+  const { getAumFeesToManagerAndKassandra, withdrawAumFees } =
+    useManagePoolController(pool.controller, networks[pool.chain_id].rpc)
 
   async function handleClaimRewards() {
     if (!wallet) return

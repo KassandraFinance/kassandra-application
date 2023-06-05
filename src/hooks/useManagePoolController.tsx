@@ -245,7 +245,7 @@ type ParamsType = {
   ) => Promise<ErrorCode | undefined>
 }
 
-export const managePool = async (
+export const managePoolController = async (
   address: string,
   rpcUrl = networks[137].rpc,
   params: ParamsType

@@ -9,7 +9,7 @@ import { GET_INVESTORS_AMOUNT } from './graphql'
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 
 import usePoolInfo from '@/hooks/usePoolInfo'
-import useManagePool from '@/hooks/useManagePoolEthers'
+import useManagePoolController from '@/hooks/useManagePoolController'
 
 import Button from '@/components/Button'
 import InputSearch from '@/components/Inputs/InputSearch'
@@ -54,7 +54,7 @@ const RemoveInvestorModal = ({
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 
-  const { removeAllowedAddresses } = useManagePool(
+  const { removeAllowedAddresses } = useManagePoolController(
     poolInfo?.controller ?? '',
     networks[chainId].rpc
   )

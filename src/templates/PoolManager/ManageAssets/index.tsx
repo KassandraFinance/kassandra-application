@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import { ERC20 } from '../../../hooks/useERC20'
-import useManagePool from '@/hooks/useManagePoolEthers'
+import useManagePoolController from '@/hooks/useManagePoolController'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
 import usePoolAssets from '@/hooks/usePoolAssets'
@@ -94,7 +94,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
   const { poolAssets } = usePoolAssets(poolId)
   const { poolInfo } = usePoolInfo(wallet, poolId)
-  const managePool = useManagePool(
+  const managePool = useManagePoolController(
     poolInfo?.controller ?? '',
     networks[poolInfo?.chain_id ?? 137].rpc
   )
