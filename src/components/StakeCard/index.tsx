@@ -2,7 +2,6 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import Web3 from 'web3'
 
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
@@ -10,6 +9,7 @@ import useSWR from 'swr'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 import { request } from 'graphql-request'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import {
   BACKEND_KASSANDRA,
@@ -26,14 +26,13 @@ import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
 
 import usePriceLP from '@/hooks/usePriceLP'
 import useCoingecko from '@/hooks/useCoingecko'
-import { ERC20 } from '@/hooks/useERC20Contract'
-import useStakingContract from '@/hooks/useStakingContract'
+import { ERC20 } from '@/hooks/useERC20'
+import useTransaction from '@/hooks/useTransaction'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import useStaking from '@/hooks/useStaking'
 
 import { GET_INFO_POOL } from './graphql'
 
-import web3 from '@/utils/web3'
 import { BNtoDecimal } from '@/utils/numerals'
 import waitTransaction, {
   MetamaskError,
@@ -154,8 +153,11 @@ const StakeCard = ({
     vestingPeriod: '...',
     lockPeriod: '...'
   })
-  const networkChain = networks[43113]
-  const { userWalletAddress, chainId } = useAppSelector(state => state)
+
+  const [{ wallet }] = useConnectWallet()
+
+  const networkChain = networks[chain.id]
+  const { chainId } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
 
   const { priceToken } = useCoingecko(
@@ -165,12 +167,9 @@ const StakeCard = ({
   )
 
   const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(chain.id)
-  const stakingContract = useStakingContract(
-    stakingAddress,
-    networkChain.chainId
-  )
 
-  // const staking = useStaking(stakingAddress, networkChain.chainId)
+  const staking = useStaking(stakingAddress, networkChain.chainId)
+  const transaction = useTransaction()
 
   const { data } = useSWR(
     [GET_INFO_POOL, address],
@@ -199,8 +198,17 @@ const StakeCard = ({
   }
 
   async function updateAllowance() {
-    const token = ERC20(infoStaked.stakingToken)
-    const allowance = await token.allowance(stakingAddress, userWalletAddress)
+    const erc20 = ERC20(infoStaked.stakingToken, networkChain.rpc, {
+      transactionErrors: transaction.transactionErrors,
+      txNotification: transaction.txNotification,
+      wallet: null
+    })
+
+    const allowance = await erc20.allowance(
+      stakingAddress,
+      wallet?.accounts[0].address || ''
+    )
+
     setAmountApproveKacyStaking(Big(allowance))
   }
 
@@ -240,14 +248,22 @@ const StakeCard = ({
   }
 
   async function handleApproveKacy() {
-    const token = ERC20(infoStaked.stakingToken)
+    const erc20 = ERC20(infoStaked.stakingToken, networkChain.rpc, {
+      transactionErrors: transaction.transactionErrors,
+      txNotification: transaction.txNotification,
+      wallet: null
+    })
 
-    const decimals = await token.decimals()
+    const decimals = await erc20.decimals()
     setDecimals(decimals.toString())
 
-    await token.approve(stakingAddress, userWalletAddress, approvalCallback)
+    await erc20.approve(stakingAddress)
 
-    const allowance = await token.allowance(stakingAddress, userWalletAddress)
+    const allowance = await erc20.allowance(
+      stakingAddress,
+      wallet?.accounts[0].address || ''
+    )
+
     setAmountApproveKacyStaking(Big(allowance))
   }
 
@@ -312,22 +328,30 @@ const StakeCard = ({
   }, [infoStaked.stakingToken, pid, data])
 
   React.useEffect(() => {
-    if (!web3.currentProvider || userWalletAddress.length === 0) {
+    if (wallet?.provider && infoStaked.stakingToken) {
+      const erc20 = ERC20(infoStaked.stakingToken, networkChain.rpc, {
+        transactionErrors: transaction.transactionErrors,
+        txNotification: transaction.txNotification,
+        wallet: null
+      })
+      erc20
+        .allowance(stakingAddress, wallet?.accounts[0].address)
+        .then((response: string) => setAmountApproveKacyStaking(Big(response)))
+
+      staking.availableWithdraw &&
+        staking
+          .availableWithdraw(pid, wallet?.accounts[0].address)
+          .then(response => setCurrentAvailableWithdraw(Big(response)))
+          .catch(error => console.log(error))
+
+      staking.lockUntil &&
+        staking
+          .lockUntil(pid, wallet?.accounts[0].address)
+          .then(response => setLockPeriod(response))
+          .catch(error => console.log(error))
       return
     }
-
-    const token = ERC20(infoStaked.stakingToken, new Web3(networkChain.rpc))
-    token
-      .allowance(stakingAddress, userWalletAddress)
-      .then((response: string) => setAmountApproveKacyStaking(Big(response)))
-    stakingContract.availableWithdraw &&
-      stakingContract
-        .availableWithdraw(pid, userWalletAddress)
-        .then(setCurrentAvailableWithdraw)
-
-    stakingContract.lockUntil &&
-      stakingContract.lockUntil(pid, userWalletAddress).then(setLockPeriod)
-  }, [userWalletAddress, infoStaked.stakingToken])
+  }, [wallet, infoStaked.stakingToken])
 
   React.useEffect(() => {
     if (infoStaked.apr.lt(new BigNumber(0))) {
@@ -344,7 +368,9 @@ const StakeCard = ({
           {isLoading && (
             <div
               style={{
-                height: `${userWalletAddress ? '52.3rem' : '30.2rem'}`,
+                height: `${
+                  wallet?.accounts[0].address ? '52.3rem' : '30.2rem'
+                }`,
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center'
@@ -440,7 +466,7 @@ const StakeCard = ({
                 </S.InfoPool>
               </S.VotingPowerAndWithdrawDelay>
             )}
-            {userWalletAddress && <S.Line />}
+            {wallet?.accounts[0].address && <S.Line />}
 
             <S.InfosStaking>
               <YourStake
@@ -450,7 +476,7 @@ const StakeCard = ({
                 kacyPrice={kacyPrice}
                 setInfoStaked={setInfoStaked}
                 lockPeriod={lockPeriod}
-                userWalletAddress={userWalletAddress}
+                userWalletAddress={wallet?.accounts[0].address || ''}
                 stakeWithVotingPower={stakeWithVotingPower}
                 stakeWithLockPeriod={stakeWithLockPeriod}
                 availableWithdraw={currentAvailableWithdraw}
@@ -458,13 +484,13 @@ const StakeCard = ({
                 chain={chain}
               />
               <S.ButtonContainer stakeWithVotingPower={!stakeWithVotingPower}>
-                {userWalletAddress ? (
+                {wallet?.accounts[0].address ? (
                   <>
                     {!stakeWithLockPeriod && (
                       <S.Claim>
                         <KacyEarned
                           pid={pid}
-                          userWalletAddress={userWalletAddress}
+                          userWalletAddress={wallet?.accounts[0].address || ''}
                           kacyEarned={kacyEarned}
                           setKacyEarned={setKacyEarned}
                           kacyPrice={kacyPrice}
@@ -478,14 +504,9 @@ const StakeCard = ({
                           backgroundSecondary
                           disabledNoEvent={
                             kacyEarned.lte(new BigNumber(0)) ||
-                            chainId !== networkChain.chainId
+                            chainId !== Number(wallet?.chains[0].id)
                           }
-                          onClick={() =>
-                            stakingContract.getReward(
-                              pid,
-                              rewardClaimCallback()
-                            )
-                          }
+                          onClick={() => staking.getReward(pid)}
                         />
                       </S.Claim>
                     )}
@@ -502,15 +523,15 @@ const StakeCard = ({
                           />
                           <WithdrawDate
                             pid={pid}
-                            userWalletAddress={userWalletAddress}
+                            userWalletAddress={wallet?.accounts[0].address}
                           />
                         </>
                       ) : (
                         <>
-                          {chainId !== networkChain.chainId ? (
+                          {chainId !== Number(wallet?.chains[0].id) ? (
                             <Button
                               type="button"
-                              text={`Connect to ${networkChain.chainName}`}
+                              text={`Connect to ${wallet?.chains[0].namespace}`}
                               size="huge"
                               backgroundSecondary
                               fullWidth
@@ -554,7 +575,7 @@ const StakeCard = ({
                               disabledNoEvent={
                                 (stakeWithLockPeriod &&
                                   currentAvailableWithdraw.lte(0)) ||
-                                chainId !== networkChain.chainId
+                                chainId !== Number(wallet?.chains[0].id)
                               }
                               fullWidth
                               onClick={() => {
@@ -569,7 +590,7 @@ const StakeCard = ({
                               backgroundBlack
                               disabledNoEvent={
                                 infoStaked.yourStake.toString() === '0' ||
-                                chainId !== networkChain.chainId
+                                chainId !== Number(wallet?.chains[0].id)
                               }
                               fullWidth
                               onClick={() => setIsModalRequestUnstake(true)}
@@ -592,7 +613,7 @@ const StakeCard = ({
                 <S.ButtonDetails
                   type="button"
                   isDetails={isDetails}
-                  isConnect={!!userWalletAddress}
+                  isConnect={!!wallet?.accounts[0].address}
                   onClick={() => {
                     setIsDetails(!isDetails)
                     trackEventFunction(
@@ -665,8 +686,8 @@ const StakeCard = ({
           votingMultiplier={infoStaked.votingMultiplier}
           yourStake={infoStaked.yourStake}
           symbol={symbol}
-          userWalletAddress={userWalletAddress}
-          stakedUntil={stakingContract.stakedUntil}
+          userWalletAddress={wallet?.accounts[0].address || ''}
+          stakedUntil={staking.stakedUntil}
         />
       )}
       {isOpenModalPangolin && (

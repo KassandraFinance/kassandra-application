@@ -1,41 +1,14 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable prettier/prettier */
 import React from 'react'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
-import { AbiItem } from 'web3-utils'
-import Web3 from 'web3'
+import { BrowserProvider, JsonRpcProvider, Contract } from 'ethers'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { networks } from '@/constants/tokenAddresses'
 
-import web3, { EventSubscribe } from '@/utils/web3'
-import { TransactionCallback } from '@/utils/txWait'
-
-import { useAppSelector } from '@/store/hooks'
-
 import StakingContract from '@/constants/abi/Staking.json'
 
-
-import { useConnectWallet } from '@web3-onboard/react'
-import { BrowserProvider, JsonRpcProvider, Contract } from 'ethers'
-import useTransaction from './useTransaction'
-
-
-interface Events {
-  MinterChanged: EventSubscribe
-  DelegateChanged: EventSubscribe
-  DelegateVotesChanged: EventSubscribe
-  Transfer: EventSubscribe
-  Approval: EventSubscribe
-  NewPool: EventSubscribe
-  RewardAdded: EventSubscribe
-  Staked: EventSubscribe
-  Unstaking: EventSubscribe
-  Withdrawn: EventSubscribe
-  RewardPaid: EventSubscribe
-  RewardsDurationUpdated: EventSubscribe
-  Recovered: EventSubscribe
-}
+import useTransaction, { CallbacksType, MessageType } from './useTransaction'
 
 export interface PoolInfo {
   pid?: number
@@ -52,11 +25,11 @@ export interface PoolInfo {
   votingMultiplier: string // uint256
 }
 
-const useStaking = (address: string, chainId = 43113) => {
+const useStaking = (address: string, chainId = 43114) => {
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
 
-  const rpcURL = networks[43114].rpc
+  const rpcURL = networks[chainId].rpc
   const readProvider = new JsonRpcProvider(rpcURL)
 
   const [contract, setContractEthers] = React.useState({
@@ -65,7 +38,7 @@ const useStaking = (address: string, chainId = 43113) => {
   })
 
   React.useEffect(() => {
-    if (!wallet) return
+    if (!wallet?.provider) return
 
     const sendProvider = new BrowserProvider(wallet.provider)
     async function signContranct() {
@@ -82,30 +55,171 @@ const useStaking = (address: string, chainId = 43113) => {
 
   return React.useMemo(() => {
     // Read functions
+    const getUserInfo = async (
+      pid: number,
+      walletAddress: string,
+      address: string,
+      chainId: number
+    ) => {
+      const provider = new JsonRpcProvider(networks[chainId].rpc)
+      const infoContract = new Contract(address, StakingContract, provider)
+      const value = await infoContract.userInfo(pid, walletAddress)
+      return value
+    }
+
+    const availableWithdraw = async (pid: number, walletAddress: string) => {
+      const value: string = await contract.read.availableWithdraw(
+        pid,
+        walletAddress
+      )
+
+      return Big(value)
+    }
+
     const balance = async (pid: number, walletAddress: string) => {
       const value = await contract.read.balanceOf(pid, walletAddress)
       return new BigNumber(value)
     }
 
-    const availableWithdraw = async (pid: number, walletAddress: string) => {
-      const value: string = await contract.read.availableWithdraw(pid, walletAddress)
-      console.log(value)
-      return Big(value)
+    const earned = async (pid: number, walletAddress: string) => {
+      const value: string = await contract.read.earned(pid, walletAddress)
+      return new BigNumber(value)
     }
 
-    // Write functions
-    // const castVote = async (proposalId: number, vote: boolean) => {
-    //   try {
-    //     const tx = await contract.send.castVote(proposalId, vote)
-    //     await txNotification(tx)
-    //   } catch (error) {
-    //     transactionErrors(error)
-    //   }
-    // }
+    const lockUntil = async (pid: number, walletAddress: string) => {
+      const value = await contract.read.lockUntil(pid, walletAddress)
+      return parseInt(value)
+    }
+
+    const poolInfo = async (pid: number) => {
+      const value: PoolInfo = await contract.read.poolInfo(pid)
+      return value
+    }
+
+    const stakedUntil = async (pid: number, walletAddress: string) => {
+      const value: string = await contract.read.stakedUntil(pid, walletAddress)
+      return value
+    }
+
+    const unstaking = async (pid: number, walletAddress: string) => {
+      const value: boolean = await contract.read.unstaking(pid, walletAddress)
+      return value
+    }
+
+    const withdrawable = async (pid: number, walletAddress: string) => {
+      const value: boolean = await contract.read.withdrawable(
+        pid,
+        walletAddress
+      )
+      return value
+    }
+
+    const userInfo = async (
+      pid: number,
+      walletAddress: string | string[] | undefined
+    ) => {
+      const value = await contract.read.userInfo(pid, walletAddress)
+      return value
+    }
+
+    const earnedMultChain = async (
+      pid: number,
+      walletAddress: string,
+      address: string,
+      chainId: number
+    ) => {
+      const provider = new JsonRpcProvider(networks[chainId].rpc)
+      const infoContract = new Contract(address, StakingContract, provider)
+      const value = await infoContract.earned(pid, walletAddress)
+      return new BigNumber(value)
+    }
+
+    const stake = async (
+      pid: number,
+      amount: BigNumber,
+      delegatee: string,
+      message?: MessageType,
+      callbacks?: CallbacksType
+    ) => {
+      try {
+        const tx = await contract.send.stake(pid, amount, delegatee)
+        await txNotification(tx, message, callbacks)
+      } catch (error) {
+        transactionErrors(error, callbacks?.onFail)
+      }
+    }
+
+    const unstake = async (
+      pid: number,
+      message?: MessageType,
+      callbacks?: CallbacksType
+    ) => {
+      try {
+        const tx = await contract.send.unstake(pid)
+        await txNotification(tx, message, callbacks)
+      } catch (error) {
+        transactionErrors(error, callbacks?.onFail)
+      }
+    }
+
+    const cancelUnstake = async (
+      pid: number,
+      message?: MessageType,
+      callbacks?: CallbacksType
+    ) => {
+      try {
+        const tx = await contract.send.cancelUnstake(pid)
+        await txNotification(tx, message, callbacks)
+      } catch (error) {
+        transactionErrors(error, callbacks?.onFail)
+      }
+    }
+
+    const getReward = async (
+      pid: number,
+      message?: MessageType,
+      callbacks?: CallbacksType
+    ) => {
+      try {
+        const tx = await contract.send.getReward(pid)
+        await txNotification(tx, message, callbacks)
+      } catch (error) {
+        transactionErrors(error, callbacks?.onFail)
+      }
+    }
+
+    const withdraw = async (
+      pid: number,
+      amount: BigNumber,
+      message?: MessageType,
+      callbacks?: CallbacksType
+    ) => {
+      try {
+        const tx = await contract.send.withdraw(pid, amount)
+        await txNotification(tx, message, callbacks)
+      } catch (error) {
+        transactionErrors(error, callbacks?.onFail)
+      }
+    }
 
     return {
+      getUserInfo,
+      availableWithdraw,
       balance,
-      availableWithdraw
+      earned,
+      lockUntil,
+      poolInfo,
+      stakedUntil,
+      unstaking,
+      withdrawable,
+      userInfo,
+      earnedMultChain,
+
+      stake,
+      unstake,
+      cancelUnstake,
+      getReward,
+      withdraw
     }
   }, [contract])
 }

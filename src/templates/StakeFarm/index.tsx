@@ -33,7 +33,7 @@ const tabs = [
 const StakeFarm = () => {
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
-  >('farm')
+  >('stake')
 
   const { userWalletAddress } = useAppSelector(state => state)
   const router = useRouter()

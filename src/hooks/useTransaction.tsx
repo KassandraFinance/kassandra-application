@@ -5,24 +5,26 @@ import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
 import { ToastInfo, ToastSuccess } from '@/components/Toastify/toast'
 
-type IMessageProps = {
+export type MessageType = {
   pending?: string
   error?: string
   sucess?: string
 }
 
-type IfunctionsProps = {
+export type CallbacksType = {
   onSuccess?: () => Promise<void> | void
   onFail?: () => Promise<void> | void
 }
+
+// Devemos criar uma lista de messagens de erros
 
 const useTransaction = () => {
   const dispatch = useAppDispatch()
 
   async function txNotification(
     tx: ContractTransactionResponse,
-    message?: IMessageProps,
-    callbacks?: IfunctionsProps
+    message?: MessageType,
+    callbacks?: CallbacksType
   ) {
     // Send pending notifications
     ToastInfo(message?.pending ?? 'Transaction pending')
@@ -38,7 +40,8 @@ const useTransaction = () => {
       if (callbacks?.onSuccess) {
         await callbacks.onSuccess()
       }
-      return receipt.status
+
+      return receipt
     } else {
       // If status code 1 or null send transaction failed modal
       dispatch(
@@ -49,7 +52,8 @@ const useTransaction = () => {
       if (callbacks?.onFail) {
         await callbacks.onFail()
       }
-      return receipt?.status || 0
+
+      return receipt
     }
   }
 
