@@ -1,6 +1,6 @@
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector } from '@/store/hooks'
 
-import Steps from '../../../../components/Steps'
+import Steps from '@/components/Steps'
 import CreatePoolHeader from '../CreatePoolHeader'
 import PoolDetails from './PoolDetails'
 import PoolSettings from './PoolSettings'

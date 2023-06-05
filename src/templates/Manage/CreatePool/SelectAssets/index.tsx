@@ -1,30 +1,30 @@
 import React from 'react'
 import useSWR from 'swr'
 import BigNumber from 'bn.js'
-import Web3 from 'web3'
-import { AbiItem, toChecksumAddress } from 'web3-utils'
 import request from 'graphql-request'
 import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import useCoingecko from '@/hooks/useCoingecko'
+import useWhiteList from '@/hooks/useWhiteList'
+import useBatchRequests from '@/hooks/useBatchRequests'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
   setTokens,
   setTokenLock,
   setAllocation,
   TokenType
-} from '../../../../store/reducers/poolCreationSlice'
+} from '@/store/reducers/poolCreationSlice'
 
-import ERC20ABI from '@/constants/abi/ERC20.json'
-import KassandraWhitelistAbi from '../../../../constants/abi/KassandraWhitelist.json'
 import {
   BACKEND_KASSANDRA,
   mockTokens,
   networks
-} from '../../../../constants/tokenAddresses'
+} from '@/constants/tokenAddresses'
 import { GET_INFO_TOKENS } from './graphql'
 
-import Steps from '../../../../components/Steps'
+import Steps from '@/components/Steps'
 import CreatePoolHeader from '../CreatePoolHeader'
 import PoolSummary from './PoolSummary'
 import AssetsTable from '../AssetsTable'
@@ -47,11 +47,13 @@ export type TokensInfoResponseType = {
   decimals: number
 }
 
+type BalancesType = Record<string, BigNumber>
+
 const SelectAssets = () => {
   const [whitelist, setWhitelist] = React.useState<string[]>()
-  const [tokenBalance, setTokenBalance] = React.useState<{
-    [key: string]: BigNumber
-  }>({})
+  const [tokenBalance, setTokenBalance] = React.useState<BalancesType>({})
+
+  const [{ wallet }] = useConnectWallet()
 
   const dispatch = useAppDispatch()
   const tokensSummary = useAppSelector(
@@ -60,13 +62,14 @@ const SelectAssets = () => {
   const { network, networkId } = useAppSelector(
     state => state.poolCreation.createPoolData
   )
-  const wallet = useAppSelector(state => state.userWalletAddress)
+  const { tokensWhitelist } = useWhiteList(networkId || 137)
+  const { balances } = useBatchRequests(networkId || 137)
 
   const tokensList = tokensSummary ? tokensSummary : []
 
   const tokensListGoerli =
     networkId === 5
-      ? whitelist?.map((token: string) => toChecksumAddress(mockTokens[token]))
+      ? whitelist?.map((token: string) => getAddress(mockTokens[token]))
       : whitelist
 
   let totalAllocation = Big(0)
@@ -91,32 +94,6 @@ const SelectAssets = () => {
     networks[networkId ?? 137].nativeCurrency.address,
     tokensListGoerli ?? ['']
   )
-
-  async function getBalances(tokensList: string[]) {
-    const web3 = new Web3(networks[networkId ?? 137].rpc)
-    const batch = new web3.BatchRequest()
-
-    const balanceArr = {}
-    for (const token of tokensList) {
-      // eslint-disable-next-line prettier/prettier
-      const contract = new web3.eth.Contract(
-        ERC20ABI as unknown as AbiItem,
-        token
-      )
-      batch.add(
-        contract.methods
-          .balanceOf(wallet)
-          .call.request({ from: wallet }, (error: any, balance: string) => {
-            Object.assign(balanceArr, {
-              [mockTokens[token] ?? token.toLowerCase()]: new BigNumber(balance)
-            })
-          })
-      )
-    }
-    batch.execute()
-
-    setTokenBalance(balanceArr)
-  }
 
   function handleInput(
     e: React.ChangeEvent<HTMLInputElement>,
@@ -154,28 +131,39 @@ const SelectAssets = () => {
 
   React.useEffect(() => {
     const getWhitelist = async () => {
-      try {
-        const web3 = new Web3(networks[networkId ?? 137].rpc)
+      const res = await tokensWhitelist()
 
-        // eslint-disable-next-line prettier/prettier
-        const whitelistContract = new web3.eth.Contract(
-          KassandraWhitelistAbi as unknown as AbiItem,
-          networks[networkId ?? 137].whiteList
-        )
-        const whitelist = await whitelistContract.methods
-          .getTokens(0, 100)
-          .call()
-
-        setWhitelist(whitelist)
-      } catch (error) {
-        console.error('It was not possible to get whitelist')
-      }
+      setWhitelist(res)
     }
+
     getWhitelist()
   }, [])
 
   React.useEffect(() => {
-    getBalances(whitelist ?? [])
+    if (!whitelist) {
+      return
+    }
+
+    async function getBalances(userWalletAddress: string, whitelist: string[]) {
+      const res = await balances(userWalletAddress, whitelist)
+
+      const balancesArr: BalancesType = {}
+      if (networkId === 5) {
+        for (const [i, token] of whitelist.entries()) {
+          balancesArr[mockTokens[token]] = new BigNumber(res[i].toString())
+        }
+      } else {
+        for (const [i, token] of whitelist.entries()) {
+          balancesArr[token.toLowerCase()] = new BigNumber(res[i].toString())
+        }
+      }
+
+      setTokenBalance(balancesArr)
+    }
+
+    if (wallet?.provider) {
+      getBalances(wallet.accounts[0].address, whitelist)
+    }
   }, [whitelist, wallet])
 
   return (

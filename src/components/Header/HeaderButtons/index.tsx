@@ -69,27 +69,29 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   }
 
   React.useEffect(() => {
-    if (wallet) {
+    if (wallet?.provider) {
       const chainId = wallet.chains[0].id
       setNetwork(chainStyle[chainId] ?? chainStyle.notSuported)
-    } else {
-      setNetwork(chainStyle.disconect)
+
+      return
     }
+
+    setNetwork(chainStyle.disconect)
   }, [wallet])
 
   React.useEffect(() => {
-    if (!wallet) return
+    if (wallet?.provider) {
+      fetch(`/api/profile/${getAddress(wallet.accounts[0].address)}`)
+        .then(res => res.json())
+        .then(data => {
+          const { nickname, image, isNFT } = data
 
-    fetch(`/api/profile/${getAddress(wallet.accounts[0].address)}`)
-      .then(res => res.json())
-      .then(data => {
-        const { nickname, image, isNFT } = data
-
-        dispatch(setNickName(nickname || ''))
-        dispatch(
-          setProfilePic({ profilePic: image || '', isNFT: isNFT || false })
-        )
-      })
+          dispatch(setNickName(nickname || ''))
+          dispatch(
+            setProfilePic({ profilePic: image || '', isNFT: isNFT || false })
+          )
+        })
+    }
   }, [wallet])
 
   return (
@@ -107,7 +109,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       />
 
       <ModalKacy />
-      {wallet ? (
+      {wallet?.provider ? (
         <Link
           href={`/profile/${getAddress(wallet.accounts[0]?.address)}`}
           passHref

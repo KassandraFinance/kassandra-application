@@ -2,9 +2,9 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import Image from 'next/image'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import usePoolInfo from '@/hooks/usePoolInfo'
-import { useAppSelector } from '@/store/hooks'
 
 import substr from '@/utils/substr'
 import { registerToken } from '../../../utils/registerToken'
@@ -20,13 +20,13 @@ import * as S from './styles'
 
 const Details = () => {
   const router = useRouter()
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   return (
     <S.Details>

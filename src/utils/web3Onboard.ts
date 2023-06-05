@@ -15,7 +15,7 @@ const chains = [
     token: 'AVAX',
     label: 'Avalanche',
     rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
-    blockExplorerUrl: 'https://polygonscan.com',
+    blockExplorerUrl: 'https://snowtrace.io',
     color: '#E84142',
     icon: `<svg width="1503" height="1504" viewBox="0 0 1503 1504" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect x="287" y="258" width="928" height="844" fill="white"/>
@@ -33,7 +33,7 @@ const chains = [
     token: 'MATIC',
     label: 'Polygon - POS',
     rpcUrl: 'https://rpc.ankr.com/polygon',
-    blockExplorerUrl: 'https://snowtrace.io',
+    blockExplorerUrl: 'https://polygonscan.com',
     color: '#7b3fe4',
     icon: `<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500">
 	<defs>
@@ -170,12 +170,13 @@ const appMetadata = {
 
 const web3Onboard = init({
   theme: {
-    '--w3o-background-color': 'unset',
-    '--w3o-foreground-color': 'unset',
-    '--w3o-text-color': 'unset',
-    '--w3o-border-color': 'unset',
+    '--w3o-background-color':
+      'linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%)',
+    '--w3o-foreground-color': '#211426',
+    '--w3o-text-color': '#FCFCFC',
+    '--w3o-border-color': 'transparent',
     '--w3o-action-color': 'unset',
-    '--w3o-border-radius': 'unset',
+    '--w3o-border-radius': '16px',
     '--w3o-font-family': 'Rubik'
   },
   disableFontDownload: true,

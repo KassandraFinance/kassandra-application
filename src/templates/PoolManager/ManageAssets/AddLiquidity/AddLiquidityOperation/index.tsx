@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 import { useRouter } from 'next/router'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import {
   networks,
@@ -17,9 +18,10 @@ import {
   setController,
   AssetType
 } from '../../../../../store/reducers/addAssetSlice'
-import { ERC20 } from '../../../../../hooks/useERC20Contract'
+import { ERC20 } from '../../../../../hooks/useERC20'
 import usePoolInfo from '@/hooks/usePoolInfo'
 import useCoingecko from '@/hooks/useCoingecko'
+import useTransaction from '@/hooks/useTransaction'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
@@ -56,7 +58,9 @@ export type GetPoolTokensType = {
 }
 
 const AddLiquidityOperation = () => {
-  const [balance, setBalance] = React.useState<BigNumber>(new BigNumber(0))
+  const [userBalance, setUserBalance] = React.useState<BigNumber>(
+    new BigNumber(0)
+  )
 
   const router = useRouter()
 
@@ -64,12 +68,14 @@ const AddLiquidityOperation = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
+  const [{ wallet }] = useConnectWallet()
+  const [{ connectedChain }] = useSetChain()
   const dispatch = useAppDispatch()
-
   const token = useAppSelector(state => state.addAsset.token)
-  const chainId = useAppSelector(state => state.chainId)
   const liquidit = useAppSelector(state => state.addAsset.liquidit)
-  const wallet = useAppSelector(state => state.userWalletAddress)
+  const { txNotification, transactionErrors } = useTransaction()
+
+  const chainId = Number(connectedChain?.id ?? '0x89')
 
   function handleTokenAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
     dispatch(setAmount(e.target.value.length > 0 ? e.target.value : '0'))
@@ -80,7 +86,7 @@ const AddLiquidityOperation = () => {
   }
 
   function handleMaxTokenInput() {
-    const amount = Big(balance.toString()).div(Big(10).pow(token.decimals))
+    const amount = Big(userBalance.toString()).div(Big(10).pow(token.decimals))
     dispatch(setAmount(amount.toString()))
   }
 
@@ -107,9 +113,19 @@ const AddLiquidityOperation = () => {
 
   React.useEffect(() => {
     async function getBalances(token: string) {
-      const { balance } = ERC20(token)
-      const balanceValue = await balance(wallet)
-      setBalance(balanceValue)
+      if (!wallet) return
+
+      const { balance } = ERC20(
+        token,
+        networks[poolInfo?.chain_id ?? 137].rpc,
+        {
+          wallet: null,
+          txNotification,
+          transactionErrors
+        }
+      )
+      const balanceValue = await balance(wallet.accounts[0].address)
+      setUserBalance(new BigNumber(balanceValue))
     }
 
     if (chainId === 5) {
@@ -142,8 +158,8 @@ const AddLiquidityOperation = () => {
               value={liquidit.amount}
               min={Big(1).div(Big(10).pow(token.decimals)).toString()}
               max={
-                balance
-                  ? Big(balance.toString())
+                userBalance
+                  ? Big(userBalance.toString())
                       .div(Big(10).pow(token.decimals))
                       .toString()
                   : '0'
@@ -156,7 +172,8 @@ const AddLiquidityOperation = () => {
             />
 
             <S.Balance>
-              Balance: {balance ? BNtoDecimal(balance, token.decimals) : '0'}
+              Balance:
+              {userBalance ? BNtoDecimal(userBalance, token.decimals) : '0'}
             </S.Balance>
           </S.InputWrapper>
         </S.InputContainer>

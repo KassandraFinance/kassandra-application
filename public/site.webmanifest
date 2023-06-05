@@ -1,6 +1,8 @@
 {
-    "name": "Kassandra Homepage",
-    "short_name": "Kassandra Home",
+    "name": "Kassandra DAO",
+    "short_name": "Kassandra",
+    "description": "Create, manage and invest in tokenized crypto portfolios.",
+    "iconPath": "./favicon.svg",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",

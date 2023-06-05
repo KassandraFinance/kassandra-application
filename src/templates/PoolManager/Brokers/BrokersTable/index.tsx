@@ -5,9 +5,10 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { useAppSelector } from '@/store/hooks'
 import substr from '@/utils/substr'
 import { GET_BROKERS } from './graphql'
 
@@ -75,22 +76,21 @@ const BrokersTable = () => {
     address: ''
   })
 
+  const [{ wallet }] = useConnectWallet()
   const router = useRouter()
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
   const take = 4
 
   const { data } = useSWR<GetBrokersType>(
-    userWalletAddress.length > 0 && poolId.length > 0
-      ? [GET_BROKERS, userWalletAddress, poolId]
+    wallet && poolId.length > 0
+      ? [GET_BROKERS, wallet.accounts[0].address, poolId]
       : null,
     (query, userWalletAddress, poolId) =>
       request(BACKEND_KASSANDRA, query, {
-        id: userWalletAddress,
+        id: getAddress(userWalletAddress),
         poolId: poolId,
         first: take,
         skip

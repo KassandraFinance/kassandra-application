@@ -83,7 +83,8 @@ const useGov = (address: string) => {
     const castVote = async (proposalId: number, vote: boolean) => {
       try {
         const tx = await contract.send.castVote(proposalId, vote)
-        await txNotification(tx)
+        const status = await txNotification(tx)
+        return status
       } catch (error) {
         transactionErrors(error)
       }

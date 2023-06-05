@@ -4,12 +4,11 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import { useRouter } from 'next/router'
 import { keccak256 } from 'web3-utils'
-import crypto from 'crypto'
-
-import web3 from '@/utils/web3'
+import { useConnectWallet } from '@web3-onboard/react'
+import useSignMessage from '@/hooks/useSignMessage'
 
 import usePoolInfo from '@/hooks/usePoolInfo'
-import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
@@ -41,15 +40,16 @@ const PoolImage = () => {
     }
   })
 
+  const [{ wallet }] = useConnectWallet()
   const dispatch = useAppDispatch()
   const router = useRouter()
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
+  const { signMessage } = useSignMessage()
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const img = poolImage.icon?.image_preview ? poolImage.icon.image_preview : ''
   const hasPoolImage =
@@ -61,15 +61,12 @@ const PoolImage = () => {
     summary: string,
     chainId: number
   ) {
+    if (!wallet) return
+
     try {
-      const nonce = crypto.randomBytes(12).toString('base64')
       const logoToSign = logo ? keccak256(logo) : ''
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
-      const signature = await web3.eth.personal.sign(
-        message,
-        userWalletAddress,
-        nonce
-      )
+      const signature = await signMessage(message)
 
       const body = {
         controller,
