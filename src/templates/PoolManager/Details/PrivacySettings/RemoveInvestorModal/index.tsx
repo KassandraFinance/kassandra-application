@@ -1,7 +1,6 @@
 import React from 'react'
 import Big from 'big.js'
 import useSWR from 'swr'
-import { getAddress } from 'ethers'
 import { useRouter } from 'next/router'
 import { request } from 'graphql-request'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
@@ -51,10 +50,7 @@ const RemoveInvestorModal = ({
 
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
 

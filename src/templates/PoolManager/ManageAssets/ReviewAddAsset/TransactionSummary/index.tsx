@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Big from 'big.js'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
 import { networks } from '../../../../../constants/tokenAddresses'
 
@@ -29,10 +28,7 @@ const TransactionSummary = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const { data: priceData } = useCoingecko(
     networks[poolInfo?.chain_id ?? 137].coingecko,

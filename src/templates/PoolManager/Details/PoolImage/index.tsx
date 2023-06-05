@@ -5,7 +5,6 @@ import { request } from 'graphql-request'
 import { useRouter } from 'next/router'
 import { keccak256 } from 'web3-utils'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 import useSignMessage from '@/hooks/useSignMessage'
 
 import usePoolInfo from '@/hooks/usePoolInfo'
@@ -50,10 +49,7 @@ const PoolImage = () => {
     : router.query.pool ?? ''
 
   const { signMessage } = useSignMessage()
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const img = poolImage.icon?.image_preview ? poolImage.icon.image_preview : ''
   const hasPoolImage =

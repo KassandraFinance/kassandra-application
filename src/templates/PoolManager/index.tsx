@@ -8,7 +8,6 @@ import Tippy from '@tippyjs/react'
 import { BNtoDecimal } from '../../utils/numerals'
 import Big from 'big.js'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { GET_POOL_REBALANCE_TIME, GET_POOL_PRICE } from './graphql'
@@ -119,10 +118,7 @@ const PoolManager = () => {
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }] = useSetChain()
 
-  const { poolInfo, isManager } = usePoolInfo(
-    wallet ? getAddress(wallet?.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo, isManager } = usePoolInfo(wallet, poolId)
   const { poolAssets } = usePoolAssets(poolId)
   const { data } = useSWR([GET_POOL_REBALANCE_TIME, poolId], (query, poolId) =>
     request(BACKEND_KASSANDRA, query, { id: poolId })

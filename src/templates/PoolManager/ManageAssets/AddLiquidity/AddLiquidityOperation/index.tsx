@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 import { useRouter } from 'next/router'
-import { getAddress } from 'ethers'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import {
@@ -91,10 +90,7 @@ const AddLiquidityOperation = () => {
     dispatch(setAmount(amount.toString()))
   }
 
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const { data: priceData } = useCoingecko(
     networks[poolInfo?.chain_id ?? 137].coingecko,

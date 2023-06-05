@@ -2,7 +2,6 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
 import { mockTokens, networks } from '@/constants/tokenAddresses'
 
@@ -37,10 +36,7 @@ const TokenRemoval = () => {
 
   const { poolAssets } = usePoolAssets(poolId)
   const [{ wallet }] = useConnectWallet()
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
   const { balance } = useERC20(
     poolInfo?.address ?? '',
     networks[poolInfo?.chain_id ?? 137].rpc

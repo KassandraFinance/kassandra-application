@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { getAddress, isAddress } from 'ethers'
+import { isAddress } from 'ethers'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import substr from '@/utils/substr'
@@ -44,10 +44,7 @@ const AddInvestorModal = ({
 
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
 

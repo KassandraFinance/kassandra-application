@@ -1,7 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
 import { networks } from '@/constants/tokenAddresses'
 
@@ -28,10 +27,7 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
 
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
 

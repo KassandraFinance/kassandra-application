@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { getAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { useAppSelector } from '@/store/hooks'
@@ -51,10 +50,7 @@ const ReviewTable = () => {
   )
 
   const [{ wallet }] = useConnectWallet()
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   function handleCurrentViewTable(method: string, value: number) {
     if (method === 'next') {

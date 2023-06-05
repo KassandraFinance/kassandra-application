@@ -2,7 +2,6 @@ import React from 'react'
 import Image from 'next/image'
 import Big from 'big.js'
 import { useRouter } from 'next/router'
-import { getAddress } from 'ethers'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import { ERC20 } from '../../../hooks/useERC20'
@@ -94,10 +93,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     : router.query.pool ?? ''
 
   const { poolAssets } = usePoolAssets(poolId)
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
   const managePool = useManagePool(
     poolInfo?.controller ?? '',
     networks[poolInfo?.chain_id ?? 137].rpc
