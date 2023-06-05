@@ -1,23 +1,22 @@
 import React from 'react'
 import Image from 'next/image'
 import Big from 'big.js'
-import web3 from '../../../utils/web3'
-import { AbiItem } from 'web3-utils'
 import { useRouter } from 'next/router'
-import useManagePool from '@/hooks/useManagePoolEthers'
+import { getAddress } from 'ethers'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
-import { ERC20 } from '../../../hooks/useERC20Contract'
+import { ERC20 } from '../../../hooks/useERC20'
+import useManagePool from '@/hooks/useManagePoolEthers'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
 import usePoolAssets from '@/hooks/usePoolAssets'
 import usePoolInfo from '@/hooks/usePoolInfo'
 import useCoingecko from '@/hooks/useCoingecko'
+import useTransaction from '@/hooks/useTransaction'
 
 import { mockTokensReverse } from '../../../constants/tokenAddresses'
-import Kacupe from '@/constants/abi/KassandraController.json'
 
 import { BNtoDecimal } from '../../../utils/numerals'
-import waitTransaction, { MetamaskError } from '../../../utils/txWait'
 
 import { networks } from '../../../constants/tokenAddresses'
 
@@ -53,8 +52,6 @@ import {
 } from './ReviewAddAsset/TransactionSummary/styles'
 
 import * as S from './styles'
-import { useConnectWallet, useSetChain } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
 Big.RM = 0
 
@@ -78,8 +75,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const dispatch = useAppDispatch()
 
   const [{ wallet }] = useConnectWallet()
-  const [{ connectedChain }, setChain] = useSetChain()
-  // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ connectedChain }] = useSetChain()
+  const { txNotification, transactionErrors } = useTransaction()
   const token = useAppSelector(state => state.addAsset.token)
   const tokenLiquidity = useAppSelector(state => state.addAsset.liquidit)
 
@@ -88,7 +85,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const { periodSelect, newTokensWights } = useAppSelector(
     state => state.rebalanceAssets
   )
-  const chainId = useAppSelector(state => state.chainId)
+  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
 
   const router = useRouter()
 
@@ -101,7 +98,10 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     wallet ? getAddress(wallet.accounts[0].address) : '',
     poolId
   )
-  const managePool = useManagePool(poolInfo?.controller ?? '')
+  const managePool = useManagePool(
+    poolInfo?.controller ?? '',
+    networks[poolInfo?.chain_id ?? 137].rpc
+  )
 
   const { data: priceData } = useCoingecko(
     networks[poolInfo?.chain_id ?? 137].coingecko,
@@ -300,10 +300,18 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
     const transactionsList: TransactionsListType[] = []
 
-    const { allowance } = ERC20(tokenId)
+    const { allowance } = ERC20(
+      tokenId,
+      networks[poolInfo?.chain_id ?? 137].rpc,
+      {
+        wallet: null,
+        txNotification: txNotification,
+        transactionErrors: transactionErrors
+      }
+    )
     const amountApproved = await allowance(
       controller,
-      wallet?.accounts[0].address
+      wallet.accounts[0].address
     )
 
     if (Big(amountApproved).gte(amountToAprove)) {
@@ -354,12 +362,29 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       )
     })
 
-    // function handleSuccess() {
-    //   console.log('handleSuccess')
-    // }
-    // function handleFail() {
-    //   console.log('handleFail')
-    // }
+    function handleSuccess() {
+      setIsCompleted(true)
+
+      setTransactions([
+        {
+          key: 'Rebalance',
+          transaction: 'Rebalance Pool',
+          status: 'APPROVED'
+        }
+      ])
+    }
+
+    function handleFail() {
+      setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
+      setTransactions([
+        {
+          key: 'Rebalance',
+          transaction: 'Rebalance Pool',
+          status: 'ERROR'
+        }
+      ])
+    }
 
     try {
       const currentDate = new Date().getTime()
@@ -375,27 +400,10 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         Math.floor(currentDateAdded / 1000),
         Math.floor(periodSelectedFormatted / 1000),
         poolInfo.underlying_assets_addresses,
-        weightsArray
+        weightsArray,
+        handleSuccess,
+        handleFail
       )
-      // eslint-disable-next-line prettier/prettier
-      // const poolController = new web3.eth.Contract(
-      //   Kacupe as unknown as AbiItem,
-      //   poolInfo.controller
-      // )
-      // await poolController.methods
-      //   .updateWeightsGradually(
-      //     Math.floor(currentDateAdded / 1000),
-      //     Math.floor(periodSelectedFormatted / 1000),
-      //     poolInfo.underlying_assets_addresses,
-      //     weightsArray
-      //   )
-      //   .send(
-      //     {
-      //       from: userWalletAddress,
-      //       maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
-      //     },
-      //     callBack
-      //   )
     } catch (error) {
       console.log(error)
     }
@@ -426,12 +434,14 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       amount = `${amount.slice(0, amount.length - 1)}${
         Number(amount[amount.length - 1]) + 1
       }`
-      await handleApproveToken({
+      const status = await handleApproveToken({
         address: poolInfo.address,
         amount: lpNeeded.value.mul(Big(10).pow(18)).toFixed(0),
         normalizedAmount: amount,
         symbol: poolInfo.symbol
       })
+
+      if (!status) return
     } else {
       setTransactions(prev =>
         prev.map((item, index) => {
@@ -449,198 +459,136 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       return
     }
 
-    // function handleSuccess() {
-    //   console.log('handleSuccess')
-    // }
-    // function handleFail() {
-    //   console.log('handleFail')
-    // }
-
     await managePool.removeToken(
       tokenSelection.address,
-      wallet?.accounts[0].address
+      wallet?.accounts[0].address,
+      handleSuccess,
+      handleFail
     )
-    // try {
-    //   // eslint-disable-next-line prettier/prettier
-    //   const poolController = new web3.eth.Contract(
-    //     Kacupe as unknown as AbiItem,
-    //     poolInfo.controller
-    //   )
-    //   await poolController.methods
-    //     .removeToken(
-    //       tokenSelection.address,
-    //       userWalletAddress,
-    //       userWalletAddress
-    //     )
-    //     .send(
-    //       {
-    //         from: userWalletAddress,
-    //         maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
-    //       },
-    //       callBack
-    //     )
-    // } catch (error) {
-    //   console.log(error)
-    // }
   }
 
-  async function callBack(
-    error: MetamaskError,
-    txHash: string,
-    approve?: {
-      token: { amount: string; normalizedAmount: string; symbol: string }
-      contractApprove: string
-      oldAllowance: string
-      allowance: (_to: string, _from: string) => Promise<string>
-    }
-  ): Promise<boolean> {
-    if (error) {
-      setTransactions(prev =>
-        prev.map(item => {
-          if (item.status === 'APPROVING') {
-            item.status = 'ERROR'
-          } else if (item.status === 'NEXT') {
-            item.status = 'WAITING'
+  function handleSuccess() {
+    let transactionIndex = -100
+    setTransactions(prev =>
+      prev.map((item, index) => {
+        if (item.status === 'APPROVING') {
+          if (
+            item.key === 'addToken' ||
+            item.key === 'RemoveToken' ||
+            item.key === 'Rebalance'
+          ) {
+            setIsCompleted(true)
           }
+          transactionIndex = index
+
+          return {
+            ...item,
+            status: 'APPROVED'
+          }
+        } else if (index === transactionIndex + 1) {
+          return {
+            ...item,
+            status: 'APPROVING'
+          }
+        } else if (index === transactionIndex + 2) {
+          return {
+            ...item,
+            status: 'NEXT'
+          }
+        } else {
           return item
-        })
+        }
+      })
+    )
+
+    return true
+  }
+
+  function handleFail() {
+    setTransactionButtonStatus(TransactionStatus.CONTINUE)
+
+    setTransactions(prev =>
+      prev.map(item => {
+        if (item.status === 'APPROVING') {
+          item.status = 'ERROR'
+        } else if (item.status === 'NEXT') {
+          item.status = 'WAITING'
+        }
+        return item
+      })
+    )
+
+    return
+  }
+
+  async function handleApproveSuccess(approve: {
+    token: { amount: string; normalizedAmount: string; symbol: string }
+    contractApprove: string
+    oldAllowance: string
+    allowance: (_to: string, _from: string) => Promise<string>
+  }) {
+    if (!wallet?.provider) {
+      return false
+    }
+
+    for (let index = 0; index < 100; index++) {
+      await new Promise(r => setTimeout(r, 500))
+
+      const amountApproved = await approve.allowance(
+        approve.contractApprove,
+        wallet.accounts[0].address
       )
+      if (amountApproved !== approve.oldAllowance && amountApproved !== '0') {
+        if (Big(amountApproved).lt(approve.token.amount)) {
+          setTransactions(prev =>
+            prev.map(item => {
+              if (item.status === 'APPROVING') {
+                item.status = 'ERROR'
+              } else if (item.status === 'NEXT') {
+                item.status = 'WAITING'
+              }
+              return item
+            })
+          )
 
-      setTransactionButtonStatus(TransactionStatus.CONTINUE)
+          setTransactionButtonStatus(TransactionStatus.CONTINUE)
 
-      if (error.code === 4001) {
-        dispatch(setModalAlertText({ errorText: `Approval cancelled` }))
+          dispatch(
+            setModalAlertText({
+              errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue manage pool`,
+              solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
+            })
+          )
+
+          return false
+        }
+
+        break
+      } else if (index === 99) {
+        setTransactions(prev =>
+          prev.map(item => {
+            if (item.status === 'APPROVING') {
+              item.status = 'ERROR'
+            } else if (item.status === 'NEXT') {
+              item.status = 'WAITING'
+            }
+            return item
+          })
+        )
+        setTransactionButtonStatus(TransactionStatus.CONTINUE)
+        dispatch(
+          setModalAlertText({
+            errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue manage pool`,
+            solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
+          })
+        )
+
         return false
       }
-
-      dispatch(
-        setModalAlertText({
-          errorText: error.message
-        })
-      )
-      return false
     }
 
-    const txReceipt = await waitTransaction(txHash)
-
-    if (txReceipt.status) {
-      if (approve) {
-        for (let index = 0; index < 100; index++) {
-          await new Promise(r => setTimeout(r, 500))
-
-          const amountApproved = await approve.allowance(
-            approve.contractApprove,
-            txReceipt.from
-          )
-          if (
-            amountApproved !== approve.oldAllowance &&
-            amountApproved !== '0'
-          ) {
-            if (Big(amountApproved).lt(approve.token.amount)) {
-              setTransactions(prev =>
-                prev.map(item => {
-                  if (item.status === 'APPROVING') {
-                    item.status = 'ERROR'
-                  } else if (item.status === 'NEXT') {
-                    item.status = 'WAITING'
-                  }
-                  return item
-                })
-              )
-
-              setTransactionButtonStatus(TransactionStatus.CONTINUE)
-
-              dispatch(
-                setModalAlertText({
-                  errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
-                  solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
-                })
-              )
-
-              return false
-            }
-
-            break
-          } else if (index === 99) {
-            setTransactions(prev =>
-              prev.map(item => {
-                if (item.status === 'APPROVING') {
-                  item.status = 'ERROR'
-                } else if (item.status === 'NEXT') {
-                  item.status = 'WAITING'
-                }
-                return item
-              })
-            )
-            setTransactionButtonStatus(TransactionStatus.CONTINUE)
-            dispatch(
-              setModalAlertText({
-                errorText: `You have approved less ${approve.token.symbol} than the amount necessary to continue creating the pool`,
-                solutionText: `Please retry and increase your spend limit to at least ${approve.token.normalizedAmount}`
-              })
-            )
-
-            return false
-          }
-        }
-      }
-
-      let transactionIndex = -100
-      setTransactions(prev =>
-        prev.map((item, index) => {
-          if (item.status === 'APPROVING') {
-            if (
-              item.key === 'addToken' ||
-              item.key === 'RemoveToken' ||
-              item.key === 'Rebalance'
-            ) {
-              setIsCompleted(true)
-            }
-            transactionIndex = index
-
-            return {
-              ...item,
-              status: 'APPROVED'
-            }
-          } else if (index === transactionIndex + 1) {
-            return {
-              ...item,
-              status: 'APPROVING'
-            }
-          } else if (index === transactionIndex + 2) {
-            return {
-              ...item,
-              status: 'NEXT'
-            }
-          } else {
-            return item
-          }
-        })
-      )
-
-      return true
-    } else {
-      dispatch(
-        setModalAlertText({
-          errorText: 'Transaction reverted'
-        })
-      )
-
-      setTransactions(prev =>
-        prev.map(item => {
-          if (item.status === 'APPROVING') {
-            item.status = 'ERROR'
-          } else if (item.status === 'NEXT') {
-            item.status = 'WAITING'
-          }
-
-          return item
-        })
-      )
-
-      setTransactionButtonStatus(TransactionStatus.CONTINUE)
-      return false
-    }
+    handleSuccess()
+    return true
   }
 
   async function handleApproveToken(token: {
@@ -650,26 +598,40 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     normalizedAmount: string
   }) {
     if (!poolInfo || !wallet) return false
-    const { approve, allowance } = ERC20(token.address)
+
+    const { approve, allowance } = ERC20(
+      token.address,
+      networks[poolInfo?.chain_id ?? 137].rpc,
+      {
+        wallet: wallet,
+        txNotification: txNotification,
+        transactionErrors: transactionErrors
+      }
+    )
     const oldAllowance = await allowance(
       poolInfo?.controller,
       wallet.accounts[0].address
     )
-    await new Promise<boolean>(resolve => {
-      approve(
-        poolInfo?.controller,
-        wallet.accounts[0].address,
-        (error: MetamaskError, txHash: string) =>
-          callBack(error, txHash, {
-            allowance,
-            contractApprove: poolInfo?.controller,
-            oldAllowance,
-            token
-          }).then(result => {
-            resolve(result)
-          })
-      )
-    })
+    const receipt = await approve(
+      poolInfo?.controller,
+      {},
+      {
+        onFail: handleFail
+      }
+    )
+
+    if (receipt?.status === 1) {
+      const status = await handleApproveSuccess({
+        allowance,
+        contractApprove: poolInfo?.controller,
+        oldAllowance,
+        token
+      })
+
+      return status
+    }
+
+    return false
   }
 
   async function handleAddToken() {
@@ -696,18 +658,16 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         })
       )
 
-      try {
-        await handleApproveToken({
-          address: tokenAdd,
-          amount: Big(tokenLiquidity.amount)
-            .mul(Big(10).pow(token.decimals))
-            .toFixed(0),
-          normalizedAmount: tokenLiquidity.amount,
-          symbol: token.symbol
-        })
-      } catch (error) {
-        console.log(error)
-      }
+      const status = await handleApproveToken({
+        address: tokenAdd,
+        amount: Big(tokenLiquidity.amount)
+          .mul(Big(10).pow(token.decimals))
+          .toFixed(0),
+        normalizedAmount: tokenLiquidity.amount,
+        symbol: token.symbol
+      })
+
+      if (!status) return
     } else {
       setTransactions(prev =>
         prev.map((item, index) => {
@@ -738,28 +698,10 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         tokenAdd,
         allocation,
         tokenToAddBalance,
-        wallet.accounts[0].address
+        wallet.accounts[0].address,
+        handleSuccess,
+        handleFail
       )
-      // eslint-disable-next-line prettier/prettier
-      // const poolController = new web3.eth.Contract(
-      //   Kacupe as unknown as AbiItem,
-      //   poolInfo.controller
-      // )
-      // const response = await poolController.methods
-      //   .addToken(
-      //     tokenAdd,
-      //     allocation,
-      //     tokenToAddBalance,
-      //     userWalletAddress,
-      //     userWalletAddress
-      //   )
-      //   .send(
-      //     {
-      //       from: userWalletAddress,
-      //       maxPriorityFeePerGas: chainId === 137 ? 30e9 : 2.5e9
-      //     },
-      //     callBack
-      //   )
     } catch (error) {
       console.log('Error', error)
     }
@@ -800,7 +742,6 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         token.symbol,
         Big(tokenLiquidity.amount).mul(Big(10).pow(token.decimals)).toFixed(0)
       )
-      // getTransactionsList(mockTokensReverse[token.id.toLowerCase()])
     }
 
     if (
