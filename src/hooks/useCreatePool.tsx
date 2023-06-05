@@ -13,6 +13,7 @@ import useTransaction, {
   MessageType
 } from '@/hooks/useTransaction'
 import { networks } from '@/constants/tokenAddresses'
+
 type PoolCreationType = {
   name: string | undefined
   symbol: string | undefined
@@ -60,6 +61,8 @@ const useCreatePool = (address: string) => {
     callbacks?: CallbacksType
   ) {
     try {
+      const salt = zeroPadValue('0x', 32)
+
       const response = await contract.send.create.staticCall(
         pool.name,
         pool.symbol,
@@ -67,8 +70,8 @@ const useCreatePool = (address: string) => {
         pool.whitelist,
         pool.maxAmountsIn,
         pool.settingsParams,
-        pool.feesSettings
-        // zeroPadValue('0x', 64)
+        pool.feesSettings,
+        salt
       )
 
       const tx = await contract.send.create(
@@ -78,8 +81,8 @@ const useCreatePool = (address: string) => {
         pool.whitelist,
         pool.maxAmountsIn,
         pool.settingsParams,
-        pool.feesSettings
-        // zeroPadValue('0x', 64)
+        pool.feesSettings,
+        salt
       )
 
       const receipt = await txNotification(tx, message, callbacks)
