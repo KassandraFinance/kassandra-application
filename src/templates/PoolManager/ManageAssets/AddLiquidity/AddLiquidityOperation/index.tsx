@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 import { useRouter } from 'next/router'
-import { getAddress } from 'ethers'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import {
@@ -19,9 +18,10 @@ import {
   setController,
   AssetType
 } from '../../../../../store/reducers/addAssetSlice'
-import { ERC20 } from '../../../../../hooks/useERC20Contract'
+import { ERC20 } from '../../../../../hooks/useERC20'
 import usePoolInfo from '@/hooks/usePoolInfo'
 import useCoingecko from '@/hooks/useCoingecko'
+import useTransaction from '@/hooks/useTransaction'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
@@ -58,7 +58,9 @@ export type GetPoolTokensType = {
 }
 
 const AddLiquidityOperation = () => {
-  const [balance, setBalance] = React.useState<BigNumber>(new BigNumber(0))
+  const [userBalance, setUserBalance] = React.useState<BigNumber>(
+    new BigNumber(0)
+  )
 
   const router = useRouter()
 
@@ -71,8 +73,9 @@ const AddLiquidityOperation = () => {
   const dispatch = useAppDispatch()
   const token = useAppSelector(state => state.addAsset.token)
   const liquidit = useAppSelector(state => state.addAsset.liquidit)
+  const { txNotification, transactionErrors } = useTransaction()
 
-  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+  const chainId = Number(connectedChain?.id ?? '0x89')
 
   function handleTokenAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
     dispatch(setAmount(e.target.value.length > 0 ? e.target.value : '0'))
@@ -83,14 +86,11 @@ const AddLiquidityOperation = () => {
   }
 
   function handleMaxTokenInput() {
-    const amount = Big(balance.toString()).div(Big(10).pow(token.decimals))
+    const amount = Big(userBalance.toString()).div(Big(10).pow(token.decimals))
     dispatch(setAmount(amount.toString()))
   }
 
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const { data: priceData } = useCoingecko(
     networks[poolInfo?.chain_id ?? 137].coingecko,
@@ -115,9 +115,17 @@ const AddLiquidityOperation = () => {
     async function getBalances(token: string) {
       if (!wallet) return
 
-      const { balance } = ERC20(token)
+      const { balance } = ERC20(
+        token,
+        networks[poolInfo?.chain_id ?? 137].rpc,
+        {
+          wallet: null,
+          txNotification,
+          transactionErrors
+        }
+      )
       const balanceValue = await balance(wallet.accounts[0].address)
-      setBalance(balanceValue)
+      setUserBalance(new BigNumber(balanceValue))
     }
 
     if (chainId === 5) {
@@ -150,8 +158,8 @@ const AddLiquidityOperation = () => {
               value={liquidit.amount}
               min={Big(1).div(Big(10).pow(token.decimals)).toString()}
               max={
-                balance
-                  ? Big(balance.toString())
+                userBalance
+                  ? Big(userBalance.toString())
                       .div(Big(10).pow(token.decimals))
                       .toString()
                   : '0'
@@ -164,7 +172,8 @@ const AddLiquidityOperation = () => {
             />
 
             <S.Balance>
-              Balance: {balance ? BNtoDecimal(balance, token.decimals) : '0'}
+              Balance:
+              {userBalance ? BNtoDecimal(userBalance, token.decimals) : '0'}
             </S.Balance>
           </S.InputWrapper>
         </S.InputContainer>

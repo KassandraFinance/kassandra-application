@@ -1,13 +1,13 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { getAddress, isAddress } from 'ethers'
+import { isAddress } from 'ethers'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import substr from '@/utils/substr'
 import { networks } from '@/constants/tokenAddresses'
 
-import useManagePool from '@/hooks/useManagePoolEthers'
+import useManagePoolController from '@/hooks/useManagePoolController'
 
 import usePoolInfo from '@/hooks/usePoolInfo'
 
@@ -44,12 +44,14 @@ const AddInvestorModal = ({
 
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
+  const { poolInfo } = usePoolInfo(wallet, poolId)
+
+  const chainId = Number(connectedChain?.id ?? '0x89')
+
+  const { addAllowedAddresses } = useManagePoolController(
+    poolInfo?.controller ?? '',
+    networks[chainId].rpc
   )
-  const { addAllowedAddresses } = useManagePool(poolInfo?.controller ?? '')
-  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
 
   function handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
     setValue(event.target.value)

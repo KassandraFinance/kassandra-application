@@ -4,10 +4,8 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import { useRouter } from 'next/router'
 import { keccak256 } from 'web3-utils'
-import crypto from 'crypto'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
-import web3 from '@/utils/web3'
+import useSignMessage from '@/hooks/useSignMessage'
 
 import usePoolInfo from '@/hooks/usePoolInfo'
 import { useAppDispatch } from '@/store/hooks'
@@ -50,10 +48,8 @@ const PoolImage = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { signMessage } = useSignMessage()
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const img = poolImage.icon?.image_preview ? poolImage.icon.image_preview : ''
   const hasPoolImage =
@@ -68,14 +64,9 @@ const PoolImage = () => {
     if (!wallet) return
 
     try {
-      const nonce = crypto.randomBytes(12).toString('base64')
       const logoToSign = logo ? keccak256(logo) : ''
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
-      const signature = await web3.eth.personal.sign(
-        message,
-        wallet.accounts[0].address,
-        nonce
-      )
+      const signature = await signMessage(message)
 
       const body = {
         controller,

@@ -1,15 +1,13 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import Web3 from 'web3'
-import { AbiItem, toChecksumAddress } from 'web3-utils'
 import request from 'graphql-request'
 import BigNumber from 'bn.js'
-import { useConnectWallet } from '@web3-onboard/react'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
+import useWhiteList from '@/hooks/useWhiteList'
+import { getAddress } from 'ethers'
 
 import { ERC20 } from '../../../../hooks/useERC20Contract'
-import KassandraWhitelistAbi from '../../../../constants/abi/KassandraWhitelist.json'
-import { useAppSelector } from '../../../../store/hooks'
 import useCoingecko from '@/hooks/useCoingecko'
 import {
   BACKEND_KASSANDRA,
@@ -50,11 +48,14 @@ const SelectAssets = () => {
   const router = useRouter()
 
   const [{ wallet }] = useConnectWallet()
-  const chainId = useAppSelector(state => state.chainId)
+  const [{ connectedChain }] = useSetChain()
+
+  const chainId = Number(connectedChain?.id ?? '0x89')
+  const { tokensWhitelist } = useWhiteList(chainId)
 
   const tokensListGoerli =
     chainId === 5
-      ? whitelist?.map((token: string) => toChecksumAddress(mockTokens[token]))
+      ? whitelist?.map((token: string) => getAddress(mockTokens[token]))
       : whitelist
 
   const poolId = Array.isArray(router.query.pool)
@@ -108,16 +109,7 @@ const SelectAssets = () => {
   React.useEffect(() => {
     const getWhitelist = async () => {
       try {
-        const web3 = new Web3(networks[chainId].rpc)
-        // eslint-disable-next-line prettier/prettier
-        const whitelistContract = new web3.eth.Contract(
-          KassandraWhitelistAbi as unknown as AbiItem,
-          networks[chainId].whiteList
-        )
-        const whitelist = await whitelistContract.methods
-          .getTokens(0, 100)
-          .call()
-
+        const whitelist = await tokensWhitelist()
         setWhitelist(whitelist)
       } catch (error) {
         console.error('It was not possible to get whitelist')
