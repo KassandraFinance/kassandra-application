@@ -116,13 +116,10 @@ function managePoolFunctions(
     currentDateAdded: number,
     periodSelected: number,
     assetsAddresses: string[],
-    weightsList: string[]
+    weightsList: string[],
 
-    // onSuccess: () => void,
-    // onFail: () => void,
-    // transactionText: {
-    //   success?: string
-    // }
+    onSuccess: () => void,
+    onFail: () => void
   ) => {
     try {
       const tx = await controller.send.updateWeightsGradually(
@@ -132,27 +129,19 @@ function managePoolFunctions(
         weightsList
       )
       // Check transaction receipt and send notification if success
-      console.log('TX AWAIT', tx.await())
-      // await txNotification(
-      //   tx,
-      //   { sucess: transactionText.success },
-      //   { onSuccess, onFail }
-      // )
+      await txNotification(tx, {}, { onFail, onSuccess })
     } catch (error) {
       console.log(error)
       // check error and send error modal
-      // transactionErrors(error, onFail)
+      transactionErrors(error, onFail)
     }
   }
 
   const removeToken = async (
     selectedTokenAddress: string,
-    userWalletAddress: string
-    // onSuccess: () => void,
-    // onFail: () => void,
-    // transactionText: {
-    //   success?: string
-    // }
+    userWalletAddress: string,
+    onSuccess: () => void,
+    onFail: () => void
   ) => {
     try {
       const tx = await controller.send.removeToken(
@@ -161,15 +150,11 @@ function managePoolFunctions(
         userWalletAddress
       )
       // Check transaction receipt and send notification if success
-      // await txNotification(
-      //   tx,
-      //   { sucess: transactionText.success },
-      //   { onSuccess, onFail }
-      // )
+      await txNotification(tx, {}, { onSuccess, onFail })
     } catch (error) {
       console.log(error)
       // check error and send error modal
-      // transactionErrors(error, onFail)
+      transactionErrors(error, onFail)
     }
   }
 
@@ -177,12 +162,9 @@ function managePoolFunctions(
     selectedTokenAddress: string,
     allocation: string,
     tokenToAddBalance: string,
-    userWalletAddress: string
-    // onSuccess: () => void,
-    // onFail: () => void,
-    // transactionText: {
-    //   success?: string
-    // }
+    userWalletAddress: string,
+    onSuccess: () => void,
+    onFail: () => void
   ) => {
     try {
       const tx = await controller.send.addToken(
@@ -193,15 +175,11 @@ function managePoolFunctions(
         userWalletAddress
       )
       // Check transaction receipt and send notification if success
-      // await txNotification(
-      //   tx,
-      //   { sucess: transactionText.success },
-      //   { onSuccess, onFail }
-      // )
+      await txNotification(tx, {}, { onSuccess, onFail })
     } catch (error) {
       console.log(error)
       // check error and send error modal
-      // transactionErrors(error, onFail)
+      transactionErrors(error, onFail)
     }
   }
 
@@ -217,7 +195,7 @@ function managePoolFunctions(
   }
 }
 
-const useManagePool = (
+const useManagePoolController = (
   controllerAddress: string,
   rpcURL = networks[137].rpc
 ) => {
@@ -297,4 +275,4 @@ export const managePool = (
   )
 }
 
-export default useManagePool
+export default useManagePoolController
