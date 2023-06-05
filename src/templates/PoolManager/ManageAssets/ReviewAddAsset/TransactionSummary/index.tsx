@@ -2,6 +2,8 @@ import React from 'react'
 import Image from 'next/image'
 import Big from 'big.js'
 import { useRouter } from 'next/router'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import { networks } from '../../../../../constants/tokenAddresses'
 
@@ -19,7 +21,7 @@ const TransactionSummary = () => {
   const token = useAppSelector(state => state.addAsset.token)
   const newToken = useAppSelector(state => state.addAsset.token)
   const newTokenLiquidity = useAppSelector(state => state.addAsset.liquidit)
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
 
   const router = useRouter()
 
@@ -27,7 +29,10 @@ const TransactionSummary = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
+  const { poolInfo } = usePoolInfo(
+    wallet ? getAddress(wallet.accounts[0].address) : '',
+    poolId
+  )
 
   const { data: priceData } = useCoingecko(
     networks[poolInfo?.chain_id ?? 137].coingecko,
