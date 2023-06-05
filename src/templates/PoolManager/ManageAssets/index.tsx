@@ -84,7 +84,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
   const { periodSelect, newTokensWights } = useAppSelector(
     state => state.rebalanceAssets
   )
-  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+  const chainId = Number(connectedChain?.id ?? '0x89')
 
   const router = useRouter()
 

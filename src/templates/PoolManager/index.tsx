@@ -124,7 +124,7 @@ const PoolManager = () => {
     request(BACKEND_KASSANDRA, query, { id: poolId })
   )
 
-  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+  const chainId = Number(connectedChain?.id ?? '0x89')
 
   const currentTime = new Date().getTime()
   const endRebalanceTime = data?.pool?.weight_goals[0].end_timestamp * 1000

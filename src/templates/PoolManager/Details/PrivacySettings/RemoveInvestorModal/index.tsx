@@ -52,7 +52,7 @@ const RemoveInvestorModal = ({
   const [{ connectedChain }, setChain] = useSetChain()
   const { poolInfo } = usePoolInfo(wallet, poolId)
 
-  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+  const chainId = Number(connectedChain?.id ?? '0x89')
 
   const { removeAllowedAddresses } = useManagePool(
     poolInfo?.controller ?? '',

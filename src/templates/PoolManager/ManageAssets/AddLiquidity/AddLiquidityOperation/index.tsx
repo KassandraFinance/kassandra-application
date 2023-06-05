@@ -75,7 +75,7 @@ const AddLiquidityOperation = () => {
   const liquidit = useAppSelector(state => state.addAsset.liquidit)
   const { txNotification, transactionErrors } = useTransaction()
 
-  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+  const chainId = Number(connectedChain?.id ?? '0x89')
 
   function handleTokenAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
     dispatch(setAmount(e.target.value.length > 0 ? e.target.value : '0'))

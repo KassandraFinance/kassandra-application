@@ -49,7 +49,8 @@ const SelectAssets = () => {
 
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }] = useSetChain()
-  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+
+  const chainId = Number(connectedChain?.id ?? '0x89')
   const { tokensWhitelist } = useWhiteList(chainId)
 
   const tokensListGoerli =
