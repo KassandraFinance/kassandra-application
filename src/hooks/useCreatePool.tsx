@@ -71,7 +71,10 @@ const useCreatePool = (address: string) => {
         pool.maxAmountsIn,
         pool.settingsParams,
         pool.feesSettings,
-        salt
+        salt,
+        {
+          from: wallet?.accounts[0].address
+        }
       )
 
       const tx = await contract.send.create(
