@@ -146,7 +146,7 @@ type ParamsType = {
   ) => Promise<ErrorCode | undefined>
 }
 
-export const ERC20 = (
+export const ERC20 = async (
   address: string,
   rpcUrl = networks[137].rpc,
   params: ParamsType
@@ -166,7 +166,7 @@ export const ERC20 = (
   if (params.wallet?.provider) {
     const sendProvider = new BrowserProvider(params.wallet.provider)
 
-    signContranct(sendProvider)
+    await signContranct(sendProvider)
   }
 
   return ERC20Contract(

@@ -115,7 +115,7 @@ const AddLiquidityOperation = () => {
     async function getBalances(token: string) {
       if (!wallet) return
 
-      const { balance } = ERC20(
+      const { balance } = await ERC20(
         token,
         networks[poolInfo?.chain_id ?? 137].rpc,
         {

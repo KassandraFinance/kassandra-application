@@ -31,7 +31,6 @@ const Header = () => {
   const [isChooseNetwork, setIsChooseNetwork] = React.useState(false)
 
   const modalWalletActive = useAppSelector(state => state.modalWalletActive)
-  // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
 
   const router = useRouter()

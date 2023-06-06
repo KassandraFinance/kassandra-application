@@ -22,6 +22,7 @@ const ModalChooseNetwork = ({
     },
     setChain // function to call to initiate user to switch chains in their wallet
   ] = useSetChain()
+
   function handleCloseModal() {
     setIsChooseNetwork(false)
   }
