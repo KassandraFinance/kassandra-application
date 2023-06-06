@@ -20,7 +20,7 @@ import {
 } from '@/constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG } from '@/constants/pools'
 
-import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
 import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
 
@@ -113,8 +113,6 @@ const StakeCard = ({
   stakingAddress,
   chain
 }: IStakingProps) => {
-  const dispatch = useAppDispatch()
-
   const [isLoading, setIsLoading] = React.useState<boolean>(true)
   const [isDetails, setIsDetails] = React.useState<boolean>(false)
   const [isModalStake, setIsModalStake] = React.useState<boolean>(false)
@@ -153,23 +151,20 @@ const StakeCard = ({
     vestingPeriod: '...',
     lockPeriod: '...'
   })
-
+  const dispatch = useAppDispatch()
   const [{ wallet }] = useConnectWallet()
+  const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(chain.id)
+  const { trackEventFunction } = useMatomoEcommerce()
+  const transaction = useTransaction()
 
   const networkChain = networks[chain.id]
-  const { chainId } = useAppSelector(state => state)
-  const { trackEventFunction } = useMatomoEcommerce()
 
+  const staking = useStaking(stakingAddress, networkChain.chainId)
   const { priceToken } = useCoingecko(
     networkChain.coingecko,
     networkChain.nativeCurrency.address,
     [WETH_POLYGON, KacyPoligon]
   )
-
-  const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(chain.id)
-
-  const staking = useStaking(stakingAddress, networkChain.chainId)
-  const transaction = useTransaction()
 
   const { data } = useSWR(
     [GET_INFO_POOL, address],
@@ -476,12 +471,11 @@ const StakeCard = ({
                 kacyPrice={kacyPrice}
                 setInfoStaked={setInfoStaked}
                 lockPeriod={lockPeriod}
-                userWalletAddress={wallet?.accounts[0].address || ''}
                 stakeWithVotingPower={stakeWithVotingPower}
                 stakeWithLockPeriod={stakeWithLockPeriod}
                 availableWithdraw={currentAvailableWithdraw}
                 stakingAddress={stakingAddress}
-                chain={chain}
+                chainId={chain.id}
               />
               <S.ButtonContainer stakeWithVotingPower={!stakeWithVotingPower}>
                 {wallet?.accounts[0].address ? (
@@ -504,7 +498,8 @@ const StakeCard = ({
                           backgroundSecondary
                           disabledNoEvent={
                             kacyEarned.lte(new BigNumber(0)) ||
-                            chainId !== Number(wallet?.chains[0].id)
+                            networkChain.chainId !==
+                              Number(wallet?.chains[0].id)
                           }
                           onClick={() => staking.getReward(pid)}
                         />
@@ -523,15 +518,17 @@ const StakeCard = ({
                           />
                           <WithdrawDate
                             pid={pid}
-                            userWalletAddress={wallet?.accounts[0].address}
+                            stakingAddress={stakingAddress}
+                            chainId={chain.id}
                           />
                         </>
                       ) : (
                         <>
-                          {chainId !== Number(wallet?.chains[0].id) ? (
+                          {networkChain.chainId !==
+                          Number(wallet?.chains[0].id) ? (
                             <Button
                               type="button"
-                              text={`Connect to ${wallet?.chains[0].namespace}`}
+                              text={`Connect to ${networkChain.chainName}`}
                               size="huge"
                               backgroundSecondary
                               fullWidth
@@ -575,7 +572,8 @@ const StakeCard = ({
                               disabledNoEvent={
                                 (stakeWithLockPeriod &&
                                   currentAvailableWithdraw.lte(0)) ||
-                                chainId !== Number(wallet?.chains[0].id)
+                                networkChain.chainId !==
+                                  Number(wallet?.chains[0].id)
                               }
                               fullWidth
                               onClick={() => {
@@ -590,7 +588,8 @@ const StakeCard = ({
                               backgroundBlack
                               disabledNoEvent={
                                 infoStaked.yourStake.toString() === '0' ||
-                                chainId !== Number(wallet?.chains[0].id)
+                                networkChain.chainId !==
+                                  Number(wallet?.chains[0].id)
                               }
                               fullWidth
                               onClick={() => setIsModalRequestUnstake(true)}
