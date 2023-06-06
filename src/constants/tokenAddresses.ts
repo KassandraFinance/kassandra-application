@@ -37,7 +37,7 @@ export const GovernorAlpha =
 
 export const ProxyContract =
   process.env.NEXT_PUBLIC_MASTER === '1'
-    ? '0xCf734790E7D25f4E366b7d2F9710D3Eb1DB62036'
+    ? '0xa356Dc5260Ca76b4113CD7251906ffb57629b985' // '0xCf734790E7D25f4E366b7d2F9710D3Eb1DB62036'
     : '0x97e33051B09092C1301A90b964a74cA51C0b068B'
 
 // export const ProxyInvestV2 = '0x2CA2CF9624c4b0c5d87a3204780408cDA9EB9BfD' // Goerli
