@@ -2,7 +2,6 @@
     "name": "Kassandra DAO",
     "short_name": "Kassandra",
     "description": "Create, manage and invest in tokenized crypto portfolios.",
-    "iconPath": "./favicon.svg",
     "icons": [
         {
             "src": "/logo-192x192.png",
