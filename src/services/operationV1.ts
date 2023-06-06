@@ -140,16 +140,13 @@ export default class operationV1 implements IOperations {
         this.poolInfo.tokens,
         tokenExchange
       )
-      let toAddress = tokenWrappedAddress?.token.id
-      if (this.crpPool === '0x38918142779e2CD1189cBd9e932723C968363D1E') {
-        toAddress = '0x62edc0692BD897D2295872a9FFCac5425011c661'
-      }
+
       const investAmountOut = await this.contract.methods
         .joinswapExternAmountInWithSwap(
           this.crpPool,
           tokenInAddress,
           new BigNumber(amountTokenIn.toFixed()),
-          toAddress,
+          tokenWrappedAddress?.token.id,
           minAmountOut,
           this.referral,
           tokenSelected.transactionsDataTx[0]
@@ -161,30 +158,23 @@ export default class operationV1 implements IOperations {
         transactionError: undefined
       }
     } catch (error: any) {
-      let tokenIn = tokenSelected.tokenInAddress
-      if (
-        this.crpPool === '0x38918142779e2CD1189cBd9e932723C968363D1E' &&
-        !checkedTokenInPool
-      ) {
-        tokenIn = '0x62edc0692BD897D2295872a9FFCac5425011c661'
-      }
       const {
         denormalizedWeight,
         poolSupply,
         poolSwapFee,
         poolTotalDenormalizedWeight,
         totalPoolBalance
-      } = await this.getInfoPool(tokenIn)
+      } = await this.getInfoPool(tokenSelected.tokenInAddress)
 
       let investAmoutInCalc: BigNumber = new BigNumber(
         Big(tokenSelected.newAmountsTokenIn[0]).toFixed()
       )
 
-      if (tokenSelected.isWrap && checkedTokenInPool) {
+      if (tokenSelected.isWrap) {
         investAmoutInCalc =
           await this.yieldYakContract.convertBalanceWrappedToYRT(
             investAmoutInCalc,
-            tokenIn
+            tokenSelected.tokenInAddress
           )
       }
 
@@ -258,17 +248,12 @@ export default class operationV1 implements IOperations {
       tokenExchange
     )
 
-    let toAddress = tokenWrappedAddress?.token.id
-    if (this.crpPool === '0x38918142779e2CD1189cBd9e932723C968363D1E') {
-      toAddress = '0x62edc0692BD897D2295872a9FFCac5425011c661'
-    }
-
     const res = await this.contract.methods
       .joinswapExternAmountInWithSwap(
         this.crpPool,
         tokenInAddress,
         tokenAmountIn,
-        toAddress,
+        tokenWrappedAddress?.token.id,
         minPoolAmountOut,
         this.referral,
         data

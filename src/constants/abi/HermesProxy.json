@@ -1,24 +1,16 @@
 [
   {
+    "anonymous": false,
     "inputs": [
       {
-        "internalType": "address",
-        "name": "wNative",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "communityStore_",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "swapProvider_",
-        "type": "address"
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
       }
     ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    "name": "Initialized",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -87,19 +79,6 @@
     ],
     "name": "OwnershipTransferred",
     "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "communityStore",
-    "outputs": [
-      {
-        "internalType": "contract IKassandraCommunityStore",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
   },
   {
     "inputs": [
@@ -189,7 +168,7 @@
   },
   {
     "inputs": [],
-    "name": "getController",
+    "name": "getProxyTransfer",
     "outputs": [
       {
         "internalType": "address",
@@ -259,6 +238,42 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getSwapProvider",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IWrappedNative",
+        "name": "wNative",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "swapProvider",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "proxyTransfer",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -282,7 +297,7 @@
       },
       {
         "internalType": "address",
-        "name": "referral",
+        "name": "",
         "type": "address"
       }
     ],
@@ -315,7 +330,7 @@
       },
       {
         "internalType": "address",
-        "name": "referral",
+        "name": "",
         "type": "address"
       }
     ],
@@ -338,7 +353,7 @@
         "type": "address"
       },
       {
-        "internalType": "address",
+        "internalType": "contract IERC20",
         "name": "tokenIn",
         "type": "address"
       },
@@ -359,7 +374,7 @@
       },
       {
         "internalType": "address",
-        "name": "referral",
+        "name": "",
         "type": "address"
       },
       {
@@ -403,7 +418,7 @@
       },
       {
         "internalType": "address",
-        "name": "referral",
+        "name": "",
         "type": "address"
       }
     ],
@@ -419,14 +434,34 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
       {
         "internalType": "address",
-        "name": "newOwner",
+        "name": "",
         "type": "address"
       }
     ],
-    "name": "setController",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newProxyTransfer",
+        "type": "address"
+      }
+    ],
+    "name": "setProxyTransfer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -537,34 +572,32 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "swapProvider",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "newOwner",
         "type": "address"
       }
     ],
-    "stateMutability": "view",
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
       {
         "internalType": "address",
-        "name": "newCommunityStore",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
         "type": "address"
       }
     ],
-    "name": "updateCommunityStore",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "wNativeToken",
+    "name": "underlyingToToken",
     "outputs": [
       {
         "internalType": "address",

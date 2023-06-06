@@ -7,8 +7,7 @@ import Tippy from '@tippyjs/react'
 
 import {
   NATIVE_ADDRESS,
-  BACKEND_KASSANDRA,
-  URL_1INCH
+  BACKEND_KASSANDRA
 } from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
@@ -117,18 +116,10 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
   const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
 
-  async function handleParaswap(): Promise<{
+  async function handleSwapProviderV2(): Promise<{
     amountsTokenIn: string[]
     transactionsDataTx: string[]
   }> {
-    const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(
-      pool.underlying_assets
-    )
-    const tokenWrappedAddress = getTokenWrapped(
-      pool.underlying_assets,
-      tokenWithHigherLiquidityPool.address
-    )
-
     const { fromAddress, fromDecimals } =
       tokenSelect.address === NATIVE_ADDRESS && pool.chain_id === 137
         ? {
@@ -145,10 +136,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     )
     const { amountsTokenIn, transactionsDataTx } =
       await operation.getAmountsOut({
-        destTokens:
-          pool.chain_id === 43114 && tokenWrappedAddress
-            ? [{ ...tokenWrappedAddress, weight_normalized: '1' }]
-            : sortAddresses,
+        destTokens: sortAddresses,
         srcToken: fromAddress,
         srcDecimals: fromDecimals.toString(),
         amount: amountTokenIn.toString(),
@@ -163,7 +151,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     }
   }
 
-  async function handle1Inch(): Promise<{
+  async function handleSwapProviderV1(): Promise<{
     amountsTokenIn: string[]
     transactionsDataTx: string[]
   }> {
@@ -174,27 +162,27 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       pool.underlying_assets,
       tokenWithHigherLiquidityPool.address
     )
-    let toAddress = tokenWrappedAddress?.token.id
-    if (pool.address === '0x38918142779e2CD1189cBd9e932723C968363D1E') {
-      toAddress = '0x62edc0692BD897D2295872a9FFCac5425011c661'
+
+    if (!tokenWrappedAddress) {
+      return {
+        amountsTokenIn: ['0'],
+        transactionsDataTx: ['0x']
+      }
     }
 
-    const response = await fetch(
-      `${URL_1INCH}${pool.chain_id}/swap?fromTokenAddress=${
-        tokenSelect.address
-      }&toTokenAddress=${toAddress}&amount=${Big(amountTokenIn).toFixed(
-        0
-      )}&fromAddress=${
-        operation.contractAddress ||
-        '0x84f154A845784Ca37Ae962504250a618EB4859dc'
-      }&slippage=1&disableEstimate=true`
-    )
-    const data = await response.json()
+    const { amountsTokenIn } = await operation.getAmountsOut({
+      destTokens: [{ ...tokenWrappedAddress, weight_normalized: '1' }],
+      srcToken: tokenSelect.address,
+      srcDecimals: tokenSelect.decimals.toString(),
+      amount: amountTokenIn.toString(),
+      chainId: pool.chain_id.toString()
+    })
 
-    setTrasactionData(data?.tx?.data)
+    const datas = await operation.getDatasTx()
+    setTrasactionData(datas[0])
     return {
-      amountsTokenIn: [data.toTokenAmount || 0],
-      transactionsDataTx: [data?.tx?.data]
+      amountsTokenIn,
+      transactionsDataTx: datas
     }
   }
 
@@ -222,9 +210,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       transactionsDataTx: ['']
     }
     if (pool.pool_version === 2) {
-      data1Inch = await handleParaswap()
+      data1Inch = await handleSwapProviderV2()
     } else if (!tokensChecked) {
-      data1Inch = await handle1Inch()
+      data1Inch = await handleSwapProviderV1()
     }
 
     return {
