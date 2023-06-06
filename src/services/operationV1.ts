@@ -170,7 +170,7 @@ export default class operationV1 implements IOperations {
         Big(tokenSelected.newAmountsTokenIn[0]).toFixed()
       )
 
-      if (tokenSelected.isWrap && checkedTokenInPool) {
+      if (tokenSelected.isWrap) {
         investAmoutInCalc =
           await this.yieldYakContract.convertBalanceWrappedToYRT(
             investAmoutInCalc,
