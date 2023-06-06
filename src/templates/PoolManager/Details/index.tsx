@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
 import usePoolInfo from '@/hooks/usePoolInfo'
 
@@ -27,10 +26,7 @@ const Details = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   return (
     <S.Details>

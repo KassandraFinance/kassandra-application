@@ -1,12 +1,11 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
 import { networks } from '@/constants/tokenAddresses'
 
 import usePoolInfo from '@/hooks/usePoolInfo'
-import useManagePool from '@/hooks/useManagePoolEthers'
+import useManagePoolController from '@/hooks/useManagePoolController'
 
 import Button from '@/components/Button'
 import Modal from '@/components/Modals/Modal'
@@ -28,13 +27,14 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
 
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
-  const { setPublicPool } = useManagePool(poolInfo?.controller ?? '')
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
-  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+  const chainId = Number(connectedChain?.id ?? '0x89')
+
+  const { setPublicPool } = useManagePoolController(
+    poolInfo?.controller ?? '',
+    networks[chainId].rpc
+  )
 
   async function handleMakePublic() {
     setIsTransaction(true)

@@ -1,12 +1,9 @@
 import React from 'react'
-import { AbiItem } from 'web3-utils'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
 import { mockTokens, networks } from '@/constants/tokenAddresses'
-import ManagedPool from '@/constants/abi/ManagedPool.json'
 
 import {
   setLpNeeded,
@@ -14,12 +11,11 @@ import {
   setWeight
 } from '@/store/reducers/removeAssetSlice'
 import useCoingecko from '@/hooks/useCoingecko'
-import { ERC20 } from '@/hooks/useERC20Contract'
+import useERC20 from '@/hooks/useERC20'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import usePoolInfo from '@/hooks/usePoolInfo'
 import usePoolAssets from '@/hooks/usePoolAssets'
-
-import web3 from '@/utils/web3'
+import useManagedPool from '@/hooks/useManagedPool'
 
 import Steps from '@/components/Steps'
 import SelectTokenRemove from './SelectTokenRemove'
@@ -40,15 +36,21 @@ const TokenRemoval = () => {
 
   const { poolAssets } = usePoolAssets(poolId)
   const [{ wallet }] = useConnectWallet()
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
+  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { balance } = useERC20(
+    poolInfo?.address ?? '',
+    networks[poolInfo?.chain_id ?? 137].rpc
   )
 
   const { priceToken } = useCoingecko(
     networks[poolInfo?.chain_id ?? 137]?.coingecko,
     poolInfo?.chain.addressWrapped ?? '',
     handleMockToken(poolInfo?.underlying_assets_addresses ?? [])
+  )
+
+  const { totalSupply } = useManagedPool(
+    poolInfo?.address ?? '',
+    networks[poolInfo?.chain_id ?? 137].rpc
   )
 
   function handleMockToken(tokenList: string[]) {
@@ -62,27 +64,18 @@ const TokenRemoval = () => {
   async function handleCheckLpNeeded(allocation: string, poolPrice: string) {
     if (tokenSelection.address === '' || !poolInfo || !wallet) return
 
-    const userBalance = await ERC20(poolInfo.address).balance(
-      wallet.accounts[0].address
-    )
+    const userBalance = await balance(wallet.accounts[0].address)
 
-    let totalSupply = Big(0)
+    let totalSupplyy = Big(0)
     try {
-      // eslint-disable-next-line prettier/prettier
-      const managedPool = new web3.eth.Contract(
-        ManagedPool as unknown as AbiItem,
-        poolInfo.address
-      )
-      const currentPoolSupply = await managedPool.methods
-        .getActualSupply()
-        .call()
+      const currentPoolSupply = await totalSupply()
 
-      totalSupply = Big(currentPoolSupply).div(Big(10).pow(18))
+      totalSupplyy = Big(currentPoolSupply.toString()).div(Big(10).pow(18))
     } catch (error) {
       console.log(error)
     }
 
-    const lpNeeded = totalSupply.mul(Big(allocation))
+    const lpNeeded = totalSupplyy.mul(Big(allocation))
 
     dispatch(
       setLpNeeded({

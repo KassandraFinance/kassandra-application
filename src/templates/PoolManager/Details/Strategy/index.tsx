@@ -8,7 +8,6 @@ import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
 import 'react-markdown-editor-lite/lib/index.css'
 import crypto from 'crypto'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 import web3 from '@/utils/web3'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
@@ -122,10 +121,7 @@ const Strategy = () => {
     )
   }
 
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const { data } = useSWR<GetStrategyType>(
     [GET_STRATEGY, poolId],

@@ -6,7 +6,7 @@ import { keccak256 } from 'ethers'
 import useSignMessage from '@/hooks/useSignMessage'
 import useCreatePool from '@/hooks/useCreatePool'
 import useTransaction from '@/hooks/useTransaction'
-import { managePool } from '@/hooks/useManagePoolEthers'
+import { managePoolController } from '@/hooks/useManagePoolController'
 import { ERC20 } from '@/hooks/useERC20'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
@@ -324,11 +324,15 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       return false
     }
 
-    const { addAllowedAddresses } = await managePool(poolControler, undefined, {
-      wallet: wallet,
-      txNotification: txNotification,
-      transactionErrors: transactionErrors
-    })
+    const { addAllowedAddresses } = await managePoolController(
+      poolControler,
+      undefined,
+      {
+        wallet: wallet,
+        txNotification: txNotification,
+        transactionErrors: transactionErrors
+      }
+    )
 
     await addAllowedAddresses(
       investorsList.map(investor => investor.address),

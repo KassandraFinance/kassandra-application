@@ -1,7 +1,6 @@
 import React from 'react'
 import Big from 'big.js'
 import useSWR from 'swr'
-import { getAddress } from 'ethers'
 import { useRouter } from 'next/router'
 import { request } from 'graphql-request'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
@@ -10,7 +9,7 @@ import { GET_INVESTORS_AMOUNT } from './graphql'
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 
 import usePoolInfo from '@/hooks/usePoolInfo'
-import useManagePool from '@/hooks/useManagePoolEthers'
+import useManagePoolController from '@/hooks/useManagePoolController'
 
 import Button from '@/components/Button'
 import InputSearch from '@/components/Inputs/InputSearch'
@@ -51,13 +50,14 @@ const RemoveInvestorModal = ({
 
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
-  const { poolInfo } = usePoolInfo(
-    wallet ? getAddress(wallet.accounts[0].address) : '',
-    poolId
-  )
-  const { removeAllowedAddresses } = useManagePool(poolInfo?.controller ?? '')
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
-  const chainId = parseInt(connectedChain?.id ?? '0x89', 16)
+  const chainId = Number(connectedChain?.id ?? '0x89')
+
+  const { removeAllowedAddresses } = useManagePoolController(
+    poolInfo?.controller ?? '',
+    networks[chainId].rpc
+  )
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchValue(e.target.value)
