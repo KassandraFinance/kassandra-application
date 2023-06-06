@@ -4,13 +4,13 @@ import React from 'react'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 
-import { networks } from '../../../constants/tokenAddresses'
+import { networks } from '@/constants/tokenAddresses'
 
-import useStakingContract from '../../../hooks/useStakingContract'
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
+import useStaking from '@/hooks/useStaking'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
-import { BNtoDecimal } from '../../../utils/numerals'
-import { registerToken } from '../../../utils/registerToken'
+import { BNtoDecimal } from '@/utils/numerals'
+import { registerToken } from '@/utils/registerToken'
 
 import ExternalLink from '../../ExternalLink'
 
@@ -56,15 +56,17 @@ const Details = ({
   const [depositedAmount, setDepositedAmount] = React.useState<BigNumber>(
     new BigNumber(-1)
   )
+  const networkChain = networks[chainId]
+
   const { trackEventFunction } = useMatomoEcommerce()
-  const { poolInfo } = useStakingContract(stakingAddress, chainId)
+  const staking = useStaking(stakingAddress, networkChain.chainId)
 
   const connect = localStorage.getItem('walletconnect')
 
   React.useEffect(() => {
     let interval: any
     ;(async () => {
-      const poolInfoResponse = await poolInfo(pid)
+      const poolInfoResponse = await staking.poolInfo(pid)
 
       interval = setInterval(async () => {
         setDepositedAmount(new BigNumber(poolInfoResponse.depositedAmount))
