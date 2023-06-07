@@ -672,8 +672,12 @@ const StakeCard = ({
         <ModalCancelUnstake
           setModalOpen={setIsModalCancelUnstake}
           pid={pid}
-          staking={infoStaked.withdrawDelay !== '0' && infoStaked.withdrawable}
+          isStaking={
+            infoStaked.withdrawDelay !== '0' && infoStaked.withdrawable
+          }
           symbol={symbol}
+          chainId={chain.id}
+          stakingToken={infoStaked.stakingToken}
           openStakeAndWithdraw={openStakeAndWithdraw}
         />
       )}
