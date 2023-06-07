@@ -28,7 +28,7 @@ import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 import PoweredBy from './PoweredBy'
 import FeeBreakdown from './FeeBreakdown'
-// import ActivityTable from './ActivityTable'
+import ActivityTable from './ActivityTable'
 
 import Change from './Change'
 import MyAsset from './MyAsset'
@@ -366,7 +366,7 @@ const Pool = () => {
               <Summary />
               {pool.partners && <PoweredBy />}
               <Distribution />
-              {/* <ActivityTable /> */}
+              <ActivityTable />
               <TokenDescription />
             </S.ProductDetails>
             <NewPoolOperations />

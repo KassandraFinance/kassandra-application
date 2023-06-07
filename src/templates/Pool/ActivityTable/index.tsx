@@ -22,8 +22,26 @@ import TokenIcons from '../TokenIcons'
 import { GET_ACTIVITY } from './graphql'
 
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
+import arrowIcon from '@assets/utilities/arrow-left.svg'
+import eyeShowIcon from '@assets/utilities/eye-show.svg'
 
 import * as S from './styles'
+import {
+  THead,
+  TR,
+  TH,
+  ColumnTitle,
+  TableViewButtonContainer,
+  TableViewButton,
+  TD,
+  Value,
+  ViewButton,
+  TRLink,
+  TRHead,
+  PaginationWrapper,
+  LoadingContainer,
+  TBodyWithHeight
+} from '@/templates/Explore/CommunityPoolsTable/styles'
 
 const invertSymbol: { [key: string]: string } = {
   WAVAX: 'AVAX'
@@ -35,41 +53,31 @@ const typeActivity = {
   swap: 'Swap'
 }
 
-type ITokenInfoProps = {
-  id: string
-  balance_in_pool: string
-  address: string
-  name: string
-  symbol: string
-  allocation: number
-  price: number
-}
-
-interface IPoolInfoProps {
-  balance: string
-  token: ITokenInfoProps
-  weight_goal_normalized: string
-  weight_normalized: string
+const explorer: Record<number, string> = {
+  137: 'https://polygonscan.com/tx/',
+  43114: 'https://snowtrace.io/tx/'
 }
 
 interface IActivitiesProps {
-  id: string
   address: string
-  // eslint-disable-next-line prettier/prettier
-  type: keyof typeof typeActivity
-  txHash: string
+  id: string
   timestamp: number
-  symbol: string[] | string
+  txHash: string
+  type: keyof typeof typeActivity
+
   amount: string[]
   price_usd: string[]
+  symbol: string[] | string
 }
 
 interface IPoolProps {
   pool: {
-    underlying_assets: IPoolInfoProps[]
     num_activities: number
+    name: string
+    symbol: string
+    price_usd: string
+    chain_id: number
     activities: IActivitiesProps[]
-    allActivities: []
   }
 }
 
@@ -91,6 +99,7 @@ const ActivityTable = () => {
         id: productAddress
       })
   )
+  console.log(data)
 
   function handlePageClick(data: { selected: number }, take: any) {
     setSkip(data.selected * take)
@@ -113,6 +122,23 @@ const ActivityTable = () => {
       setActivities(data?.pool?.activities)
     }
   }, [data])
+
+  // New code
+
+  const [inViewCollum, setInViewCollum] = React.useState(1)
+
+  function handleCurrentInView(n: number, columns: number) {
+    setInViewCollum(prev => {
+      const newPrev = prev + n
+      if (newPrev < 1) {
+        return columns
+      } else if (newPrev > columns) {
+        return 1
+      } else {
+        return newPrev
+      }
+    })
+  }
 
   return (
     <>
@@ -393,12 +419,99 @@ const ActivityTable = () => {
           </tbody>
         </S.Table>
       </S.ActivityTable>
+
       <Pagination
         take={take}
         skip={skip}
         totalItems={data?.pool?.num_activities || 0}
         handlePageClick={handlePageClick}
       />
+
+      <S.NewActivityTable>
+        <THead>
+          <TRHead>
+            <TH>
+              <ColumnTitle>TX Type</ColumnTitle>
+            </TH>
+            <TH isView={inViewCollum === 1}>
+              <ColumnTitle align="right">Out</ColumnTitle>
+            </TH>
+            <TH isView={inViewCollum === 2}>
+              <ColumnTitle align="right">In</ColumnTitle>
+            </TH>
+            <TH isView={inViewCollum === 3}>
+              <ColumnTitle align="right">Address / Time</ColumnTitle>
+            </TH>
+            <TH>
+              <TableViewButtonContainer>
+                <TableViewButton onClick={() => handleCurrentInView(-1, 3)}>
+                  <Image src={arrowIcon} width={7} height={12} />
+                </TableViewButton>
+
+                <TableViewButton onClick={() => handleCurrentInView(1, 3)}>
+                  <Image src={arrowIcon} width={7} height={12} />
+                </TableViewButton>
+              </TableViewButtonContainer>
+            </TH>
+          </TRHead>
+        </THead>
+
+        <TBodyWithHeight tableRowsNumber={4} lineHeight={8.6}>
+          {data
+            ? data.pool.activities.map(activity => {
+                return (
+                  <TRHead key={activity.txHash}>
+                    <TD>
+                      <S.Wrapper>
+                        <Value align="left">
+                          {typeActivity[activity.type]}
+                        </Value>
+
+                        <S.Link
+                          href={`${explorer[data.pool.chain_id]}${
+                            activity.txHash
+                          }`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Image
+                            src="/assets/utilities/external-link.svg"
+                            alt="External Link"
+                            layout="fill"
+                          />
+                        </S.Link>
+                      </S.Wrapper>
+                    </TD>
+
+                    <TD isView={inViewCollum === 1}>
+                      <Value>{activity.type}</Value>
+                    </TD>
+
+                    <TD isView={inViewCollum === 2}>
+                      <Value>{activity.type}</Value>
+                    </TD>
+
+                    <TD isView={inViewCollum === 3}>
+                      <Value>{activity.type}</Value>
+                    </TD>
+
+                    <TD
+                      onClick={event => {
+                        event.preventDefault()
+                        console.log('click')
+                        // handleView(manager)
+                      }}
+                    >
+                      <ViewButton type="button">
+                        <Image src={eyeShowIcon} />
+                      </ViewButton>
+                    </TD>
+                  </TRHead>
+                )
+              })
+            : null}
+        </TBodyWithHeight>
+      </S.NewActivityTable>
     </>
   )
 }
