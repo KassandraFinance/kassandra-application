@@ -130,7 +130,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
     const tokensNotAproved: Array<Token> = []
     for (const token of tokens) {
-      const { allowance } = ERC20(
+      const { allowance } = await ERC20(
         token.address,
         networks[poolData.networkId ?? 137].rpc,
         {
@@ -278,7 +278,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
     let status = false
     for (const token of notAprovedTokens) {
-      const { approve, allowance } = ERC20(
+      const { approve, allowance } = await ERC20(
         token.address,
         networks[poolData.networkId ?? 137].rpc,
         {
@@ -689,25 +689,6 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       {},
       { onFail: handleFail, onSuccess: handleSuccess }
     )
-
-    // const tx = await factoryContract.methods
-    //   .create(
-    //     pool.name,
-    //     pool.symbol,
-    //     pool.isPrivatePool,
-    //     pool.whitelist,
-    //     pool.maxAmountsIn,
-    //     pool.settingsParams,
-    //     pool.feesSettings,
-    //     web3.utils.padLeft('0x', 64)
-    //   )
-    //   .send(
-    //     {
-    //       from: wallet?.accounts[0].address,
-    //       maxPriorityFeePerGas: 30e9
-    //     },
-    //     callBack
-    //   )
 
     if (receipt?.status === 1) {
       setCompletedData({

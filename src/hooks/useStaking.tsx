@@ -72,7 +72,6 @@ const useStaking = (address: string, chainId = 43114) => {
         pid,
         walletAddress
       )
-
       return Big(value)
     }
 
