@@ -88,6 +88,7 @@ const useTransaction = () => {
       return error.code
     }
 
+    console.log('error', error)
     dispatch(setModalAlertText({ errorText: 'error unknown' }))
     return
   }
