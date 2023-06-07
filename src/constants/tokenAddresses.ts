@@ -92,6 +92,7 @@ type NetworkType = Record<
     coingecko: string
     whiteList: string
     factory: string
+    stakingContract?: string
     privateInvestor: string
     nativeCurrency: CurrencyDetails
     blockExplorer: string
@@ -129,6 +130,7 @@ export const networks: NetworkType = {
     factory: '0x228885c9d0440Ae640B88fBeE31522CC6a59Fd2F',
     privateInvestor: '0xa356Dc5260Ca76b4113CD7251906ffb57629b985',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
+    stakingContract: '0xd530f3ce79c9eb03e59dce89a7504dd41d4899bb',
     nativeCurrency: {
       address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
       name: 'Matic Token',
@@ -147,6 +149,7 @@ export const networks: NetworkType = {
     factory: '',
     privateInvestor: '',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
+    stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
     nativeCurrency: {
       address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Avalanche',
