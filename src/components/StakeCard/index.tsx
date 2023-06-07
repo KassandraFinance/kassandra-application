@@ -665,7 +665,7 @@ const StakeCard = ({
           handleApprove={handleApproveKacy}
           updateAllowance={updateAllowance}
           stakingAddress={stakingAddress}
-          chain={chain.id}
+          chainId={chain.id}
         />
       )}
       {isModalCancelUnstake && (
