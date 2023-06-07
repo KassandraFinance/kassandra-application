@@ -64,13 +64,6 @@ interface IAllocationProps {
   }
 }
 
-type CoinGeckoResponseType = {
-  [key: string]: {
-    usd: number
-    usd_24h_change: number
-  }
-}
-
 interface IAllocationsProps {
   countDownDate: string
 }

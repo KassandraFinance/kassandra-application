@@ -3,27 +3,21 @@ import Image from 'next/image'
 
 import BigNumber from 'bn.js'
 
-import { Staking } from '../../../../constants/tokenAddresses'
+import { Staking } from '@/constants/tokenAddresses'
 
-import useStakingContract from '../../../../hooks/useStakingContract'
-import useVotingPower from '../../../../hooks/useVotingPower'
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import { setModalAlertText } from '../../../../store/reducers/modalAlertText'
+import useStakingContract from '@/hooks/useStakingContract'
+import useVotingPower from '@/hooks/useVotings'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
-import { BNtoDecimal } from '../../../../utils/numerals'
-import substr from '../../../../utils/substr'
-import waitTransaction, {
-  MetamaskError,
-  TransactionCallback
-} from '../../../../utils/txWait'
+import { BNtoDecimal } from '@/utils/numerals'
 
-import Button from '../../../Button'
-import ExternalLink from '../../../ExternalLink'
-import { ToastSuccess, ToastWarning } from '../../../Toastify/toast'
+import Button from '@/components/Button'
+import ExternalLink from '@/components/ExternalLink'
 import Options from '../Options'
 
-import arrowSelect from '../../../../../public/assets/utilities/arrow-select-down.svg'
-import logo from '../../../../../public/assets/logos/kacy-64.svg'
+import arrowSelect from '@assets/utilities/arrow-select-down.svg'
+import logo from '@assets/logos/kacy-64.svg'
 
 import * as S from '../styles'
 
@@ -105,11 +99,7 @@ const DelegateVotingPower = ({
   }
 
   const handleDelegateVotes = async () => {
-    await delegateVote(
-      delegateSelected?.pid,
-      receiverAddress,
-      delegateCallback(receiverAddress)
-    )
+    await delegateVote(delegateSelected?.pid, receiverAddress)
   }
 
   const handleDelegateAllVoting = async () => {
@@ -118,10 +108,7 @@ const DelegateVotingPower = ({
       return
     }
 
-    await delegateAllVotes(
-      receiverAddress,
-      delegateAllCallback(receiverAddress)
-    )
+    await delegateAllVotes(receiverAddress)
   }
 
   React.useEffect(() => {
@@ -136,59 +123,60 @@ const DelegateVotingPower = ({
     handlePoolInfo()
   }, [setModalOpen, setCurrentModal])
 
-  const delegateCallback = React.useCallback(
-    (receiverAddress: string): TransactionCallback => {
-      return async (error: MetamaskError, txHash: string) => {
-        if (error) {
-          if (error.code === 4001) {
-            dispatch(setModalAlertText({ errorText: `Delegate cancelled` }))
-            return
-          }
+  // const delegateCallback = React.useCallback(
+  //   (receiverAddress: string): TransactionCallback => {
+  //     return async (error: MetamaskError, txHash: string) => {
+  //       if (error) {
+  //         if (error.code === 4001) {
+  //           dispatch(setModalAlertText({ errorText: `Delegate cancelled` }))
+  //           return
+  //         }
 
-          dispatch(setModalAlertText({ errorText: `Error` }))
-          return
-        }
+  //         console.log(error)
+  //         dispatch(setModalAlertText({ errorText: `Error` }))
+  //         return
+  //       }
 
-        ToastWarning(`Confirming delegate to ${substr(receiverAddress)}...`)
-        const txReceipt = await waitTransaction(txHash)
+  //       ToastWarning(`Confirming delegate to ${substr(receiverAddress)}...`)
+  //       const txReceipt = await waitTransaction(txHash)
 
-        if (txReceipt.status) {
-          ToastSuccess(`Delegate confirmed to ${substr(receiverAddress)}`)
-          setCurrentModal('manage')
-          setModalOpen(false)
-          return
-        }
-      }
-    },
-    []
-  )
+  //       if (txReceipt.status) {
+  //         ToastSuccess(`Delegate confirmed to ${substr(receiverAddress)}`)
+  //         setCurrentModal('manage')
+  //         setModalOpen(false)
+  //         return
+  //       }
+  //     }
+  //   },
+  //   []
+  // )
 
-  const delegateAllCallback = React.useCallback(
-    (receiverAddress: string): TransactionCallback => {
-      return async (error: MetamaskError, txHash: string) => {
-        if (error) {
-          if (error.code === 4001) {
-            dispatch(setModalAlertText({ errorText: `Delegate cancelled` }))
-            return
-          }
+  // const delegateAllCallback = React.useCallback(
+  //   (receiverAddress: string): TransactionCallback => {
+  //     return async (error: MetamaskError, txHash: string) => {
+  //       if (error) {
+  //         if (error.code === 4001) {
+  //           dispatch(setModalAlertText({ errorText: `Delegate cancelled` }))
+  //           return
+  //         }
 
-          dispatch(setModalAlertText({ errorText: `Error` }))
-          return
-        }
+  //         dispatch(setModalAlertText({ errorText: `Error` }))
+  //         return
+  //       }
 
-        ToastWarning(`Confirming delegate to ${substr(receiverAddress)}...`)
-        const txReceipt = await waitTransaction(txHash)
+  //       ToastWarning(`Confirming delegate to ${substr(receiverAddress)}...`)
+  //       const txReceipt = await waitTransaction(txHash)
 
-        if (txReceipt.status) {
-          ToastSuccess(`Delegate confirmed to ${substr(receiverAddress)}`)
-          setCurrentModal('manage')
-          setModalOpen(false)
-          return
-        }
-      }
-    },
-    []
-  )
+  //       if (txReceipt.status) {
+  //         ToastSuccess(`Delegate confirmed to ${substr(receiverAddress)}`)
+  //         setCurrentModal('manage')
+  //         setModalOpen(false)
+  //         return
+  //       }
+  //     }
+  //   },
+  //   []
+  // )
 
   return (
     <>

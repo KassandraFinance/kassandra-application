@@ -1,10 +1,12 @@
 import React from 'react'
 import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
+
+import { networks } from '@/constants/tokenAddresses'
 
 import Button from '@/components/Button'
 
-import useManagePool from '@/hooks/useManagePool'
-import { useAppSelector } from '@/store/hooks'
+import useManagePoolController from '@/hooks/useManagePoolController'
 
 import { getDateDiff } from '@/utils/date'
 import { BNtoDecimal } from '@/utils/numerals'
@@ -27,24 +29,30 @@ const AvailableRewards = ({ pool }: Props) => {
     ? getDateDiff(pool.last_harvest * 1000)
     : { string: 'days', value: 0 }
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const managePool = useManagePool(pool.controller)
+  const [{ wallet }] = useConnectWallet()
+  const { getAumFeesToManagerAndKassandra, withdrawAumFees } =
+    useManagePoolController(pool.controller, networks[pool.chain_id].rpc)
 
   async function handleClaimRewards() {
-    try {
-      await managePool.withdrawAumFees(userWalletAddress)
+    if (!wallet) return
+
+    function handleSuccess() {
       setFeesAum({ kassandra: '0', manager: '0' })
+    }
+
+    try {
+      await withdrawAumFees(handleSuccess)
     } catch (error) {
       console.log(error)
     }
   }
 
   React.useEffect(() => {
-    if (!pool) return
+    if (!pool || !wallet) return
     const getAvailableAumFee = async () => {
       try {
         const { feesToManager, feesToKassandra } =
-          await managePool.getAumFeesToManagerAndKassandra(userWalletAddress)
+          await getAumFeesToManagerAndKassandra(wallet.accounts[0].address)
 
         setFeesAum({ kassandra: feesToKassandra, manager: feesToManager })
       } catch (error) {
@@ -52,7 +60,7 @@ const AvailableRewards = ({ pool }: Props) => {
       }
     }
     getAvailableAumFee()
-  }, [managePool, userWalletAddress])
+  }, [wallet])
 
   return (
     <S.AvailableRewards>

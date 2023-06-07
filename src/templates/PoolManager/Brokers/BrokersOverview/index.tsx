@@ -3,9 +3,10 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { useAppSelector } from '@/store/hooks'
 import { GET_BROKERS_FEES } from './graphql'
 
 import StatusCard from '@/components/Manage/StatusCard'
@@ -35,12 +36,11 @@ const BrokersOverview = () => {
   const [depositsPeriod, setDepositsPeriod] = React.useState<string>('1D')
   const [rewardsPeriod, setRewardsPeriod] = React.useState<string>('1D')
 
+  const [{ wallet }] = useConnectWallet()
   const router = useRouter()
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
-
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const dateNow = new Date()
 
@@ -68,12 +68,12 @@ const BrokersOverview = () => {
   }
 
   const { data } = useSWR<GetBrokersFees>(
-    userWalletAddress.length > 0 && poolId.length > 0
-      ? [GET_BROKERS_FEES, depositsPeriod]
+    wallet && poolId.length > 0
+      ? [GET_BROKERS_FEES, wallet.accounts[0].address, depositsPeriod]
       : null,
-    query =>
+    (query, userWalletAddress) =>
       request(BACKEND_KASSANDRA, query, {
-        id: userWalletAddress,
+        id: getAddress(userWalletAddress),
         poolId: poolId,
         depositsTimestamp: periodList[depositsPeriod].timestamp,
         rewardsTimestamp: periodList[rewardsPeriod].timestamp

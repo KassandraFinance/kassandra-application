@@ -7,7 +7,7 @@ import * as S from './styles'
 
 interface ProposalDataProps {
   proposalData: IStateProposalListProps[]
-  proposalTotal: number
+  proposalTotal: string
 }
 
 const chartProps = {
@@ -17,7 +17,6 @@ const chartProps = {
 }
 
 const Chart = ({ proposalData, proposalTotal }: ProposalDataProps) => {
-  // eslint-disable-next-line prettier/prettier
   const [proposalStateData, setProposalStateData] = React.useState([
     { name: '', value: 0, fill: '' }
   ])
@@ -38,16 +37,13 @@ const Chart = ({ proposalData, proposalTotal }: ProposalDataProps) => {
   React.useEffect(() => {
     setProposalStateData([])
 
-    proposalData.map(ProspData => {
-      setProposalStateData(prevState => [
-        ...prevState,
-        {
-          name: ProspData.stateProposal,
-          value: ProspData.proposalVote,
-          fill: handleCheckChartColor(ProspData)
-        }
-      ])
-    })
+    const proposalsList = proposalData.map(ProspData => ({
+      name: ProspData.stateProposal,
+      value: ProspData.proposalVote,
+      fill: handleCheckChartColor(ProspData)
+    }))
+
+    setProposalStateData(proposalsList)
   }, [proposalData])
 
   return (

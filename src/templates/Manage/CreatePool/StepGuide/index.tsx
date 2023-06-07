@@ -1,22 +1,22 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import { setPoolData } from '../../../../store/reducers/poolCreationSlice'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setPoolData } from '@/store/reducers/poolCreationSlice'
 
 import StepCard from './StepCard'
-import ExternalLink from '../../../../components/ExternalLink'
+import ExternalLink from '@/components/ExternalLink'
 import CreatePoolHeader from '../CreatePoolHeader'
-import ModalAvailableAssets from '../../../../components/Modals/ModalAvailableAssets'
+import ModalAvailableAssets from '@/components/Modals/ModalAvailableAssets'
 import InputRadio from '@/components/Inputs/InputRadio'
 
-import infoIcon from '../../../../../public/assets/iconGradient/info-solid-gradient.svg'
-import assetsIcon from '../../../../../public/assets/iconGradient/assets-distribution.svg'
-import adjustIcon from '../../../../../public/assets/iconGradient/adjust.svg'
-import feeConfigurationIcon from '../../../../../public/assets/iconGradient/info-solid-gradient.svg'
-import reviewIcon from '../../../../../public/assets/iconGradient/review.svg'
-import avalancheIcon from '../../../../../public/assets/logos/avalanche.svg'
-import polygonIcon from '../../../../../public/assets/logos/polygon.svg'
+import infoIcon from '@assets/iconGradient/info-solid-gradient.svg'
+import assetsIcon from '@assets/iconGradient/assets-distribution.svg'
+import adjustIcon from '@assets/iconGradient/adjust.svg'
+import feeConfigurationIcon from '@assets/iconGradient/info-solid-gradient.svg'
+import reviewIcon from '@assets/iconGradient/review.svg'
+import avalancheIcon from '@assets/logos/avalanche.svg'
+import polygonIcon from '@assets/logos/polygon.svg'
 
 import * as S from './styles'
 
@@ -49,10 +49,10 @@ const stepGuide = [
 ]
 
 const StepGuide = () => {
-  const [chainInfo, setChainInfo] = React.useState({
-    chainName: '',
-    chainId: 0
-  })
+  // const [chainInfo, setChainInfo] = React.useState({
+  //   chainName: '',
+  //   chainId: 0
+  // })
   const dispatch = useAppDispatch()
   const network = useAppSelector(
     state => state.poolCreation.createPoolData.network
@@ -64,9 +64,9 @@ const StepGuide = () => {
     dispatch(setPoolData({ network: network, networkId: networkId }))
   }
 
-  function handleAvailableAssets(chainName: string, chainId: number) {
+  function handleAvailableAssets() {
     setIsAvailableAssets(true)
-    setChainInfo({ chainName: chainName, chainId: chainId })
+    // setChainInfo({ chainName: chainName, chainId: chainId })
   }
 
   return (
@@ -139,7 +139,7 @@ const StepGuide = () => {
                 required
               />
             </S.ButtonWrapper>
-            {/* <S.ButtonWrapper>
+            <S.ButtonWrapper>
               <S.ButtonNetwork
                 type="button"
                 borderColor="goerli"
@@ -166,11 +166,11 @@ const StepGuide = () => {
                 }}
                 required
               />
-            </S.ButtonWrapper> */}
+            </S.ButtonWrapper>
             <S.LinkWrapper>
               <ExternalLink
                 text="Available assets"
-                onClick={() => handleAvailableAssets('Goerli Testnet', 5)}
+                onClick={() => handleAvailableAssets()}
               />
             </S.LinkWrapper>
           </S.ButtonsContainer>

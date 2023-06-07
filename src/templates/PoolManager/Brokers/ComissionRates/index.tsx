@@ -3,9 +3,10 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { useAppSelector } from '@/store/hooks'
 import { GET_DEPOSIT_FEE } from './graphql'
 
 import * as S from './styles'
@@ -20,22 +21,19 @@ type GetDepositFeeType = {
 }
 
 const ComissionRates = () => {
+  const [{ wallet }] = useConnectWallet()
   const router = useRouter()
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
   const params = {
-    id: userWalletAddress,
+    id: wallet ? getAddress(wallet.accounts[0].address) : '',
     poolId: poolId
   }
 
   const { data } = useSWR<GetDepositFeeType>(
-    userWalletAddress.length > 0 && poolId.length > 0
-      ? [GET_DEPOSIT_FEE, params]
-      : null,
+    wallet && poolId.length > 0 ? [GET_DEPOSIT_FEE, params] : null,
     (query, params) => request(BACKEND_KASSANDRA, query, params)
   )
 

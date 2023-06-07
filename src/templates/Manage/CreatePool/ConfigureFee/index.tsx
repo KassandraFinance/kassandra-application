@@ -2,7 +2,7 @@ import React from 'react'
 
 import { useAppSelector } from '@/store/hooks'
 
-import Steps from '../../../../components/Steps'
+import Steps from '@/components/Steps'
 import CreatePoolHeader from '../CreatePoolHeader'
 import FeeBreakdown from './FeeBreakdown'
 import FeeConfig from './FeeConfig'

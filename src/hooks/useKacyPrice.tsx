@@ -8,6 +8,9 @@ type CoinsMetadataType = {
     usd: number
     usd_24h_change: number
     usd_market_cap: number
+    id: string
+    name: string
+    image: string
   }
 }
 
@@ -19,7 +22,7 @@ type CoinsMetadataResultType = {
   symbol: string
   price: string
   image: string
-  priceChangeIn24h: number
+  priceChangePercentage24h: number
   priceChangePercentage7d: number
   volume: number
   marketCap: number
@@ -39,8 +42,11 @@ const useKacyPrice = () => {
       Object.assign(data, {
         [token.contractAddress]: {
           usd: token.price,
-          usd_24h_change: token.priceChangeIn24h,
-          usd_market_cap: token.marketCap
+          usd_24h_change: token.priceChangePercentage24h,
+          usd_market_cap: token.marketCap,
+          id: token.id,
+          image: token.image,
+          name: token.name
         }
       })
     )

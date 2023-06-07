@@ -1,13 +1,10 @@
 import React from 'react'
 import Link from 'next/link'
-import useSWR from 'swr'
-import request from 'graphql-request'
-
 import { AbiItem, toChecksumAddress } from 'web3-utils'
 import Web3 from 'web3'
 
-import { GET_INFO_TOKENS } from './graphql'
-import { BACKEND_KASSANDRA } from '../../../constants/tokenAddresses'
+import { networks, mockTokens } from '@/constants/tokenAddresses'
+import useCoingecko from '@/hooks/useCoingecko'
 
 import Loading from '../../Loading'
 import Overlay from '../../Overlay'
@@ -20,8 +17,6 @@ import polygonIcon from '@assets/logos/polygon.svg'
 // import ethIcon from '@assets/logos/eth-logo.svg'
 
 import * as S from './styles'
-
-import { mockTokens, networks } from '../../../constants/tokenAddresses'
 
 const tabs = [
   // {
@@ -40,17 +35,17 @@ interface IModalAvailableAssetsProps {
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-type ITokenProps = {
-  name: string
-  symbol: string
-  logo: string
-}
-
 const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
   const [whitelist, setWhitelist] = React.useState<string[]>()
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
   >('137')
+
+  const { data: coingecko } = useCoingecko(
+    networks[Number(isSelectTab)].coingecko,
+    networks[Number(isSelectTab)].nativeCurrency.address,
+    whitelist || []
+  )
 
   React.useEffect(() => {
     if (!isSelectTab) {
@@ -66,8 +61,10 @@ const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
     const getWhitelist = async () => {
       try {
         const web3 = new Web3(networks[chainId].rpc)
-        // eslint-disable-next-line prettier/prettier
-        const whitelistContract = new web3.eth.Contract((KassandraWhitelistAbi as unknown) as AbiItem, networks[chainId].whiteList);
+        const whitelistContract = new web3.eth.Contract(
+          KassandraWhitelistAbi as unknown as AbiItem,
+          networks[chainId].whiteList
+        )
         const whitelist = await whitelistContract.methods
           .getTokens(0, 100)
           .call()
@@ -88,12 +85,6 @@ const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
     getWhitelist()
   }, [isSelectTab])
 
-  const { data } = useSWR([GET_INFO_TOKENS, whitelist], (query, whitelist) =>
-    request(BACKEND_KASSANDRA, query, {
-      whitelist
-    })
-  )
-
   return (
     <S.ModalAvailableAssets>
       <Overlay onClick={() => setModalOpen(false)} />
@@ -109,18 +100,20 @@ const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
             setIsSelect={setIsSelectTab}
           />
 
-          <S.ModalAvailableAssetsContent hasToken={data && data.tokensByIds}>
-            {data && data.tokensByIds ? (
-              data.tokensByIds.map((token: ITokenProps, index: number) => {
+          <S.ModalAvailableAssetsContent
+            hasToken={Object.keys(coingecko || {}).length > 0}
+          >
+            {coingecko ? (
+              Object.values(coingecko).map(token => {
                 return (
                   token && (
                     <Link
-                      key={token.name + index}
-                      href={`https://heimdall-frontend.vercel.app/coins/${token.symbol.toLocaleLowerCase()}`}
+                      key={token.id}
+                      href={`https://www.coingecko.com/coins/${token.id}`}
                       passHref
                     >
                       <S.tokenContent target="_blank">
-                        <img src={token.logo} alt="" width={24} height={24} />
+                        <img src={token.image} alt="" width={24} height={24} />
                         <p>{token.name}</p>
                       </S.tokenContent>
                     </Link>

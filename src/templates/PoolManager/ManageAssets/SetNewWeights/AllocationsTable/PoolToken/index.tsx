@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Big from 'big.js'
+import Image from 'next/image'
 
 import { lockToken } from '@/store/reducers/rebalanceAssetsSlice'
 
@@ -9,7 +10,6 @@ import { BNtoDecimal } from '@/utils/numerals'
 import InputNumber from '../../../../../../components/Inputs/InputNumber'
 
 import * as S from './styles'
-import Image from 'next/image'
 
 export type AssetType = {
   currentWeight: Big

@@ -67,13 +67,7 @@ const FeeBreakdown = ({
 
           <S.FeeSmallContainer isCollapsed={isDepositFee}>
             <S.FeeContainer>
-              <S.FeeSmall>
-                Broker commission (
-                {Big(feeJoinBroker || '0')
-                  .mul(100)
-                  .toFixed(2)}
-                %)
-              </S.FeeSmall>
+              <S.FeeSmall>Broker commission</S.FeeSmall>
 
               <S.FeeValueSmall>
                 {Big(feeJoinBroker || '0')
@@ -84,13 +78,7 @@ const FeeBreakdown = ({
             </S.FeeContainer>
 
             <S.FeeContainer>
-              <S.FeeSmall>
-                Manager share (
-                {Big(feeJoinManager || '0')
-                  .mul(100)
-                  .toFixed(2)}
-                %)
-              </S.FeeSmall>
+              <S.FeeSmall>Manager share</S.FeeSmall>
 
               <S.FeeValueSmall>
                 {Big(feeJoinManager || '0')
@@ -130,7 +118,6 @@ const FeeBreakdown = ({
 
             <S.FeeValue>
               {Big(feeAum || '0')
-                .add(feeAumKassandra || '0')
                 .mul(100)
                 .toFixed(2)}
               %
@@ -139,13 +126,7 @@ const FeeBreakdown = ({
 
           <S.FeeSmallContainer isCollapsed={isManagementFee}>
             <S.FeeContainer>
-              <S.FeeSmall>
-                KASSANDRA SHARE (
-                {Big(feeAumKassandra || '0')
-                  .mul(100)
-                  .toFixed(2)}
-                %)
-              </S.FeeSmall>
+              <S.FeeSmall>KASSANDRA SHARE</S.FeeSmall>
 
               <S.FeeValueSmall>
                 {Big(feeAumKassandra || '0')
@@ -156,16 +137,11 @@ const FeeBreakdown = ({
             </S.FeeContainer>
 
             <S.FeeContainer>
-              <S.FeeSmall>
-                Manager share (
-                {Big(feeAum || '0')
-                  .mul(100)
-                  .toFixed(2)}
-                %)
-              </S.FeeSmall>
+              <S.FeeSmall>Manager share</S.FeeSmall>
 
               <S.FeeValueSmall>
                 {Big(feeAum || '0')
+                  .sub(feeAumKassandra)
                   .mul(100)
                   .toFixed(2)}
                 %

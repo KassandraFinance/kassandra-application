@@ -4,16 +4,16 @@ import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-import { SUBGRAPH_URL } from '../../../constants/tokenAddresses'
+import { SUBGRAPH_URL } from '@/constants/tokenAddresses'
 
-import { BNtoDecimal } from '../../../utils/numerals'
+import { BNtoDecimal } from '@/utils/numerals'
 
 import { GET_INFO_USERS } from './graphql'
 
-import ImageProfile from '../ImageProfile'
+import Loading from '@/components/Loading'
+import ImageProfile from '@/components/Governance/ImageProfile'
 
 import * as S from './styles'
-import Loading from '../../Loading'
 
 interface IVotingPowerRankProps {
   address: string
