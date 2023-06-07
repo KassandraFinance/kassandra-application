@@ -126,7 +126,7 @@ const ModalStakeAndWithdraw = ({
 
   async function getBalance() {
     if (wallet?.provider && stakeTransaction === 'staking') {
-      const erc20 = ERC20(stakingToken, networkChain.rpc, {
+      const erc20 = await ERC20(stakingToken, networkChain.rpc, {
         transactionErrors: transaction.transactionErrors,
         txNotification: transaction.txNotification,
         wallet: null
@@ -143,6 +143,19 @@ const ModalStakeAndWithdraw = ({
         setBalance(new BigNumber(balance.toFixed(0)))
       }
     }
+  }
+
+  async function handleEventProductPageView() {
+    const erc20 = await ERC20(stakingToken, networkChain.rpc, {
+      transactionErrors: transaction.transactionErrors,
+      txNotification: transaction.txNotification,
+      wallet: null
+    })
+    const track = async () => {
+      const tokenName = await erc20.name()
+      trackProductPageView(productSKU, tokenName, productCategories)
+    }
+    track()
   }
 
   React.useEffect(() => {
@@ -164,16 +177,7 @@ const ModalStakeAndWithdraw = ({
 
   React.useEffect(() => {
     if (stakeTransaction === 'staking') {
-      const erc20 = ERC20(stakingToken, networkChain.rpc, {
-        transactionErrors: transaction.transactionErrors,
-        txNotification: transaction.txNotification,
-        wallet: null
-      })
-      const track = async () => {
-        const tokenName = await erc20.name()
-        trackProductPageView(productSKU, tokenName, productCategories)
-      }
-      track()
+      handleEventProductPageView()
     }
   }, [stakingToken])
 

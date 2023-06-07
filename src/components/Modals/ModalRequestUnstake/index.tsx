@@ -1,6 +1,6 @@
 import React from 'react'
 import BigNumber from 'bn.js'
-import { ToastSuccess, ToastWarning } from '../../Toastify/toast'
+// import { ToastSuccess, ToastWarning } from '../../Toastify/toast'
 
 import { BNtoDecimal } from '../../../utils/numerals'
 import { dateRequestUnstake } from '../../../utils/date'
