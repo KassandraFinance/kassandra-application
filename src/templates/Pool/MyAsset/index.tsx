@@ -4,21 +4,21 @@ import { useRouter } from 'next/router'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
+import Tippy from '@tippyjs/react'
+import Web3 from 'web3'
 
-import { Staking, LPDaiAvax } from '../../../constants/tokenAddresses'
-import { LP_KACY_AVAX_PNG } from '../../../constants/pools'
+import { networks, KacyPoligon } from '../../../constants/tokenAddresses'
 
 import { useAppDispatch } from '../../../store/hooks'
 import { useAppSelector } from '../../../store/hooks'
 import { ChainInfo } from '../../../store/reducers/pool'
 import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
+import useCoingecko from '@/hooks/useCoingecko'
 
-import usePriceLP from '../../../hooks/usePriceLP'
 import useERC20Contract from '../../../hooks/useERC20Contract'
 import useStakingContract from '../../../hooks/useStakingContract'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
-import changeChain from '../../../utils/changeChain'
 import { BNtoDecimal } from '../../../utils/numerals'
 import { registerToken } from '../../../utils/registerToken'
 
@@ -50,83 +50,73 @@ const MyAsset = ({
   pid,
   decimals
 }: IMyAssetProps) => {
-  const [walletConnect, setWalletConnect] = React.useState<string | null>(null)
   const [stakedToken, setStakedToken] = React.useState<BigNumber>(
     new BigNumber(0)
   )
   const [balance, setBalance] = React.useState<BigNumber>(new BigNumber(0))
-  const [priceToken, setPriceToken] = React.useState<IPriceLPToken>({
-    kacy: Big(-1),
-    fund: Big(-1)
-  })
   const [apr, setApr] = React.useState<BigNumber>(new BigNumber(0))
 
-  const stakingContract = useStakingContract(Staking)
-  const tokenWallet = useERC20Contract(poolToken)
+  const chainInfo = networks[chain.id]
+
+  const stakingContract = useStakingContract(
+    chainInfo.stakingContract ?? '',
+    chainInfo.chainId
+  )
+  const ERC20 = useERC20Contract(
+    poolToken,
+    new Web3(networks[chainInfo.chainId].rpc)
+  )
   const { trackEventFunction } = useMatomoEcommerce()
-  const { getPriceKacyAndLP } = usePriceLP(chain.id)
-
-  const { chainId, userWalletAddress, pool } = useAppSelector(state => state)
-
+  const { priceToken } = useCoingecko(
+    chainInfo.coingecko,
+    chainInfo.nativeCurrency.address,
+    [KacyPoligon]
+  )
+  const { userWalletAddress, pool } = useAppSelector(state => state)
   const dispatch = useAppDispatch()
   const router = useRouter()
 
+  const kacyPrice = priceToken(KacyPoligon.toLowerCase())
+
   async function getStakedToken() {
-    if (typeof pid !== 'number') return
+    if (!pid) return
 
     const staked = await stakingContract.userInfo(pid, userWalletAddress)
+
     setStakedToken(staked.amount)
   }
 
   async function getBalance() {
-    const balanceToken = await tokenWallet.balance(userWalletAddress)
+    const balanceToken = await ERC20.balance(userWalletAddress)
 
     setBalance(balanceToken)
   }
 
-  async function getLiquidityPoolPriceInDollar() {
-    const { kacyPriceInDollar } = await getPriceKacyAndLP(
-      LP_KACY_AVAX_PNG,
-      LPDaiAvax,
-      false
-    )
-
-    setPriceToken(prevState => ({
-      ...prevState,
-      fund: Big(price || -1)
-    }))
-
-    setPriceToken(prevState => ({
-      ...prevState,
-      kacy: kacyPriceInDollar
-    }))
-  }
-
   async function getApr() {
-    if (typeof pid !== 'number') return
-
+    if (!pid) return
     const poolInfoResponse = await stakingContract.poolInfo(pid)
 
-    if (!poolInfoResponse.withdrawDelay) {
-      return
-    }
+    if (!poolInfoResponse.withdrawDelay) return
 
     const kacyRewards = new BigNumber(poolInfoResponse.rewardRate).mul(
       new BigNumber(86400)
     )
 
-    if (priceToken.fund.gt('0')) {
+    const fundPrice = Big(price ?? 0)
+    const priceKacy = Big(kacyPrice ?? 0)
+
+    if (fundPrice.gt('0')) {
       const aprResponse =
         poolInfoResponse.depositedAmount.toString() !== '0' &&
-        priceToken.kacy.gt('-1') &&
-        priceToken.fund.gt('-1')
+        priceKacy.gt('-1') &&
+        fundPrice.gt('-1')
           ? new BigNumber(
               Big(kacyRewards.toString())
                 .mul('365')
                 .mul('100')
-                .mul(priceToken.kacy)
+                .mul(Big(priceKacy ?? 0))
                 .div(
-                  priceToken.fund.mul(
+                  Big(price).mul(
                     Big(poolInfoResponse.depositedAmount.toString())
                   )
                 )
@@ -139,40 +129,20 @@ const MyAsset = ({
   }
 
   React.useEffect(() => {
-    const handleWallectConnect = () => {
-      const connect = localStorage.getItem('walletconnect')
-
-      if (connect) {
-        setWalletConnect(connect)
-      } else {
-        setWalletConnect(null)
-      }
-    }
-
-    handleWallectConnect()
-  }, [])
-
-  React.useEffect(() => {
     if (userWalletAddress !== '') {
       getBalance()
 
       getStakedToken()
     }
-  }, [userWalletAddress, chainId])
+  }, [userWalletAddress, pid])
 
   React.useEffect(() => {
-    if (userWalletAddress !== '' && typeof pid === 'number') {
-      getLiquidityPoolPriceInDollar()
-    }
-  }, [price, userWalletAddress, chainId])
-
-  React.useEffect(() => {
-    if (userWalletAddress !== '') {
+    if (userWalletAddress !== '' && pid) {
       getApr()
     }
-  }, [priceToken, userWalletAddress, chainId])
+  }, [userWalletAddress, pid, kacyPrice])
 
-  return !apr.isZero() || pool.poolId ? (
+  return (
     <S.MyAsset>
       <S.TitleWrapper>
         <S.Title>
@@ -221,7 +191,13 @@ const MyAsset = ({
             <S.Td>
               <S.TdWrapper>
                 {pool.logo ? (
-                  <img src={pool.logo} width={20} height={20} alt="" />
+                  <img
+                    src={pool.logo}
+                    width={20}
+                    height={20}
+                    alt=""
+                    className="poolIcon"
+                  />
                 ) : (
                   <Blockies
                     seed={pool.name}
@@ -234,25 +210,44 @@ const MyAsset = ({
               </S.TdWrapper>
             </S.Td>
             <S.Td>
-              <S.TdWrapper>
-                <span>
-                  {userWalletAddress
-                    ? BNtoDecimal(stakedToken, decimals, 4)
-                    : '...'}{' '}
-                  {symbol}
-                </span>
-                <S.Value>
-                  $
-                  {userWalletAddress
-                    ? BNtoDecimal(
-                        Big(stakedToken.toString())
-                          .div(Big(10).pow(18))
-                          .mul(price),
-                        2
-                      )
-                    : '...'}
-                </S.Value>
-              </S.TdWrapper>
+              {userWalletAddress && pid ? (
+                <S.TdWrapper>
+                  <span>
+                    {BNtoDecimal(stakedToken, decimals, 4)} {symbol}
+                  </span>
+                  <S.Value>
+                    $
+                    {BNtoDecimal(
+                      Big(stakedToken.toString())
+                        .div(Big(10).pow(18))
+                        .mul(price),
+                      2
+                    )}
+                  </S.Value>
+                </S.TdWrapper>
+              ) : pid ? (
+                <S.TdWrapper>
+                  <span>
+                    ...
+                    {symbol}
+                  </span>
+                  <S.Value>$ ...</S.Value>
+                </S.TdWrapper>
+              ) : (
+                <S.TdWrapper>
+                  <S.Value>
+                    Can&apos;t farm
+                    <Tippy content="there is no way to farm this asset at the moment">
+                      <img
+                        src="/assets/utilities/tooltip.svg"
+                        alt=""
+                        width={16}
+                        height={16}
+                      />
+                    </Tippy>
+                  </S.Value>
+                </S.TdWrapper>
+              )}
             </S.Td>
             <S.Td>
               <S.TdWrapper>
@@ -274,56 +269,35 @@ const MyAsset = ({
           </S.Tr>
         </S.TBody>
       </S.Table>
-      <S.ButtonWrapper>
-        {Number(chain.id) === chainId ? (
+
+      {userWalletAddress !== '' ? (
+        pid && (
+          <S.ButtonWrapper>
+            <Button
+              backgroundSecondary
+              text={`Stake ${symbol} to earn ${BNtoDecimal(apr, 0)}% APR`}
+              fullWidth
+              size="huge"
+              onClick={() => {
+                trackEventFunction('click-on-button', 'stake', 'my-asset')
+                router.push('/farm')
+              }}
+            />
+          </S.ButtonWrapper>
+        )
+      ) : (
+        <S.ButtonWrapper>
           <Button
             backgroundSecondary
-            text={
-              userWalletAddress
-                ? `Stake ${symbol} to earn ${BNtoDecimal(apr, 0)}% APR`
-                : 'Connect Wallet'
-            }
+            text="Connect Wallet"
             fullWidth
             size="huge"
-            onClick={
-              userWalletAddress
-                ? () => {
-                    trackEventFunction('click-on-button', 'stake', 'my-asset')
-                    router.push('/farm')
-                  }
-                : () => dispatch(setModalWalletActive(true))
-            }
+            onClick={() => dispatch(setModalWalletActive(true))}
           />
-        ) : (
-          <Button
-            className="btn-submit"
-            backgroundSecondary
-            size="huge"
-            fullWidth
-            type="button"
-            onClick={() =>
-              changeChain({
-                chainId: chain.id,
-                chainName: chain.chainName,
-                rpcUrls: chain.rpcUrls,
-                nativeCurrency: {
-                  decimals: chain.nativeTokenDecimals,
-                  name: chain.nativeTokenName,
-                  symbol: chain.nativeTokenSymbol
-                }
-              })
-            }
-            disabled={walletConnect ? true : false}
-            text={
-              walletConnect
-                ? `Change manually to ${chain.chainName}`
-                : `Change to ${chain.chainName}`
-            }
-          />
-        )}
-      </S.ButtonWrapper>
+        </S.ButtonWrapper>
+      )}
     </S.MyAsset>
-  ) : null
+  )
 }
 
 export default MyAsset
