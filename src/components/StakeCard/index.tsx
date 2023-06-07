@@ -689,8 +689,8 @@ const StakeCard = ({
           votingMultiplier={infoStaked.votingMultiplier}
           yourStake={infoStaked.yourStake}
           symbol={symbol}
-          userWalletAddress={wallet?.accounts[0].address || ''}
-          stakedUntil={staking.stakedUntil}
+          chainId={chain.id}
+          stakingAddress={stakingAddress}
         />
       )}
       {isOpenModalPangolin && (
