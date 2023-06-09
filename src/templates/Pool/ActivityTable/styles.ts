@@ -3,6 +3,7 @@ import theme from '../../../styles/theme'
 import {
   TRHead,
   TRLink,
+  TD,
   Value
 } from '@/templates/Explore/CommunityPoolsTable/styles'
 
@@ -10,8 +11,12 @@ export const NewActivityTable = styled.div`
   ${() => css`
     ${TRHead}, ${TRLink} {
       @media (min-width: 768px) {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: 0.5fr repeat(3, 1fr);
       }
+    }
+
+    ${TD} {
+      height: 6rem;
     }
   `}
 `
@@ -20,6 +25,23 @@ export const Wrapper = styled.div`
   ${() => css`
     display: flex;
     gap: 0.3rem;
+  `}
+`
+
+export const DataWrapper = styled.div`
+  ${() => css`
+    display: flex;
+    gap: 0.3rem;
+    justify-content: flex-end;
+  `}
+`
+
+export const ImageWrapper = styled.div`
+  ${() => css`
+    position: relative;
+
+    width: 1.6rem;
+    height: 1.6rem;
   `}
 `
 

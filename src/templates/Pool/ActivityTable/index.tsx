@@ -34,8 +34,10 @@ import {
   TableViewButtonContainer,
   TableViewButton,
   TD,
+  ValueWrapper,
   Value,
   ViewButton,
+  SecondaryTextValue,
   TRLink,
   TRHead,
   PaginationWrapper,
@@ -456,43 +458,349 @@ const ActivityTable = () => {
           </TRHead>
         </THead>
 
-        <TBodyWithHeight tableRowsNumber={4} lineHeight={8.6}>
+        <TBodyWithHeight tableRowsNumber={6} lineHeight={6}>
           {data
             ? data.pool.activities.map(activity => {
                 return (
-                  <TRHead key={activity.txHash}>
+                  <TRHead key={activity.id}>
                     <TD>
-                      <S.Wrapper>
-                        <Value align="left">
-                          {typeActivity[activity.type]}
-                        </Value>
+                      <ValueWrapper>
+                        <S.Wrapper>
+                          <Value align="left">
+                            {typeActivity[activity.type]}
+                          </Value>
 
-                        <S.Link
-                          href={`${explorer[data.pool.chain_id]}${
-                            activity.txHash
-                          }`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Image
-                            src="/assets/utilities/external-link.svg"
-                            alt="External Link"
-                            layout="fill"
-                          />
-                        </S.Link>
-                      </S.Wrapper>
+                          <S.Link
+                            href={`${explorer[data.pool.chain_id]}${
+                              activity.txHash
+                            }`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Image
+                              src="/assets/utilities/external-link.svg"
+                              alt="External Link"
+                              layout="fill"
+                            />
+                          </S.Link>
+                        </S.Wrapper>
+
+                        {activity.type === 'exit' ? (
+                          activity.symbol.length > 2 ? (
+                            <SecondaryTextValue>All assets</SecondaryTextValue>
+                          ) : (
+                            <SecondaryTextValue>
+                              Single asset
+                            </SecondaryTextValue>
+                          )
+                        ) : null}
+                      </ValueWrapper>
                     </TD>
 
                     <TD isView={inViewCollum === 1}>
-                      <Value>{activity.type}</Value>
+                      <ValueWrapper>
+                        <S.DataWrapper>
+                          {pool.underlying_assets.map(element => {
+                            if (
+                              activity.type === 'join' &&
+                              element.token.symbol === 'KACY'
+                            )
+                              return (
+                                <S.ImageWrapper>
+                                  <Image src={pool.logo} alt="" layout="fill" />
+                                </S.ImageWrapper>
+                              )
+
+                            if (activity.type === 'exit') {
+                              if (element.token.symbol === activity.symbol[0]) {
+                                return (
+                                  <S.ImageWrapper
+                                    key={element.token.id + activity.timestamp}
+                                  >
+                                    <Image
+                                      src={
+                                        element.token?.logo ||
+                                        element.token?.wraps?.logo ||
+                                        ''
+                                      }
+                                      layout="fill"
+                                    />
+                                  </S.ImageWrapper>
+                                )
+                              }
+                              if (
+                                activity.symbol.length < 3 &&
+                                element.token.symbol ===
+                                  invertSymbol[activity.symbol[0]]
+                              ) {
+                                return (
+                                  <S.ImageWrapper
+                                    key={element.token.id + activity.timestamp}
+                                  >
+                                    <Image
+                                      src={
+                                        element.token?.logo ||
+                                        element.token?.wraps?.logo ||
+                                        ''
+                                      }
+                                      alt=""
+                                      layout="fill"
+                                    />
+                                  </S.ImageWrapper>
+                                )
+                              }
+                              if (
+                                activity.symbol.length > 3 &&
+                                element.token.symbol === 'KACY'
+                              ) {
+                                return (
+                                  <S.TokensSymbols
+                                    key={element.token.id + activity.timestamp}
+                                  >
+                                    <TokenIcons />
+                                    {pool.underlying_assets.length > 3 && (
+                                      <span>
+                                        +{pool.underlying_assets.length - 3}{' '}
+                                        MORE
+                                      </span>
+                                    )}
+                                  </S.TokensSymbols>
+                                )
+                              }
+                            }
+
+                            if (
+                              activity.type === 'swap' &&
+                              element.token.symbol === activity.symbol[1]
+                            )
+                              return (
+                                <S.ImageWrapper
+                                  key={element.token.id + activity.timestamp}
+                                >
+                                  <Image
+                                    src={
+                                      element.token?.logo ||
+                                      element.token?.wraps?.logo ||
+                                      ''
+                                    }
+                                    alt=""
+                                    layout="fill"
+                                  />
+                                </S.ImageWrapper>
+                              )
+                            if (
+                              activity.type === 'swap' &&
+                              element.token.symbol ===
+                                invertSymbol[activity.symbol[1]]
+                            )
+                              return (
+                                <S.ImageWrapper
+                                  key={element.token.id + activity.timestamp}
+                                >
+                                  <Image
+                                    src={
+                                      element.token?.logo ||
+                                      element.token?.wraps?.logo ||
+                                      ''
+                                    }
+                                    alt=""
+                                    layout="fill"
+                                  />
+                                </S.ImageWrapper>
+                              )
+                          })}
+
+                          <Value>
+                            {activity.symbol.length > 2
+                              ? null
+                              : BNtoDecimal(
+                                  Big(
+                                    activity.amount[
+                                      activity.type === 'exit' ? 0 : 1
+                                    ] || '0'
+                                  ),
+                                  18,
+                                  3
+                                )}
+                          </Value>
+                        </S.DataWrapper>
+
+                        <SecondaryTextValue align="right">
+                          $
+                          {activity.type === 'exit' &&
+                          activity.symbol.length > 2
+                            ? handleWithdrawAllAsset(
+                                activity.amount,
+                                activity.price_usd
+                              )
+                            : BNtoDecimal(
+                                Big(activity.amount[1] || 0).times(
+                                  Big(activity?.price_usd[1] || 0)
+                                ),
+                                18,
+                                5,
+                                2
+                              )}
+                        </SecondaryTextValue>
+                      </ValueWrapper>
                     </TD>
 
                     <TD isView={inViewCollum === 2}>
-                      <Value>{activity.type}</Value>
+                      <ValueWrapper>
+                        <S.DataWrapper>
+                          {pool.underlying_assets.map(element => {
+                            if (
+                              activity.type === 'join' &&
+                              element.token.symbol === activity.symbol[0]
+                            )
+                              return (
+                                <S.ImageWrapper>
+                                  <Image
+                                    src={
+                                      element.token?.logo ||
+                                      element.token.wraps?.logo ||
+                                      ''
+                                    }
+                                    alt=""
+                                    layout="fill"
+                                  />
+                                </S.ImageWrapper>
+                              )
+                            if (
+                              activity.type === 'join' &&
+                              element.token.symbol ===
+                                invertSymbol[activity.symbol[0]]
+                            )
+                              return (
+                                <S.ImageWrapper>
+                                  <Image
+                                    src={
+                                      element.token?.logo ||
+                                      element.token?.wraps?.logo ||
+                                      ''
+                                    }
+                                    alt=""
+                                    layout="fill"
+                                  />
+                                </S.ImageWrapper>
+                              )
+
+                            if (activity.type === 'exit') {
+                              if (element.token.symbol === 'KACY') {
+                                return (
+                                  <S.ImageWrapper key={pool.id}>
+                                    <Image
+                                      src={pool.logo}
+                                      alt=""
+                                      layout="fill"
+                                    />
+                                  </S.ImageWrapper>
+                                )
+                              } else {
+                                null
+                              }
+                            }
+
+                            if (
+                              activity.type === 'swap' &&
+                              element.token.symbol === activity.symbol[0]
+                            )
+                              return (
+                                <S.ImageWrapper>
+                                  <Image
+                                    src={
+                                      element.token?.logo ||
+                                      element.token?.wraps?.logo ||
+                                      ''
+                                    }
+                                    alt=""
+                                    layout="fill"
+                                  />
+                                </S.ImageWrapper>
+                              )
+                            if (
+                              activity.type === 'swap' &&
+                              element.token.symbol ===
+                                invertSymbol[activity.symbol[0]]
+                            )
+                              return (
+                                <S.ImageWrapper>
+                                  <Image
+                                    src={
+                                      element.token?.logo ||
+                                      element.token?.wraps?.logo ||
+                                      ''
+                                    }
+                                    alt=""
+                                    layout="fill"
+                                  />
+                                </S.ImageWrapper>
+                              )
+                          })}
+
+                          <Value>
+                            {BNtoDecimal(
+                              Big(
+                                activity.amount[
+                                  activity.type === 'exit'
+                                    ? activity.symbol.length > 2
+                                      ? 0
+                                      : 1
+                                    : 0
+                                ] || '0'
+                              ),
+                              18,
+                              3
+                            )}
+                          </Value>
+                        </S.DataWrapper>
+
+                        <SecondaryTextValue align="right">
+                          $
+                          {BNtoDecimal(
+                            Big(
+                              activity.amount[
+                                activity.type === 'exit'
+                                  ? activity.symbol.length > 2
+                                    ? 0
+                                    : 1
+                                  : 0
+                              ] || 0
+                            ).times(
+                              Big(
+                                activity?.price_usd[
+                                  activity.type === 'exit'
+                                    ? activity.symbol.length > 2
+                                      ? 0
+                                      : 1
+                                    : 0
+                                ] || 0
+                              )
+                            ),
+                            18,
+                            5,
+                            2
+                          )}
+                        </SecondaryTextValue>
+                      </ValueWrapper>
                     </TD>
 
                     <TD isView={inViewCollum === 3}>
-                      <Value>{activity.type}</Value>
+                      <ValueWrapper>
+                        <Value>{substr(activity?.address)}</Value>
+
+                        <S.DataWrapper>
+                          <SecondaryTextValue align="right">
+                            {getDateDiff(activity.timestamp * 1000)?.value}{' '}
+                            {date(getDateDiff(activity.timestamp * 1000))} ago
+                          </SecondaryTextValue>
+
+                          <ExternalLink
+                            hrefNext={`/profile/${activity.address}`}
+                            text=""
+                          />
+                        </S.DataWrapper>
+                      </ValueWrapper>
                     </TD>
 
                     <TD

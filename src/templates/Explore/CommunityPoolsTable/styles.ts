@@ -324,7 +324,11 @@ export const TextValue = styled.span`
   `}
 `
 
-export const SecondaryTextValue = styled.span`
+interface ISecondaryTextValueProps {
+  align?: 'right' | 'left' | 'center'
+}
+
+export const SecondaryTextValue = styled.span<ISecondaryTextValueProps>`
   ${({ theme }) => css`
     color: #c4c4c4;
     font-weight: ${theme.font.weight.light};
@@ -332,6 +336,11 @@ export const SecondaryTextValue = styled.span`
     line-height: 135%;
     letter-spacing: 0.05em;
   `}
+  ${({ align }) =>
+    align &&
+    css`
+      text-align: ${align};
+    `}
 `
 
 export const ValueWrapper = styled.div`
@@ -448,8 +457,8 @@ export const CoinImageWrapper = styled.div<ICoinImageWrapperProps>`
 export const TableViewButtonContainer = styled.div`
   ${() => css`
     display: flex;
-    justify-content: center;
     gap: 0.8rem;
+    justify-content: center;
 
     ${TableViewButton}:last-child {
       transform: rotate(180deg);
@@ -462,19 +471,20 @@ export const TableViewButton = styled.button`
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.6rem 0.85rem;
 
+    padding: 0.6rem 0.85rem;
     border: none;
-    border-radius: 50%;
     border: 0.1rem solid transparent;
+    border-radius: 50%;
 
     background-color: rgba(255 255 255 / 0.05);
 
     cursor: pointer;
+
     transition: border 0.3s ease;
 
     &:hover {
-      border: 0.1rem solid rgba(255, 255, 255, 0.3);
+      border: 0.1rem solid rgb(255 255 255 / 0.3);
     }
   `}
 `
