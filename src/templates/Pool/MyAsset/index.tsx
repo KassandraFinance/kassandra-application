@@ -1,11 +1,10 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
 import Tippy from '@tippyjs/react'
-import Web3 from 'web3'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { networks, KacyPoligon } from '../../../constants/tokenAddresses'
 
@@ -15,8 +14,8 @@ import { ChainInfo } from '../../../store/reducers/pool'
 import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 import useCoingecko from '@/hooks/useCoingecko'
 
-import useERC20Contract from '../../../hooks/useERC20Contract'
-import useStakingContract from '../../../hooks/useStakingContract'
+import useERC20 from '../../../hooks/useERC20'
+import useStaking from '../../../hooks/useStaking'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import { BNtoDecimal } from '../../../utils/numerals'
@@ -50,58 +49,54 @@ const MyAsset = ({
   pid,
   decimals
 }: IMyAssetProps) => {
-  const [stakedToken, setStakedToken] = React.useState<BigNumber>(
-    new BigNumber(0)
-  )
-  const [balance, setBalance] = React.useState<BigNumber>(new BigNumber(0))
-  const [apr, setApr] = React.useState<BigNumber>(new BigNumber(0))
+  const [stakedToken, setStakedToken] = React.useState<Big>(Big(0))
+  const [balance, setBalance] = React.useState<Big>(Big(0))
+  const [apr, setApr] = React.useState<Big>(Big(0))
 
   const chainInfo = networks[chain.id]
 
-  const stakingContract = useStakingContract(
+  const [{ wallet }] = useConnectWallet()
+  const stakingContract = useStaking(
     chainInfo.stakingContract ?? '',
     chainInfo.chainId
   )
-  const ERC20 = useERC20Contract(
-    poolToken,
-    new Web3(networks[chainInfo.chainId].rpc)
-  )
+  const ERC20 = useERC20(poolToken, networks[chainInfo.chainId].rpc)
   const { trackEventFunction } = useMatomoEcommerce()
   const { priceToken } = useCoingecko(
     chainInfo.coingecko,
     chainInfo.nativeCurrency.address,
     [KacyPoligon]
   )
-  const { userWalletAddress, pool } = useAppSelector(state => state)
+  const { pool } = useAppSelector(state => state)
   const dispatch = useAppDispatch()
   const router = useRouter()
 
   const kacyPrice = priceToken(KacyPoligon.toLowerCase())
 
   async function getStakedToken() {
-    if (!pid) return
+    if (!pid || !wallet) return
 
-    const staked = await stakingContract.userInfo(pid, userWalletAddress)
+    const staked = await stakingContract.userInfo(
+      pid,
+      wallet.accounts[0].address
+    )
 
-    setStakedToken(staked.amount)
+    setStakedToken(Big(staked.amount))
   }
 
   async function getBalance() {
-    const balanceToken = await ERC20.balance(userWalletAddress)
+    if (!wallet) return
 
-    setBalance(balanceToken)
+    const balanceToken = await ERC20.balance(wallet.accounts[0].address)
+
+    setBalance(Big(balanceToken))
   }
 
   async function getApr() {
     if (!pid) return
     const poolInfoResponse = await stakingContract.poolInfo(pid)
 
-    if (!poolInfoResponse.withdrawDelay) return
-
-    const kacyRewards = new BigNumber(poolInfoResponse.rewardRate).mul(
-      new BigNumber(86400)
-    )
-
+    const kacyRewards = Big(poolInfoResponse.rewardRate).mul(Big(86400))
     const fundPrice = Big(price ?? 0)
     const priceKacy = Big(kacyPrice ?? 0)
 
@@ -110,37 +105,34 @@ const MyAsset = ({
         poolInfoResponse.depositedAmount.toString() !== '0' &&
         priceKacy.gt('-1') &&
         fundPrice.gt('-1')
-          ? new BigNumber(
-              Big(kacyRewards.toString())
+          ? Big(
+              kacyRewards
                 .mul('365')
                 .mul('100')
-                .mul(Big(priceKacy ?? 0))
+                .mul(priceKacy ?? 0)
                 .div(
-                  Big(price).mul(
+                  fundPrice.mul(
                     Big(poolInfoResponse.depositedAmount.toString())
                   )
                 )
                 .toFixed(0)
             )
-          : new BigNumber(-1)
+          : Big(-1)
 
       setApr(aprResponse)
     }
   }
 
   React.useEffect(() => {
-    if (userWalletAddress !== '') {
-      getBalance()
-
-      getStakedToken()
-    }
-  }, [userWalletAddress, pid])
+    getBalance()
+    getStakedToken()
+  }, [wallet, pid])
 
   React.useEffect(() => {
-    if (userWalletAddress !== '' && pid) {
+    if (wallet && pid) {
       getApr()
     }
-  }, [userWalletAddress, pid, kacyPrice])
+  }, [wallet, pid, kacyPrice])
 
   return (
     <S.MyAsset>
@@ -210,10 +202,10 @@ const MyAsset = ({
               </S.TdWrapper>
             </S.Td>
             <S.Td>
-              {userWalletAddress && pid ? (
+              {wallet && pid ? (
                 <S.TdWrapper>
                   <span>
-                    {BNtoDecimal(stakedToken, decimals, 4)} {symbol}
+                    {BNtoDecimal(stakedToken.div(Big(10).pow(18)), 6)} {symbol}
                   </span>
                   <S.Value>
                     $
@@ -252,16 +244,15 @@ const MyAsset = ({
             <S.Td>
               <S.TdWrapper>
                 <span>
-                  {userWalletAddress ? BNtoDecimal(balance, 18, 4) : '...'}{' '}
+                  {wallet
+                    ? BNtoDecimal(balance.div(Big(10).pow(18)), 6)
+                    : '...'}{' '}
                   {symbol}
                 </span>
                 <S.Value>
                   $
-                  {userWalletAddress
-                    ? BNtoDecimal(
-                        Big(balance.toString()).div(Big(10).pow(18)).mul(price),
-                        2
-                      )
+                  {wallet
+                    ? BNtoDecimal(balance.div(Big(10).pow(18)).mul(price), 2)
                     : '...'}
                 </S.Value>
               </S.TdWrapper>
@@ -270,7 +261,7 @@ const MyAsset = ({
         </S.TBody>
       </S.Table>
 
-      {userWalletAddress !== '' ? (
+      {wallet ? (
         pid && (
           <S.ButtonWrapper>
             <Button
