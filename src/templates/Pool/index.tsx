@@ -16,7 +16,11 @@ import { setTokensSwapProvider } from '../../store/reducers/tokenListSwapProvide
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
-import { BACKEND_KASSANDRA, URL_PARASWAP } from '../../constants/tokenAddresses'
+import {
+  BACKEND_KASSANDRA,
+  NATIVE_ADDRESS,
+  URL_PARASWAP
+} from '../../constants/tokenAddresses'
 
 import { GET_INFO_POOL } from './graphql'
 
@@ -42,6 +46,7 @@ import SharedImage from './SharedImage'
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
 
 import * as S from './styles'
+import { ITokenListSwapProviderProps } from './NewPoolOperations/Form/TokenSelection'
 
 export interface IfarmInfoYYProps {
   urlFarmContract: string
@@ -65,10 +70,10 @@ export interface IPriceAndChangeTokens {
   }
 }
 
-type ResTokenSwapProvider = {
-  address: string
+type ListTokensRes = {
+  id: string
   decimals: number
-  img: string
+  logo: string
   network: number
   symbol: string
 }
@@ -108,46 +113,64 @@ const Pool = () => {
   }
 
   async function getTokensForOperations() {
-    const resJson = await fetch(`${URL_PARASWAP}/tokens/${pool.chain_id}`)
+    const resJson = await fetch(`${BACKEND_KASSANDRA}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query: `
+          query($chainId: Int) {
+            tokensByIds(chainId: $chainId) {
+              id
+              decimals
+              logo
+              name
+              symbol
+            }
+        }
+        `,
+        variables: { chainId: pool.chain_id }
+      })
+    })
     const response = await resJson.json()
-    const tokensSwapProvider = response.tokens as ResTokenSwapProvider[]
-    const tokenAddressesSwapProvider = tokensSwapProvider.map(
-      token => token.address
-    )
+
+    const tokensSwapProvider = response.data.tokensByIds as ListTokensRes[]
+    const tokenAddressesSwapProvider = tokensSwapProvider.map(token => token.id)
     const poolAssets = [...pool.underlying_assets].sort(
       (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
     )
-
-    const formatPoolTokens = poolAssets.map(asset => {
-      const address = asset.token.wraps?.id ?? asset.token.id
-      const decimals = asset.token.wraps?.decimals ?? asset.token.decimals
-      const logoURI = asset.token.wraps?.logo ?? asset.token.logo ?? ''
-      const name = asset.token.wraps?.name ?? asset.token.name
-      const symbol = asset.token.wraps?.symbol ?? asset.token.symbol
-
-      return {
-        address: address.toLowerCase(),
-        decimals,
-        logoURI,
-        name,
-        symbol
+    const formatTokensSwapProvider = [
+      {
+        address: NATIVE_ADDRESS,
+        decimals: pool.chain.nativeTokenDecimals,
+        logoURI: pool.chain.logo ?? '',
+        name: pool.chain.nativeTokenName,
+        symbol: pool.chain.nativeTokenSymbol
       }
-    })
+    ]
 
-    const formatTokensSwapProvider = tokensSwapProvider.map(token => ({
-      address: token.address,
-      decimals: token.decimals,
-      logoURI:
-        token.img === 'https://cdn.paraswap.io/token/token.png'
-          ? ''
-          : token.img,
-      name: token.symbol,
-      symbol: token.symbol
-    }))
+    for (const token of tokensSwapProvider) {
+      formatTokensSwapProvider.push({
+        address: token.id,
+        decimals: token.decimals,
+        logoURI: token.logo,
+        name: token.symbol,
+        symbol: token.symbol
+      })
+    }
 
-    for (const token of formatPoolTokens) {
-      if (!tokenAddressesSwapProvider.includes(token.address)) {
-        formatTokensSwapProvider.push(token)
+    for (const asset of poolAssets) {
+      const address = asset.token.wraps?.id ?? asset.token.id
+
+      if (!tokenAddressesSwapProvider.includes(address)) {
+        formatTokensSwapProvider.push({
+          address: address.toLowerCase(),
+          decimals: asset.token.wraps?.decimals ?? asset.token.decimals,
+          logoURI: asset.token.wraps?.logo ?? asset.token.logo ?? '',
+          name: asset.token.wraps?.name ?? asset.token.name,
+          symbol: asset.token.wraps?.symbol ?? asset.token.symbol
+        })
       }
     }
 
