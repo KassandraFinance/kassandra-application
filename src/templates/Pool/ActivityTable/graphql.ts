@@ -4,6 +4,10 @@ export const GET_ACTIVITY = gql`
   query ($skip: Int!, $take: Int!, $id: ID!) {
     pool(id: $id) {
       num_activities
+      name
+      symbol
+      price_usd
+      chain_id
       activities(
         orderBy: timestamp
         orderDirection: desc
@@ -18,11 +22,6 @@ export const GET_ACTIVITY = gql`
         symbol
         amount
         price_usd
-        pool {
-          name
-          symbol
-          price_usd
-        }
       }
     }
   }
