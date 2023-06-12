@@ -69,9 +69,7 @@ const TokenSelection = () => {
     useAppSelector(state => state)
   const { batchRequestBalance } = useBatchRequest()
 
-  const tokenAddresses = tokenListSwapProvider.map(token =>
-    token.address.toLowerCase()
-  )
+  const tokenAddresses = tokenListSwapProvider.map(token => token.address)
   const { priceToken } = useCoingecko(
     platform[pool.chain_id],
     pool.chain.addressWrapped,
