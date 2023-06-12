@@ -776,7 +776,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
                       '$' +
                       BNtoDecimal(
                         Big(amountTokenIn.toString())
-                          .mul(Big(priceToken(tokenSelect.address) || 0))
+                          .mul(
+                            Big(
+                              priceToken(tokenSelect.address.toLowerCase()) || 0
+                            )
+                          )
                           .div(Big(10).pow(Number(tokenSelect.decimals))),
                         18,
                         2,

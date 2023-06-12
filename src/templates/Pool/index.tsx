@@ -46,7 +46,6 @@ import SharedImage from './SharedImage'
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
 
 import * as S from './styles'
-import { ITokenListSwapProviderProps } from './NewPoolOperations/Form/TokenSelection'
 
 export interface IfarmInfoYYProps {
   urlFarmContract: string
