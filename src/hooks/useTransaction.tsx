@@ -16,6 +16,8 @@ export type CallbacksType = {
   onFail?: () => Promise<void> | void
 }
 
+// Devemos criar uma lista de messagens de erros
+
 const useTransaction = () => {
   const dispatch = useAppDispatch()
 

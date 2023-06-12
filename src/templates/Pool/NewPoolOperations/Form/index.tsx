@@ -14,8 +14,9 @@ import {
   ProxyInvestV2
 } from '../../../../constants/tokenAddresses'
 
-import operationV1 from '../../../../services/operationV1'
-import operationV2 from '../../../../services/operationV2'
+import operationV1 from '@/services/operationV1'
+import operationV2 from '@/services/operationV2'
+import { ParaSwap } from '@/services/ParaSwap'
 
 import Invest from './Invest'
 import Withdraw from './Withdraw'
@@ -27,7 +28,6 @@ import useCoingecko from '../../../../hooks/useCoingecko'
 
 import * as S from './styles'
 
-// eslint-disable-next-line prettier/prettier
 export type Titles = keyof typeof messages
 
 const messages = {
@@ -43,7 +43,7 @@ interface IFormProps {
 const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   const [privateInvestors, setPrivateInvestors] = React.useState<string[]>([])
 
-  const { pool, tokenList1Inch, userWalletAddress } = useAppSelector(
+  const { pool, tokenListSwapProvider, userWalletAddress } = useAppSelector(
     state => state
   )
   const poolId = pool.id.slice(pool.chain_id.toString().length)
@@ -54,10 +54,11 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
     controller: pool.controller,
     vault: pool.vault,
     tokens: pool.underlying_assets,
-    tokensAddresses: pool.underlying_assets_addresses
+    tokensAddresses: pool.underlying_assets_addresses,
+    chainId: pool.chain_id.toString()
   }
 
-  const tokenAddresses = tokenList1Inch.map(token => token.address)
+  const tokenAddresses = tokenListSwapProvider.map(token => token.address)
   const { priceToken } = useCoingecko(
     platform[pool.chain_id],
     pool.chain.addressWrapped?.toLowerCase(),
@@ -72,9 +73,15 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
           poolInfo,
           corePoolContract(pool.vault),
           ERC20(pool.address),
-          YieldYakContract()
+          YieldYakContract(),
+          new ParaSwap()
         )
-      : new operationV2(ProxyInvestV2, BalancerHelpers, poolInfo)
+      : new operationV2(
+          ProxyInvestV2,
+          BalancerHelpers,
+          poolInfo,
+          new ParaSwap()
+        )
 
   const setAddressesOfPrivateInvestors = async () => {
     const network = networks[pool?.chain_id ?? 137]

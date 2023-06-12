@@ -4,7 +4,7 @@ import web3 from './web3'
 import { ERC20 } from '../hooks/useERC20Contract'
 import { underlyingAssetsInfo } from '../store/reducers/pool'
 
-import { addressNativeToken1Inch } from '../constants/tokenAddresses'
+import { NATIVE_ADDRESS } from '../constants/tokenAddresses'
 
 export const checkTokenWithHigherLiquidityPool = (
   underlyingAssets: underlyingAssetsInfo[]
@@ -14,7 +14,8 @@ export const checkTokenWithHigherLiquidityPool = (
 
     return {
       address: item.token.id,
-      normalizedWeight: normalizedWeightToken
+      normalizedWeight: normalizedWeightToken,
+      isWrap: item.token.is_wrap_token
     }
   })
 
@@ -36,14 +37,27 @@ export const getTokenWrapped = (
   address: string
 ) => {
   const tokenAddresses = underlyingAssets.find(
-    item => item.token.id.toLocaleLowerCase() === address.toLocaleLowerCase()
+    item =>
+      address.toLowerCase() === item.token.wraps?.id.toLowerCase() ||
+      address.toLowerCase() === item.token.id.toLowerCase()
   )
-
   if (tokenAddresses?.token.wraps) {
-    return tokenAddresses?.token.wraps.id
+    return {
+      token: {
+        id: tokenAddresses.token.wraps.id,
+        decimals: tokenAddresses.token.wraps.decimals
+      },
+      weight_normalized: tokenAddresses.weight_normalized
+    }
+  } else if (tokenAddresses) {
+    return {
+      token: {
+        id: tokenAddresses.token.id,
+        decimals: tokenAddresses.token.decimals
+      },
+      weight_normalized: tokenAddresses.weight_normalized ?? '0'
+    }
   }
-
-  return address
 }
 
 // eslint-disable-next-line prettier/prettier
@@ -78,7 +92,7 @@ export const getBalanceToken = async (
   userWalletAddress: string,
   addressWrapped?: string
 ) => {
-  if (address === addressNativeToken1Inch || address === addressWrapped) {
+  if (address === NATIVE_ADDRESS || address === addressWrapped) {
     const balanceToken = await web3.eth
       .getBalance(userWalletAddress)
       .then(newBalance => Big(newBalance.toString()))

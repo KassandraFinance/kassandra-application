@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 
 import { setTokenSelectionActive } from '../../../../../store/reducers/tokenSelectionActive'
 
-import arrow from '../../../../../../public/assets/utilities/arrow-select-down.svg'
 import none from '../../../../../../public/assets/icons/coming-soon.svg'
 
 import * as S from './styles'
@@ -22,7 +21,7 @@ const TokenSelected = () => {
         }}
       >
         <S.tokenInfo>
-          <img
+          <Image
             src={tokenSelect.logoURI || none}
             alt=""
             width={22}

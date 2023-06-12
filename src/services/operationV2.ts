@@ -16,14 +16,13 @@ import {
   EstimatedGasParams,
   ExitSwapPoolAllTokenAmountInParams,
   ExitSwapPoolAmountInParams,
+  IOperations,
   IPoolInfoProps,
   JoinSwapAmountInParams
 } from './IOperation'
-import {
-  checkTokenInThePool,
-  checkTokenWithHigherLiquidityPool
-} from '../utils/poolUtils'
-import { addressNativeToken1Inch } from '../constants/tokenAddresses'
+import { checkTokenWithHigherLiquidityPool } from '../utils/poolUtils'
+import { NATIVE_ADDRESS } from '../constants/tokenAddresses'
+import { GetAmountsParams, ISwapProvider } from './ISwapProvider'
 
 export interface ItokenSelectedProps {
   tokenInAddress: string
@@ -32,7 +31,7 @@ export interface ItokenSelectedProps {
   isWrap: number | undefined
 }
 
-export default class operationV2 {
+export default class operationV2 implements IOperations {
   contract: Contract
   balancerHelpersContract: Contract
   contractAddress: string
@@ -41,13 +40,15 @@ export default class operationV2 {
   managedPoolController: Contract
   vaultBalancer: Contract
   referral = '0x0000000000000000000000000000000000000000'
+  swapProvider: ISwapProvider
 
   constructor(
     proxyAddress: string,
     balancerHelpers: string,
-    _poolInfo: IPoolInfoProps
+    _poolInfo: IPoolInfoProps,
+    _swapProvider: ISwapProvider
   ) {
-    // eslint-disable-next-line prettier/prettier
+    this.swapProvider = _swapProvider
     this.contract = new web3.eth.Contract(
       ProxyInvestV2 as unknown as AbiItem,
       proxyAddress
@@ -69,24 +70,30 @@ export default class operationV2 {
     this.withdrawContract = _poolInfo.vault
   }
 
+  async getDatasTx() {
+    return this.swapProvider.getDatasTx(
+      this.poolInfo.chainId,
+      this.contractAddress
+    )
+  }
+
+  async getAmountsOut(params: GetAmountsParams) {
+    return await this.swapProvider.getAmountsOut(params)
+  }
+
   createRequestJoinInPool(
-    tokenInAddress: string,
-    newAmountTokenIn: string,
+    newAmountsTokenIn: string[],
     minAmountOut: BigNumber
   ) {
     const joinKind = 1
     const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
-    const amountsIn = this.poolInfo.tokensAddresses.map(item => {
-      if (item.toLowerCase() === tokenInAddress.toLowerCase()) {
-        return newAmountTokenIn
-      }
-      return '0'
-    })
+
     const userData = web3.eth.abi.encodeParameters(
       ['uint256', 'uint256[]', 'uint256'],
-      [joinKind, amountsIn, minAmountOut]
+      [joinKind, newAmountsTokenIn, minAmountOut]
     )
-    const maxAmountsIn = [0, ...amountsIn]
+
+    const maxAmountsIn = [0, ...newAmountsTokenIn]
     const request = {
       assets,
       maxAmountsIn,
@@ -108,8 +115,7 @@ export default class operationV2 {
     let investAmountOut
     let transactionError
     const request = this.createRequestJoinInPool(
-      tokenSelected.tokenInAddress,
-      tokenSelected.newAmountTokenIn.toString(),
+      tokenSelected.newAmountsTokenIn,
       minAmountOut
     )
     try {
@@ -180,44 +186,48 @@ export default class operationV2 {
     data,
     transactionCallback
   }: JoinSwapAmountInParams) {
-    const hasTokenInPool = checkTokenInThePool(
-      this.poolInfo.tokens,
-      tokenInAddress
-    )
+    // const hasTokenInPool = checkTokenInThePool(
+    //   this.poolInfo.tokens,
+    //   tokenInAddress
+    // )
     const gasPriceValue = await web3.eth.getGasPrice()
 
-    if (hasTokenInPool) {
-      const request = this.createRequestJoinInPool(
-        tokenInAddress,
-        tokenAmountIn.toString(),
-        minPoolAmountOut
-      )
-      const result = await this.contract.methods
-        .joinPool(
-          userWalletAddress,
-          this.referral,
-          this.poolInfo.controller,
-          request
-        )
-        .send(
-          {
-            from: userWalletAddress,
-            gasPrice: new BigNumber(gasPriceValue),
-            maxPriorityFeePerGas: 30e9
-          },
-          transactionCallback
-        )
+    // if (hasTokenInPool) {
+    //   const request = this.createRequestJoinInPool(
+    //     this.amountsIn,
+    //     minPoolAmountOut
+    //   )
+    //   const result = await this.contract.methods
+    //     .joinPool(
+    //       userWalletAddress,
+    //       this.referral,
+    //       this.poolInfo.controller,
+    //       request
+    //     )
+    //     .send(
+    //       {
+    //         from: userWalletAddress,
+    //         gasPrice: new BigNumber(gasPriceValue),
+    //         maxPriorityFeePerGas: 30e9
+    //       },
+    //       transactionCallback
+    //     )
 
-      return result
-    }
+    //   return result
+    // }
 
     const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(
       this.poolInfo.tokens
     )
     const nativeValue =
-      tokenInAddress === addressNativeToken1Inch
-        ? tokenAmountIn
-        : new BigNumber(0)
+      tokenInAddress === NATIVE_ADDRESS ? tokenAmountIn : new BigNumber(0)
+
+    const tokenIn =
+      tokenInAddress === NATIVE_ADDRESS
+        ? '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
+        : tokenInAddress
+
+    const datas = await this.getDatasTx()
 
     const res = await this.contract.methods
       .joinPoolExactTokenInWithSwap(
@@ -225,19 +235,22 @@ export default class operationV2 {
           recipient: userWalletAddress,
           referrer: this.referral,
           controller: this.poolInfo.controller,
-          tokenIn: tokenInAddress,
+          tokenIn,
           tokenAmountIn: tokenAmountIn.toString(),
           tokenExchange,
           minTokenAmountOut: minPoolAmountOut.toString()
         },
-        data
+        datas
       )
-      .send({
-        from: userWalletAddress,
-        value: nativeValue,
-        gasPrice: new BigNumber(gasPriceValue),
-        maxPriorityFeePerGas: 30e9
-      })
+      .send(
+        {
+          from: userWalletAddress,
+          value: nativeValue,
+          gasPrice: new BigNumber(gasPriceValue),
+          maxPriorityFeePerGas: 30e9
+        },
+        transactionCallback
+      )
 
     return res
   }
@@ -350,6 +363,7 @@ export default class operationV2 {
     userWalletAddress,
     selectedTokenInBalance
   }: CalcAllOutGivenPoolInParams) {
+    const withdrawAllAmoutOut: Record<string, BigNumber> = {}
     const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
     const userData = web3.eth.abi.encodeParameters(
       ['uint256', 'uint256'],
@@ -377,6 +391,13 @@ export default class operationV2 {
 
       allAmountsOut = response.amountsOut.slice(1, response.amountsOut.length)
 
+      const _length = this.poolInfo.tokensAddresses.length
+      for (let i = 0; i < _length; i++) {
+        Object.assign(withdrawAllAmoutOut, {
+          [this.poolInfo.tokensAddresses[i]]: new BigNumber(allAmountsOut[i])
+        })
+      }
+
       await this.vaultBalancer.methods
         .exitPool(
           this.poolInfo.id,
@@ -387,9 +408,7 @@ export default class operationV2 {
         .call({ from: userWalletAddress })
 
       return {
-        withdrawAllAmoutOut: allAmountsOut.map(
-          (item: string) => new BigNumber(item)
-        ),
+        withdrawAllAmoutOut,
         transactionError: undefined
       }
     } catch (error: any) {
@@ -408,9 +427,7 @@ export default class operationV2 {
       }
 
       return {
-        withdrawAllAmoutOut: allAmountsOut.map(
-          (item: string) => new BigNumber(item)
-        ),
+        withdrawAllAmoutOut,
         transactionError
       }
     }
@@ -482,9 +499,9 @@ export default class operationV2 {
         [1, tokenAmountIn.toString()]
       )
 
-      const minAmountsOutTokens = amountAllTokenOut.map(item => {
-        return item.mul(slippageBase).div(slippageExp).toString()
-      })
+      const minAmountsOutTokens = this.poolInfo.tokensAddresses.map(item =>
+        amountAllTokenOut[item].mul(slippageBase).div(slippageExp).toString()
+      )
 
       const request = {
         assets,

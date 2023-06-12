@@ -113,13 +113,13 @@ function ERC20Contract(contract: Contract) {
   }
 }
 
-const useERC20Contract = (address: string) => {
+const useERC20Contract = (address: string, _web3: Web3 = web3) => {
   const [contract, setContract] = React.useState(
-    new web3.eth.Contract(ERC20ABI as unknown as AbiItem, address)
+    new _web3.eth.Contract(ERC20ABI as unknown as AbiItem, address)
   )
 
   React.useEffect(() => {
-    setContract(new web3.eth.Contract(ERC20ABI as unknown as AbiItem, address))
+    setContract(new _web3.eth.Contract(ERC20ABI as unknown as AbiItem, address))
   }, [address])
 
   return React.useMemo(() => {

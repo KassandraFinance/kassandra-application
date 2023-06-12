@@ -3,21 +3,20 @@ import React from 'react'
 import Link from 'next/link'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
-import { ToastSuccess, ToastWarning } from '../../Toastify/toast'
-import Web3 from 'web3'
+import { useConnectWallet } from '@web3-onboard/react'
 
+// import { ToastSuccess, ToastWarning } from '../../Toastify/toast'
 import { BNtoDecimal } from '../../../utils/numerals'
-import waitTransaction, {
-  MetamaskError,
-  TransactionCallback
-} from '../../../utils/txWait'
+// import waitTransaction, {
+//   MetamaskError,
+//   TransactionCallback
+// } from '../../../utils/txWait'
 
-import { useAppSelector, useAppDispatch } from '../../../store/hooks'
-import { setModalAlertText } from '../../../store/reducers/modalAlertText'
+import useStaking from '@/hooks/useStaking'
+import useTransaction from '@/hooks/useTransaction'
 
 import { Staking, networks } from '../../../constants/tokenAddresses'
-import { ERC20 } from '../../../hooks/useERC20Contract'
-import useStakingContract from '../../../hooks/useStakingContract'
+import { ERC20 } from '../../../hooks/useERC20'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import Button from '../../Button'
@@ -41,7 +40,7 @@ interface IModalStakeProps {
   updateAllowance: () => Promise<void>
   handleApprove: () => Promise<void>
   stakingAddress: string
-  chain: number
+  chainId: number
 }
 
 const ModalStakeAndWithdraw = ({
@@ -58,10 +57,8 @@ const ModalStakeAndWithdraw = ({
   updateAllowance,
   handleApprove,
   stakingAddress,
-  chain
+  chainId
 }: IModalStakeProps) => {
-  const dispatch = useAppDispatch()
-
   const [isAmount, setIsAmount] = React.useState<boolean>(false)
   const [balance, setBalance] = React.useState<BigNumber>(new BigNumber(0))
   const [multiplier, setMultiplier] = React.useState<number>(0)
@@ -69,17 +66,24 @@ const ModalStakeAndWithdraw = ({
     new BigNumber(0)
   )
   const [isOpenModalPangolin, setIsOpenModalPangolin] = React.useState(false)
+  const [{ wallet }] = useConnectWallet()
 
   const inputRef = React.useRef<HTMLInputElement>(null)
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const {
+    trackEventFunction,
+    trackProductPageView
+    // trackBought,
+    // trackBuying,
+    // trackCancelBuying
+  } = useMatomoEcommerce()
 
-  const { trackProductPageView, trackBuying, trackCancelBuying, trackBought } =
-    useMatomoEcommerce()
-  const { trackEventFunction } = useMatomoEcommerce()
+  const networkChain = networks[chainId]
 
-  const kacyStake = useStakingContract(stakingAddress, chain)
-  const kacyToken = ERC20(stakingToken, new Web3(networks[chain].rpc))
+  const transaction = useTransaction()
+
+  const staking = useStaking(stakingAddress, networkChain.chainId)
+
   const productSKU = `${Staking}_${pid}`
 
   const connect = localStorage.getItem('walletconnect')
@@ -105,31 +109,53 @@ const ModalStakeAndWithdraw = ({
 
   async function handleConfirm() {
     if (stakeTransaction === 'staking') {
-      const toDelegate = await kacyStake.userInfo(pid, userWalletAddress)
+      const toDelegate = await staking.userInfo(
+        pid,
+        wallet?.accounts[0].address
+      )
       const delegate =
         toDelegate.delegatee === '0x0000000000000000000000000000000000000000'
-          ? userWalletAddress
+          ? wallet?.accounts[0].address
           : toDelegate.delegatee
-      await kacyStake.stake(pid, amountStake, delegate, stakeCallback())
+      await staking.stake(pid, amountStake, delegate)
       await updateAllowance()
     } else if (stakeTransaction === 'unstaking') {
-      kacyStake.withdraw(pid, amountStake, withdrawCallback())
+      staking.withdraw(pid, amountStake)
     }
   }
 
   async function getBalance() {
-    if (stakeTransaction === 'staking') {
-      const balanceKacy = await kacyToken.balance(userWalletAddress)
-      setBalance(balanceKacy)
+    if (wallet?.provider && stakeTransaction === 'staking') {
+      const erc20 = await ERC20(stakingToken, networkChain.rpc, {
+        transactionErrors: transaction.transactionErrors,
+        txNotification: transaction.txNotification,
+        wallet: null
+      })
+
+      const balanceKacy = await erc20.balance(wallet?.accounts[0].address)
+      setBalance(new BigNumber(balanceKacy))
     } else if (stakeTransaction === 'unstaking') {
-      if (userWalletAddress !== '') {
-        const balance = await kacyStake.availableWithdraw(
+      if (wallet?.provider) {
+        const balance = await staking.availableWithdraw(
           pid,
-          userWalletAddress
+          wallet?.accounts[0].address
         )
         setBalance(new BigNumber(balance.toFixed(0)))
       }
     }
+  }
+
+  async function handleEventProductPageView() {
+    const erc20 = await ERC20(stakingToken, networkChain.rpc, {
+      transactionErrors: transaction.transactionErrors,
+      txNotification: transaction.txNotification,
+      wallet: null
+    })
+    const track = async () => {
+      const tokenName = await erc20.name()
+      trackProductPageView(productSKU, tokenName, productCategories)
+    }
+    track()
   }
 
   React.useEffect(() => {
@@ -151,93 +177,89 @@ const ModalStakeAndWithdraw = ({
 
   React.useEffect(() => {
     if (stakeTransaction === 'staking') {
-      const track = async () => {
-        const tokenName = await kacyToken.name()
-        trackProductPageView(productSKU, tokenName, productCategories)
-      }
-      track()
+      handleEventProductPageView()
     }
   }, [stakingToken])
 
-  const stakeCallback = React.useCallback((): TransactionCallback => {
-    return async (error: MetamaskError, txHash: string) => {
-      const tokenName = await kacyToken.name()
-      trackBuying(
-        productSKU,
-        tokenName,
-        Big(amountStake.toString()).div(Big(10).pow(18)).toNumber(),
-        productCategories
-      )
+  // const stakeCallback = React.useCallback((): TransactionCallback => {
+  //   return async (error: MetamaskError, txHash: string) => {
+  //     const tokenName = await kacyToken.name()
+  //     trackBuying(
+  //       productSKU,
+  //       tokenName,
+  //       Big(amountStake.toString()).div(Big(10).pow(18)).toNumber(),
+  //       productCategories
+  //     )
 
-      if (error) {
-        trackCancelBuying()
+  //     if (error) {
+  //       trackCancelBuying()
 
-        if (error.code === 4001) {
-          dispatch(
-            setModalAlertText({ errorText: `Staking of ${symbol} cancelled` })
-          )
-          return
-        }
+  //       if (error.code === 4001) {
+  //         dispatch(
+  //           setModalAlertText({ errorText: `Staking of ${symbol} cancelled` })
+  //         )
+  //         return
+  //       }
 
-        dispatch(
-          setModalAlertText({
-            errorText: `Failed to stake ${symbol}. Please try again later.`
-          })
-        )
-        return
-      }
+  //       dispatch(
+  //         setModalAlertText({
+  //           errorText: `Failed to stake ${symbol}. Please try again later.`
+  //         })
+  //       )
+  //       return
+  //     }
 
-      trackBought(productSKU, 0, 0)
-      ToastWarning(`Confirming stake of ${symbol}...`)
-      const txReceipt = await waitTransaction(txHash)
+  //     trackBought(productSKU, 0, 0)
+  //     ToastWarning(`Confirming stake of ${symbol}...`)
+  //     const txReceipt = await waitTransaction(txHash)
 
-      if (txReceipt.status) {
-        ToastSuccess(`Stake of ${symbol} confirmed`)
-        return
-      }
-    }
-  }, [kacyToken])
+  //     if (txReceipt.status) {
+  //       ToastSuccess(`Stake of ${symbol} confirmed`)
+  //       return
+  //     }
+  //   }
+  // }, [kacyToken])
 
-  const withdrawCallback = React.useCallback((): TransactionCallback => {
-    const productSKU = `${Staking}_${pid}`
+  // const withdrawCallback = React.useCallback((): TransactionCallback => {
+  //   const productSKU = `${Staking}_${pid}`
 
-    return async (error: MetamaskError, txHash: string) => {
-      const tokenName = await kacyToken.name()
-      trackBuying(
-        productSKU,
-        tokenName,
-        -Big(amountStake.toString()).div(Big(10).pow(18)).toNumber(),
-        productCategories
-      )
+  //   return async (error: MetamaskError, txHash: string) => {
+  //     const tokenName = await kacyToken.name()
+  //     trackBuying(
+  //       productSKU,
+  //       tokenName,
+  //       -Big(amountStake.toString()).div(Big(10).pow(18)).toNumber(),
+  //       productCategories
+  //     )
 
-      if (error) {
-        trackCancelBuying()
+  //     if (error) {
+  //       trackCancelBuying()
 
-        if (error.code === 4001) {
-          dispatch(
-            setModalAlertText({ errorText: `Unstaking of ${symbol} cancelled` })
-          )
-          return
-        }
+  //       if (error.code === 4001) {
+  //         dispatch(
+  //           setModalAlertText({ errorText: `Unstaking of ${symbol} cancelled` })
+  //         )
+  //         return
+  //       }
 
-        dispatch(
-          setModalAlertText({
-            errorText: `Failed to unstake ${symbol}. Please try again later.`
-          })
-        )
-        return
-      }
+  //       dispatch(
+  //         setModalAlertText({
+  //           errorText: `Failed to unstake ${symbol}. Please try again later.`
+  //         })
+  //       )
+  //       return
+  //     }
 
-      trackBought(productSKU, 0, 0)
-      ToastWarning(`Confirming unstake of ${symbol}...`)
-      const txReceipt = await waitTransaction(txHash)
+  //     trackBought(productSKU, 0, 0)
+  //     ToastWarning(`Confirming unstake of ${symbol}...`)
+  //     const txReceipt = await waitTransaction(txHash)
 
-      if (txReceipt.status) {
-        ToastSuccess(`Unstake of ${symbol} completed`)
-        return
-      }
-    }
-  }, [kacyToken])
+  //     if (txReceipt.status) {
+  //       ToastSuccess(`Unstake of ${symbol} completed`)
+  //       return
+  //     }
+  //   }
+  // }, [kacyToken])
 
   let title: string
   if (stakeTransaction === 'staking') {
