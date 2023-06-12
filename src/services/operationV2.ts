@@ -113,6 +113,7 @@ export default class operationV2 implements IOperations {
     tokenInAddress
   }: CalcAmountOutParams) {
     let investAmountOut
+    let investAmountOutWithoutFees
     let transactionError
     const request = this.createRequestJoinInPool(
       tokenSelected.newAmountsTokenIn,
@@ -138,7 +139,7 @@ export default class operationV2 implements IOperations {
       const amountToReferral = totalBptOut
         .mul(feesResponse.feesToReferral)
         .div((1e18).toString())
-
+      investAmountOutWithoutFees = response.bptOut
       investAmountOut = totalBptOut.sub(amountToManager.add(amountToReferral))
 
       response = await this.contract.methods
@@ -154,7 +155,8 @@ export default class operationV2 implements IOperations {
 
       return {
         investAmountOut,
-        transactionError
+        transactionError,
+        investAmountOutWithoutFees
       }
     } catch (error: any) {
       const errorStr = error.toString().match(/(BAL#\d{0,3})/)
@@ -173,7 +175,8 @@ export default class operationV2 implements IOperations {
 
       return {
         investAmountOut,
-        transactionError
+        transactionError,
+        investAmountOutWithoutFees
       }
     }
   }

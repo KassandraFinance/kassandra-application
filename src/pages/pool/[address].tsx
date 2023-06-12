@@ -79,6 +79,7 @@ const queryPool = `{
   pool_version
   strategy
   is_private_pool
+  supply
   manager {
     id
   }
