@@ -4,6 +4,7 @@ import { AbiItem } from 'web3-utils'
 
 import ERC20ABI from '@/constants/abi/ERC20.json'
 import web3 from '@/utils/web3'
+import { NATIVE_ADDRESS } from '@/constants/tokenAddresses'
 
 type Provider = Web3
 
@@ -17,6 +18,7 @@ export const useBatchRequest = () => {
       const batchRequest = new provider.BatchRequest()
       const balances = {}
       for (const token of tokens) {
+        if (token.toLowerCase() === NATIVE_ADDRESS) continue
         const tokenContract = new provider.eth.Contract(
           ERC20ABI as unknown as AbiItem,
           token

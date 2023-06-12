@@ -69,7 +69,9 @@ const TokenSelection = () => {
     useAppSelector(state => state)
   const { batchRequestBalance } = useBatchRequest()
 
-  const tokenAddresses = tokenListSwapProvider.map(token => token.address)
+  const tokenAddresses = tokenListSwapProvider.map(token =>
+    token.address.toLowerCase()
+  )
   const { priceToken } = useCoingecko(
     platform[pool.chain_id],
     pool.chain.addressWrapped,
@@ -89,7 +91,8 @@ const TokenSelection = () => {
           ? pool.chain.addressWrapped.toLocaleLowerCase()
           : token.address
 
-      const tokenBalance = balanceToken[token.address]?.balance || 0
+      const tokenBalance =
+        balanceToken[token.address.toLowerCase()]?.balance || 0
       const tokenPriceInDollar = priceToken(checkToken.toLowerCase()) ?? 0
 
       const balanceTokenFormated = Big(tokenBalance || 0).div(
