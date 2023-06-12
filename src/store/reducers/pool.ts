@@ -63,6 +63,7 @@ export interface IPoolSlice {
   controller: string
   chain_id: number
   is_private_pool: boolean
+  supply: string
   manager: {
     id: string
   }
@@ -92,6 +93,7 @@ const initialState: IPoolSlice = {
   chain_id: 0,
   strategy: '',
   is_private_pool: false,
+  supply: '0',
   chain: {
     id: 0,
     logo: '',

@@ -126,6 +126,10 @@ export const TdWrapper = styled.div`
 `
 
 export const Value = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
   color: #c4c4c4;
   font-weight: ${theme.font.weight.light};
   font-size: ${theme.font.sizes.font14};

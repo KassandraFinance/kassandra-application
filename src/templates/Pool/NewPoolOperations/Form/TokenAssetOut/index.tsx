@@ -11,7 +11,8 @@ import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
 
 // import web3 from '../../../../../utils/web3'
 import { BNtoDecimal } from '../../../../../utils/numerals'
-import { getBalanceToken } from '../../../../../utils/poolUtils'
+import { getBalanceToken, getPoolPrice } from '../../../../../utils/poolUtils'
+import PoolOperationContext from '../PoolOperationContext'
 
 import { useAppSelector } from '../../../../../store/hooks'
 
@@ -33,6 +34,7 @@ const TokenAssetOut = ({
   setOutAssetBalance
 }: ITokenAssetOutProps) => {
   const { pool, chainId, userWalletAddress } = useAppSelector(state => state)
+  const { priceToken } = React.useContext(PoolOperationContext)
 
   const { data } = useSWR([GET_INFO_POOL], query =>
     request(BACKEND_KASSANDRA, query, {
@@ -104,7 +106,13 @@ const TokenAssetOut = ({
               'USD: ' +
                 BNtoDecimal(
                   Big(amountTokenOut.toString())
-                    .mul(data?.pool?.price_usd || 0)
+                    .mul(
+                      getPoolPrice({
+                        assets: pool.underlying_assets,
+                        priceToken,
+                        poolSupply: pool.supply
+                      })
+                    )
                     .div(Big(10).pow(data?.pool?.decimals)),
                   18,
                   2,
