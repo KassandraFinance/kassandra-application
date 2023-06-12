@@ -8,8 +8,10 @@ import {
 } from '@/templates/Explore/CommunityPoolsTable/styles'
 
 export const NewActivityTable = styled.div`
-  ${() => css`
+  ${({ theme }) => css`
     ${TRHead}, ${TRLink} {
+      grid-template-columns: 0.7fr 1fr 6rem;
+
       @media (min-width: 768px) {
         grid-template-columns: 0.5fr repeat(3, 1fr);
       }
@@ -18,6 +20,21 @@ export const NewActivityTable = styled.div`
     ${TD} {
       height: 6rem;
     }
+
+    .Link {
+      a {
+        justify-content: flex-end;
+
+        span {
+          color: ${theme.colors.snow};
+          font-weight: ${theme.font.weight.normal};
+          font-size: ${theme.font.sizes.font14};
+          line-height: 135%;
+          letter-spacing: 0.05em;
+          text-align: right;
+        }
+      }
+    }
   `}
 `
 
@@ -25,6 +42,13 @@ export const Wrapper = styled.div`
   ${() => css`
     display: flex;
     gap: 0.3rem;
+    align-items: center;
+
+    height: 1.6rem;
+
+    ${Value} {
+      height: 1.6rem;
+    }
   `}
 `
 
