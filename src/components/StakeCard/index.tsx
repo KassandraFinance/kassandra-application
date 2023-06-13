@@ -21,7 +21,6 @@ import {
 import { LP_KACY_AVAX_PNG } from '@/constants/pools'
 
 import { useAppDispatch } from '@/store/hooks'
-import { setModalAlertText } from '@/store/reducers/modalAlertText'
 import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
 
 import usePriceLP from '@/hooks/usePriceLP'
@@ -34,14 +33,10 @@ import useStaking from '@/hooks/useStaking'
 import { GET_INFO_POOL } from './graphql'
 
 import { BNtoDecimal } from '@/utils/numerals'
-import waitTransaction, {
-  MetamaskError,
-  TransactionCallback
-} from '@/utils/txWait'
+
 import changeChain from '@/utils/changeChain'
 
 import Button from '../Button'
-import { ToastSuccess, ToastWarning } from '../Toastify/toast'
 import ModalRequestUnstake from '../Modals/ModalRequestUnstake'
 import ModalCancelUnstake from '../Modals/ModalCancelUnstake'
 import ModalStakeAndWithdraw from '../Modals/ModalStakeAndWithdraw'
