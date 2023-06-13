@@ -172,14 +172,14 @@ const web3Onboard = init({
   theme: {
     '--w3o-background-color':
       'linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%)',
-    '--w3o-foreground-color': '#211426',
-    '--w3o-text-color': '#FCFCFC',
-    '--w3o-border-color': 'transparent',
+    '--w3o-foreground-color': '#1B1D22',
+    '--w3o-text-color': '#fcfcfc',
+    '--w3o-border-color': 'rgba(255, 255, 255, 0.05)',
     '--w3o-action-color': 'unset',
-    '--w3o-border-radius': '16px',
+    '--w3o-border-radius': '8px',
     '--w3o-font-family': 'Rubik'
   },
-  disableFontDownload: true,
+  // disableFontDownload: true,
   wallets,
   chains,
   appMetadata,
