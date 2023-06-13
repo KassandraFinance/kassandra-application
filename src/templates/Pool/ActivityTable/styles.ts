@@ -1,16 +1,95 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
+import {
+  TRHead,
+  TRLink,
+  TD,
+  Value
+} from '@/templates/Explore/CommunityPoolsTable/styles'
+
+export const NewActivityTable = styled.div`
+  ${({ theme }) => css`
+    ${TRHead}, ${TRLink} {
+      grid-template-columns: 0.7fr 1fr 6rem;
+
+      @media (min-width: 768px) {
+        grid-template-columns: 0.5fr repeat(3, 1fr);
+      }
+    }
+
+    ${TD} {
+      height: 6rem;
+    }
+
+    .Link {
+      a {
+        justify-content: flex-end;
+
+        span {
+          color: ${theme.colors.snow};
+          font-weight: ${theme.font.weight.normal};
+          font-size: ${theme.font.sizes.font14};
+          line-height: 135%;
+          letter-spacing: 0.05em;
+          text-align: right;
+        }
+      }
+    }
+  `}
+`
+
+export const Wrapper = styled.div`
+  ${() => css`
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+
+    height: 1.6rem;
+
+    ${Value} {
+      height: 1.6rem;
+    }
+  `}
+`
+
+export const DataWrapper = styled.div`
+  ${() => css`
+    display: flex;
+    gap: 0.3rem;
+    justify-content: flex-end;
+  `}
+`
+
+export const ImageWrapper = styled.div`
+  ${() => css`
+    position: relative;
+
+    width: 1.6rem;
+    height: 1.6rem;
+  `}
+`
+
+export const Link = styled.a`
+  ${() => css`
+    position: relative;
+
+    display: block;
+
+    width: 1.6rem;
+    height: 1.6rem;
+  `}
+`
 
 export const ActivityTable = styled.div`
   margin: ${theme.spacings.space48} 0;
 `
 
 export const Line = styled.div`
-  background-color: rgba(255, 255, 255, 0.1);
-
   width: 100%;
   height: 0.1rem;
   margin: ${theme.spacings.space24} 0;
+
+  background-color: rgb(255 255 255 / 0.1);
 `
 
 export const Title = styled.div`
@@ -20,25 +99,21 @@ export const Title = styled.div`
   h2 {
     margin-left: ${theme.spacings.space16};
 
-    font-size: ${theme.font.sizes.font18};
     font-weight: ${theme.font.weight.bold};
+    font-size: ${theme.font.sizes.font18};
   }
 `
 
 export const Table = styled.table`
-  width: 100%;
+  overflow: hidden;
 
-  border-radius: 2rem;
+  width: 100%;
   border-spacing: 0;
   border-collapse: collapse;
+  border-radius: 2rem;
 
   font-size: ${theme.font.sizes.font14};
-
-  overflow: hidden;
   text-indent: initial;
-
-  -webkit-border-radius: 2rem;
-  -moz-border-radius: 2rem;
   -webkit-border-horizontal-spacing: 0;
   -webkit-border-vertical-spacing: 0;
 
@@ -47,16 +122,18 @@ export const Table = styled.table`
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 1rem;
+
+    background-color: rgb(255 255 255 / 0.2);
   }
 
   thead {
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: rgb(0 0 0 / 0.25);
   }
 
   tbody {
-    background-color: rgba(255, 255, 255, 0.04);
+    background-color: rgb(255 255 255 / 0.04);
+
     /* max-height: 100%; */
   }
 
@@ -79,8 +156,8 @@ export const Table = styled.table`
 export const Tr = styled.tr`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  justify-items: center;
   align-items: center;
+  justify-items: center;
 
   height: 3.8rem;
   margin: 1.6rem 1.5rem;
@@ -90,10 +167,10 @@ export const Tr = styled.tr`
   }
 
   @media (max-width: 960px) {
-    min-width: 69rem;
-
-    height: 2.8rem;
     gap: 1.6rem;
+
+    min-width: 69rem;
+    height: 2.8rem;
   }
 
   @media (max-width: 768px) {
@@ -119,10 +196,10 @@ export const TitleTransaction = styled.td`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
 
   font-weight: ${theme.font.weight.light};
   letter-spacing: 0.5px;
+  text-align: center;
 
   span {
     display: flex;
@@ -137,8 +214,8 @@ export const TitleTransaction = styled.td`
 
   p {
     color: #c4c4c4;
-    font-size: ${theme.font.sizes.font12};
     font-weight: ${theme.font.weight.normal};
+    font-size: ${theme.font.sizes.font12};
   }
 `
 
@@ -147,10 +224,10 @@ export const TransactionOutAndIn = styled.td`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
 
   font-weight: ${theme.font.weight.light};
   letter-spacing: 0.5px;
+  text-align: center;
 
   span {
     display: flex;
@@ -161,8 +238,8 @@ export const TransactionOutAndIn = styled.td`
 
   p {
     color: #c4c4c4;
-    font-size: ${theme.font.sizes.font12};
     font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font12};
   }
 `
 
@@ -171,13 +248,13 @@ export const TransactionInfo = styled.td`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
 
   font-weight: ${theme.font.weight.light};
   letter-spacing: 0.5px;
+  text-align: center;
 
   p {
-    color: #ffffff;
+    color: #fff;
     font-weight: ${theme.font.weight.medium};
   }
 
@@ -195,15 +272,13 @@ export const TokensSymbols = styled.div`
   display: flex;
   align-items: center;
 
-  z-index: 10;
-
   span {
     min-width: 1.8rem;
     min-height: 1.8rem;
     margin-left: 0.6rem;
 
-    font-size: 1.1rem;
     font-weight: ${theme.font.weight.light};
+    font-size: 1.1rem;
 
     @media (max-width: 960px) {
       margin-left: 0;
