@@ -246,13 +246,23 @@ const StakeCard = ({
     const erc20 = await ERC20(infoStaked.stakingToken, networkChain.rpc, {
       transactionErrors: transaction.transactionErrors,
       txNotification: transaction.txNotification,
-      wallet: null
+      wallet: wallet
     })
 
     const decimals = await erc20.decimals()
     setDecimals(decimals.toString())
 
-    await erc20.approve(stakingAddress)
+    await erc20.approve(
+      stakingAddress,
+      {
+        pending: `Waiting approval of ${symbol}...`,
+        sucess: `Approval of ${symbol} confirmed`
+      },
+      {
+        onSuccess: () =>
+          trackEventFunction('approve-contract', `${symbol}`, 'stake-farm')
+      }
+    )
 
     const allowance = await erc20.allowance(
       stakingAddress,
@@ -288,62 +298,6 @@ const StakeCard = ({
       return
     }
   }
-
-  // const approvalCallback = React.useCallback((): TransactionCallback => {
-  //   return async (error: MetamaskError, txHash: string) => {
-  //     if (error) {
-  //       if (error.code === 4001) {
-  //         dispatch(
-  //           setModalAlertText({ errorText: `Approval of ${symbol} cancelled` })
-  //         )
-  //         return
-  //       }
-
-  //       dispatch(
-  //         setModalAlertText({
-  //           errorText: `Failed to approve ${symbol}. Please try again later.`
-  //         })
-  //       )
-  //       return
-  //     }
-
-  //     ToastWarning(`Waiting approval of ${symbol}...`)
-  //     const txReceipt = await waitTransaction(txHash)
-
-  //     if (txReceipt.status) {
-  //       trackEventFunction('approve-contract', `${symbol}`, 'stake-farm')
-  //       ToastSuccess(`Approval of ${symbol} confirmed`)
-  //       return
-  //     }
-  //   }
-  // }, [symbol])
-
-  // const rewardClaimCallback = React.useCallback((): TransactionCallback => {
-  //   return async (error: MetamaskError, txHash: string) => {
-  //     if (error) {
-  //       if (error.code === 4001) {
-  //         dispatch(setModalAlertText({ errorText: `Cancelled reward claim` }))
-  //         return
-  //       }
-
-  //       dispatch(
-  //         setModalAlertText({
-  //           errorText: `Failed to claim your rewards. Please try again later.`
-  //         })
-  //       )
-  //       return
-  //     }
-
-  //     ToastWarning(`Waiting for the blockchain to claim your rewards...`)
-  //     const txReceipt = await waitTransaction(txHash)
-
-  //     if (txReceipt.status) {
-  //       trackEventFunction('reward-claim', `${symbol}`, 'stake-farm')
-  //       ToastSuccess(`Rewards claimed successfully`)
-  //       return
-  //     }
-  //   }
-  // }, [])
 
   React.useEffect(() => {
     getLiquidityPoolPriceInDollar()
@@ -506,7 +460,23 @@ const StakeCard = ({
                             networkChain.chainId !==
                               Number(wallet?.chains[0].id)
                           }
-                          onClick={() => staking.getReward(pid)}
+                          onClick={() =>
+                            staking.getReward(
+                              pid,
+                              {
+                                pending: `Waiting for the blockchain to claim your rewards...`,
+                                sucess: `Rewards claimed successfully`
+                              },
+                              {
+                                onSuccess: () =>
+                                  trackEventFunction(
+                                    'reward-claim',
+                                    `${symbol}`,
+                                    'stake-farm'
+                                  )
+                              }
+                            )
+                          }
                         />
                       </S.Claim>
                     )}

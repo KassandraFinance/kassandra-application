@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-
-import { useAppSelector } from '../../store/hooks'
+import { getAddress } from 'ethers'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import VotingPower from '@/components/VotingPower'
 import Breadcrumb from '@/components/Breadcrumb'
@@ -35,7 +35,10 @@ const StakeFarm = () => {
     string | string[] | undefined
   >('stake')
 
-  const { userWalletAddress } = useAppSelector(state => state)
+  const [{ wallet }] = useConnectWallet()
+
+  const walletAddress = wallet ? getAddress(wallet.accounts[0].address) : ''
+
   const router = useRouter()
 
   React.useEffect(() => {
@@ -62,7 +65,7 @@ const StakeFarm = () => {
               title="Stake and Farm KACY"
               text="Earn rewards and voting power by staking KACY and other assets"
             />
-            <VotingPower userWalletAddress={userWalletAddress} />
+            <VotingPower userWalletAddress={walletAddress} />
           </S.StakeWithPowerVote>
 
           <SelectTabs

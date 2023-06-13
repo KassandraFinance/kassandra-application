@@ -18,16 +18,10 @@ import {
 } from '@/constants/tokenAddresses'
 import { GET_PROPOSAL } from './graphql'
 
-// import waitTransaction, {
-//   MetamaskError,
-//   TransactionCallback
-// } from '@/utils/txWait'
 import { BNtoDecimal } from '@/utils/numerals'
 
 import useGov from '@/hooks/useGov'
 import useVotingPower from '@/hooks/useVotings'
-
-// import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
 import ModalVotes from '@/components/Governance/ModalVotes'
 import TitleSection from '@/components/TitleSection'
@@ -36,7 +30,6 @@ import VotingPower from '@/components/VotingPower'
 import Breadcrumb from '@/components/Breadcrumb'
 import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
 import ImageProfile from '@/components/Governance/ImageProfile'
-// import { ToastSuccess, ToastWarning } from '@/components/Toastify/toast'
 
 import externalLink from '@assets/utilities/external-link.svg'
 import proposalDetailsIcon from '@assets/iconGradient/details.svg'
@@ -227,27 +220,6 @@ const Proposal = () => {
       }, 1200)
     }
   }
-
-  // const voteCallback = React.useCallback((): TransactionCallback => {
-  //   return async (error: MetamaskError, txHash: string) => {
-  //     if (error) {
-  //       dispatch(
-  //         setModalAlertText({
-  //           errorText: `Failed vote. Please try again later.`
-  //         })
-  //       )
-  //       return
-  //     }
-
-  //     ToastWarning(`Confirming vote`)
-  //     const txReceipt = await waitTransaction(txHash)
-
-  //     if (txReceipt.status) {
-  //       ToastSuccess(`Vote confirmed`)
-  //       return
-  //     }
-  //   }
-  // }, [])
 
   React.useEffect(() => {
     if (data) {
