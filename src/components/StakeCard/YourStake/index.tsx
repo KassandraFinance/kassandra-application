@@ -136,7 +136,7 @@ const YourStake = ({
 
   React.useEffect(() => {
     getYourStake()
-    const interval = setInterval(getYourStake, 6000)
+    const interval = setInterval(getYourStake, 10000)
 
     return () => clearInterval(interval)
   }, [getYourStake])
