@@ -10,7 +10,7 @@ import { useConnectWallet } from '@web3-onboard/react'
 
 import { ERC20 } from '../../hooks/useERC20Contract'
 import useStakingContract from '../../hooks/useStakingContract'
-import usePriceLP from '../../hooks/usePriceLP'
+import usePriceLP from '@/hooks/usePriceLPEthers'
 import useVotingPower from '../../hooks/useVotings'
 import useCoingecko from '@/hooks/useCoingecko'
 

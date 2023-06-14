@@ -23,7 +23,7 @@ import { LP_KACY_AVAX_PNG } from '@/constants/pools'
 import { useAppDispatch } from '@/store/hooks'
 import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
 
-import usePriceLP from '@/hooks/usePriceLP'
+import usePriceLP from '@/hooks/usePriceLPEthers'
 import useCoingecko from '@/hooks/useCoingecko'
 import { ERC20 } from '@/hooks/useERC20'
 import useTransaction from '@/hooks/useTransaction'
@@ -155,18 +155,14 @@ const StakeCard = ({
   const networkChain = networks[chain.id]
 
   const staking = useStaking(stakingAddress, networkChain.chainId)
-  const { priceToken } = useCoingecko(
+  const { data: price } = useCoingecko(
     networkChain.coingecko,
     networkChain.nativeCurrency.address,
     [WETH_POLYGON, KacyPoligon]
   )
 
-  const { data } = useSWR(
-    [GET_INFO_POOL, address],
-    (query, id) => request(BACKEND_KASSANDRA, query, { id }),
-    {
-      refreshInterval: 10000
-    }
+  const { data } = useSWR([GET_INFO_POOL, address], (query, id) =>
+    request(BACKEND_KASSANDRA, query, { id })
   )
 
   const productCategories = [
@@ -203,37 +199,28 @@ const StakeCard = ({
   }
 
   async function getLiquidityPoolPriceInDollar() {
-    const priceKacy = priceToken(KacyPoligon.toLowerCase())
-    if (priceKacy) {
-      setKacyPrice(Big(priceKacy))
-    }
     if (chain.id === 137 && isLP && address) {
-      const priceWETH = priceToken(WETH_POLYGON.toLowerCase())
-      if (priceWETH) {
-        setPoolPrice(await getPriceKacyAndLPBalancer(priceWETH, address))
-      }
       return
     } else if (isLP) {
       const addressProviderReserves =
         isLP && address ? address : LP_KACY_AVAX_PNG
 
-      const { kacyPriceInDollar, priceLP } = await getPriceKacyAndLP(
+      const { priceLP } = await getPriceKacyAndLP(
         addressProviderReserves,
         LPDaiAvax,
         isLP
       )
-      setKacyPrice(kacyPriceInDollar)
 
       if (isLP && priceLP) {
         setPoolPrice(priceLP)
         return
       }
-    } else if (priceKacy) {
+    } else if (kacyPrice.gte(0)) {
       if (data?.pools?.length) {
         setPoolPrice(Big(data.pools[0]?.price_usd || -1))
         return
       }
-      setPoolPrice(Big(priceKacy))
+      setPoolPrice(kacyPrice)
     }
   }
 
@@ -295,8 +282,45 @@ const StakeCard = ({
   }
 
   React.useEffect(() => {
+    async function getBalancerLP(address: string) {
+      if (!price) {
+        return
+      }
+
+      const priceWETH = price[WETH_POLYGON.toLowerCase()].usd
+      if (priceWETH) {
+        setPoolPrice(await getPriceKacyAndLPBalancer(priceWETH, address))
+      }
+    }
+
+    if (poolPrice.gte(0)) {
+      return
+    }
+
+    if (chain.id === 137 && isLP && address) {
+      getBalancerLP(address)
+      return
+    }
+    return
+  }, [price])
+
+  React.useEffect(() => {
+    console.log('aqui')
+    if (!price) {
+      return
+    }
+
+    if (kacyPrice.gte(0)) {
+      return
+    }
+
+    const priceKacy = price[KacyPoligon.toLowerCase()].usd
+    setKacyPrice(Big(priceKacy))
+  }, [price])
+
+  React.useEffect(() => {
     getLiquidityPoolPriceInDollar()
-  }, [infoStaked.stakingToken, pid, data])
+  }, [infoStaked.stakingToken, pid, data, kacyPrice])
 
   React.useEffect(() => {
     handleCheckStaking()
