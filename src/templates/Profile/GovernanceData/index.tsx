@@ -9,7 +9,7 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { SUBGRAPH_URL, Staking } from '../../../constants/tokenAddresses'
 import { GET_USER } from './graphql'
 
-import useStakingContract from '../../../hooks/useStakingContract'
+import useStakingContract from '@/hooks/useStaking'
 
 import TitleSection from '../../../components/TitleSection'
 import IntroGovernance from './IntroGovernance'

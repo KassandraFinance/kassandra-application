@@ -4,15 +4,18 @@ import BigNumber from 'bn.js'
 import useSWR from 'swr'
 import request from 'graphql-request'
 import Big from 'big.js'
-import Web3 from 'web3'
 import { getAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { ERC20 } from '../../hooks/useERC20Contract'
-import useStakingContract from '../../hooks/useStakingContract'
+import substr from '../../utils/substr'
+import { BNtoDecimal } from '../../utils/numerals'
+
+import useStakingContract from '@/hooks/useStaking'
+import useVotingPower from '@/hooks/useVotings'
 import usePriceLP from '@/hooks/usePriceLPEthers'
-import useVotingPower from '../../hooks/useVotings'
+import { ERC20 } from '@/hooks/useERC20'
 import useCoingecko from '@/hooks/useCoingecko'
+import useTransaction from '@/hooks/useTransaction'
 
 import { GET_PROFILE } from './graphql'
 import {
@@ -22,13 +25,13 @@ import {
   BACKEND_KASSANDRA,
   KacyPoligon,
   WETH_POLYGON
-} from '../../constants/tokenAddresses'
+} from '@/constants/tokenAddresses'
 import {
   LP_KACY_AVAX_PNG,
   LP_KACY_AVAX_JOE,
   allPools,
   KACY_WETH
-} from '../../constants/pools'
+} from '@/constants/pools'
 
 import Breadcrumb from '../../components/Breadcrumb'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
@@ -43,9 +46,6 @@ import ManagedFunds from './ManagedFunds'
 import profileIcon from '../../../public/assets/iconGradient/profile.svg'
 import walletIcon from '../../../public/assets/iconGradient/wallet-gradient.svg'
 import governanceIcon from '../../../public/assets/iconGradient/vote.svg'
-
-import substr from '../../utils/substr'
-import { BNtoDecimal } from '../../utils/numerals'
 
 import * as S from './styles'
 
@@ -126,13 +126,14 @@ const Profile = () => {
     string | string[] | undefined
   >('portfolio')
   const [priceInDolar, setPriceInDolar] = React.useState({
-    tokenizedFunds: new Big(0),
-    assetsToken: new Big(0),
-    totalInvestmented: new Big(0)
+    tokenizedFunds: Big(0),
+    assetsToken: Big(0),
+    totalInvestmented: Big(0)
   })
 
   const chain = networks[43114]
 
+  const { txNotification, transactionErrors } = useTransaction()
   const router = useRouter()
   const [{ wallet }] = useConnectWallet()
   const votingPower = useVotingPower(Staking)
@@ -164,10 +165,18 @@ const Profile = () => {
     stakingContract: string,
     chain: number
   ) {
+    if (!profileAddress) {
+      return new BigNumber(0)
+    }
+
+    const address = Array.isArray(profileAddress)
+      ? profileAddress[0]
+      : profileAddress
+
     try {
       const userInfoResponse = await getUserInfo(
         pid,
-        profileAddress,
+        address,
         stakingContract,
         chain
       )
@@ -182,11 +191,15 @@ const Profile = () => {
     const valueInWallet: IAssetsValueWalletProps = {}
     for (const id of ids) {
       try {
-        const ERC20Contract = ERC20(id, new Web3(chain.rpc))
+        const ERC20Contract = await ERC20(id, chain.rpc, {
+          transactionErrors,
+          txNotification,
+          wallet: null
+        })
         const balanceToken = await ERC20Contract.balance(walletUserString)
 
         Object.assign(valueInWallet, {
-          [id]: balanceToken
+          [id]: new BigNumber(balanceToken)
         })
       } catch (error) {
         Object.assign(valueInWallet, {
