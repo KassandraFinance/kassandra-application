@@ -9,7 +9,7 @@ import useSWR from 'swr'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 import { request } from 'graphql-request'
-import { useConnectWallet } from '@web3-onboard/react'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import {
   BACKEND_KASSANDRA,
@@ -19,9 +19,6 @@ import {
   networks
 } from '@/constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG } from '@/constants/pools'
-
-import { useAppDispatch } from '@/store/hooks'
-import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
 
 import usePriceLP from '@/hooks/usePriceLPEthers'
 import useCoingecko from '@/hooks/useCoingecko'
@@ -33,8 +30,6 @@ import useStaking from '@/hooks/useStaking'
 import { GET_INFO_POOL } from './graphql'
 
 import { BNtoDecimal } from '@/utils/numerals'
-
-import changeChain from '@/utils/changeChain'
 
 import Button from '../Button'
 import ModalRequestUnstake from '../Modals/ModalRequestUnstake'
@@ -146,8 +141,8 @@ const StakeCard = ({
     vestingPeriod: '...',
     lockPeriod: '...'
   })
-  const dispatch = useAppDispatch()
-  const [{ wallet }] = useConnectWallet()
+  const [{ wallet, connecting }, connect] = useConnectWallet()
+  const [{ settingChain }, setChain] = useSetChain()
   const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(chain.id)
   const { trackEventFunction } = useMatomoEcommerce()
   const transaction = useTransaction()
@@ -526,10 +521,12 @@ const StakeCard = ({
                               size="huge"
                               backgroundSecondary
                               fullWidth
+                              disabledNoEvent={settingChain}
                               onClick={() =>
-                                changeChain({
-                                  ...networkChain,
-                                  rpcUrls: [networkChain.rpc]
+                                setChain({
+                                  chainId: `0x${networkChain.chainId.toString(
+                                    16
+                                  )}`
                                 })
                               }
                             />
@@ -600,7 +597,8 @@ const StakeCard = ({
                     size="huge"
                     backgroundSecondary
                     fullWidth
-                    onClick={() => dispatch(setModalWalletActive(true))}
+                    disabledNoEvent={connecting}
+                    onClick={() => connect()}
                   />
                 )}
                 <S.ButtonDetails
