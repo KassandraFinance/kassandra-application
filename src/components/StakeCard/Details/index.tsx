@@ -70,7 +70,7 @@ const Details = ({
 
       interval = setInterval(async () => {
         setDepositedAmount(new BigNumber(poolInfoResponse.depositedAmount))
-      }, 6000)
+      }, 10000)
       setDepositedAmount(new BigNumber(poolInfoResponse.depositedAmount))
     })()
 

@@ -11,7 +11,7 @@ import { BNtoDecimal } from '@/utils/numerals'
 
 import { Staking } from '@/constants/tokenAddresses'
 
-import useStakingContract from '@/hooks/useStakingContract'
+import useStakingContract from '@/hooks/useStaking'
 
 import Button from '@/components/Button'
 import ExternalLink from '@/components/ExternalLink'

@@ -48,7 +48,7 @@ const KacyEarned = ({
   React.useEffect(() => {
     const interval = setInterval(async () => {
       getKacyEaned()
-    }, 6000)
+    }, 10000)
 
     getKacyEaned()
 
