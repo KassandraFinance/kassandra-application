@@ -328,6 +328,7 @@ const StakeCard = ({
 
     setIsLoading(false)
   }, [infoStaked])
+  console.log(infoStaked)
 
   return (
     <>
@@ -401,7 +402,7 @@ const StakeCard = ({
                 <S.InfoPool>
                   <h3>Voting Power</h3>
                   <p>
-                    {infoStaked.votingMultiplier || '...'}
+                    {infoStaked.votingMultiplier.toString() || '...'}
                     <span>/$KACY</span>
                   </p>
                 </S.InfoPool>
