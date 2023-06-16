@@ -300,7 +300,6 @@ const StakeCard = ({
   }, [price])
 
   React.useEffect(() => {
-    console.log('aqui')
     if (!price) {
       return
     }
@@ -328,7 +327,6 @@ const StakeCard = ({
 
     setIsLoading(false)
   }, [infoStaked])
-  console.log(infoStaked)
 
   return (
     <>
