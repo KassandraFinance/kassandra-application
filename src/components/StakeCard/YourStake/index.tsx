@@ -136,7 +136,7 @@ const YourStake = ({
 
   React.useEffect(() => {
     getYourStake()
-    const interval = setInterval(getYourStake, 6000)
+    const interval = setInterval(getYourStake, 10000)
 
     return () => clearInterval(interval)
   }, [getYourStake])
@@ -215,7 +215,7 @@ const YourStake = ({
           </S.Info>
           <S.Info>
             <span>Delegated To</span>
-            {delegateTo === wallet?.accounts[0].address ||
+            {delegateTo.toLocaleLowerCase() === wallet?.accounts[0].address ||
             delegateTo === '0x0000000000000000000000000000000000000000' ? (
               <span>Self</span>
             ) : (

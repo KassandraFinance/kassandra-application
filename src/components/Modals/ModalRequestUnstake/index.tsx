@@ -1,28 +1,19 @@
 import React from 'react'
 import BigNumber from 'bn.js'
-// import { ToastSuccess, ToastWarning } from '../../Toastify/toast'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import { BNtoDecimal } from '../../../utils/numerals'
-import { dateRequestUnstake } from '../../../utils/date'
-// import waitTransaction, {
-//   MetamaskError,
-//   TransactionCallback
-// } from '../../../utils/txWait'
+import { networks } from '@/constants/tokenAddresses'
+import { BNtoDecimal } from '@/utils/numerals'
+import { dateRequestUnstake } from '@/utils/date'
 
-// import useStakingContract from '../../../hooks/useStakingContract'
-// import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
-// import { useAppDispatch } from '../../../store/hooks'
-// import { setModalAlertText } from '../../../store/reducers/modalAlertText'
-
-import { networks } from '../../../constants/tokenAddresses'
+import useStaking from '@/hooks/useStaking'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
 import Button from '../../Button'
 import Overlay from '../../Overlay'
 import Modal from '../Modal'
 
 import * as S from './styles'
-import useStaking from '@/hooks/useStaking'
-import { useConnectWallet } from '@web3-onboard/react'
 
 interface IModalRequestUnstakeProps {
   modalOpen: boolean
@@ -41,19 +32,17 @@ const ModalRequestUnstake = ({
   pid,
   votingMultiplier,
   yourStake,
-  // symbol,
+  symbol,
   chainId,
   stakingAddress
 }: IModalRequestUnstakeProps) => {
   const [dateWithdraw, setDateWithdraw] = React.useState<number>(0)
   const [{ wallet }] = useConnectWallet()
 
-  // const dispatch = useAppDispatch()
-
   const networkChain = networks[chainId]
   const staking = useStaking(stakingAddress, networkChain.chainId)
 
-  // const { trackEventFunction } = useMatomoEcommerce()
+  const { trackEventFunction } = useMatomoEcommerce()
 
   async function getWithdrawDelay() {
     if (wallet?.provider) {
@@ -66,41 +55,6 @@ const ModalRequestUnstake = ({
       setDateWithdraw(date)
     }
   }
-
-  // const requestsUnstakeCallback = React.useCallback((): TransactionCallback => {
-  //   return async (error: MetamaskError, txHash: string) => {
-  //     if (error) {
-  //       if (error.code === 4001) {
-  //         dispatch(
-  //           setModalAlertText({
-  //             errorText: `Request for unstaking ${symbol} cancelled`
-  //           })
-  //         )
-  //         return
-  //       }
-
-  //       dispatch(
-  //         setModalAlertText({
-  //           errorText: `Failed to request unstaking of ${symbol}. Please try again later.`
-  //         })
-  //       )
-  //       return
-  //     }
-
-  //     trackEventFunction(
-  //       'click-on-request-unstaking',
-  //       `${symbol}`,
-  //       'modal-staking'
-  //     )
-  //     ToastWarning(`Confirming request for unstaking of ${symbol}...`)
-  //     const txReceipt = await waitTransaction(txHash)
-
-  //     if (txReceipt.status) {
-  //       ToastSuccess(`Request for unstaking of ${symbol} confirmed`)
-  //       return
-  //     }
-  //   }
-  // }, [symbol])
 
   React.useEffect(() => {
     if (modalOpen) {
@@ -161,7 +115,21 @@ const ModalRequestUnstake = ({
               text="Yes"
               backgroundSecondary
               onClick={() => {
-                staking.unstake(pid)
+                staking.unstake(
+                  pid,
+                  {
+                    pending: `Confirming request for unstaking of ${symbol}...`,
+                    sucess: `Request for unstaking of ${symbol} confirmed`
+                  },
+                  {
+                    onSuccess: () =>
+                      trackEventFunction(
+                        'click-on-request-unstaking',
+                        `${symbol}`,
+                        'modal-staking'
+                      )
+                  }
+                )
                 setModalOpen(false)
               }}
             />

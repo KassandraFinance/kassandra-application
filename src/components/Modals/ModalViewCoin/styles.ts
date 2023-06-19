@@ -1,9 +1,14 @@
 import styled, { css } from 'styled-components'
+import { Overlay } from '@/components/Overlay/styles'
 
 export const ModalViewCoin = styled.div`
   ${() => css`
     @media (min-width: 768px) {
       display: none;
+    }
+
+    ${Overlay} {
+      z-index: 1050;
     }
   `}
 `
@@ -12,14 +17,13 @@ interface IModalCoinProps {
   isOpen: boolean
 }
 
-// prettier-ignore
 export const ModalCoin = styled.div<IModalCoinProps>`
   ${() => css`
     position: fixed;
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 1040;
+    z-index: 1050;
 
     padding: 0 1.6rem 4rem;
     border-radius: 8px 8px 0 0;
@@ -33,11 +37,13 @@ export const ModalCoin = styled.div<IModalCoinProps>`
     transition-property: transform opacity;
     transform: translateY(100%);
   `}
-  ${({ isOpen }) => isOpen && css`
-    opacity: 1;
+  ${({ isOpen }) =>
+    isOpen &&
+    css`
+      opacity: 1;
 
-    transform: translateY(0%);
-  `}
+      transform: translateY(0%);
+    `}
 `
 
 export const ModalHeader = styled.div`
@@ -128,7 +134,7 @@ export const ValueContainer = styled.div`
 export const Value = styled.span`
   ${({ theme }) => css`
     color: ${theme.colors.snow};
-    font-weight: ${theme.font.weight};
+    font-weight: ${theme.font.weight.normal};
     font-size: ${theme.font.sizes.font14};
     line-height: 135%;
     letter-spacing: 0.05em;

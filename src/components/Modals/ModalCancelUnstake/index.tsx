@@ -1,19 +1,9 @@
-/* eslint-disable prettier/prettier */
 import React from 'react'
-// import { ToastSuccess, ToastWarning } from '../../Toastify/toast'
 
 import useStaking from '@/hooks/useStaking'
-// import useStakingContract from '../../../hooks/useStakingContract'
-// import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
-// import { useAppDispatch } from '../../../store/hooks'
-// import { setModalAlertText } from '../../../store/reducers/modalAlertText'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
-// import waitTransaction, {
-//   MetamaskError,
-//   TransactionCallback
-// } from '../../../utils/txWait'
-
-import { networks } from '../../../constants/tokenAddresses'
+import { networks } from '@/constants/tokenAddresses'
 
 import Button from '../../Button'
 import Overlay from '../../Overlay'
@@ -36,52 +26,15 @@ const ModalCancelUnstake = ({
   openStakeAndWithdraw,
   pid,
   isStaking,
-  // symbol,
+  symbol,
   chainId,
   stakingToken
 }: IModalRequestUnstakeProps) => {
-  // const dispatch = useAppDispatch()
   const networkChain = networks[chainId]
 
-  // const kacyStake = useStakingContract(Staking)
   const staking = useStaking(stakingToken, networkChain.chainId)
 
-  // const { trackEventFunction } = useMatomoEcommerce()
-
-  // const cancelUnstakeCallback = React.useCallback((): TransactionCallback => {
-  //   return async (error: MetamaskError, txHash: string) => {
-  //     if (error) {
-  //       if (error.code === 4001) {
-  //         dispatch(
-  //           setModalAlertText({
-  //             errorText: `Request for cancelling unstaking ${symbol} cancelled`
-  //           })
-  //         )
-  //         return
-  //       }
-
-  //       dispatch(
-  //         setModalAlertText({
-  //           errorText: `Failed to cancel unstaking of ${symbol}. Please try again later.`
-  //         })
-  //       )
-  //       return
-  //     }
-
-  //     trackEventFunction(
-  //       'click-on-cancel',
-  //       `${symbol}`,
-  //       'modal-cancel-unstaking'
-  //     )
-  //     ToastWarning(`Confirming cancelling of unstaking ${symbol}...`)
-  //     const txReceipt = await waitTransaction(txHash)
-
-  //     if (txReceipt.status) {
-  //       ToastSuccess(`Cancelling of unstaking ${symbol} completed`)
-  //       return
-  //     }
-  //   }
-  // }, [symbol])
+  const { trackEventFunction } = useMatomoEcommerce()
 
   return (
     <S.ModalCancelUnstake>
@@ -162,7 +115,21 @@ const ModalCancelUnstake = ({
                 if (isStaking) {
                   openStakeAndWithdraw('staking')
                 } else {
-                  staking.cancelUnstake(pid)
+                  staking.cancelUnstake(
+                    pid,
+                    {
+                      pending: `Confirming cancelling of unstaking ${symbol}...`,
+                      sucess: `Cancelling of unstaking ${symbol} completed`
+                    },
+                    {
+                      onSuccess: () =>
+                        trackEventFunction(
+                          'click-on-cancel',
+                          `${symbol}`,
+                          'modal-cancel-unstaking'
+                        )
+                    }
+                  )
                 }
                 setModalOpen(false)
               }}

@@ -9,7 +9,7 @@ import useSWR from 'swr'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 import { request } from 'graphql-request'
-import { useConnectWallet } from '@web3-onboard/react'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import {
   BACKEND_KASSANDRA,
@@ -20,11 +20,7 @@ import {
 } from '@/constants/tokenAddresses'
 import { LP_KACY_AVAX_PNG } from '@/constants/pools'
 
-import { useAppDispatch } from '@/store/hooks'
-import { setModalAlertText } from '@/store/reducers/modalAlertText'
-import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
-
-import usePriceLP from '@/hooks/usePriceLP'
+import usePriceLP from '@/hooks/usePriceLPEthers'
 import useCoingecko from '@/hooks/useCoingecko'
 import { ERC20 } from '@/hooks/useERC20'
 import useTransaction from '@/hooks/useTransaction'
@@ -34,14 +30,8 @@ import useStaking from '@/hooks/useStaking'
 import { GET_INFO_POOL } from './graphql'
 
 import { BNtoDecimal } from '@/utils/numerals'
-import waitTransaction, {
-  MetamaskError,
-  TransactionCallback
-} from '@/utils/txWait'
-import changeChain from '@/utils/changeChain'
 
 import Button from '../Button'
-import { ToastSuccess, ToastWarning } from '../Toastify/toast'
 import ModalRequestUnstake from '../Modals/ModalRequestUnstake'
 import ModalCancelUnstake from '../Modals/ModalCancelUnstake'
 import ModalStakeAndWithdraw from '../Modals/ModalStakeAndWithdraw'
@@ -151,8 +141,8 @@ const StakeCard = ({
     vestingPeriod: '...',
     lockPeriod: '...'
   })
-  const dispatch = useAppDispatch()
-  const [{ wallet }] = useConnectWallet()
+  const [{ wallet, connecting }, connect] = useConnectWallet()
+  const [{ settingChain }, setChain] = useSetChain()
   const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(chain.id)
   const { trackEventFunction } = useMatomoEcommerce()
   const transaction = useTransaction()
@@ -160,18 +150,14 @@ const StakeCard = ({
   const networkChain = networks[chain.id]
 
   const staking = useStaking(stakingAddress, networkChain.chainId)
-  const { priceToken } = useCoingecko(
+  const { data: price } = useCoingecko(
     networkChain.coingecko,
     networkChain.nativeCurrency.address,
     [WETH_POLYGON, KacyPoligon]
   )
 
-  const { data } = useSWR(
-    [GET_INFO_POOL, address],
-    (query, id) => request(BACKEND_KASSANDRA, query, { id }),
-    {
-      refreshInterval: 10000
-    }
+  const { data } = useSWR([GET_INFO_POOL, address], (query, id) =>
+    request(BACKEND_KASSANDRA, query, { id })
   )
 
   const productCategories = [
@@ -208,37 +194,28 @@ const StakeCard = ({
   }
 
   async function getLiquidityPoolPriceInDollar() {
-    const priceKacy = priceToken(KacyPoligon.toLowerCase())
-    if (priceKacy) {
-      setKacyPrice(Big(priceKacy))
-    }
     if (chain.id === 137 && isLP && address) {
-      const priceWETH = priceToken(WETH_POLYGON.toLowerCase())
-      if (priceWETH) {
-        setPoolPrice(await getPriceKacyAndLPBalancer(priceWETH, address))
-      }
       return
     } else if (isLP) {
       const addressProviderReserves =
         isLP && address ? address : LP_KACY_AVAX_PNG
 
-      const { kacyPriceInDollar, priceLP } = await getPriceKacyAndLP(
+      const { priceLP } = await getPriceKacyAndLP(
         addressProviderReserves,
         LPDaiAvax,
         isLP
       )
-      setKacyPrice(kacyPriceInDollar)
 
       if (isLP && priceLP) {
         setPoolPrice(priceLP)
         return
       }
-    } else if (priceKacy) {
+    } else if (kacyPrice.gte(0)) {
       if (data?.pools?.length) {
         setPoolPrice(Big(data.pools[0]?.price_usd || -1))
         return
       }
-      setPoolPrice(Big(priceKacy))
+      setPoolPrice(kacyPrice)
     }
   }
 
@@ -246,13 +223,23 @@ const StakeCard = ({
     const erc20 = await ERC20(infoStaked.stakingToken, networkChain.rpc, {
       transactionErrors: transaction.transactionErrors,
       txNotification: transaction.txNotification,
-      wallet: null
+      wallet: wallet
     })
 
     const decimals = await erc20.decimals()
     setDecimals(decimals.toString())
 
-    await erc20.approve(stakingAddress)
+    await erc20.approve(
+      stakingAddress,
+      {
+        pending: `Waiting approval of ${symbol}...`,
+        sucess: `Approval of ${symbol} confirmed`
+      },
+      {
+        onSuccess: () =>
+          trackEventFunction('approve-contract', `${symbol}`, 'stake-farm')
+      }
+    )
 
     const allowance = await erc20.allowance(
       stakingAddress,
@@ -289,65 +276,45 @@ const StakeCard = ({
     }
   }
 
-  // const approvalCallback = React.useCallback((): TransactionCallback => {
-  //   return async (error: MetamaskError, txHash: string) => {
-  //     if (error) {
-  //       if (error.code === 4001) {
-  //         dispatch(
-  //           setModalAlertText({ errorText: `Approval of ${symbol} cancelled` })
-  //         )
-  //         return
-  //       }
+  React.useEffect(() => {
+    async function getBalancerLP(address: string) {
+      if (!price) {
+        return
+      }
 
-  //       dispatch(
-  //         setModalAlertText({
-  //           errorText: `Failed to approve ${symbol}. Please try again later.`
-  //         })
-  //       )
-  //       return
-  //     }
+      const priceWETH = price[WETH_POLYGON.toLowerCase()].usd
+      if (priceWETH) {
+        setPoolPrice(await getPriceKacyAndLPBalancer(priceWETH, address))
+      }
+    }
 
-  //     ToastWarning(`Waiting approval of ${symbol}...`)
-  //     const txReceipt = await waitTransaction(txHash)
+    if (poolPrice.gte(0)) {
+      return
+    }
 
-  //     if (txReceipt.status) {
-  //       trackEventFunction('approve-contract', `${symbol}`, 'stake-farm')
-  //       ToastSuccess(`Approval of ${symbol} confirmed`)
-  //       return
-  //     }
-  //   }
-  // }, [symbol])
+    if (chain.id === 137 && isLP && address) {
+      getBalancerLP(address)
+      return
+    }
+    return
+  }, [price])
 
-  // const rewardClaimCallback = React.useCallback((): TransactionCallback => {
-  //   return async (error: MetamaskError, txHash: string) => {
-  //     if (error) {
-  //       if (error.code === 4001) {
-  //         dispatch(setModalAlertText({ errorText: `Cancelled reward claim` }))
-  //         return
-  //       }
+  React.useEffect(() => {
+    if (!price) {
+      return
+    }
 
-  //       dispatch(
-  //         setModalAlertText({
-  //           errorText: `Failed to claim your rewards. Please try again later.`
-  //         })
-  //       )
-  //       return
-  //     }
+    if (kacyPrice.gte(0)) {
+      return
+    }
 
-  //     ToastWarning(`Waiting for the blockchain to claim your rewards...`)
-  //     const txReceipt = await waitTransaction(txHash)
-
-  //     if (txReceipt.status) {
-  //       trackEventFunction('reward-claim', `${symbol}`, 'stake-farm')
-  //       ToastSuccess(`Rewards claimed successfully`)
-  //       return
-  //     }
-  //   }
-  // }, [])
+    const priceKacy = price[KacyPoligon.toLowerCase()].usd
+    setKacyPrice(Big(priceKacy))
+  }, [price])
 
   React.useEffect(() => {
     getLiquidityPoolPriceInDollar()
-  }, [infoStaked.stakingToken, pid, data])
+  }, [infoStaked.stakingToken, pid, data, kacyPrice])
 
   React.useEffect(() => {
     handleCheckStaking()
@@ -433,7 +400,7 @@ const StakeCard = ({
                 <S.InfoPool>
                   <h3>Voting Power</h3>
                   <p>
-                    {infoStaked.votingMultiplier || '...'}
+                    {infoStaked.votingMultiplier.toString() || '...'}
                     <span>/$KACY</span>
                   </p>
                 </S.InfoPool>
@@ -506,7 +473,23 @@ const StakeCard = ({
                             networkChain.chainId !==
                               Number(wallet?.chains[0].id)
                           }
-                          onClick={() => staking.getReward(pid)}
+                          onClick={() =>
+                            staking.getReward(
+                              pid,
+                              {
+                                pending: `Waiting for the blockchain to claim your rewards...`,
+                                sucess: `Rewards claimed successfully`
+                              },
+                              {
+                                onSuccess: () =>
+                                  trackEventFunction(
+                                    'reward-claim',
+                                    `${symbol}`,
+                                    'stake-farm'
+                                  )
+                              }
+                            )
+                          }
                         />
                       </S.Claim>
                     )}
@@ -537,10 +520,12 @@ const StakeCard = ({
                               size="huge"
                               backgroundSecondary
                               fullWidth
+                              disabledNoEvent={settingChain}
                               onClick={() =>
-                                changeChain({
-                                  ...networkChain,
-                                  rpcUrls: [networkChain.rpc]
+                                setChain({
+                                  chainId: `0x${networkChain.chainId.toString(
+                                    16
+                                  )}`
                                 })
                               }
                             />
@@ -611,7 +596,8 @@ const StakeCard = ({
                     size="huge"
                     backgroundSecondary
                     fullWidth
-                    onClick={() => dispatch(setModalWalletActive(true))}
+                    disabledNoEvent={connecting}
+                    onClick={() => connect()}
                   />
                 )}
                 <S.ButtonDetails
