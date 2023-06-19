@@ -25,12 +25,12 @@ type ContractType = {
 
 function ERC20Contract(
   contract: ContractType,
-  txNotification: (
+  txNotification?: (
     tx: ContractTransactionResponse,
     message?: MessageType | undefined,
     callbacks?: CallbacksType | undefined
   ) => Promise<ContractTransactionReceipt | null>,
-  transactionErrors: (
+  transactionErrors?: (
     error: unknown,
     onFail?: (() => void | Promise<void>) | undefined
   ) => Promise<ErrorCode | undefined>
@@ -78,6 +78,8 @@ function ERC20Contract(
     message?: MessageType,
     callbacks?: CallbacksType
   ): Promise<ContractTransactionReceipt | null> => {
+    if (!txNotification || !transactionErrors) return null
+
     try {
       const tx = await contract.send.approve(spenderAddress, MaxUint256)
       const receipt = await txNotification(tx, message, callbacks)
@@ -149,7 +151,7 @@ type ParamsType = {
 export const ERC20 = async (
   address: string,
   rpcUrl = networks[137].rpc,
-  params: ParamsType
+  params?: ParamsType
 ) => {
   const readProvider = new JsonRpcProvider(rpcUrl)
   const contract: ContractType = {
@@ -163,7 +165,7 @@ export const ERC20 = async (
     contract.send = new Contract(address, ERC20ABI, signer)
   }
 
-  if (params.wallet?.provider) {
+  if (params?.wallet?.provider) {
     const sendProvider = new BrowserProvider(params.wallet.provider)
 
     await signContranct(sendProvider)
@@ -171,8 +173,8 @@ export const ERC20 = async (
 
   return ERC20Contract(
     contract,
-    params.txNotification,
-    params.transactionErrors
+    params?.txNotification,
+    params?.transactionErrors
   )
 }
 
