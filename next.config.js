@@ -11,7 +11,8 @@ module.exports = {
       'storage.cloud.google.com',
       'storage.googleapis.com',
       'app.kassandra.finance',
-      'cdn.paraswap.io'
+      'cdn.paraswap.io',
+      'raw.githubusercontent.com'
     ]
   },
   async headers() {
