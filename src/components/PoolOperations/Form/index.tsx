@@ -9,7 +9,7 @@ import { ProxyContract } from '../../../constants/tokenAddresses'
 
 import useProxy from '../../../hooks/useProxy'
 import useERC20Contract, { ERC20 } from '../../../hooks/useERC20Contract'
-import usePoolContract from '../../../hooks/usePoolContract'
+import usePoolContract from '../../../hooks/usePoolContractOld'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import useYieldYak from '../../../hooks/useYieldYak'
 
