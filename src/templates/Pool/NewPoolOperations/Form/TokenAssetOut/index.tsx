@@ -6,10 +6,10 @@ import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Blockies from 'react-blockies'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
 
-// import web3 from '../../../../../utils/web3'
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import { getBalanceToken } from '../../../../../utils/poolUtils'
 
@@ -32,7 +32,10 @@ const TokenAssetOut = ({
   outAssetBalance,
   setOutAssetBalance
 }: ITokenAssetOutProps) => {
-  const { pool, chainId, userWalletAddress } = useAppSelector(state => state)
+  const [{ wallet }] = useConnectWallet()
+  const { pool } = useAppSelector(state => state)
+
+  const chainId = Number(wallet?.chains[0].id ?? '0x89')
 
   const { data } = useSWR([GET_INFO_POOL], query =>
     request(BACKEND_KASSANDRA, query, {
@@ -41,19 +44,19 @@ const TokenAssetOut = ({
   )
 
   React.useEffect(() => {
-    if (
-      pool.id.length === 0 ||
-      userWalletAddress.length === 0 ||
-      pool.chain_id !== chainId
-    ) {
+    if (pool.id.length === 0 || !wallet || pool.chain_id !== chainId) {
       return setOutAssetBalance(Big(0))
     }
     // eslint-disable-next-line prettier/prettier
     ;(async () => {
-      const balance = await getBalanceToken(pool.address, userWalletAddress)
+      const balance = await getBalanceToken(
+        pool.address,
+        wallet.accounts[0].address,
+        chainId
+      )
       setOutAssetBalance(balance)
     })()
-  }, [chainId, typeAction, userWalletAddress, pool])
+  }, [chainId, typeAction, wallet, pool])
 
   return (
     <S.TokenAssetOut>

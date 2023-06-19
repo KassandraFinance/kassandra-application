@@ -2,6 +2,7 @@ import React from 'react'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import { getBalanceToken, decimalToBN } from '../../../../../utils/poolUtils'
@@ -49,10 +50,11 @@ const InputAndOutputValueToken = ({
   gasFee,
   errorMsg = ''
 }: IInputAndOutputValueTokenProps) => {
-  const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
-    state => state
-  )
+  const [{ wallet }] = useConnectWallet()
+  const { pool, tokenSelect } = useAppSelector(state => state)
   const { priceToken } = React.useContext(PoolOperationContext)
+
+  const chainId = Number(wallet?.chains[0].id ?? '0x89')
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { value } = e.target
@@ -80,8 +82,8 @@ const InputAndOutputValueToken = ({
 
   function handleMaxUserBalance() {
     if (
-      !inputAmountTokenRef ||
       !amountTokenIn ||
+      !inputAmountTokenRef ||
       pool.chain_id !== chainId ||
       Big(selectedTokenInBalance).lte(0)
     ) {
@@ -110,12 +112,11 @@ const InputAndOutputValueToken = ({
 
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const disabled =
-    userWalletAddress.length === 0
-      ? 'Please connect your wallet by clicking the button below'
-      : chainId !== pool.chain_id
-      ? `Please change to the ${pool.chain.chainName} by clicking the button below`
-      : ''
+  const disabled = !wallet
+    ? 'Please connect your wallet by clicking the button below'
+    : chainId !== pool.chain_id
+    ? `Please change to the ${pool.chain.chainName} by clicking the button below`
+    : ''
 
   const isInvestType = typeAction === 'Invest' ? true : false
 
@@ -133,10 +134,10 @@ const InputAndOutputValueToken = ({
   // get balance of swap in token
   React.useEffect(() => {
     if (
-      tokenSelect.address.length === 0 ||
-      userWalletAddress.length === 0 ||
+      !wallet ||
+      chainId !== pool.chain_id ||
       chainId.toString().length === 0 ||
-      chainId !== pool.chain_id
+      tokenSelect.address.length === 0
     ) {
       return setSelectedTokenInBalance(Big(0))
     }
@@ -144,12 +145,14 @@ const InputAndOutputValueToken = ({
     ;(async () => {
       const userTokenBalance = await getBalanceToken(
         tokenSelect.address,
-        userWalletAddress,
+        wallet.accounts[0].address,
+        chainId,
         pool.pool_version === 1 ? pool.chain.addressWrapped : undefined
       )
+
       setSelectedTokenInBalance(userTokenBalance)
     })()
-  }, [chainId, typeAction, tokenSelect, userWalletAddress, pool])
+  }, [chainId, typeAction, tokenSelect, wallet, pool])
 
   return (
     <S.InputAndOutputValueToken>
