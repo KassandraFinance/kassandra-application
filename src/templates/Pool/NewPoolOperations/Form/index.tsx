@@ -1,11 +1,11 @@
 import React from 'react'
-import { AbiItem } from 'web3-utils'
-import Web3 from 'web3'
+import { useConnectWallet } from '@web3-onboard/react'
+import { BrowserProvider, JsonRpcSigner } from 'ethers'
 
 import { OperationProvider } from './PoolOperationContext'
 import { useAppSelector } from '../../../../store/hooks'
+import usePrivateInvestors from '@/hooks/usePrivateInvestors'
 
-import PrivateInvestors from '@/constants/abi/PrivateInvestors.json'
 import {
   BalancerHelpers,
   networks,
@@ -22,9 +22,9 @@ import Invest from './Invest'
 import Withdraw from './Withdraw'
 
 import { corePoolContract } from '../../../../hooks/usePoolContract'
-import { ERC20 } from '../../../../hooks/useERC20Contract'
-import { YieldYakContract } from '../../../../hooks/useYieldYak'
+import { YieldYakContract } from '../../../../hooks/useYieldYakEthers'
 import useCoingecko from '../../../../hooks/useCoingecko'
+import useERC20 from '@/hooks/useERC20'
 
 import * as S from './styles'
 
@@ -42,12 +42,23 @@ interface IFormProps {
 
 const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   const [privateInvestors, setPrivateInvestors] = React.useState<string[]>([])
+  const [signerProvider, setsignerProvider] = React.useState<JsonRpcSigner>()
 
-  const { pool, tokenListSwapProvider, userWalletAddress } = useAppSelector(
-    state => state
+  const [{ wallet }] = useConnectWallet()
+  const { pool, tokenListSwapProvider } = useAppSelector(state => state)
+  const ERC20 = useERC20(pool.address, networks[pool.chain_id].rpc)
+  const { privateAddresses } = usePrivateInvestors(
+    networks[pool.chain_id].privateInvestor,
+    pool.chain_id
   )
-  const poolId = pool.id.slice(pool.chain_id.toString().length)
+  const tokenAddresses = tokenListSwapProvider.map(token => token.address)
+  const { priceToken } = useCoingecko(
+    platform[pool.chain_id],
+    pool.chain.addressWrapped?.toLowerCase(),
+    tokenAddresses
+  )
 
+  const poolId = pool.id.slice(pool.chain_id.toString().length)
   const poolInfo = {
     id: poolId,
     address: pool.address,
@@ -58,12 +69,14 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
     chainId: pool.chain_id.toString()
   }
 
-  const tokenAddresses = tokenListSwapProvider.map(token => token.address)
-  const { priceToken } = useCoingecko(
-    platform[pool.chain_id],
-    pool.chain.addressWrapped?.toLowerCase(),
-    tokenAddresses
-  )
+  async function handleGetSigner() {
+    if (!wallet) return
+
+    const provider = new BrowserProvider(wallet?.provider)
+    const signer = await provider.getSigner()
+
+    setsignerProvider(signer)
+  }
 
   const operationVersion =
     pool.pool_version === 1
@@ -72,37 +85,32 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
           pool.address,
           poolInfo,
           corePoolContract(pool.vault),
-          ERC20(pool.address),
-          YieldYakContract(),
-          new ParaSwap()
+          ERC20,
+          YieldYakContract(43114),
+          new ParaSwap(),
+          signerProvider
         )
       : new operationV2(
           ProxyInvestV2,
           BalancerHelpers,
           poolInfo,
-          new ParaSwap()
+          new ParaSwap(),
+          signerProvider
         )
 
   const setAddressesOfPrivateInvestors = async () => {
-    const network = networks[pool?.chain_id ?? 137]
-    const _web3 = new Web3(network.rpc)
-    const privateInvestorsContract = new _web3.eth.Contract(
-      PrivateInvestors as unknown as AbiItem,
-      network.privateInvestor
-    )
-    const addresses = await privateInvestorsContract.methods
-      .getInvestors(pool.address, 0, 100)
-      .call()
-
+    const addresses = await privateAddresses(pool.address)
     setPrivateInvestors(addresses)
   }
 
   React.useEffect(() => {
     if (!pool.is_private_pool) return
-    ;(async () => {
-      await setAddressesOfPrivateInvestors()
-    })()
-  }, [userWalletAddress, pool])
+    setAddressesOfPrivateInvestors()
+  }, [wallet, pool])
+
+  React.useEffect(() => {
+    handleGetSigner()
+  }, [wallet])
 
   return (
     <OperationProvider operation={{ operation: operationVersion, priceToken }}>

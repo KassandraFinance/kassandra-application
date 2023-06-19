@@ -1,11 +1,9 @@
-/* eslint-disable prettier/prettier */
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 
 import { ItokenSelectedProps } from './operationV1'
 import { underlyingAssetsInfo } from '../store/reducers/pool'
-import { TransactionCallback } from '../utils/txWait'
 import { GetAmountsParams, GetAmountsResult } from './ISwapProvider'
+import { ContractTransactionResponse } from 'ethers'
 
 export interface IOperations {
   contractAddress: string
@@ -21,10 +19,12 @@ export interface IOperations {
   calcAllOutGivenPoolIn: (
     params: CalcAllOutGivenPoolInParams
   ) => Promise<CalcAllOutGivenPoolInResult>
-  exitswapPoolAmountIn: (params: ExitSwapPoolAmountInParams) => Promise<void>
+  exitswapPoolAmountIn: (
+    params: ExitSwapPoolAmountInParams
+  ) => Promise<ContractTransactionResponse>
   exitswapPoolAllTokenAmountIn: (
     params: ExitSwapPoolAllTokenAmountInParams
-  ) => Promise<void>
+  ) => Promise<ContractTransactionResponse>
   getDatasTx: () => Promise<Array<string>>
   getAmountsOut: (params: GetAmountsParams) => Promise<GetAmountsResult>
 }
@@ -42,32 +42,32 @@ export type IPoolInfoProps = {
 export type CalcAmountOutParams = {
   tokenSelected: ItokenSelectedProps
   userWalletAddress: string
-  minAmountOut: BigNumber
+  minAmountOut: bigint
   selectedTokenInBalance: Big
   amountTokenIn: Big
   tokenInAddress: string
 }
 
 export type CalcAmountOutParamsResult = {
-  investAmountOut: BigNumber
+  investAmountOut: bigint
   transactionError: string | undefined
 }
 
 export type JoinSwapAmountInParams = {
   tokenInAddress: string
-  tokenAmountIn: BigNumber
-  minPoolAmountOut: BigNumber
+  tokenAmountIn: string
+  minPoolAmountOut: string
   userWalletAddress: string
   data: any
   hasTokenInPool: boolean
-  transactionCallback: TransactionCallback
+  // transactionCallback: TransactionCallback
 }
 
 export type EstimatedGasParams = {
   userWalletAddress: string
   tokenInAddress: string
-  minPoolAmountOut: BigNumber
-  amountTokenIn: BigNumber
+  minPoolAmountOut: string
+  amountTokenIn: string
   data: any
 }
 
@@ -86,7 +86,7 @@ export type CalcSingleOutGivenPoolInParams = {
 }
 
 export type CalcSingleOutGivenPoolInResult = {
-  withdrawAmoutOut: BigNumber
+  withdrawAmoutOut: Big
   transactionError: string | undefined
 }
 
@@ -97,23 +97,21 @@ export type CalcAllOutGivenPoolInParams = {
 }
 
 export type CalcAllOutGivenPoolInResult = {
-  withdrawAllAmoutOut: Record<string, BigNumber> | undefined
+  withdrawAllAmoutOut: Record<string, Big> | undefined
   transactionError: string | undefined
 }
 
 export type ExitSwapPoolAmountInParams = {
   tokenOutAddress: string
-  tokenAmountIn: BigNumber
-  minPoolAmountOut: BigNumber
+  tokenAmountIn: string
+  minPoolAmountOut: string
   userWalletAddress: string
-  transactionCallback: TransactionCallback
 }
 
 export type ExitSwapPoolAllTokenAmountInParams = {
-  tokenAmountIn: BigNumber
-  amountAllTokenOut: Record<string, BigNumber>
-  slippageBase: BigNumber
-  slippageExp: BigNumber
+  tokenAmountIn: string
+  amountAllTokenOut: Record<string, Big>
+  slippageBase: Big
+  slippageExp: Big
   userWalletAddress: string
-  transactionCallback: TransactionCallback
 }
