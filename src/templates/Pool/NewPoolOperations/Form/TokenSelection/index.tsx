@@ -1,20 +1,19 @@
 import React from 'react'
 import Big from 'big.js'
-import { isAddress } from 'web3-utils'
 import { stringSimilarity } from 'string-similarity-js'
-import Web3 from 'web3'
+import { useConnectWallet } from '@web3-onboard/react'
+import { isAddress } from 'ethers'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setTokenSelectionActive } from '../../../../../store/reducers/tokenSelectionActive'
 
 import useCoingecko from '../../../../../hooks/useCoingecko'
-import { useBatchRequest } from '@/hooks/useBatchRequest'
+import useBatchRequests from '@/hooks/useBatchRequests'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import {
   NATIVE_ADDRESS,
-  networks,
   platform
 } from '../../../../../constants/tokenAddresses'
 
@@ -26,9 +25,7 @@ import Loading from '../../../../../components/Loading'
 import * as S from './styles'
 
 export type IListbalanceTokenprops = {
-  [key: string]: {
-    balance: string
-  }
+  [key: string]: string
 }
 
 export type IListTokenPricesprops = {
@@ -59,15 +56,13 @@ const TokenSelection = () => {
   >([])
   const [balanceToken, setBalanceToken] =
     React.useState<IListbalanceTokenprops>({
-      ['']: {
-        balance: '0'
-      }
+      ['']: '0'
     })
 
   const dispatch = useAppDispatch()
-  const { userWalletAddress, tokenListSwapProvider, pool, chainId } =
-    useAppSelector(state => state)
-  const { batchRequestBalance } = useBatchRequest()
+  const { tokenListSwapProvider, pool } = useAppSelector(state => state)
+  const { balances } = useBatchRequests(pool.chain_id)
+  const [{ wallet }] = useConnectWallet()
 
   const tokenAddresses = tokenListSwapProvider.map(token => token.address)
   const { priceToken } = useCoingecko(
@@ -89,10 +84,10 @@ const TokenSelection = () => {
           ? pool.chain.addressWrapped.toLocaleLowerCase()
           : token.address
 
-      const tokenBalance = balanceToken[token.address]?.balance || 0
+      const tokenBalance = balanceToken[token.address.toLowerCase()] || 0
       const tokenPriceInDollar = priceToken(checkToken.toLowerCase()) ?? 0
 
-      const balanceTokenFormated = Big(tokenBalance || 0).div(
+      const balanceTokenFormated = Big(tokenBalance || '0').div(
         Big(10).pow(token.decimals)
       )
       const balanceInDollar = balanceTokenFormated.mul(tokenPriceInDollar)
@@ -146,7 +141,7 @@ const TokenSelection = () => {
       return 0
     })
 
-    const userTokensBalanceFiltered = userWalletAddress
+    const userTokensBalanceFiltered = wallet
       ? filteredbyTokenPin.sort((a, b) => {
           if (a.balanceInDollar > b.balanceInDollar) return -1
           if (a.balanceInDollar < b.balanceInDollar) return 1
@@ -171,16 +166,18 @@ const TokenSelection = () => {
   }
 
   async function handleFetchBalance() {
-    if (chainId !== pool.chain_id) return
+    if (!wallet) return
 
     try {
-      const balances = await batchRequestBalance(
-        new Web3(networks[pool.chain_id].rpc),
-        tokenListSwapProvider.map(token => token.address),
-        userWalletAddress
-      )
+      const addresses = tokenListSwapProvider.map(token => token.address)
+      const balanceList = await balances(wallet.accounts[0].address, addresses)
 
-      setBalanceToken(balances)
+      const balanceListFormatted: IListbalanceTokenprops = {}
+      for (const [i, token] of addresses.entries()) {
+        balanceListFormatted[token] = balanceList[i]?.toString() ?? '0'
+      }
+
+      setBalanceToken(balanceListFormatted)
     } catch (error) {
       console.log(error)
     }
@@ -192,10 +189,10 @@ const TokenSelection = () => {
       : handleTokenListFilteringBybalance(tokenListSwapProvider)
 
   React.useEffect(() => {
-    if (userWalletAddress) {
+    if (wallet) {
       handleFetchBalance()
     }
-  }, [userWalletAddress])
+  }, [wallet])
 
   React.useEffect(() => {
     setTimeout(() => {

@@ -58,11 +58,29 @@ const useTransaction = () => {
   }
 
   async function transactionErrors(
-    error: unknown,
+    error: any,
     onFail?: () => Promise<void> | void
   ) {
     if (onFail) {
       await onFail()
+    }
+
+    if (error?.code === 'KASS#01') {
+      dispatch(
+        setModalAlertText({
+          errorText: 'Amount you put is low to complete the transaction'
+        })
+      )
+      return error?.code
+    }
+
+    if (error?.code === 'KASS#02') {
+      dispatch(
+        setModalAlertText({
+          errorText: 'There was an error in the transaction, please recalculate'
+        })
+      )
+      return error?.code
     }
 
     if (isError(error, 'ACTION_REJECTED')) {

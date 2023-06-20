@@ -147,7 +147,7 @@ export const networks: NetworkType = {
     coingecko: 'avalanche',
     whiteList: '',
     factory: '',
-    privateInvestor: '',
+    privateInvestor: '0x',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
     nativeCurrency: {

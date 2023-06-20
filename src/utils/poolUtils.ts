@@ -1,10 +1,10 @@
 import Big from 'big.js'
-import web3 from './web3'
+import { JsonRpcProvider } from 'ethers'
 
-import { ERC20 } from '../hooks/useERC20Contract'
+import { ERC20 } from '../hooks/useERC20'
 import { underlyingAssetsInfo } from '../store/reducers/pool'
 
-import { NATIVE_ADDRESS } from '../constants/tokenAddresses'
+import { NATIVE_ADDRESS, networks } from '../constants/tokenAddresses'
 
 export const checkTokenWithHigherLiquidityPool = (
   underlyingAssets: underlyingAssetsInfo[]
@@ -90,21 +90,20 @@ export const checkTokenInThePool = (
 export const getBalanceToken = async (
   address: string,
   userWalletAddress: string,
+  chainId: number,
   addressWrapped?: string
 ) => {
   if (address === NATIVE_ADDRESS || address === addressWrapped) {
-    const balanceToken = await web3.eth
-      .getBalance(userWalletAddress)
-      .then(newBalance => Big(newBalance.toString()))
+    const readProvider = new JsonRpcProvider(networks[chainId].rpc)
+    const balanceToken = await readProvider.getBalance(userWalletAddress)
 
-    return balanceToken
+    return Big(balanceToken.toString())
   }
 
-  const token = ERC20(address)
-
-  const balanceToken = await token
-    .balance(userWalletAddress)
-    .then(newBalance => Big(newBalance.toString()))
+  const { balance } = await ERC20(address, networks[chainId].rpc)
+  const balanceToken = await balance(userWalletAddress).then(newBalance =>
+    Big(newBalance.toString())
+  )
 
   return balanceToken
 }

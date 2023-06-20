@@ -1,27 +1,24 @@
 import React from 'react'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Tippy from '@tippyjs/react'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import {
   NATIVE_ADDRESS,
-  BACKEND_KASSANDRA
+  BACKEND_KASSANDRA,
+  networks
 } from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
 import { setModalWalletActive } from '../../../../../store/reducers/modalWalletActive'
 
-import { ERC20 } from '../../../../../hooks/useERC20Contract'
+import { ERC20 } from '../../../../../hooks/useERC20'
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
+import useTransaction from '@/hooks/useTransaction'
 
-import waitTransaction, {
-  MetamaskError,
-  TransactionCallback
-} from '../../../../../utils/txWait'
-import changeChain from '../../../../../utils/changeChain'
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import {
   checkTokenInThePool,
@@ -31,10 +28,7 @@ import {
   decimalToBN
 } from '../../../../../utils/poolUtils'
 
-import {
-  ToastSuccess,
-  ToastWarning
-} from '../../../../../components/Toastify/toast'
+import { ToastWarning } from '../../../../../components/Toastify/toast'
 import Button from '../../../../../components/Button'
 
 import PoolOperationContext from '../PoolOperationContext'
@@ -75,7 +69,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const [amountTokenOut, setAmountTokenOut] = React.useState<Big>(Big(0))
   const [amountApproved, setAmountApproved] = React.useState(Big(0))
   const [priceImpact, setPriceImpact] = React.useState<Big>(Big(0))
-  const [walletConnect, setWalletConnect] = React.useState<string | null>(null)
   const [trasactionData, setTrasactionData] = React.useState<any>()
   const [errorMsg, setErrorMsg] = React.useState('')
   const [slippage, setSlippage] = React.useState({
@@ -98,9 +91,12 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     Big(-1)
   )
 
-  const { pool, chainId, tokenSelect, userWalletAddress } = useAppSelector(
-    state => state
-  )
+  const [{ wallet }] = useConnectWallet()
+  const { pool, tokenSelect } = useAppSelector(state => state)
+  const [{ connectedChain }, setChain] = useSetChain()
+  const { txNotification, transactionErrors } = useTransaction()
+
+  const chainId = Number(connectedChain?.id ?? '0x89')
 
   const { operation, priceToken } = React.useContext(PoolOperationContext)
 
@@ -178,7 +174,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       chainId: pool.chain_id.toString()
     })
 
-    const datas = await operation.getDatasTx()
+    const datas = await operation.getDatasTx(slippage.value)
     setTrasactionData(datas[0])
     return {
       amountsTokenIn,
@@ -226,16 +222,28 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   }
 
   async function updateAllowance() {
-    const allowance = await ERC20(tokenSelect.address).allowance(
-      operation.contractAddress,
-      userWalletAddress
-    )
+    if (!wallet?.provider || !tokenSelect.address) return
+    let value: string
+    try {
+      const { allowance } = await ERC20(
+        tokenSelect.address,
+        networks[chainId].rpc
+      )
 
-    setAmountApproved(Big(allowance))
+      const allowanceValue = await allowance(
+        operation.contractAddress,
+        wallet.accounts[0].address
+      )
+      value = allowanceValue
+    } catch (error) {
+      value = '0'
+    }
+
+    setAmountApproved(Big(value))
     if (NATIVE_ADDRESS !== tokenSelect.address) {
       setApprovals(old => ({
         ...old,
-        [typeAction]: Big(allowance).gte(amountTokenIn)
+        [typeAction]: Big(value).gte(amountTokenIn)
           ? [Approval.Approved]
           : [Approval.Denied]
       }))
@@ -247,158 +255,111 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     }
   }
 
-  const approvalCallback = React.useCallback(
-    (
-      tokenSymbol: string,
-      tokenAddress: string,
-      tabTitle: Titles
-    ): TransactionCallback => {
-      return async (error: MetamaskError, txHash: string) => {
-        if (error) {
-          if (error.code === 4001) {
-            dispatch(
-              setModalAlertText({
-                errorText: `Approval of ${tokenSymbol} cancelled`
-              })
-            )
-            return
-          }
+  async function handleApproveSuccess() {
+    if (!wallet) return
 
-          dispatch(
-            setModalAlertText({
-              errorText: `Failed to approve ${tokenSymbol}. Please try again later.`
-            })
-          )
-          return
-        }
+    const { allowance } = await ERC20(
+      tokenSelect.address,
+      networks[chainId].rpc
+    )
 
-        setApprovals(old => {
-          return {
-            ...old,
-            [tabTitle]: [Approval.WaitingTransaction]
-          }
-        })
-
-        ToastWarning(`Waiting approval of ${tokenSymbol}...`)
-        const txReceipt = await waitTransaction(txHash)
-
-        setApprovals(old => {
-          return {
-            ...old,
-            [tabTitle]: [Approval.Syncing]
-          }
-        })
-
-        if (txReceipt.status) {
-          ToastSuccess(
-            `Approval of ${tokenSymbol} confirmed, wait while we sync with the latest block of the blockchain.`
-          )
-
-          let approved = false
-          while (!approved) {
-            await new Promise(r => setTimeout(r, 1000)) // sleep
-            const allowance = await ERC20(tokenAddress).allowance(
-              operation.contractAddress,
-              userWalletAddress
-            )
-            if (
-              amountApproved.toFixed() !== Big(allowance).toFixed() ||
-              amountApproved.gte(amountTokenIn)
-            ) {
-              await updateAllowance()
-              approved = true
-            }
-          }
-          return
-        }
-
-        setApprovals(old => {
-          return {
-            ...old,
-            [tabTitle]: [Approval.Denied]
-          }
-        })
+    let approved = false
+    while (!approved) {
+      await new Promise(r => setTimeout(r, 1000)) // sleep
+      const allowanceValue = await allowance(
+        operation.contractAddress,
+        wallet.accounts[0].address
+      )
+      if (
+        amountApproved.toFixed() !== Big(allowanceValue).toFixed() ||
+        amountApproved.gte(amountTokenIn)
+      ) {
+        await updateAllowance()
+        approved = true
       }
-    },
-    [approvals]
-  )
+    }
+  }
 
-  const investCallback = React.useCallback(
-    (tokenSymbol: string, amountInUSD: number): TransactionCallback => {
-      return async (error: MetamaskError, txHash: string) => {
-        if (error) {
-          trackCancelBuying()
-
-          if (error.code === 4001) {
-            dispatch(
-              setModalAlertText({
-                errorText: `Investment in ${tokenSymbol} cancelled`
-              })
-            )
-            return
-          }
-
-          dispatch(
-            setModalAlertText({
-              errorText: `Failed to invest in ${tokenSymbol}. Please try again later.`
-            })
-          )
-          return
-        }
-
-        trackBought(txHash, amountInUSD, 0)
-        ToastWarning(`Confirming investment in ${tokenSymbol}...`)
-        const txReceipt = await waitTransaction(txHash)
-
-        if (txReceipt.status) {
-          ToastSuccess(`Investment in ${tokenSymbol} confirmed`)
-          let amountPool = Big(0)
-          for (let index = 0; index < 100; index++) {
-            await new Promise(r => setTimeout(r, 500))
-            amountPool = await getBalanceToken(pool.address, userWalletAddress)
-            if (
-              amountPool.toFixed() !== outAssetBalance.toFixed() &&
-              amountPool.gt(0)
-            )
-              break
-          }
-
-          const amountToken = await getBalanceToken(
-            tokenSelect.address,
-            userWalletAddress,
-            pool.pool_version === 1 ? pool.chain.addressWrapped : undefined
-          )
-          const allowance = await ERC20(tokenSelect.address).allowance(
-            operation.contractAddress,
-            userWalletAddress
-          )
-
-          setAmountApproved(Big(allowance))
-          setSelectedTokenInBalance(amountToken)
-          setOutAssetBalance(amountPool)
-          setAmountTokenOut(Big(0))
-          setAmountTokenIn(Big(0))
-          if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
-            inputAmountTokenRef.current.value = ''
-          }
-
-          return
-        }
+  async function handleApproveFail() {
+    setApprovals(old => {
+      return {
+        ...old,
+        [typeAction]: [Approval.Denied]
       }
-    },
-    []
-  )
+    })
 
-  const submitAction = (e: React.FormEvent<HTMLFormElement>) => {
+    dispatch(
+      setModalAlertText({
+        errorText: `Failed to approve ${tokenSelect.symbol}. Please try again later.`
+      })
+    )
+  }
+
+  async function handleTransactionSuccess() {
+    if (!wallet) return
+
+    let amountPool = Big(0)
+    for (let index = 0; index < 100; index++) {
+      await new Promise(r => setTimeout(r, 500))
+      amountPool = await getBalanceToken(
+        pool.address,
+        wallet.accounts[0].address,
+        chainId
+      )
+      if (
+        amountPool.toFixed() !== outAssetBalance.toFixed() &&
+        amountPool.gt(0)
+      )
+        break
+    }
+
+    const amountToken = await getBalanceToken(
+      tokenSelect.address,
+      wallet.accounts[0].address,
+      chainId,
+      pool.pool_version === 1 ? pool.chain.addressWrapped : undefined
+    )
+
+    const { allowance } = await ERC20(
+      tokenSelect.address,
+      networks[chainId].rpc
+    )
+    const allowanceValue = await allowance(
+      operation.contractAddress,
+      wallet.accounts[0].address
+    )
+
+    setAmountApproved(Big(allowanceValue))
+    setSelectedTokenInBalance(amountToken)
+    setOutAssetBalance(amountPool)
+    setAmountTokenOut(Big(0))
+    setAmountTokenIn(Big(0))
+    if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
+      inputAmountTokenRef.current.value = ''
+    }
+  }
+
+  async function handleTransactionFail() {
+    trackCancelBuying()
+
+    dispatch(
+      setModalAlertText({
+        errorText: `Failed to invest in ${pool.symbol}. Please try again later.`
+      })
+    )
+  }
+
+  const submitAction = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const slippageVal = slippage.value
+    if (!wallet?.provider) return
 
-    const slippageExp = new BigNumber(10).pow(
-      new BigNumber(2 + (slippageVal.split('.')[1]?.length || 0))
+    const slippageVal = slippage.value
+    const slippageExpInBig = Big(10).pow(
+      Big(2 + (slippageVal.split('.')[1]?.length || 0)).toNumber()
     )
-    const slippageBase = slippageExp.sub(
-      new BigNumber(slippageVal.replace('.', ''))
+    const slippageBaseInBig = slippageExpInBig.sub(
+      Big(slippageVal.replace('.', ''))
     )
 
     try {
@@ -406,11 +367,31 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         approvals[typeAction][0] === 0 &&
         tokenSelect.address !== NATIVE_ADDRESS
       ) {
-        ERC20(tokenSelect.address).approve(
-          operation.contractAddress,
-          userWalletAddress,
-          approvalCallback(tokenSelect.symbol, tokenSelect.address, typeAction)
+        const { approve } = await ERC20(
+          tokenSelect.address,
+          networks[chainId].rpc,
+          {
+            wallet: wallet,
+            txNotification: txNotification,
+            transactionErrors: transactionErrors
+          }
         )
+        approve(
+          operation.contractAddress,
+          {
+            error: `Failed to approve ${tokenSelect.symbol}`,
+            pending: `Waiting approval of ${tokenSelect.symbol}...`,
+            sucess: `Approval of ${tokenSelect.symbol} confirmed, wait while we sync with the latest block of the blockchain.`
+          },
+          { onFail: handleApproveFail, onSuccess: handleApproveSuccess }
+        )
+
+        setApprovals(old => {
+          return {
+            ...old,
+            [typeAction]: [Approval.WaitingTransaction]
+          }
+        })
         return
       }
 
@@ -421,32 +402,41 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         pool.chain.chainName
       )
 
-      operation.joinswapExternAmountIn({
-        tokenInAddress: tokenSelect.address,
-        tokenAmountIn: new BigNumber(Big(amountTokenIn).toFixed()),
-        minPoolAmountOut: new BigNumber(amountTokenOut.toFixed(0))
-          .mul(slippageBase)
-          .div(slippageExp),
-        userWalletAddress,
-        data: trasactionData,
-        hasTokenInPool: !!checkTokenInThePool(
-          pool.underlying_assets,
-          tokenSelect.address
-        ),
-        transactionCallback: investCallback(
-          pool.symbol,
-          Number(
-            BNtoDecimal(
-              Big(amountTokenOut.toFixed())
-                .mul(data?.pool?.price_usd || 0)
-                .div(Big(10).pow(data?.pool?.decimals)),
-              18,
-              2,
-              2
-            )
-          )
+      try {
+        const response: any = await operation.joinswapExternAmountIn({
+          tokenInAddress: tokenSelect.address,
+          tokenAmountIn: Big(amountTokenIn).toFixed(0),
+          minPoolAmountOut: amountTokenOut
+            .mul(slippageBaseInBig)
+            .div(slippageExpInBig)
+            .toFixed(0),
+          userWalletAddress: wallet.accounts[0].address,
+          data: trasactionData,
+          hasTokenInPool: !!checkTokenInThePool(
+            pool.underlying_assets,
+            tokenSelect.address
+          ),
+          slippage: slippageVal
+        })
+
+        trackBought(
+          response?.hash ?? '0x',
+          Number(Big(amountTokenIn).toFixed(0)),
+          0
         )
-      })
+
+        await txNotification(
+          response,
+          {
+            error: `Failed to invest in ${pool.symbol}. Please try again later.`,
+            pending: `Confirming investment in ${pool.symbol}...`,
+            sucess: `Investment in ${pool.symbol} confirmed`
+          },
+          { onFail: handleTransactionFail, onSuccess: handleTransactionSuccess }
+        )
+      } catch (error) {
+        transactionErrors(error)
+      }
       return
     } catch (error) {
       dispatch(
@@ -464,21 +454,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       return
     }
     updateAllowance()
-  }, [typeAction, tokenSelect.address, userWalletAddress, chainId])
-
-  React.useEffect(() => {
-    const handleWallectConnect = () => {
-      const connect = localStorage.getItem('walletconnect')
-
-      if (connect) {
-        setWalletConnect(connect)
-      } else {
-        setWalletConnect(null)
-      }
-    }
-
-    handleWallectConnect()
-  }, [])
+  }, [typeAction, tokenSelect.address, wallet, chainId])
 
   // calculate investment
   React.useEffect(() => {
@@ -509,11 +485,13 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     }
 
     async function generateEstimatedGas(transactionDataTx: any) {
+      if (!wallet?.provider) return
+
       const response = await operation.estimatedGas({
-        userWalletAddress,
+        userWalletAddress: wallet.accounts[0].address,
         tokenInAddress: tokenSelect.address,
-        minPoolAmountOut: new BigNumber('0'),
-        amountTokenIn: new BigNumber(Big(amountTokenIn).toFixed() || '0'),
+        minPoolAmountOut: '0',
+        amountTokenIn: Big(amountTokenIn).toFixed(0),
         data: transactionDataTx
       })
 
@@ -527,7 +505,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     }
 
     const calc = async () => {
-      if (!(inputAmountTokenRef && inputAmountTokenRef.current !== null)) return
+      if (
+        !(inputAmountTokenRef && inputAmountTokenRef.current !== null) ||
+        !wallet?.provider
+      )
+        return
 
       try {
         const valueFormatted = decimalToBN(
@@ -542,8 +524,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           await operation.calcInvestAmountOut({
             tokenSelected,
             tokenInAddress: tokenSelect.address,
-            userWalletAddress,
-            minAmountOut: new BigNumber('0'),
+            userWalletAddress: wallet.accounts[0].address,
+            minAmountOut: BigInt(0),
             selectedTokenInBalance,
             amountTokenIn: Big(amountTokenIn)
           })
@@ -553,13 +535,13 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           setErrorMsg(transactionError)
         }
 
-        if (tokenSelect.name === pool.chain.nativeTokenName) {
+        if (tokenSelect.address === NATIVE_ADDRESS) {
           await generateEstimatedGas(tokenSelected.transactionsDataTx[0])
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         const errorStr = error.toString()
-        if (userWalletAddress.length > 0) {
+        if (wallet?.provider) {
           if (errorStr.search('ERR_BPOW_BASE_TOO_HIGH') > -1) {
             ToastWarning(
               "The amount can't be more than half of what's in the pool!"
@@ -625,10 +607,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   }, [tokenSelect, amountTokenOut])
 
   React.useEffect(() => {
-    if (
-      tokenSelect.name !== pool.chain.nativeTokenName ||
-      Big(amountTokenIn).lte(0)
-    )
+    if (tokenSelect.address !== NATIVE_ADDRESS || Big(amountTokenIn).lte(0))
       return
 
     const gasFeeBig = Big(String(gasFee?.feeNumber) || '0')
@@ -636,7 +615,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     const balanceMinusFee = Big(amountTokenIn).sub(gasFeeBig)
 
     if (
-      tokenSelect.name === pool.chain.nativeTokenName &&
+      tokenSelect.address === NATIVE_ADDRESS &&
       Big(amountTokenIn).lte(selectedTokenInBalance) &&
       Big(amountTokenIn).gte(balanceMinusFee)
     ) {
@@ -698,7 +677,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       <S.TransactionSettingsOptions>
         <TransactionSettings slippage={slippage} setSlippage={setSlippage} />
       </S.TransactionSettingsOptions>
-      {userWalletAddress.length === 0 && walletConnect === null ? (
+      {!wallet ? (
         <Button
           className="btn-submit"
           backgroundPrimary
@@ -709,7 +688,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         />
       ) : chainId === pool.chain_id ? (
         pool.is_private_pool &&
-        !privateInvestors.some(address => address === userWalletAddress) ? (
+        !privateInvestors.some(
+          address => address === wallet?.accounts[0].address
+        ) ? (
           <Tippy
             allowHTML={true}
             content={[
@@ -777,23 +758,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           fullWidth
           type="button"
           onClick={() =>
-            changeChain({
-              chainId: pool.chain.id,
-              chainName: pool.chain.chainName,
-              rpcUrls: pool.chain.rpcUrls,
-              nativeCurrency: {
-                decimals: pool.chain.nativeTokenDecimals,
-                name: pool.chain.nativeTokenName,
-                symbol: pool.chain.nativeTokenSymbol
-              }
-            })
+            setChain({ chainId: `0x${pool.chain_id.toString(16)}` })
           }
-          disabled={walletConnect ? true : false}
-          text={
-            walletConnect
-              ? `Change manually to ${pool.chain.chainName}`
-              : `Change to ${pool.chain.chainName}`
-          }
+          text={`Change to ${pool.chain.chainName}`}
         />
       )}
     </S.Invest>
