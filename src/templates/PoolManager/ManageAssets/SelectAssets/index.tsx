@@ -37,8 +37,8 @@ export type TokensListType = TokensInfoResponseType & { balance?: BigNumber }
 export type CoinGeckoAssetsResponseType = {
   [key: string]: {
     usd: number
-    usd_24h_change: number
-    usd_market_cap: number
+    pricePercentageChangeIn24h: number
+    marketCap: number
   }
 }
 
@@ -73,7 +73,7 @@ const SelectAssets = () => {
   )
 
   const { data: priceData } = useCoingecko(
-    networks[chainId].coingecko,
+    chainId,
     networks[chainId].nativeCurrency.address,
     tokensListGoerli ?? []
   )

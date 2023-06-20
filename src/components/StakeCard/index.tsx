@@ -24,6 +24,7 @@ import usePriceLP from '../../hooks/usePriceLP'
 import useStakingContract from '../../hooks/useStakingContract'
 import { ERC20 } from '../../hooks/useERC20Contract'
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+import useCoingecko from '@/hooks/useCoingecko'
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setModalAlertText } from '../../store/reducers/modalAlertText'
@@ -57,7 +58,6 @@ import infoCyanIcon from '../../../public/assets/notificationStatus/info.svg'
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
 
 import * as S from './styles'
-import useCoingecko from '@/hooks/useCoingecko'
 
 export interface IInfoStaked {
   yourStake: BigNumber
@@ -158,7 +158,7 @@ const StakeCard = ({
   const { trackEventFunction } = useMatomoEcommerce()
 
   const { priceToken } = useCoingecko(
-    networkChain.coingecko,
+    chain.id,
     networkChain.nativeCurrency.address,
     [WETH_POLYGON, KacyPoligon]
   )

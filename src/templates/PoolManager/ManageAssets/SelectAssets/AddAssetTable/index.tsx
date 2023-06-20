@@ -17,7 +17,6 @@ import ModalViewCoin from '../../../../../components/Modals/ModalViewCoin'
 import arrowIcon from '../../../../../../public/assets/utilities/arrow-left.svg'
 import eyeShowIcon from '../../../../../../public/assets/utilities/eye-show.svg'
 
-import * as S from './styles'
 import {
   TableLine,
   TableLineTitle,
@@ -25,6 +24,8 @@ import {
   Value,
   SecondaryValue
 } from '../../../../../components/Modals/ModalViewCoin/styles'
+
+import * as S from './styles'
 
 import {
   TokensInfoResponseType,
@@ -219,9 +220,7 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                     $
                     {priceList
                       ? BNtoDecimal(
-                          Big(
-                            priceList[coin.id?.toLowerCase()]?.usd_market_cap
-                          ),
+                          Big(priceList[coin.id?.toLowerCase()]?.marketCap),
                           2
                         )
                       : 0}
@@ -291,9 +290,7 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
               $
               {priceList
                 ? BNtoDecimal(
-                    Big(
-                      priceList[viewToken.id.toLowerCase()]?.usd_market_cap || 0
-                    ),
+                    Big(priceList[viewToken.id.toLowerCase()]?.marketCap || 0),
                     2
                   )
                 : 0}

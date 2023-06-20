@@ -60,7 +60,7 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
 
   const tokenAddresses = tokenListSwapProvider.map(token => token.address)
   const { priceToken } = useCoingecko(
-    platform[pool.chain_id],
+    pool.chain_id,
     pool.chain.addressWrapped?.toLowerCase(),
     tokenAddresses
   )

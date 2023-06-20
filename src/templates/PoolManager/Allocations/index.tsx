@@ -5,11 +5,7 @@ import { useRouter } from 'next/router'
 import useSWR from 'swr'
 
 import { GET_TOKENS_POOL } from './graphql'
-import {
-  BACKEND_KASSANDRA,
-  mockTokens,
-  networks
-} from '@/constants/tokenAddresses'
+import { BACKEND_KASSANDRA, mockTokens } from '@/constants/tokenAddresses'
 
 import useCoingecko from '@/hooks/useCoingecko'
 import usePoolAssets from '@/hooks/usePoolAssets'
@@ -64,13 +60,6 @@ interface IAllocationProps {
   }
 }
 
-type CoinGeckoResponseType = {
-  [key: string]: {
-    usd: number
-    usd_24h_change: number
-  }
-}
-
 interface IAllocationsProps {
   countDownDate: string
 }
@@ -99,7 +88,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
   )
 
   const { data: coingeckoData } = useCoingecko(
-    networks[data?.pool.chain_id ?? 137]?.coingecko,
+    data?.pool.chain_id ?? 137,
     data?.pool?.chain?.addressWrapped ?? '',
     handleMockToken(poolAssets ?? [])
   )

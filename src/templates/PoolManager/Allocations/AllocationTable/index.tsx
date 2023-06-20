@@ -14,13 +14,14 @@ import {
   Value,
   SecondaryValue
 } from '../../../../components/Modals/ModalViewCoin/styles'
+
 import * as S from './styles'
 
 type CoinsMetadataType = {
   [key: string]: {
     usd: number
-    usd_24h_change: number
-    usd_market_cap: number
+    pricePercentageChangeIn24h: number
+    marketCap: number
   }
 }
 
@@ -164,9 +165,14 @@ const AllocationTable = ({
                   <S.PriceContent className="price">
                     <p>$ {coingeckoTokenInfo?.usd?.toFixed(2)}</p>
                     <S.PriceChange
-                      changePrice={coingeckoTokenInfo?.usd_24h_change ?? 0}
+                      changePrice={
+                        coingeckoTokenInfo?.pricePercentageChangeIn24h ?? 0
+                      }
                     >
-                      {(coingeckoTokenInfo?.usd_24h_change ?? 0)?.toFixed(2)}%
+                      {(
+                        coingeckoTokenInfo?.pricePercentageChangeIn24h ?? 0
+                      )?.toFixed(2)}
+                      %
                     </S.PriceChange>
                   </S.PriceContent>
                   {/* <S.YieldContent className="yield">
@@ -264,14 +270,14 @@ const AllocationTable = ({
                           viewToken?.token?.address ?? ''
                         ]?.toLowerCase()
                       : viewToken?.token?.address.toLowerCase() ?? ''
-                  ]?.usd_24h_change ?? 0
+                  ]?.pricePercentageChangeIn24h ?? 0
                 }
               >
                 {coingeckoData[
                   chainId === 5
                     ? mockTokens[viewToken?.token?.address ?? '']?.toLowerCase()
                     : viewToken?.token?.address.toLowerCase() ?? ''
-                ]?.usd_24h_change.toFixed(2) ?? 0}
+                ]?.pricePercentageChangeIn24h.toFixed(2) ?? 0}
                 %
               </S.PriceChange>
             </SecondaryValue>
