@@ -1,6 +1,8 @@
 import React from 'react'
 
 import useMatomoEcommerce from '../../../../hooks/useMatomoEcommerce'
+import { useAppDispatch } from '@/store/hooks'
+import { setTokenSelect } from '@/store/reducers/tokenSelect'
 
 import Form from '../Form'
 
@@ -20,6 +22,7 @@ const SelectOperation = ({
   setTypeWithdrawChecked
 }: ISelectOperationProps) => {
   const { trackEventFunction } = useMatomoEcommerce()
+  const dispatch = useAppDispatch()
 
   return (
     <>
@@ -31,6 +34,15 @@ const SelectOperation = ({
           onChange={() => {
             setInputChecked('Invest')
             trackEventFunction('click-on-tab', 'invest', 'operations-invest')
+            dispatch(
+              setTokenSelect({
+                address: '',
+                decimals: 18,
+                logoURI: '',
+                name: '',
+                symbol: ''
+              })
+            )
           }}
           checked={inputChecked === 'Invest'}
         />
@@ -45,6 +57,15 @@ const SelectOperation = ({
           onChange={() => {
             setInputChecked('Withdraw')
             trackEventFunction('click-on-tab', 'withdraw', 'operations-invest')
+            dispatch(
+              setTokenSelect({
+                address: '',
+                decimals: 18,
+                logoURI: '',
+                name: '',
+                symbol: ''
+              })
+            )
           }}
           checked={inputChecked === 'Withdraw'}
         />

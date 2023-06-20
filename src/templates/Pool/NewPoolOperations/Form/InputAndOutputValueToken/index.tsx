@@ -152,7 +152,7 @@ const InputAndOutputValueToken = ({
 
       setSelectedTokenInBalance(userTokenBalance)
     })()
-  }, [chainId, typeAction, tokenSelect, wallet, pool])
+  }, [tokenSelect, wallet])
 
   return (
     <S.InputAndOutputValueToken>
