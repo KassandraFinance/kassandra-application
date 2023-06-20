@@ -25,7 +25,7 @@ export interface IOperations {
   exitswapPoolAllTokenAmountIn: (
     params: ExitSwapPoolAllTokenAmountInParams
   ) => Promise<ContractTransactionResponse>
-  getDatasTx: () => Promise<Array<string>>
+  getDatasTx: (slippage: string) => Promise<Array<string>>
   getAmountsOut: (params: GetAmountsParams) => Promise<GetAmountsResult>
 }
 
@@ -60,7 +60,7 @@ export type JoinSwapAmountInParams = {
   userWalletAddress: string
   data: any
   hasTokenInPool: boolean
-  // transactionCallback: TransactionCallback
+  slippage: string
 }
 
 export type EstimatedGasParams = {

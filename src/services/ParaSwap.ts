@@ -11,7 +11,10 @@ export class ParaSwap implements ISwapProvider {
     return searchString
   }
 
-  async getDatasTx(chainId: string, proxy: string) {
+  async getDatasTx(chainId: string, proxy: string, slippage: string) {
+    const slippageFomatted = Number(slippage) / 100
+    const totalPercentage = 1
+
     const txURL = `${this.baseUrl}/transactions/${chainId}?gasPrice=50000000000&ignoreChecks=true&ignoreGasEstimate=false&onlyParams=false`
     const requests = this.txs.map(async tx => {
       const txConfig = {
@@ -21,7 +24,9 @@ export class ParaSwap implements ISwapProvider {
         destToken: tx.destToken,
         destDecimals: tx.destDecimals,
         srcAmount: tx.srcAmount,
-        destAmount: Big(tx.destAmount).mul('0.99').toFixed(0),
+        destAmount: Big(tx.destAmount)
+          .mul(totalPercentage - slippageFomatted)
+          .toFixed(0),
         userAddress: proxy,
         partner: tx.partner,
         receiver: proxy

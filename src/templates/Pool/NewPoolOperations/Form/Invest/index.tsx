@@ -174,7 +174,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       chainId: pool.chain_id.toString()
     })
 
-    const datas = await operation.getDatasTx()
+    const datas = await operation.getDatasTx(slippage.value)
     setTrasactionData(datas[0])
     return {
       amountsTokenIn,
@@ -415,13 +415,16 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           hasTokenInPool: !!checkTokenInThePool(
             pool.underlying_assets,
             tokenSelect.address
-          )
+          ),
+          slippage: slippageVal
         })
+
         trackBought(
           response?.hash ?? '0x',
           Number(Big(amountTokenIn).toFixed(0)),
           0
         )
+
         await txNotification(
           response,
           {
@@ -432,7 +435,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           { onFail: handleTransactionFail, onSuccess: handleTransactionSuccess }
         )
       } catch (error) {
-        console.log(error)
         transactionErrors(error)
       }
       return

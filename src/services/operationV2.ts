@@ -71,10 +71,11 @@ export default class operationV2 implements IOperations {
     this.withdrawContract = _poolInfo.vault
   }
 
-  async getDatasTx() {
+  async getDatasTx(slippage = '0.5') {
     return this.swapProvider.getDatasTx(
       this.poolInfo.chainId,
-      this.contractAddress
+      this.contractAddress,
+      slippage
     )
   }
 
