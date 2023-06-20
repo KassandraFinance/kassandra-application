@@ -40,9 +40,15 @@ export class ParaSwap implements ISwapProvider {
         body: JSON.stringify(txConfig)
       })
       const response = await resJson.json()
+
+      if (response?.error) {
+        throw { code: 'KASS#01', message: response.error }
+      }
+
       return response.data
     })
     const datas = await Promise.all(requests)
+
     return datas
   }
 

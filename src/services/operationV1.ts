@@ -124,16 +124,17 @@ export default class operationV1 implements IOperations {
 
     try {
       if (checkedTokenInPool) {
-        const investAmountOut = await this.contract.joinswapExternAmountIn(
-          this.crpPool,
-          tokenInAddress,
-          BigInt(amountTokenIn.toFixed()),
-          minAmountOut,
-          this.referral,
-          {
-            from: userWalletAddress
-          }
-        )
+        const investAmountOut =
+          await this.contract.joinswapExternAmountIn.staticCall(
+            this.crpPool,
+            tokenInAddress,
+            BigInt(amountTokenIn.toFixed()),
+            minAmountOut,
+            this.referral,
+            {
+              from: userWalletAddress
+            }
+          )
 
         return {
           investAmountOut,

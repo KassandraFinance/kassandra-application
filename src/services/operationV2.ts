@@ -186,7 +186,8 @@ export default class operationV2 implements IOperations {
     tokenAmountIn,
     minPoolAmountOut,
     userWalletAddress,
-    data
+    data,
+    slippage
   }: JoinSwapAmountInParams) {
     const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(
       this.poolInfo.tokens
@@ -198,7 +199,11 @@ export default class operationV2 implements IOperations {
         ? '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
         : tokenInAddress
 
-    const datas = await this.getDatasTx()
+    const datas = await this.getDatasTx(slippage)
+
+    if (datas.length < 1) {
+      throw { code: 'KASS#02', message: 'please recalculate' }
+    }
 
     const res = await this.contract.joinPoolExactTokenInWithSwap(
       {
