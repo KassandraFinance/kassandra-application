@@ -7,7 +7,7 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import useWhiteList from '@/hooks/useWhiteList'
 import { getAddress } from 'ethers'
 
-import { ERC20 } from '../../../../hooks/useERC20Contract'
+import useBatchRequests from '@/hooks/useBatchRequests'
 import useCoingecko from '@/hooks/useCoingecko'
 import {
   BACKEND_KASSANDRA,
@@ -51,6 +51,8 @@ const SelectAssets = () => {
   const [{ connectedChain }] = useSetChain()
 
   const chainId = Number(connectedChain?.id ?? '0x89')
+
+  const { balances } = useBatchRequests(chainId)
   const { tokensWhitelist } = useWhiteList(chainId)
 
   const tokensListGoerli =
@@ -122,14 +124,18 @@ const SelectAssets = () => {
     async function getBalances(tokensList: string[]) {
       if (!wallet) return
 
+      const res = await balances(wallet.accounts[0].address, tokensList)
+
       type BalanceType = Record<string, BigNumber>
-      let balanceArr: BalanceType = {}
-      for (const token of tokensList) {
-        const { balance } = ERC20(token)
-        const balanceValue = await balance(wallet.accounts[0].address)
-        balanceArr = {
-          ...balanceArr,
-          [mockTokens[token] ?? token.toLowerCase()]: balanceValue
+      const balanceArr: BalanceType = {}
+
+      if (chainId === 5) {
+        for (const [i, token] of tokensList.entries()) {
+          balanceArr[mockTokens[token]] = new BigNumber(res[i].toString())
+        }
+      } else {
+        for (const [i, token] of tokensList.entries()) {
+          balanceArr[token.toLowerCase()] = new BigNumber(res[i].toString())
         }
       }
 
