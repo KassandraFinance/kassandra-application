@@ -155,7 +155,7 @@ const Profile = () => {
   )
 
   const { priceToken: getPriceToken } = useCoingecko(
-    networks[137].coingecko,
+    networks[137].chainId,
     networks[137].nativeCurrency.address,
     [WETH_POLYGON, KacyPoligon]
   )

@@ -51,9 +51,10 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
     networks[pool.chain_id].privateInvestor,
     pool.chain_id
   )
+
   const tokenAddresses = tokenListSwapProvider.map(token => token.address)
   const { priceToken } = useCoingecko(
-    platform[pool.chain_id],
+    pool.chain_id,
     pool.chain.addressWrapped?.toLowerCase(),
     tokenAddresses
   )

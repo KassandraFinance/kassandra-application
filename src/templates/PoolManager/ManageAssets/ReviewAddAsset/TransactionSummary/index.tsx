@@ -31,7 +31,7 @@ const TransactionSummary = () => {
   const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const { data: priceData } = useCoingecko(
-    networks[poolInfo?.chain_id ?? 137].coingecko,
+    poolInfo?.chain_id ?? 137,
     networks[poolInfo?.chain_id ?? 137].nativeCurrency.address,
     [token.id]
   )

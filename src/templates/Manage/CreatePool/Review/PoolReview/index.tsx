@@ -42,7 +42,7 @@ const PoolReview = () => {
   }
 
   const { data } = useCoingecko(
-    networks[poolData.networkId ?? 137].coingecko,
+    poolData.networkId ?? 137,
     networks[poolData.networkId ?? 137].nativeCurrency.address,
     addressesList
   )

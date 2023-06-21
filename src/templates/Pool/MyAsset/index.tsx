@@ -63,7 +63,7 @@ const MyAsset = ({
   const ERC20 = useERC20(poolToken, networks[chainInfo.chainId].rpc)
   const { trackEventFunction } = useMatomoEcommerce()
   const { priceToken } = useCoingecko(
-    chainInfo.coingecko,
+    chainInfo.chainId,
     chainInfo.nativeCurrency.address,
     [KacyPoligon]
   )

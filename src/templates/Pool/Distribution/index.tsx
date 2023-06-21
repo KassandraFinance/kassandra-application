@@ -9,7 +9,7 @@ import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import useYieldYakEthers from '../../../hooks/useYieldYakEthers'
 import useCoingecko from '../../../hooks/useCoingecko'
 
-import { platform, YIELDYAK_API } from '../../../constants/tokenAddresses'
+import { YIELDYAK_API } from '../../../constants/tokenAddresses'
 
 import none from '../../../../public/assets/icons/coming-soon.svg'
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
@@ -41,7 +41,7 @@ const Distribution = () => {
   })
 
   const { data: coinGecko } = useCoingecko(
-    platform[pool.chain.id],
+    pool.chain.id,
     pool.chain.addressWrapped,
     tokenAddresses
   )
@@ -175,19 +175,20 @@ const Distribution = () => {
                     <S.Coin
                       negative={
                         (coinGecko?.[coin.token.id.toLowerCase()]
-                          ?.usd_24h_change || 0) < 0
+                          ?.pricePercentageChangeIn24h || 0) < 0
                       }
                       change24h={true}
                     >
-                      {coinGecko?.[coin.token.id.toLowerCase()]?.usd_24h_change
+                      {coinGecko?.[coin.token.id.toLowerCase()]
+                        ?.pricePercentageChangeIn24h
                         ? `${
                             coinGecko?.[coin.token.id.toLowerCase()]
-                              ?.usd_24h_change < 0
+                              ?.pricePercentageChangeIn24h < 0
                               ? ''
                               : '+'
                           }${coinGecko?.[
                             coin.token.id.toLowerCase()
-                          ]?.usd_24h_change.toFixed(2)}%`
+                          ]?.pricePercentageChangeIn24h.toFixed(2)}%`
                         : '-'}
                     </S.Coin>
                   </S.Td>
@@ -252,20 +253,20 @@ const Distribution = () => {
                   <S.Coin
                     negative={
                       (coinGecko?.[coin.token.wraps.id.toLowerCase()]
-                        ?.usd_24h_change || 0) < 0
+                        ?.pricePercentageChangeIn24h || 0) < 0
                     }
                     change24h={true}
                   >
                     {coinGecko?.[coin.token.wraps.id.toLowerCase()]
-                      ?.usd_24h_change
+                      ?.pricePercentageChangeIn24h
                       ? `${
                           coinGecko?.[coin.token.wraps.id.toLowerCase()]
-                            ?.usd_24h_change < 0
+                            ?.pricePercentageChangeIn24h < 0
                             ? ''
                             : '+'
                         }${coinGecko?.[
                           coin.token.wraps.id.toLowerCase()
-                        ]?.usd_24h_change.toFixed(2)}%`
+                        ]?.pricePercentageChangeIn24h.toFixed(2)}%`
                       : '-'}
                   </S.Coin>
                 </S.Td>

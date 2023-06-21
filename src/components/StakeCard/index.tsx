@@ -151,7 +151,7 @@ const StakeCard = ({
 
   const staking = useStaking(stakingAddress, networkChain.chainId)
   const { data: price } = useCoingecko(
-    networkChain.coingecko,
+    chain.id,
     networkChain.nativeCurrency.address,
     [WETH_POLYGON, KacyPoligon]
   )
