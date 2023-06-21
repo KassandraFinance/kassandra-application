@@ -42,7 +42,7 @@ const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
   >('137')
 
   const { data: coingecko } = useCoingecko(
-    networks[Number(isSelectTab)].coingecko,
+    Number(isSelectTab),
     networks[Number(isSelectTab)].nativeCurrency.address,
     whitelist || []
   )
@@ -108,12 +108,12 @@ const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
                 return (
                   token && (
                     <Link
-                      key={token.id}
-                      href={`https://www.coingecko.com/coins/${token.id}`}
+                      key={token.heimdallId}
+                      href={`https://www.coingecko.com/coins/${token.heimdallId}`}
                       passHref
                     >
                       <S.tokenContent target="_blank">
-                        <img src={token.image} alt="" width={24} height={24} />
+                        <img src={token.logo} alt="" width={24} height={24} />
                         <p>{token.name}</p>
                       </S.tokenContent>
                     </Link>
