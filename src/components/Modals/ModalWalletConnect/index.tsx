@@ -1,12 +1,12 @@
 import React from 'react'
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
 import detectEthereumProvider from '@metamask/detect-provider'
 
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import { useAppDispatch, useAppSelector } from '../../../store/hooks'
-import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
+// import { useAppDispatch, useAppSelector } from '../../../store/hooks'
+// import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 
 import useConnect from '../../../hooks/useConnect'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
@@ -23,8 +23,8 @@ const ModalWalletConnect = () => {
   const [loading, setLoading] = React.useState(false)
   const [provider, setProvider] = React.useState('')
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const dispatch = useAppDispatch()
+  // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  // const dispatch = useAppDispatch()
 
   const {
     connect,
@@ -35,21 +35,21 @@ const ModalWalletConnect = () => {
   } = useConnect()
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const router = useRouter()
+  // const router = useRouter()
 
   function handleCloseModal() {
-    const pahtName = router.pathname
-    const asPathId = router.asPath.slice(8)
+    // const pahtName = router.pathname
+    // const asPathId = router.asPath.slice(8)
 
-    if (pahtName === '/profile') {
-      router.push(`/profile/${userWalletAddress}${asPathId}`)
-    }
+    // if (pahtName === '/profile') {
+    //   router.push(`/profile/${userWalletAddress}${asPathId}`)
+    // }
 
     if (metaMaskError) {
       cleanError()
     }
 
-    dispatch(setModalWalletActive(false))
+    // dispatch(setModalWalletActive(false))
   }
 
   function handleConnect() {

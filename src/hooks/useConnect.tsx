@@ -3,13 +3,13 @@ import React from 'react'
 import detectEthereumProvider from '@metamask/detect-provider'
 import WalletConnect from '@walletconnect/client'
 import QRCodeModal from '@walletconnect/qrcode-modal'
-import { toChecksumAddress } from 'web3-utils'
+// import { toChecksumAddress } from 'web3-utils'
 
 import { subscribeToEvents } from '../utils/walletConnect'
 
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { setChainId } from '../store/reducers/chainId'
-import { setUserWalletAddress } from '../store/reducers/userWalletAddress'
+// import { setUserWalletAddress } from '../store/reducers/userWalletAddress'
 
 import web3, { provider } from '../utils/web3'
 
@@ -30,18 +30,18 @@ const useConnect = () => {
   const [metamaskInstalled, setMetamaskInstalled] = React.useState(false)
 
   const dispatch = useAppDispatch()
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const handleAccountsChanged = React.useCallback(accounts => {
-    try {
-      if (accounts.length === 0 || accounts[0] === undefined) {
-        dispatch(setUserWalletAddress(''))
-      } else if (accounts[0] !== userWalletAddress) {
-        dispatch(setUserWalletAddress(toChecksumAddress(accounts[0])))
-      }
-    } catch (error: any) {
-      console.log(error)
-    }
+    // try {
+    //   if (accounts.length === 0 || accounts[0] === undefined) {
+    //     dispatch(setUserWalletAddress(''))
+    //   } else if (accounts[0] !== userWalletAddress) {
+    //     dispatch(setUserWalletAddress(toChecksumAddress(accounts[0])))
+    //   }
+    // } catch (error: any) {
+    //   console.log(error)
+    // }
   }, [])
 
   const handleChainChanged = React.useCallback(chainId => {
@@ -60,7 +60,7 @@ const useConnect = () => {
 
   const handleDisconnected = React.useCallback(() => {
     if (connector) {
-      dispatch(setUserWalletAddress(''))
+      // dispatch(setUserWalletAddress(''))
       connector.killSession()
       localStorage.removeItem('walletconnect')
     }

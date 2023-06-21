@@ -3,7 +3,6 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import storage from 'redux-persist/lib/storage'
 import { persistReducer, persistStore } from 'redux-persist'
 
-import userWalletAddressReducer from './reducers/userWalletAddress'
 import chainIdReducer from './reducers/chainId'
 import feesReducer from './reducers/fees'
 import chartSelectedReducer from './reducers/chartSelected'
@@ -30,7 +29,6 @@ const persistConfig = {
 }
 
 export const rootReducer = combineReducers({
-  userWalletAddress: userWalletAddressReducer,
   chainId: chainIdReducer,
   fees: feesReducer,
   chartSelected: chartSelectedReducer,
