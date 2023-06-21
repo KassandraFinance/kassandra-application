@@ -11,7 +11,8 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
-import { getBalanceToken } from '../../../../../utils/poolUtils'
+import { getBalanceToken, getPoolPrice } from '../../../../../utils/poolUtils'
+import PoolOperationContext from '../PoolOperationContext'
 
 import { useAppSelector } from '../../../../../store/hooks'
 
@@ -34,6 +35,7 @@ const TokenAssetOut = ({
 }: ITokenAssetOutProps) => {
   const [{ wallet }] = useConnectWallet()
   const { pool } = useAppSelector(state => state)
+  const { priceToken } = React.useContext(PoolOperationContext)
 
   const chainId = Number(wallet?.chains[0].id ?? '0x89')
 
@@ -107,7 +109,13 @@ const TokenAssetOut = ({
               'USD: ' +
                 BNtoDecimal(
                   Big(amountTokenOut.toString())
-                    .mul(data?.pool?.price_usd || 0)
+                    .mul(
+                      getPoolPrice({
+                        assets: pool.underlying_assets,
+                        priceToken,
+                        poolSupply: pool.supply
+                      })
+                    )
                     .div(Big(10).pow(data?.pool?.decimals)),
                   18,
                   2,

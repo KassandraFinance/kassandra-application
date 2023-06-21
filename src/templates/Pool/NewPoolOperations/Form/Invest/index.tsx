@@ -25,8 +25,9 @@ import {
   checkTokenWithHigherLiquidityPool,
   getBalanceToken,
   getTokenWrapped,
-  decimalToBN
-} from '../../../../../utils/poolUtils'
+  decimalToBN,
+  getPoolPrice
+} from '@/utils/poolUtils'
 
 import { ToastWarning } from '../../../../../components/Toastify/toast'
 import Button from '../../../../../components/Button'
@@ -67,6 +68,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const [maxActive, setMaxActive] = React.useState<boolean>(false)
   const [amountTokenIn, setAmountTokenIn] = React.useState<Big | string>(Big(0))
   const [amountTokenOut, setAmountTokenOut] = React.useState<Big>(Big(0))
+  const [amountTokenOutWithoutFees, setAmountTokenOuttWithoutFees] =
+    React.useState<Big>(Big(0))
   const [amountApproved, setAmountApproved] = React.useState(Big(0))
   const [priceImpact, setPriceImpact] = React.useState<Big>(Big(0))
   const [trasactionData, setTrasactionData] = React.useState<any>()
@@ -333,6 +336,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     setSelectedTokenInBalance(amountToken)
     setOutAssetBalance(amountPool)
     setAmountTokenOut(Big(0))
+    setAmountTokenOuttWithoutFees(Big(0))
     setAmountTokenIn(Big(0))
     if (inputAmountTokenRef && inputAmountTokenRef.current !== null) {
       inputAmountTokenRef.current.value = ''
@@ -467,6 +471,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     ) {
       updateAllowance()
       setAmountTokenOut(Big(0))
+      setAmountTokenOuttWithoutFees(Big(0))
       setErrorMsg('')
       return
     }
@@ -481,6 +486,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
     if (chainId !== pool.chain_id) {
       setAmountTokenOut(Big(0))
+      setAmountTokenOuttWithoutFees(Big(0))
       return
     }
 
@@ -520,17 +526,27 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
         const tokenSelected = await handleTokenSelected()
 
-        const { investAmountOut, transactionError } =
-          await operation.calcInvestAmountOut({
-            tokenSelected,
-            tokenInAddress: tokenSelect.address,
-            userWalletAddress: wallet.accounts[0].address,
-            minAmountOut: BigInt(0),
-            selectedTokenInBalance,
-            amountTokenIn: Big(amountTokenIn)
-          })
+        const {
+          investAmountOut,
+          investAmountOutWithoutFees,
+          transactionError
+        } = await operation.calcInvestAmountOut({
+          tokenSelected,
+          tokenInAddress: tokenSelect.address,
+          userWalletAddress: wallet.accounts[0].address,
+          minAmountOut: BigInt(0),
+          selectedTokenInBalance,
+          amountTokenIn: Big(amountTokenIn)
+        })
 
         setAmountTokenOut(Big(investAmountOut.toString()))
+        setAmountTokenOuttWithoutFees(
+          Big(
+            investAmountOutWithoutFees
+              ? investAmountOutWithoutFees.toString()
+              : investAmountOut.toString()
+          )
+        )
         if (transactionError) {
           setErrorMsg(transactionError)
         }
@@ -576,6 +592,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     calc()
     setErrorMsg('')
     setAmountTokenOut(Big(0))
+    setAmountTokenOuttWithoutFees(Big(0))
   }, [pool, tokenSelect, amountTokenIn])
 
   React.useEffect(() => {
@@ -586,11 +603,17 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
     if (Big(amountTokenIn).gt(0) && parseFloat(amountTokenOut.toString()) > 0) {
       const usdAmountIn = Big(amountTokenIn)
-        .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
+        .mul(Big(priceToken(tokenSelect.address.toLowerCase()) || 0))
         .div(Big(10).pow(tokenSelect.decimals || 18))
 
-      const usdAmountOut = Big(amountTokenOut)
-        .mul(Big(data?.pool?.price_usd || 0))
+      const poolPrice = getPoolPrice({
+        assets: pool.underlying_assets,
+        poolSupply: pool.supply,
+        priceToken
+      })
+
+      const usdAmountOut = Big(amountTokenOutWithoutFees)
+        .mul(Big(poolPrice))
         .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
 
       const subValue = usdAmountIn.sub(usdAmountOut)
@@ -604,7 +627,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     } else {
       setPriceImpact(Big(0))
     }
-  }, [tokenSelect, amountTokenOut])
+  }, [tokenSelect, amountTokenOutWithoutFees])
 
   React.useEffect(() => {
     if (tokenSelect.address !== NATIVE_ADDRESS || Big(amountTokenIn).lte(0))
@@ -734,7 +757,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
                       '$' +
                       BNtoDecimal(
                         Big(amountTokenIn.toString())
-                          .mul(Big(priceToken(tokenSelect.address) || 0))
+                          .mul(
+                            Big(
+                              priceToken(tokenSelect.address.toLowerCase()) || 0
+                            )
+                          )
                           .div(Big(10).pow(Number(tokenSelect.decimals))),
                         18,
                         2,

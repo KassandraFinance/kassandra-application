@@ -50,6 +50,7 @@ export type CalcAmountOutParams = {
 
 export type CalcAmountOutParamsResult = {
   investAmountOut: bigint
+  investAmountOutWithoutFees?: string
   transactionError: string | undefined
 }
 

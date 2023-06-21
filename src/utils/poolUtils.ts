@@ -118,3 +118,34 @@ export const decimalToBN = (value: string, decimals?: number) => {
 
   return paddedRight
 }
+
+interface PoolPriceParams {
+  priceToken: (address: string) => number | undefined
+  poolSupply: string
+  assets: {
+    balance: string
+    token: {
+      id: string
+      wraps?: {
+        id: string
+      }
+    }
+  }[]
+}
+
+export const getPoolPrice = ({
+  assets,
+  poolSupply,
+  priceToken
+}: PoolPriceParams): string => {
+  const totalUSDinPool = assets.reduce((totalUSD, asset) => {
+    const tokenAddress = asset.token.wraps?.id ?? asset.token.id
+    const _priceToken = priceToken(tokenAddress.toLowerCase())
+    if (_priceToken) {
+      return totalUSD.add(Big(asset.balance).mul(_priceToken))
+    }
+    return totalUSD
+  }, Big(0))
+
+  return totalUSDinPool.div(poolSupply).toFixed()
+}

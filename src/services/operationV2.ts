@@ -176,7 +176,8 @@ export default class operationV2 implements IOperations {
 
       return {
         investAmountOut,
-        transactionError
+        transactionError,
+        investAmountOutWithoutFees
       }
     }
   }

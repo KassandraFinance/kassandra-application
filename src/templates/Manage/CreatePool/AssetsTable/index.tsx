@@ -123,20 +123,23 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                       coinName={coin.name}
                       coinSymbol={coin.symbol}
                       price={
-                        priceList ? priceList[coin.id.toLowerCase()].usd : 0
+                        priceList ? priceList[coin.id.toLowerCase()]?.usd : 0
                       }
                       url={`https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`}
                       table
                     />
                   </S.Td>
                   <S.Td className="price">
-                    ${priceList ? priceList[coin.id.toLowerCase()].usd : 0}
+                    ${priceList ? priceList[coin.id.toLowerCase()]?.usd : 0}
                   </S.Td>
                   <S.Td className="marketCap">
                     $
                     {priceList
                       ? BNtoDecimal(
-                          Big(priceList[coin.id.toLowerCase()].usd_market_cap),
+                          Big(
+                            priceList[coin.id.toLowerCase()]?.usd_market_cap ??
+                              0
+                          ),
                           2
                         )
                       : 0}
@@ -156,7 +159,9 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                         ? abbreviateNumber(
                             Big(tokenBalance[coin.id.toLowerCase()].toString())
                               .div(Big(10).pow(coin.decimals))
-                              .mul(Big(priceList[coin.id.toLowerCase()].usd))
+                              .mul(
+                                Big(priceList[coin.id.toLowerCase()]?.usd ?? 0)
+                              )
                               .toString()
                           )
                         : 0}
