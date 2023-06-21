@@ -169,7 +169,9 @@ const TokenSelection = () => {
     if (!wallet) return
 
     try {
-      const addresses = tokenListSwapProvider.map(token => token.address)
+      const addresses = tokenListSwapProvider.map(token =>
+        token.address.toLowerCase()
+      )
       const balanceList = await balances(wallet.accounts[0].address, addresses)
 
       const balanceListFormatted: IListbalanceTokenprops = {}
