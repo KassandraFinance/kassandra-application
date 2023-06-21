@@ -4,11 +4,7 @@ import useSWR from 'swr'
 import usePoolAssets from '@/hooks/usePoolAssets'
 
 import CoinCard from '@/templates/PoolManager/Analytics/CoinCard'
-import {
-  COINS_METADATA,
-  mockTokens,
-  networks
-} from '@/constants/tokenAddresses'
+import { mockTokens } from '@/constants/tokenAddresses'
 import Loading from '@/components/Loading'
 
 import * as S from './styles'
@@ -19,17 +15,20 @@ interface IPoolAssetsProps {
 }
 
 type Result = {
-  id: string
-  contractAddress: string
-  contractName: string
-  name: string
-  symbol: string
-  price: string
-  image: string
-  priceChangePercentage7d: number
-  volume: number
-  marketCap: number
-  sparkline: string[]
+  tokens: {
+    [id: string]: {
+      heimdallId: string
+      name: string
+      symbol: string
+      logo: string
+      usd: number
+      marketCap: number
+      volume: number
+      pricePercentageChangeIn24h: number
+      pricePercentageChangeIn7d: number
+      sparklineFrom7d: number[]
+    }
+  }
 }
 
 const PoolAssets = (props: IPoolAssetsProps) => {
@@ -47,62 +46,36 @@ const PoolAssets = (props: IPoolAssetsProps) => {
   }
 
   const url = addresses
-    ? `${COINS_METADATA}/coins/contracts?name=` +
-      networks[props.chainId].coingecko +
-      '&addressesSeparatedByComma=' +
-      addresses
+    ? `/api/tokens?chainId=${137}&addressesSeparatedByComma=${addresses}`
     : null
 
-  const url2 = poolAssets?.some(
-    asset =>
-      asset.token.id.toLowerCase() ===
-      '0x366e293a5cf90a0458d9ff9f3f92234da598f62e'
-  )
-    ? `${COINS_METADATA}/coins/contracts?name=` +
-      networks[43114].coingecko +
-      '&addressesSeparatedByComma=' +
-      '0xf32398dae246c5f672b52a54e9b413dffcae1a44'
-    : null
-
-  const { data } = useSWR<Result[]>(url, {
+  const { data } = useSWR<Result>(url, {
     refreshInterval: 60 * 5 * 1000
   })
 
-  const { data: kacyData } = useSWR<Result[]>(url2, {
-    refreshInterval: 60 * 5 * 1000
-  })
+  Object.entries(data?.tokens ?? {}).map(console.log)
 
   return (
     <S.PoolAssets>
       {data ? (
         <S.CoinCardContainer>
-          {data?.map(token => (
+          {Object.values(data.tokens).map(token => (
             <CoinCard
-              key={token.id}
-              image={token.image ?? ''}
+              key={token.heimdallId}
+              image={token.logo ?? ''}
               name={token.name}
               symbol={token.symbol}
-              sparkLine={token.sparkline?.map(line => ({ close: line }))}
-              priceChangeIn7d={token.priceChangePercentage7d?.toFixed(4)}
-              marketCap={token.marketCap}
-              price={token.price}
+              sparkLine={token.sparklineFrom7d?.map(line => ({
+                close: line.toString()
+              }))}
+              priceChangeIn7d={Number(token.pricePercentageChangeIn7d)?.toFixed(
+                4
+              )}
+              marketCap={Number(token.marketCap)}
+              price={token.usd}
               period={{ time: 7, frame: 'days', abvFrame: 'D' }}
             />
           ))}
-          {kacyData &&
-            kacyData?.map(token => (
-              <CoinCard
-                key={token.id}
-                image={token.image ?? ''}
-                name={token.name}
-                symbol={token.symbol}
-                sparkLine={token.sparkline?.map(line => ({ close: line }))}
-                priceChangeIn7d={token.priceChangePercentage7d?.toFixed(4)}
-                marketCap={token.marketCap}
-                price={token.price}
-                period={{ time: 7, frame: 'days', abvFrame: 'D' }}
-              />
-            ))}
         </S.CoinCardContainer>
       ) : (
         <Loading marginTop={0} />

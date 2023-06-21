@@ -23,7 +23,7 @@ import * as S from './styles'
 export type CoinGeckoResponseType = {
   [key: string]: {
     usd: number
-    usd_24h_change: number
+    pricePercentageChangeIn24h: number
   }
 }
 
@@ -127,7 +127,7 @@ const AddLiquidity = () => {
   }
 
   const { data } = useCoingecko(
-    networks[networkId ?? 137].coingecko,
+    networkId ?? 137,
     networks[networkId ?? 137].nativeCurrency.address,
     addressesList
   )

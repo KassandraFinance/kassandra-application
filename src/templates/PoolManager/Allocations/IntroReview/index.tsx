@@ -41,8 +41,8 @@ export type IRebalanceWeightsProps = {
 type CoinsMetadataType = {
   [key: string]: {
     usd: number
-    usd_24h_change: number
-    usd_market_cap: number
+    pricePercentageChangeIn24h: number
+    marketCap: number
   }
 }
 export interface IlistTokenWeightsProps {
@@ -130,12 +130,19 @@ const IntroReview = ({
                   ${(coingeckoTokenInfo?.usd ?? 0).toFixed(2)}
                 </S.ValueHoldingAndPrice>
                 <S.ChangeDayValue
-                  changePrice={coingeckoTokenInfo?.usd_24h_change ?? 0}
+                  changePrice={
+                    coingeckoTokenInfo?.pricePercentageChangeIn24h ?? 0
+                  }
                 >
-                  <p>{(coingeckoTokenInfo?.usd_24h_change ?? 0).toFixed(2)}%</p>
+                  <p>
+                    {(
+                      coingeckoTokenInfo?.pricePercentageChangeIn24h ?? 0
+                    ).toFixed(2)}
+                    %
+                  </p>
                   <img
                     src={
-                      (coingeckoTokenInfo?.usd_24h_change ?? 0) >= 0
+                      (coingeckoTokenInfo?.pricePercentageChangeIn24h ?? 0) >= 0
                         ? priceUp.src
                         : priceDown.src
                     }

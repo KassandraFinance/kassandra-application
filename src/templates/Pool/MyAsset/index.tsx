@@ -68,7 +68,7 @@ const MyAsset = ({
   )
   const { trackEventFunction } = useMatomoEcommerce()
   const { priceToken } = useCoingecko(
-    chainInfo.coingecko,
+    chainInfo.chainId,
     chainInfo.nativeCurrency.address,
     [KacyPoligon]
   )

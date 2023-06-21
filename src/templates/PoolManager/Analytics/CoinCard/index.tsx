@@ -21,7 +21,7 @@ interface ICoinCardProps {
   sparkLine: sparkData[]
   priceChangeIn7d: string
   marketCap: number
-  price: string
+  price: number
   dataList?: string[]
   period?: {
     time: number
