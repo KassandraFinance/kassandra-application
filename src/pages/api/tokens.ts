@@ -54,7 +54,7 @@ async function getInfoTokens(coingeckoIds: string[], page: number) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `BearerInternal ${process.env.HEIMDALL_KEY}`
+      Authorization: `BearerInternal ${process.env.HEIMDALL_API_KEY}`
     },
     body: JSON.stringify({
       query: `
