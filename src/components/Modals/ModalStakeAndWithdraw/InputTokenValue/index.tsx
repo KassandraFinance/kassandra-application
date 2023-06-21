@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React from 'react'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
@@ -6,9 +5,10 @@ import Big from 'big.js'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import { usePoolTokens } from '../../../context/PoolTokensContext'
-import { BNtoDecimal } from '../../../utils/numerals'
-import { priceDollar } from '../../../utils/priceDollar'
+import { usePoolTokens } from '@/context/PoolTokensContext'
+import { BNtoDecimal } from '@/utils/numerals'
+import { priceDollar } from '@/utils/priceDollar'
+
 import { Input } from './styles'
 
 interface IInputProps {

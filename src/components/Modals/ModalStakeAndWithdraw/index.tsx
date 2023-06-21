@@ -16,7 +16,7 @@ import { ERC20 } from '@/hooks/useERC20'
 
 import Button from '@/components/Button'
 import Overlay from '@/components/Overlay'
-import InputTokenValue from '@/components/PoolOperations/InputTokenValue'
+import InputTokenValue from './InputTokenValue'
 import ModalBuyKacyOnPangolin from '../ModalBuyKacyOnPangolin'
 
 import * as S from './styles'
