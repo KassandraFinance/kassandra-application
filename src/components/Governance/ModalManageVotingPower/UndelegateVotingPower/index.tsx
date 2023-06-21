@@ -8,7 +8,7 @@ import { Staking } from '@/constants/tokenAddresses'
 import substr from '@/utils/substr'
 import { BNtoDecimal } from '@/utils/numerals'
 
-import useStakingContract from '@/hooks/useStakingContract'
+import useStakingContract from '@/hooks/useStaking'
 import useVotingPower from '@/hooks/useVotings'
 
 import ExternalLink from '@/components/ExternalLink'
@@ -75,10 +75,6 @@ const UndelegateVotingPower = ({
         wallet.accounts[0].address
       )
     ])
-
-    userInfoOne.pid = process.env.NEXT_PUBLIC_MASTER === '1' ? 2 : 0
-    userInfoTwo.pid = process.env.NEXT_PUBLIC_MASTER === '1' ? 3 : 1
-    userInfoThree.pid = process.env.NEXT_PUBLIC_MASTER === '1' ? 4 : 2
 
     const poolInfoArr = [poolInfoOne, poolInfoTwo, poolInfoThree]
 
