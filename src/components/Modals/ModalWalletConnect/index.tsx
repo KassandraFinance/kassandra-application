@@ -8,11 +8,11 @@ import 'tippy.js/dist/tippy.css'
 // import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 // import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 
-import useConnect from '../../../hooks/useConnect'
+// import useConnect from '../../../hooks/useConnect'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
-import WalletConnecting from './WalletConnecting'
-import ModalConnectError from './ModalConnectError'
+// import WalletConnecting from './WalletConnecting'
+// import ModalConnectError from './ModalConnectError'
 import Overlay from '../../Overlay'
 import Modal from '../Modal'
 
@@ -21,18 +21,18 @@ import * as S from './styles'
 const ModalWalletConnect = () => {
   const [hasEthereumProvider, setHasEthereumProvider] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
-  const [provider, setProvider] = React.useState('')
+  // const [provider, setProvider] = React.useState('')
 
   // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   // const dispatch = useAppDispatch()
 
-  const {
-    connect,
-    connectToWalletConnect,
-    isConnected,
-    metaMaskError,
-    cleanError
-  } = useConnect()
+  // const {
+  //   connect,
+  //   connectToWalletConnect,
+  //   isConnected,
+  //   metaMaskError,
+  //   cleanError
+  // } = useConnect()
   const { trackEventFunction } = useMatomoEcommerce()
 
   // const router = useRouter()
@@ -40,22 +40,19 @@ const ModalWalletConnect = () => {
   function handleCloseModal() {
     // const pahtName = router.pathname
     // const asPathId = router.asPath.slice(8)
-
     // if (pahtName === '/profile') {
     //   router.push(`/profile/${userWalletAddress}${asPathId}`)
     // }
-
-    if (metaMaskError) {
-      cleanError()
-    }
-
+    // if (metaMaskError) {
+    //   cleanError()
+    // }
     // dispatch(setModalWalletActive(false))
   }
 
-  function handleConnect() {
-    setLoading(true)
-    connect()
-  }
+  // function handleConnect() {
+  //   setLoading(true)
+  //   connect()
+  // }
 
   React.useEffect(() => {
     const checkEthereumProvider = async () => {
@@ -109,9 +106,9 @@ const ModalWalletConnect = () => {
                       'metamask',
                       'header-modal-connect'
                     )
-                    setProvider('metamask')
+                    // setProvider('metamask')
                     setLoading(true)
-                    connect()
+                    // connect()
                   }
                 }}
               >
@@ -130,9 +127,9 @@ const ModalWalletConnect = () => {
                   'wallet-connect',
                   'header-modal-connect'
                 )
-                setProvider('walletConnect')
+                // setProvider('walletConnect')
                 setLoading(true)
-                connectToWalletConnect()
+                // connectToWalletConnect()
               }}
             >
               <S.WrapperIcons>
@@ -143,7 +140,7 @@ const ModalWalletConnect = () => {
           </S.Content>
         ) : (
           <S.Content>
-            {!metaMaskError ? (
+            {/* {!metaMaskError ? (
               <WalletConnecting
                 provider={provider}
                 isConnected={isConnected}
@@ -157,7 +154,7 @@ const ModalWalletConnect = () => {
                 handleConnect={handleConnect}
                 cleanError={cleanError}
               />
-            )}
+            )} */}
           </S.Content>
         )}
       </Modal>
