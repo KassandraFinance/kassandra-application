@@ -13,7 +13,6 @@ import {
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
-import { setModalWalletActive } from '../../../../../store/reducers/modalWalletActive'
 
 import { ERC20 } from '../../../../../hooks/useERC20'
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
@@ -94,7 +93,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     Big(-1)
   )
 
-  const [{ wallet }] = useConnectWallet()
+  const [{ wallet, connecting }, connect] = useConnectWallet()
   const { pool, tokenSelect } = useAppSelector(state => state)
   const [{ connectedChain }, setChain] = useSetChain()
   const { txNotification, transactionErrors } = useTransaction()
@@ -706,7 +705,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           backgroundPrimary
           fullWidth
           type="button"
-          onClick={() => dispatch(setModalWalletActive(true))}
+          disabled={connecting}
+          onClick={() => connect()}
           text="Connect Wallet"
         />
       ) : chainId === pool.chain_id ? (

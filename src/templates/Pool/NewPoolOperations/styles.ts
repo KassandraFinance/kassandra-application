@@ -7,7 +7,7 @@ export const NewPoolOperations = styled.div`
 
   @media (max-width: 960px) {
     position: auto;
-    z-index: 1041;
+    z-index: 10;
   }
 `
 

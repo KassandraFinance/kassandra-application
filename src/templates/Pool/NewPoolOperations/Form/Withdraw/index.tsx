@@ -13,7 +13,6 @@ import {
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
-import { setModalWalletActive } from '../../../../../store/reducers/modalWalletActive'
 
 import { ERC20 } from '../../../../../hooks/useERC20'
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
@@ -100,7 +99,7 @@ const Withdraw = ({
 
   const dispatch = useAppDispatch()
   const { pool, tokenSelect } = useAppSelector(state => state)
-  const [{ wallet }] = useConnectWallet()
+  const [{ wallet, connecting }, connect] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
   const { txNotification, transactionErrors } = useTransaction()
   const { balances } = useBatchRequests(pool.chain_id)
@@ -600,7 +599,8 @@ const Withdraw = ({
           backgroundPrimary
           fullWidth
           type="button"
-          onClick={() => dispatch(setModalWalletActive(true))}
+          disabled={connecting}
+          onClick={() => connect()}
           text="Connect Wallet"
         />
       ) : chainId === pool.chain_id ? (

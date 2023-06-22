@@ -8,10 +8,8 @@ import { useConnectWallet } from '@web3-onboard/react'
 
 import { networks, KacyPoligon } from '../../../constants/tokenAddresses'
 
-import { useAppDispatch } from '../../../store/hooks'
 import { useAppSelector } from '../../../store/hooks'
 import { ChainInfo } from '../../../store/reducers/pool'
-import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
 import useCoingecko from '@/hooks/useCoingecko'
 
 import useERC20 from '../../../hooks/useERC20'
@@ -55,7 +53,7 @@ const MyAsset = ({
 
   const chainInfo = networks[chain.id]
 
-  const [{ wallet }] = useConnectWallet()
+  const [{ wallet, connecting }, connect] = useConnectWallet()
   const stakingContract = useStaking(
     chainInfo.stakingContract ?? '',
     chainInfo.chainId
@@ -68,7 +66,6 @@ const MyAsset = ({
     [KacyPoligon]
   )
   const { pool } = useAppSelector(state => state)
-  const dispatch = useAppDispatch()
   const router = useRouter()
 
   const kacyPrice = priceToken(KacyPoligon.toLowerCase())
@@ -283,7 +280,8 @@ const MyAsset = ({
             text="Connect Wallet"
             fullWidth
             size="huge"
-            onClick={() => dispatch(setModalWalletActive(true))}
+            disabled={connecting}
+            onClick={() => connect()}
           />
         </S.ButtonWrapper>
       )}

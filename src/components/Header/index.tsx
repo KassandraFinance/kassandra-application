@@ -7,8 +7,6 @@ import { useAppSelector } from '../../store/hooks'
 
 import Nav from './Nav'
 import ModalAlert from '../Modals/ModalAlert'
-// import ModalLogOut from '../Modals/ModalLogOut'
-import ModalWalletConnect from '../Modals/ModalWalletConnect'
 import ModalInstitucionalLinksMobile from '../Modals/ModalInstitucionalLinksMobile'
 import ModalChooseNetwork from '../Modals/ModalChooseNetwork'
 import HeaderButtons from './HeaderButtons'
@@ -30,7 +28,6 @@ const Header = () => {
   const [showOverlay, setShowOverlay] = React.useState(false)
   const [isChooseNetwork, setIsChooseNetwork] = React.useState(false)
 
-  const modalWalletActive = useAppSelector(state => state.modalWalletActive)
   const isError = useAppSelector(state => state.modalAlertText.errorText)
 
   const router = useRouter()
@@ -103,16 +100,6 @@ const Header = () => {
       {isModalSocialMedia && (
         <ModalInstitucionalLinksMobile setModalOpen={setIsModalSocialMedia} />
       )}
-
-      {modalWalletActive && <ModalWalletConnect />}
-
-      {
-        // <ModalLogOut
-        //   modalOpen={isModalLogout}
-        //   setModalOpen={setIsModalLogout}
-        //   userWalletAddress={userWalletAddress}
-        // />
-      }
 
       {isError && <ModalAlert />}
 

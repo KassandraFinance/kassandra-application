@@ -1,25 +1,30 @@
 import React from 'react'
 import Head from 'next/head'
-import detectEthereumProvider from '@metamask/detect-provider'
+import { getAddress } from 'ethers'
+import { useRouter } from 'next/router'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import Web3Disabled from '../../components/Web3Disabled'
 
 export default function Index() {
-  const [hasEthereumProvider, setHasEthereumProvider] = React.useState(false)
+  const router = useRouter()
+  const [{ wallet }, connect] = useConnectWallet()
+
+  function handleConnect() {
+    connect()
+  }
 
   React.useEffect(() => {
-    const checkEthereumProvider = async () => {
-      const provider = await detectEthereumProvider()
-
-      if (provider) {
-        setHasEthereumProvider(true)
-      } else {
-        setHasEthereumProvider(false)
-      }
+    if (wallet?.provider) {
+      router.push(
+        {
+          pathname: `/profile/${getAddress(wallet.accounts[0].address)}`
+        },
+        undefined,
+        { scroll: false, shallow: false }
+      )
     }
-
-    checkEthereumProvider()
-  }, [])
+  }, [wallet])
 
   return (
     <>
@@ -33,23 +38,12 @@ export default function Index() {
         <meta property="og:url" content="https://kassandra.finance/" />
       </Head>
 
-      <>
-        {!hasEthereumProvider ? (
-          <Web3Disabled
-            textButton="Connect Wallet"
-            textHeader="You need to have a Wallet installed"
-            bodyText="Please install any Wallet to see the user's profile"
-            type="connect"
-          />
-        ) : (
-          <Web3Disabled
-            textHeader="Connect Wallet"
-            textButton="Connect Wallet"
-            type="connect"
-            bodyText="Please connect to see your profile"
-          />
-        )}
-      </>
+      <Web3Disabled
+        textHeader="Connect Wallet"
+        textButton="Connect Wallet"
+        bodyText="Please connect to see your profile"
+        getFunction={handleConnect}
+      />
     </>
   )
 }
