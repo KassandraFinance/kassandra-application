@@ -12,8 +12,6 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { GET_POOL_REBALANCE_TIME, GET_POOL_PRICE } from './graphql'
 
-import changeChain from '@/utils/changeChain'
-
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import usePoolInfo from '@/hooks/usePoolInfo'
 import usePoolAssets from '@/hooks/usePoolAssets'
@@ -117,6 +115,7 @@ const PoolManager = () => {
   const { trackEventFunction } = useMatomoEcommerce()
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }] = useSetChain()
+  const [{ settingChain }, setChain] = useSetChain()
 
   const { poolInfo, isManager } = usePoolInfo(wallet, poolId)
   const { poolAssets } = usePoolAssets(poolId)
@@ -355,13 +354,10 @@ const PoolManager = () => {
                       backgroundSecondary
                       size="large"
                       className="btn-manage-assets"
+                      disabledNoEvent={settingChain}
                       onClick={() =>
-                        changeChain({
-                          chainId: networks[poolInfo.chain_id].chainId,
-                          chainName: networks[poolInfo.chain_id].chainName,
-                          rpcUrls: [networks[poolInfo.chain_id].rpc],
-                          nativeCurrency:
-                            networks[poolInfo.chain_id].nativeCurrency
+                        setChain({
+                          chainId: `0x${poolInfo.chain_id.toString(16)}`
                         })
                       }
                     />
