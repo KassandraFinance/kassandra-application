@@ -72,6 +72,8 @@ export const URL_1INCH = 'https://api.1inch.io/v5.0/'
 export const URL_PARASWAP = 'https://apiv5.paraswap.io'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
+export const COINS_METADATA =
+  process.env.NEXT_PUBLIC_COINS_METADATA ?? 'http://localhost:3001'
 
 type CurrencyDetails = {
   name: string
