@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { AbiItem, toChecksumAddress } from 'web3-utils'
-import Web3 from 'web3'
+import useWhiteList from '@/hooks/useWhiteList'
 
 import { networks, mockTokens } from '@/constants/tokenAddresses'
 import useCoingecko from '@/hooks/useCoingecko'
@@ -11,12 +10,11 @@ import Overlay from '../../Overlay'
 import ModalWithMobile from '../ModalWithMobile'
 import SelectTabs from '@/components/SelectTabs'
 
-import KassandraWhitelistAbi from '../../../constants/abi/KassandraWhitelist.json'
-
 import polygonIcon from '@assets/logos/polygon.svg'
 // import ethIcon from '@assets/logos/eth-logo.svg'
 
 import * as S from './styles'
+import { getAddress } from 'ethers'
 
 const tabs = [
   // {
@@ -41,6 +39,9 @@ const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
     string | string[] | undefined
   >('137')
 
+  const { tokensWhitelist } = useWhiteList(
+    networks[Number(isSelectTab)].chainId
+  )
   const { data: coingecko } = useCoingecko(
     Number(isSelectTab),
     networks[Number(isSelectTab)].nativeCurrency.address,
@@ -60,20 +61,11 @@ const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
 
     const getWhitelist = async () => {
       try {
-        const web3 = new Web3(networks[chainId].rpc)
-        const whitelistContract = new web3.eth.Contract(
-          KassandraWhitelistAbi as unknown as AbiItem,
-          networks[chainId].whiteList
-        )
-        const whitelist = await whitelistContract.methods
-          .getTokens(0, 100)
-          .call()
+        const whitelist = await tokensWhitelist()
 
         if (chainId === 5) {
           setWhitelist(
-            whitelist.map((token: string) =>
-              toChecksumAddress(mockTokens[token])
-            )
+            whitelist.map((token: string) => getAddress(mockTokens[token]))
           )
         } else {
           setWhitelist(whitelist)
