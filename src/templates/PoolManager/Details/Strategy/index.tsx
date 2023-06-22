@@ -6,9 +6,9 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
 import 'react-markdown-editor-lite/lib/index.css'
-import crypto from 'crypto'
+// import crypto from 'crypto'
 import { useConnectWallet } from '@web3-onboard/react'
-import web3 from '@/utils/web3'
+import useSignMessage from '@/hooks/useSignMessage'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 import { GET_STRATEGY, SAVE_POOL } from './graphql'
@@ -38,6 +38,7 @@ const Strategy = () => {
   const [value, setValue] = React.useState('')
   const [isEdit, setIsEdit] = React.useState(true)
 
+  const { signMessage } = useSignMessage()
   const [{ wallet }] = useConnectWallet()
   const dispatch = useAppDispatch()
   const router = useRouter()
@@ -69,14 +70,10 @@ const Strategy = () => {
     if (!wallet) return
 
     try {
-      const nonce = crypto.randomBytes(12).toString('base64')
+      // const nonce = crypto.randomBytes(12).toString('base64')
       const logoToSign = ''
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
-      const signature = await web3.eth.personal.sign(
-        message,
-        wallet.accounts[0].address,
-        nonce
-      )
+      const signature = await signMessage(message)
 
       const body = {
         controller,

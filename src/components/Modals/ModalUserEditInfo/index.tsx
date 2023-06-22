@@ -3,10 +3,10 @@ import Image from 'next/image'
 import 'tippy.js/dist/tippy.css'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import { useConnectWallet } from '@web3-onboard/react'
+import useSignMessage from '@/hooks/useSignMessage'
+import { getAddress } from 'ethers'
 
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
-
-import web3 from '../../../utils/web3'
 
 import { useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
@@ -67,7 +67,7 @@ const ModalUserEditInfo = ({
 
   const dispatch = useAppDispatch()
   const [{ wallet }] = useConnectWallet()
-
+  const { signMessage } = useSignMessage()
   const inputRefModal = React.useRef<HTMLInputElement>(null)
 
   const { trackEventFunction } = useMatomoEcommerce()
@@ -105,15 +105,16 @@ const ModalUserEditInfo = ({
       const response = await fetch('/api/nonce')
       const { nonce } = await response.json()
       const message = JSON.stringify(
-        { ...editYourProfileInput, nonce, address: wallet.accounts[0].address },
+        {
+          ...editYourProfileInput,
+          nonce,
+          address: getAddress(wallet.accounts[0].address)
+        },
         null,
         2
       )
-      const signature = await web3.eth.personal.sign(
-        message,
-        wallet.accounts[0].address,
-        nonce
-      )
+
+      const signature = await signMessage(message)
 
       const responseAuth = await fetch('/api/auth', {
         method: 'POST',
@@ -125,7 +126,7 @@ const ModalUserEditInfo = ({
 
       const { authorized } = await responseAuth.json()
       if (authorized) {
-        await fetch(`/api/profile/${wallet.accounts[0].address}`, {
+        await fetch(`/api/profile/${getAddress(wallet.accounts[0].address)}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
