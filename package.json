@@ -23,9 +23,6 @@
     "@types/react-copy-to-clipboard": "^5.0.1",
     "@types/react-scroll": "^1.8.3",
     "@types/styled-components": "^5.1.11",
-    "@walletconnect/client": "^1.8.0",
-    "@walletconnect/qrcode-modal": "^1.8.0",
-    "@walletconnect/web3-provider": "^1.8.0",
     "@web3-onboard/gnosis": "^2.1.10",
     "@web3-onboard/injected-wallets": "^2.10.0",
     "@web3-onboard/react": "^2.8.6",
@@ -61,10 +58,7 @@
     "styled-components": "^5.3.0",
     "swr": "^1.2.2",
     "typescript": "^4.9.5",
-    "uuid": "^8.3.2",
-    "web3": "^1.8.0",
-    "web3-core": "^1.8.0",
-    "web3-utils": "^1.8.0"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@styled/typescript-styled-plugin": "^0.20.0",
