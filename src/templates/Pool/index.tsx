@@ -18,8 +18,7 @@ import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 import {
   BACKEND_KASSANDRA,
-  NATIVE_ADDRESS,
-  URL_PARASWAP
+  NATIVE_ADDRESS
 } from '../../constants/tokenAddresses'
 
 import { GET_INFO_POOL } from './graphql'

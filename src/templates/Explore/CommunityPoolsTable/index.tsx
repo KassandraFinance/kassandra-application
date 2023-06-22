@@ -312,33 +312,45 @@ const CommunityPoolsTable = ({
                     </S.TD>
                     <S.TD isView={inViewCollum === 5}>
                       <S.Value
-                        value={Number(
-                          calcChange(
-                            Number(pool.now[0]?.close || 0),
-                            Number(pool.month[0]?.close || 0)
-                          )
-                        )}
+                        value={
+                          pool.month[0]?.close
+                            ? Number(
+                                calcChange(
+                                  Number(pool.now[0]?.close || 0),
+                                  Number(pool.month[0]?.close)
+                                )
+                              )
+                            : 0
+                        }
                       >
-                        {calcChange(
-                          Number(pool.now[0]?.close || 0),
-                          Number(pool.month[0]?.close || 0)
-                        )}
+                        {pool.month[0]?.close
+                          ? calcChange(
+                              Number(pool.now[0]?.close || 0),
+                              Number(pool.month[0]?.close)
+                            )
+                          : 0}
                         %
                       </S.Value>
                     </S.TD>
                     <S.TD isView={inViewCollum === 6}>
                       <S.Value
-                        value={Number(
-                          calcChange(
-                            Number(pool.now[0]?.close || 0),
-                            Number(pool.month[0]?.close || 0)
-                          )
-                        )}
+                        value={
+                          pool.day[0]?.close
+                            ? Number(
+                                calcChange(
+                                  Number(pool.now[0]?.close || 0),
+                                  Number(pool.day[0]?.close)
+                                )
+                              )
+                            : 0
+                        }
                       >
-                        {calcChange(
-                          Number(pool.now[0]?.close || 0),
-                          Number(pool.month[0]?.close || 0)
-                        )}
+                        {pool.day[0]?.close
+                          ? calcChange(
+                              Number(pool.now[0]?.close || 0),
+                              Number(pool.day[0]?.close)
+                            )
+                          : 0}
                         %
                       </S.Value>
                     </S.TD>
@@ -353,14 +365,18 @@ const CommunityPoolsTable = ({
                           pool.total_value_locked_usd,
                           pool.weight_goals[0].weights,
                           pool.volumes[0].volume_usd,
-                          calcChange(
-                            Number(pool.now[0].close),
-                            Number(pool.month[0].close)
-                          ),
-                          calcChange(
-                            Number(pool.now[0].close),
-                            Number(pool.month[0].close)
-                          )
+                          pool.month[0].close
+                            ? calcChange(
+                                Number(pool.now[0].close || 0),
+                                Number(pool.month[0].close)
+                              )
+                            : '0',
+                          pool.day[0].close
+                            ? calcChange(
+                                Number(pool.now[0].close || 0),
+                                Number(pool.day[0].close)
+                              )
+                            : '0'
                         )
                       }}
                     >
