@@ -1,13 +1,4 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
-
-import { networks } from '../../constants/tokenAddresses'
-
-import { useAppDispatch } from '../../store/hooks'
-import { setModalWalletActive } from '../../store/reducers/modalWalletActive'
-
-import changeChain from '../../utils/changeChain'
 
 import Button from '../Button'
 
@@ -17,35 +8,15 @@ interface IWeb3DisabledProps {
   textButton?: string
   textHeader: string
   bodyText: string
-  type: string
+  getFunction?: () => void
 }
 
 const Web3Disabled = ({
   textButton,
   textHeader,
   bodyText,
-  type
+  getFunction
 }: IWeb3DisabledProps) => {
-  const dispatch = useAppDispatch()
-  function getFunction(type: string) {
-    const { chainId, chainName, rpc, nativeCurrency } = networks[43114]
-    switch (type) {
-      case 'connect':
-        dispatch(setModalWalletActive(true))
-        break
-      case 'changeChain':
-        changeChain({
-          chainId,
-          chainName,
-          rpcUrls: [rpc],
-          nativeCurrency
-        })
-        break
-      default:
-        break
-    }
-  }
-
   return (
     <>
       <S.Web3Disabled>
@@ -61,7 +32,7 @@ const Web3Disabled = ({
                 backgroundBlack
                 size="huge"
                 text={textButton}
-                onClick={() => getFunction(type)}
+                onClick={() => getFunction && getFunction()}
               />
             )}
           </S.Body>

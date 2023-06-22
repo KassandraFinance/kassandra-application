@@ -4,13 +4,14 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import { linkSnowtrace } from '../../../constants/tokenAddresses'
 
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import substr from '../../../utils/substr'
-import { useAppSelector } from '../../../store/hooks'
 
 import tooltip from '../../../../public/assets/utilities/tooltip.svg'
 
@@ -67,11 +68,12 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
     nft: undefined
   })
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
+  const [{ wallet }] = useConnectWallet()
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const isConnectWallet = userWalletAddress === userWalletUrl
+  const isConnectWallet = wallet
+    ? getAddress(wallet.accounts[0].address) === userWalletUrl
+    : false
 
   const walletUserString = Array.isArray(userWalletUrl)
     ? userWalletUrl[0]

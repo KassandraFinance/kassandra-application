@@ -1,58 +1,43 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
 import ReactMarkdown from 'react-markdown'
-
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
 import {
   GovernorAlpha,
-  networks,
   Staking,
   SUBGRAPH_URL
-} from '../../../../constants/tokenAddresses'
-
-import waitTransaction, {
-  MetamaskError,
-  TransactionCallback
-} from '../../../../utils/txWait'
-import { BNtoDecimal } from '../../../../utils/numerals'
-
-import useConnect from '../../../../hooks/useConnect'
-import useGovernance from '../../../../hooks/useGovernance'
-import useVotingPower from '../../../../hooks/useVotingPower'
-
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import { setModalAlertText } from '../../../../store/reducers/modalAlertText'
-
+} from '@/constants/tokenAddresses'
 import { GET_PROPOSAL } from './graphql'
 
-import ModalVotes from '../../../../components/Governance/ModalVotes'
-import TitleSection from '../../../../components/TitleSection'
-import VoteCard from '../../../../components/Governance/VoteCard'
-import VotingPower from '../../../../components/VotingPower'
-import Breadcrumb from '../../../../components/Breadcrumb'
-import BreadcrumbItem from '../../../../components/Breadcrumb/BreadcrumbItem'
-import Web3Disabled from '../../../../components/Web3Disabled'
-import ImageProfile from '../../../../components/Governance/ImageProfile'
-import {
-  ToastSuccess,
-  ToastWarning
-} from '../../../../components/Toastify/toast'
+import { BNtoDecimal } from '@/utils/numerals'
 
-import externalLink from '../../../../../public/assets/utilities/external-link.svg'
-import proposalDetailsIcon from '../../../../../public/assets/iconGradient/details.svg'
-import proposalInfoIcon from '../../../../../public/assets/iconGradient/info-gradient.svg'
-import proposalCompleteIcon from '../../../../../public/assets/statusProposal/proposal-complete.svg'
-import proposalWaitingIcon from '../../../../../public/assets/statusProposal/proposal-waiting.svg'
-import proposalStatusHistory from '../../../../../public/assets/iconGradient/timer-grandient.svg'
-import tooltip from '../../../../../public/assets/utilities/tooltip.svg'
+import useGov from '@/hooks/useGov'
+import useVotingPower from '@/hooks/useVotings'
+
+import ModalVotes from '@/components/Governance/ModalVotes'
+import TitleSection from '@/components/TitleSection'
+import VoteCard from '@/components/Governance/VoteCard'
+import VotingPower from '@/components/VotingPower'
+import Breadcrumb from '@/components/Breadcrumb'
+import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
+import ImageProfile from '@/components/Governance/ImageProfile'
+
+import externalLink from '@assets/utilities/external-link.svg'
+import proposalDetailsIcon from '@assets/iconGradient/details.svg'
+import proposalInfoIcon from '@assets/iconGradient/info-gradient.svg'
+import proposalCompleteIcon from '@assets/statusProposal/proposal-complete.svg'
+import proposalWaitingIcon from '@assets/statusProposal/proposal-waiting.svg'
+import proposalStatusHistory from '@assets/iconGradient/timer-grandient.svg'
+import tooltip from '@assets/utilities/tooltip.svg'
 
 import * as S from './styles'
 
@@ -141,8 +126,6 @@ const statslibColor: { [key: string]: string } = {
 }
 
 const Proposal = () => {
-  const dispatch = useAppDispatch()
-
   const [proposal, setProposal] = React.useState<IProposalProps>({
     forVotes: Big(0),
     againstVotes: Big(0),
@@ -181,21 +164,19 @@ const Proposal = () => {
     userWalletAddress: '',
     yourVotingPowerInProposal: new BigNumber(0)
   })
-  // eslint-disable-next-line prettier/prettier
   const [yourVotingPowerInProposal, setYourVotingPowerInProposal] =
     React.useState(new BigNumber(0))
+
   const router = useRouter()
-  const governance = useGovernance(GovernorAlpha)
+  const [{ wallet }] = useConnectWallet()
+  const governance = useGov(GovernorAlpha)
   const votingPower = useVotingPower(Staking)
 
-  const { chainId, userWalletAddress } = useAppSelector(state => state)
-  const { metamaskInstalled } = useConnect()
-
-  const chain = networks[43114]
   const idProposal = router.query.proposal
 
+  const walletAddress = wallet ? getAddress(wallet.accounts[0].address) : ''
   const { data } = useSWR<IRequestDataProposal>(
-    [GET_PROPOSAL, idProposal, userWalletAddress],
+    [GET_PROPOSAL, idProposal, walletAddress],
     (query, number, voter) =>
       request(SUBGRAPH_URL, query, {
         number: Number(number),
@@ -208,9 +189,9 @@ const Proposal = () => {
   }
 
   async function getVotingPowerInProposal(startBlock: string) {
-    if (userWalletAddress && startBlock) {
+    if (wallet && startBlock) {
       const votingPowerAtMoment = await votingPower.getPriorVotes(
-        userWalletAddress,
+        wallet.accounts[0].address,
         startBlock
       )
 
@@ -222,7 +203,7 @@ const Proposal = () => {
     if (
       userVoted.voted ||
       proposalState !== 'Active' ||
-      !userWalletAddress ||
+      !wallet ||
       yourVotingPowerInProposal.eq(new BigNumber(0))
     ) {
       return
@@ -230,9 +211,7 @@ const Proposal = () => {
 
     governance.castVote(
       Number(router.query.proposal),
-      voteType === 'For' ? true : false,
-      userWalletAddress,
-      voteCallback()
+      voteType === 'For' ? true : false
     )
 
     if (isModalOpen) {
@@ -241,27 +220,6 @@ const Proposal = () => {
       }, 1200)
     }
   }
-
-  const voteCallback = React.useCallback((): TransactionCallback => {
-    return async (error: MetamaskError, txHash: string) => {
-      if (error) {
-        dispatch(
-          setModalAlertText({
-            errorText: `Failed vote. Please try again later.`
-          })
-        )
-        return
-      }
-
-      ToastWarning(`Confirming vote`)
-      const txReceipt = await waitTransaction(txHash)
-
-      if (txReceipt.status) {
-        ToastSuccess(`Vote confirmed`)
-        return
-      }
-    }
-  }, [])
 
   React.useEffect(() => {
     if (data) {
@@ -322,18 +280,21 @@ const Proposal = () => {
       }
 
       const [userAlreadyVoted] = data.proposal[0].votes
-      setUserVoted({
-        voted: userAlreadyVoted ? true : false,
-        support: userAlreadyVoted ? userAlreadyVoted.support : null,
-        userWalletAddress,
-        yourVotingPowerInProposal: new BigNumber(0)
-      })
 
       getVotingPowerInProposal(data.proposal[0].startBlock)
       getProposalState(data.proposal[0].number)
       setProposal(proposalInfo)
+
+      if (wallet) {
+        setUserVoted({
+          voted: userAlreadyVoted ? true : false,
+          support: userAlreadyVoted ? userAlreadyVoted.support : null,
+          userWalletAddress: wallet.accounts[0].address,
+          yourVotingPowerInProposal: new BigNumber(0)
+        })
+      }
     }
-  }, [data, userWalletAddress])
+  }, [data, wallet])
 
   React.useEffect(() => {
     if (data) {
@@ -633,328 +594,311 @@ const Proposal = () => {
             Proposal {router.query.proposal}
           </BreadcrumbItem>
         </Breadcrumb>
-        {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
-        (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
-          <Web3Disabled
-            textButton={`Connect to ${chain.chainName}`}
-            textHeader="Your wallet is set to the wrong network."
-            bodyText={`Please switch to the ${chain.chainName} network to have access to governance`}
-            type="changeChain"
-          />
-        ) : (
-          <>
-            <S.VoteContent>
-              <S.IntroDesktopScreen>
-                <S.TitleWrapper>
-                  <S.TitleAndAuthor>
-                    <TitleSection
-                      image={proposalDetailsIcon}
-                      title={`Proposal ${router.query.proposal}`}
-                    />
-                    <S.ProposeAuthorCard>
-                      <p>Proposed by</p>
-                      <ImageProfile
-                        address={proposal.proposer}
-                        diameter={32}
-                        hasAddress={true}
-                        isLink={true}
-                        tab="?tab=governance-data"
-                      />
-                    </S.ProposeAuthorCard>
-                  </S.TitleAndAuthor>
-                  <S.VotingPower>
-                    <VotingPower
-                      userWalletAddress={userWalletAddress}
-                      yourVotingPowerInProposal={yourVotingPowerInProposal}
-                    />
-                  </S.VotingPower>
-                </S.TitleWrapper>
-              </S.IntroDesktopScreen>
-
-              <S.IntroMobileScreen>
-                <S.TitleWrapper>
-                  <TitleSection
-                    image={proposalDetailsIcon}
-                    title={`Proposal ${router.query.proposal}`}
-                  />
-                  <S.CardTitleWrapper>
-                    <S.VotingPower>
-                      <VotingPower
-                        userWalletAddress={userWalletAddress}
-                        yourVotingPowerInProposal={yourVotingPowerInProposal}
-                      />
-                    </S.VotingPower>
-                    <S.ProposeAuthorCard>
-                      <p>Proposed by</p>
-                      <ImageProfile
-                        address={proposal.proposer}
-                        diameter={24}
-                        hasAddress={true}
-                        isLink={true}
-                        tab="?tab=governance-data"
-                      />
-                    </S.ProposeAuthorCard>
-                  </S.CardTitleWrapper>
-                </S.TitleWrapper>
-              </S.IntroMobileScreen>
-              <S.VoteCardWrapper>
-                <VoteCard
-                  yourVotingPowerInProposal={yourVotingPowerInProposal}
-                  typeVote="For"
-                  percentage={percentageVotes.for}
-                  totalVotingPower={BNtoDecimal(proposal.forVotes, 0, 2, 2)}
-                  proposalState={proposalState}
-                  userVote={userVoted}
-                  handleVote={handleVote}
-                  onClickLink={() => {
-                    setModalVotes({
-                      voteType: 'For',
-                      percentage: `${percentageVotes.for}`,
-                      // eslint-disable-next-line prettier/prettier
-                      totalVotingPower: `${BNtoDecimal(
-                        proposal.forVotes,
-                        0,
-                        2,
-                        2
-                      )}`,
-                      checkAllVoterModal: true
-                    })
-                    setIsModalOpen(true)
-                  }}
-                />
-                <VoteCard
-                  yourVotingPowerInProposal={yourVotingPowerInProposal}
-                  typeVote="Against"
-                  percentage={percentageVotes.against}
-                  totalVotingPower={BNtoDecimal(proposal.againstVotes, 0, 2, 2)}
-                  proposalState={proposalState}
-                  userVote={userVoted}
-                  handleVote={handleVote}
-                  onClickLink={() => {
-                    setModalVotes({
-                      voteType: 'Against',
-                      percentage: `${percentageVotes.against}`,
-                      // eslint-disable-next-line prettier/prettier
-                      totalVotingPower: `${BNtoDecimal(
-                        proposal.againstVotes,
-                        0,
-                        2,
-                        2
-                      )}`,
-                      checkAllVoterModal: false
-                    })
-                    setIsModalOpen(true)
-                  }}
-                />
-              </S.VoteCardWrapper>
-            </S.VoteContent>
-            <S.ProposalInfo>
-              <TitleSection image={proposalInfoIcon} title="Proposal Info" />
-              <S.CardWrapper>
-                <S.DescriptionTable>
-                  <S.DescriptionProposal>
-                    <ReactMarkdown skipHtml={true} linkTarget={'_blank'}>
-                      {proposal.description.replace('["', '').replace('"]', '')}
-                    </ReactMarkdown>
-                  </S.DescriptionProposal>
-                </S.DescriptionTable>
-                <S.InfoTable>
-                  <S.Table>
-                    <S.TableHead>
-                      <S.TableTitle>Information</S.TableTitle>
-                    </S.TableHead>
-                    <S.TableBody>
-                      <S.TableInfoWrapper>
-                        <S.DataWrapper>
-                          <S.TextKey>State</S.TextKey>
-                          {proposalState ? (
-                            <S.TextValue
-                              style={{
-                                color:
-                                  statslibColor[proposalState.toLowerCase()]
-                              }}
-                            >
-                              {proposalState.charAt(0).toUpperCase() +
-                                proposalState.slice(1)}
-                            </S.TextValue>
-                          ) : (
-                            '...'
-                          )}
-                        </S.DataWrapper>
-                        <S.DataWrapper>
-                          <S.Quorum>
-                            <S.TextKey>Quorum</S.TextKey>
-                            <Tippy content="Quorum is the minimal amount of votes that a proposal needs to have to be valid. Proposals that don’t achieve the quorum will fail.">
-                              <S.Tooltip tabIndex={0}>
-                                <Image
-                                  src={tooltip}
-                                  alt="Explanation"
-                                  width={14}
-                                  height={14}
-                                />
-                              </S.Tooltip>
-                            </Tippy>
-                          </S.Quorum>
-                          <S.TextValue>
-                            {BNtoDecimal(Big(proposal.quorum), 0, 2)}
-                          </S.TextValue>
-                        </S.DataWrapper>
-                        <S.DataWrapper>
-                          <S.TextKey>Total Voted</S.TextKey>
-                          <S.TextValue>
-                            {BNtoDecimal(proposal.votingPower, 0, 2)}
-                          </S.TextValue>
-                        </S.DataWrapper>
-                        <S.DataWrapper>
-                          <S.TextKey>Created</S.TextKey>
-                          <S.TextValue>{proposal.created}</S.TextValue>
-                        </S.DataWrapper>
-                        <S.DataWrapper>
-                          <S.TextKey>Voting Open</S.TextKey>
-                          <S.TextValue>{proposal.votingOpen}</S.TextValue>
-                        </S.DataWrapper>
-                        <S.DataWrapper>
-                          <S.TextKey>Voting Close</S.TextKey>
-                          <S.TextValue>{proposal.votingClose}</S.TextValue>
-                        </S.DataWrapper>
-                        <S.DataWrapper>
-                          <S.TextKey>
-                            {proposal.executed
-                              ? 'Executed'
-                              : proposal.eta
-                              ? 'Execution Deadline'
-                              : ''}
-                          </S.TextKey>
-                          <S.TextValue>
-                            {proposal.executed ?? proposal.eta ?? ''}
-                          </S.TextValue>
-                        </S.DataWrapper>
-                      </S.TableInfoWrapper>
-                    </S.TableBody>
-                  </S.Table>
-
-                  <S.LinkForum
-                    href="https://gov.kassandra.finance/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span>Discuss the proposals at the Forum</span>
-                    <Image src={externalLink} alt="" />
-                  </S.LinkForum>
-                </S.InfoTable>
-              </S.CardWrapper>
-              <S.ProposalDetails>
-                <TitleSection image={proposalDetailsIcon} title="Details" />
-                <S.DescriptionTable>
-                  {new Array(3).fill(null).map((_, index) => {
-                    if (
-                      proposal.calldatas[index] ||
-                      proposal.signatures[index] ||
-                      proposal.targets[index] ||
-                      proposal.values[index]
-                    ) {
-                      return (
-                        <S.TableDescriptionWrapper key={index}>
-                          <S.LinkTargetSnowTrace
-                            href={`https://snowtrace.io/address/${proposal.targets[index]}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <span>Target:</span>
-                            <span>
-                              {proposal.targets[index]
-                                ? proposal.targets[index]
-                                : '-'}
-                            </span>
-                            <svg
-                              width="17"
-                              height="17"
-                              viewBox="0 0 17 17"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M9.57924 2.78973C9.57924 2.44566 9.85816 2.16675 10.2022 2.16675H13.9401C14.2841 2.16675 14.5631 2.44566 14.5631 2.78973V6.52759C14.5631 6.87165 14.2841 7.15057 13.9401 7.15057C13.596 7.15057 13.3171 6.87165 13.3171 6.52759V4.41832L6.90487 10.8306C6.66158 11.0738 6.26713 11.0738 6.02385 10.8306C5.78056 10.5873 5.78056 10.1928 6.02385 9.94954L12.5607 3.4127H10.2022C9.85816 3.4127 9.57924 3.13379 9.57924 2.78973ZM3.97245 5.65542C3.80722 5.65542 3.64877 5.72106 3.53194 5.83789C3.41511 5.95472 3.34947 6.11317 3.34947 6.2784V13.1312C3.34947 13.2964 3.41511 13.4548 3.53194 13.5717C3.64877 13.6885 3.80722 13.7541 3.97245 13.7541H10.8252C10.9904 13.7541 11.1489 13.6885 11.2657 13.5717C11.3825 13.4548 11.4482 13.2964 11.4482 13.1312V9.39329C11.4482 9.04923 11.7271 8.77031 12.0712 8.77031C12.4152 8.77031 12.6941 9.04923 12.6941 9.39329V13.1312C12.6941 13.6268 12.4972 14.1022 12.1467 14.4527C11.7962 14.8032 11.3209 15.0001 10.8252 15.0001H3.97245C3.47678 15.0001 3.00141 14.8032 2.65091 14.4527C2.30042 14.1022 2.10352 13.6268 2.10352 13.1312L2.10352 6.2784C2.10352 5.78273 2.30042 5.30736 2.65091 4.95686C3.00141 4.60637 3.47678 4.40947 3.97245 4.40947H7.71031C8.05437 4.40947 8.33329 4.68838 8.33329 5.03244C8.33329 5.37651 8.05437 5.65542 7.71031 5.65542H3.97245Z"
-                                fill="white"
-                              />
-                            </svg>
-                          </S.LinkTargetSnowTrace>
-
-                          <S.DetailsSubTitle>
-                            Value:
-                            <S.DetailsText>
-                              {proposal.values[index]
-                                ? BNtoDecimal(
-                                    new BigNumber(proposal.values[index]),
-                                    18,
-                                    2
-                                  )
-                                : '-'}
-                            </S.DetailsText>
-                          </S.DetailsSubTitle>
-
-                          <S.DetailsSubTitle>
-                            Signature:
-                            <S.DetailsText>
-                              {proposal.signatures[index]
-                                ? proposal.signatures[index]
-                                : '-'}
-                            </S.DetailsText>
-                          </S.DetailsSubTitle>
-
-                          <S.DetailsSubTitle>
-                            Calldata:
-                            <S.DetailsText>
-                              {proposal.calldatas[index]
-                                ? proposal.calldatas[index]
-                                : '-'}
-                            </S.DetailsText>
-                          </S.DetailsSubTitle>
-                        </S.TableDescriptionWrapper>
-                      )
-                    }
-                    return
-                  })}
-                </S.DescriptionTable>
-              </S.ProposalDetails>
-              <S.ProposalStatus>
+        <S.VoteContent>
+          <S.IntroDesktopScreen>
+            <S.TitleWrapper>
+              <S.TitleAndAuthor>
                 <TitleSection
-                  image={proposalStatusHistory}
-                  title="Proposal Status History"
+                  image={proposalDetailsIcon}
+                  title={`Proposal ${router.query.proposal}`}
                 />
-                <S.Steps>
-                  {dataStatus.map((step, index) => (
-                    <React.Fragment key={index}>
-                      <S.LineBetweenImages
-                        isBefore={step.title === 'Created'}
-                        isComplete={step.completed === true}
-                      />
-                      <S.Step>
-                        <S.StepImageContainer>
-                          {step.completed === true ? (
+                <S.ProposeAuthorCard>
+                  <p>Proposed by</p>
+                  <ImageProfile
+                    address={proposal.proposer}
+                    diameter={32}
+                    hasAddress={true}
+                    isLink={true}
+                    tab="?tab=governance-data"
+                  />
+                </S.ProposeAuthorCard>
+              </S.TitleAndAuthor>
+              <S.VotingPower>
+                <VotingPower
+                  userWalletAddress={
+                    wallet ? getAddress(wallet.accounts[0].address) : ''
+                  }
+                  yourVotingPowerInProposal={yourVotingPowerInProposal}
+                />
+              </S.VotingPower>
+            </S.TitleWrapper>
+          </S.IntroDesktopScreen>
+
+          <S.IntroMobileScreen>
+            <S.TitleWrapper>
+              <TitleSection
+                image={proposalDetailsIcon}
+                title={`Proposal ${router.query.proposal}`}
+              />
+              <S.CardTitleWrapper>
+                <S.VotingPower>
+                  <VotingPower
+                    userWalletAddress={
+                      wallet ? getAddress(wallet.accounts[0].address) : ''
+                    }
+                    yourVotingPowerInProposal={yourVotingPowerInProposal}
+                  />
+                </S.VotingPower>
+                <S.ProposeAuthorCard>
+                  <p>Proposed by</p>
+                  <ImageProfile
+                    address={proposal.proposer}
+                    diameter={24}
+                    hasAddress={true}
+                    isLink={true}
+                    tab="?tab=governance-data"
+                  />
+                </S.ProposeAuthorCard>
+              </S.CardTitleWrapper>
+            </S.TitleWrapper>
+          </S.IntroMobileScreen>
+          <S.VoteCardWrapper>
+            <VoteCard
+              yourVotingPowerInProposal={yourVotingPowerInProposal}
+              typeVote="For"
+              percentage={percentageVotes.for}
+              totalVotingPower={BNtoDecimal(proposal.forVotes, 0, 2, 2)}
+              proposalState={proposalState}
+              userVote={userVoted}
+              handleVote={handleVote}
+              onClickLink={() => {
+                setModalVotes({
+                  voteType: 'For',
+                  percentage: `${percentageVotes.for}`,
+                  totalVotingPower: `${BNtoDecimal(
+                    proposal.forVotes,
+                    0,
+                    2,
+                    2
+                  )}`,
+                  checkAllVoterModal: true
+                })
+                setIsModalOpen(true)
+              }}
+            />
+            <VoteCard
+              yourVotingPowerInProposal={yourVotingPowerInProposal}
+              typeVote="Against"
+              percentage={percentageVotes.against}
+              totalVotingPower={BNtoDecimal(proposal.againstVotes, 0, 2, 2)}
+              proposalState={proposalState}
+              userVote={userVoted}
+              handleVote={handleVote}
+              onClickLink={() => {
+                setModalVotes({
+                  voteType: 'Against',
+                  percentage: `${percentageVotes.against}`,
+                  totalVotingPower: `${BNtoDecimal(
+                    proposal.againstVotes,
+                    0,
+                    2,
+                    2
+                  )}`,
+                  checkAllVoterModal: false
+                })
+                setIsModalOpen(true)
+              }}
+            />
+          </S.VoteCardWrapper>
+        </S.VoteContent>
+        <S.ProposalInfo>
+          <TitleSection image={proposalInfoIcon} title="Proposal Info" />
+          <S.CardWrapper>
+            <S.DescriptionTable>
+              <S.DescriptionProposal>
+                <ReactMarkdown skipHtml={true} linkTarget={'_blank'}>
+                  {proposal.description.replace('["', '').replace('"]', '')}
+                </ReactMarkdown>
+              </S.DescriptionProposal>
+            </S.DescriptionTable>
+            <S.InfoTable>
+              <S.Table>
+                <S.TableHead>
+                  <S.TableTitle>Information</S.TableTitle>
+                </S.TableHead>
+                <S.TableBody>
+                  <S.TableInfoWrapper>
+                    <S.DataWrapper>
+                      <S.TextKey>State</S.TextKey>
+                      {proposalState ? (
+                        <S.TextValue
+                          style={{
+                            color: statslibColor[proposalState.toLowerCase()]
+                          }}
+                        >
+                          {proposalState.charAt(0).toUpperCase() +
+                            proposalState.slice(1)}
+                        </S.TextValue>
+                      ) : (
+                        '...'
+                      )}
+                    </S.DataWrapper>
+                    <S.DataWrapper>
+                      <S.Quorum>
+                        <S.TextKey>Quorum</S.TextKey>
+                        <Tippy content="Quorum is the minimal amount of votes that a proposal needs to have to be valid. Proposals that don’t achieve the quorum will fail.">
+                          <S.Tooltip tabIndex={0}>
                             <Image
-                              src={proposalCompleteIcon}
-                              layout="responsive"
+                              src={tooltip}
+                              alt="Explanation"
+                              width={14}
+                              height={14}
                             />
-                          ) : (
-                            <Image
-                              src={proposalWaitingIcon}
-                              layout="responsive"
-                            />
-                          )}
-                        </S.StepImageContainer>
-                        <S.StepTitle>{step.title}</S.StepTitle>
-                        <S.StepDate>{step.date}</S.StepDate>
-                      </S.Step>
-                    </React.Fragment>
-                  ))}
-                </S.Steps>
-              </S.ProposalStatus>
-            </S.ProposalInfo>
-          </>
-        )}
+                          </S.Tooltip>
+                        </Tippy>
+                      </S.Quorum>
+                      <S.TextValue>
+                        {BNtoDecimal(Big(proposal.quorum), 0, 2)}
+                      </S.TextValue>
+                    </S.DataWrapper>
+                    <S.DataWrapper>
+                      <S.TextKey>Total Voted</S.TextKey>
+                      <S.TextValue>
+                        {BNtoDecimal(proposal.votingPower, 0, 2)}
+                      </S.TextValue>
+                    </S.DataWrapper>
+                    <S.DataWrapper>
+                      <S.TextKey>Created</S.TextKey>
+                      <S.TextValue>{proposal.created}</S.TextValue>
+                    </S.DataWrapper>
+                    <S.DataWrapper>
+                      <S.TextKey>Voting Open</S.TextKey>
+                      <S.TextValue>{proposal.votingOpen}</S.TextValue>
+                    </S.DataWrapper>
+                    <S.DataWrapper>
+                      <S.TextKey>Voting Close</S.TextKey>
+                      <S.TextValue>{proposal.votingClose}</S.TextValue>
+                    </S.DataWrapper>
+                    <S.DataWrapper>
+                      <S.TextKey>
+                        {proposal.executed
+                          ? 'Executed'
+                          : proposal.eta
+                          ? 'Execution Deadline'
+                          : ''}
+                      </S.TextKey>
+                      <S.TextValue>
+                        {proposal.executed ?? proposal.eta ?? ''}
+                      </S.TextValue>
+                    </S.DataWrapper>
+                  </S.TableInfoWrapper>
+                </S.TableBody>
+              </S.Table>
+
+              <S.LinkForum
+                href="https://gov.kassandra.finance/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>Discuss the proposals at the Forum</span>
+                <Image src={externalLink} alt="" />
+              </S.LinkForum>
+            </S.InfoTable>
+          </S.CardWrapper>
+          <S.ProposalDetails>
+            <TitleSection image={proposalDetailsIcon} title="Details" />
+            <S.DescriptionTable>
+              {new Array(3).fill(null).map((_, index) => {
+                if (
+                  proposal.calldatas[index] ||
+                  proposal.signatures[index] ||
+                  proposal.targets[index] ||
+                  proposal.values[index]
+                ) {
+                  return (
+                    <S.TableDescriptionWrapper key={index}>
+                      <S.LinkTargetSnowTrace
+                        href={`https://snowtrace.io/address/${proposal.targets[index]}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span>Target:</span>
+                        <span>
+                          {proposal.targets[index]
+                            ? proposal.targets[index]
+                            : '-'}
+                        </span>
+                        <svg
+                          width="17"
+                          height="17"
+                          viewBox="0 0 17 17"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M9.57924 2.78973C9.57924 2.44566 9.85816 2.16675 10.2022 2.16675H13.9401C14.2841 2.16675 14.5631 2.44566 14.5631 2.78973V6.52759C14.5631 6.87165 14.2841 7.15057 13.9401 7.15057C13.596 7.15057 13.3171 6.87165 13.3171 6.52759V4.41832L6.90487 10.8306C6.66158 11.0738 6.26713 11.0738 6.02385 10.8306C5.78056 10.5873 5.78056 10.1928 6.02385 9.94954L12.5607 3.4127H10.2022C9.85816 3.4127 9.57924 3.13379 9.57924 2.78973ZM3.97245 5.65542C3.80722 5.65542 3.64877 5.72106 3.53194 5.83789C3.41511 5.95472 3.34947 6.11317 3.34947 6.2784V13.1312C3.34947 13.2964 3.41511 13.4548 3.53194 13.5717C3.64877 13.6885 3.80722 13.7541 3.97245 13.7541H10.8252C10.9904 13.7541 11.1489 13.6885 11.2657 13.5717C11.3825 13.4548 11.4482 13.2964 11.4482 13.1312V9.39329C11.4482 9.04923 11.7271 8.77031 12.0712 8.77031C12.4152 8.77031 12.6941 9.04923 12.6941 9.39329V13.1312C12.6941 13.6268 12.4972 14.1022 12.1467 14.4527C11.7962 14.8032 11.3209 15.0001 10.8252 15.0001H3.97245C3.47678 15.0001 3.00141 14.8032 2.65091 14.4527C2.30042 14.1022 2.10352 13.6268 2.10352 13.1312L2.10352 6.2784C2.10352 5.78273 2.30042 5.30736 2.65091 4.95686C3.00141 4.60637 3.47678 4.40947 3.97245 4.40947H7.71031C8.05437 4.40947 8.33329 4.68838 8.33329 5.03244C8.33329 5.37651 8.05437 5.65542 7.71031 5.65542H3.97245Z"
+                            fill="white"
+                          />
+                        </svg>
+                      </S.LinkTargetSnowTrace>
+
+                      <S.DetailsSubTitle>
+                        Value:
+                        <S.DetailsText>
+                          {proposal.values[index]
+                            ? BNtoDecimal(
+                                new BigNumber(proposal.values[index]),
+                                18,
+                                2
+                              )
+                            : '-'}
+                        </S.DetailsText>
+                      </S.DetailsSubTitle>
+
+                      <S.DetailsSubTitle>
+                        Signature:
+                        <S.DetailsText>
+                          {proposal.signatures[index]
+                            ? proposal.signatures[index]
+                            : '-'}
+                        </S.DetailsText>
+                      </S.DetailsSubTitle>
+
+                      <S.DetailsSubTitle>
+                        Calldata:
+                        <S.DetailsText>
+                          {proposal.calldatas[index]
+                            ? proposal.calldatas[index]
+                            : '-'}
+                        </S.DetailsText>
+                      </S.DetailsSubTitle>
+                    </S.TableDescriptionWrapper>
+                  )
+                }
+                return
+              })}
+            </S.DescriptionTable>
+          </S.ProposalDetails>
+          <S.ProposalStatus>
+            <TitleSection
+              image={proposalStatusHistory}
+              title="Proposal Status History"
+            />
+            <S.Steps>
+              {dataStatus.map((step, index) => (
+                <React.Fragment key={index}>
+                  <S.LineBetweenImages
+                    isBefore={step.title === 'Created'}
+                    isComplete={step.completed === true}
+                  />
+                  <S.Step>
+                    <S.StepImageContainer>
+                      {step.completed === true ? (
+                        <Image src={proposalCompleteIcon} layout="responsive" />
+                      ) : (
+                        <Image src={proposalWaitingIcon} layout="responsive" />
+                      )}
+                    </S.StepImageContainer>
+                    <S.StepTitle>{step.title}</S.StepTitle>
+                    <S.StepDate>{step.date}</S.StepDate>
+                  </S.Step>
+                </React.Fragment>
+              ))}
+            </S.Steps>
+          </S.ProposalStatus>
+        </S.ProposalInfo>
       </>
       {isModalOpen && (
         <ModalVotes

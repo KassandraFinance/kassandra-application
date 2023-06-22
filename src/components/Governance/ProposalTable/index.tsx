@@ -6,7 +6,7 @@ import { request } from 'graphql-request'
 
 import { GovernorAlpha, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
 
-import useGovernance from '../../../hooks/useGovernance'
+import useGov from '../../../hooks/useGov'
 
 import Loading from '../../Loading'
 
@@ -51,7 +51,6 @@ interface IProposalTableProps {
 }
 
 export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
-  // eslint-disable-next-line prettier/prettier
   const [proposalsList, setProposalsList] = React.useState<
     Array<IProposalsListProps>
   >([])
@@ -62,7 +61,7 @@ export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
     request(SUBGRAPH_URL, query, { skip, take })
   )
 
-  const governance = useGovernance(GovernorAlpha)
+  const governance = useGov(GovernorAlpha)
 
   async function handleAddStateOnProposal(proposals: IProposalsListProps[]) {
     const proposal = proposals.map((proposal: IProposalsListProps) =>

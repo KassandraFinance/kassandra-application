@@ -1,19 +1,19 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import { getAddress } from 'ethers'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import { useAppSelector } from '../../store/hooks'
-
-import VotingPower from '../../components/VotingPower'
-import Breadcrumb from '../../components/Breadcrumb'
-import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
-import SelectTabs from '../../components/SelectTabs'
-import TitleSection from '../../components/TitleSection'
+import VotingPower from '@/components/VotingPower'
+import Breadcrumb from '@/components/Breadcrumb'
+import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
+import SelectTabs from '@/components/SelectTabs'
+import TitleSection from '@/components/TitleSection'
 import Farm from './Farm'
 import Stake from './Stake'
 
-import productBarIcon from '../../../public/assets/iconGradient/product-bar.svg'
-import stakingPoolsIcon from '../../../public/assets/iconGradient/staking-pools.svg'
-import stakeMoneyWithdraw from '../../../public/assets/iconGradient/stake-money-withdraw.svg'
+import productBarIcon from '@assets/iconGradient/product-bar.svg'
+import stakingPoolsIcon from '@assets/iconGradient/staking-pools.svg'
+import stakeMoneyWithdraw from '@assets/iconGradient/stake-money-withdraw.svg'
 
 import * as S from './styles'
 
@@ -33,9 +33,12 @@ const tabs = [
 const StakeFarm = () => {
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
-  >('farm')
+  >('stake')
 
-  const { userWalletAddress } = useAppSelector(state => state)
+  const [{ wallet }] = useConnectWallet()
+
+  const walletAddress = wallet ? getAddress(wallet.accounts[0].address) : ''
+
   const router = useRouter()
 
   React.useEffect(() => {
@@ -62,7 +65,7 @@ const StakeFarm = () => {
               title="Stake and Farm KACY"
               text="Earn rewards and voting power by staking KACY and other assets"
             />
-            <VotingPower userWalletAddress={userWalletAddress} />
+            <VotingPower userWalletAddress={walletAddress} />
           </S.StakeWithPowerVote>
 
           <SelectTabs

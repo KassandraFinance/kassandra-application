@@ -53,8 +53,6 @@ const PoolAssets = (props: IPoolAssetsProps) => {
     refreshInterval: 60 * 5 * 1000
   })
 
-  Object.entries(data?.tokens ?? {}).map(console.log)
-
   return (
     <S.PoolAssets>
       {data ? (

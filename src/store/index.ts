@@ -3,7 +3,6 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import storage from 'redux-persist/lib/storage'
 import { persistReducer, persistStore } from 'redux-persist'
 
-import userWalletAddressReducer from './reducers/userWalletAddress'
 import chainIdReducer from './reducers/chainId'
 import feesReducer from './reducers/fees'
 import chartSelectedReducer from './reducers/chartSelected'
@@ -18,7 +17,6 @@ import tokenSelectionActiveReducer from './reducers/tokenSelectionActive'
 import tokenSelectReducer from './reducers/tokenSelect'
 import poolReducer from './reducers/pool'
 import tokenListSwapProviderReducer from './reducers/tokenListSwapProvider'
-import modalWalletActiveReducer from './reducers/modalWalletActive'
 import addAssetReducer from './reducers/addAssetSlice'
 import removeAssetReducer from './reducers/removeAssetSlice'
 import rebalanceAssetsReducer from './reducers/rebalanceAssetsSlice'
@@ -30,7 +28,6 @@ const persistConfig = {
 }
 
 export const rootReducer = combineReducers({
-  userWalletAddress: userWalletAddressReducer,
   chainId: chainIdReducer,
   fees: feesReducer,
   chartSelected: chartSelectedReducer,
@@ -45,7 +42,6 @@ export const rootReducer = combineReducers({
   tokenSelect: tokenSelectReducer,
   pool: poolReducer,
   tokenListSwapProvider: tokenListSwapProviderReducer,
-  modalWalletActive: modalWalletActiveReducer,
   addAsset: addAssetReducer,
   removeAsset: removeAssetReducer,
   rebalanceAssets: rebalanceAssetsReducer

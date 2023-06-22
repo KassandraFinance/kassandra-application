@@ -1,29 +1,23 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { networks } from '../../../constants/tokenAddresses'
 
-import { useAppSelector } from '../../../store/hooks'
-import useConnect from '../../../hooks/useConnect'
+import TitleSection from '@/components/TitleSection'
+import Breadcrumb from '@/components/Breadcrumb'
+import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
+import VotingPowerTable from '@/components/Governance/VotingPowerTable'
+import Pagination from '@/components/Pagination'
 
-import TitleSection from '../../../components/TitleSection'
-import Breadcrumb from '../../../components/Breadcrumb'
-import BreadcrumbItem from '../../../components/Breadcrumb/BreadcrumbItem'
-import VotingPowerTable from '../../../components/Governance/VotingPowerTable'
-import Web3Disabled from '../../../components/Web3Disabled'
-import Pagination from '../../../components/Pagination'
-
-import votingPower from '../../../../public/assets/iconGradient/voting-power-rank.svg'
+import votingPower from '@assets/iconGradient/voting-power-rank.svg'
 
 import * as S from './styles'
 
 const Leaderboard = () => {
   const [skip, setSkip] = React.useState<number>(0)
 
-  const { chainId, userWalletAddress } = useAppSelector(state => state)
-  const { metamaskInstalled } = useConnect()
   const router = useRouter()
 
   const take = 10
+  const page = typeof router.query.page === 'string' ? router.query.page : '0'
 
   function handlePageClick(data: { selected: number }) {
     router.push({
@@ -31,10 +25,6 @@ const Leaderboard = () => {
       query: { ...router.query, page: `${data.selected + 1}` }
     })
   }
-
-  const page = typeof router.query.page === 'string' ? router.query.page : '0'
-
-  const chain = networks[43114]
 
   React.useEffect(() => {
     setSkip((parseInt(page) - 1) * take)
@@ -49,27 +39,14 @@ const Leaderboard = () => {
           Voting Power Leaderboard
         </BreadcrumbItem>
       </Breadcrumb>
-      {(metamaskInstalled && Number(chainId) !== chain.chainId) ||
-      (userWalletAddress.length > 0 && Number(chainId) !== chain.chainId) ? (
-        <Web3Disabled
-          textButton={`Connect to ${chain.chainName}`}
-          textHeader="Your wallet is set to the wrong network."
-          bodyText={`Please switch to the ${chain.chainName} network to have access to governance`}
-          type="changeChain"
-        />
-      ) : (
-        <>
-          <S.VoteContent>
-            <S.VotingPowerLeaderboard>
-              <TitleSection
-                image={votingPower}
-                title="Voting Power Leaderboard"
-              />
-              {<VotingPowerTable skip={skip} take={take} />}
-            </S.VotingPowerLeaderboard>
-          </S.VoteContent>
-        </>
-      )}
+
+      <S.VoteContent>
+        <S.VotingPowerLeaderboard>
+          <TitleSection image={votingPower} title="Voting Power Leaderboard" />
+          {<VotingPowerTable skip={skip} take={take} />}
+        </S.VotingPowerLeaderboard>
+      </S.VoteContent>
+
       <Pagination
         take={take}
         skip={skip}

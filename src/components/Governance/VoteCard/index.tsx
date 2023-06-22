@@ -1,16 +1,14 @@
 import React from 'react'
 import BigNumber from 'bn.js'
-import Button from '../../Button'
-import ExternalLink from '../../ExternalLink'
-
-import { checkVoteButton } from '../../../utils/checkVoteButton'
-import { IUserVotedProps } from '../../../templates/Gov/Proposals/Proposal'
-
-import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
+import Tippy from '@tippyjs/react'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import { useAppDispatch } from '../../../store/hooks'
-import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
+import { checkVoteButton } from '@/utils/checkVoteButton'
+import { IUserVotedProps } from '@/templates/Gov/Proposals/Proposal'
+
+import Button from '@/components/Button'
+import ExternalLink from '@/components/ExternalLink'
 
 import * as S from './styles'
 
@@ -37,7 +35,7 @@ const VoteCard = ({
 }: IVoteCardProps) => {
   userVote.yourVotingPowerInProposal = yourVotingPowerInProposal
 
-  const dispatch = useAppDispatch()
+  const [{ wallet }, connect] = useConnectWallet()
 
   function getTextButton(typeVote: string) {
     if (typeVote === 'For') {
@@ -64,10 +62,7 @@ const VoteCard = ({
         <S.ActionWrapper>
           <Tippy
             content="You had no voting power at the time the proposal was created"
-            disabled={
-              userVote.userWalletAddress === '' ||
-              yourVotingPowerInProposal.gt(new BigNumber(0))
-            }
+            disabled={!wallet || yourVotingPowerInProposal.gt(new BigNumber(0))}
           >
             <S.VoteButtonContainer>
               <Button
@@ -77,13 +72,10 @@ const VoteCard = ({
                   type: typeVote
                 }}
                 onClick={() => {
-                  if (userVote.userWalletAddress === '') {
-                    dispatch(setModalWalletActive(true))
-                    return
-                  }
-
+                  if (!wallet) connect()
                   handleVote(typeVote)
                 }}
+                disabledNoEvent={!wallet}
               />
             </S.VoteButtonContainer>
           </Tippy>

@@ -1,31 +1,33 @@
 import React from 'react'
 import Image from 'next/image'
 import Tippy from '@tippyjs/react'
-import { isAddress } from 'web3-utils'
 import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
+import { isAddress } from 'ethers'
 
-import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
   setToggle,
   setFee,
   setRefferalFee
-} from '../../../../../store/reducers/poolCreationSlice'
+} from '@/store/reducers/poolCreationSlice'
 import { kassandraManagementFee } from '@/constants/tokenAddresses'
 
-import InputRange from '../../../../../components/Inputs/InputRange'
-import InputText from '../../../../../components/Inputs/InputText'
-import InputToggle from '../../../../../components/Inputs/InputToggle'
+import InputRange from '@/components/Inputs/InputRange'
+import InputText from '@/components/Inputs/InputText'
+import InputToggle from '@/components/Inputs/InputToggle'
 
-import limiterIcon from '../../../../../../public/assets/utilities/limiter.svg'
+import limiterIcon from '@assets/utilities/limiter.svg'
 
 import * as S from './styles'
 
 const FeeConfig = () => {
+  const [{ wallet }] = useConnectWallet()
+
   const dispatch = useAppDispatch()
   const feesData = useAppSelector(
     state => state.poolCreation.createPoolData.fees
   )
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   function handleFeeChange(event: React.ChangeEvent<HTMLInputElement>) {
     const inputName = event.target.name
@@ -102,7 +104,7 @@ const FeeConfig = () => {
           <S.FeeContainer isFeeChecked={feesData.depositFee.isChecked}>
             <S.WrapperInputFee
               className="depositFee"
-              isAddress={isAddress(userWalletAddress)}
+              isAddress={isAddress(wallet?.accounts[0].address)}
               value={
                 feesData.depositFee.feeRate
                   ? Number(feesData.depositFee.feeRate)
@@ -132,21 +134,23 @@ const FeeConfig = () => {
                 }
                 onChange={event => handleFeeChange(event)}
               />
-              <InputText
-                name="address"
-                type="text"
-                placeholder={userWalletAddress}
-                required
-                value={userWalletAddress}
-                minLength={0}
-                maxLength={42}
-                lable="recipient address"
-                error="Invalid address"
-                readonly
-                onChange={() => {
-                  return
-                }}
-              />
+              {wallet?.provider ? (
+                <InputText
+                  name="address"
+                  type="text"
+                  placeholder={wallet?.accounts[0].address}
+                  required
+                  value={wallet?.accounts[0].address}
+                  minLength={0}
+                  maxLength={42}
+                  lable="recipient address"
+                  error="Invalid address"
+                  readonly
+                  onChange={() => {
+                    return
+                  }}
+                />
+              ) : null}
             </S.WrapperInputFee>
             <hr />
             <S.RefferalCommissionWrapper>
@@ -257,7 +261,7 @@ const FeeConfig = () => {
         {feesData?.managementFee && (
           <S.FeeContainer>
             <S.WrapperInput
-              isAddress={isAddress(userWalletAddress)}
+              isAddress={isAddress(wallet?.accounts[0].address)}
               value={
                 feesData.managementFee.feeRate
                   ? Number(feesData.managementFee.feeRate)
@@ -306,21 +310,23 @@ const FeeConfig = () => {
                   </S.Wrapper>
                 </S.ManagementFeeWrapper>
               </div>
-              <InputText
-                name="address"
-                type="text"
-                placeholder=""
-                required
-                value={userWalletAddress}
-                minLength={42}
-                maxLength={42}
-                lable="recipient address"
-                error="Invalid address"
-                readonly
-                onChange={() => {
-                  return
-                }}
-              />
+              {wallet?.provider ? (
+                <InputText
+                  name="address"
+                  type="text"
+                  placeholder=""
+                  required
+                  value={wallet?.accounts[0].address}
+                  minLength={42}
+                  maxLength={42}
+                  lable="recipient address"
+                  error="Invalid address"
+                  readonly
+                  onChange={() => {
+                    return
+                  }}
+                />
+              ) : null}
             </S.WrapperInput>
 
             <hr />

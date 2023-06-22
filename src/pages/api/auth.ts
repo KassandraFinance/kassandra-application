@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { withIronSessionApiRoute } from 'iron-session/next'
+import { ethers } from 'ethers'
+
 import { ironSessionConfig } from '../../config/ironSessionConfig'
-import web3 from '../../utils/web3'
 
 interface InputAuth {
   message: {
@@ -20,7 +21,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse) => {
     if (method === 'POST') {
       const { message, signature }: InputAuth = request.body
 
-      const address = web3.eth.accounts.recover(
+      const address = ethers.verifyMessage(
         JSON.stringify(message, null, 2),
         signature
       )

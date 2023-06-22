@@ -1,18 +1,9 @@
-/* eslint-disable prettier/prettier */
 import React from 'react'
-import { ToastSuccess, ToastWarning } from '../../Toastify/toast'
 
-import useStakingContract from '../../../hooks/useStakingContract'
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
-import { useAppDispatch } from '../../../store/hooks'
-import { setModalAlertText } from '../../../store/reducers/modalAlertText'
+import useStaking from '@/hooks/useStaking'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
-import waitTransaction, {
-  MetamaskError,
-  TransactionCallback
-} from '../../../utils/txWait'
-
-import { Staking } from '../../../constants/tokenAddresses'
+import { networks } from '@/constants/tokenAddresses'
 
 import Button from '../../Button'
 import Overlay from '../../Overlay'
@@ -24,56 +15,26 @@ interface IModalRequestUnstakeProps {
   openStakeAndWithdraw: (transaction: 'staking' | 'unstaking') => void
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   pid: number
-  staking: boolean
+  isStaking: boolean
   symbol: string
+  chainId: number
+  stakingToken: string
 }
 
 const ModalCancelUnstake = ({
   setModalOpen,
   openStakeAndWithdraw,
   pid,
-  staking,
-  symbol
+  isStaking,
+  symbol,
+  chainId,
+  stakingToken
 }: IModalRequestUnstakeProps) => {
-  const dispatch = useAppDispatch()
-  const kacyStake = useStakingContract(Staking)
+  const networkChain = networks[chainId]
+
+  const staking = useStaking(stakingToken, networkChain.chainId)
 
   const { trackEventFunction } = useMatomoEcommerce()
-
-  const cancelUnstakeCallback = React.useCallback((): TransactionCallback => {
-    return async (error: MetamaskError, txHash: string) => {
-      if (error) {
-        if (error.code === 4001) {
-          dispatch(
-            setModalAlertText({
-              errorText: `Request for cancelling unstaking ${symbol} cancelled`
-            })
-          )
-          return
-        }
-
-        dispatch(
-          setModalAlertText({
-            errorText: `Failed to cancel unstaking of ${symbol}. Please try again later.`
-          })
-        )
-        return
-      }
-
-      trackEventFunction(
-        'click-on-cancel',
-        `${symbol}`,
-        'modal-cancel-unstaking'
-      )
-      ToastWarning(`Confirming cancelling of unstaking ${symbol}...`)
-      const txReceipt = await waitTransaction(txHash)
-
-      if (txReceipt.status) {
-        ToastSuccess(`Cancelling of unstaking ${symbol} completed`)
-        return
-      }
-    }
-  }, [symbol])
 
   return (
     <S.ModalCancelUnstake>
@@ -131,7 +92,7 @@ const ModalCancelUnstake = ({
         onCloseModal={() => setModalOpen(false)}
       >
         <S.ModalContent>
-          {staking ? (
+          {isStaking ? (
             <p>By staking you will reset your withdraw time.</p>
           ) : (
             <p>
@@ -151,10 +112,24 @@ const ModalCancelUnstake = ({
               text="Yes"
               backgroundSecondary
               onClick={() => {
-                if (staking) {
+                if (isStaking) {
                   openStakeAndWithdraw('staking')
                 } else {
-                  kacyStake.cancelUnstake(pid, cancelUnstakeCallback())
+                  staking.cancelUnstake(
+                    pid,
+                    {
+                      pending: `Confirming cancelling of unstaking ${symbol}...`,
+                      sucess: `Cancelling of unstaking ${symbol} completed`
+                    },
+                    {
+                      onSuccess: () =>
+                        trackEventFunction(
+                          'click-on-cancel',
+                          `${symbol}`,
+                          'modal-cancel-unstaking'
+                        )
+                    }
+                  )
                 }
                 setModalOpen(false)
               }}

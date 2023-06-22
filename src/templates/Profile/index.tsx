@@ -1,20 +1,21 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import detectEthereumProvider from '@metamask/detect-provider'
 import BigNumber from 'bn.js'
 import useSWR from 'swr'
 import request from 'graphql-request'
 import Big from 'big.js'
-import { toChecksumAddress } from 'web3-utils'
-import Web3 from 'web3'
+import { getAddress } from 'ethers'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import { useAppSelector } from '../../store/hooks'
+import substr from '../../utils/substr'
+import { BNtoDecimal } from '../../utils/numerals'
 
-import { ERC20 } from '../../hooks/useERC20Contract'
-import useStakingContract from '../../hooks/useStakingContract'
-import usePriceLP from '../../hooks/usePriceLP'
-import useVotingPower from '../../hooks/useVotingPower'
+import useStakingContract from '@/hooks/useStaking'
+import useVotingPower from '@/hooks/useVotings'
+import usePriceLP from '@/hooks/usePriceLPEthers'
+import { ERC20 } from '@/hooks/useERC20'
 import useCoingecko from '@/hooks/useCoingecko'
+import useTransaction from '@/hooks/useTransaction'
 
 import { GET_PROFILE } from './graphql'
 import {
@@ -24,13 +25,13 @@ import {
   BACKEND_KASSANDRA,
   KacyPoligon,
   WETH_POLYGON
-} from '../../constants/tokenAddresses'
+} from '@/constants/tokenAddresses'
 import {
   LP_KACY_AVAX_PNG,
   LP_KACY_AVAX_JOE,
   allPools,
   KACY_WETH
-} from '../../constants/pools'
+} from '@/constants/pools'
 
 import Breadcrumb from '../../components/Breadcrumb'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
@@ -46,18 +47,7 @@ import profileIcon from '../../../public/assets/iconGradient/profile.svg'
 import walletIcon from '../../../public/assets/iconGradient/wallet-gradient.svg'
 import governanceIcon from '../../../public/assets/iconGradient/vote.svg'
 
-import substr from '../../utils/substr'
-import { BNtoDecimal } from '../../utils/numerals'
-
 import * as S from './styles'
-
-// eslint-disable-next-line prettier/prettier
-declare let window: {
-  ethereum: any
-  location: {
-    reload: (noCache?: boolean) => void
-  }
-}
 
 const tabs = [
   {
@@ -121,10 +111,7 @@ const Profile = () => {
     React.useState<IAssetsValueWalletProps>({ '': new BigNumber(-1) })
   const [cardstakesPool, setCardStakesPool] = React.useState<IKacyLpPool[]>([])
   const [myFunds, setMyFunds] = React.useState<ImyFundsType>({})
-  const [hasEthereumProvider, setHasEthereumProvider] = React.useState(false)
-  const [totalVotingPower, setTotalVotingPower] = React.useState(
-    new BigNumber(0)
-  )
+  const [totalVotingPower, setTotalVotingPower] = React.useState(BigInt(0))
   const [priceToken, setPriceToken] = React.useState<IPriceToken>({
     'LP-PNG': Big(0),
     'LP-JOE': Big(0),
@@ -139,15 +126,16 @@ const Profile = () => {
     string | string[] | undefined
   >('portfolio')
   const [priceInDolar, setPriceInDolar] = React.useState({
-    tokenizedFunds: new Big(0),
-    assetsToken: new Big(0),
-    totalInvestmented: new Big(0)
+    tokenizedFunds: Big(0),
+    assetsToken: Big(0),
+    totalInvestmented: Big(0)
   })
 
-  const router = useRouter()
-  const { chainId, userWalletAddress } = useAppSelector(state => state)
   const chain = networks[43114]
 
+  const { txNotification, transactionErrors } = useTransaction()
+  const router = useRouter()
+  const [{ wallet }] = useConnectWallet()
   const votingPower = useVotingPower(Staking)
   const { getUserInfo } = useStakingContract(Staking)
   const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(
@@ -177,10 +165,18 @@ const Profile = () => {
     stakingContract: string,
     chain: number
   ) {
+    if (!profileAddress) {
+      return new BigNumber(0)
+    }
+
+    const address = Array.isArray(profileAddress)
+      ? profileAddress[0]
+      : profileAddress
+
     try {
       const userInfoResponse = await getUserInfo(
         pid,
-        profileAddress,
+        address,
         stakingContract,
         chain
       )
@@ -195,11 +191,15 @@ const Profile = () => {
     const valueInWallet: IAssetsValueWalletProps = {}
     for (const id of ids) {
       try {
-        const ERC20Contract = ERC20(id, new Web3(chain.rpc))
+        const ERC20Contract = await ERC20(id, chain.rpc, {
+          transactionErrors,
+          txNotification,
+          wallet: null
+        })
         const balanceToken = await ERC20Contract.balance(walletUserString)
 
         Object.assign(valueInWallet, {
-          [id]: balanceToken
+          [id]: new BigNumber(balanceToken)
         })
       } catch (error) {
         Object.assign(valueInWallet, {
@@ -306,11 +306,13 @@ const Profile = () => {
   }
 
   const handleAccountChange = (account: string[]) => {
+    if (!account[0]) return
+
     const tabSelect = isSelectQueryTab ? isSelectQueryTab : 'portfolio'
 
     router.push(
       {
-        pathname: `/profile/${toChecksumAddress(account[0])}`,
+        pathname: `/profile/${getAddress(account[0])}`,
         query: { tab: `${tabSelect}` }
       },
       undefined,
@@ -319,10 +321,13 @@ const Profile = () => {
   }
 
   React.useEffect(() => {
-    if (hasEthereumProvider) {
-      window.ethereum.on('accountsChanged', handleAccountChange)
+    if (!wallet) return
+
+    wallet.provider.on('accountsChanged', handleAccountChange)
+    return () => {
+      wallet?.provider.removeListener('accountsChanged', handleAccountChange)
     }
-  }, [])
+  }, [wallet])
 
   React.useEffect(() => {
     if (data?.pools) {
@@ -343,20 +348,6 @@ const Profile = () => {
   }, [data, walletUserString])
 
   React.useEffect(() => {
-    const checkEthereumProvider = async () => {
-      const provider = await detectEthereumProvider()
-
-      if (!provider && !chainId) {
-        setHasEthereumProvider(false)
-      } else {
-        setHasEthereumProvider(true)
-      }
-    }
-
-    checkEthereumProvider()
-  }, [chainId])
-
-  React.useEffect(() => {
     if (isSelectQueryTab) {
       setIsSelectTab(isSelectQueryTab)
     } else {
@@ -369,7 +360,7 @@ const Profile = () => {
       getAmountToken()
       getLiquidityPoolPriceInDollar()
     }
-  }, [profileAddress, chainId])
+  }, [profileAddress])
 
   React.useEffect(() => {
     let tokenAmountInTokenizedFunds = new Big(0)
@@ -399,31 +390,33 @@ const Profile = () => {
       ...prev,
       assetsToken: tokenAmountInTokenizedFunds
     }))
-  }, [profileAddress, priceToken, assetsValueInWallet, chainId])
+  }, [profileAddress, priceToken, assetsValueInWallet])
 
   React.useEffect(() => {
     async function getVotingPower() {
       const currentVotes = await votingPower.currentVotes(profileAddress)
 
-      setTotalVotingPower(currentVotes || new BigNumber(0))
+      setTotalVotingPower(currentVotes ?? BigInt(0))
     }
 
     getVotingPower()
-  }, [profileAddress, chainId])
+  }, [profileAddress])
 
   return (
     <>
       <Breadcrumb>
         <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem
-          href={`/profile/${userWalletAddress}`}
-          isLastPage={userWalletAddress === profileAddress}
+          href={`/profile/${wallet?.accounts[0].address}`}
+          isLastPage={
+            wallet?.accounts[0].address === walletUserString.toLowerCase()
+          }
         >
           Profile
         </BreadcrumbItem>
-        {userWalletAddress !== profileAddress && (
-          <BreadcrumbItem href={`/Profile/${profileAddress}`} isLastPage>
-            {substr(String(profileAddress))}
+        {wallet?.accounts[0].address !== walletUserString.toLowerCase() && (
+          <BreadcrumbItem href={`/Profile/${walletUserString}`} isLastPage>
+            {substr(String(walletUserString))}
           </BreadcrumbItem>
         )}
       </Breadcrumb>
@@ -447,7 +440,11 @@ const Profile = () => {
               textTitle="TOTAL MANAGED"
             />
             <AnyCardTotal
-              text={String(BNtoDecimal(totalVotingPower, 18, 2) || 0)}
+              text={BNtoDecimal(
+                new BigNumber(totalVotingPower.toString()),
+                18,
+                2
+              )}
               TooltipText="The voting power of this address. Voting power is used to vote on governance proposals, and it can be earned by staking KACY."
               textTitle="VOTING POWER"
             />
@@ -460,13 +457,7 @@ const Profile = () => {
           {isSelectTab === tabs[0].asPathText ? (
             data && (
               <Portfolio
-                profileAddress={
-                  typeof profileAddress === 'undefined'
-                    ? ''
-                    : typeof profileAddress === 'string'
-                    ? profileAddress
-                    : ''
-                }
+                profileAddress={walletUserString}
                 assetsValueInWallet={assetsValueInWallet}
                 cardstakesPool={cardstakesPool}
                 priceToken={priceToken}
