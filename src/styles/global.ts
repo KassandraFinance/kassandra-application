@@ -111,6 +111,7 @@ const GlobalStyles: GlobalStyleComponent<
         --onboard-font-family-normal: rubik, sans-serif;
         --onboard-font-size-5: 1.6rem;
         --onboard-font-size-6: 1.2rem;
+        --onboard-modal-z-index: 1050;
       }
     }
 
