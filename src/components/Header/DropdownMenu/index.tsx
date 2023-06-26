@@ -2,9 +2,9 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
-import pickaxe from '../../../../public/assets/icons/pickaxe.svg'
+import pickaxe from '@assets/icons/pickaxe.svg'
 
 import * as S from './styles'
 
@@ -39,8 +39,8 @@ const DropdownMenu = ({
         isActive={isActive ? isActive : false}
         onTouchStart={() => setIsDropdown(!isDropdown)}
         onMouseOver={() => setIsDropdown(true)}
-        onMouseOut={(event: any) => {
-          setIsDropdown(false), event.target.blur()
+        onMouseOut={() => {
+          setIsDropdown(false)
         }}
         onKeyPress={event =>
           event.key === 'Enter' && setIsDropdown(!isDropdown)

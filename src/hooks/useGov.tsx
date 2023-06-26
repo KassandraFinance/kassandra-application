@@ -14,7 +14,14 @@ import failed from '@assets/notificationStatus/failed.svg'
 import queued from '@assets/notificationStatus/queued.svg'
 import votingOpen from '@assets/notificationStatus/voting-open.svg'
 
-const valuesStateProposal = [
+export type StateProposal = [
+  string,
+  string,
+  { src: string; height: number; width: number },
+  string
+]
+
+const valuesStateProposal: Array<StateProposal> = [
   ['Active', 'Pending', queued, '0'],
   ['Active', 'Voting Open', votingOpen, '1'],
   ['Failed', 'Canceled', cancelled, '2'],

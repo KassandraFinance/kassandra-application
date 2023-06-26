@@ -1,19 +1,25 @@
 import Image from 'next/image'
 
-import substr from '../../../../utils/substr'
+import substr from '@/utils/substr'
 
 import { IDateProps } from '../DelegateVotingPower'
 
-import ImageProfile from '../../ImageProfile'
+import ImageProfile from '@/components/Governance/ImageProfile'
 
-import logo from '../../../../../public/assets/logos/kacy-64.svg'
+import logo from '@assets/logos/kacy-64.svg'
 
 import * as S from '../styles'
 
 interface IOptionsProps {
   optionsOpen: boolean
   setOptionsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  data: any
+  data: Array<{
+    msg?: string
+    pid: number
+    nameToken: string
+    withdrawDelay: string
+    votingPower: string
+  }>
   delegateSelected: IDateProps
   setDelegateSelected: React.Dispatch<React.SetStateAction<IDateProps>>
   undelegate?: boolean
@@ -45,7 +51,7 @@ const Options = ({
         style={{ display: optionsOpen ? 'block' : 'none' }}
       />
       <S.Modal isOpenOption={optionsOpen} undelegate={undelegate}>
-        {data.map((item: any, index: number) => (
+        {data.map((item, index) => (
           <>
             {item.msg ? (
               <></>

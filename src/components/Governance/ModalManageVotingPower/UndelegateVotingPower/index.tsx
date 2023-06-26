@@ -26,6 +26,14 @@ export interface IDateProps {
   votingPower: string
 }
 
+type UserInfo = {
+  pid: number
+  nameToken: string
+  withdrawDelay: string
+  votingPower: string
+  msg?: string
+}
+
 interface IUndelegateVotingPowerProps {
   setCurrentModal: React.Dispatch<React.SetStateAction<string>>
 }
@@ -41,7 +49,7 @@ const UndelegateVotingPower = ({
       withdrawDelay: '',
       votingPower: ''
     })
-  const [userInfoData, setUserInfoData] = React.useState<any>([])
+  const [userInfoData, setUserInfoData] = React.useState<Array<UserInfo>>([])
   const [loading, setLoading] = React.useState<boolean>(true)
 
   const [{ wallet }] = useConnectWallet()
@@ -95,15 +103,21 @@ const UndelegateVotingPower = ({
           userInfo.delegatee.toLowerCase() ===
           wallet.accounts[0].address.toLowerCase()
         ) {
-          return { msg: "Can't undelegate to your own wallet" }
+          return {
+            msg: "Can't undelegate to your own wallet",
+            votingPower: '',
+            withdrawDelay: '',
+            nameToken: '',
+            pid: 0
+          }
         } else {
           return {
             votingPower,
             withdrawDelay: Math.round(
-              Number(poolInfo?.withdrawDelay ?? '0') / 86400
-            ),
-            nameToken: userInfo.delegatee,
-            pid: userInfo.pid
+              Number(poolInfo.withdrawDelay) / 86400
+            ).toString(),
+            nameToken: String(userInfo.delegatee),
+            pid: Number(userInfo.pid)
           }
         }
       }

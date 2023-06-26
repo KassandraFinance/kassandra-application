@@ -1,11 +1,15 @@
 import React from 'react'
 
-import { getDate } from '../../../utils/date'
+import { getDate } from '@/utils/date'
 
 import * as S from './styles'
 
-const TooltipAllocation = (props: { payload: any; label: any }) => {
-  const { payload, label } = props
+type TooltipAllocationProps = {
+  payload?: { color: string; name: string; value: number }[]
+  label?: number
+}
+
+const TooltipAllocation = ({ payload, label = 0 }: TooltipAllocationProps) => {
   const [currentDate, setCurrentDate] = React.useState('')
 
   const toPercent = (decimal: number, fixed = 2) => {
@@ -20,18 +24,13 @@ const TooltipAllocation = (props: { payload: any; label: any }) => {
     <S.TooltipAllocation>
       <ul>
         {payload &&
-          payload.map(
-            (
-              entry: { color: string; name: string; value: any; payload: any },
-              index: any
-            ) => (
-              <li key={`item-${index}`} style={{ color: entry.color }}>
-                <span>{entry.name}</span>
-                <span>-</span>
-                <span>{toPercent(entry.value)}</span>
-              </li>
-            )
-          )}
+          payload.map((entry, index) => (
+            <li key={`item-${index}`} style={{ color: entry.color }}>
+              <span>{entry.name}</span>
+              <span>-</span>
+              <span>{toPercent(entry.value)}</span>
+            </li>
+          ))}
         <S.DateAllocation>{currentDate}</S.DateAllocation>
       </ul>
     </S.TooltipAllocation>

@@ -14,7 +14,13 @@ import CustomizedAxisTick from './CustomizedAxisTick'
 import { dictionary } from './styles'
 
 interface IChartAllocationProps {
-  data: any[]
+  data: {
+    weights: {
+      token: { symbol: string; id: string }
+      weight_normalized: string
+    }[]
+    timestamp: number
+  }[]
 }
 
 const invertSymbol: { [key: string]: string } = {
@@ -25,34 +31,33 @@ const invertSymbol: { [key: string]: string } = {
 }
 
 const ChartAllocation = ({ data }: IChartAllocationProps) => {
-  const [allocation, setAllocation] = React.useState<any[]>([])
+  const [allocation, setAllocation] = React.useState<
+    Array<{
+      [symbol: string]: number
+    }>
+  >([])
   const [arrayKeys, setArrayKeys] = React.useState<string[]>([])
 
   React.useEffect(() => {
     if (data.length) {
-      const res = data.map((item: any) => {
-        const weight = item.weights.map(
-          (weight: {
-            token: { symbol: string; id: string }
-            weight_normalized: string
-          }) => {
-            return {
-              [invertSymbol[weight.token.id] || weight.token.symbol]:
-                weight.weight_normalized
-            }
+      const res = data.map(item => {
+        const weight = item.weights.map(weight => {
+          return {
+            [invertSymbol[weight.token.id] || weight.token.symbol]:
+              weight.weight_normalized
           }
-        )
+        })
 
-        const wei = weight.sort((a: number, b: number) => {
+        const wei = weight.sort((a, b) => {
           return Number(Object.values(a)) - Number(Object.values(b))
         })
 
         const weightObj = wei.reduce(
-          (target: any, obj: any) => Object.assign(target, obj),
+          (target, obj) => Object.assign(target, obj),
           {}
         )
         return {
-          timestamp: item.timestamp,
+          ['timestamp']: item.timestamp,
           ...weightObj
         }
       })
