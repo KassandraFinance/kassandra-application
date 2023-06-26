@@ -151,7 +151,7 @@ const StakeCard = ({
 
   const staking = useStaking(stakingAddress, networkChain.chainId)
   const { data: price } = useCoingecko(
-    chain.id,
+    137,
     networkChain.nativeCurrency.address,
     [WETH_POLYGON, KacyPoligon]
   )
@@ -282,7 +282,7 @@ const StakeCard = ({
         return
       }
 
-      const priceWETH = price[WETH_POLYGON.toLowerCase()].usd
+      const priceWETH = price[WETH_POLYGON.toLowerCase()]?.usd ?? 0
       if (priceWETH) {
         setPoolPrice(await getPriceKacyAndLPBalancer(priceWETH, address))
       }
@@ -308,7 +308,7 @@ const StakeCard = ({
       return
     }
 
-    const priceKacy = price[KacyPoligon.toLowerCase()].usd
+    const priceKacy = price[KacyPoligon.toLowerCase()]?.usd ?? 0
     setKacyPrice(Big(priceKacy))
   }, [price])
 

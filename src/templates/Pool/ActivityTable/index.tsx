@@ -364,8 +364,9 @@ const ActivityTable = () => {
                                     : 0
                                 ] || '0'
                               ),
-                              18,
-                              3
+                              6,
+                              2,
+                              2
                             )}
                           </Value>
                         </S.DataWrapper>
@@ -392,8 +393,8 @@ const ActivityTable = () => {
                                 ] || 0
                               )
                             ),
-                            18,
-                            5,
+                            6,
+                            2,
                             2
                           )}
                         </SecondaryTextValue>
@@ -523,8 +524,9 @@ const ActivityTable = () => {
                                       activity.type === 'exit' ? 0 : 1
                                     ] || '0'
                                   ),
-                                  18,
-                                  3
+                                  6,
+                                  2,
+                                  2
                                 )}
                           </Value>
                         </S.DataWrapper>
@@ -541,8 +543,8 @@ const ActivityTable = () => {
                                 Big(activity.amount[1] || 0).times(
                                   Big(activity?.price_usd[1] || 0)
                                 ),
-                                18,
-                                5,
+                                6,
+                                2,
                                 2
                               )}
                         </SecondaryTextValue>
