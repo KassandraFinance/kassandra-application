@@ -1,21 +1,27 @@
-/* eslint-disable prettier/prettier */
 import React from 'react'
 import { AbiItem } from 'web3-utils'
 import Web3 from 'web3'
 
-import { TransactionCallback } from '../utils/txWait'
+import { TransactionCallback } from '@/utils/txWait'
 
-import Governance from '../constants/abi/Governance.json'
+import Governance from '@/constants/abi/Governance.json'
 import { networks } from '@/constants/tokenAddresses'
 
-import approved from '../../public/assets/notificationStatus/approved.svg'
-import cancelled from '../../public/assets/notificationStatus/cancelled.svg'
-import executed from '../../public/assets/notificationStatus/executed.svg'
-import failed from '../../public/assets/notificationStatus/failed.svg'
-import queued from '../../public/assets/notificationStatus/queued.svg'
-import votingOpen from '../../public/assets/notificationStatus/voting-open.svg'
+import approved from '@assets/notificationStatus/approved.svg'
+import cancelled from '@assets/notificationStatus/cancelled.svg'
+import executed from '@assets/notificationStatus/executed.svg'
+import failed from '@assets/notificationStatus/failed.svg'
+import queued from '@assets/notificationStatus/queued.svg'
+import votingOpen from '@assets/notificationStatus/voting-open.svg'
 
-const valuesStateProposal = [
+export type StateProposal = [
+  string,
+  string,
+  { src: string; height: number; width: number },
+  string
+]
+
+const valuesStateProposal: Array<StateProposal> = [
   ['Active', 'Pending', queued, '0'],
   ['Active', 'Voting Open', votingOpen, '1'],
   ['Failed', 'Canceled', cancelled, '2'],
@@ -49,7 +55,11 @@ const useGovernance = (address: string) => {
       return value
     }
 
-    const stateProposals = async (id: number) => {
+    const stateProposals = async (
+      id: number
+    ): Promise<
+      [string, string, { src: string; height: number; width: number }, string]
+    > => {
       const value = await contract.methods.state(id).call()
       return valuesStateProposal[value]
     }

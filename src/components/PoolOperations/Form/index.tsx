@@ -1,30 +1,29 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import { ProxyContract } from '../../../constants/tokenAddresses'
+import { ProxyContract } from '@/constants/tokenAddresses'
 
-import useProxy from '../../../hooks/useProxy'
-import useERC20Contract, { ERC20 } from '../../../hooks/useERC20Contract'
-import usePoolContract from '../../../hooks/usePoolContract'
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
-import useYieldYak from '../../../hooks/useYieldYak'
+import useProxy from '@/hooks/useProxy'
+import useERC20Contract, { ERC20 } from '@/hooks/useERC20Contract'
+import usePoolContract from '@/hooks/usePoolContract'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
+import useYieldYak from '@/hooks/useYieldYak'
 
-import { useAppSelector, useAppDispatch } from '../../../store/hooks'
-import { setModalAlertText } from '../../../store/reducers/modalAlertText'
-import { usePoolTokens } from '../../../context/PoolTokensContext'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setModalAlertText } from '@/store/reducers/modalAlertText'
+import { usePoolTokens } from '@/context/PoolTokensContext'
 
-import web3 from '../../../utils/web3'
-import { priceDollar } from '../../../utils/priceDollar'
-import { BNtoDecimal, wei } from '../../../utils/numerals'
-import changeChain, { ChainDetails } from '../../../utils/changeChain'
+import web3 from '@/utils/web3'
+import { priceDollar } from '@/utils/priceDollar'
+import { BNtoDecimal, wei } from '@/utils/numerals'
+import changeChain, { ChainDetails } from '@/utils/changeChain'
 import waitTransaction, {
   MetamaskError,
   TransactionCallback
-} from '../../../utils/txWait'
+} from '@/utils/txWait'
 
 import Button from '../../Button'
 
@@ -212,8 +211,7 @@ const Form = ({
           ).replace(/\s/g, '')
           setPriceImpact(Big(0))
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
+      } catch (error) {
         let investAmoutOutCalc: BigNumber = investAmoutOut
         if (invertToken[swapOutAddress]) {
           investAmoutOutCalc = await convertBalanceWrappedYRT(
@@ -247,7 +245,10 @@ const Form = ({
         }
 
         if (userWalletAddress.length > 0) {
-          const errorStr = error.toString()
+          let errorStr = ''
+          if (typeof error === 'object' && error !== null) {
+            errorStr = error.toString()
+          }
           if (errorStr.search(/ERR_(BPOW_BASE_TOO_|MATH_APPROX)/) > -1) {
             setErrorMsg('This amount is too low for the pool!')
             return
@@ -288,19 +289,20 @@ const Form = ({
           pow = pow.add(new BigNumber(1))
         }
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      const errorStr = error.toString()
-      if (userWalletAddress.length > 0) {
-        if (errorStr.search('ERR_BPOW_BASE_TOO_HIGH') > -1) {
+    } catch (error) {
+      if (typeof error === 'object' && error !== null) {
+        const errorStr = error.toString()
+        if (userWalletAddress.length > 0) {
+          if (errorStr.search('ERR_BPOW_BASE_TOO_HIGH') > -1) {
+            ToastWarning(
+              "The amount can't be more than half of what's in the pool!"
+            )
+            return
+          }
           ToastWarning(
-            "The amount can't be more than half of what's in the pool!"
+            'Could not connect with the blockchain to calculate prices.'
           )
-          return
         }
-        ToastWarning(
-          'Could not connect with the blockchain to calculate prices.'
-        )
       }
     }
   }

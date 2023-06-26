@@ -4,9 +4,9 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-import { GovernorAlpha, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
+import { GovernorAlpha, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 
-import useGovernance from '../../../hooks/useGovernance'
+import useGovernance, { StateProposal } from '@/hooks/useGovernance'
 
 import AnyCard from '../../AnyCard'
 
@@ -40,8 +40,8 @@ interface IProposalsTableProps {
   signatures: []
   startBlock: string
   description: string
-  timestamp: any
-  state: any[]
+  timestamp: number
+  state: StateProposal
   endBlock: string
   created: string
   timeToEndProposal: string
@@ -57,12 +57,10 @@ interface IUserTableProps {
   userWalletAddress: string | string[] | undefined
 }
 
-// eslint-disable-next-line prettier/prettier
 export const UserTableVotingHistory = ({
   userAddressUrl,
   userWalletAddress
 }: IUserTableProps) => {
-  // eslint-disable-next-line prettier/prettier
   const [proposalsList, setProposalsList] = React.useState<
     IProposalsTableProps[]
   >([])
@@ -78,7 +76,7 @@ export const UserTableVotingHistory = ({
   const governance = useGovernance(GovernorAlpha)
 
   async function handleAddStateOnProposal(proposals: IProposalsListProps[]) {
-    const proposal = proposals.map((prop: IProposalsListProps) => {
+    const proposal = proposals.map(prop => {
       const proposal = { ...prop.proposal, support: prop.support }
       return governance.stateProposals(proposal.number).then(res => {
         const createdProposal = new Date(Number(proposal.created) * 1000)

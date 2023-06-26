@@ -6,17 +6,14 @@ import { ThemeProvider } from 'styled-components'
 import { useRouter } from 'next/router'
 import { SWRConfig } from 'swr'
 
-import { persistor } from '../store'
-import { PersistGate } from 'redux-persist/integration/react'
+import GlobalStyles from '@/styles/global'
+import theme from '@/styles/theme'
 
-import GlobalStyles from '../styles/global'
-import theme from '../styles/theme'
+import { ReduxProvider } from '@/store/reduxContext'
 
-import { ReduxProvider } from '../store/reduxContext'
-
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import Toastify from '../components/Toastify'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import Toastify from '@/components/Toastify'
 
 const matomoUrl = 'https://stats.kassandra.finance'
 

@@ -1,11 +1,10 @@
 import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useInView } from 'react-intersection-observer'
 
-import Overlay from '../../Overlay'
+import Overlay from '@/components/Overlay'
 
-import closeIcon from '../../../../public/assets/utilities/close-icon.svg'
+import closeIcon from '@assets/utilities/close-icon.svg'
 
 import * as S from './styles'
 

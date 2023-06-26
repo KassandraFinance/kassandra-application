@@ -5,19 +5,19 @@ import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import { linkSnowtrace } from '../../../constants/tokenAddresses'
+import { linkSnowtrace } from '@/constants/tokenAddresses'
 
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
-import substr from '../../../utils/substr'
-import { useAppSelector } from '../../../store/hooks'
+import substr from '@/utils/substr'
+import { useAppSelector } from '@/store/hooks'
 
-import tooltip from '../../../../public/assets/utilities/tooltip.svg'
+import tooltip from '@assets/utilities/tooltip.svg'
 
-import { ToastInfo } from '../../Toastify/toast'
-import ModalUserEditInfo from '../../Modals/ModalUserEditInfo'
-import NftImage from '../../NftImage'
-import ModalInfoNFT from '../../Modals/ModalInfoNFT'
+import { ToastInfo } from '@/components/Toastify/toast'
+import ModalUserEditInfo from '@/components/Modals/ModalUserEditInfo'
+import NftImage from '@/components/NftImage'
+import ModalInfoNFT from '@/components/Modals/ModalInfoNFT'
 
 import * as S from './styles'
 
@@ -96,7 +96,7 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
         }),
           setImageUser({ url: image, isNFT: data.isNFT })
       })
-      .catch(error => {
+      .catch(() => {
         setUserData({
           nickname: '',
           twitter: '',

@@ -3,18 +3,18 @@ import Image from 'next/image'
 import 'tippy.js/dist/tippy.css'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
-import web3 from '../../../utils/web3'
+import web3 from '@/utils/web3'
 
-import { useAppSelector, useAppDispatch } from '../../../store/hooks'
-import { setModalAlertText } from '../../../store/reducers/modalAlertText'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
-import Button from '../../Button'
-import UserNFTs, { INftDetailsListProps } from '../../UserNFts'
-import NftImage from '../../NftImage'
-import { NftDetailsProps } from '../../Governance/UserDescription'
-import Overlay from '../../Overlay'
+import Button from '@/components/Button'
+import UserNFTs, { INftDetailsListProps } from '@/components/UserNFts'
+import NftImage from '@/components/NftImage'
+import { NftDetailsProps } from '@/components/Governance/UserDescription'
+import Overlay from '@/components/Overlay'
 import Modal from '../Modal'
 
 import * as S from './styles'
@@ -23,7 +23,9 @@ interface IModalUserEditInfoProps {
   modalOpen: boolean
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   userData: UserEditInfoFormProps
-  setUserImage: React.Dispatch<React.SetStateAction<any>>
+  setUserImage: React.Dispatch<
+    React.SetStateAction<{ url: string; isNFT: boolean }>
+  >
   setUserData: React.Dispatch<React.SetStateAction<UserEditInfoFormProps>>
   imageUser: {
     url: string
@@ -58,9 +60,13 @@ const ModalUserEditInfo = ({
     React.useState<UserEditInfoFormProps>({
       ...userData
     })
-  const [userImageModal, setUserImageModal] = React.useState<any>({
+  const [userImageModal, setUserImageModal] = React.useState<{
+    image_preview: string
+    image_file: Blob | null
+    isNFTPreviewModal: boolean
+  }>({
     image_preview: imageUser.url,
-    image_file: '',
+    image_file: null,
     isNFTPreviewModal: imageUser.isNFT
   })
 

@@ -4,11 +4,11 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-import { GovernorAlpha, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
+import { GovernorAlpha, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 
-import useGovernance from '../../../hooks/useGovernance'
+import useGovernance, { StateProposal } from '@/hooks/useGovernance'
 
-import Loading from '../../Loading'
+import Loading from '@/components/Loading'
 
 import { GET_PROPOSALS } from './graphql'
 
@@ -41,7 +41,7 @@ interface IProposalsListProps {
   endBlock: string
   description: string
   created: string
-  state: string[]
+  state: StateProposal
   timeToEndProposal: string
 }
 

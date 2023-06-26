@@ -2,28 +2,28 @@ import React from 'react'
 import Image from 'next/image'
 import BigNumber from 'bn.js'
 
-import { Staking } from '../../../../constants/tokenAddresses'
+import { Staking } from '@/constants/tokenAddresses'
 
 import waitTransaction, {
   MetamaskError,
   TransactionCallback
-} from '../../../../utils/txWait'
-import substr from '../../../../utils/substr'
-import { BNtoDecimal } from '../../../../utils/numerals'
+} from '@/utils/txWait'
+import substr from '@/utils/substr'
+import { BNtoDecimal } from '@/utils/numerals'
 
-import useStakingContract from '../../../../hooks/useStakingContract'
-import useVotingPower from '../../../../hooks/useVotingPower'
+import useStakingContract from '@/hooks/useStakingContract'
+import useVotingPower from '@/hooks/useVotingPower'
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import { setModalAlertText } from '../../../../store/reducers/modalAlertText'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
-import { ToastSuccess, ToastWarning } from '../../../Toastify/toast'
-import ExternalLink from '../../../ExternalLink'
+import { ToastSuccess, ToastWarning } from '@/components/Toastify/toast'
+import ExternalLink from '@/components/ExternalLink'
 import ImageProfile from '../../ImageProfile'
-import Button from '../../../Button'
+import Button from '@/components/Button'
 import Options from '../Options'
 
-import arrowSelect from '../../../../../public/assets/utilities/arrow-select-down.svg'
+import arrowSelect from '@assets/utilities/arrow-select-down.svg'
 
 import * as S from '../styles'
 export interface IDateProps {
@@ -31,6 +31,14 @@ export interface IDateProps {
   nameToken: string
   withdrawDelay: string
   votingPower: string
+}
+
+type UserInfo = {
+  pid: number
+  nameToken: string
+  withdrawDelay: string
+  votingPower: string
+  msg?: string
 }
 
 interface IUndelegateVotingPowerProps {
@@ -51,7 +59,7 @@ const UndelegateVotingPower = ({
       withdrawDelay: '',
       votingPower: ''
     })
-  const [userInfoData, setUserInfoData] = React.useState<any>([])
+  const [userInfoData, setUserInfoData] = React.useState<Array<UserInfo>>([])
   const [loading, setLoading] = React.useState<boolean>(true)
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
@@ -107,13 +115,21 @@ const UndelegateVotingPower = ({
         if (
           userInfo.delegatee.toLowerCase() === userWalletAddress.toLowerCase()
         ) {
-          return { msg: "Can't undelegate to your own wallet" }
+          return {
+            msg: "Can't undelegate to your own wallet",
+            votingPower: '',
+            withdrawDelay: '',
+            nameToken: '',
+            pid: 0
+          }
         } else {
           return {
             votingPower,
-            withdrawDelay: Math.round(Number(poolInfo.withdrawDelay) / 86400),
-            nameToken: userInfo.delegatee,
-            pid: userInfo.pid
+            withdrawDelay: Math.round(
+              Number(poolInfo.withdrawDelay) / 86400
+            ).toString(),
+            nameToken: String(userInfo.delegatee),
+            pid: Number(userInfo.pid)
           }
         }
       }

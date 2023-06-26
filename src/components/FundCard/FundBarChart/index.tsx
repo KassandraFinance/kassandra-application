@@ -3,8 +3,8 @@ import React from 'react'
 import { BarChart, XAxis, YAxis, Bar, ResponsiveContainer } from 'recharts'
 
 interface IBarChartProps {
-  poolObject: any
-  poolInfo: any[]
+  poolObject: Record<string, number>
+  poolInfo: { token: { id: string } }[]
 }
 
 const FundBarChart = ({ poolObject, poolInfo }: IBarChartProps) => {
@@ -53,7 +53,7 @@ const FundBarChart = ({ poolObject, poolInfo }: IBarChartProps) => {
         <XAxis type="number" domain={[0, 100]} hide />
         <YAxis type="category" hide dataKey="pool" />
 
-        {poolInfo.map((item: any, index: number) => (
+        {poolInfo.map((item, index) => (
           <Bar
             key={item.token.id}
             barSize={4}

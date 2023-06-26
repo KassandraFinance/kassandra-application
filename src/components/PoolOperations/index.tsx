@@ -1,11 +1,10 @@
-/* eslint-disable prettier/prettier */
 import React from 'react'
 
-import { useAppSelector } from '../../store/hooks'
+import { useAppSelector } from '@/store/hooks'
 
-import { networks } from '../../constants/tokenAddresses'
+import { networks } from '@/constants/tokenAddresses'
 
-import { ChainDetails } from '../../utils/changeChain'
+import { ChainDetails } from '@/utils/changeChain'
 
 import ModalPoolOperations from '../Modals/ModalPoolOperations'
 import SelectOperatorCart from './SelectOperatorCart'
@@ -44,7 +43,7 @@ const PoolOperations = ({
 
   const [isModalPoolOperations, setIsModalPoolOperations] =
     React.useState<boolean>(false)
-  const [isModalWallet, setIsModaWallet] = React.useState<boolean>(false)
+  const [, setIsModaWallet] = React.useState<boolean>(false)
 
   const { chainId } = useAppSelector(state => state)
 

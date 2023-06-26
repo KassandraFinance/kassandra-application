@@ -6,26 +6,25 @@ import {
   SwapWidget as SwapWidgetType,
   PangolinProvider as PangolinProviderType
 } from '@pangolindex/components'
+import { provider as Provider } from 'web3-core'
 
-import { useAppSelector } from '../../../store/hooks'
+import { useAppSelector } from '@/store/hooks'
 
-import { Kacy, networks } from '../../../constants/tokenAddresses'
+import { Kacy, networks } from '@/constants/tokenAddresses'
 
 import Button from '../../Button'
 import Overlay from '../../Overlay'
 
-import { provider } from '../../../utils/web3'
+import { provider } from '@/utils/web3'
 import changeChain from '@/utils/changeChain'
 
-import spinerIcon from '../../../../public/assets/iconGradient/spinner.png'
+import spinerIcon from '@assets/iconGradient/spinner.png'
 
 import swapTheme from './swapTheme.json'
 import * as S from './styles'
 
-//eslint-disable-next-line prettier/prettier
 const SwapWidget = dynamic(
-  () =>
-    import('@pangolindex/components').then(module => module.SwapWidget) as any,
+  () => import('@pangolindex/components').then(module => module.SwapWidget),
   {
     ssr: false
   }
@@ -33,9 +32,7 @@ const SwapWidget = dynamic(
 
 const PangolinProvider = dynamic(
   () =>
-    import('@pangolindex/components').then(
-      module => module.PangolinProvider
-    ) as any,
+    import('@pangolindex/components').then(module => module.PangolinProvider),
   { ssr: false }
 ) as typeof PangolinProviderType
 
@@ -47,7 +44,7 @@ interface IModalBuyKacyOnPangolinProps {
 const ModalBuyKacyOnPangolin = ({
   setModalOpen
 }: IModalBuyKacyOnPangolinProps) => {
-  const [isModalWallet, setIsModaWallet] = React.useState<boolean>(false)
+  const [, setIsModaWallet] = React.useState<boolean>(false)
 
   const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const chainId = useAppSelector(state => state.chainId)
@@ -55,7 +52,7 @@ const ModalBuyKacyOnPangolin = ({
 
   const connect = localStorage.getItem('walletconnect')
 
-  const walletProvider = new Web3(provider as any)
+  const walletProvider = new Web3(provider as unknown as Provider)
 
   function handleCloseModal() {
     setModalOpen(false)

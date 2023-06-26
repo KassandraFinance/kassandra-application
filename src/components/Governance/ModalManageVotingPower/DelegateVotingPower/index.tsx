@@ -1,29 +1,28 @@
 import React from 'react'
 import Image from 'next/image'
-
 import BigNumber from 'bn.js'
 
-import { Staking } from '../../../../constants/tokenAddresses'
+import { Staking } from '@/constants/tokenAddresses'
 
-import useStakingContract from '../../../../hooks/useStakingContract'
-import useVotingPower from '../../../../hooks/useVotingPower'
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import { setModalAlertText } from '../../../../store/reducers/modalAlertText'
+import useStakingContract from '@/hooks/useStakingContract'
+import useVotingPower from '@/hooks/useVotingPower'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
-import { BNtoDecimal } from '../../../../utils/numerals'
-import substr from '../../../../utils/substr'
+import { BNtoDecimal } from '@/utils/numerals'
+import substr from '@/utils/substr'
 import waitTransaction, {
   MetamaskError,
   TransactionCallback
-} from '../../../../utils/txWait'
+} from '@/utils/txWait'
 
-import Button from '../../../Button'
-import ExternalLink from '../../../ExternalLink'
-import { ToastSuccess, ToastWarning } from '../../../Toastify/toast'
+import Button from '@/components/Button'
+import ExternalLink from '@/components/ExternalLink'
+import { ToastSuccess, ToastWarning } from '@/components/Toastify/toast'
 import Options from '../Options'
 
-import arrowSelect from '../../../../../public/assets/utilities/arrow-select-down.svg'
-import logo from '../../../../../public/assets/logos/kacy-64.svg'
+import arrowSelect from '@assets/utilities/arrow-select-down.svg'
+import logo from '@assets/logos/kacy-64.svg'
 
 import * as S from '../styles'
 
@@ -40,9 +39,9 @@ interface IDelegateVotingPowerProps {
 }
 
 interface PoolData {
-  withdrawDelay: number
+  withdrawDelay: string
   votingPower: string
-  pid: number | undefined
+  pid: number
   nameToken: string
 }
 
@@ -89,13 +88,15 @@ const DelegateVotingPower = ({
       const votingPower = await balance(Number(poolInfo.pid), userWalletAddress)
 
       newArr.push({
-        withdrawDelay: Math.round(Number(poolInfo.withdrawDelay) / 86400),
+        withdrawDelay: Math.round(
+          Number(poolInfo.withdrawDelay) / 86400
+        ).toString(),
         votingPower: BNtoDecimal(
           new BigNumber(poolInfo.votingMultiplier).mul(votingPower),
           18,
           2
         ),
-        pid: poolInfo.pid,
+        pid: poolInfo.pid ?? 0,
         nameToken: 'KACY'
       })
     }

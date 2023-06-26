@@ -1,13 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
-
-import { Staking } from '../../../constants/tokenAddresses'
-
-import useStakingContract from '../../../hooks/useStakingContract'
-
-import { BNtoDecimal } from '../../../utils/numerals'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
+
+import useStakingContract from '@/hooks/useStakingContract'
+
+import { BNtoDecimal } from '@/utils/numerals'
 
 import * as S from './styles'
 

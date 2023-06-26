@@ -1,14 +1,14 @@
 import React from 'react'
 import Link from 'next/link'
 
-import { useAppSelector, useAppDispatch } from '../../../store/hooks'
-import { setNickName, setProfilePic } from '../../../store/reducers/userSlice'
-import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
-import substr from '../../../utils/substr'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setNickName, setProfilePic } from '@/store/reducers/userSlice'
+import { setModalWalletActive } from '@/store/reducers/modalWalletActive'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
+import substr from '@/utils/substr'
 
-import ModalKacy from '../../Modals/ModalKacy'
-import Button from '../../Button'
+import ModalKacy from '@/components/Modals/ModalKacy'
+import Button from '@/components/Button'
 
 import { disconnectedIcon, avalancheIcon } from './SvgButtons'
 import polygon from '@assets/logos/polygon.svg'
@@ -20,7 +20,7 @@ interface IHeaderButtonsProps {
 }
 
 type styles = {
-  icon: any
+  icon: JSX.Element
   network: string
   color: string
   fillColor: string

@@ -1,14 +1,14 @@
 import React from 'react'
 import Big from 'big.js'
 
-import { getDateInHours } from '../../../utils/date'
+import { getDateInHours } from '@/utils/date'
+import { BNtoDecimal } from '@/utils/numerals'
 
 import * as S from './styles'
-import { BNtoDecimal } from '../../../utils/numerals'
 
 interface ITooltipCustomizedPRops {
   chart: string
-  payload: any[]
+  payload: { value: string; payload: { timestamp: number } }[]
   currentPrice?: { close?: string; timestamp: number; value?: string }
 }
 
