@@ -18,8 +18,7 @@ import swapTheme from './swapTheme.json'
 import * as S from './styles'
 
 const SwapWidget = dynamic(
-  () =>
-    import('@pangolindex/components').then(module => module.SwapWidget) as any,
+  () => import('@pangolindex/components').then(module => module.SwapWidget),
   {
     ssr: false
   }
@@ -27,9 +26,7 @@ const SwapWidget = dynamic(
 
 const PangolinProvider = dynamic(
   () =>
-    import('@pangolindex/components').then(
-      module => module.PangolinProvider
-    ) as any,
+    import('@pangolindex/components').then(module => module.PangolinProvider),
   { ssr: false }
 ) as typeof PangolinProviderType
 

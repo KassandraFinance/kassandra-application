@@ -5,9 +5,9 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import { getAddress } from 'ethers'
 
-import { GovernorAlpha, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
+import { GovernorAlpha, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 
-import useGov from '../../../hooks/useGov'
+import useGov, { StateProposal } from '@/hooks/useGov'
 
 import AnyCard from '../../AnyCard'
 
@@ -41,8 +41,8 @@ interface IProposalsTableProps {
   signatures: []
   startBlock: string
   description: string
-  timestamp: any
-  state: any[]
+  timestamp: number
+  state: StateProposal
   endBlock: string
   created: string
   timeToEndProposal: string
@@ -77,7 +77,7 @@ export const UserTableVotingHistory = ({
   const governance = useGov(GovernorAlpha)
 
   async function handleAddStateOnProposal(proposals: IProposalsListProps[]) {
-    const proposal = proposals.map((prop: IProposalsListProps) => {
+    const proposal = proposals.map(prop => {
       const proposal = { ...prop.proposal, support: prop.support }
       return governance.stateProposals(proposal.number).then(res => {
         const createdProposal = new Date(Number(proposal.created) * 1000)

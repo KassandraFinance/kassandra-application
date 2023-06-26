@@ -2,7 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 
 // import { useAppSelector } from '../../../../store/hooks'
-import substr from '../../../../utils/substr'
+// import substr from '../../../../utils/substr'
 
 import Button from '../../../Button'
 
@@ -30,7 +30,7 @@ const WalletConnecting = ({
   isConnected,
   handleCloseModal
 }: IWalletConnectingProps) => {
-  const [nickname, setNickname] = React.useState()
+  // const [nickname, setNickname] = React.useState()
 
   // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
@@ -78,11 +78,11 @@ const WalletConnecting = ({
         </>
       ) : (
         <>
-          {nickname && (
+          {/* {nickname && (
             <S.AddressWrapper>
               Username: <span>{nickname}</span>
             </S.AddressWrapper>
-          )}
+          )} */}
 
           <S.AddressWrapper>
             {/* Address: <span>{substr(userWalletAddress)}</span> */}

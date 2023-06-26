@@ -7,16 +7,15 @@ import { useRouter } from 'next/router'
 import { SWRConfig } from 'swr'
 import { Web3OnboardProvider } from '@web3-onboard/react'
 
+import GlobalStyles from '@/styles/global'
+import theme from '@/styles/theme'
 import web3Onboard from '@/utils/web3Onboard'
 
-import GlobalStyles from '../styles/global'
-import theme from '../styles/theme'
+import { ReduxProvider } from '@/store/reduxContext'
 
-import { ReduxProvider } from '../store/reduxContext'
-
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import Toastify from '../components/Toastify'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import Toastify from '@/components/Toastify'
 
 const matomoUrl = 'https://stats.kassandra.finance'
 

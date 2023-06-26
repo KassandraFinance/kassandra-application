@@ -1,5 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
+import Big from 'big.js'
+import BigNumber from 'bn.js'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { networks } from '@/constants/tokenAddresses'
@@ -7,8 +8,6 @@ import { networks } from '@/constants/tokenAddresses'
 import useStaking from '@/hooks/useStaking'
 
 import { BNtoDecimal } from '@/utils/numerals'
-import Big from 'big.js'
-import BigNumber from 'bn.js'
 
 import * as S from './styles'
 

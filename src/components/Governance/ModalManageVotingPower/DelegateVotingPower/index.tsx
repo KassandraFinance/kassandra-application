@@ -35,9 +35,9 @@ interface IDelegateVotingPowerProps {
 }
 
 interface PoolData {
-  withdrawDelay: number
+  withdrawDelay: string
   votingPower: string
-  pid: number | undefined
+  pid: number
   nameToken: string
 }
 
@@ -83,13 +83,15 @@ const DelegateVotingPower = ({
       )
 
       newArr.push({
-        withdrawDelay: Math.round(Number(poolInfo.withdrawDelay) / 86400),
+        withdrawDelay: Math.round(
+          Number(poolInfo.withdrawDelay) / 86400
+        ).toString(),
         votingPower: BNtoDecimal(
           new BigNumber(poolInfo.votingMultiplier).mul(votingPower),
           18,
           2
         ),
-        pid: poolsKacy[i].pid,
+        pid: poolsKacy[i].pid ?? 0,
         nameToken: 'KACY'
       })
     }
