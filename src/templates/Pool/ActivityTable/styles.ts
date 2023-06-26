@@ -13,7 +13,7 @@ export const NewActivityTable = styled.div`
       grid-template-columns: 0.7fr 1fr 6rem;
 
       @media (min-width: 768px) {
-        grid-template-columns: 0.5fr repeat(3, 1fr);
+        grid-template-columns: 0.6fr repeat(3, 1fr);
       }
     }
 
