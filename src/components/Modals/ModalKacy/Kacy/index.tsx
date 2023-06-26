@@ -2,9 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
-
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
-import { setModalWalletActive } from '../../../../store/reducers/modalWalletActive'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal } from '../../../../utils/numerals'
 import { networks } from '../../../../constants/tokenAddresses'
@@ -42,10 +40,7 @@ const Kacy = ({
   setIsOpenModal,
   setIsModalBridge
 }: IKacyProps) => {
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
-  const connect = process.browser && localStorage.getItem('walletconnect')
-  const dispatch = useAppDispatch()
+  const [{ wallet, connecting }, connect] = useConnectWallet()
 
   const avalancheNetwork = networks[43114]
   const polygonNetwork = networks[137]
@@ -62,7 +57,7 @@ const Kacy = ({
 
       <Modal title="Your KACY Stats" onCloseModal={handleCloseModal}>
         <S.ModalContent>
-          {userWalletAddress && (
+          {wallet?.provider ? (
             <>
               <S.KacyTotalContainer>
                 <S.ImgContainer>
@@ -212,7 +207,7 @@ const Kacy = ({
 
               <S.Line />
             </>
-          )}
+          ) : null}
 
           <S.Ul isKacyStatsModal={kacyTotal.isZero()}>
             <S.Li>
@@ -235,45 +230,35 @@ const Kacy = ({
             </S.Li>
           </S.Ul>
 
-          {userWalletAddress ? (
-            connect ? (
+          {wallet?.provider ? (
+            <S.ButtonContainer>
               <Button
                 text="Buy KACY"
                 backgroundPrimary
                 fullWidth
-                as="a"
-                href="https://app.pangolin.exchange/#/swap?outputCurrency=0xf32398dae246C5f672B52A54e9B413dFFcAe1A44"
-                target="_blank"
+                onClick={() => {
+                  setIsOpenModal(true)
+                  setIsModalKacy(false)
+                }}
               />
-            ) : (
-              <S.ButtonContainer>
-                <Button
-                  text="Buy KACY"
-                  backgroundPrimary
-                  fullWidth
-                  onClick={() => {
-                    setIsOpenModal(true)
-                    setIsModalKacy(false)
-                  }}
-                />
-                <Button
-                  text="Bridge KACY"
-                  backgroundSecondary
-                  fullWidth
-                  onClick={() => {
-                    setIsModalBridge(true)
-                    setIsModalKacy(false)
-                  }}
-                />
-              </S.ButtonContainer>
-            )
+              <Button
+                text="Bridge KACY"
+                backgroundSecondary
+                fullWidth
+                onClick={() => {
+                  setIsModalBridge(true)
+                  setIsModalKacy(false)
+                }}
+              />
+            </S.ButtonContainer>
           ) : (
             <Button
               text="Connect Wallet"
               backgroundPrimary
               fullWidth
+              disabledNoEvent={connecting}
               onClick={() => {
-                dispatch(setModalWalletActive(true))
+                connect()
               }}
             />
           )}

@@ -1,8 +1,11 @@
 import React from 'react'
 import Big from 'big.js'
 import BigNumber from 'bn.js'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import useStakingContract from '@/hooks/useStakingContract'
+import { networks } from '@/constants/tokenAddresses'
+
+import useStaking from '@/hooks/useStaking'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
@@ -27,17 +30,24 @@ const KacyEarned = ({
   stakingAddress,
   chainId
 }: IKacyEarnedProps) => {
-  const { earned } = useStakingContract(stakingAddress, chainId)
+  const networkChain = networks[chainId]
+  const staking = useStaking(stakingAddress, networkChain.chainId)
+  const [{ wallet }] = useConnectWallet()
 
   async function getKacyEaned() {
-    const earnedResponse: BigNumber = await earned(pid, userWalletAddress)
-    setKacyEarned(earnedResponse)
+    if (wallet?.provider) {
+      const earnedResponse: BigNumber = await staking.earned(
+        pid,
+        wallet?.accounts[0].address
+      )
+      setKacyEarned(earnedResponse)
+    }
   }
 
   React.useEffect(() => {
     const interval = setInterval(async () => {
       getKacyEaned()
-    }, 6000)
+    }, 10000)
 
     getKacyEaned()
 

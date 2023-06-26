@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector } from '@/store/hooks'
 
-import Steps from '../../../../components/Steps'
+import Steps from '@/components/Steps'
 import CreatePoolHeader from '../CreatePoolHeader'
 import PoolReview from './PoolReview'
 import PriceFee from './PriceFee'

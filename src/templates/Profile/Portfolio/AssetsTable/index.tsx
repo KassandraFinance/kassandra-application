@@ -5,7 +5,7 @@ import BigNumber from 'bn.js'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
 
-import { BNtoDecimal } from '../../../../utils/numerals'
+import { BNtoDecimal } from '@/utils/numerals'
 
 import comingSoonIcon from '@assets/icons/coming-soon.svg'
 

@@ -2,12 +2,13 @@ import React, { FormEvent } from 'react'
 import Image from 'next/image'
 import 'tippy.js/dist/tippy.css'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
+import { useConnectWallet } from '@web3-onboard/react'
+import useSignMessage from '@/hooks/useSignMessage'
+import { getAddress } from 'ethers'
 
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
-import web3 from '@/utils/web3'
-
-import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
 import Button from '@/components/Button'
@@ -71,8 +72,8 @@ const ModalUserEditInfo = ({
   })
 
   const dispatch = useAppDispatch()
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
+  const [{ wallet }] = useConnectWallet()
+  const { signMessage } = useSignMessage()
   const inputRefModal = React.useRef<HTMLInputElement>(null)
 
   const { trackEventFunction } = useMatomoEcommerce()
@@ -87,6 +88,9 @@ const ModalUserEditInfo = ({
 
   async function handleFormChangeEditInfo(event: FormEvent) {
     event.preventDefault()
+
+    if (!wallet?.provider) return
+
     const { nickname, twitter, website, telegram, discord, description } =
       editYourProfileInput
 
@@ -107,15 +111,16 @@ const ModalUserEditInfo = ({
       const response = await fetch('/api/nonce')
       const { nonce } = await response.json()
       const message = JSON.stringify(
-        { ...editYourProfileInput, nonce, address: userWalletAddress },
+        {
+          ...editYourProfileInput,
+          nonce,
+          address: getAddress(wallet.accounts[0].address)
+        },
         null,
         2
       )
-      const signature = await web3.eth.personal.sign(
-        message,
-        userWalletAddress,
-        nonce
-      )
+
+      const signature = await signMessage(message)
 
       const responseAuth = await fetch('/api/auth', {
         method: 'POST',
@@ -127,7 +132,7 @@ const ModalUserEditInfo = ({
 
       const { authorized } = await responseAuth.json()
       if (authorized) {
-        await fetch(`/api/profile/${userWalletAddress}`, {
+        await fetch(`/api/profile/${getAddress(wallet.accounts[0].address)}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -152,7 +157,7 @@ const ModalUserEditInfo = ({
           const formData = new FormData()
           formData.append('image', userImageModal.image_file)
 
-          fetch(`/api/profile/${userWalletAddress}/upload-img`, {
+          fetch(`/api/profile/${wallet.accounts[0].address}/upload-img`, {
             method: 'PUT',
             body: formData
           })
@@ -248,8 +253,9 @@ const ModalUserEditInfo = ({
                   <Jazzicon
                     diameter={100}
                     seed={jsNumberForAddress(
-                      String(userWalletAddress) ||
-                        '0x1111111111111111111111111111111111111111'
+                      wallet
+                        ? String(wallet.accounts[0].address)
+                        : '0x1111111111111111111111111111111111111111'
                     )}
                   />
                 )}
@@ -296,7 +302,7 @@ const ModalUserEditInfo = ({
                   </S.ButtonAddNft>
                   <S.UserAddNftImage isDropdownAddNft={isDropdownAddNft}>
                     <UserNFTs
-                      address={userWalletAddress}
+                      address={wallet?.accounts[0].address ?? ''}
                       setUserImageModal={setUserImageModal}
                       isDropdownAddNft={isDropdownAddNft}
                       setIsDropdownAddNft={setIsDropdownAddNft}

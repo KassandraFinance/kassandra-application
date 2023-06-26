@@ -2,16 +2,16 @@ import React from 'react'
 import Image from 'next/image'
 import useSWR from 'swr'
 import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
-import { BNtoDecimal } from '../../../utils/numerals'
-
-import { useAppSelector } from '../../../store/hooks'
+import { BNtoDecimal } from '@/utils/numerals'
 
 import AnyCard from '../../AnyCard'
 import ImageProfile from '../ImageProfile'
 
-import avax from '../../../../public/assets/logos/kacy-stake.svg'
-import avaxLogo from '../../../../public/assets/logos/avax.png'
+import avax from '@assets/logos/kacy-stake.svg'
+import avaxLogo from '@assets/logos/avax.png'
 
 import * as S from './styles'
 
@@ -36,7 +36,6 @@ interface IOwnAndReceivedTableProps {
   isDelegationTable: boolean
 }
 
-// eslint-disable-next-line prettier/prettier
 export const OwnAndReceivedTable = ({
   userAddressUrl,
   userVotingPower,
@@ -44,7 +43,7 @@ export const OwnAndReceivedTable = ({
 }: IOwnAndReceivedTableProps) => {
   const [kacyDolarPrice, setKacyDolarPrice] = React.useState(0)
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
 
   const { data } = useSWR('/api/overview')
 
@@ -204,7 +203,8 @@ export const OwnAndReceivedTable = ({
             </tbody>
           </S.Table>
         </S.OwnAndReceivedTable>
-      ) : userWalletAddress === userAddressUrl ? (
+      ) : wallet &&
+        getAddress(wallet.accounts[0].address) === userAddressUrl ? (
         <AnyCard
           text={
             isDelegationTable

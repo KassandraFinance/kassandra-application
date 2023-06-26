@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
 import { useAppSelector } from '../../../../../store/hooks'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 
 import logoNone from '../../../../../../public/assets/icons/coming-soon.svg'
@@ -13,8 +12,8 @@ import { BNtoDecimal } from '../../../../../utils/numerals'
 import * as S from './styles'
 
 interface IListOfAllAssetProps {
-  amountAllTokenOut: Record<string, BigNumber>
-  balanceAllTokenOut: Record<string, BigNumber>
+  amountAllTokenOut: Record<string, Big>
+  balanceAllTokenOut: Record<string, Big>
 }
 const ListOfAllAsset = ({
   amountAllTokenOut,
@@ -43,6 +42,7 @@ const ListOfAllAsset = ({
       <S.AllInput>
         {tokenSorting.map(item => {
           const token = item.token.wraps ? item.token.wraps : item.token
+          const amount = item?.amount ?? Big(0)
 
           return (
             <S.InputBestValueGrid key={`best_value_${item.token.id}`}>
@@ -56,17 +56,11 @@ const ListOfAllAsset = ({
                       height={21}
                     />
                   </S.tokenLogo>
-                  {BNtoDecimal(item.amount || new BigNumber(0), token.decimals)}{' '}
+                  {BNtoDecimal(item.amount || Big(0), token.decimals)}{' '}
                   {token.symbol}
                 </S.SymbolContainer>
                 <S.SpanLight>
-                  Balance:{' '}
-                  {item.balance > new BigNumber(-1)
-                    ? BNtoDecimal(
-                        item.balance || new BigNumber(0),
-                        token.decimals
-                      )
-                    : '...'}
+                  Balance: {BNtoDecimal(item.balance || Big(0), token.decimals)}
                 </S.SpanLight>
               </S.BestValueItem>
               <S.BestValueItem style={{ paddingRight: '10px' }}>
@@ -77,18 +71,16 @@ const ListOfAllAsset = ({
                   value={
                     '$' +
                     BNtoDecimal(
-                      Big(item.amount?.toString() || 0)
-                        .mul(
-                          Big(
-                            priceToken(
-                              item.token.wraps
-                                ? item.token.wraps.id.toLocaleLowerCase()
-                                : item.token.id.toLocaleLowerCase()
-                            ) || 0
-                          )
+                      amount.mul(
+                        Big(
+                          priceToken(
+                            item.token.wraps
+                              ? item.token.wraps.id.toLocaleLowerCase()
+                              : item.token.id.toLocaleLowerCase()
+                          ) || 0
                         )
-                        .div(Big(10).pow(Number(token.decimals))),
-                      18,
+                      ),
+                      Number(token.decimals),
                       2,
                       2
                     )

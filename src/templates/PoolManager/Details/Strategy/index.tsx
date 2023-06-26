@@ -6,14 +6,13 @@ import useSWR from 'swr'
 import { request } from 'graphql-request'
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
 import 'react-markdown-editor-lite/lib/index.css'
-import { keccak256 } from 'web3-utils'
-import crypto from 'crypto'
-
-import web3 from '@/utils/web3'
+// import crypto from 'crypto'
+import { useConnectWallet } from '@web3-onboard/react'
+import useSignMessage from '@/hooks/useSignMessage'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 import { GET_STRATEGY, SAVE_POOL } from './graphql'
-import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
 import usePoolInfo from '@/hooks/usePoolInfo'
 
@@ -39,8 +38,8 @@ const Strategy = () => {
   const [value, setValue] = React.useState('')
   const [isEdit, setIsEdit] = React.useState(true)
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
+  const { signMessage } = useSignMessage()
+  const [{ wallet }] = useConnectWallet()
   const dispatch = useAppDispatch()
   const router = useRouter()
   const poolId = Array.isArray(router.query.pool)
@@ -68,15 +67,13 @@ const Strategy = () => {
     summary: string,
     chainId: number
   ) {
+    if (!wallet) return
+
     try {
-      const nonce = crypto.randomBytes(12).toString('base64')
+      // const nonce = crypto.randomBytes(12).toString('base64')
       const logoToSign = ''
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
-      const signature = await web3.eth.personal.sign(
-        message,
-        userWalletAddress,
-        nonce
-      )
+      const signature = await signMessage(message)
 
       const body = {
         controller,
@@ -121,7 +118,7 @@ const Strategy = () => {
     )
   }
 
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const { data } = useSWR<GetStrategyType>(
     [GET_STRATEGY, poolId],

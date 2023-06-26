@@ -3,10 +3,11 @@ import Link from 'next/link'
 import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
+import { getAddress } from 'ethers'
 
 import { GovernorAlpha, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 
-import useGovernance, { StateProposal } from '@/hooks/useGovernance'
+import useGov, { StateProposal } from '@/hooks/useGov'
 
 import AnyCard from '../../AnyCard'
 
@@ -54,7 +55,7 @@ interface IProposalsListProps {
 
 interface IUserTableProps {
   userAddressUrl: string | string[] | undefined
-  userWalletAddress: string | string[] | undefined
+  userWalletAddress: string | undefined
 }
 
 export const UserTableVotingHistory = ({
@@ -73,7 +74,7 @@ export const UserTableVotingHistory = ({
     })
   )
 
-  const governance = useGovernance(GovernorAlpha)
+  const governance = useGov(GovernorAlpha)
 
   async function handleAddStateOnProposal(proposals: IProposalsListProps[]) {
     const proposal = proposals.map(prop => {
@@ -205,11 +206,15 @@ export const UserTableVotingHistory = ({
       ) : (
         <AnyCard
           text={
-            userWalletAddress === userAddressUrl
+            userWalletAddress &&
+            getAddress(userWalletAddress) === userAddressUrl
               ? 'This address hasn’t voted in any governance proposal yet.'
               : 'This address has not voted on a governance proposal yet '
           }
-          button={userWalletAddress === userAddressUrl}
+          button={
+            (userWalletAddress ? getAddress(userWalletAddress) : false) ===
+            userAddressUrl
+          }
           link="/farm"
           buttonText="Stake/Farm"
         />

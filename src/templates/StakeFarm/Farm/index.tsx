@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import React from 'react'
 
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
-import StakeCard from '../../../components/StakeCard'
+import StakeCard from '@/components/StakeCard'
 
-import { poolsFunds } from '../../../constants/pools'
+import { poolsFunds } from '@/constants/pools'
 
 import * as S from './styles'
 

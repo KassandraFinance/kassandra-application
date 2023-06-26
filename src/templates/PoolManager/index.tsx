@@ -7,11 +7,10 @@ import request from 'graphql-request'
 import Tippy from '@tippyjs/react'
 import { BNtoDecimal } from '../../utils/numerals'
 import Big from 'big.js'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { GET_POOL_REBALANCE_TIME, GET_POOL_PRICE } from './graphql'
-
-import changeChain from '@/utils/changeChain'
 
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import usePoolInfo from '@/hooks/usePoolInfo'
@@ -108,20 +107,23 @@ const PoolManager = () => {
 
   const dispatch = useAppDispatch()
   const router = useRouter()
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const chainId = useAppSelector(state => state.chainId)
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
   const { trackEventFunction } = useMatomoEcommerce()
+  const [{ wallet }] = useConnectWallet()
+  const [{ connectedChain }] = useSetChain()
+  const [{ settingChain }, setChain] = useSetChain()
 
-  const { poolInfo, isManager } = usePoolInfo(userWalletAddress, poolId)
+  const { poolInfo, isManager } = usePoolInfo(wallet, poolId)
   const { poolAssets } = usePoolAssets(poolId)
   const { data } = useSWR([GET_POOL_REBALANCE_TIME, poolId], (query, poolId) =>
     request(BACKEND_KASSANDRA, query, { id: poolId })
   )
+
+  const chainId = Number(connectedChain?.id ?? '0x89')
 
   const currentTime = new Date().getTime()
   const endRebalanceTime = data?.pool?.weight_goals[0].end_timestamp * 1000
@@ -226,14 +228,14 @@ const PoolManager = () => {
   }, [change])
 
   React.useEffect(() => {
-    if (43114 === chainId && userWalletAddress.length > 0) {
+    if (43114 === chainId && wallet) {
       setNetworkIcon(avalancheIcon)
-    } else if (137 === chainId && userWalletAddress.length > 0) {
+    } else if (137 === chainId && wallet) {
       setNetworkIcon(polygonIcon)
     } else {
       return
     }
-  }, [chainId, userWalletAddress])
+  }, [wallet])
 
   return (
     <S.PoolManager>
@@ -245,7 +247,7 @@ const PoolManager = () => {
           onClick={handleDashBoardButton}
         >
           <S.UserImageWrapper isOpen={isOpen}>
-            {userWalletAddress.length > 0 ? (
+            {wallet ? (
               <>
                 <img
                   src={image?.profilePic ? image.profilePic : userIcon.src}
@@ -352,13 +354,10 @@ const PoolManager = () => {
                       backgroundSecondary
                       size="large"
                       className="btn-manage-assets"
+                      disabledNoEvent={settingChain}
                       onClick={() =>
-                        changeChain({
-                          chainId: networks[poolInfo.chain_id].chainId,
-                          chainName: networks[poolInfo.chain_id].chainName,
-                          rpcUrls: [networks[poolInfo.chain_id].rpc],
-                          nativeCurrency:
-                            networks[poolInfo.chain_id].nativeCurrency
+                        setChain({
+                          chainId: `0x${poolInfo.chain_id.toString(16)}`
                         })
                       }
                     />

@@ -51,7 +51,6 @@ const ModalVotes = ({
   userVote,
   handleVote
 }: IModalVotes) => {
-  // eslint-disable-next-line prettier/prettier
   const [modalVotesList, setModalVotesList] = React.useState<IModalVotesList[]>(
     []
   )

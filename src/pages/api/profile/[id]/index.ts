@@ -1,6 +1,7 @@
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { checkAddressChecksum } from 'web3-utils'
+import { isAddress } from 'ethers'
+
 import { ironSessionConfig } from '../../../../config/ironSessionConfig'
 import prisma from '../../../../libs/prisma'
 
@@ -122,7 +123,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse) => {
         errors.push({ message: 'Nickname already exist' })
       }
 
-      if (!errors.length && checkAddressChecksum(walletAddress)) {
+      if (!errors.length && isAddress(walletAddress)) {
         await prisma.user.upsert({
           where: {
             walletAddress
@@ -169,7 +170,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse) => {
         return response.status(201).end()
       }
 
-      if (!checkAddressChecksum(walletAddress)) {
+      if (!isAddress(walletAddress)) {
         errors.push({ message: 'Invalid address' })
       }
 

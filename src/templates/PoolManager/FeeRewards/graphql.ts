@@ -3,6 +3,7 @@ import { gql } from 'graphql-request'
 export const GET_FEES = gql`
   query ($poolId: ID!) {
     pool(id: $poolId) {
+      chain_id
       manager {
         id
       }

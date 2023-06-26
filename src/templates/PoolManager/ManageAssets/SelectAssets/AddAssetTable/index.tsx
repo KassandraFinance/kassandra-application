@@ -220,7 +220,9 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                     $
                     {priceList
                       ? BNtoDecimal(
-                          Big(priceList[coin.id?.toLowerCase()]?.marketCap),
+                          Big(
+                            priceList[coin.id?.toLowerCase()]?.marketCap ?? 0
+                          ),
                           2
                         )
                       : 0}
@@ -240,7 +242,9 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                         ? BNtoDecimal(
                             Big(coin.balance?.toString())
                               .div(Big(10).pow(coin.decimals))
-                              .mul(Big(priceList[coin.id?.toLowerCase()].usd)),
+                              .mul(
+                                Big(priceList[coin.id?.toLowerCase()]?.usd ?? 0)
+                              ),
                             2
                           )
                         : 0}
@@ -314,7 +318,9 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                 ? BNtoDecimal(
                     Big(viewToken.balance.toString())
                       .div(Big(10).pow(viewToken.decimals))
-                      .mul(Big(priceList[viewToken.id.toLowerCase()].usd || 0)),
+                      .mul(
+                        Big(priceList[viewToken.id.toLowerCase()]?.usd || 0)
+                      ),
                     2
                   )
                 : 0}

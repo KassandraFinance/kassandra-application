@@ -3,12 +3,15 @@ import React from 'react'
 import Link from 'next/link'
 import BigNumber from 'bn.js'
 import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import useStakingContract from '../../../hooks/useStakingContract'
+import { networks } from '@/constants/tokenAddresses'
 
-import { getDate } from '../../../utils/date'
-import { BNtoDecimal } from '../../../utils/numerals'
-import substr from '../../../utils/substr'
+import useStaking from '@/hooks/useStaking'
+
+import { getDate } from '@/utils/date'
+import { BNtoDecimal } from '@/utils/numerals'
+import substr from '@/utils/substr'
 
 import { IInfoStaked } from '../'
 
@@ -16,7 +19,6 @@ import * as S from './styles'
 
 interface IYourStakeProps {
   pid: number
-  userWalletAddress: string
   infoStaked: IInfoStaked
   setInfoStaked: React.Dispatch<React.SetStateAction<IInfoStaked>>
   stakeWithVotingPower: boolean
@@ -26,15 +28,11 @@ interface IYourStakeProps {
   lockPeriod: number
   availableWithdraw: Big
   stakingAddress: string
-  chain: {
-    id: number
-    logo: string
-  }
+  chainId: number
 }
 
 const YourStake = ({
   pid,
-  userWalletAddress,
   infoStaked,
   setInfoStaked,
   stakeWithVotingPower,
@@ -43,16 +41,20 @@ const YourStake = ({
   kacyPrice,
   lockPeriod,
   availableWithdraw,
-  chain,
-  stakingAddress
+  stakingAddress,
+  chainId
 }: IYourStakeProps) => {
-  const stakingContract = useStakingContract(stakingAddress, chain.id)
-
   const [delegateTo, setDelegateTo] = React.useState<string>('')
 
+  const networkChain = networks[chainId]
+
+  const staking = useStaking(stakingAddress, networkChain.chainId)
+  const [{ wallet }] = useConnectWallet()
+
   const getYourStake = React.useCallback(async () => {
-    const poolInfoResponse = await stakingContract.poolInfo(pid)
-    if (!poolInfoResponse.withdrawDelay) {
+    const poolInfoResponse = await staking.poolInfo(pid)
+
+    if (!poolInfoResponse.withdrawDelay.toString()) {
       return
     }
 
@@ -95,13 +97,16 @@ const YourStake = ({
     let unstakeResponse = false
     let yourDailyKacyReward = new BigNumber(0)
 
-    if (userWalletAddress.length > 0) {
-      balance = await stakingContract.balance(pid, userWalletAddress)
-      withdrawableResponse = await stakingContract.withdrawable(
+    if (wallet?.provider) {
+      balance = await staking.balance(pid, wallet?.accounts[0].address)
+      withdrawableResponse = await staking.withdrawable(
         pid,
-        userWalletAddress
+        wallet?.accounts[0].address
       )
-      unstakeResponse = await stakingContract.unstaking(pid, userWalletAddress)
+      unstakeResponse = await staking.unstaking(
+        pid,
+        wallet?.accounts[0].address
+      )
 
       if (balance.gt(new BigNumber('0'))) {
         yourDailyKacyReward = kacyRewards
@@ -118,7 +123,7 @@ const YourStake = ({
       endDate,
       kacyRewards,
       yourDailyKacyReward,
-      withdrawDelay: poolInfoResponse.withdrawDelay,
+      withdrawDelay: poolInfoResponse.withdrawDelay.toString(),
       totalStaked,
       hasExpired: periodFinish < timestampNow,
       unstake: unstakeResponse,
@@ -127,26 +132,26 @@ const YourStake = ({
       vestingPeriod: poolInfoResponse.vestingPeriod,
       lockPeriod: poolInfoResponse.lockPeriod
     })
-  }, [userWalletAddress, poolPrice, kacyPrice])
+  }, [wallet, poolPrice, kacyPrice])
 
   React.useEffect(() => {
     getYourStake()
-    const interval = setInterval(getYourStake, 6000)
+    const interval = setInterval(getYourStake, 10000)
 
     return () => clearInterval(interval)
   }, [getYourStake])
 
   React.useEffect(() => {
     const delegateInfo = async () => {
-      const delegate = await stakingContract.userInfo(pid, userWalletAddress)
+      const delegate = await staking.userInfo(pid, wallet?.accounts[0].address)
       setDelegateTo(delegate.delegatee)
     }
-    if (userWalletAddress) {
+    if (wallet?.accounts[0].address) {
       delegateInfo()
     }
   }, [])
 
-  return userWalletAddress ? (
+  return wallet?.accounts[0].address ? (
     <>
       <S.Info>
         <p>Your stake</p>
@@ -210,7 +215,7 @@ const YourStake = ({
           </S.Info>
           <S.Info>
             <span>Delegated To</span>
-            {delegateTo === userWalletAddress ||
+            {delegateTo.toLocaleLowerCase() === wallet?.accounts[0].address ||
             delegateTo === '0x0000000000000000000000000000000000000000' ? (
               <span>Self</span>
             ) : (

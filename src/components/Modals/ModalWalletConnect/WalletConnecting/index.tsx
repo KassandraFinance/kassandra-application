@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 
-import { useAppSelector } from '../../../../store/hooks'
+// import { useAppSelector } from '../../../../store/hooks'
 import substr from '../../../../utils/substr'
 
 import Button from '../../../Button'
@@ -32,7 +32,7 @@ const WalletConnecting = ({
 }: IWalletConnectingProps) => {
   const [nickname, setNickname] = React.useState()
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const providers: ProviderType = {
     metamask: {
@@ -45,16 +45,16 @@ const WalletConnecting = ({
     }
   }
 
-  React.useEffect(() => {
-    if (!userWalletAddress) return
+  // React.useEffect(() => {
+  //   if (!userWalletAddress) return
 
-    fetch(`/api/profile/${userWalletAddress}`)
-      .then(res => res.json())
-      .then(data => {
-        const { nickname } = data
-        setNickname(nickname)
-      })
-  }, [userWalletAddress])
+  //   fetch(`/api/profile/${userWalletAddress}`)
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       const { nickname } = data
+  //       setNickname(nickname)
+  //     })
+  // }, [userWalletAddress])
 
   return (
     <>
@@ -85,7 +85,7 @@ const WalletConnecting = ({
           )}
 
           <S.AddressWrapper>
-            Address: <span>{substr(userWalletAddress)}</span>
+            {/* Address: <span>{substr(userWalletAddress)}</span> */}
           </S.AddressWrapper>
 
           <S.TextConnected>

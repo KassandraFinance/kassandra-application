@@ -3,7 +3,7 @@ import React from 'react'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { ToastInfo } from '../../Toastify/toast'
 
-import useConnect from '../../../hooks/useConnect'
+// import useConnect from '../../../hooks/useConnect'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 
 import Button from '../../Button'
@@ -24,7 +24,7 @@ const ModalLogOut = ({
   setModalOpen,
   userWalletAddress
 }: IModalLogOutProps) => {
-  const { handleDisconnected } = useConnect()
+  // const { handleDisconnected } = useConnect()
   const { trackEventFunction } = useMatomoEcommerce()
   const [connectionToWalletConnect, setConnectionToWalletConnect] =
     React.useState(false)
@@ -105,7 +105,7 @@ const ModalLogOut = ({
                 backgroundSecondary
                 text="Disconnect"
                 onClick={() => {
-                  handleDisconnected()
+                  // handleDisconnected()
                   setModalOpen(false)
                 }}
               />

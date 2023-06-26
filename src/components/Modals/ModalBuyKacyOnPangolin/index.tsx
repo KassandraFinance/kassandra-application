@@ -1,22 +1,16 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import Web3 from 'web3'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import {
   SwapWidget as SwapWidgetType,
   PangolinProvider as PangolinProviderType
 } from '@pangolindex/components'
-import { provider as Provider } from 'web3-core'
-
-import { useAppSelector } from '@/store/hooks'
 
 import { Kacy, networks } from '@/constants/tokenAddresses'
 
-import Button from '../../Button'
-import Overlay from '../../Overlay'
-
-import { provider } from '@/utils/web3'
-import changeChain from '@/utils/changeChain'
+import Button from '@/components/Button'
+import Overlay from '@/components/Overlay'
 
 import spinerIcon from '@assets/iconGradient/spinner.png'
 
@@ -44,23 +38,14 @@ interface IModalBuyKacyOnPangolinProps {
 const ModalBuyKacyOnPangolin = ({
   setModalOpen
 }: IModalBuyKacyOnPangolinProps) => {
-  const [, setIsModaWallet] = React.useState<boolean>(false)
+  const [{ wallet }] = useConnectWallet()
+  const [{ settingChain }, setChain] = useSetChain()
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const chainId = useAppSelector(state => state.chainId)
   const avalanche = networks[43114]
-
-  const connect = localStorage.getItem('walletconnect')
-
-  const walletProvider = new Web3(provider as unknown as Provider)
 
   function handleCloseModal() {
     setModalOpen(false)
   }
-
-  React.useEffect(() => {
-    connect && handleCloseModal()
-  }, [connect])
 
   return (
     <>
@@ -74,48 +59,40 @@ const ModalBuyKacyOnPangolin = ({
             </S.Spinner>
             <p>Initializing Pangolin widget...</p>
           </S.textContainer>
-          {userWalletAddress === '' ? (
-            <Button
-              type="button"
-              text="Connect Wallet"
-              size="huge"
-              backgroundSecondary
-              fullWidth
-              onClick={() => setIsModaWallet(true)}
-            />
-          ) : avalanche.chainId !== chainId ? (
+          {wallet?.provider &&
+          avalanche.chainId !== Number(wallet.chains[0].id) ? (
             <Button
               type="button"
               text="Connect to Avalanche Mainnet"
               size="huge"
               backgroundSecondary
               fullWidth
+              disabledNoEvent={settingChain}
               onClick={() =>
-                changeChain({
-                  chainId: avalanche.chainId,
-                  rpcUrls: [avalanche.rpc],
-                  chainName: avalanche.chainName,
-                  nativeCurrency: avalanche.nativeCurrency
+                setChain({
+                  chainId: `0x${avalanche.chainId.toString(16)}`
                 })
               }
             />
-          ) : (
-            <></>
-          )}
+          ) : null}
         </S.LoadingContent>
       </S.LoadingContainer>
-      {userWalletAddress !== '' && chainId === avalanche.chainId && (
-        <PangolinProvider
-          account={userWalletAddress}
-          chainId={chainId}
-          library={walletProvider.givenProvider}
-          theme={swapTheme}
-        >
-          <S.ModalBuyKacyContainer>
-            <SwapWidget isLimitOrderVisible={false} defaultOutputToken={Kacy} />
-          </S.ModalBuyKacyContainer>
-        </PangolinProvider>
-      )}
+      {wallet?.provider &&
+        Number(wallet.chains[0].id) === avalanche.chainId && (
+          <PangolinProvider
+            account={wallet.accounts[0].address}
+            chainId={Number(wallet.chains[0].id)}
+            library={wallet.provider}
+            theme={swapTheme}
+          >
+            <S.ModalBuyKacyContainer>
+              <SwapWidget
+                isLimitOrderVisible={false}
+                defaultOutputToken={Kacy}
+              />
+            </S.ModalBuyKacyContainer>
+          </PangolinProvider>
+        )}
     </>
   )
 }

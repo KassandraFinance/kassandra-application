@@ -3,8 +3,8 @@ import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Big from 'big.js'
-
-import { useAppSelector } from '@/store/hooks'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 import { GET_JOIN_FESS } from './graphql'
@@ -50,9 +50,9 @@ const depositsLegend: Record<string, string> = {
 }
 
 const RewardsOvertime = () => {
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
+  const [{ wallet }] = useConnectWallet()
   const router = useRouter()
+
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
@@ -171,10 +171,10 @@ const RewardsOvertime = () => {
   }
 
   const { data } = useSWR<GetJoinFeesType>(
-    [GET_JOIN_FESS, userWalletAddress, poolId],
+    wallet && [GET_JOIN_FESS, wallet.accounts[0].address, poolId],
     (query, userWalletAddress, poolId) =>
       request(BACKEND_KASSANDRA, query, {
-        id: userWalletAddress,
+        id: getAddress(userWalletAddress),
         poolId: poolId
       })
   )

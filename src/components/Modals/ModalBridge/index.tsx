@@ -1,27 +1,17 @@
 import React from 'react'
-import Web3 from 'web3'
-import { AbiItem } from 'web3-utils'
 import Big from 'big.js'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
-import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { setModalAlertText } from '@/store/reducers/modalAlertText'
-import { ERC20 } from '@/hooks/useERC20Contract'
+import useTransaction from '@/hooks/useTransaction'
+import useBridge from '@/hooks/useBridge'
+import { ERC20 } from '@/hooks/useERC20'
 import { networks } from '@/constants/tokenAddresses'
-import changeChain from '@/utils/changeChain'
-import waitTransaction, {
-  MetamaskError,
-  TransactionCallback
-} from '@/utils/txWait'
-import web3 from '@/utils/web3'
-
-import OFT from '@/constants/abi/OFT.json'
 
 import Overlay from '@/components/Overlay'
 import InputListIcon, { DataListType } from '@/components/Inputs/InputListIcon'
 import Modal from '../Modal'
 import InputNumberRight from '@/components/Inputs/InputNumberRight'
 import Button from '@/components/Button'
-import { ToastSuccess, ToastWarning } from '@/components/Toastify/toast'
 
 import { avalancheIcon, polygonIcon } from './icons'
 
@@ -49,9 +39,10 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
   const [balance, setBalance] = React.useState('0')
   const [approvedAmount, setApprovedAmount] = React.useState('0')
 
-  const dispatch = useAppDispatch()
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-  const chainId = useAppSelector(state => state.chainId)
+  const [{ wallet }] = useConnectWallet()
+  const [{ settingChain }, setChain] = useSetChain()
+  const { txNotification, transactionErrors } = useTransaction()
+  const { bridge } = useBridge()
 
   function handleSetFrom(data: DataListType) {
     setInputFrom(data)
@@ -76,119 +67,66 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
   }
 
   async function getBalance(id: string) {
-    const chain = networks[Number(id)]
-    if (chain.kacyAddress === undefined) {
-      return
+    if (wallet?.provider) {
+      const chain = networks[Number(id)]
+      if (chain.kacyAddress === undefined) {
+        return
+      }
+
+      const contract = await ERC20(chain.kacyAddress, chain.rpc, {
+        wallet: wallet,
+        txNotification: txNotification,
+        transactionErrors: transactionErrors
+      })
+      const balance = await contract.balance(wallet.accounts[0].address)
+
+      if (id === '43114') {
+        const amount = await contract.allowance(
+          chain.kacyOFT,
+          wallet.accounts[0].address
+        )
+        setApprovedAmount(Big(amount).div(Big(10).pow(18)).toString())
+      }
+
+      setBalance(Big(balance.toString()).div(Big(10).pow(18)).toString())
     }
-
-    const contract = ERC20(chain.kacyAddress, new Web3(chain.rpc))
-    const balance = await contract.balance(userWalletAddress)
-
-    if (id === '43114') {
-      const amount = await contract.allowance(chain.kacyOFT, userWalletAddress)
-      setApprovedAmount(Big(amount).div(Big(10).pow(18)).toFixed(6))
-    }
-
-    setBalance(Big(balance.toString()).div(Big(10).pow(18)).toString())
   }
 
-  const approvalCallback = React.useCallback((): TransactionCallback => {
-    return async (error: MetamaskError, txHash: string) => {
-      if (error) {
-        if (error.code === 4001) {
-          dispatch(
-            setModalAlertText({ errorText: `Approval of Kacy cancelled` })
-          )
-          return
-        }
-
-        dispatch(
-          setModalAlertText({
-            errorText: `Failed to approve Kacy. Please try again later.`
-          })
-        )
-        return
-      }
-
-      ToastWarning(`Waiting approval of Kacy...`)
-      const txReceipt = await waitTransaction(txHash)
-
-      if (txReceipt.status) {
-        ToastSuccess(`Approval of Kacy confirmed`)
-        return
-      }
-    }
-  }, [])
-
   async function handleApproveKacy() {
-    if (chainId !== 43114) {
-      return
-    }
-
     if (networks[43114]?.kacyAddress === undefined) {
       return
     }
 
-    const token = ERC20(networks[43114].kacyAddress)
+    if (wallet?.provider) {
+      if (Number(wallet.chains[0].id) !== 43114) {
+        return
+      }
 
-    await token.approve(
-      networks[43114].kacyOFT,
-      userWalletAddress,
-      approvalCallback
-    )
+      const { approve, allowance } = await ERC20(
+        networks[43114].kacyAddress,
+        networks[43114].rpc,
+        {
+          wallet: wallet,
+          txNotification: txNotification,
+          transactionErrors: transactionErrors
+        }
+      )
 
-    const amount = await token.allowance(
-      networks[43114].kacyOFT,
-      userWalletAddress
-    )
+      await approve(networks[43114].kacyOFT)
 
-    setApprovedAmount(Big(amount).div(Big(10).pow(18)).toFixed(6))
+      const amount = await allowance(
+        networks[43114].kacyOFT,
+        wallet.accounts[0].address
+      )
+
+      setApprovedAmount(Big(amount).div(Big(10).pow(18)).toString())
+    }
   }
 
   async function handleBridge(id: string) {
-    try {
-      const lzChainIds: Record<number, number> = {
-        137: 109,
-        43114: 106
-      }
+    const valueMult = Big(value).mul(Big(10).pow(18)).toFixed(0)
 
-      const valueMult = Big(value).mul(Big(10).pow(18)).toFixed(0)
-
-      // eslint-disable-next-line prettier/prettier
-      const kacyOFT = new web3.eth.Contract(
-        OFT as unknown as AbiItem,
-        networks[chainId].kacyOFT
-      )
-
-      const fees = await kacyOFT.methods
-        .estimateSendFee(
-          lzChainIds[Number(id)],
-          userWalletAddress,
-          valueMult,
-          false,
-          []
-        )
-        .call({
-          from: userWalletAddress
-        })
-
-      await kacyOFT.methods
-        .sendFrom(
-          userWalletAddress,
-          lzChainIds[Number(id)],
-          userWalletAddress,
-          valueMult,
-          userWalletAddress,
-          '0x0000000000000000000000000000000000000000',
-          []
-        )
-        .send({
-          from: userWalletAddress,
-          value: fees.nativeFee
-        })
-    } catch (error) {
-      console.log(error)
-    }
+    await bridge(id, valueMult)
   }
 
   function handleMaxClick() {
@@ -229,7 +167,7 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
                 type="number"
                 value={value}
                 min={(1 / 10 ** 18).toString()}
-                max="9600000"
+                max={balance}
                 onChange={handleOnChange}
                 lable=""
                 placeholder="Add token amount"
@@ -245,22 +183,23 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
               <S.Text>
                 Approved amount:{' '}
                 {inputFrom?.id === '43114'
-                  ? approvedAmount
+                  ? Number(approvedAmount).toFixed(6)
                   : 'Does not need approval from Polygon to Avalanche'}
               </S.Text>
 
               <S.Text>This transaction can take up to 30 minutes</S.Text>
             </S.Info>
 
-            {inputFrom && Number(inputFrom.id) !== chainId ? (
+            {inputFrom &&
+            Number(inputFrom.id) !== Number(wallet?.chains[0].id) ? (
               <Button
                 type="button"
                 text={`Connect to ${inputFrom?.name}`}
                 backgroundPrimary
+                disabledNoEvent={settingChain}
                 onClick={() =>
-                  changeChain({
-                    ...networks[Number(inputFrom.id)],
-                    rpcUrls: [networks[Number(inputFrom.id)].rpc]
+                  setChain({
+                    chainId: `0x${Number(inputFrom.id).toString(16)}`
                   })
                 }
               />
