@@ -1,8 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
-
+import { useConnectWallet } from '@web3-onboard/react'
 import BigNumber from 'bn.js'
 
+import { poolsKacy } from '@/constants/pools'
 import { Staking } from '@/constants/tokenAddresses'
 
 import useStakingContract from '@/hooks/useStaking'
@@ -20,8 +21,6 @@ import arrowSelect from '@assets/utilities/arrow-select-down.svg'
 import logo from '@assets/logos/kacy-64.svg'
 
 import * as S from '../styles'
-import { useConnectWallet } from '@web3-onboard/react'
-import { poolsKacy } from '@/constants/pools'
 
 export interface IDateProps {
   pid: number
@@ -90,7 +89,7 @@ const DelegateVotingPower = ({
           18,
           2
         ),
-        pid: poolInfo.pid,
+        pid: poolsKacy[i].pid,
         nameToken: 'KACY'
       })
     }
