@@ -32,7 +32,7 @@
     "bn.js": "^5.2.0",
     "ethers": "^6.6.0",
     "formidable": "^2.0.1",
-    "graphql": "^16.0.1",
+    "graphql": "^16.7.1",
     "graphql-request": "^3.6.1",
     "html2canvas": "^1.4.1",
     "iron-session": "^6.1.3",
