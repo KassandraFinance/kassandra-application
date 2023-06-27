@@ -6,7 +6,6 @@ import { getAddress } from 'ethers'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import ReactMarkdown from 'react-markdown'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
@@ -86,7 +85,7 @@ export interface IUserVotedProps {
   voted: boolean
   support: boolean | null
   userWalletAddress: string
-  yourVotingPowerInProposal: BigNumber
+  yourVotingPowerInProposal: Big
 }
 
 export interface IVotesProps {
@@ -162,10 +161,10 @@ const Proposal = () => {
     voted: false,
     support: null,
     userWalletAddress: '',
-    yourVotingPowerInProposal: new BigNumber(0)
+    yourVotingPowerInProposal: Big(0)
   })
   const [yourVotingPowerInProposal, setYourVotingPowerInProposal] =
-    React.useState(new BigNumber(0))
+    React.useState(Big(0))
 
   const router = useRouter()
   const [{ wallet }] = useConnectWallet()
@@ -195,7 +194,7 @@ const Proposal = () => {
         startBlock
       )
 
-      setYourVotingPowerInProposal(new BigNumber(votingPowerAtMoment))
+      setYourVotingPowerInProposal(Big(votingPowerAtMoment.toString()))
     }
   }
 
@@ -204,7 +203,7 @@ const Proposal = () => {
       userVoted.voted ||
       proposalState !== 'Active' ||
       !wallet ||
-      yourVotingPowerInProposal.eq(new BigNumber(0))
+      yourVotingPowerInProposal.eq(Big(0))
     ) {
       return
     }
@@ -290,7 +289,7 @@ const Proposal = () => {
           voted: userAlreadyVoted ? true : false,
           support: userAlreadyVoted ? userAlreadyVoted.support : null,
           userWalletAddress: wallet.accounts[0].address,
-          yourVotingPowerInProposal: new BigNumber(0)
+          yourVotingPowerInProposal: Big(0)
         })
       }
     }
@@ -838,11 +837,7 @@ const Proposal = () => {
                         Value:
                         <S.DetailsText>
                           {proposal.values[index]
-                            ? BNtoDecimal(
-                                new BigNumber(proposal.values[index]),
-                                18,
-                                2
-                              )
+                            ? BNtoDecimal(Big(proposal.values[index]), 18, 2)
                             : '-'}
                         </S.DetailsText>
                       </S.DetailsSubTitle>
