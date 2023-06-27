@@ -14,6 +14,8 @@
     "@pangolindex/components": "6.0.2",
     "@pangolindex/sdk": "5.0.1",
     "@prisma/client": "3.13.0",
+    "@tanstack/react-query": "^4.29.19",
+    "@tanstack/react-query-devtools": "^4.29.19",
     "@tippyjs/react": "^4.2.6",
     "@types/big.js": "^6.1.2",
     "@types/node": "^15.0.2",
@@ -60,7 +62,8 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@styled/typescript-styled-plugin": "^0.20.0",
+    "@styled/typescript-styled-plugin": "^1.0.0",
+    "@tanstack/eslint-plugin-query": "^4.29.9",
     "@types/formidable": "^2.0.5",
     "@types/react-slick": "^0.23.8",
     "@types/react-window": "^1.8.5",
