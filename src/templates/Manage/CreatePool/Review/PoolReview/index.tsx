@@ -6,9 +6,14 @@ import Big from 'big.js'
 
 import { networks } from '@/constants/tokenAddresses'
 
-import { useAppSelector } from '@/store/hooks'
-import { TokenType } from '@/store/reducers/poolCreationSlice'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import {
+  TokenType,
+  setLiquidity,
+  setTxs
+} from '@/store/reducers/poolCreationSlice'
 import useCoingecko from '@/hooks/useCoingecko'
+import { ParaSwap } from '@/services/ParaSwap'
 
 import substr from '@/utils/substr'
 import { BNtoDecimal } from '@/utils/numerals'
@@ -32,7 +37,10 @@ const PoolReview = () => {
   const [viewColumnInTable, setViewColumnInTable] = React.useState(1)
   const [isOpenModal, setisOpenModal] = React.useState(false)
   const [tokenForModal, setTokenForModal] = React.useState<ITokenModalProps>()
+  const [initialPrice, setInitialPrice] = React.useState(Big('0'))
+  const [totalLiquidity, setTotalLiquidity] = React.useState(Big('0'))
 
+  const dispatch = useAppDispatch()
   const poolData = useAppSelector(state => state.poolCreation.createPoolData)
 
   const tokensList = poolData.tokens ? poolData.tokens : []
@@ -80,21 +88,23 @@ const PoolReview = () => {
     })
   }
 
-  function totalLiquidity() {
+  function getTotalLiquidity() {
     const priceArr = data ? data : {}
     let total = Big(0)
-
     for (const coin of tokensList) {
-      total = total.add(Big(coin.amount).mul(Big(priceArr[coin.address].usd)))
+      total = total.add(
+        Big(coin.amount).mul(
+          Big(priceArr[coin.address.toLowerCase()]?.usd ?? 0)
+        )
+      )
     }
-
     return total
   }
 
   function getInitialPrice() {
     let invariant = Big(0)
     const numberOfTokens = poolData.tokens ? poolData.tokens?.length : 0
-    const initialLiquidity = totalLiquidity()
+    const initialLiquidity = getTotalLiquidity()
 
     for (const token of tokensList) {
       const weight = Number(token.allocation) / 100
@@ -111,6 +121,57 @@ const PoolReview = () => {
 
     return price
   }
+
+  async function getTokensAmountOut() {
+    const swapProvider = new ParaSwap()
+    const amount = poolData.tokenInAmount
+    const amounts = await swapProvider.getAmountsOut({
+      amount,
+      chainId: poolData.networkId?.toString() ?? '137',
+      destTokens: tokensList.map(token => ({
+        token: {
+          id: token.address,
+          decimals: token.decimals
+        },
+        weight_normalized: Big(token.allocation).div(100).toString()
+      })),
+      srcDecimals: poolData.tokenIn.decimals.toString(),
+      srcToken: poolData.tokenIn.address
+    })
+
+    for (let i = 0; i < amounts.amountsTokenIn.length; i++) {
+      dispatch(
+        setLiquidity({
+          token: tokensList[i].symbol,
+          liquidity: Big(amounts.amountsTokenIn[i])
+            .div(Big(10).pow(tokensList[i].decimals))
+            .toFixed(),
+          tokenPriceList: data ?? {}
+        })
+      )
+    }
+    // setInitialPrice(getInitialPrice())
+    // setTotalLiquidity(getTotalLiquidity())
+    dispatch(setTxs(amounts.txs))
+    return amounts
+  }
+
+  React.useEffect(() => {
+    if (!data) return
+    if (poolData.methodCreate === 'any-asset') {
+      getTokensAmountOut()
+    } else {
+      setInitialPrice(getInitialPrice())
+      setTotalLiquidity(getTotalLiquidity())
+    }
+  }, [data])
+
+  React.useEffect(() => {
+    if (poolData.methodCreate === 'any-asset') {
+      setInitialPrice(getInitialPrice())
+      setTotalLiquidity(getTotalLiquidity())
+    }
+  }, [poolData.tokens])
 
   return (
     <S.PoolReview>
@@ -135,7 +196,7 @@ const PoolReview = () => {
             </S.PoolNameContent>
           </S.PoolNameContainer>
           <S.PoolValueContent>
-            <span>~${data ? BNtoDecimal(getInitialPrice(), 2) : 0}</span>
+            <span>~${data ? BNtoDecimal(initialPrice, 2) : 0}</span>
             <p>INITIAL PRICE</p>
           </S.PoolValueContent>
         </S.PoolReviewHeader>
@@ -195,7 +256,9 @@ const PoolReview = () => {
                     $
                     {data
                       ? BNtoDecimal(
-                          Big(token.amount).mul(Big(data[token.address].usd)),
+                          Big(token.amount).mul(
+                            Big(data[token.address.toLowerCase()]?.usd ?? 0)
+                          ),
                           2
                         )
                       : 0}
@@ -228,7 +291,7 @@ const PoolReview = () => {
               height={20}
             />
           </span>
-          <p>${data ? BNtoDecimal(totalLiquidity(), 2) : 0}</p>
+          <p>${data ? BNtoDecimal(totalLiquidity, 2) : 0}</p>
         </S.TvlContainer>
       </S.PoolReviewContainer>
 

@@ -1,9 +1,9 @@
 import Image from 'next/image'
-import Link from 'next/link'
+// import Link from 'next/link'
 
 import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
-import link from '../../../../../../public/assets/utilities/external-link.svg'
+// import link from '../../../../../../public/assets/utilities/external-link.svg'
 import walletIcon from '../../../../../../public/assets/utilities/wallet.svg'
 
 import * as S from './styles'
@@ -13,7 +13,7 @@ interface ICoinSummaryProps {
   coinSymbol: string
   coinImage: string
   chainImage?: string
-  price: number | null
+  price: string | null
   url?: string | null
   balance?: number | null
   table?: boolean

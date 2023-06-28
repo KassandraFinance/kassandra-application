@@ -94,7 +94,8 @@ export class ParaSwap implements ISwapProvider {
 
     return {
       amountsTokenIn: amountsIn,
-      transactionsDataTx: datasTx
+      transactionsDataTx: datasTx,
+      txs: this.txs
     }
   }
 }

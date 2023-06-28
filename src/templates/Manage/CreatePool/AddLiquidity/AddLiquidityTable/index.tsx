@@ -113,7 +113,7 @@ const AddLiquidityTable = ({
                   coinImage={coin.icon}
                   coinName={coin.name}
                   coinSymbol={coin.symbol}
-                  price={priceList ? priceList[coin.address].usd : 0}
+                  price={priceList ? priceList[coin.address].usd : '0'}
                   url={coin.url}
                   balance={
                     tokensBalance[coin.address]

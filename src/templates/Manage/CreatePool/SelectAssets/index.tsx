@@ -33,7 +33,7 @@ import * as S from './styles'
 
 export type CoinGeckoAssetsResponseType = {
   [key: string]: {
-    usd: number
+    usd: string
     pricePercentageChangeIn24h: number
     marketCap: number
   }

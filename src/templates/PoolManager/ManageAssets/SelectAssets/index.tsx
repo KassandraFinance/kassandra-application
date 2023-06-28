@@ -35,7 +35,7 @@ export type TokensListType = TokensInfoResponseType & { balance?: BigNumber }
 
 export type CoinGeckoAssetsResponseType = {
   [key: string]: {
-    usd: number
+    usd: string
     pricePercentageChangeIn24h: number
     marketCap: number
   }

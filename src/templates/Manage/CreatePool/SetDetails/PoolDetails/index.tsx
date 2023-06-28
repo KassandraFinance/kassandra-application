@@ -8,6 +8,7 @@ import PoolText from './PoolText'
 import MarkdownEditor from './MarkdownEditor'
 
 import * as S from './styles'
+import { ethers } from 'ethers'
 
 const PoolDetails = () => {
   const dispatch = useAppDispatch()

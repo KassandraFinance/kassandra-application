@@ -146,7 +146,7 @@ const AddLiquidityOperation = () => {
             coinSymbol={token.symbol}
             coinImage={token.image}
             url={`https://heimdall-frontend.vercel.app/coins/btc`}
-            price={0}
+            price={'0'}
           />
 
           <S.InputWrapper>
@@ -210,7 +210,7 @@ const AddLiquidityOperation = () => {
               coinSymbol={poolInfo.symbol}
               coinImage={poolInfo.logo}
               chainImage={poolInfo.chain.logo}
-              price={0}
+              price={'0'}
             />
 
             <S.InputWrapper>

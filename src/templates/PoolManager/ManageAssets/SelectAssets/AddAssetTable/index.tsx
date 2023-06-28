@@ -204,7 +204,7 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                       coinName={coin.name}
                       coinSymbol={coin.symbol}
                       price={
-                        priceList ? priceList[coin.id?.toLowerCase()]?.usd : 0
+                        priceList ? priceList[coin.id?.toLowerCase()]?.usd : '0'
                       }
                       url={`https://heimdall-frontend.vercel.app/coins/${coin.symbol?.toLocaleLowerCase()}`}
                       table
@@ -213,7 +213,9 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                   <S.Td className="price" isView={inViewCollum === 1}>
                     $
                     {priceList
-                      ? priceList[coin.id?.toLowerCase()]?.usd.toFixed(2)
+                      ? Big(
+                          priceList[coin.id?.toLowerCase()]?.usd ?? 0
+                        ).toFixed(2)
                       : 0}
                   </S.Td>
                   <S.Td className="marketCap" isView={inViewCollum === 2}>

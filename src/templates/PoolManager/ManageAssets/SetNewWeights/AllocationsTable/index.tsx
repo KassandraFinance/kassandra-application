@@ -17,7 +17,7 @@ import PoolToken, { AssetType } from './PoolToken'
 import * as S from './styles'
 
 interface IAllocationsTableProps {
-  priceToken: (address: string) => number | undefined
+  priceToken: (address: string) => string | undefined
   chainId: number
 }
 
@@ -202,7 +202,7 @@ const AllocationsTable = ({ priceToken, chainId }: IAllocationsTableProps) => {
                     chainId === 5
                       ? mockTokens[item.token.address].toLowerCase()
                       : item.token.address.toLowerCase()
-                  ) || 0
+                  ) || '0'
                 }
               />
             </S.TrBody>

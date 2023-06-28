@@ -9,18 +9,18 @@ import { abbreviateNumber } from '@/utils/abbreviateNumber'
 
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { setTokens, TokenType } from '@/store/reducers/poolCreationSlice'
+import { setTokenSelectionActive } from '@/store/reducers/tokenSelectionActive'
 
 import InputSearch from '@/components/Inputs/InputSearch'
 import Checkbox from '@/components/Inputs/Checkbox'
 import CoinSummary from '../SelectAssets/CoinSummary'
 import Button from '@/components/Button'
-
-import * as S from './styles'
-
 import {
   CoinGeckoAssetsResponseType,
   TokensInfoResponseType
 } from '../SelectAssets'
+
+import * as S from './styles'
 
 interface IAssetsTable {
   tokensData: TokensInfoResponseType[] | undefined
@@ -70,6 +70,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
     })
 
     setTokensArr(tokensFiltered)
+    dispatch(setTokenSelectionActive(true))
   }, [tokensData, search])
 
   return (
@@ -123,7 +124,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                       coinName={coin.name}
                       coinSymbol={coin.symbol}
                       price={
-                        priceList ? priceList[coin.id.toLowerCase()]?.usd : 0
+                        priceList ? priceList[coin.id.toLowerCase()]?.usd : '0'
                       }
                       url={`https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`}
                       table

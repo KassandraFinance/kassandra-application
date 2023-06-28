@@ -6,7 +6,10 @@ import { getAddress } from 'ethers'
 
 import useBatchRequests from '@/hooks/useBatchRequests'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { setLiquidity } from '@/store/reducers/poolCreationSlice'
+import {
+  setLiquidity,
+  setMethodCreate
+} from '@/store/reducers/poolCreationSlice'
 import useCoingecko from '@/hooks/useCoingecko'
 
 import {
@@ -15,32 +18,43 @@ import {
   mockTokensReverse
 } from '@/constants/tokenAddresses'
 
+import SelectMethodToAddLiquidity from './SelectMethodToAddLiquidity'
 import CreatePoolHeader from '../CreatePoolHeader'
 import Steps from '@/components/Steps'
 import PoolSummary from '../SelectAssets/PoolSummary'
 import AddLiquidityTable from './AddLiquidityTable'
+import AddLiquidityAsset from './AddLiquidityAsset'
 
 import * as S from './styles'
 
 export type CoinGeckoResponseType = {
   [key: string]: {
-    usd: number
+    heimdallId: string
+    name: string
+    symbol: string
+    logo: string
+    usd: string
+    marketCap: number
+    volume: number
     pricePercentageChangeIn24h: number
+    pricePercentageChangeIn7d: number
+    decimals: number
+    sparklineFrom7d: number[]
   }
 }
 
-type BalancesType = Record<string, BigNumber>
+export type BalancesType = Record<string, BigNumber>
 
 const AddLiquidity = () => {
   const [tokensBalance, setTokensBalance] = React.useState<BalancesType>({})
 
   const dispatch = useAppDispatch()
-  const tokensSummary = useAppSelector(
-    state => state.poolCreation.createPoolData.tokens
-  )
-  const { network, networkId } = useAppSelector(
-    state => state.poolCreation.createPoolData
-  )
+  const {
+    network,
+    networkId,
+    tokens: tokensSummary,
+    methodCreate
+  } = useAppSelector(state => state.poolCreation.createPoolData)
 
   const { balances } = useBatchRequests(networkId || 137)
 
@@ -111,10 +125,10 @@ const AddLiquidity = () => {
     )
   }
 
-  const { data } = useCoingecko(
+  const { data, priceToken } = useCoingecko(
     networkId ?? 137,
     networks[networkId ?? 137].nativeCurrency.address,
-    addressesList
+    []
   )
 
   React.useEffect(() => {
@@ -128,7 +142,7 @@ const AddLiquidity = () => {
         getAddress(mockTokensReverse[token.address.toLowerCase()])
       )
     } else {
-      arr = tokensList.map(token => token.address)
+      arr = data ? Object.keys(data) : []
     }
 
     async function getBalances(userWalletAddress: string, tokens: string[]) {
@@ -148,10 +162,10 @@ const AddLiquidity = () => {
       setTokensBalance(balancesArr)
     }
 
-    if (wallet?.provider) {
+    if (wallet?.provider && data) {
       getBalances(wallet.accounts[0].address, arr)
     }
-  }, [wallet])
+  }, [wallet, data])
 
   return (
     <S.AddLiquidity>
@@ -190,14 +204,32 @@ const AddLiquidity = () => {
       />
 
       <S.PoolContainer>
-        <AddLiquidityTable
-          coinsList={tokensList}
-          tokensBalance={tokensBalance}
-          priceList={data}
-          onChange={handleInput}
-          onInputMaxClick={handleInputMax}
-          onMaxClick={handleMaxClick}
-        />
+        <S.AddLiquidityContainer>
+          <SelectMethodToAddLiquidity
+            setMethod={(param: 'any-asset' | 'pool-assets') =>
+              dispatch(setMethodCreate(param))
+            }
+            method={methodCreate}
+          />
+          {methodCreate === 'any-asset' ? (
+            data && (
+              <AddLiquidityAsset
+                tokensList={data}
+                tokensBalance={tokensBalance}
+                priceToken={priceToken}
+              />
+            )
+          ) : (
+            <AddLiquidityTable
+              coinsList={tokensList}
+              tokensBalance={tokensBalance}
+              priceList={data}
+              onChange={handleInput}
+              onInputMaxClick={handleInputMax}
+              onMaxClick={handleMaxClick}
+            />
+          )}
+        </S.AddLiquidityContainer>
 
         <PoolSummary
           coinsList={tokensList}

@@ -1,25 +1,21 @@
 import React from 'react'
 import { FixedSizeList as List, ListOnScrollProps } from 'react-window'
 
-import {
-  IListbalanceTokenprops,
-  IUserTokenProps,
-  ITokenListSwapProviderProps
-} from '..'
+import { IUserTokenProps, ITokenListSwapProviderProps } from '../'
 
-import { useAppDispatch, useAppSelector } from '../../../../../../store/hooks'
-import { setTokenSelect } from '../../../../../../store/reducers/tokenSelect'
-import { setTokenSelectionActive } from '../../../../../../store/reducers/tokenSelectionActive'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { setTokenSelectionActive } from '@/store/reducers/tokenSelectionActive'
+import { TokenSelectProps } from '@/store/reducers/poolCreationSlice'
 
 import * as S from './styles'
 
-interface IToken1inchListProps {
+interface ITokenListProps {
   filteredToken: IUserTokenProps[]
-  listBalanceToken: IListbalanceTokenprops
   tokenPinList: ITokenListSwapProviderProps[]
   setTokenPinList: React.Dispatch<
     React.SetStateAction<ITokenListSwapProviderProps[]>
   >
+  setTokenSelected: (token: TokenSelectProps) => void
 }
 
 export type ITokenPinprops = {
@@ -33,10 +29,10 @@ interface ICurrencyRowProps {
 
 const TokensSwapProviderList = ({
   filteredToken,
-  listBalanceToken,
   tokenPinList,
-  setTokenPinList
-}: IToken1inchListProps) => {
+  setTokenPinList,
+  setTokenSelected
+}: ITokenListProps) => {
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth)
   const [isShowShadow, setisShowShadow] = React.useState(true)
 
@@ -102,7 +98,8 @@ const TokensSwapProviderList = ({
           key={token?.symbol}
           style={style}
           onClick={() => {
-            dispatch(setTokenSelect(token))
+            // dispatch(setTokenSelect(token))
+            setTokenSelected(token)
             dispatch(setTokenSelectionActive(false))
           }}
         >

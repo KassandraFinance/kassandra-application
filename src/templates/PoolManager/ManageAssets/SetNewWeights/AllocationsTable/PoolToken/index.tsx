@@ -33,7 +33,7 @@ type INewTokensWeights = {
 interface IPoolTokensProps {
   tokenInfo: AssetType
   newTokensValues: Record<string, INewTokensWeights>
-  priceToken: number
+  priceToken: string
   handleLockStatus: (address: string, status: lockToken) => void
   handleCalcNewWeights: (value: number, tokenInfo: AssetType) => void
 }

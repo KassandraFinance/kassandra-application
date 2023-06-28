@@ -1,7 +1,7 @@
 import React from 'react'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
-import { keccak256 } from 'ethers'
+import { ethers, keccak256 } from 'ethers'
 
 import useSignMessage from '@/hooks/useSignMessage'
 import useCreatePool from '@/hooks/useCreatePool'
@@ -16,6 +16,7 @@ import {
   setClear
 } from '@/store/reducers/poolCreationSlice'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
+import { ParaSwap } from '@/services/ParaSwap'
 
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { SAVE_POOL } from './graphql'
@@ -394,47 +395,82 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }
     }
 
-    const notAprovedTokens = await getIsAproved(tokens)
+    let tokensForVerifyIsApproved: Token[]
+    if (poolData.methodCreate === 'any-asset') {
+      const { address, decimals, symbol } = poolData.tokenIn
+
+      tokensForVerifyIsApproved = [
+        {
+          address,
+          amount: Big(poolData.tokenInAmount)
+            .mul(Big(10).pow(decimals))
+            .toFixed(0),
+          normalizedAmount: poolData.tokenInAmount,
+          symbol
+        }
+      ]
+    } else {
+      tokensForVerifyIsApproved = tokens
+    }
+
+    const notAprovedTokens = await getIsAproved(tokensForVerifyIsApproved)
 
     const notApprovedList: TransactionsListType[] = []
     const approvedList: TransactionsListType[] = []
 
-    for (const token of tokensList) {
-      if (poolData.networkId === 5) {
-        const notApprovedToken = notAprovedTokens.find(
-          _token =>
-            _token.address === mockTokensReverse[token.address] ?? token.address
-        )
-        if (notApprovedToken) {
-          notApprovedList.push({
-            key: mockTokensReverse[token.address] ?? token.address,
-            transaction: `Approve ${token.symbol}`,
-            status: 'WAITING'
-          })
+    if (poolData.methodCreate === 'pool-assets') {
+      for (const token of tokensList) {
+        if (poolData.networkId === 5) {
+          const notApprovedToken = notAprovedTokens.find(
+            _token =>
+              _token.address === mockTokensReverse[token.address] ??
+              token.address
+          )
+          if (notApprovedToken) {
+            notApprovedList.push({
+              key: mockTokensReverse[token.address] ?? token.address,
+              transaction: `Approve ${token.symbol}`,
+              status: 'WAITING'
+            })
+          } else {
+            approvedList.push({
+              key: token.address,
+              transaction: `Approve ${token.symbol}`,
+              status: 'APPROVED'
+            })
+          }
         } else {
-          approvedList.push({
-            key: token.address,
-            transaction: `Approve ${token.symbol}`,
-            status: 'APPROVED'
-          })
+          const notApprovedToken = notAprovedTokens.find(
+            _token => _token.address === token.address
+          )
+          if (notApprovedToken) {
+            notApprovedList.push({
+              key: token.address,
+              transaction: `Approve ${token.symbol}`,
+              status: 'WAITING'
+            })
+          } else {
+            approvedList.push({
+              key: token.address,
+              transaction: `Approve ${token.symbol}`,
+              status: 'APPROVED'
+            })
+          }
         }
+      }
+    } else {
+      if (notAprovedTokens.length > 0) {
+        notApprovedList.push({
+          key: poolData.tokenIn.address,
+          transaction: `Approve ${poolData.tokenIn.symbol}`,
+          status: 'WAITING'
+        })
       } else {
-        const notApprovedToken = notAprovedTokens.find(
-          _token => _token.address === token.address
-        )
-        if (notApprovedToken) {
-          notApprovedList.push({
-            key: token.address,
-            transaction: `Approve ${token.symbol}`,
-            status: 'WAITING'
-          })
-        } else {
-          approvedList.push({
-            key: token.address,
-            transaction: `Approve ${token.symbol}`,
-            status: 'APPROVED'
-          })
-        }
+        approvedList.push({
+          key: poolData.tokenIn.address,
+          transaction: `Approve ${poolData.tokenIn.symbol}`,
+          status: 'APPROVED'
+        })
       }
     }
 
@@ -595,7 +631,25 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }
     }
 
-    const notAprovedTokens = await getIsAproved(tokens)
+    let tokensForVerifyIsApproved: Token[]
+    if (poolData.methodCreate === 'any-asset') {
+      const { address, decimals, symbol } = poolData.tokenIn
+
+      tokensForVerifyIsApproved = [
+        {
+          address,
+          amount: Big(poolData.tokenInAmount)
+            .mul(Big(10).pow(decimals))
+            .toFixed(0),
+          normalizedAmount: poolData.tokenInAmount,
+          symbol
+        }
+      ]
+    } else {
+      tokensForVerifyIsApproved = tokens
+    }
+
+    const notAprovedTokens = await getIsAproved(tokensForVerifyIsApproved)
 
     setTransactions(prev =>
       prev.map((item, index) => {
@@ -657,12 +711,36 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       ? brokerCommision / 100
       : 0 / 100
 
+    let datas: Array<string> = []
+    if (poolData.methodCreate === 'any-asset') {
+      const slippageInPercentage = '1'
+      const chainId = poolData.networkId?.toString() ?? '137'
+      const swapProvider = new ParaSwap()
+      await swapProvider.getAmountsOut({
+        amount: poolData.tokenInAmount,
+        chainId,
+        destTokens:
+          poolData.tokens?.map(token => ({
+            token: { decimals: token.decimals, id: token.address },
+            weight_normalized: Big(token.allocation).div(100).toString()
+          })) ?? [],
+        srcDecimals: poolData.tokenIn.decimals.toString(),
+        srcToken: poolData.tokenIn.address
+      })
+      datas = await swapProvider.getDatasTx(
+        chainId,
+        networks[Number(chainId)].factory,
+        slippageInPercentage
+      )
+    }
     const pool = {
-      name: poolData.poolName,
-      symbol: poolData.poolSymbol,
-      isPrivatePool: poolData.privacy !== 'public',
-      whitelist: networks[poolData.networkId ?? 137].whiteList,
-      maxAmountsIn: maxAmountsIn,
+      poolParams: {
+        name: poolData.poolName,
+        symbol: poolData.poolSymbol,
+        isPrivatePool: poolData.privacy !== 'public',
+        whitelist: networks[poolData.networkId ?? 137].whiteList,
+        amountsIn: maxAmountsIn
+      },
       settingsParams: {
         tokens: tokens.map(token => token.address),
         normalizedWeights: normalizedWeights,
@@ -681,6 +759,15 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         feesToReferral: poolData.fees?.refferalFee?.isChecked
           ? Big(feesToReferral).mul(Big(10).pow(18)).toFixed(0)
           : Big(0).mul(Big(10).pow(18)).toFixed(0)
+      },
+      joinParams: {
+        tokenIn:
+          poolData.methodCreate === 'any-asset'
+            ? poolData.tokenIn.address
+            : ethers.ZeroAddress,
+        amountIn:
+          poolData.methodCreate === 'any-asset' ? poolData.tokenInAmount : '0',
+        datas
       }
     }
 
@@ -697,7 +784,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         networkId: poolData.networkId ?? 137
       })
 
-      if (pool.isPrivatePool) {
+      if (pool.poolParams.isPrivatePool) {
         const addressList = poolData?.privateAddressList
           ? poolData.privateAddressList
           : []
