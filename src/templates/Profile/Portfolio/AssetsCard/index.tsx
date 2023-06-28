@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 import Tippy from '@tippyjs/react'
 import { useConnectWallet } from '@web3-onboard/react'
@@ -28,7 +27,7 @@ export interface IKacyLpPool {
     title?: string
     link?: string
   }
-  amount: BigNumber
+  amount: Big
   chainLogo: string
 }
 
@@ -37,7 +36,7 @@ export interface IPriceToken {
 }
 
 export interface IAssetsValueWalletProps {
-  [key: number]: BigNumber
+  [key: number]: Big
 }
 
 interface IStakingTableProps {
@@ -103,14 +102,14 @@ const AssetsCard = ({
                     </Tippy>
                   </S.Balance>
                   <S.AssetsValue>
-                    {BNtoDecimal(stake.amount, 18, 2)}
+                    {BNtoDecimal(stake.amount.div(Big(10).pow(18)), 18, 2)}
                     <strong>{stake.symbol === 'KACY' ? 'KACY' : 'LP'}</strong>
                   </S.AssetsValue>
                   <S.AssetsValueDollar>
                     $
                     {priceToken[stake.symbol]
                       ? BNtoDecimal(
-                          Big(stake.amount.toString())
+                          stake.amount
                             .mul(priceToken[stake.symbol])
                             .div(Big(10).pow(18)),
                           6,

@@ -1,6 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import BigNumber from 'bn.js'
 import useSWR from 'swr'
 import request from 'graphql-request'
 import Big from 'big.js'
@@ -82,11 +81,11 @@ export interface IKacyLpPool {
     title?: string
     link?: string
   }
-  amount: BigNumber
+  amount: Big
   chainLogo: string
 }
 export interface IAssetsValueWalletProps {
-  [key: string]: BigNumber
+  [key: string]: Big
 }
 
 export interface IPriceToken {
@@ -108,10 +107,10 @@ type Response = {
 
 const Profile = () => {
   const [assetsValueInWallet, setAssetsValueInWallet] =
-    React.useState<IAssetsValueWalletProps>({ '': new BigNumber(-1) })
+    React.useState<IAssetsValueWalletProps>({ '': Big(-1) })
   const [cardstakesPool, setCardStakesPool] = React.useState<IKacyLpPool[]>([])
   const [myFunds, setMyFunds] = React.useState<ImyFundsType>({})
-  const [totalVotingPower, setTotalVotingPower] = React.useState(BigInt(0))
+  const [totalVotingPower, setTotalVotingPower] = React.useState(Big(0))
   const [priceToken, setPriceToken] = React.useState<IPriceToken>({
     'LP-PNG': Big(0),
     'LP-JOE': Big(0),
@@ -166,7 +165,7 @@ const Profile = () => {
     chain: number
   ) {
     if (!profileAddress) {
-      return new BigNumber(0)
+      return Big(0)
     }
 
     const address = Array.isArray(profileAddress)
@@ -181,9 +180,9 @@ const Profile = () => {
         chain
       )
 
-      return new BigNumber(userInfoResponse.amount)
+      return Big(userInfoResponse.amount.toString())
     } catch (error) {
-      return new BigNumber(0)
+      return Big(0)
     }
   }
 
@@ -199,11 +198,11 @@ const Profile = () => {
         const balanceToken = await ERC20Contract.balance(walletUserString)
 
         Object.assign(valueInWallet, {
-          [id]: new BigNumber(balanceToken)
+          [id]: Big(balanceToken)
         })
       } catch (error) {
         Object.assign(valueInWallet, {
-          [id]: new BigNumber(0)
+          [id]: Big(0)
         })
       }
     }
@@ -257,7 +256,7 @@ const Profile = () => {
       address: '',
       symbol: '',
       poolName: '',
-      amount: new BigNumber(0),
+      amount: Big(0),
       chainLogo: ''
     }
 
@@ -396,7 +395,7 @@ const Profile = () => {
     async function getVotingPower() {
       const currentVotes = await votingPower.currentVotes(profileAddress)
 
-      setTotalVotingPower(currentVotes ?? BigInt(0))
+      setTotalVotingPower(Big(currentVotes?.toString() ?? 0))
     }
 
     getVotingPower()
@@ -440,11 +439,7 @@ const Profile = () => {
               textTitle="TOTAL MANAGED"
             />
             <AnyCardTotal
-              text={BNtoDecimal(
-                new BigNumber(totalVotingPower.toString()),
-                18,
-                2
-              )}
+              text={BNtoDecimal(totalVotingPower.div(Big(10).pow(18)), 18, 2)}
               TooltipText="The voting power of this address. Voting power is used to vote on governance proposals, and it can be earned by staking KACY."
               textTitle="VOTING POWER"
             />

@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
-import BigNumber from 'bn.js'
+import Big from 'big.js'
 
 import { poolsKacy } from '@/constants/pools'
 import { Staking } from '@/constants/tokenAddresses'
@@ -81,13 +81,16 @@ const DelegateVotingPower = ({
         poolsKacy[i].pid,
         wallet.accounts[0].address
       )
+      const votingPowerFormatted = Big(votingPower.toString()).div(
+        Big(10).pow(18)
+      )
 
       newArr.push({
         withdrawDelay: Math.round(
           Number(poolInfo.withdrawDelay) / 86400
         ).toString(),
         votingPower: BNtoDecimal(
-          new BigNumber(poolInfo.votingMultiplier).mul(votingPower),
+          Big(poolInfo.votingMultiplier).mul(votingPowerFormatted),
           18,
           2
         ),

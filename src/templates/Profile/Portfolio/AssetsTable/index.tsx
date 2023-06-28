@@ -1,7 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
 
@@ -20,7 +19,7 @@ export interface IPriceType {
 }
 
 export interface IBalanceType {
-  [key: string]: BigNumber
+  [key: string]: Big
 }
 
 export interface IParamsType {

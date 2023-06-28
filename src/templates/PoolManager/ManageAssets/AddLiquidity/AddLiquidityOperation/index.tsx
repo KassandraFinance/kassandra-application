@@ -20,7 +20,6 @@ import {
 import { ERC20 } from '../../../../../hooks/useERC20'
 import usePoolInfo from '@/hooks/usePoolInfo'
 import useCoingecko from '@/hooks/useCoingecko'
-import useTransaction from '@/hooks/useTransaction'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
@@ -70,7 +69,6 @@ const AddLiquidityOperation = () => {
   const dispatch = useAppDispatch()
   const token = useAppSelector(state => state.addAsset.token)
   const liquidit = useAppSelector(state => state.addAsset.liquidit)
-  const { txNotification, transactionErrors } = useTransaction()
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 
