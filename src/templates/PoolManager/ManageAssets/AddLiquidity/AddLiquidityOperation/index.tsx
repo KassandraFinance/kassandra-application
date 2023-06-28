@@ -1,7 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import { useRouter } from 'next/router'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
@@ -58,9 +57,7 @@ export type GetPoolTokensType = {
 }
 
 const AddLiquidityOperation = () => {
-  const [userBalance, setUserBalance] = React.useState<BigNumber>(
-    new BigNumber(0)
-  )
+  const [userBalance, setUserBalance] = React.useState<Big>(Big(0))
 
   const router = useRouter()
 
@@ -117,15 +114,10 @@ const AddLiquidityOperation = () => {
 
       const { balance } = await ERC20(
         token,
-        networks[poolInfo?.chain_id ?? 137].rpc,
-        {
-          wallet: null,
-          txNotification,
-          transactionErrors
-        }
+        networks[poolInfo?.chain_id ?? 137].rpc
       )
       const balanceValue = await balance(wallet.accounts[0].address)
-      setUserBalance(new BigNumber(balanceValue))
+      setUserBalance(Big(balanceValue))
     }
 
     if (chainId === 5) {
@@ -173,7 +165,12 @@ const AddLiquidityOperation = () => {
 
             <S.Balance>
               Balance:
-              {userBalance ? BNtoDecimal(userBalance, token.decimals) : '0'}
+              {userBalance
+                ? BNtoDecimal(
+                    userBalance.div(Big(10).pow(token.decimals)),
+                    token.decimals
+                  )
+                : '0'}
             </S.Balance>
           </S.InputWrapper>
         </S.InputContainer>
@@ -216,7 +213,7 @@ const AddLiquidityOperation = () => {
             <S.InputWrapper>
               <S.Value>
                 {Big(liquidit.amount || 0)
-                  .mul(priceData[token.id.toLowerCase()].usd ?? 0)
+                  .mul(priceData[token.id.toLowerCase()]?.usd ?? 0)
                   .div(poolInfo.price_usd)
                   .toFixed(2)}
               </S.Value>
@@ -224,7 +221,7 @@ const AddLiquidityOperation = () => {
               <S.SecondaryValue>
                 ~$
                 {Big(liquidit.amount || 0)
-                  .mul(priceData[token.id.toLowerCase()].usd ?? 0)
+                  .mul(priceData[token.id.toLowerCase()]?.usd ?? 0)
                   .toFixed(2)}
               </S.SecondaryValue>
             </S.InputWrapper>
