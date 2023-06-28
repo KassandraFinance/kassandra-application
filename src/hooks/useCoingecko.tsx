@@ -2,18 +2,19 @@ import useSWR from 'swr'
 
 import { NATIVE_ADDRESS } from '../constants/tokenAddresses'
 
-type CoinsMetadataType = {
+export type CoinsMetadataType = {
   [key: string]: {
     heimdallId: string
     name: string
     symbol: string
     logo: string
-    usd: number
+    usd: string
     marketCap: number
     volume: number
     pricePercentageChangeIn24h: number
     pricePercentageChangeIn7d: number
     sparklineFrom7d: number[]
+    decimals: number
   }
 }
 
@@ -64,13 +65,14 @@ const useCoingecko = (
       ...dataTwo.tokens
     })
   }
+
   const priceToken = (address: string) => {
     let _address = address
     if (address === NATIVE_ADDRESS) {
       _address = nativeAddress
     }
 
-    return data?.tokens[_address]?.usd ?? 0
+    return data?.tokens[_address]?.usd ?? '0'
   }
 
   return { data: data?.tokens, priceToken }
