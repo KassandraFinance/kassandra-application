@@ -33,7 +33,6 @@ const TokensSwapProviderList = ({
   setTokenPinList,
   setTokenSelected
 }: ITokenListProps) => {
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth)
   const [isShowShadow, setisShowShadow] = React.useState(true)
 
   const dispatch = useAppDispatch()
@@ -168,18 +167,6 @@ const TokensSwapProviderList = ({
     })
   }, [tokenPinList, filteredToken])
 
-  React.useEffect(() => {
-    function watchWidth() {
-      setWindowWidth(window.innerWidth)
-    }
-
-    window.addEventListener('resize', watchWidth)
-
-    return function () {
-      window.removeEventListener('resize', watchWidth)
-    }
-  }, [])
-
   return (
     <S.TokenListContainer ref={TokenListContainerRef}>
       {filteredToken.length > 0 ? (
@@ -189,7 +176,7 @@ const TokensSwapProviderList = ({
             itemCount={filteredToken.length}
             itemSize={58}
             height={3000}
-            width={windowWidth < 550 ? 260 : 384}
+            width="100%"
             onScroll={event => handleOnScroll(event)}
           >
             {CurrencyRow}

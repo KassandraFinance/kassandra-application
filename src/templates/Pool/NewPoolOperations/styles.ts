@@ -31,6 +31,11 @@ interface ISelectOperationProps {
 export const TokenSelectionContainer = styled.div<ISelectOperationProps>`
   ${({ isOpen }) => css`
     /* animation: ${fadeInAnimation} 750ms forwards; */
+    width: 44.8rem;
+
+    @media (max-width: 550px) {
+      width: 32.4rem;
+    }
 
     ${isOpen
       ? `

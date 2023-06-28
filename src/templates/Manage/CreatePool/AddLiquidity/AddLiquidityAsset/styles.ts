@@ -6,6 +6,10 @@ export const AddLiquidityAsset = styled.div`
     border-radius: 8px;
 
     background-color: rgb(255 255 255 / 0.05);
+
+    @media (max-width: 576px) {
+      padding: 1.6rem;
+    }
   `}
 `
 

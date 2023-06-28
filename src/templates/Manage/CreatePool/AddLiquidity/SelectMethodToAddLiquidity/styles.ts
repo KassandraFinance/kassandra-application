@@ -8,6 +8,10 @@ export const SelectMethodToAddLiquidity = styled.div`
     border-radius: 8px;
 
     background: rgb(252 252 252 / 0.05);
+
+    @media (max-width: 576px) {
+      padding: 1.6rem;
+    }
   `}
 `
 

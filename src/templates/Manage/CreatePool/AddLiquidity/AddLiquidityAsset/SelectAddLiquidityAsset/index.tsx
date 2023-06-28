@@ -157,7 +157,7 @@ const SelectAddLiquidityAsset = ({
       <InputSearch
         name="search-token"
         value={search}
-        placeholder="Search asset by name or address"
+        placeholder="Search asset by name"
         onChange={e => setSearch(e.target.value)}
       />
       <TokensSwapProviderList
