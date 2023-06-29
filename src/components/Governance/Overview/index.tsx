@@ -50,7 +50,7 @@ export const Overview = () => {
             </S.TextVoting>
             {wallet ? (
               <S.ValueVoting>
-                {BNtoDecimal(Big(data?.user?.votingPower ?? Big(0)), 0, 2)}
+                {BNtoDecimal(Big(data?.user?.votingPower ?? 0), 0, 2)}
               </S.ValueVoting>
             ) : (
               <Button
@@ -78,7 +78,7 @@ export const Overview = () => {
             </S.TextVoting>
             <S.ValueVoting>
               {BNtoDecimal(
-                Big(data?.governances[0]?.totalVotingPower ?? Big(0)),
+                Big(data?.governances[0]?.totalVotingPower ?? 0),
                 0,
                 2
               )}

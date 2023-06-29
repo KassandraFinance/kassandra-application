@@ -6,7 +6,7 @@ export function BNtoDecimal(
   maximumNonZero?: number,
   minimumPrecision?: number
 ) {
-  const fullNumber = value.toFixed(maximumPrecision)
+  const fullNumber = Big(value).toFixed(maximumPrecision)
   const maxPrecision = maximumNonZero || 6
   const minPrecision = minimumPrecision || 0
 
