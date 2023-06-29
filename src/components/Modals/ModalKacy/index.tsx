@@ -1,10 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
 import useSWR from 'swr'
-import BigNumber from 'bn.js'
 import { useConnectWallet } from '@web3-onboard/react'
+import Big from 'big.js'
 
-import useTransaction from '@/hooks/useTransaction'
 import { ERC20 } from '@/hooks/useERC20'
 import useStakingContract from '@/hooks/useStaking'
 import { poolsKacy, allPools } from '@/constants/pools'
@@ -48,29 +47,24 @@ const ModalKacy = () => {
       supply: 0,
       kacyPercentage: 0
     })
-  const [kacyStaked, setKacyStaked] = React.useState<BigNumber>(
-    new BigNumber(0)
-  )
-  const [kacyUnclaimed, setKacyUnclaimed] = React.useState<
-    Record<number, BigNumber>
-  >({
-    [43114]: new BigNumber(0),
-    [137]: new BigNumber(0)
-  })
-  const [kacyWallet, setKacyWallet] = React.useState<Record<number, BigNumber>>(
+  const [kacyStaked, setKacyStaked] = React.useState<Big>(Big(0))
+  const [kacyUnclaimed, setKacyUnclaimed] = React.useState<Record<number, Big>>(
     {
-      [0]: new BigNumber(0)
+      [43114]: Big(0),
+      [137]: Big(0)
     }
   )
-  const [kacyTotal, setKacyTotal] = React.useState<BigNumber>(new BigNumber(0))
+  const [kacyWallet, setKacyWallet] = React.useState<Record<number, Big>>({
+    [0]: Big(0)
+  })
+  const [kacyTotal, setKacyTotal] = React.useState<Big>(Big(0))
 
   const [{ wallet }] = useConnectWallet()
-  const { txNotification, transactionErrors } = useTransaction()
   const { data } = useSWR('/api/overview')
 
   const { userInfo, earnedMultChain } = useStakingContract(Staking)
 
-  const isKacyZeroValue = kacyTotal.isZero()
+  const isKacyZeroValue = kacyTotal.eq(Big(0))
 
   React.useEffect(() => {
     if (data) {
@@ -85,20 +79,18 @@ const ModalKacy = () => {
 
   React.useEffect(() => {
     async function getKacyBalanceInWallet(wallet: string) {
-      const kacyAmountInWallet: Record<number, BigNumber> = {}
+      const kacyAmountInWallet: Record<number, Big> = {}
 
       for (const kacy of KACY_MULTICHAIN) {
         const chain = networks[kacy.chain]
 
         if (chain.kacyAddress) {
-          const contract = await ERC20(chain.kacyAddress, chain.rpc, {
-            wallet: null,
-            txNotification: txNotification,
-            transactionErrors: transactionErrors
-          })
+          const contract = await ERC20(chain.kacyAddress, chain.rpc)
           const balance = await contract.balance(wallet)
 
-          Object.assign(kacyAmountInWallet, { [kacy.chain]: balance ?? 0 })
+          Object.assign(kacyAmountInWallet, {
+            [kacy.chain]: Big(balance) ?? Big(0)
+          })
         }
       }
 
@@ -108,11 +100,11 @@ const ModalKacy = () => {
     async function getTokenAmountInPool(pid: number, wallet: string) {
       const userInfoResponse = await userInfo(pid, wallet)
 
-      return new BigNumber(userInfoResponse.amount)
+      return Big(userInfoResponse.amount.toString())
     }
 
     const kacyTotalInPool = async (wallet: string) => {
-      let count = new BigNumber(0)
+      let count = Big(0)
       for (const kacy of poolsKacy) {
         const res = await getTokenAmountInPool(kacy.pid, wallet)
 
@@ -122,9 +114,9 @@ const ModalKacy = () => {
     }
 
     const kacyEarned = async (wallet: string) => {
-      const kacyCount: Record<number, BigNumber> = {
-        [43114]: new BigNumber(0),
-        [137]: new BigNumber(0)
+      const kacyCount: Record<number, Big> = {
+        [43114]: Big(0),
+        [137]: Big(0)
       }
 
       for (const kacy of allPools) {
@@ -135,7 +127,9 @@ const ModalKacy = () => {
           kacy.chain.id
         )
 
-        kacyCount[kacy.chain.id] = kacyCount[kacy.chain.id].add(res)
+        kacyCount[kacy.chain.id] = kacyCount[kacy.chain.id].add(
+          Big(res.toString())
+        )
       }
 
       setKacyUnclaimed(kacyCount)
@@ -150,13 +144,11 @@ const ModalKacy = () => {
 
   React.useEffect(() => {
     if (wallet?.provider) {
-      let count = new BigNumber(0)
-      let countInWallet = new BigNumber(0)
+      let count = Big(0)
+      let countInWallet = Big(0)
 
       for (const kacy of KACY_MULTICHAIN) {
-        countInWallet = countInWallet.add(
-          new BigNumber(kacyWallet[kacy.chain]) ?? new BigNumber(0)
-        )
+        countInWallet = countInWallet.add(Big(kacyWallet[kacy.chain] ?? Big(0)))
       }
 
       count = count
@@ -178,9 +170,7 @@ const ModalKacy = () => {
               ? isKacyZeroValue
                 ? 'Buy KACY'
                 : `${abbreviateNumber(
-                    kacyTotal
-                      .div(new BigNumber(10).pow(new BigNumber(18)))
-                      .toString()
+                    kacyTotal.div(Big(10).pow(18)).toString()
                   )} KACY`
               : 'Buy KACY'
           }

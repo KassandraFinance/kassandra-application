@@ -7,7 +7,6 @@ import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 import useSWR from 'swr'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import { request } from 'graphql-request'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
@@ -50,18 +49,18 @@ import tooltip from '@assets/utilities/tooltip.svg'
 import * as S from './styles'
 
 export interface IInfoStaked {
-  yourStake: BigNumber
+  yourStake: Big
   withdrawable: boolean
   votingMultiplier: string
   startDate: string
   endDate: string
-  kacyRewards: BigNumber
-  yourDailyKacyReward: BigNumber
+  kacyRewards: Big
+  yourDailyKacyReward: Big
   withdrawDelay: any
-  totalStaked: BigNumber
+  totalStaked: Big
   hasExpired: boolean
   unstake: boolean
-  apr: BigNumber
+  apr: Big
   stakingToken: string
   vestingPeriod: string
   lockPeriod: string
@@ -119,24 +118,22 @@ const StakeCard = ({
   const [stakeTransaction, setStakeTransaction] = React.useState<string>('')
   const [currentAvailableWithdraw, setCurrentAvailableWithdraw] =
     React.useState(Big(-1))
-  const [kacyEarned, setKacyEarned] = React.useState<BigNumber>(
-    new BigNumber(-1)
-  )
+  const [kacyEarned, setKacyEarned] = React.useState<Big>(Big(-1))
   const [poolPrice, setPoolPrice] = React.useState<Big>(Big(-1))
   const [kacyPrice, setKacyPrice] = React.useState<Big>(Big(-1))
   const [infoStaked, setInfoStaked] = React.useState<IInfoStaked>({
-    yourStake: new BigNumber(-1),
+    yourStake: Big(-1),
     withdrawable: false,
     votingMultiplier: '',
     startDate: '...',
     endDate: '...',
     withdrawDelay: '',
-    kacyRewards: new BigNumber(-1),
-    totalStaked: new BigNumber(-1),
-    yourDailyKacyReward: new BigNumber(-1),
+    kacyRewards: Big(-1),
+    totalStaked: Big(-1),
+    yourDailyKacyReward: Big(-1),
     hasExpired: false,
     unstake: false,
-    apr: new BigNumber(-1),
+    apr: Big(-1),
     stakingToken: '',
     vestingPeriod: '...',
     lockPeriod: '...'
@@ -179,11 +176,7 @@ const StakeCard = ({
   }
 
   async function updateAllowance() {
-    const erc20 = await ERC20(infoStaked.stakingToken, networkChain.rpc, {
-      transactionErrors: transaction.transactionErrors,
-      txNotification: transaction.txNotification,
-      wallet: null
-    })
+    const erc20 = await ERC20(infoStaked.stakingToken, networkChain.rpc)
 
     const allowance = await erc20.allowance(
       stakingAddress,
@@ -251,11 +244,7 @@ const StakeCard = ({
 
   async function handleCheckStaking() {
     if (wallet?.provider && infoStaked.stakingToken) {
-      const erc20 = await ERC20(infoStaked.stakingToken, networkChain.rpc, {
-        transactionErrors: transaction.transactionErrors,
-        txNotification: transaction.txNotification,
-        wallet: null
-      })
+      const erc20 = await ERC20(infoStaked.stakingToken, networkChain.rpc)
       erc20
         .allowance(stakingAddress, wallet?.accounts[0].address)
         .then((response: string) => setAmountApproveKacyStaking(Big(response)))
@@ -321,7 +310,7 @@ const StakeCard = ({
   }, [wallet, infoStaked.stakingToken])
 
   React.useEffect(() => {
-    if (infoStaked.apr.lt(new BigNumber(0))) {
+    if (infoStaked.apr.lt(Big(0))) {
       return
     }
 
@@ -370,7 +359,7 @@ const StakeCard = ({
                   <h4>APR</h4>
                 </S.APR>
                 <S.Percentage>
-                  {infoStaked.apr.lt(new BigNumber(0))
+                  {infoStaked.apr.lt(Big(0))
                     ? '...'
                     : infoStaked.hasExpired
                     ? 0
@@ -469,7 +458,7 @@ const StakeCard = ({
                           size="claim"
                           backgroundSecondary
                           disabledNoEvent={
-                            kacyEarned.lte(new BigNumber(0)) ||
+                            kacyEarned.lte(Big(0)) ||
                             networkChain.chainId !==
                               Number(wallet?.chains[0].id)
                           }

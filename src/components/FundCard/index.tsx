@@ -98,7 +98,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
       setChangeWeek(arrChangePrice)
 
       setInfoPool({
-        tvl: BNtoDecimal(Big(data.pool?.total_value_locked_usd), 2, 2, 2),
+        tvl: BNtoDecimal(Big(data?.pool?.total_value_locked_usd ?? 0), 2, 2, 2),
         price: data.pool.price_usd
       })
 

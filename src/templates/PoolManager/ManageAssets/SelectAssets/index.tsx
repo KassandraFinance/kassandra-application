@@ -2,10 +2,10 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import request from 'graphql-request'
-import BigNumber from 'bn.js'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import useWhiteList from '@/hooks/useWhiteList'
 import { getAddress } from 'ethers'
+import Big from 'big.js'
 
 import useBatchRequests from '@/hooks/useBatchRequests'
 import useCoingecko from '@/hooks/useCoingecko'
@@ -31,7 +31,7 @@ export type TokensInfoResponseType = {
   decimals: number
 }
 
-export type TokensListType = TokensInfoResponseType & { balance?: BigNumber }
+export type TokensListType = TokensInfoResponseType & { balance?: Big }
 
 export type CoinGeckoAssetsResponseType = {
   [key: string]: {
@@ -126,16 +126,16 @@ const SelectAssets = () => {
 
       const res = await balances(wallet.accounts[0].address, tokensList)
 
-      type BalanceType = Record<string, BigNumber>
+      type BalanceType = Record<string, Big>
       const balanceArr: BalanceType = {}
 
       if (chainId === 5) {
         for (const [i, token] of tokensList.entries()) {
-          balanceArr[mockTokens[token]] = new BigNumber(res[i].toString())
+          balanceArr[mockTokens[token]] = Big(res[i].toString())
         }
       } else {
         for (const [i, token] of tokensList.entries()) {
-          balanceArr[token.toLowerCase()] = new BigNumber(res[i].toString())
+          balanceArr[token.toLowerCase()] = Big(res[i].toString())
         }
       }
 

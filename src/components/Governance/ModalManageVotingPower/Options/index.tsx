@@ -57,7 +57,7 @@ const Options = ({
               <></>
             ) : (
               <S.Option
-                key={index}
+                key={item.pid + index}
                 onClick={() => {
                   setDelegateSelected(item)
                   setOptionsOpen(false)
