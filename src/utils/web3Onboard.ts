@@ -74,13 +74,13 @@ const chains = [
         icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/17587.png'
       }
     ]
-  },
-  {
-    id: '0x5',
-    token: 'ETH',
-    label: 'Goerli Test Network',
-    rpcUrl: 'https://rpc.ankr.com/eth_goerli'
   }
+  // {
+  //   id: '0x5',
+  //   token: 'ETH',
+  //   label: 'Goerli Test Network',
+  //   rpcUrl: 'https://rpc.ankr.com/eth_goerli'
+  // }
 ]
 
 const appMetadata = {
