@@ -52,8 +52,8 @@ const AddLiquidityAnyAsset = ({ priceToken }: AddLiquidityAnyAssetProps) => {
       />
       <S.PriceImpactContainer>
         <S.Tippy>
-          <span>Price Impact</span>
-          <Tippy content="aaaaa">
+          <span>Slippage tolerance</span>
+          <Tippy content="Slippage allows you to configure how much the price can change against you. Slippages larger than 1% could allow a bad actor to purposely run a transaction before you just so you pay the maximum slippage, this is called frontrunning.">
             <span>
               <Image src={tooltip} alt="Explanation" width={14} height={14} />
             </span>

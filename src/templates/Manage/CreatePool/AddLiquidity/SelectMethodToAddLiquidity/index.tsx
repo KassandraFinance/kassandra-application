@@ -1,4 +1,8 @@
 import React from 'react'
+import Tippy from '@tippyjs/react'
+import Image from 'next/image'
+
+import tooltip from '@assets/utilities/tooltip.svg'
 
 import * as S from './styles'
 
@@ -13,7 +17,14 @@ const SelectMethodToAddLiquidity = ({
 }: SelectMethodToAddLiquidityProps) => {
   return (
     <S.SelectMethodToAddLiquidity>
-      <S.Title>Select how would you like to add liquidity</S.Title>
+      <S.Title>
+        <S.H2>Select how would you like to add liquidity</S.H2>
+        <Tippy content="Select the way you would like to add liquidity to the pool you are creating">
+          <span>
+            <Image src={tooltip} alt="Explanation" width={14} height={14} />
+          </span>
+        </Tippy>
+      </S.Title>
       <S.RadiosContainer>
         <S.Label checked={method === 'any-asset'}>
           <S.Input

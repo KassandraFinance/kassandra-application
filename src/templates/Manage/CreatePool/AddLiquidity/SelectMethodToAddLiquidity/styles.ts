@@ -15,7 +15,21 @@ export const SelectMethodToAddLiquidity = styled.div`
   `}
 `
 
-export const Title = styled.h2`
+export const Title = styled.div`
+  ${() => css`
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-start;
+    align-items: center;
+
+    > span {
+      display: flex;
+      align-items: center;
+    }
+  `}
+`
+
+export const H2 = styled.h2`
   ${({ theme }) => css`
     color: ${theme.colors.white};
     font-weight: ${theme.font.weight.normal};
