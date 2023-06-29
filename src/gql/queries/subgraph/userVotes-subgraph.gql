@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_PROPOSALS = gql`
-  query ($id: ID!) {
+  query UserVotes($id: ID!) {
     user(id: $id) {
       votes {
         support
@@ -19,4 +16,3 @@ export const GET_PROPOSALS = gql`
       }
     }
   }
-`

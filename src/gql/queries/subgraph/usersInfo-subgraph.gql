@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_INFO_USERS = gql`
-  query ($skip: Int!, $take: Int!) {
+  query UsersInfo($skip: Int!, $take: Int!) {
     users(
       orderDirection: desc
       orderBy: votingPower
@@ -25,4 +22,3 @@ export const GET_INFO_USERS = gql`
       totalVotingPower
     }
   }
-`

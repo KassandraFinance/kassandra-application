@@ -1,15 +1,10 @@
-import React from 'react'
-import BigNumber from 'bn.js'
 import Image from 'next/image'
-import useSWR from 'swr'
-import request from 'graphql-request'
+import BigNumber from 'bn.js'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
 import { BNtoDecimal } from '@/utils/numerals'
-
-import { GET_VOTINGPOWER } from './graphql'
-import { SUBGRAPH_URL } from '@/constants/tokenAddresses'
+import { useVotingPower } from '@/hooks/query/useVotingPower'
 
 import tooltip from '@assets/utilities/tooltip.svg'
 
@@ -26,11 +21,7 @@ const VotingPower = ({
   yourVotingPowerInProposal,
   isMobile
 }: IVotingPowerProps) => {
-  const { data } = useSWR(
-    [GET_VOTINGPOWER, userWalletAddress],
-    (query, userWalletAddress) =>
-      request(SUBGRAPH_URL, query, { id: userWalletAddress })
-  )
+  const { data } = useVotingPower({ id: userWalletAddress })
 
   return (
     <S.VotingPower isMobile={isMobile}>

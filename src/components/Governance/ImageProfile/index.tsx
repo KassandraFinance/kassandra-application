@@ -1,9 +1,9 @@
-import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
-import substr from '../../../utils/substr'
+import { useUserProfile } from '@/hooks/query/useUserProfile'
+import substr from '@/utils/substr'
 
 import NftImage from '../../NftImage'
 
@@ -26,55 +26,30 @@ const ImageProfile = ({
   fontSize,
   tab
 }: IImageProfileProps) => {
-  const [dataImageProfile, setDataImageProfile] = React.useState({
-    name: '',
-    image: '',
-    isNFT: false
-  })
-
   const router = useRouter()
 
-  async function getImageAndNickname() {
-    const response = await fetch(`/api/profile/${address}`)
-    const userProfile = await response.json()
-
-    if (userProfile.nickname) {
-      setDataImageProfile({
-        name: userProfile?.nickname || '',
-        image: userProfile?.image || '',
-        isNFT: userProfile?.isNFT || false
-      })
-    }
-  }
-
-  React.useEffect(() => {
-    if (address !== '') {
-      getImageAndNickname()
-    }
-  }, [address])
+  const { data } = useUserProfile({ address })
 
   return (
     <S.Image
       fontSize={fontSize}
       onClick={() => isLink && router.push(`/profile/${address}${tab}`)}
     >
-      {dataImageProfile.name !== '' ? (
-        dataImageProfile.isNFT ? (
-          <NftImage NftUrl={dataImageProfile.image} imageSize="small" />
+      {data?.nickname ? (
+        data?.isNFT ? (
+          data?.image && <NftImage NftUrl={data.image} imageSize="small" />
         ) : (
-          <img className="user-image" src={dataImageProfile.image} alt="" />
+          data?.image && <img className="user-image" src={data.image} alt="" />
         )
       ) : (
         <Jazzicon diameter={diameter} seed={jsNumberForAddress(address)} />
       )}
       {hasAddress ? (
-        dataImageProfile.name ? (
+        data?.nickname ? (
           isLink ? (
-            <Link href={`/profile/${address}${tab}`}>
-              {dataImageProfile.name}
-            </Link>
+            <Link href={`/profile/${address}${tab}`}>{data.nickname}</Link>
           ) : (
-            <span>{dataImageProfile.name}</span>
+            <span>{data.nickname}</span>
           )
         ) : isLink ? (
           <Link href={`/profile/${address}${tab}`}>{substr(address)}</Link>

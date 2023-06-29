@@ -10,8 +10,8 @@ import { useConnectWallet } from '@web3-onboard/react'
 import substr from '../../utils/substr'
 import { BNtoDecimal } from '../../utils/numerals'
 
+import { useVotingPower as useVotingPowerApi } from '@/hooks/query/useVotingPower'
 import useStakingContract from '@/hooks/useStaking'
-import useVotingPower from '@/hooks/useVotings'
 import usePriceLP from '@/hooks/usePriceLPEthers'
 import { ERC20 } from '@/hooks/useERC20'
 import useCoingecko from '@/hooks/useCoingecko'
@@ -111,7 +111,6 @@ const Profile = () => {
     React.useState<IAssetsValueWalletProps>({ '': new BigNumber(-1) })
   const [cardstakesPool, setCardStakesPool] = React.useState<IKacyLpPool[]>([])
   const [myFunds, setMyFunds] = React.useState<ImyFundsType>({})
-  const [totalVotingPower, setTotalVotingPower] = React.useState(BigInt(0))
   const [priceToken, setPriceToken] = React.useState<IPriceToken>({
     'LP-PNG': Big(0),
     'LP-JOE': Big(0),
@@ -136,7 +135,6 @@ const Profile = () => {
   const { txNotification, transactionErrors } = useTransaction()
   const router = useRouter()
   const [{ wallet }] = useConnectWallet()
-  const votingPower = useVotingPower(Staking)
   const { getUserInfo } = useStakingContract(Staking)
   const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(
     chain.chainId
@@ -150,6 +148,7 @@ const Profile = () => {
       : profileAddress
     : ''
 
+  const { data: votingPowerData } = useVotingPowerApi({ id: walletUserString })
   const { data } = useSWR<Response>([GET_PROFILE], query =>
     request(BACKEND_KASSANDRA, query)
   )
@@ -392,16 +391,6 @@ const Profile = () => {
     }))
   }, [profileAddress, priceToken, assetsValueInWallet])
 
-  React.useEffect(() => {
-    async function getVotingPower() {
-      const currentVotes = await votingPower.currentVotes(profileAddress)
-
-      setTotalVotingPower(currentVotes ?? BigInt(0))
-    }
-
-    getVotingPower()
-  }, [profileAddress])
-
   return (
     <>
       <Breadcrumb>
@@ -441,7 +430,7 @@ const Profile = () => {
             />
             <AnyCardTotal
               text={BNtoDecimal(
-                new BigNumber(totalVotingPower.toString()),
+                Big(votingPowerData?.user?.votingPower || 0),
                 18,
                 2
               )}

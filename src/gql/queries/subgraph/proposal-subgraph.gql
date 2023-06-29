@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_PROPOSAL = gql`
-  query ($number: Int!, $voter: ID!) {
+  query Proposal($number: Int!, $voter: String) {
     proposal: proposals(where: { number: $number }) {
       number
       description
@@ -30,4 +27,3 @@ export const GET_PROPOSAL = gql`
       }
     }
   }
-`
