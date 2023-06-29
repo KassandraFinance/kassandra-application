@@ -30,7 +30,9 @@ const ListOfAllAsset = ({
       amount: Big(amountAllTokenOut[item.token.id] ?? 0).div(
         Big(10).pow(decimals)
       ),
-      balance: balanceAllTokenOut[item.token.id]
+      balance: Big(balanceAllTokenOut[item.token.id] ?? 0).div(
+        Big(10).pow(decimals)
+      )
     }
   })
   const tokenSorting = [...ListTokenWithBalance].sort(
