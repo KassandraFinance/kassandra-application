@@ -467,9 +467,7 @@ export default class operationV1 implements IOperations {
           }
 
           Object.assign(withdrawAllAmoutOut, {
-            [item.token.id]: withdrawAmout.div(
-              Big(10).pow(item.token?.wraps?.decimals ?? item.token.decimals)
-            )
+            [item.token.id]: withdrawAmout
           })
         })
       )
@@ -536,7 +534,10 @@ export default class operationV1 implements IOperations {
     userWalletAddress
   }: ExitSwapPoolAllTokenAmountInParams) {
     const swapOutAmounts = this.poolInfo.tokens.map(asset =>
-      amountAllTokenOut[asset.token.id].mul(slippageBase).div(slippageExp)
+      amountAllTokenOut[asset.token.id]
+        .mul(slippageBase)
+        .div(slippageExp)
+        .toFixed(0)
     )
 
     const tokensWithdraw = this.poolInfo.tokens.map(token =>
@@ -550,6 +551,7 @@ export default class operationV1 implements IOperations {
       swapOutAmounts,
       { from: userWalletAddress }
     )
+
     return res
   }
 }

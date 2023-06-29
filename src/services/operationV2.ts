@@ -386,9 +386,7 @@ export default class operationV2 implements IOperations {
       const _length = this.poolInfo.tokensAddresses.length
       for (let i = 0; i < _length; i++) {
         Object.assign(withdrawAllAmoutOut, {
-          [this.poolInfo.tokensAddresses[i]]: Big(
-            allAmountsOut[i].toString()
-          ).div(Big(10).pow(18))
+          [this.poolInfo.tokensAddresses[i]]: Big(allAmountsOut[i].toString())
         })
       }
 
