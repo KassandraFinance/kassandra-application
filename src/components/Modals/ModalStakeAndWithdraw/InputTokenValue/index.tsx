@@ -1,5 +1,4 @@
 import React from 'react'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 
 import Tippy from '@tippyjs/react'
@@ -12,13 +11,12 @@ import { priceDollar } from '@/utils/priceDollar'
 import { Input } from './styles'
 
 interface IInputProps {
-  max: string
-  decimals: BigNumber
+  decimals: Big
   inputRef: React.RefObject<HTMLInputElement>
-  setInputValue: React.Dispatch<React.SetStateAction<BigNumber>>
+  setInputValue: React.Dispatch<React.SetStateAction<Big>>
   setMaxActive?: React.Dispatch<React.SetStateAction<boolean>>
   disabled?: string
-  amount?: BigNumber
+  amount?: Big
   address?: string | undefined
 }
 
@@ -92,7 +90,7 @@ const InputTokenValue = ({
               decimalsNum
             )}`.slice(0, decimalsNum)}`
             setMaxActive && setMaxActive(false)
-            setInputValue && setInputValue(new BigNumber(paddedRight))
+            setInputValue && setInputValue(Big(paddedRight))
           }}
         />
       </Tippy>

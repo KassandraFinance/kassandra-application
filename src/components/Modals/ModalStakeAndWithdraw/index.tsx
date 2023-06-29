@@ -1,14 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
 import Link from 'next/link'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
 import useStaking from '@/hooks/useStaking'
-import useTransaction from '@/hooks/useTransaction'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
 import { Staking, networks } from '@/constants/tokenAddresses'
@@ -55,12 +52,11 @@ const ModalStakeAndWithdraw = ({
   chainId
 }: IModalStakeProps) => {
   const [isAmount, setIsAmount] = React.useState<boolean>(false)
-  const [balance, setBalance] = React.useState<BigNumber>(new BigNumber(0))
+  const [balance, setBalance] = React.useState<Big>(Big(0))
   const [multiplier, setMultiplier] = React.useState<number>(0)
-  const [amountStake, setAmountStake] = React.useState<BigNumber>(
-    new BigNumber(0)
-  )
+  const [amountStake, setAmountStake] = React.useState<Big>(Big(0))
   const [isOpenModalPangolin, setIsOpenModalPangolin] = React.useState(false)
+
   const [{ wallet }] = useConnectWallet()
 
   const inputRef = React.useRef<HTMLInputElement>(null)
@@ -75,22 +71,20 @@ const ModalStakeAndWithdraw = ({
 
   const networkChain = networks[chainId]
 
-  const transaction = useTransaction()
-
   const staking = useStaking(stakingAddress, networkChain.chainId)
 
   const productSKU = `${Staking}_${pid}`
 
   const connect = localStorage.getItem('walletconnect')
 
-  function handleKacyAmount(percentage: BigNumber) {
-    const kacyAmount = percentage.mul(balance).div(new BigNumber(100))
+  function handleKacyAmount(percentage: Big) {
+    const kacyAmount = percentage.mul(balance).div(Big(100))
 
     if (inputRef.current !== null) {
-      inputRef.current.value = BNtoDecimal(kacyAmount, 18).replace(
-        /\u00A0/g,
-        ''
-      )
+      inputRef.current.value = BNtoDecimal(
+        kacyAmount.div(Big(10).pow(18)),
+        18
+      ).replace(/\u00A0/g, '')
     }
 
     trackEventFunction(
@@ -103,11 +97,7 @@ const ModalStakeAndWithdraw = ({
   }
 
   async function handleConfirm() {
-    const erc20 = await ERC20(stakingToken, networkChain.rpc, {
-      transactionErrors: transaction.transactionErrors,
-      txNotification: transaction.txNotification,
-      wallet: null
-    })
+    const erc20 = await ERC20(stakingToken, networkChain.rpc)
 
     const tokenName = await erc20.name()
 
@@ -124,13 +114,13 @@ const ModalStakeAndWithdraw = ({
       trackBuying(
         productSKU,
         tokenName,
-        Big(amountStake.toString()).div(Big(10).pow(18)).toNumber(),
+        amountStake.div(Big(10).pow(18)).toNumber(),
         productCategories
       )
 
       await staking.stake(
         pid,
-        amountStake,
+        amountStake.toFixed(0),
         delegate,
         {
           pending: `Confirming stake of ${symbol}...`,
@@ -155,7 +145,7 @@ const ModalStakeAndWithdraw = ({
 
       staking.withdraw(
         pid,
-        amountStake,
+        amountStake.toFixed(0),
         {
           pending: `Confirming unstake of ${symbol}...`,
           sucess: `Unstake of ${symbol} completed`
@@ -170,31 +160,24 @@ const ModalStakeAndWithdraw = ({
 
   async function getBalance() {
     if (wallet?.provider && stakeTransaction === 'staking') {
-      const erc20 = await ERC20(stakingToken, networkChain.rpc, {
-        transactionErrors: transaction.transactionErrors,
-        txNotification: transaction.txNotification,
-        wallet: null
-      })
+      const erc20 = await ERC20(stakingToken, networkChain.rpc)
 
       const balanceKacy = await erc20.balance(wallet?.accounts[0].address)
-      setBalance(new BigNumber(balanceKacy))
+      setBalance(Big(balanceKacy))
     } else if (stakeTransaction === 'unstaking') {
       if (wallet?.provider) {
         const balance = await staking.availableWithdraw(
           pid,
           wallet?.accounts[0].address
         )
-        setBalance(new BigNumber(balance.toFixed(0)))
+        setBalance(balance)
       }
     }
   }
 
   async function handleEventProductPageView() {
-    const erc20 = await ERC20(stakingToken, networkChain.rpc, {
-      transactionErrors: transaction.transactionErrors,
-      txNotification: transaction.txNotification,
-      wallet: null
-    })
+    const erc20 = await ERC20(stakingToken, networkChain.rpc)
+
     const track = async () => {
       const tokenName = await erc20.name()
       trackProductPageView(productSKU, tokenName, productCategories)
@@ -215,7 +198,7 @@ const ModalStakeAndWithdraw = ({
 
   React.useEffect(() => {
     setMultiplier(0)
-    handleKacyAmount(new BigNumber(0))
+    handleKacyAmount(Big(0))
     updateAllowance()
   }, [])
 
@@ -265,11 +248,10 @@ const ModalStakeAndWithdraw = ({
               <span>${symbol} Total</span>
               <InputTokenValue
                 inputRef={inputRef}
-                max={balance.toString(10)}
-                decimals={new BigNumber(decimals)}
+                decimals={Big(decimals)}
                 setInputValue={setAmountStake}
               />
-              <h5>Balance: {BNtoDecimal(balance, 18)}</h5>
+              <h5>Balance: {BNtoDecimal(balance.div(Big(10).pow(18)), 18)}</h5>
             </S.Amount>
             <S.ButtonContainer>
               <button
@@ -281,8 +263,8 @@ const ModalStakeAndWithdraw = ({
                 onClick={() => {
                   multiplier === 25 ? setMultiplier(0) : setMultiplier(25)
                   multiplier === 25
-                    ? handleKacyAmount(new BigNumber(0))
-                    : handleKacyAmount(new BigNumber(25))
+                    ? handleKacyAmount(Big(0))
+                    : handleKacyAmount(Big(25))
                 }}
               >
                 25%
@@ -297,8 +279,8 @@ const ModalStakeAndWithdraw = ({
                 onClick={() => {
                   multiplier === 50 ? setMultiplier(0) : setMultiplier(50)
                   multiplier === 50
-                    ? handleKacyAmount(new BigNumber(0))
-                    : handleKacyAmount(new BigNumber(50))
+                    ? handleKacyAmount(Big(0))
+                    : handleKacyAmount(Big(50))
                 }}
               >
                 50%
@@ -313,8 +295,8 @@ const ModalStakeAndWithdraw = ({
                 onClick={() => {
                   multiplier === 75 ? setMultiplier(0) : setMultiplier(75)
                   multiplier === 75
-                    ? handleKacyAmount(new BigNumber(0))
-                    : handleKacyAmount(new BigNumber(75))
+                    ? handleKacyAmount(Big(0))
+                    : handleKacyAmount(Big(75))
                 }}
               >
                 75%
@@ -329,8 +311,8 @@ const ModalStakeAndWithdraw = ({
                 onClick={() => {
                   multiplier === 100 ? setMultiplier(0) : setMultiplier(100)
                   multiplier === 100
-                    ? handleKacyAmount(new BigNumber(0))
-                    : handleKacyAmount(new BigNumber(100))
+                    ? handleKacyAmount(Big(0))
+                    : handleKacyAmount(Big(100))
                 }}
               >
                 max
@@ -352,14 +334,14 @@ const ModalStakeAndWithdraw = ({
                   backgroundSecondary
                   type="button"
                   disabledNoEvent={
-                    amountStake.eq(new BigNumber(0)) || amountStake.gt(balance)
+                    amountStake.eq(Big(0)) || amountStake.gt(balance)
                   }
                   text="Confirm"
                   fullWidth
                   onClick={() => {
                     setModalOpen(false)
                     handleConfirm()
-                    setAmountStake(new BigNumber(0))
+                    setAmountStake(Big(0))
                     setStakeTransaction('')
                   }}
                 />
