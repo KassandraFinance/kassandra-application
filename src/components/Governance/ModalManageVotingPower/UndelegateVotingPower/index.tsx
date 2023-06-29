@@ -128,60 +128,6 @@ const UndelegateVotingPower = ({
     setLoading(false)
   }
 
-  // const undelegateCallback = React.useCallback(
-  //   (receiverAddress: string): TransactionCallback => {
-  //     return async (error: MetamaskError, txHash: string) => {
-  //       if (error) {
-  //         if (error.code === 4001) {
-  //           dispatch(setModalAlertText({ errorText: `Undelegate cancelled` }))
-  //           return
-  //         }
-
-  //         dispatch(setModalAlertText({ errorText: `Error` }))
-  //         return
-  //       }
-
-  //       ToastWarning(`Confirming undelegate to ${substr(receiverAddress)}...`)
-  //       const txReceipt = await waitTransaction(txHash)
-
-  //       if (txReceipt.status) {
-  //         ToastSuccess(`Undelegate confirmed to ${substr(receiverAddress)}`)
-  //         setCurrentModal('manage')
-  //         setModalOpen(false)
-  //         return
-  //       }
-  //     }
-  //   },
-  //   []
-  // )
-
-  // const undelegateAllCallback = React.useCallback(
-  //   (receiverAddress: string): TransactionCallback => {
-  //     return async (error: MetamaskError, txHash: string) => {
-  //       if (error) {
-  //         if (error.code === 4001) {
-  //           dispatch(setModalAlertText({ errorText: `Undelegate cancelled` }))
-  //           return
-  //         }
-
-  //         dispatch(setModalAlertText({ errorText: `Error` }))
-  //         return
-  //       }
-
-  //       ToastWarning(`Confirming undelegate to ${substr(receiverAddress)}...`)
-  //       const txReceipt = await waitTransaction(txHash)
-
-  //       if (txReceipt.status) {
-  //         ToastSuccess(`Undelegate confirmed to ${substr(receiverAddress)}`)
-  //         setCurrentModal('manage')
-  //         setModalOpen(false)
-  //         return
-  //       }
-  //     }
-  //   },
-  //   []
-  // )
-
   const handleUndelegateVotes = async () => {
     if (!wallet) return
 

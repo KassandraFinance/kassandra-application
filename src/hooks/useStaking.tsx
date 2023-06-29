@@ -118,6 +118,7 @@ const useStaking = (address: string, chainId = 43114) => {
       walletAddress: string | string[] | undefined
     ) => {
       const value = await contract.read.userInfo(pid, walletAddress)
+
       return value
     }
 
