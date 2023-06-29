@@ -4,19 +4,23 @@ import Big from 'big.js'
 
 export class ParaSwap implements ISwapProvider {
   private readonly baseUrl = URL_PARASWAP
-  private txs: Array<any> = []
 
   private formatParams(queryParams: Record<string, string>) {
     const searchString = new URLSearchParams(queryParams)
     return searchString
   }
 
-  async getDatasTx(chainId: string, proxy: string, slippage: string) {
+  async getDatasTx(
+    chainId: string,
+    proxy: string,
+    slippage: string,
+    txs: Array<any>
+  ) {
     const slippageFomatted = Number(slippage) / 100
     const totalPercentage = 1
 
     const txURL = `${this.baseUrl}/transactions/${chainId}?gasPrice=50000000000&ignoreChecks=true&ignoreGasEstimate=false&onlyParams=false`
-    const requests = this.txs.map(async tx => {
+    const requests = txs.map(async tx => {
       const txConfig = {
         priceRoute: tx,
         srcToken: tx.srcToken,
@@ -54,9 +58,8 @@ export class ParaSwap implements ISwapProvider {
 
   async getAmountsOut(params: GetAmountsParams) {
     const { srcToken, destTokens, amount, srcDecimals, chainId } = params
-    this.txs = []
+    const txs = []
 
-    const datasTx: Array<string> = []
     const amountsIn: Array<string> = []
 
     const requests = destTokens.map(async asset => {
@@ -85,7 +88,7 @@ export class ParaSwap implements ISwapProvider {
     for (let index = 0; index < _size; index++) {
       const data = amounts[index]
       if (data?.priceRoute) {
-        this.txs.push(data.priceRoute)
+        txs.push(data.priceRoute)
         amountsIn.push(data.priceRoute.destAmount)
       } else {
         amountsIn.push(data)
@@ -94,7 +97,7 @@ export class ParaSwap implements ISwapProvider {
 
     return {
       amountsTokenIn: amountsIn,
-      transactionsDataTx: datasTx
+      transactionsDataTx: txs
     }
   }
 }

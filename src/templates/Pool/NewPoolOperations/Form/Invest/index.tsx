@@ -141,7 +141,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         chainId: pool.chain_id.toString()
       })
 
-    setTrasactionData(['0x'])
+    setTrasactionData(transactionsDataTx)
 
     return {
       amountsTokenIn,
@@ -168,15 +168,16 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       }
     }
 
-    const { amountsTokenIn } = await operation.getAmountsOut({
-      destTokens: [{ ...tokenWrappedAddress, weight_normalized: '1' }],
-      srcToken: tokenSelect.address,
-      srcDecimals: tokenSelect.decimals.toString(),
-      amount: amountTokenIn.toString(),
-      chainId: pool.chain_id.toString()
-    })
+    const { amountsTokenIn, transactionsDataTx } =
+      await operation.getAmountsOut({
+        destTokens: [{ ...tokenWrappedAddress, weight_normalized: '1' }],
+        srcToken: tokenSelect.address,
+        srcDecimals: tokenSelect.decimals.toString(),
+        amount: amountTokenIn.toString(),
+        chainId: pool.chain_id.toString()
+      })
 
-    const datas = await operation.getDatasTx(slippage.value)
+    const datas = await operation.getDatasTx(slippage.value, transactionsDataTx)
     setTrasactionData(datas[0])
     return {
       amountsTokenIn,
