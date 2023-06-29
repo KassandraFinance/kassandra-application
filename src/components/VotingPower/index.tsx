@@ -55,7 +55,7 @@ const VotingPower = ({
         </span>
         <span>
           {yourVotingPowerInProposal === undefined
-            ? BNtoDecimal(data?.user?.votingPower ?? Big(0), 0, 2)
+            ? BNtoDecimal(Big(data?.user?.votingPower ?? Big(0)), 0, 2)
             : BNtoDecimal(
                 yourVotingPowerInProposal.div(Big(10).pow(18)),
                 18,
@@ -86,11 +86,11 @@ const VotingPower = ({
         <span>
           {yourVotingPowerInProposal === undefined
             ? BNtoDecimal(
-                data?.governances[0]?.totalVotingPower ?? Big(0),
+                Big(data?.governances[0]?.totalVotingPower ?? Big(0)),
                 0,
                 2
               )
-            : BNtoDecimal(data?.user?.votingPower ?? Big(0), 0, 2)}
+            : BNtoDecimal(Big(data?.user?.votingPower ?? Big(0)), 0, 2)}
         </span>
       </S.TotalVotingPower>
     </S.VotingPower>

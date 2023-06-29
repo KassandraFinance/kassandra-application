@@ -656,7 +656,7 @@ const Proposal = () => {
               yourVotingPowerInProposal={yourVotingPowerInProposal}
               typeVote="For"
               percentage={percentageVotes.for}
-              totalVotingPower={BNtoDecimal(proposal.forVotes, 0, 2, 2)}
+              totalVotingPower={BNtoDecimal(Big(proposal.forVotes), 0, 2, 2)}
               proposalState={proposalState}
               userVote={userVoted}
               handleVote={handleVote}
@@ -665,7 +665,7 @@ const Proposal = () => {
                   voteType: 'For',
                   percentage: `${percentageVotes.for}`,
                   totalVotingPower: `${BNtoDecimal(
-                    proposal.forVotes,
+                    Big(proposal.forVotes),
                     0,
                     2,
                     2
@@ -679,7 +679,12 @@ const Proposal = () => {
               yourVotingPowerInProposal={yourVotingPowerInProposal}
               typeVote="Against"
               percentage={percentageVotes.against}
-              totalVotingPower={BNtoDecimal(proposal.againstVotes, 0, 2, 2)}
+              totalVotingPower={BNtoDecimal(
+                Big(proposal.againstVotes),
+                0,
+                2,
+                2
+              )}
               proposalState={proposalState}
               userVote={userVoted}
               handleVote={handleVote}
@@ -688,7 +693,7 @@ const Proposal = () => {
                   voteType: 'Against',
                   percentage: `${percentageVotes.against}`,
                   totalVotingPower: `${BNtoDecimal(
-                    proposal.againstVotes,
+                    Big(proposal.againstVotes),
                     0,
                     2,
                     2

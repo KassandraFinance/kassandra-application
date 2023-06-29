@@ -6,6 +6,7 @@ import Tippy from '@tippyjs/react'
 import { getAddress } from 'ethers'
 import { request } from 'graphql-request'
 import { useConnectWallet } from '@web3-onboard/react'
+import Big from 'big.js'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
@@ -49,7 +50,7 @@ export const Overview = () => {
             </S.TextVoting>
             {wallet ? (
               <S.ValueVoting>
-                {BNtoDecimal(data?.user?.votingPower ?? BigInt(0), 0, 2)}
+                {BNtoDecimal(Big(data?.user?.votingPower ?? Big(0)), 0, 2)}
               </S.ValueVoting>
             ) : (
               <Button
@@ -77,7 +78,7 @@ export const Overview = () => {
             </S.TextVoting>
             <S.ValueVoting>
               {BNtoDecimal(
-                data?.governances[0]?.totalVotingPower ?? BigInt(0),
+                Big(data?.governances[0]?.totalVotingPower ?? Big(0)),
                 0,
                 2
               )}
