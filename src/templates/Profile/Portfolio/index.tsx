@@ -1,7 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import useSWR from 'swr'
 import request from 'graphql-request'
 import { useConnectWallet } from '@web3-onboard/react'
@@ -48,7 +47,7 @@ interface ImyFundsType {
   [key: string]: string
 }
 export interface IBalanceType {
-  [key: string]: BigNumber
+  [key: string]: Big
 }
 
 type PoolProps = {
@@ -105,7 +104,7 @@ const Portfolio = ({
   const [tokenizedFunds, setTokenizedFunds] = React.useState<string[]>([])
   const [balanceFunds, setBalanceFunds] = React.useState<IBalanceType>({})
   const [amountProdInPool, setAmountProdInPool] =
-    React.useState<IAssetsValueWalletProps>({ '': new BigNumber(0) })
+    React.useState<IAssetsValueWalletProps>({ '': Big(0) })
   const [cardstakesPoolNew, setCardStakesPoolNew] = React.useState<
     IKacyLpPool[]
   >([])
@@ -130,7 +129,7 @@ const Portfolio = ({
       const tokenAmount = pool.amount.add(
         assetsValueInWallet[pool.address]
           ? assetsValueInWallet[pool.address]
-          : new BigNumber(0)
+          : Big(0)
       )
 
       if (pool.address === myFunds[pool.address]) {
@@ -139,7 +138,7 @@ const Portfolio = ({
           [pool.address]: pool.amount
         }))
       } else {
-        if (tokenAmount.gt(new BigNumber(0))) {
+        if (tokenAmount.gt(Big(0))) {
           setCardStakesPoolNew(prevState => [
             ...prevState,
             {
@@ -164,10 +163,10 @@ const Portfolio = ({
       const balanceInWallet = assetsValueInWallet[address]
       const balanceInPool = amountProdInPool[address]
       const balanceProductAll = balanceInWallet
-        ? balanceInWallet.add(balanceInPool ? balanceInPool : new BigNumber(0))
-        : new BigNumber(0)
+        ? balanceInWallet.add(balanceInPool ? balanceInPool : Big(0))
+        : Big(0)
 
-      if (balanceProductAll.gt(new BigNumber(0))) {
+      if (balanceProductAll.gt(Big(0))) {
         setTokenizedFunds(prevState => [...prevState, address])
       }
 
@@ -248,7 +247,7 @@ const Portfolio = ({
         <PortfolioHeading
           image={AssetsIcon}
           title="Indexes"
-          usd={BNtoDecimal(Big(priceInDolar.tokenizedFunds), 6, 2, 2)}
+          usd={BNtoDecimal(priceInDolar.tokenizedFunds, 6, 2, 2)}
           tippy="The amount in US Dollars that this address holds in tokenized funds."
         />
       </S.paddingWrapper>

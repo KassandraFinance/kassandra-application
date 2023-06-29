@@ -716,7 +716,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       const slippageInPercentage = '1'
       const chainId = poolData.networkId?.toString() ?? '137'
       const swapProvider = new ParaSwap()
-      await swapProvider.getAmountsOut({
+      const { transactionsDataTx } = await swapProvider.getAmountsOut({
         amount: poolData.tokenInAmount,
         chainId,
         destTokens:
@@ -730,7 +730,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       datas = await swapProvider.getDatasTx(
         chainId,
         networks[Number(chainId)].factory,
-        slippageInPercentage
+        slippageInPercentage,
+        transactionsDataTx
       )
     }
     const pool = {

@@ -8,8 +8,6 @@ import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
 import { useAppDispatch } from '../../store/hooks'
 import { IPoolSlice, setPool } from '../../store/reducers/pool'
 
-import { PoolTokensProvider } from '../../context/PoolTokensContext'
-
 import Pool from '../../templates/Pool'
 import { getWeightsNormalizedV2 } from '../../utils/updateAssetsToV2'
 
@@ -61,9 +59,7 @@ const Index = ({ pool }: IPoolProps) => {
         fetcher: url => fetch(url).then(res => res.json())
       }}
     >
-      <PoolTokensProvider>
-        <Pool />
-      </PoolTokensProvider>
+      <Pool />
     </SWRConfig>
   )
 }

@@ -150,9 +150,7 @@ const PoolReview = () => {
         })
       )
     }
-    // setInitialPrice(getInitialPrice())
-    // setTotalLiquidity(getTotalLiquidity())
-    dispatch(setTxs(amounts.txs))
+    dispatch(setTxs(amounts.transactionsDataTx))
     return amounts
   }
 

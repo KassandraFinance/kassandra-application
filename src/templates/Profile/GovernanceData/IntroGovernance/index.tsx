@@ -1,7 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import { getAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import Tippy from '@tippyjs/react'
@@ -34,15 +33,13 @@ const IntroGovernance = ({
 }: IIntroWalletAddressProps) => {
   const [isModalManageVotingPower, setIsModalManageVotingPower] =
     React.useState<boolean>(false)
-  const [totalKacyStaked, setTotalKacyStaked] = React.useState<BigNumber>(
-    new BigNumber(0)
-  )
+  const [totalKacyStaked, setTotalKacyStaked] = React.useState<Big>(Big(0))
 
   const [{ wallet }] = useConnectWallet()
   const { userInfo } = useStakingContract(Staking)
 
   const callUserInfo = async () => {
-    let totalStaked = new BigNumber(0)
+    let totalStaked = Big(0)
 
     if (process.env.NEXT_PUBLIC_MASTER === '1') {
       const [
@@ -59,11 +56,11 @@ const IntroGovernance = ({
         userInfo(4, address)
       ])
 
-      totalStaked = new BigNumber(userInfoOne.amount)
-        .add(new BigNumber(userInfoTwo.amount))
-        .add(new BigNumber(userInfoThree.amount))
-        .add(new BigNumber(investorOne.amount))
-        .add(new BigNumber(investorTwo.amount))
+      totalStaked = Big(userInfoOne.amount.toString())
+        .add(Big(userInfoTwo.amount.toString()))
+        .add(Big(userInfoThree.amount.toString()))
+        .add(Big(investorOne.amount.toString()))
+        .add(Big(investorTwo.amount.toString()))
     } else {
       const [userInfoOne, userInfoTwo, userInfoThree] = await Promise.all([
         userInfo(0, address),
@@ -71,9 +68,9 @@ const IntroGovernance = ({
         userInfo(2, address)
       ])
 
-      totalStaked = new BigNumber(userInfoOne.amount)
-        .add(new BigNumber(userInfoTwo.amount))
-        .add(new BigNumber(userInfoThree.amount))
+      totalStaked = Big(userInfoOne.amount.toString())
+        .add(Big(userInfoTwo.amount.toString()))
+        .add(Big(userInfoThree.amount.toString()))
     }
 
     setTotalKacyStaked(totalStaked)
@@ -104,7 +101,7 @@ const IntroGovernance = ({
               </Tippy>
             </S.TextAndTooltip>
             <span className="value-total-voting-power">
-              {BNtoDecimal(new BigNumber(totalKacyStaked), 18, 2)}
+              {BNtoDecimal(totalKacyStaked.div(Big(10).pow(18)), 18, 2)}
             </span>
           </S.AddressTotalVotingPower>
 

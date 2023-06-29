@@ -1,7 +1,6 @@
 import React from 'react'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
@@ -230,7 +229,7 @@ const InputAndOutputValueToken = ({
                   {BNtoDecimal(
                     Big(amountTokenIn)?.div(
                       Big(10).pow(tokenSelect.decimals)
-                    ) || new BigNumber(0),
+                    ) || Big(0),
                     tokenSelect.decimals,
                     6
                   ).replace(/\s/g, '')}

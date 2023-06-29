@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 import { useInView } from 'react-intersection-observer'
 
@@ -33,14 +32,14 @@ import {
 } from '../../SelectAssets'
 
 interface IAddAssestsTableProps {
-  tokensData: (TokensInfoResponseType & { balance?: BigNumber })[] | undefined
+  tokensData: (TokensInfoResponseType & { balance?: Big })[] | undefined
   priceList: CoinGeckoAssetsResponseType | undefined
 }
 
 const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
   const [searchValue, setSearchValue] = React.useState('')
   const [filteredArr, setFilteredArr] = React.useState<
-    (TokensInfoResponseType & { balance?: BigNumber })[]
+    (TokensInfoResponseType & { balance?: Big })[]
   >([])
   const [inViewCollum, setInViewCollum] = React.useState(1)
   const [token, setToken] = React.useState({
@@ -52,7 +51,7 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
     id: '',
     decimals: 18,
     symbol: '',
-    balance: new BigNumber(0)
+    balance: Big(0)
   })
 
   const dispatch = useAppDispatch()
@@ -102,7 +101,7 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
     id: string,
     symbol: string,
     decimals: number,
-    balance: BigNumber
+    balance: Big
   ) {
     setToken({
       logo: logo,
@@ -122,7 +121,7 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
     const arr = tokensData ? tokensData : []
 
     const sortedArr = arr.sort((a, b) => {
-      return a?.balance?.lt(b?.balance || new BigNumber(0)) ? 1 : -1
+      return a?.balance?.lt(b?.balance || Big(0)) ? 1 : -1
     })
     const tokensFiltered = sortedArr.filter(token => {
       return expressao.test(token.symbol)
@@ -232,9 +231,8 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                   <S.Td className="balance" isView={inViewCollum === 3}>
                     {coin.balance
                       ? BNtoDecimal(
-                          Big(coin.balance?.toString()).div(
-                            Big(10).pow(coin.decimals)
-                          ),
+                          coin.balance?.div(Big(10).pow(coin.decimals)) ??
+                            Big(0),
                           2
                         )
                       : 0}
@@ -242,11 +240,11 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                       ~$
                       {coin.balance && priceList
                         ? BNtoDecimal(
-                            Big(coin.balance?.toString())
-                              .div(Big(10).pow(coin.decimals))
-                              .mul(
+                            coin.balance
+                              ?.div(Big(10).pow(coin.decimals))
+                              ?.mul(
                                 Big(priceList[coin.id?.toLowerCase()]?.usd ?? 0)
-                              ),
+                              ) ?? Big(0),
                             2
                           )
                         : 0}
@@ -262,7 +260,7 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
                           coin.id,
                           coin.symbol,
                           coin.decimals,
-                          coin.balance || new BigNumber(0)
+                          coin.balance || Big(0)
                         )
                       }
                     >
@@ -308,9 +306,8 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
           <ValueContainer>
             <Value>
               {BNtoDecimal(
-                Big(viewToken.balance.toString()).div(
-                  Big(10).pow(viewToken.decimals)
-                ),
+                viewToken.balance?.div(Big(10).pow(viewToken.decimals)) ??
+                  Big(0),
                 2
               )}
             </Value>
@@ -318,11 +315,11 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
               ~$
               {priceList && priceList[viewToken.id.toLowerCase()]
                 ? BNtoDecimal(
-                    Big(viewToken.balance.toString())
-                      .div(Big(10).pow(viewToken.decimals))
-                      .mul(
+                    viewToken.balance
+                      ?.div(Big(10).pow(viewToken.decimals))
+                      ?.mul(
                         Big(priceList[viewToken.id.toLowerCase()]?.usd || 0)
-                      ),
+                      ) ?? Big(0),
                     2
                   )
                 : 0}

@@ -1,5 +1,4 @@
 import React from 'react'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
@@ -43,7 +42,7 @@ export type CoinGeckoResponseType = {
   }
 }
 
-export type BalancesType = Record<string, BigNumber>
+export type BalancesType = Record<string, Big>
 
 const AddLiquidity = () => {
   const [tokensBalance, setTokensBalance] = React.useState<BalancesType>({})
@@ -151,11 +150,11 @@ const AddLiquidity = () => {
       const balancesArr: BalancesType = {}
       if (networkId === 5) {
         for (const [i, token] of tokens.entries()) {
-          balancesArr[mockTokens[token]] = new BigNumber(res[i].toString())
+          balancesArr[mockTokens[token]] = Big(res[i].toString())
         }
       } else {
         for (const [i, token] of tokens.entries()) {
-          balancesArr[token] = res[i].toString()
+          balancesArr[token] = Big(res[i].toString())
         }
       }
 

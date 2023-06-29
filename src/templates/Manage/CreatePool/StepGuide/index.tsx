@@ -139,7 +139,7 @@ const StepGuide = () => {
                 required
               />
             </S.ButtonWrapper>
-            <S.ButtonWrapper>
+            {/* <S.ButtonWrapper>
               <S.ButtonNetwork
                 type="button"
                 borderColor="goerli"
@@ -166,7 +166,7 @@ const StepGuide = () => {
                 }}
                 required
               />
-            </S.ButtonWrapper>
+            </S.ButtonWrapper> */}
             <S.LinkWrapper>
               <ExternalLink
                 text="Available assets"

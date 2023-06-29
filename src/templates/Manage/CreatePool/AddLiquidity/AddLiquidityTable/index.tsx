@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 
 import { BNtoDecimal } from '@/utils/numerals'
 import { abbreviateNumber } from '@/utils/abbreviateNumber'
@@ -22,7 +21,7 @@ import { CoinGeckoResponseType } from '..'
 
 interface IAddLiquidityTableProps {
   coinsList: TokenType[]
-  tokensBalance: { [key: string]: BigNumber }
+  tokensBalance: { [key: string]: Big }
   priceList: CoinGeckoResponseType | undefined
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onInputMaxClick: (token: string, liquidity: string) => void
@@ -42,7 +41,9 @@ const AddLiquidityTable = ({
     let total = Big(0)
 
     for (const coin of coinsList) {
-      total = total.add(Big(coin.amount).mul(Big(priceArr[coin.address].usd)))
+      total = total.add(
+        Big(coin.amount).mul(Big(priceArr[coin.address]?.usd ?? 0))
+      )
     }
 
     return total
@@ -55,18 +56,17 @@ const AddLiquidityTable = ({
     let liquidity = Big(0)
     for (const token of coinsList) {
       const diffAllocation = 100 - Number(token.allocation)
+      const tokenBalance = tokensBalance[token.address] ?? Big(0)
 
-      const balanceInDollar = Big(tokensBalance[token.address]?.toString() || 0)
+      const balanceInDollar = tokenBalance
         .div(Big(10).pow(token.decimals))
-        .mul(Big(priceArr[token.address].usd))
+        .mul(Big(priceArr[token.address]?.usd ?? 0))
         .mul(Big(diffAllocation))
 
       if (min.gte(balanceInDollar)) {
         min = balanceInDollar
         tokenSymbol = token.symbol
-        liquidity = Big(tokensBalance[token.address]?.toString() || 0).div(
-          Big(10).pow(token.decimals)
-        )
+        liquidity = tokenBalance.div(Big(10).pow(token.decimals))
       }
     }
 
@@ -80,7 +80,9 @@ const AddLiquidityTable = ({
     let total = Big(0)
 
     for (const coin of liquidityList) {
-      total = total.add(Big(coin.amount).mul(Big(priceArr[coin.address].usd)))
+      total = total.add(
+        Big(coin.amount).mul(Big(priceArr[coin.address]?.usd ?? 0))
+      )
     }
 
     return total
@@ -119,7 +121,7 @@ const AddLiquidityTable = ({
                     tokensBalance[coin.address]
                       ? Number(
                           BNtoDecimal(
-                            Big(tokensBalance[coin.address].toString()).div(
+                            tokensBalance[coin.address].div(
                               Big(10).pow(coin.decimals)
                             ),
                             2
@@ -149,14 +151,14 @@ const AddLiquidityTable = ({
               <Td className="price">
                 $
                 {priceList
-                  ? BNtoDecimal(Big(priceList[coin.address].usd), 4)
+                  ? BNtoDecimal(Big(priceList[coin.address]?.usd ?? 0), 4)
                   : 0}
               </Td>
 
               <Td className="balance">
                 {tokensBalance[coin.address]
                   ? abbreviateNumber(
-                      Big(tokensBalance[coin.address].toString())
+                      tokensBalance[coin.address]
                         .div(Big(10).pow(coin.decimals))
                         .toString()
                     )
@@ -165,9 +167,9 @@ const AddLiquidityTable = ({
                   ~$
                   {tokensBalance[coin.address] && priceList
                     ? abbreviateNumber(
-                        Big(tokensBalance[coin.address].toString())
+                        tokensBalance[coin.address]
                           .div(Big(10).pow(coin.decimals))
-                          .mul(Big(priceList[coin.address].usd))
+                          .mul(Big(priceList[coin.address]?.usd ?? 0))
                           .toString()
                       )
                     : 0}
@@ -180,7 +182,7 @@ const AddLiquidityTable = ({
                   isBiggerThanBalance={
                     tokensBalance[coin.address] &&
                     Big(coin.amount).gt(
-                      Big(tokensBalance[coin.address].toString()).div(
+                      tokensBalance[coin.address].div(
                         Big(10).pow(coin.decimals)
                       )
                     )
@@ -194,7 +196,7 @@ const AddLiquidityTable = ({
                     min={Big(1).div(Big(10).pow(coin.decimals)).toString()}
                     max={
                       tokensBalance[coin.address] &&
-                      Big(tokensBalance[coin.address].toString())
+                      tokensBalance[coin.address]
                         .div(Big(10).pow(coin.decimals))
                         .toString()
                     }
@@ -209,7 +211,7 @@ const AddLiquidityTable = ({
                         coin.symbol,
                         tokensBalance[coin.address]
                           ? String(
-                              Big(tokensBalance[coin.address].toString()).div(
+                              tokensBalance[coin.address].div(
                                 Big(10).pow(coin.decimals)
                               )
                             )
@@ -223,7 +225,9 @@ const AddLiquidityTable = ({
                   ~$
                   {priceList
                     ? BNtoDecimal(
-                        Big(coin.amount).mul(Big(priceList[coin.address].usd)),
+                        Big(coin.amount).mul(
+                          Big(priceList[coin.address]?.usd ?? 0)
+                        ),
                         4
                       )
                     : 0}

@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 
@@ -20,10 +19,10 @@ import * as S from './styles'
 interface IKacyProps {
   price: number
   supply: number
-  kacyStaked: BigNumber
-  kacyUnclaimed: Record<number, BigNumber>
-  kacyWallet: Record<number, BigNumber>
-  kacyTotal: BigNumber
+  kacyStaked: Big
+  kacyUnclaimed: Record<number, Big>
+  kacyWallet: Record<number, Big>
+  kacyTotal: Big
   setIsModalKacy: React.Dispatch<React.SetStateAction<boolean>>
   setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>
   setIsModalBridge: React.Dispatch<React.SetStateAction<boolean>>
@@ -68,7 +67,9 @@ const Kacy = ({
 
                 <S.TotalWrapper>
                   <S.BodyTitle>TOTAL</S.BodyTitle>
-                  <S.KacyTotal>{BNtoDecimal(kacyTotal, 18, 2)}</S.KacyTotal>
+                  <S.KacyTotal>
+                    {BNtoDecimal(kacyTotal.div(Big(10).pow(18)), 18, 2)}
+                  </S.KacyTotal>
                   <S.KacyUSDTotal>
                     ~
                     {BNtoDecimal(
@@ -94,7 +95,7 @@ const Kacy = ({
                 <S.Li>
                   KACY Staked
                   <S.Value>
-                    {BNtoDecimal(kacyStaked, 18, 2)}
+                    {BNtoDecimal(kacyStaked.div(Big(10).pow(18)), 18, 2)}
                     <span>
                       ~
                       {BNtoDecimal(
@@ -112,11 +113,17 @@ const Kacy = ({
                 <S.Li>
                   Unclaimed
                   <S.Value>
-                    {BNtoDecimal(kacyUnclaimed[43114], 18, 2)}
+                    {BNtoDecimal(
+                      kacyUnclaimed[avalancheNetwork.chainId].div(
+                        Big(10).pow(18)
+                      ),
+                      18,
+                      2
+                    )}
                     <span>
                       ~
                       {BNtoDecimal(
-                        Big(kacyUnclaimed[43114].toString())
+                        kacyUnclaimed[avalancheNetwork.chainId]
                           .mul(price)
                           .div(Big(10).pow(18)),
                         6,
@@ -131,19 +138,18 @@ const Kacy = ({
                   Wallet
                   <S.Value>
                     {BNtoDecimal(
-                      kacyWallet[avalancheNetwork.chainId] ?? Big(0),
+                      kacyWallet[avalancheNetwork.chainId]?.div(
+                        Big(10).pow(18)
+                      ) ?? Big(0),
                       18,
                       2
                     )}
                     <span>
                       ~
                       {BNtoDecimal(
-                        Big(
-                          kacyWallet[avalancheNetwork.chainId]?.toString() ??
-                            Big(0)
-                        )
-                          .mul(price)
-                          .div(Big(10).pow(18)),
+                        kacyWallet[avalancheNetwork.chainId]
+                          ?.mul(price)
+                          .div(Big(10).pow(18)) ?? Big(0),
                         6,
                         2,
                         2
@@ -163,11 +169,17 @@ const Kacy = ({
                 <S.Li>
                   Unclaimed
                   <S.Value>
-                    {BNtoDecimal(kacyUnclaimed[137], 18, 2)}
+                    {BNtoDecimal(
+                      kacyUnclaimed[polygonNetwork.chainId].div(
+                        Big(10).pow(18)
+                      ),
+                      18,
+                      2
+                    )}
                     <span>
                       ~
                       {BNtoDecimal(
-                        Big(kacyUnclaimed[137].toString())
+                        Big(kacyUnclaimed[polygonNetwork.chainId].toString())
                           .mul(price)
                           .div(Big(10).pow(18)),
                         6,
@@ -182,19 +194,18 @@ const Kacy = ({
                   Wallet
                   <S.Value>
                     {BNtoDecimal(
-                      kacyWallet[polygonNetwork.chainId] ?? Big(0),
+                      kacyWallet[polygonNetwork.chainId]?.div(
+                        Big(10).pow(18)
+                      ) ?? Big(0),
                       18,
                       2
                     )}
                     <span>
                       ~
                       {BNtoDecimal(
-                        Big(
-                          kacyWallet[polygonNetwork.chainId]?.toString() ??
-                            Big(0)
-                        )
-                          .mul(price)
-                          .div(Big(10).pow(18)),
+                        kacyWallet[polygonNetwork.chainId]
+                          ?.mul(price)
+                          .div(Big(10).pow(18)) ?? Big(0),
                         6,
                         2,
                         2
@@ -209,7 +220,7 @@ const Kacy = ({
             </>
           ) : null}
 
-          <S.Ul isKacyStatsModal={kacyTotal.isZero()}>
+          <S.Ul isKacyStatsModal={kacyTotal.eq(Big(0))}>
             <S.Li>
               Price
               <S.Value>
