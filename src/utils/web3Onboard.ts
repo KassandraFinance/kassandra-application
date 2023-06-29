@@ -155,17 +155,15 @@ const appMetadata = {
   description: 'Example showcasing how to connect a wallet.',
   gettingStartedGuide: 'https://www.kassandra.finance/managers',
   explore: 'https://www.kassandra.finance/',
-  recommendedInjectedWallets: [
-    { name: 'MetaMask', url: 'https://metamask.io' }
-  ],
-  agreement: {
-    // user agrees with exact version of terms and privacy policy
-    version: '0.0',
-    // url that points to the Terms & Conditions of the dapp
-    termsUrl: 'https://www.kassandra.finance/',
-    // url that points to the Privacy policy of the dapp
-    privacyUrl: 'https://www.kassandra.finance/'
-  }
+  recommendedInjectedWallets: [{ name: 'MetaMask', url: 'https://metamask.io' }]
+  // agreement: {
+  //   // user agrees with exact version of terms and privacy policy
+  //   version: '0.0',
+  //   // url that points to the Terms & Conditions of the dapp
+  //   termsUrl: 'https://www.kassandra.finance/',
+  //   // url that points to the Privacy policy of the dapp
+  //   privacyUrl: 'https://www.kassandra.finance/'
+  // }
 }
 
 const web3Onboard = init({
@@ -190,9 +188,6 @@ const web3Onboard = init({
     mobile: {
       enabled: false
     }
-  },
-  connect: {
-    autoConnectLastWallet: true
   }
 })
 
