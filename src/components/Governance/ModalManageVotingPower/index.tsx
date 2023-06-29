@@ -51,10 +51,7 @@ const ModalManageVotingPower = ({
           />
         )}
         {currentModal === 'undelegate' && (
-          <UndelegateVotingPower
-            setModalOpen={setModalOpen}
-            setCurrentModal={setCurrentModal}
-          />
+          <UndelegateVotingPower setCurrentModal={setCurrentModal} />
         )}
       </S.ModalContainer>
     </>

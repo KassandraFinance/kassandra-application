@@ -14,13 +14,6 @@ export type IAllocationListProps = {
   NewWeight: number
 }
 
-type IDataAllocationGraphProps = {
-  imageUrl: string
-  name: string
-  currentAllocation: number
-  newAllocation: number
-}
-
 interface INewAllocationsTableProps {
   AllocationList: IAllocationListProps[]
 }

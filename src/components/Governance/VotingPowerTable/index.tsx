@@ -4,16 +4,16 @@ import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 
-import { SUBGRAPH_URL } from '../../../constants/tokenAddresses'
+import { SUBGRAPH_URL } from '@/constants/tokenAddresses'
 
-import { BNtoDecimal } from '../../../utils/numerals'
+import { BNtoDecimal } from '@/utils/numerals'
 
 import { GET_INFO_USERS } from './graphql'
 
-import ImageProfile from '../ImageProfile'
+import Loading from '@/components/Loading'
+import ImageProfile from '@/components/Governance/ImageProfile'
 
 import * as S from './styles'
-import Loading from '../../Loading'
 
 interface IVotingPowerRankProps {
   address: string
@@ -145,7 +145,7 @@ export const VotingPowerTable = ({ skip = 0, take }: IVotingPowerProps) => {
                     />
                   </S.Td>
                   <S.Td className="vote-power">
-                    {BNtoDecimal(item.votingPower, 0, 2)}
+                    {BNtoDecimal(Big(item.votingPower), 0, 2)}
                   </S.Td>
                   <S.Td className="vote-weight">{item.voteWeight + '%'}</S.Td>
                   <S.Td className="proposals-created">

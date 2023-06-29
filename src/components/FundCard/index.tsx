@@ -17,8 +17,10 @@ import FundBarChart from './FundBarChart'
 import FundTokenIcons from './FundTokenIcons'
 import TokenWithNetworkImage from '../TokenWithNetworkImage'
 
-import arrowAscend from '../../../public/assets/notificationStatus/arrow-ascend.svg'
-import arrowDescend from '../../../public/assets/notificationStatus/arrow-descend.svg'
+import arrowAscend from '@assets/notificationStatus/arrow-ascend.svg'
+import arrowDescend from '@assets/notificationStatus/arrow-descend.svg'
+
+import { underlyingAssetsInfo } from '@/store/reducers/pool'
 
 import { GET_POOL } from './graphql'
 
@@ -43,8 +45,8 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
     tvl: '...',
     price: '...'
   })
-  const [poolInfo, setPoolInfo] = React.useState<any[]>([])
-  const [poolObject, setPoolObject] = React.useState<any>({})
+  const [poolInfo, setPoolInfo] = React.useState<underlyingAssetsInfo[]>([])
+  const [poolObject, setPoolObject] = React.useState<Record<string, number>>({})
 
   const [price, setPrice] = React.useState([])
 
@@ -96,7 +98,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
       setChangeWeek(arrChangePrice)
 
       setInfoPool({
-        tvl: BNtoDecimal(Big(data.pool?.total_value_locked_usd), 2, 2, 2),
+        tvl: BNtoDecimal(Big(data?.pool?.total_value_locked_usd ?? 0), 2, 2, 2),
         price: data.pool.price_usd
       })
 
@@ -122,7 +124,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
     if (poolInfo.length > 0) {
       const pool = poolInfo.map(item => {
         return {
-          [item.token.id]: getPercentage(item.weight_normalized)
+          [item.token.id]: getPercentage(Number(item.weight_normalized))
         }
       })
       const poolData = Object.assign({}, ...pool)

@@ -6,10 +6,10 @@ import { request } from 'graphql-request'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
 import Link from 'next/link'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 import { GET_INVESTORS } from './graphql'
-import { useAppSelector } from '@/store/hooks'
 import substr from '@/utils/substr'
 
 import { getDateDiff } from '@/utils/date'
@@ -87,9 +87,9 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
   const params = {
-    manager: userWalletAddress,
+    manager: wallet?.accounts[0].address,
     poolId: poolId,
     skip: skip,
     first: take
@@ -131,9 +131,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
   }
 
   const { data } = useSWR<GetInvestorsType>(
-    userWalletAddress.length > 0 && poolId.length > 0
-      ? [GET_INVESTORS, params]
-      : null,
+    wallet && poolId.length > 0 ? [GET_INVESTORS, params] : null,
     (query, params) => request(BACKEND_KASSANDRA, query, params)
   )
 

@@ -6,16 +6,16 @@ import Big from 'big.js'
 
 import { networks } from '@/constants/tokenAddresses'
 
-import { useAppSelector } from '../../../../../store/hooks'
-import { TokenType } from '../../../../../store/reducers/poolCreationSlice'
+import { useAppSelector } from '@/store/hooks'
+import { TokenType } from '@/store/reducers/poolCreationSlice'
 import useCoingecko from '@/hooks/useCoingecko'
 
-import substr from '../../../../../utils/substr'
-import { BNtoDecimal } from '../../../../../utils/numerals'
+import substr from '@/utils/substr'
+import { BNtoDecimal } from '@/utils/numerals'
 
-import { ToastInfo } from '../../../../../components/Toastify/toast'
+import { ToastInfo } from '@/components/Toastify/toast'
 import FeeBreakdown from '../../ConfigureFee/FeeBreakdown'
-import ModalViewCoinMobile from '../../../../../components/Modals/ModalViewCoinMobile'
+import ModalViewCoinMobile from '@/components/Modals/ModalViewCoinMobile'
 
 import * as S from './styles'
 
@@ -42,7 +42,7 @@ const PoolReview = () => {
   }
 
   const { data } = useCoingecko(
-    networks[poolData.networkId ?? 137].coingecko,
+    poolData.networkId ?? 137,
     networks[poolData.networkId ?? 137].nativeCurrency.address,
     addressesList
   )

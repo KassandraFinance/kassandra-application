@@ -1,29 +1,24 @@
 import React from 'react'
 import Image from 'next/image'
+import { useConnectWallet } from '@web3-onboard/react'
+import Big from 'big.js'
 
-import BigNumber from 'bn.js'
+import { poolsKacy } from '@/constants/pools'
+import { Staking } from '@/constants/tokenAddresses'
 
-import { Staking } from '../../../../constants/tokenAddresses'
+import useStakingContract from '@/hooks/useStaking'
+import useVotingPower from '@/hooks/useVotings'
+import { useAppDispatch } from '@/store/hooks'
+import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
-import useStakingContract from '../../../../hooks/useStakingContract'
-import useVotingPower from '../../../../hooks/useVotingPower'
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import { setModalAlertText } from '../../../../store/reducers/modalAlertText'
+import { BNtoDecimal } from '@/utils/numerals'
 
-import { BNtoDecimal } from '../../../../utils/numerals'
-import substr from '../../../../utils/substr'
-import waitTransaction, {
-  MetamaskError,
-  TransactionCallback
-} from '../../../../utils/txWait'
-
-import Button from '../../../Button'
-import ExternalLink from '../../../ExternalLink'
-import { ToastSuccess, ToastWarning } from '../../../Toastify/toast'
+import Button from '@/components/Button'
+import ExternalLink from '@/components/ExternalLink'
 import Options from '../Options'
 
-import arrowSelect from '../../../../../public/assets/utilities/arrow-select-down.svg'
-import logo from '../../../../../public/assets/logos/kacy-64.svg'
+import arrowSelect from '@assets/utilities/arrow-select-down.svg'
+import logo from '@assets/logos/kacy-64.svg'
 
 import * as S from '../styles'
 
@@ -40,9 +35,9 @@ interface IDelegateVotingPowerProps {
 }
 
 interface PoolData {
-  withdrawDelay: number
+  withdrawDelay: string
   votingPower: string
-  pid: number | undefined
+  pid: number
   nameToken: string
 }
 
@@ -51,7 +46,6 @@ const DelegateVotingPower = ({
   setModalOpen
 }: IDelegateVotingPowerProps) => {
   const dispatch = useAppDispatch()
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
   const [optionsOpen, setOptionsOpen] = React.useState<boolean>(false)
   const [receiverAddress, setReceiverAddress] = React.useState<string>('')
   const [delegateSelected, setDelegateSelected] = React.useState<IDateProps>({
@@ -66,36 +60,41 @@ const DelegateVotingPower = ({
 
   const { poolInfo, balance } = useStakingContract(Staking)
   const { delegateVote, delegateAllVotes } = useVotingPower(Staking)
+  const [{ wallet }] = useConnectWallet()
 
   const regex = /^0x[a-fA-F0-9]{40}$/g
   const walletRegex: RegExpExecArray | null = regex.exec(receiverAddress)
 
   const handlePoolInfo = async () => {
-    const [poolInfoOne, poolInfoTwo, poolInfoThree] = await Promise.all([
-      poolInfo(process.env.NEXT_PUBLIC_MASTER === '1' ? 2 : 0),
-      poolInfo(process.env.NEXT_PUBLIC_MASTER === '1' ? 3 : 1),
-      poolInfo(process.env.NEXT_PUBLIC_MASTER === '1' ? 4 : 2)
-    ])
+    if (!wallet) return
 
-    poolInfoOne.pid = process.env.NEXT_PUBLIC_MASTER === '1' ? 2 : 0
-    poolInfoTwo.pid = process.env.NEXT_PUBLIC_MASTER === '1' ? 3 : 1
-    poolInfoThree.pid = process.env.NEXT_PUBLIC_MASTER === '1' ? 4 : 2
+    const [poolInfoOne, poolInfoTwo, poolInfoThree] = await Promise.all(
+      poolsKacy.map(item => poolInfo(item.pid))
+    )
 
     const newArr = []
     const arr = [poolInfoOne, poolInfoTwo, poolInfoThree]
 
-    for (let i = 0; i < arr.length; i++) {
+    for (let i = 0; i < poolsKacy.length; i++) {
       const poolInfo = arr[i]
-      const votingPower = await balance(Number(poolInfo.pid), userWalletAddress)
+      const votingPower = await balance(
+        poolsKacy[i].pid,
+        wallet.accounts[0].address
+      )
+      const votingPowerFormatted = Big(votingPower.toString()).div(
+        Big(10).pow(18)
+      )
 
       newArr.push({
-        withdrawDelay: Math.round(Number(poolInfo.withdrawDelay) / 86400),
+        withdrawDelay: Math.round(
+          Number(poolInfo.withdrawDelay) / 86400
+        ).toString(),
         votingPower: BNtoDecimal(
-          new BigNumber(poolInfo.votingMultiplier).mul(votingPower),
+          Big(poolInfo.votingMultiplier).mul(votingPowerFormatted),
           18,
           2
         ),
-        pid: poolInfo.pid,
+        pid: poolsKacy[i].pid ?? 0,
         nameToken: 'KACY'
       })
     }
@@ -105,11 +104,7 @@ const DelegateVotingPower = ({
   }
 
   const handleDelegateVotes = async () => {
-    await delegateVote(
-      delegateSelected?.pid,
-      receiverAddress,
-      delegateCallback(receiverAddress)
-    )
+    await delegateVote(delegateSelected?.pid, receiverAddress)
   }
 
   const handleDelegateAllVoting = async () => {
@@ -118,10 +113,7 @@ const DelegateVotingPower = ({
       return
     }
 
-    await delegateAllVotes(
-      receiverAddress,
-      delegateAllCallback(receiverAddress)
-    )
+    await delegateAllVotes(receiverAddress)
   }
 
   React.useEffect(() => {
@@ -136,59 +128,60 @@ const DelegateVotingPower = ({
     handlePoolInfo()
   }, [setModalOpen, setCurrentModal])
 
-  const delegateCallback = React.useCallback(
-    (receiverAddress: string): TransactionCallback => {
-      return async (error: MetamaskError, txHash: string) => {
-        if (error) {
-          if (error.code === 4001) {
-            dispatch(setModalAlertText({ errorText: `Delegate cancelled` }))
-            return
-          }
+  // const delegateCallback = React.useCallback(
+  //   (receiverAddress: string): TransactionCallback => {
+  //     return async (error: MetamaskError, txHash: string) => {
+  //       if (error) {
+  //         if (error.code === 4001) {
+  //           dispatch(setModalAlertText({ errorText: `Delegate cancelled` }))
+  //           return
+  //         }
 
-          dispatch(setModalAlertText({ errorText: `Error` }))
-          return
-        }
+  //         console.log(error)
+  //         dispatch(setModalAlertText({ errorText: `Error` }))
+  //         return
+  //       }
 
-        ToastWarning(`Confirming delegate to ${substr(receiverAddress)}...`)
-        const txReceipt = await waitTransaction(txHash)
+  //       ToastWarning(`Confirming delegate to ${substr(receiverAddress)}...`)
+  //       const txReceipt = await waitTransaction(txHash)
 
-        if (txReceipt.status) {
-          ToastSuccess(`Delegate confirmed to ${substr(receiverAddress)}`)
-          setCurrentModal('manage')
-          setModalOpen(false)
-          return
-        }
-      }
-    },
-    []
-  )
+  //       if (txReceipt.status) {
+  //         ToastSuccess(`Delegate confirmed to ${substr(receiverAddress)}`)
+  //         setCurrentModal('manage')
+  //         setModalOpen(false)
+  //         return
+  //       }
+  //     }
+  //   },
+  //   []
+  // )
 
-  const delegateAllCallback = React.useCallback(
-    (receiverAddress: string): TransactionCallback => {
-      return async (error: MetamaskError, txHash: string) => {
-        if (error) {
-          if (error.code === 4001) {
-            dispatch(setModalAlertText({ errorText: `Delegate cancelled` }))
-            return
-          }
+  // const delegateAllCallback = React.useCallback(
+  //   (receiverAddress: string): TransactionCallback => {
+  //     return async (error: MetamaskError, txHash: string) => {
+  //       if (error) {
+  //         if (error.code === 4001) {
+  //           dispatch(setModalAlertText({ errorText: `Delegate cancelled` }))
+  //           return
+  //         }
 
-          dispatch(setModalAlertText({ errorText: `Error` }))
-          return
-        }
+  //         dispatch(setModalAlertText({ errorText: `Error` }))
+  //         return
+  //       }
 
-        ToastWarning(`Confirming delegate to ${substr(receiverAddress)}...`)
-        const txReceipt = await waitTransaction(txHash)
+  //       ToastWarning(`Confirming delegate to ${substr(receiverAddress)}...`)
+  //       const txReceipt = await waitTransaction(txHash)
 
-        if (txReceipt.status) {
-          ToastSuccess(`Delegate confirmed to ${substr(receiverAddress)}`)
-          setCurrentModal('manage')
-          setModalOpen(false)
-          return
-        }
-      }
-    },
-    []
-  )
+  //       if (txReceipt.status) {
+  //         ToastSuccess(`Delegate confirmed to ${substr(receiverAddress)}`)
+  //         setCurrentModal('manage')
+  //         setModalOpen(false)
+  //         return
+  //       }
+  //     }
+  //   },
+  //   []
+  // )
 
   return (
     <>

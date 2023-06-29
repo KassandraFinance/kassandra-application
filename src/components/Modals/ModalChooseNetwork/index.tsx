@@ -1,13 +1,8 @@
 import Image from 'next/image'
-
-import changeChain from '../../../utils/changeChain'
-import { networks } from '../../../constants/tokenAddresses'
+import { useSetChain } from '@web3-onboard/react'
 
 import Modal from '../Modal'
 import Overlay from '../../Overlay'
-
-import avalanche from '../../../../public/assets/logos/avalanche.svg'
-import polygon from '../../../../public/assets/logos/polygon.svg'
 
 import * as S from './styles'
 
@@ -20,12 +15,17 @@ const ModalChooseNetwork = ({
   isOpen,
   setIsChooseNetwork
 }: IChooseNetworkProps) => {
+  const [
+    {
+      chains, // the list of chains that web3-onboard was initialized with
+      settingChain // boolean indicating if the chain is in the process of being set
+    },
+    setChain // function to call to initiate user to switch chains in their wallet
+  ] = useSetChain()
+
   function handleCloseModal() {
     setIsChooseNetwork(false)
   }
-
-  const avalancheNetwork = networks[43114]
-  const polygonNetwork = networks[137]
 
   return (
     <S.ModalChooseNetwork>
@@ -33,41 +33,30 @@ const ModalChooseNetwork = ({
 
       <Modal title="Choose Network" onCloseModal={handleCloseModal}>
         <S.ModalContent>
-          <S.WrapperIconsBackGround
-            onClick={() =>
-              changeChain({
-                chainId: avalancheNetwork.chainId,
-                chainName: avalancheNetwork.chainName,
-                rpcUrls: [avalancheNetwork.rpc],
-                nativeCurrency: avalancheNetwork.nativeCurrency,
-                callbackFunction: handleCloseModal
-              })
-            }
-          >
-            <S.WrapperIcons>
-              <Image src={avalanche} width={24} height={24} />
+          {chains.map(chain => {
+            const svgStr = chain?.icon || '<svg></svg>'
+            const svg = new Blob([svgStr], { type: 'image/svg+xml' })
+            const url = URL.createObjectURL(svg)
 
-              <span>Avalanche</span>
-            </S.WrapperIcons>
-          </S.WrapperIconsBackGround>
+            return (
+              <S.WrapperIconsBackGround
+                key={chain.id}
+                disabled={settingChain}
+                onClick={() =>
+                  setChain({
+                    chainId: chain.id,
+                    chainNamespace: chain.namespace
+                  })
+                }
+              >
+                <S.WrapperIcons>
+                  <Image src={url} width={24} height={24} />
 
-          <S.WrapperIconsBackGround
-            onClick={() =>
-              changeChain({
-                chainId: polygonNetwork.chainId,
-                chainName: polygonNetwork.chainName,
-                rpcUrls: [polygonNetwork.rpc],
-                nativeCurrency: polygonNetwork.nativeCurrency,
-                callbackFunction: handleCloseModal
-              })
-            }
-          >
-            <S.WrapperIcons>
-              <Image src={polygon} width={24} height={24} />
-
-              <span>Polygon</span>
-            </S.WrapperIcons>
-          </S.WrapperIconsBackGround>
+                  <span>{chain.label}</span>
+                </S.WrapperIcons>
+              </S.WrapperIconsBackGround>
+            )
+          })}
         </S.ModalContent>
       </Modal>
     </S.ModalChooseNetwork>

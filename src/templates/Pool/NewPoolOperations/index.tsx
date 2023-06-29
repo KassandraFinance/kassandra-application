@@ -29,10 +29,8 @@ const NewPoolOperations = () => {
   const [inputCheckedBarMobile, setInputCheckedBarMobile] =
     React.useState<TitlesMobile>('Disable')
 
-  const { tokenSelectionActive } = useAppSelector(state => state)
-
   const dispatch = useAppDispatch()
-  const { modalWalletActive } = useAppSelector(state => state)
+  const { tokenSelectionActive } = useAppSelector(state => state)
   const { tokenListSwapProvider } = useAppSelector(state => state)
 
   React.useEffect(() => {
@@ -43,14 +41,6 @@ const NewPoolOperations = () => {
     )
     dispatch(setTokenSelect(nativeToken ?? tokenListSwapProvider[0]))
   }, [inputChecked])
-
-  React.useEffect(() => {
-    if (!modalWalletActive) return
-
-    dispatch(setTokenSelectionActive(false))
-    setisOpenPoolOperationMobile(false)
-    setInputCheckedBarMobile('Disable')
-  }, [modalWalletActive])
 
   React.useEffect(() => {
     if (!tokenSelectionActive) return

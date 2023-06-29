@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import React from 'react'
 
-import { useAppSelector } from '../../../../store/hooks'
-import substr from '../../../../utils/substr'
+// import { useAppSelector } from '../../../../store/hooks'
+// import substr from '../../../../utils/substr'
 
 import Button from '../../../Button'
 
@@ -30,9 +30,9 @@ const WalletConnecting = ({
   isConnected,
   handleCloseModal
 }: IWalletConnectingProps) => {
-  const [nickname, setNickname] = React.useState()
+  // const [nickname, setNickname] = React.useState()
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  // const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const providers: ProviderType = {
     metamask: {
@@ -45,16 +45,16 @@ const WalletConnecting = ({
     }
   }
 
-  React.useEffect(() => {
-    if (!userWalletAddress) return
+  // React.useEffect(() => {
+  //   if (!userWalletAddress) return
 
-    fetch(`/api/profile/${userWalletAddress}`)
-      .then(res => res.json())
-      .then(data => {
-        const { nickname } = data
-        setNickname(nickname)
-      })
-  }, [userWalletAddress])
+  //   fetch(`/api/profile/${userWalletAddress}`)
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       const { nickname } = data
+  //       setNickname(nickname)
+  //     })
+  // }, [userWalletAddress])
 
   return (
     <>
@@ -78,14 +78,14 @@ const WalletConnecting = ({
         </>
       ) : (
         <>
-          {nickname && (
+          {/* {nickname && (
             <S.AddressWrapper>
               Username: <span>{nickname}</span>
             </S.AddressWrapper>
-          )}
+          )} */}
 
           <S.AddressWrapper>
-            Address: <span>{substr(userWalletAddress)}</span>
+            {/* Address: <span>{substr(userWalletAddress)}</span> */}
           </S.AddressWrapper>
 
           <S.TextConnected>

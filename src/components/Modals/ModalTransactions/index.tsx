@@ -1,13 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
-
-import { useAppSelector } from '@/store/hooks'
+import { useSetChain } from '@web3-onboard/react'
 
 import { networks } from '@/constants/tokenAddresses'
-import changeChain from '@/utils/changeChain'
 
 import Loading from '@/components/Loading'
-import Button from '../../Button'
+import Button from '@/components/Button'
 
 import executedIcon from '@assets/notificationStatus/executed.svg'
 import failedIcon from '@assets/notificationStatus/failed.svg'
@@ -56,8 +54,20 @@ const ModalTransactions = ({
   networkId = null
 }: IModalTransactionsProps) => {
   const [isLoading, setIsLoading] = React.useState(true)
+  const [
+    {
+      chains, // the list of chains that web3-onboard was initialized with
+      connectedChain, // the current chain the user's wallet is connected to
+      settingChain // boolean indicating if the chain is in the process of being set
+    },
+    setChain // function to call to initiate user to switch chains in their wallet
+  ] = useSetChain()
 
-  const chainId = useAppSelector(state => state.chainId)
+  function handleChangeChain(networkId: number) {
+    const id = `0x${networkId.toString(16)}`
+    const chain = chains.filter(chain => chain.id === id)
+    setChain({ chainId: chain[0].id, chainNamespace: chain[0].namespace })
+  }
 
   React.useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 700)
@@ -113,20 +123,14 @@ const ModalTransactions = ({
       </S.TransactionContainer>
 
       <S.ButtonsWrapper>
-        {networkId && networkId !== chainId ? (
+        {networkId && networkId !== parseInt(connectedChain?.id || '', 16) ? (
           <Button
             text={`Connect to ${networks[networkId].chainName}`}
             backgroundPrimary
             fullWidth
+            disabledNoEvent={settingChain}
             type="button"
-            onClick={() =>
-              changeChain({
-                chainId: networks[networkId].chainId,
-                chainName: networks[networkId].chainName,
-                rpcUrls: [networks[networkId].rpc],
-                nativeCurrency: networks[networkId].nativeCurrency
-              })
-            }
+            onClick={() => handleChangeChain(networkId)}
           />
         ) : (
           <>

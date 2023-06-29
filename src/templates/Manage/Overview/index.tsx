@@ -2,9 +2,10 @@ import React from 'react'
 import useSWR from 'swr'
 import request from 'graphql-request'
 import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { useAppSelector } from '@/store/hooks'
 import {
   GET_TVM_CHART,
   GET_CHANGE_TVL,
@@ -15,14 +16,14 @@ import {
 
 import { calcChange } from '@/utils/numerals'
 
-import TitleSection from '../../../components/TitleSection'
-import StatusCard from '../../../components/Manage/StatusCard'
-import TVMChart from '../../../components/Manage/TVMChart'
+import TitleSection from '@/components/TitleSection'
+import StatusCard from '@/components/Manage/StatusCard'
+import TVMChart from '@/components/Manage/TVMChart'
 import ManagedPools from './ManagedPools'
 import Loading from '@/components/Loading'
 
-import managerOveriewIcon from '../../../../public/assets/iconGradient/section-title-eye.svg'
-import managedPoolsIcon from '../../../../public/assets/iconGradient/assets-distribution.svg'
+import managerOveriewIcon from '@assets/iconGradient/section-title-eye.svg'
+import managedPoolsIcon from '@assets/iconGradient/assets-distribution.svg'
 
 import * as S from './styles'
 
@@ -71,10 +72,13 @@ const Overview = () => {
   const [withdrawalPeriod, setWithdrawalPeriod] = React.useState<string>('1D')
   const [tvlPeriod, setTvlPeriod] = React.useState<string>('1D')
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
+  const walletAddress = wallet?.provider
+    ? getAddress(wallet.accounts[0].address)
+    : ''
 
   const { data } = useSWR(
-    [GET_TVM_CHART, userWalletAddress, tvlPeriod],
+    [GET_TVM_CHART, walletAddress, tvlPeriod],
     (query, userWalletAddress, tvlPeriod) =>
       request(BACKEND_KASSANDRA, query, {
         manager: userWalletAddress,
@@ -83,7 +87,7 @@ const Overview = () => {
   )
 
   const { data: dataChange } = useSWR(
-    [GET_CHANGE_TVL, userWalletAddress],
+    [GET_CHANGE_TVL, walletAddress],
     (query, userWalletAddress) =>
       request(BACKEND_KASSANDRA, query, {
         manager: userWalletAddress,
@@ -95,7 +99,7 @@ const Overview = () => {
   )
 
   const { data: withdraws } = useSWR(
-    [GET_WITHDRAWS, userWalletAddress, withdrawalPeriod],
+    [GET_WITHDRAWS, walletAddress, withdrawalPeriod],
     (query, userWalletAddress, withdrawalPeriod) =>
       request(BACKEND_KASSANDRA, query, {
         manager: userWalletAddress,
@@ -106,7 +110,7 @@ const Overview = () => {
   )
 
   const { data: deposit } = useSWR(
-    [GET_DEPOSITS, userWalletAddress, depostiPeriod],
+    [GET_DEPOSITS, walletAddress, depostiPeriod],
     (query, userWalletAddress, depostiPeriod) =>
       request(BACKEND_KASSANDRA, query, {
         manager: userWalletAddress,
@@ -117,7 +121,7 @@ const Overview = () => {
   )
 
   const { data: uniqueInvestors } = useSWR(
-    [GET_UNIQUE_INVESTORS, userWalletAddress],
+    [GET_UNIQUE_INVESTORS, walletAddress],
     (query, userWalletAddress) =>
       request(BACKEND_KASSANDRA, query, {
         manager: userWalletAddress

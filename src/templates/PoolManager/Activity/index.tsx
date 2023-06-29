@@ -1,7 +1,7 @@
 import React from 'react'
 import router from 'next/router'
 import Image from 'next/image'
-
+import { useConnectWallet } from '@web3-onboard/react'
 import Big from 'big.js'
 import useSWRInfinite from 'swr/infinite'
 import request from 'graphql-request'
@@ -10,8 +10,6 @@ import { getActivityInfo, getManagerActivity } from '../utils'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 import { GET_ACTIVITIES } from './graphql'
-
-import { useAppSelector } from '@/store/hooks'
 
 import Loading from '@/components/Loading'
 import ActivityCard, { actionsType, ActivityInfo } from '../ActivityCard'
@@ -166,7 +164,7 @@ const Activity = () => {
     []
   )
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet }] = useConnectWallet()
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -211,7 +209,7 @@ const Activity = () => {
   }
 
   const activityHistory = React.useMemo((): ActivityCardProps[] => {
-    if (!data?.length) return []
+    if (!data?.length || !wallet) return []
     let filters: Record<string, boolean> = {
       join: false,
       exit: false,
@@ -255,7 +253,7 @@ const Activity = () => {
     )
     const managerActivities = getManagerActivity(
       weights,
-      userWalletAddress,
+      wallet.accounts[0].address,
       filters
     )
     const activities = [...activitiesInvestors, ...managerActivities]

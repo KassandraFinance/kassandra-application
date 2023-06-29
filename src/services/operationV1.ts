@@ -1,7 +1,7 @@
 import Big from 'big.js'
-import BigNumber from 'bn.js'
-import { AbiItem } from 'web3-utils'
-import { Contract } from 'web3-eth-contract'
+import { Contract, JsonRpcProvider, JsonRpcSigner } from 'ethers'
+
+import { BNtoDecimal } from '@/utils/numerals'
 
 import HermesProxy from '../constants/abi/HermesProxy.json'
 
@@ -16,11 +16,11 @@ import {
   IPoolInfoProps,
   JoinSwapAmountInParams
 } from './IOperation'
-import { NATIVE_ADDRESS } from '../constants/tokenAddresses'
+import { NATIVE_ADDRESS, networks } from '../constants/tokenAddresses'
 
-import { ERC20 } from '../hooks/useERC20Contract'
+import ERC20 from '../hooks/useERC20'
 import { corePoolContract } from '../hooks/usePoolContract'
-import { YieldYakContract } from '../hooks/useYieldYak'
+import { YieldYakContract } from '../hooks/useYieldYakEthers'
 
 import {
   checkTokenInThePool,
@@ -28,7 +28,6 @@ import {
   getTokenWrapped
 } from '../utils/poolUtils'
 
-import web3 from '../utils/web3'
 import { GetAmountsParams, ISwapProvider } from './ISwapProvider'
 
 export interface ItokenSelectedProps {
@@ -48,6 +47,7 @@ export default class operationV1 implements IOperations {
   yieldYakContract: ReturnType<typeof YieldYakContract>
   poolInfo: IPoolInfoProps
   swapProvider: ISwapProvider
+  signerProvider: JsonRpcSigner | undefined
 
   constructor(
     proxyAddress: string,
@@ -56,12 +56,15 @@ export default class operationV1 implements IOperations {
     _corePoolContract: ReturnType<typeof corePoolContract>,
     _ER20Contract: ReturnType<typeof ERC20>,
     _yieldYakContract: ReturnType<typeof YieldYakContract>,
-    _swapProvider: ISwapProvider
+    _swapProvider: ISwapProvider,
+    _signerProvider: JsonRpcSigner | undefined
   ) {
     this.swapProvider = _swapProvider
-    this.contract = new web3.eth.Contract(
-      HermesProxy as unknown as AbiItem,
-      proxyAddress
+    this.contractAddress = proxyAddress
+    this.contract = new Contract(
+      this.contractAddress,
+      HermesProxy,
+      _signerProvider
     )
     this.crpPool = _crpPool
     this.contractAddress = proxyAddress
@@ -70,12 +73,15 @@ export default class operationV1 implements IOperations {
     this.yieldYakContract = _yieldYakContract
     this.withdrawContract = proxyAddress
     this.poolInfo = _poolInfo
+    this.signerProvider = _signerProvider
   }
 
-  async getDatasTx() {
+  async getDatasTx(slippage = '0.5', txs: Array<any>) {
     return this.swapProvider.getDatasTx(
       this.poolInfo.chainId,
-      this.contractAddress
+      this.contractAddress,
+      slippage,
+      txs
     )
   }
 
@@ -113,20 +119,23 @@ export default class operationV1 implements IOperations {
       this.poolInfo.tokens,
       tokenInAddress
     )
+
     const avaxValue =
-      tokenInAddress === NATIVE_ADDRESS ? amountTokenIn : new BigNumber(0)
+      tokenInAddress === NATIVE_ADDRESS ? amountTokenIn.toFixed(0) : '0'
 
     try {
       if (checkedTokenInPool) {
-        const investAmountOut: BigNumber = await this.contract.methods
-          .joinswapExternAmountIn(
+        const investAmountOut =
+          await this.contract.joinswapExternAmountIn.staticCall(
             this.crpPool,
             tokenInAddress,
-            new BigNumber(amountTokenIn.toFixed()),
+            BigInt(amountTokenIn.toFixed()),
             minAmountOut,
-            this.referral
+            this.referral,
+            {
+              from: userWalletAddress
+            }
           )
-          .call({ from: userWalletAddress })
 
         return {
           investAmountOut,
@@ -141,17 +150,20 @@ export default class operationV1 implements IOperations {
         tokenExchange
       )
 
-      const investAmountOut = await this.contract.methods
-        .joinswapExternAmountInWithSwap(
+      const investAmountOut =
+        await this.contract.joinswapExternAmountInWithSwap.staticCall(
           this.crpPool,
           tokenInAddress,
-          new BigNumber(amountTokenIn.toFixed()),
+          amountTokenIn.toFixed(0),
           tokenWrappedAddress?.token.id,
           minAmountOut,
           this.referral,
-          tokenSelected.transactionsDataTx[0]
+          tokenSelected.transactionsDataTx[0],
+          {
+            from: userWalletAddress,
+            value: avaxValue
+          }
         )
-        .call({ from: userWalletAddress, value: avaxValue })
 
       return {
         investAmountOut,
@@ -166,14 +178,11 @@ export default class operationV1 implements IOperations {
         totalPoolBalance
       } = await this.getInfoPool(tokenSelected.tokenInAddress)
 
-      let investAmoutInCalc: BigNumber = new BigNumber(
-        Big(tokenSelected.newAmountsTokenIn[0]).toFixed()
-      )
-
+      let investAmoutInCalc = Big(tokenSelected.newAmountsTokenIn[0])
       if (tokenSelected.isWrap) {
         investAmoutInCalc =
           await this.yieldYakContract.convertBalanceWrappedToYRT(
-            investAmoutInCalc,
+            investAmoutInCalc.toFixed(0),
             tokenSelected.tokenInAddress
           )
       }
@@ -182,9 +191,9 @@ export default class operationV1 implements IOperations {
         await this.corePoolContract.calcPoolOutGivenSingleIn(
           totalPoolBalance,
           denormalizedWeight,
-          poolSupply,
+          BigInt(poolSupply),
           poolTotalDenormalizedWeight,
-          investAmoutInCalc,
+          BigInt(investAmoutInCalc.toFixed(0)),
           poolSwapFee
         )
 
@@ -217,25 +226,19 @@ export default class operationV1 implements IOperations {
     minPoolAmountOut,
     userWalletAddress,
     data,
-    hasTokenInPool,
-    transactionCallback
+    hasTokenInPool
   }: JoinSwapAmountInParams) {
-    const avaxValue =
-      tokenInAddress === NATIVE_ADDRESS ? tokenAmountIn : new BigNumber(0)
+    const avaxValue = tokenInAddress === NATIVE_ADDRESS ? tokenAmountIn : '0'
 
     if (hasTokenInPool) {
-      const res = await this.contract.methods
-        .joinswapExternAmountIn(
-          this.crpPool,
-          tokenInAddress,
-          tokenAmountIn,
-          minPoolAmountOut,
-          this.referral
-        )
-        .send(
-          { from: userWalletAddress, value: avaxValue },
-          transactionCallback
-        )
+      const res = await this.contract.joinswapExternAmountIn(
+        this.crpPool,
+        tokenInAddress,
+        tokenAmountIn,
+        minPoolAmountOut,
+        this.referral,
+        { from: userWalletAddress, value: avaxValue }
+      )
 
       return res
     }
@@ -248,17 +251,16 @@ export default class operationV1 implements IOperations {
       tokenExchange
     )
 
-    const res = await this.contract.methods
-      .joinswapExternAmountInWithSwap(
-        this.crpPool,
-        tokenInAddress,
-        tokenAmountIn,
-        tokenWrappedAddress?.token.id,
-        minPoolAmountOut,
-        this.referral,
-        data
-      )
-      .send({ from: userWalletAddress, value: avaxValue }, transactionCallback)
+    const res = await this.contract.joinswapExternAmountInWithSwap(
+      this.crpPool,
+      tokenInAddress,
+      tokenAmountIn,
+      tokenWrappedAddress?.token.id,
+      minPoolAmountOut,
+      this.referral,
+      data,
+      { from: userWalletAddress, value: avaxValue }
+    )
 
     return res
   }
@@ -274,47 +276,48 @@ export default class operationV1 implements IOperations {
       this.poolInfo.tokens,
       tokenInAddress
     )
-    const avaxValue =
-      tokenInAddress === NATIVE_ADDRESS ? amountTokenIn : new BigNumber(0)
+    const avaxValue = tokenInAddress === NATIVE_ADDRESS ? amountTokenIn : '0'
     const tokenWithHigherLiquidity = checkTokenWithHigherLiquidityPool(
       this.poolInfo.tokens
     )
 
-    const estimateGas = await web3.eth.estimateGas({
-      // "value": '0x0', // Only tokens
-      data: tokensChecked
-        ? this.contract.methods
-            .joinswapExternAmountIn(
-              this.crpPool,
-              tokenInAddress,
-              amountTokenIn,
-              minPoolAmountOut,
-              this.referral
-            )
-            .encodeABI()
-        : this.contract.methods
-            .joinswapExternAmountInWithSwap(
-              this.crpPool,
-              tokenInAddress,
-              amountTokenIn,
-              tokenWithHigherLiquidity.address,
-              minPoolAmountOut,
-              this.referral,
-              data
-            )
-            .encodeABI(),
-      from: userWalletAddress,
-      to: tokenWithHigherLiquidity.address,
-      value: avaxValue
-    })
-    const gasPrice = await web3.eth.getGasPrice()
+    let estimateGas
+    if (tokensChecked) {
+      estimateGas = await this.contract.joinswapExternAmountIn.estimateGas(
+        this.crpPool,
+        tokenInAddress,
+        amountTokenIn,
+        minPoolAmountOut,
+        this.referral,
+        {
+          value: avaxValue
+        }
+      )
+    } else {
+      estimateGas =
+        await this.contract.joinswapExternAmountInWithSwap.estimateGas(
+          this.crpPool,
+          tokenInAddress,
+          amountTokenIn,
+          tokenWithHigherLiquidity.address,
+          minPoolAmountOut,
+          this.referral,
+          data,
+          {
+            value: avaxValue
+          }
+        )
+    }
 
-    const fee = Number(gasPrice) * estimateGas * 1.3
-    const finalGasInEther = web3.utils.fromWei(fee.toString(), 'ether')
+    const jsonProvider = new JsonRpcProvider(networks[43114].rpc)
+    const feeData = await jsonProvider.getFeeData()
+    const fee = Big(feeData?.maxFeePerGas?.toString() ?? '0').mul(
+      Big(estimateGas?.toString() ?? '0')
+    )
 
     return {
-      feeNumber: fee,
-      feeString: finalGasInEther
+      feeNumber: fee.toNumber(),
+      feeString: BNtoDecimal(fee.div(Big(10).pow(18)), 3, 6)
     }
   }
 
@@ -328,21 +331,21 @@ export default class operationV1 implements IOperations {
   }: CalcSingleOutGivenPoolInParams) {
     try {
       // if (userWalletAddress.length > 0 && Big(poolAmountIn).gt(Big('0'))) {
-      const withdrawAmoutOut: BigNumber = await this.contract.methods
-        .exitswapPoolAmountIn(
+
+      const withdrawAmoutOut =
+        await this.contract.exitswapPoolAmountIn.staticCall(
           this.crpPool,
           tokenSelectAddress,
-          new BigNumber(poolAmountIn),
-          new BigNumber('0')
+          poolAmountIn,
+          '0',
+          { from: userWalletAddress }
         )
-        .call({ from: userWalletAddress })
 
       return {
-        withdrawAmoutOut,
+        withdrawAmoutOut: Big(withdrawAmoutOut.toString()),
         transactionError: undefined
       }
       // }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const {
         denormalizedWeight,
@@ -357,17 +360,17 @@ export default class operationV1 implements IOperations {
       const value = await this.corePoolContract.calcSingleOutGivenPoolIn(
         totalPoolBalance,
         denormalizedWeight,
-        poolSupply,
+        BigInt(poolSupply),
         poolTotalDenormalizedWeight,
-        new BigNumber(poolAmountIn),
+        BigInt(poolAmountIn),
         poolSwapFee,
         exitFee
       )
 
-      let withdrawAmoutOut: BigNumber = value
+      let withdrawAmoutOut = Big(value)
       if (isWrap) {
         withdrawAmoutOut = await this.yieldYakContract.convertBalanceYRTtoWrap(
-          withdrawAmoutOut,
+          withdrawAmoutOut.toFixed(0),
           tokenInAddress
         )
       }
@@ -398,19 +401,20 @@ export default class operationV1 implements IOperations {
   }
 
   getWithdrawAmount(
-    supplyPoolToken: BigNumber,
-    amountPoolToken: BigNumber,
-    balanceOut: BigNumber,
-    exitFee: BigNumber
-  ): BigNumber {
-    if (supplyPoolToken.toString(10) === '0') {
-      return new BigNumber(0)
-    }
+    supplyPoolToken: Big,
+    amountPoolToken: Big,
+    balanceOut: Big,
+    exitFee: Big
+  ): Big {
+    // if (supplyPoolToken.toString(10) === '0') {
+    //   return Big(0)
+    // }
 
     // 10^18
-    const one = new BigNumber('1')
-    const two = new BigNumber('2')
-    const bigOne = new BigNumber('10').pow(new BigNumber('18'))
+    const one = Big('1')
+    const two = Big('2')
+    const bigOne = Big('10').pow(18)
+    // const bigOne = Big('10').pow(Big('18'))
     const halfBigOne = bigOne.div(two)
     // calculated fee (bmul)
     const fee = amountPoolToken.mul(exitFee).add(halfBigOne).div(bigOne)
@@ -433,7 +437,7 @@ export default class operationV1 implements IOperations {
     userWalletAddress,
     selectedTokenInBalance
   }: CalcAllOutGivenPoolInParams) {
-    const withdrawAllAmoutOut: Record<string, BigNumber> = {}
+    const withdrawAllAmoutOut: Record<string, Big> = {}
     let transactionError: string | undefined = undefined
     const tokensInPool = this.poolInfo.tokens.map(
       item => item.token.wraps?.id ?? item.token.id
@@ -450,14 +454,14 @@ export default class operationV1 implements IOperations {
           )
 
           let withdrawAmout = this.getWithdrawAmount(
-            poolSupply,
-            new BigNumber(poolAmountIn.toFixed()),
-            swapOutTotalPoolBalance,
-            exitFee
+            Big(poolSupply),
+            poolAmountIn,
+            Big(swapOutTotalPoolBalance.toString()),
+            Big(exitFee.toString())
           )
           if (item.token.wraps) {
             withdrawAmout = await this.yieldYakContract.convertBalanceYRTtoWrap(
-              withdrawAmout,
+              withdrawAmout.toFixed(0),
               item.token.id
             )
           }
@@ -468,14 +472,13 @@ export default class operationV1 implements IOperations {
         })
       )
 
-      await this.contract.methods
-        .exitPool(
-          this.crpPool,
-          new BigNumber(poolAmountIn.toFixed()),
-          tokensInPool,
-          Array(tokensInPool.length).fill(new BigNumber('0'))
-        )
-        .call({ from: userWalletAddress })
+      await this.contract.exitPool.staticCall(
+        this.crpPool,
+        poolAmountIn.toFixed(),
+        tokensInPool,
+        Array(tokensInPool.length).fill('0'),
+        { from: userWalletAddress }
+      )
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -508,17 +511,17 @@ export default class operationV1 implements IOperations {
     tokenOutAddress,
     tokenAmountIn,
     minPoolAmountOut,
-    userWalletAddress,
-    transactionCallback
+    userWalletAddress
   }: ExitSwapPoolAmountInParams) {
-    const res = await this.contract.methods
-      .exitswapPoolAmountIn(
-        this.crpPool,
-        tokenOutAddress,
-        tokenAmountIn,
-        minPoolAmountOut
-      )
-      .send({ from: userWalletAddress }, transactionCallback)
+    const res = await this.contract.exitswapPoolAmountIn(
+      this.crpPool,
+      tokenOutAddress,
+      tokenAmountIn,
+      minPoolAmountOut,
+      {
+        from: userWalletAddress
+      }
+    )
 
     return res
   }
@@ -528,20 +531,27 @@ export default class operationV1 implements IOperations {
     amountAllTokenOut,
     slippageBase,
     slippageExp,
-    userWalletAddress,
-    transactionCallback
+    userWalletAddress
   }: ExitSwapPoolAllTokenAmountInParams) {
     const swapOutAmounts = this.poolInfo.tokens.map(asset =>
-      amountAllTokenOut[asset.token.id].mul(slippageBase).div(slippageExp)
+      amountAllTokenOut[asset.token.id]
+        .mul(slippageBase)
+        .div(slippageExp)
+        .toFixed(0)
     )
 
     const tokensWithdraw = this.poolInfo.tokens.map(token =>
       token.token.wraps ? token.token.wraps.id : token.token.id
     )
 
-    const res = await this.contract.methods
-      .exitPool(this.crpPool, tokenAmountIn, tokensWithdraw, swapOutAmounts)
-      .send({ from: userWalletAddress }, transactionCallback)
+    const res = await this.contract.exitPool(
+      this.crpPool,
+      tokenAmountIn,
+      tokensWithdraw,
+      swapOutAmounts,
+      { from: userWalletAddress }
+    )
+
     return res
   }
 }

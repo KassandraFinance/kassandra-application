@@ -1,10 +1,10 @@
 import React from 'react'
 
-import { GovernorAlpha } from '../../../constants/tokenAddresses'
+import { GovernorAlpha } from '@/constants/tokenAddresses'
 
-import useGovernance from '../../../hooks/useGovernance'
+import useGov from '@/hooks/useGov'
 
-import Loading from '../../Loading'
+import Loading from '@/components/Loading'
 import PieChart from './PieChart'
 
 import * as S from './styles'
@@ -21,22 +21,21 @@ const ProposalOverview = () => {
     { stateProposal: 'Failed', proposalVote: 0 }
   ]
 
-  // eslint-disable-next-line prettier/prettier
   const [stateProposalsList, setStateProposalsList] =
     React.useState<IStateProposalListProps[]>(proposalArray)
-  const [proposalTotal, setProposalTotal] = React.useState(0)
+  const [proposalTotal, setProposalTotal] = React.useState<string>('0')
   const [isLoadingProposal, setIsLoadingProposal] = React.useState(true)
 
-  const governance = useGovernance(GovernorAlpha)
+  const governance = useGov(GovernorAlpha)
 
   async function handleStateProposals() {
     const proposalAmount = await governance.proposalCount()
-    setProposalTotal(proposalAmount)
+    setProposalTotal(proposalAmount.toString())
 
     await Promise.all(
       Array(Number(proposalAmount))
         .fill(0)
-        .map(async (item, index) => {
+        .map(async (_, index) => {
           const proposal = await governance.stateProposals(index + 1)
           const proposalState = proposal[0]
 

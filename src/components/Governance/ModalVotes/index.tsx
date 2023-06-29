@@ -1,8 +1,8 @@
 import React from 'react'
 import router from 'next/router'
 import useSWR from 'swr'
-import BigNumber from 'bn.js'
 import { request } from 'graphql-request'
+import Big from 'big.js'
 // import { useInView } from 'react-intersection-observer'
 
 import { SUBGRAPH_URL } from '../../../constants/tokenAddresses'
@@ -37,7 +37,7 @@ interface IModalVotesList {
   voter: {
     id: string
   }
-  votingPower: BigNumber
+  votingPower: string
 }
 
 const ModalVotes = ({
@@ -51,7 +51,6 @@ const ModalVotes = ({
   userVote,
   handleVote
 }: IModalVotes) => {
-  // eslint-disable-next-line prettier/prettier
   const [modalVotesList, setModalVotesList] = React.useState<IModalVotesList[]>(
     []
   )
@@ -167,7 +166,7 @@ const ModalVotes = ({
                         />
                       </S.UserName>
                       <S.UserVote>
-                        {BNtoDecimal(user.votingPower, 0, 2)}
+                        {BNtoDecimal(Big(user.votingPower), 0, 2)}
                       </S.UserVote>
                     </S.UserData>
                   )

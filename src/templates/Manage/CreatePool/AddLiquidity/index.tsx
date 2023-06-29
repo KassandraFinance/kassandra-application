@@ -1,20 +1,21 @@
 import React from 'react'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
-import Web3 from 'web3'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import { setLiquidity } from '../../../../store/reducers/poolCreationSlice'
-import { ERC20 } from '../../../../hooks/useERC20Contract'
+import useBatchRequests from '@/hooks/useBatchRequests'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setLiquidity } from '@/store/reducers/poolCreationSlice'
 import useCoingecko from '@/hooks/useCoingecko'
 
 import {
-  mockTokensReverse,
-  networks
-} from '../../../../constants/tokenAddresses'
+  mockTokens,
+  networks,
+  mockTokensReverse
+} from '@/constants/tokenAddresses'
 
 import CreatePoolHeader from '../CreatePoolHeader'
-import Steps from '../../../../components/Steps'
+import Steps from '@/components/Steps'
 import PoolSummary from '../SelectAssets/PoolSummary'
 import AddLiquidityTable from './AddLiquidityTable'
 
@@ -23,14 +24,14 @@ import * as S from './styles'
 export type CoinGeckoResponseType = {
   [key: string]: {
     usd: number
-    usd_24h_change: number
+    pricePercentageChangeIn24h: number
   }
 }
 
+type BalancesType = Record<string, Big>
+
 const AddLiquidity = () => {
-  const [tokensBalance, setTokensBalance] = React.useState<{
-    [key: string]: BigNumber
-  }>({})
+  const [tokensBalance, setTokensBalance] = React.useState<BalancesType>({})
 
   const dispatch = useAppDispatch()
   const tokensSummary = useAppSelector(
@@ -39,7 +40,10 @@ const AddLiquidity = () => {
   const { network, networkId } = useAppSelector(
     state => state.poolCreation.createPoolData
   )
-  const wallet = useAppSelector(state => state.userWalletAddress)
+
+  const { balances } = useBatchRequests(networkId || 137)
+
+  const [{ wallet }] = useConnectWallet()
 
   const tokensList = tokensSummary ? tokensSummary : []
 
@@ -48,26 +52,6 @@ const AddLiquidity = () => {
   for (const token of tokensList) {
     totalAllocation = totalAllocation.plus(token.allocation)
     addressesList = [...addressesList, token.address]
-  }
-
-  async function getBalances() {
-    let balancesList = {}
-    for (const token of tokensList) {
-      const tokenAddress =
-        networkId === 5 ? mockTokensReverse[token.address] : token.address
-
-      const { balance } = ERC20(
-        tokenAddress,
-        new Web3(networks[networkId ?? 137].rpc)
-      )
-      const balanceValue = await balance(wallet)
-      balancesList = {
-        ...balancesList,
-        [token.address]: balanceValue
-      }
-    }
-
-    setTokensBalance(balancesList)
   }
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
@@ -127,13 +111,45 @@ const AddLiquidity = () => {
   }
 
   const { data } = useCoingecko(
-    networks[networkId ?? 137].coingecko,
+    networkId ?? 137,
     networks[networkId ?? 137].nativeCurrency.address,
     addressesList
   )
 
   React.useEffect(() => {
-    getBalances()
+    if (!tokensList) {
+      return
+    }
+
+    let arr = []
+    if (networkId === 5) {
+      arr = tokensList.map(token =>
+        getAddress(mockTokensReverse[token.address.toLowerCase()])
+      )
+    } else {
+      arr = tokensList.map(token => token.address)
+    }
+
+    async function getBalances(userWalletAddress: string, tokens: string[]) {
+      const res = await balances(userWalletAddress, tokens)
+
+      const balancesArr: BalancesType = {}
+      if (networkId === 5) {
+        for (const [i, token] of tokens.entries()) {
+          balancesArr[mockTokens[token]] = Big(res[i].toString())
+        }
+      } else {
+        for (const [i, token] of tokens.entries()) {
+          balancesArr[token] = Big(res[i].toString())
+        }
+      }
+
+      setTokensBalance(balancesArr)
+    }
+
+    if (wallet?.provider) {
+      getBalances(wallet.accounts[0].address, arr)
+    }
   }, [wallet])
 
   return (

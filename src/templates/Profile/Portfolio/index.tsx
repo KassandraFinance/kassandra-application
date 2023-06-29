@@ -1,25 +1,23 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import useSWR from 'swr'
 import request from 'graphql-request'
-
-import PortfolioHeading from '../../../components/PortfolioHeading'
-import AssetsTable from './AssetsTable'
-import AnyCard from '../../../components/AnyCard'
-import AssetsCard, { IPriceToken } from './AssetsCard'
-
-import { useAppSelector } from '@/store/hooks'
-
-import AssetsIcon from '../../../../public/assets/iconGradient/assets-distribution.svg'
-import StakedPoolsIcon from '../../../../public/assets/iconGradient/staking-pools.svg'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal, calcChange } from '@/utils/numerals'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 import { GET_CHART } from './AssetsTable/graphql'
 import { IAssetsValueWalletProps, IKacyLpPool } from '../'
+
+import AssetsTable from './AssetsTable'
+import AssetsCard, { IPriceToken } from './AssetsCard'
+import AnyCard from '@/components/AnyCard'
+import PortfolioHeading from '@/components/PortfolioHeading'
+
+import AssetsIcon from '@assets/iconGradient/assets-distribution.svg'
+import StakedPoolsIcon from '@assets/iconGradient/staking-pools.svg'
 
 import * as S from './styles'
 
@@ -49,7 +47,7 @@ interface ImyFundsType {
   [key: string]: string
 }
 export interface IBalanceType {
-  [key: string]: BigNumber
+  [key: string]: Big
 }
 
 type PoolProps = {
@@ -102,16 +100,16 @@ const Portfolio = ({
   setPriceInDolar
 }: IProfileProps) => {
   const router = useRouter()
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
   const [pools, setPools] = React.useState<Array<PoolProps>>([])
   const [tokenizedFunds, setTokenizedFunds] = React.useState<string[]>([])
   const [balanceFunds, setBalanceFunds] = React.useState<IBalanceType>({})
   const [amountProdInPool, setAmountProdInPool] =
-    React.useState<IAssetsValueWalletProps>({ '': new BigNumber(0) })
+    React.useState<IAssetsValueWalletProps>({ '': Big(0) })
   const [cardstakesPoolNew, setCardStakesPoolNew] = React.useState<
     IKacyLpPool[]
   >([])
+
+  const [{ wallet }] = useConnectWallet()
 
   const { data } = useSWR<Response>(
     [GET_CHART, profileAddress, tokenizedFunds],
@@ -131,7 +129,7 @@ const Portfolio = ({
       const tokenAmount = pool.amount.add(
         assetsValueInWallet[pool.address]
           ? assetsValueInWallet[pool.address]
-          : new BigNumber(0)
+          : Big(0)
       )
 
       if (pool.address === myFunds[pool.address]) {
@@ -140,7 +138,7 @@ const Portfolio = ({
           [pool.address]: pool.amount
         }))
       } else {
-        if (tokenAmount.gt(new BigNumber(0))) {
+        if (tokenAmount.gt(Big(0))) {
           setCardStakesPoolNew(prevState => [
             ...prevState,
             {
@@ -165,10 +163,10 @@ const Portfolio = ({
       const balanceInWallet = assetsValueInWallet[address]
       const balanceInPool = amountProdInPool[address]
       const balanceProductAll = balanceInWallet
-        ? balanceInWallet.add(balanceInPool ? balanceInPool : new BigNumber(0))
-        : new BigNumber(0)
+        ? balanceInWallet.add(balanceInPool ? balanceInPool : Big(0))
+        : Big(0)
 
-      if (balanceProductAll.gt(new BigNumber(0))) {
+      if (balanceProductAll.gt(Big(0))) {
         setTokenizedFunds(prevState => [...prevState, address])
       }
 
@@ -177,7 +175,7 @@ const Portfolio = ({
         [address]: balanceProductAll
       }))
     })
-  }, [profileAddress, assetsValueInWallet, router, userWalletAddress])
+  }, [profileAddress, assetsValueInWallet, router, wallet?.accounts[0].address])
 
   React.useEffect(() => {
     if (!data?.pools) {
@@ -249,7 +247,7 @@ const Portfolio = ({
         <PortfolioHeading
           image={AssetsIcon}
           title="Indexes"
-          usd={BNtoDecimal(Big(priceInDolar.tokenizedFunds), 6, 2, 2)}
+          usd={BNtoDecimal(priceInDolar.tokenizedFunds, 6, 2, 2)}
           tippy="The amount in US Dollars that this address holds in tokenized funds."
         />
       </S.paddingWrapper>
@@ -260,7 +258,7 @@ const Portfolio = ({
         </S.paddingLeftWrapper>
       ) : (
         <S.paddingWrapper>
-          {profileAddress === userWalletAddress ? (
+          {profileAddress.toLowerCase() === wallet?.accounts[0].address ? (
             <AnyCard
               text="Looks like you have not invested in anything yet"
               button={true}

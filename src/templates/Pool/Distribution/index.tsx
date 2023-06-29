@@ -1,16 +1,15 @@
 import React from 'react'
 import Image from 'next/image'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 
 import { BNtoDecimal } from '../../../utils/numerals'
 
 import { useAppSelector } from '../../../store/hooks'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
-import useYieldYak from '../../../hooks/useYieldYak'
+import useYieldYakEthers from '../../../hooks/useYieldYakEthers'
 import useCoingecko from '../../../hooks/useCoingecko'
 
-import { platform, YIELDYAK_API } from '../../../constants/tokenAddresses'
+import { YIELDYAK_API } from '../../../constants/tokenAddresses'
 
 import none from '../../../../public/assets/icons/coming-soon.svg'
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
@@ -28,7 +27,7 @@ const Distribution = () => {
     { address: string; platform: string }[]
   >([])
 
-  const { convertBalanceYRTtoWrap } = useYieldYak()
+  const { convertBalanceYRTtoWrap } = useYieldYakEthers()
   const { trackEventFunction } = useMatomoEcommerce()
 
   const pool = useAppSelector(state => state.pool)
@@ -42,7 +41,7 @@ const Distribution = () => {
   })
 
   const { data: coinGecko } = useCoingecko(
-    platform[pool.chain.id],
+    pool.chain.id,
     pool.chain.addressWrapped,
     tokenAddresses
   )
@@ -73,14 +72,11 @@ const Distribution = () => {
     decimals: string
   ): Promise<{ balancePoolYY: Big }> {
     const tokensShares = await convertBalanceYRTtoWrap(
-      new BigNumber(Big(balance).mul(Big('10').pow(18)).toFixed(0, 0)),
+      Big(balance).mul(Big('10').pow(18)).toFixed(0, 0),
       token
     )
-
     return {
-      balancePoolYY: Big(tokensShares.toString()).div(
-        Big(10).pow(Number(decimals))
-      )
+      balancePoolYY: tokensShares.div(Big(10).pow(Number(decimals)))
     }
   }
 
@@ -179,19 +175,20 @@ const Distribution = () => {
                     <S.Coin
                       negative={
                         (coinGecko?.[coin.token.id.toLowerCase()]
-                          ?.usd_24h_change || 0) < 0
+                          ?.pricePercentageChangeIn24h || 0) < 0
                       }
                       change24h={true}
                     >
-                      {coinGecko?.[coin.token.id.toLowerCase()]?.usd_24h_change
+                      {coinGecko?.[coin.token.id.toLowerCase()]
+                        ?.pricePercentageChangeIn24h
                         ? `${
                             coinGecko?.[coin.token.id.toLowerCase()]
-                              ?.usd_24h_change < 0
+                              ?.pricePercentageChangeIn24h < 0
                               ? ''
                               : '+'
                           }${coinGecko?.[
                             coin.token.id.toLowerCase()
-                          ]?.usd_24h_change.toFixed(2)}%`
+                          ]?.pricePercentageChangeIn24h.toFixed(2)}%`
                         : '-'}
                     </S.Coin>
                   </S.Td>
@@ -226,7 +223,7 @@ const Distribution = () => {
                 </S.Td>
                 <S.Td>
                   {`$ ${BNtoDecimal(
-                    Big(balanceYY?.[coin.token.id].toString() || 0).times(
+                    (balanceYY?.[coin.token.id] || Big(0)).times(
                       Big(
                         coinGecko?.[coin.token.wraps.id.toLowerCase()]?.usd || 0
                       )
@@ -236,7 +233,7 @@ const Distribution = () => {
                     2
                   )}`}
                   <S.BalanceCoin>{`${BNtoDecimal(
-                    Big(balanceYY?.[coin.token.id] || '0'),
+                    balanceYY?.[coin.token.id] || Big(0),
                     18,
                     5
                   )} ${coin.token.wraps.symbol}`}</S.BalanceCoin>
@@ -256,20 +253,20 @@ const Distribution = () => {
                   <S.Coin
                     negative={
                       (coinGecko?.[coin.token.wraps.id.toLowerCase()]
-                        ?.usd_24h_change || 0) < 0
+                        ?.pricePercentageChangeIn24h || 0) < 0
                     }
                     change24h={true}
                   >
                     {coinGecko?.[coin.token.wraps.id.toLowerCase()]
-                      ?.usd_24h_change
+                      ?.pricePercentageChangeIn24h
                       ? `${
                           coinGecko?.[coin.token.wraps.id.toLowerCase()]
-                            ?.usd_24h_change < 0
+                            ?.pricePercentageChangeIn24h < 0
                             ? ''
                             : '+'
                         }${coinGecko?.[
                           coin.token.wraps.id.toLowerCase()
-                        ]?.usd_24h_change.toFixed(2)}%`
+                        ]?.pricePercentageChangeIn24h.toFixed(2)}%`
                       : '-'}
                   </S.Coin>
                 </S.Td>

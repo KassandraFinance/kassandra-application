@@ -1,14 +1,15 @@
 import React from 'react'
 import Link from 'next/link'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
 
-import { useAppSelector, useAppDispatch } from '../../../store/hooks'
-import { setNickName, setProfilePic } from '../../../store/reducers/userSlice'
-import { setModalWalletActive } from '../../../store/reducers/modalWalletActive'
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
-import substr from '../../../utils/substr'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setNickName, setProfilePic } from '@/store/reducers/userSlice'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
+import substr from '@/utils/substr'
 
-import ModalKacy from '../../Modals/ModalKacy'
-import Button from '../../Button'
+import ModalKacy from '@/components/Modals/ModalKacy'
+import Button from '@/components/Button'
 
 import { disconnectedIcon, avalancheIcon } from './SvgButtons'
 import polygon from '@assets/logos/polygon.svg'
@@ -20,7 +21,7 @@ interface IHeaderButtonsProps {
 }
 
 type styles = {
-  icon: any
+  icon: JSX.Element
   network: string
   color: string
   fillColor: string
@@ -29,9 +30,7 @@ type styles = {
 const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   const dispatch = useAppDispatch()
   const { trackEventFunction } = useMatomoEcommerce()
-
-  const chainId = useAppSelector(state => state.chainId)
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
+  const [{ wallet, connecting }, connect] = useConnectWallet()
 
   const { nickName, image } = useAppSelector(state => state.user)
 
@@ -43,13 +42,13 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   })
 
   const chainStyle: Record<string, styles> = {
-    '43114': {
+    '0xa86a': {
       icon: avalancheIcon,
       network: 'Avalanche',
       color: '#E84142',
       fillColor: '#E84142'
     },
-    '137': {
+    '0x89': {
       icon: <img src={polygon.src} />,
       network: 'Polygon',
       color: '#7B3FE4',
@@ -70,27 +69,30 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   }
 
   React.useEffect(() => {
-    if (userWalletAddress.length <= 0) {
-      setNetwork(chainStyle.disconect)
-    } else {
+    if (wallet?.provider) {
+      const chainId = wallet.chains[0].id
       setNetwork(chainStyle[chainId] ?? chainStyle.notSuported)
+
+      return
     }
-  }, [chainId, userWalletAddress])
+
+    setNetwork(chainStyle.disconect)
+  }, [wallet])
 
   React.useEffect(() => {
-    if (!userWalletAddress) return
+    if (wallet?.provider) {
+      fetch(`/api/profile/${getAddress(wallet.accounts[0].address)}`)
+        .then(res => res.json())
+        .then(data => {
+          const { nickname, image, isNFT } = data
 
-    fetch(`/api/profile/${userWalletAddress}`)
-      .then(res => res.json())
-      .then(data => {
-        const { nickname, image, isNFT } = data
-
-        dispatch(setNickName(nickname || ''))
-        dispatch(
-          setProfilePic({ profilePic: image || '', isNFT: isNFT || false })
-        )
-      })
-  }, [userWalletAddress])
+          dispatch(setNickName(nickname || ''))
+          dispatch(
+            setProfilePic({ profilePic: image || '', isNFT: isNFT || false })
+          )
+        })
+    }
+  }, [wallet])
 
   return (
     <S.HeaderButtons
@@ -107,8 +109,11 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       />
 
       <ModalKacy />
-      {userWalletAddress ? (
-        <Link href={`/profile/${userWalletAddress}`} passHref>
+      {wallet?.provider ? (
+        <Link
+          href={`/profile/${getAddress(wallet.accounts[0]?.address)}`}
+          passHref
+        >
           <Button
             className="button-wallet"
             icon={
@@ -176,7 +181,11 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
             onClick={() => {
               trackEventFunction('open-modal', 'your-wallet', 'header')
             }}
-            text={nickName.length > 0 ? nickName : substr(userWalletAddress)}
+            text={
+              nickName.length > 0
+                ? nickName
+                : substr(getAddress(wallet.accounts[0].address))
+            }
           />
         </Link>
       ) : (
@@ -199,9 +208,10 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
           as="button"
           backgroundBlack
           size="medium"
+          disabled={connecting}
           onClick={() => {
             trackEventFunction('open-metamask', 'connect-wallet', 'header')
-            dispatch(setModalWalletActive(true))
+            connect()
           }}
           text="Connect Wallet"
         />

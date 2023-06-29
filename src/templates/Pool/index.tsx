@@ -18,8 +18,7 @@ import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
 import {
   BACKEND_KASSANDRA,
-  NATIVE_ADDRESS,
-  URL_PARASWAP
+  NATIVE_ADDRESS
 } from '../../constants/tokenAddresses'
 
 import { GET_INFO_POOL } from './graphql'
@@ -32,7 +31,7 @@ import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
 import PoweredBy from './PoweredBy'
 import FeeBreakdown from './FeeBreakdown'
-// import ActivityTable from './ActivityTable'
+import ActivityTable from './ActivityTable'
 
 import Change from './Change'
 import MyAsset from './MyAsset'
@@ -408,7 +407,7 @@ const Pool = () => {
               <Summary />
               {pool.partners && <PoweredBy />}
               <Distribution />
-              {/* <ActivityTable /> */}
+              <ActivityTable />
               <TokenDescription />
             </S.ProductDetails>
             <NewPoolOperations />

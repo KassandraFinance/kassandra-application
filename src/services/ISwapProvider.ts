@@ -20,6 +20,11 @@ export type GetAmountsResult = {
 }
 
 export interface ISwapProvider {
-  getDatasTx: (chainId: string, proxy: string) => Promise<Array<string>>
+  getDatasTx: (
+    chainId: string,
+    proxy: string,
+    slippage: string,
+    txs: Array<any>
+  ) => Promise<Array<string>>
   getAmountsOut: (params: GetAmountsParams) => Promise<GetAmountsResult>
 }

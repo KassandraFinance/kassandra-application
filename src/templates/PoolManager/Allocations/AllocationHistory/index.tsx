@@ -2,8 +2,7 @@ import useSWR from 'swr'
 import React from 'react'
 import request from 'graphql-request'
 import { useRouter } from 'next/router'
-
-import { useAppSelector } from '@/store/hooks'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { GET_ALLOCATION_POOL } from './graphql'
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
@@ -60,12 +59,11 @@ const AllocationHistory = ({ poolInfo }: IAllocationHistoryProps) => {
   >([])
 
   const router = useRouter()
+  const [{ wallet }] = useConnectWallet()
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
-
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   const { data } = useSWR(
     [GET_ALLOCATION_POOL, poolId, skip],
@@ -77,11 +75,11 @@ const AllocationHistory = ({ poolInfo }: IAllocationHistoryProps) => {
   )
 
   React.useEffect(() => {
-    if (!data) return setAllocationHistory([])
+    if (!data || !wallet) return setAllocationHistory([])
 
     const managerActivities = getManagerActivity(
       data.pool.weight_goals,
-      userWalletAddress
+      wallet.accounts[0].address
     )
 
     setAllocationHistory(

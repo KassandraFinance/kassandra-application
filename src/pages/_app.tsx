@@ -5,18 +5,17 @@ import Head from 'next/head'
 import { ThemeProvider } from 'styled-components'
 import { useRouter } from 'next/router'
 import { SWRConfig } from 'swr'
+import { Web3OnboardProvider } from '@web3-onboard/react'
 
-import { persistor } from '../store'
-import { PersistGate } from 'redux-persist/integration/react'
+import GlobalStyles from '@/styles/global'
+import theme from '@/styles/theme'
+import web3Onboard from '@/utils/web3Onboard'
 
-import GlobalStyles from '../styles/global'
-import theme from '../styles/theme'
+import { ReduxProvider } from '@/store/reduxContext'
 
-import { ReduxProvider } from '../store/reduxContext'
-
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import Toastify from '../components/Toastify'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import Toastify from '@/components/Toastify'
 
 const matomoUrl = 'https://stats.kassandra.finance'
 
@@ -40,75 +39,57 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const pathClearHashtag = pathClearQuestionMark[0].split('#')
 
   return (
-    <ReduxProvider>
-      <MatomoProvider value={instance}>
-        <ThemeProvider theme={theme}>
-          <Head>
-            <title>Kassandra</title>
-            <meta
-              name="description"
-              content="Tokenized data-driven investment funds"
-            />
-            <link rel="preconnect" href="https://fonts.gstatic.com" />
-            <link
-              href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&amp;display=swap"
-              rel="stylesheet"
-            />
-            <link rel="icon" href="/favicon.ico" />
-            <link
-              rel="icon"
-              href="https://kassandra.finance/favicon.svg"
-              sizes="any"
-            />
-            <meta property="og:site_name" content="Kassandra" />
-            <meta property="og:type" content="website" />
-            {/* <meta property="og:url" content="https://kassandra.finance/" /> */}
-            <meta
-              property="og:title"
-              content="Kassandra - Decentralized Funds"
-            />
-            {/* <meta
-            property="og:image:alt"
-            content="Welcome to Kassandra DAO - Tokenized data-driven investment funds"
-          />
-          <meta
-            property="og:image"
-            content="https://kassandra.finance/favicon.svg"
-          />
-          <meta property="og:image:width" content="300" />
-          <meta property="og:image:height" content="300" />
-          <meta property="og:image:alt" content="Kassandra" />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:site" content="@dao_kassandra" />
-          <meta name="twitter:title" content="Kassandra" />
-          <meta
-            name="twitter:image"
-            content="https://kassandra.finance/kacy-og.png"
-          />
-          <meta
-            name="twitter:image:alt"
-            content="Welcome to Kassandra DAO - Tokenized data-driven investment funds"
-          /> */}
-          </Head>
-          <Toastify />
-          <GlobalStyles selectBackground={true} />
-          <SWRConfig
-            value={{
-              refreshInterval: 10000,
-              fetcher: url => fetch(url).then(res => res.json())
-            }}
-          >
-            {pathClearHashtag[0] !== 'manage' ? <Header /> : null}
+    <Web3OnboardProvider web3Onboard={web3Onboard}>
+      <ReduxProvider>
+        <MatomoProvider value={instance}>
+          <ThemeProvider theme={theme}>
+            <Head>
+              <title>Kassandra</title>
 
-            <Component {...pageProps} />
-          </SWRConfig>
-          {router.pathname === '/404' ||
-          pathClearHashtag[0] === 'manage' ? null : (
-            <Footer />
-          )}
-        </ThemeProvider>
-      </MatomoProvider>
-    </ReduxProvider>
+              <meta
+                name="description"
+                content="Tokenized data-driven investment funds"
+              />
+
+              <link rel="manifest" href="/manifest.json" />
+              <link rel="preconnect" href="https://fonts.gstatic.com" />
+              <link
+                href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&amp;display=swap"
+                rel="stylesheet"
+              />
+              <link rel="icon" href="/favicon.ico" />
+              <link
+                rel="icon"
+                href="https://kassandra.finance/favicon.svg"
+                sizes="any"
+              />
+              <meta property="og:site_name" content="Kassandra" />
+              <meta property="og:type" content="website" />
+              <meta
+                property="og:title"
+                content="Kassandra - Decentralized Funds"
+              />
+            </Head>
+            <Toastify />
+            <GlobalStyles selectBackground={true} />
+            <SWRConfig
+              value={{
+                refreshInterval: 10000,
+                fetcher: url => fetch(url).then(res => res.json())
+              }}
+            >
+              {pathClearHashtag[0] !== 'manage' ? <Header /> : null}
+
+              <Component {...pageProps} />
+            </SWRConfig>
+            {router.pathname === '/404' ||
+            pathClearHashtag[0] === 'manage' ? null : (
+              <Footer />
+            )}
+          </ThemeProvider>
+        </MatomoProvider>
+      </ReduxProvider>
+    </Web3OnboardProvider>
   )
 }
 

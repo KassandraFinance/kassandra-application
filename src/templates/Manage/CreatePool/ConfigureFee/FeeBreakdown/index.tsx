@@ -1,21 +1,20 @@
-import Image from 'next/image'
 import Link from 'next/link'
-import { isAddress } from 'web3-utils'
-import Tippy from '@tippyjs/react'
 import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import { useAppSelector } from '../../../../../store/hooks'
+import { useAppSelector } from '@/store/hooks'
 import { kassandraManagementFee } from '@/constants/tokenAddresses'
 
-import substr from '../../../../../utils/substr'
+import substr from '@/utils/substr'
 
 import * as S from './styles'
 
 const FeeBreakdown = () => {
+  const [{ wallet }] = useConnectWallet()
+
   const feesData = useAppSelector(
     state => state.poolCreation.createPoolData.fees
   )
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
 
   return (
     <S.FeeBreakdown>
@@ -52,13 +51,13 @@ const FeeBreakdown = () => {
               <S.FeeBreakdownParagraph>
                 Recipient address
               </S.FeeBreakdownParagraph>
-              {isAddress(userWalletAddress) ? (
+              {wallet?.provider ? (
                 <Link
-                  href={`https://polygonscan.com/address/${userWalletAddress}`}
+                  href={`https://polygonscan.com/address/${wallet?.accounts[0].address}`}
                   passHref
                 >
                   <S.FeeBreakdownAdress target="_blank">
-                    {substr(userWalletAddress)}
+                    {substr(wallet?.accounts[0].address)}
                     <img
                       src="/assets/utilities/go-to-site.svg"
                       alt=""
@@ -89,13 +88,13 @@ const FeeBreakdown = () => {
               <S.FeeBreakdownParagraph>
                 Recipient address
               </S.FeeBreakdownParagraph>
-              {isAddress(userWalletAddress) ? (
+              {wallet?.provider ? (
                 <Link
-                  href={`https://polygonscan.com/address/${userWalletAddress}`}
+                  href={`https://polygonscan.com/address/${wallet.accounts[0].address}`}
                   passHref
                 >
                   <S.FeeBreakdownAdress target="_blank">
-                    {substr(userWalletAddress)}
+                    {substr(wallet.accounts[0].address)}
                     <img
                       src="/assets/utilities/go-to-site.svg"
                       alt=""

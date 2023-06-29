@@ -1,29 +1,24 @@
 import React from 'react'
-import BigNumber from 'bn.js'
+import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
 
-import { Staking } from '../../../constants/tokenAddresses'
+import { Staking } from '@/constants/tokenAddresses'
 
-import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
-import useStakingContract from '../../../hooks/useStakingContract'
-import { useAppSelector } from '../../../store/hooks'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
+import useStaking from '@/hooks/useStaking'
 
-import StakeCard from '../../../components/StakeCard'
+import StakeCard from '@/components/StakeCard'
 
 import * as S from './styles'
 
-import {
-  poolsKacyFuji,
-  poolsInvestor,
-  poolsKacy
-} from '../../../constants/pools'
+import { poolsKacyFuji, poolsInvestor, poolsKacy } from '@/constants/pools'
 
 const Stake = () => {
   const [investor, setInvestor] = React.useState([false, false])
 
   const { trackCategoryPageView } = useMatomoEcommerce()
-  const { balance } = useStakingContract(Staking)
-
-  const { userWalletAddress } = useAppSelector(state => state)
+  const { balance } = useStaking(Staking)
+  const [{ wallet }] = useConnectWallet()
 
   React.useEffect(() => {
     trackCategoryPageView([
@@ -33,24 +28,24 @@ const Stake = () => {
   }, [])
 
   React.useEffect(() => {
-    if (userWalletAddress.length === 0) {
+    if (!wallet?.provider) {
       return
     }
 
     const calc = async () => {
       const res = await Promise.all([
-        balance(0, userWalletAddress),
-        balance(1, userWalletAddress)
+        balance(0, wallet?.accounts[0].address || ''),
+        balance(1, wallet?.accounts[0].address || '')
       ])
 
       setInvestor([
-        res[0].gt(new BigNumber('0')),
-        res[1].gt(new BigNumber('0'))
+        Big(res[0].toString()).gt(Big(0)),
+        Big(res[1].toString()).gt(Big(0))
       ])
     }
 
     calc()
-  }, [userWalletAddress])
+  }, [wallet])
 
   return (
     <S.GridStaking>

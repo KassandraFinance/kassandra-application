@@ -1,25 +1,23 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
-import BigNumber from 'bn.js'
 import Image from 'next/image'
 import useSWR from 'swr'
 import request from 'graphql-request'
-
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
+import Big from 'big.js'
+
+import { BNtoDecimal } from '@/utils/numerals'
 
 import { GET_VOTINGPOWER } from './graphql'
-import { SUBGRAPH_URL } from '../../constants/tokenAddresses'
+import { SUBGRAPH_URL } from '@/constants/tokenAddresses'
 
-import { BNtoDecimal } from '../../utils/numerals'
-
-import tooltip from '../../../public/assets/utilities/tooltip.svg'
+import tooltip from '@assets/utilities/tooltip.svg'
 
 import * as S from './styles'
 
 interface IVotingPowerProps {
   userWalletAddress: string
-  yourVotingPowerInProposal?: BigNumber
+  yourVotingPowerInProposal?: Big
   isMobile?: boolean
 }
 
@@ -28,22 +26,11 @@ const VotingPower = ({
   yourVotingPowerInProposal,
   isMobile
 }: IVotingPowerProps) => {
-  const [totalVotingPowerGovernance, setTotalVotingPowerGovernance] =
-    React.useState(new BigNumber(0))
-  const [yourVotingPower, setYourVotingPower] = React.useState(new BigNumber(0))
-
   const { data } = useSWR(
     [GET_VOTINGPOWER, userWalletAddress],
     (query, userWalletAddress) =>
       request(SUBGRAPH_URL, query, { id: userWalletAddress })
   )
-
-  React.useEffect(() => {
-    if (data?.user) {
-      setTotalVotingPowerGovernance(data.governances[0].totalVotingPower)
-    }
-    setYourVotingPower(data?.user ? data?.user?.votingPower : 0)
-  }, [data])
 
   return (
     <S.VotingPower isMobile={isMobile}>
@@ -68,8 +55,12 @@ const VotingPower = ({
         </span>
         <span>
           {yourVotingPowerInProposal === undefined
-            ? BNtoDecimal(yourVotingPower, 0, 2)
-            : BNtoDecimal(yourVotingPowerInProposal, 18, 2)}
+            ? BNtoDecimal(Big(data?.user?.votingPower ?? Big(0)), 0, 2)
+            : BNtoDecimal(
+                yourVotingPowerInProposal.div(Big(10).pow(18)),
+                18,
+                2
+              )}
         </span>
       </S.YourVotingPower>
       <S.TotalVotingPower>
@@ -94,8 +85,12 @@ const VotingPower = ({
         </span>
         <span>
           {yourVotingPowerInProposal === undefined
-            ? BNtoDecimal(totalVotingPowerGovernance, 0, 2)
-            : BNtoDecimal(yourVotingPower, 0, 2)}
+            ? BNtoDecimal(
+                Big(data?.governances[0]?.totalVotingPower ?? Big(0)),
+                0,
+                2
+              )
+            : BNtoDecimal(Big(data?.user?.votingPower ?? Big(0)), 0, 2)}
         </span>
       </S.TotalVotingPower>
     </S.VotingPower>

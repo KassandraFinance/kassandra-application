@@ -1,6 +1,7 @@
 import React from 'react'
 import Big from 'big.js'
 import { useRouter } from 'next/router'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { mockTokens, networks } from '@/constants/tokenAddresses'
 
@@ -31,13 +32,12 @@ const SetNewWeights = () => {
 
   const dispatch = useAppDispatch()
   const { newTokensWights } = useAppSelector(state => state.rebalanceAssets)
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
+  const [{ wallet }] = useConnectWallet()
   const { poolAssets } = usePoolAssets(poolId)
-  const { poolInfo } = usePoolInfo(userWalletAddress, poolId)
+  const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const { priceToken } = useCoingecko(
-    networks[poolInfo?.chain_id ?? 137]?.coingecko,
+    poolInfo?.chain_id ?? 137,
     poolInfo?.chain.addressWrapped ?? '',
     handleMockToken(poolAssets ?? [])
   )

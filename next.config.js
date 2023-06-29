@@ -11,7 +11,27 @@ module.exports = {
       'storage.cloud.google.com',
       'storage.googleapis.com',
       'app.kassandra.finance',
-      'cdn.paraswap.io'
+      'cdn.paraswap.io',
+      'raw.githubusercontent.com'
+    ]
+  },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET'
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value:
+              'X-Requested-With, content-type, Authorization'
+          }
+        ]
+      }
     ]
   }
 }

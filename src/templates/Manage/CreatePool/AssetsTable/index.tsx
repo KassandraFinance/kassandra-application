@@ -1,7 +1,6 @@
 import React from 'react'
 import { useInView } from 'react-intersection-observer'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import Link from 'next/link'
 
 import { BNtoDecimal } from '@/utils/numerals'
@@ -24,7 +23,7 @@ import {
 
 interface IAssetsTable {
   tokensData: TokensInfoResponseType[] | undefined
-  tokenBalance: { [key: string]: BigNumber }
+  tokenBalance: { [key: string]: Big }
   priceList: CoinGeckoAssetsResponseType | undefined
 }
 
@@ -136,17 +135,14 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                     $
                     {priceList
                       ? BNtoDecimal(
-                          Big(
-                            priceList[coin.id.toLowerCase()]?.usd_market_cap ??
-                              0
-                          ),
+                          Big(priceList[coin.id.toLowerCase()]?.marketCap ?? 0),
                           2
                         )
                       : 0}
                   </S.Td>
                   <S.Td className="balance">
                     {tokenBalance[coin.id.toLowerCase()] &&
-                    tokenBalance[coin.id.toLowerCase()].gt(new BigNumber(0))
+                    tokenBalance[coin.id.toLowerCase()].gt(Big(0))
                       ? abbreviateNumber(
                           Big(tokenBalance[coin.id.toLowerCase()].toString())
                             .div(Big(10).pow(coin.decimals))

@@ -2,6 +2,7 @@ import React from 'react'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
+import { useConnectWallet } from '@web3-onboard/react'
 
 import { useAppSelector } from '../../../../../store/hooks'
 
@@ -39,7 +40,8 @@ const TokenAssetIn = ({
   errorMsg,
   disabled
 }: ITokenAssetInProps) => {
-  const { pool, userWalletAddress } = useAppSelector(state => state)
+  const [{ wallet }] = useConnectWallet()
+  const { pool } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
 
   function wei2String(input: Big) {
@@ -48,9 +50,9 @@ const TokenAssetIn = ({
 
   function handleMaxUserBalance() {
     if (
-      !inputAmountTokenRef ||
+      !wallet ||
       !amountTokenIn ||
-      userWalletAddress.length === 0 ||
+      !inputAmountTokenRef ||
       !Big(selectedTokenInBalance).gt(0)
     ) {
       return
@@ -117,12 +119,13 @@ const TokenAssetIn = ({
           <Tippy content={disabled} disabled={disabled.length === 0}>
             <S.Input
               className="noscroll"
-              readOnly={userWalletAddress.length === 0}
+              readOnly={!wallet}
               ref={inputAmountTokenRef}
               // value={inputAmountTokenRef?.current?.value}
               type="number"
               placeholder="0"
               step="any"
+              disabled={disabled.length !== 0}
               // onWheel={() => handleOnWheel()}
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 // eslint-disable-next-line prettier/prettier

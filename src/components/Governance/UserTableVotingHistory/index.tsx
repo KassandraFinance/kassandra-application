@@ -3,10 +3,11 @@ import Link from 'next/link'
 import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
+import { getAddress } from 'ethers'
 
-import { GovernorAlpha, SUBGRAPH_URL } from '../../../constants/tokenAddresses'
+import { GovernorAlpha, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 
-import useGovernance from '../../../hooks/useGovernance'
+import useGov, { StateProposal } from '@/hooks/useGov'
 
 import AnyCard from '../../AnyCard'
 
@@ -40,8 +41,8 @@ interface IProposalsTableProps {
   signatures: []
   startBlock: string
   description: string
-  timestamp: any
-  state: any[]
+  timestamp: number
+  state: StateProposal
   endBlock: string
   created: string
   timeToEndProposal: string
@@ -54,15 +55,13 @@ interface IProposalsListProps {
 
 interface IUserTableProps {
   userAddressUrl: string | string[] | undefined
-  userWalletAddress: string | string[] | undefined
+  userWalletAddress: string | undefined
 }
 
-// eslint-disable-next-line prettier/prettier
 export const UserTableVotingHistory = ({
   userAddressUrl,
   userWalletAddress
 }: IUserTableProps) => {
-  // eslint-disable-next-line prettier/prettier
   const [proposalsList, setProposalsList] = React.useState<
     IProposalsTableProps[]
   >([])
@@ -75,10 +74,10 @@ export const UserTableVotingHistory = ({
     })
   )
 
-  const governance = useGovernance(GovernorAlpha)
+  const governance = useGov(GovernorAlpha)
 
   async function handleAddStateOnProposal(proposals: IProposalsListProps[]) {
-    const proposal = proposals.map((prop: IProposalsListProps) => {
+    const proposal = proposals.map(prop => {
       const proposal = { ...prop.proposal, support: prop.support }
       return governance.stateProposals(proposal.number).then(res => {
         const createdProposal = new Date(Number(proposal.created) * 1000)
@@ -207,11 +206,15 @@ export const UserTableVotingHistory = ({
       ) : (
         <AnyCard
           text={
-            userWalletAddress === userAddressUrl
+            userWalletAddress &&
+            getAddress(userWalletAddress) === userAddressUrl
               ? 'This address hasn’t voted in any governance proposal yet.'
               : 'This address has not voted on a governance proposal yet '
           }
-          button={userWalletAddress === userAddressUrl}
+          button={
+            (userWalletAddress ? getAddress(userWalletAddress) : false) ===
+            userAddressUrl
+          }
           link="/farm"
           buttonText="Stake/Farm"
         />

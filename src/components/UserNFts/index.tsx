@@ -1,13 +1,13 @@
 import React from 'react'
 import Image from 'next/image'
 
-import token96 from '../../../public/assets/logos/kacy-96.svg'
-import ethLogo from '../../../public/assets/logos/eth-logo.svg'
-import AVAXLogo from '../../../public/assets/logos/avalanche.svg'
-import bscLogo from '../../../public/assets/logos/bsc.svg'
-import cronosLogo from '../../../public/assets/logos/cronos.svg'
-import fantomLogo from '../../../public/assets/logos/fantom.svg'
-import maticLogo from '../../../public/assets/logos/polygon.svg'
+import token96 from '@assets/logos/kacy-96.svg'
+import ethLogo from '@assets/logos/eth-logo.svg'
+import AVAXLogo from '@assets/logos/avalanche.svg'
+import bscLogo from '@assets/logos/bsc.svg'
+import cronosLogo from '@assets/logos/cronos.svg'
+import fantomLogo from '@assets/logos/fantom.svg'
+import maticLogo from '@assets/logos/polygon.svg'
 
 import * as S from './styles'
 
@@ -16,7 +16,7 @@ interface IUserNFTsProps {
   setUserImageModal: React.Dispatch<
     React.SetStateAction<{
       image_preview: string
-      image_file?: any
+      image_file: Blob | null
       isNFTPreviewModal: boolean
     }>
   >
@@ -53,7 +53,9 @@ export interface INftDetailsListProps extends INftDetailsProps {
 
 const chains = ['eth', 'avalanche', 'bsc', 'matic', 'fantom', 'cronos']
 const chainsName = ['ETH', 'AVAX', 'BSC', 'MATIC', 'FTM', 'CRO']
-const ChainLogo: { [key: string]: any } = {
+const ChainLogo: {
+  [key: string]: { src: string; height: number; width: string }
+} = {
   ETH: ethLogo,
   AVAX: AVAXLogo,
   BSC: bscLogo,
@@ -194,7 +196,7 @@ const UserNFTs = ({
                           <p>{nft?.metadata?.name}</p>
                           <span>
                             <Image
-                              src={ChainLogo[nft.chain]}
+                              src={ChainLogo[nft.chain].src}
                               alt=""
                               width={14}
                               height={14}

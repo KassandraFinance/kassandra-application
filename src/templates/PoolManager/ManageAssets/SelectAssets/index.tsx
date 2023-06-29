@@ -1,14 +1,13 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import Web3 from 'web3'
-import { AbiItem, toChecksumAddress } from 'web3-utils'
 import request from 'graphql-request'
-import BigNumber from 'bn.js'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
+import useWhiteList from '@/hooks/useWhiteList'
+import { getAddress } from 'ethers'
+import Big from 'big.js'
 
-import { ERC20 } from '../../../../hooks/useERC20Contract'
-import KassandraWhitelistAbi from '../../../../constants/abi/KassandraWhitelist.json'
-import { useAppSelector } from '../../../../store/hooks'
+import useBatchRequests from '@/hooks/useBatchRequests'
 import useCoingecko from '@/hooks/useCoingecko'
 import {
   BACKEND_KASSANDRA,
@@ -32,13 +31,13 @@ export type TokensInfoResponseType = {
   decimals: number
 }
 
-export type TokensListType = TokensInfoResponseType & { balance?: BigNumber }
+export type TokensListType = TokensInfoResponseType & { balance?: Big }
 
 export type CoinGeckoAssetsResponseType = {
   [key: string]: {
     usd: number
-    usd_24h_change: number
-    usd_market_cap: number
+    pricePercentageChangeIn24h: number
+    marketCap: number
   }
 }
 
@@ -48,12 +47,17 @@ const SelectAssets = () => {
 
   const router = useRouter()
 
-  const wallet = useAppSelector(state => state.userWalletAddress)
-  const chainId = useAppSelector(state => state.chainId)
+  const [{ wallet }] = useConnectWallet()
+  const [{ connectedChain }] = useSetChain()
+
+  const chainId = Number(connectedChain?.id ?? '0x89')
+
+  const { balances } = useBatchRequests(chainId)
+  const { tokensWhitelist } = useWhiteList(chainId)
 
   const tokensListGoerli =
     chainId === 5
-      ? whitelist?.map((token: string) => toChecksumAddress(mockTokens[token]))
+      ? whitelist?.map((token: string) => getAddress(mockTokens[token]))
       : whitelist
 
   const poolId = Array.isArray(router.query.pool)
@@ -73,7 +77,7 @@ const SelectAssets = () => {
   )
 
   const { data: priceData } = useCoingecko(
-    networks[chainId].coingecko,
+    chainId,
     networks[chainId].nativeCurrency.address,
     tokensListGoerli ?? []
   )
@@ -107,16 +111,7 @@ const SelectAssets = () => {
   React.useEffect(() => {
     const getWhitelist = async () => {
       try {
-        const web3 = new Web3(networks[chainId].rpc)
-        // eslint-disable-next-line prettier/prettier
-        const whitelistContract = new web3.eth.Contract(
-          KassandraWhitelistAbi as unknown as AbiItem,
-          networks[chainId].whiteList
-        )
-        const whitelist = await whitelistContract.methods
-          .getTokens(0, 100)
-          .call()
-
+        const whitelist = await tokensWhitelist()
         setWhitelist(whitelist)
       } catch (error) {
         console.error('It was not possible to get whitelist')
@@ -127,14 +122,20 @@ const SelectAssets = () => {
 
   React.useEffect(() => {
     async function getBalances(tokensList: string[]) {
-      type BalanceType = Record<string, BigNumber>
-      let balanceArr: BalanceType = {}
-      for (const token of tokensList) {
-        const { balance } = ERC20(token)
-        const balanceValue = await balance(wallet)
-        balanceArr = {
-          ...balanceArr,
-          [mockTokens[token] ?? token.toLowerCase()]: balanceValue
+      if (!wallet) return
+
+      const res = await balances(wallet.accounts[0].address, tokensList)
+
+      type BalanceType = Record<string, Big>
+      const balanceArr: BalanceType = {}
+
+      if (chainId === 5) {
+        for (const [i, token] of tokensList.entries()) {
+          balanceArr[mockTokens[token]] = Big(res[i].toString())
+        }
+      } else {
+        for (const [i, token] of tokensList.entries()) {
+          balanceArr[token.toLowerCase()] = Big(res[i].toString())
         }
       }
 

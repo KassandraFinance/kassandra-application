@@ -12,7 +12,6 @@ const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
 import * as S from './styles'
 
 interface IMarkdownEditorProps {
-  // eslint-disable-next-line prettier/prettier
   handleEditorChange: ({ text }: { text: string }) => void
 }
 

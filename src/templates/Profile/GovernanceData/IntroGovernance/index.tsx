@@ -1,25 +1,22 @@
 import React from 'react'
 import Image from 'next/image'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
-
+import { getAddress } from 'ethers'
+import { useConnectWallet } from '@web3-onboard/react'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import { Staking } from '../../../../constants/tokenAddresses'
+import { BNtoDecimal } from '@/utils/numerals'
 
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
-import { setModalWalletActive } from '../../../../store/reducers/modalWalletActive'
+import { Staking } from '@/constants/tokenAddresses'
 
-import useStakingContract from '../../../../hooks/useStakingContract'
+import useStakingContract from '@/hooks/useStaking'
 
-import { BNtoDecimal } from '../../../../utils/numerals'
+import Button from '@/components/Button'
+import ExternalLink from '@/components/ExternalLink'
+import ModalManageVotingPower from '@/components/Governance/ModalManageVotingPower'
 
-import Button from '../../../../components/Button'
-import ExternalLink from '../../../../components/ExternalLink'
-import ModalManageVotingPower from '../../../../components/Governance/ModalManageVotingPower'
-
-import tooltip from '../../../../../public/assets/utilities/tooltip.svg'
+import tooltip from '@assets/utilities/tooltip.svg'
 
 import * as S from './styles'
 
@@ -34,21 +31,15 @@ const IntroGovernance = ({
   userReceivedTotal,
   userDelegatingTotal
 }: IIntroWalletAddressProps) => {
-  // eslint-disable-next-line prettier/prettier
   const [isModalManageVotingPower, setIsModalManageVotingPower] =
     React.useState<boolean>(false)
-  // eslint-disable-next-line prettier/prettier
-  const [totalKacyStaked, setTotalKacyStaked] = React.useState<BigNumber>(
-    new BigNumber(0)
-  )
+  const [totalKacyStaked, setTotalKacyStaked] = React.useState<Big>(Big(0))
 
-  const userWalletAddress = useAppSelector(state => state.userWalletAddress)
-
+  const [{ wallet }] = useConnectWallet()
   const { userInfo } = useStakingContract(Staking)
-  const dispatch = useAppDispatch()
 
   const callUserInfo = async () => {
-    let totalStaked = new BigNumber(0)
+    let totalStaked = Big(0)
 
     if (process.env.NEXT_PUBLIC_MASTER === '1') {
       const [
@@ -65,11 +56,11 @@ const IntroGovernance = ({
         userInfo(4, address)
       ])
 
-      totalStaked = new BigNumber(userInfoOne.amount)
-        .add(new BigNumber(userInfoTwo.amount))
-        .add(new BigNumber(userInfoThree.amount))
-        .add(new BigNumber(investorOne.amount))
-        .add(new BigNumber(investorTwo.amount))
+      totalStaked = Big(userInfoOne.amount.toString())
+        .add(Big(userInfoTwo.amount.toString()))
+        .add(Big(userInfoThree.amount.toString()))
+        .add(Big(investorOne.amount.toString()))
+        .add(Big(investorTwo.amount.toString()))
     } else {
       const [userInfoOne, userInfoTwo, userInfoThree] = await Promise.all([
         userInfo(0, address),
@@ -77,9 +68,9 @@ const IntroGovernance = ({
         userInfo(2, address)
       ])
 
-      totalStaked = new BigNumber(userInfoOne.amount)
-        .add(new BigNumber(userInfoTwo.amount))
-        .add(new BigNumber(userInfoThree.amount))
+      totalStaked = Big(userInfoOne.amount.toString())
+        .add(Big(userInfoTwo.amount.toString()))
+        .add(Big(userInfoThree.amount.toString()))
     }
 
     setTotalKacyStaked(totalStaked)
@@ -87,7 +78,7 @@ const IntroGovernance = ({
 
   React.useEffect(() => {
     callUserInfo()
-  }, [address, userWalletAddress])
+  }, [address])
 
   return (
     <>
@@ -109,18 +100,9 @@ const IntroGovernance = ({
                 </S.Tooltip>
               </Tippy>
             </S.TextAndTooltip>
-            {address || userWalletAddress ? (
-              <span className="value-total-voting-power">
-                {BNtoDecimal(new BigNumber(totalKacyStaked), 18, 2)}
-              </span>
-            ) : (
-              <Button
-                onClick={() => dispatch(setModalWalletActive(true))}
-                size="large"
-                text="Connect Wallet"
-                backgroundSecondary
-              />
-            )}
+            <span className="value-total-voting-power">
+              {BNtoDecimal(totalKacyStaked.div(Big(10).pow(18)), 18, 2)}
+            </span>
           </S.AddressTotalVotingPower>
 
           <S.AllVotingPowerCard>
@@ -162,7 +144,7 @@ const IntroGovernance = ({
                 text="Manage Delegation"
                 backgroundSecondary
                 disabledNoEvent={
-                  address !== userWalletAddress || !userWalletAddress
+                  !wallet || getAddress(wallet.accounts[0].address) !== address
                 }
                 onClick={() => setIsModalManageVotingPower(true)}
               />

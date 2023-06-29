@@ -1,6 +1,8 @@
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import { gql } from 'graphql-request'
+import { WalletState } from '@web3-onboard/core'
+import { getAddress } from 'ethers'
 
 import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 
@@ -36,7 +38,7 @@ export type GetPoolInfoType = {
   }[]
 }
 
-function usePoolInfo(userWalletAddress: string, poolId: string) {
+function usePoolInfo(wallet: WalletState | null, poolId: string) {
   const GET_INFO_POOL = gql`
     query ($manager: String, $id: ID) {
       pools(where: { manager: $manager, id: $id }) {
@@ -71,12 +73,12 @@ function usePoolInfo(userWalletAddress: string, poolId: string) {
     }
   `
   const { data, error, isValidating } = useSWR<GetPoolInfoType>(
-    userWalletAddress.length > 0 && poolId
-      ? [GET_INFO_POOL, userWalletAddress, poolId]
+    wallet && poolId
+      ? [GET_INFO_POOL, wallet?.accounts[0].address, poolId]
       : null,
     (query, userWalletAddress) =>
       request(BACKEND_KASSANDRA, query, {
-        manager: userWalletAddress,
+        manager: getAddress(userWalletAddress),
         id: poolId
       }),
     {
