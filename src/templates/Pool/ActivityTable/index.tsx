@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-
+import Blockies from 'react-blockies'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import Big from 'big.js'
@@ -304,11 +304,20 @@ const ActivityTable = () => {
                               if (element.token.symbol === 'KACY') {
                                 return (
                                   <S.ImageWrapper key={pool.id}>
-                                    <Image
-                                      src={pool.logo}
-                                      alt=""
-                                      layout="fill"
-                                    />
+                                    {pool.logo ? (
+                                      <Image
+                                        src={pool.logo}
+                                        alt=""
+                                        layout="fill"
+                                      />
+                                    ) : (
+                                      <Blockies
+                                        seed={pool.name}
+                                        className="poolIcon"
+                                        size={4}
+                                        scale={4}
+                                      />
+                                    )}
                                   </S.ImageWrapper>
                                 )
                               } else {
@@ -412,7 +421,20 @@ const ActivityTable = () => {
                             )
                               return (
                                 <S.ImageWrapper>
-                                  <Image src={pool.logo} alt="" layout="fill" />
+                                  {pool.logo ? (
+                                    <Image
+                                      src={pool.logo}
+                                      alt=""
+                                      layout="fill"
+                                    />
+                                  ) : (
+                                    <Blockies
+                                      seed={pool.name}
+                                      className="poolIcon"
+                                      size={4}
+                                      scale={4}
+                                    />
+                                  )}
                                 </S.ImageWrapper>
                               )
 
@@ -516,7 +538,8 @@ const ActivityTable = () => {
                           })}
 
                           <Value>
-                            {activity.symbol.length > 2
+                            {activity.symbol.length > 2 &&
+                            activity.type !== 'join'
                               ? null
                               : BNtoDecimal(
                                   Big(
@@ -525,7 +548,7 @@ const ActivityTable = () => {
                                     ] || '0'
                                   ),
                                   6,
-                                  2,
+                                  4,
                                   2
                                 )}
                           </Value>
@@ -638,7 +661,16 @@ const ActivityTable = () => {
                 <S.DataWrapper>
                   {historyMobile.type === 'exit' && (
                     <S.ImageWrapper key={pool.id}>
-                      <Image src={pool.logo} alt="" layout="fill" />
+                      {pool.logo ? (
+                        <Image src={pool.logo} alt="" layout="fill" />
+                      ) : (
+                        <Blockies
+                          seed={pool.name}
+                          className="poolIcon"
+                          size={4}
+                          scale={4}
+                        />
+                      )}
                     </S.ImageWrapper>
                   )}
 
@@ -742,7 +774,16 @@ const ActivityTable = () => {
                 <S.DataWrapper>
                   {historyMobile.type === 'join' && (
                     <S.ImageWrapper>
-                      <Image src={pool.logo} alt="" layout="fill" />
+                      {pool.logo ? (
+                        <Image src={pool.logo} alt="" layout="fill" />
+                      ) : (
+                        <Blockies
+                          seed={pool.name}
+                          className="poolIcon"
+                          size={4}
+                          scale={4}
+                        />
+                      )}
                     </S.ImageWrapper>
                   )}
 
@@ -803,7 +844,8 @@ const ActivityTable = () => {
                     })}
 
                   <V>
-                    {historyMobile.symbol.length > 2
+                    {historyMobile.symbol.length > 2 &&
+                    historyMobile.type !== 'join'
                       ? null
                       : BNtoDecimal(
                           Big(
