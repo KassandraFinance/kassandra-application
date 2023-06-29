@@ -118,7 +118,17 @@ const useStaking = (address: string, chainId = 43114) => {
       walletAddress: string | string[] | undefined
     ) => {
       const value = await contract.read.userInfo(pid, walletAddress)
-      return value
+      const temp = {
+        amount: value.amount,
+        depositTime: value.depositTime,
+        pendingRewards: value.pendingRewards,
+        rewardPerTokenPaid: value.rewardPerTokenPaid,
+        unstakeRequestTime: value.unstakeRequestTime,
+        withdrawn: value.withdrawn,
+        delegatee: value.delegatee,
+        pid
+      }
+      return temp
     }
 
     const earnedMultChain = async (
