@@ -24,9 +24,12 @@ const ListOfAllAsset = ({
   const { priceToken } = React.useContext(PoolOperationContext)
 
   const ListTokenWithBalance = pool.underlying_assets.map(item => {
+    const decimals = item.token.wraps?.decimals ?? item.token.decimals
     return {
       ...item,
-      amount: amountAllTokenOut[item.token.id],
+      amount: Big(amountAllTokenOut[item.token.id] ?? 0).div(
+        Big(10).pow(decimals)
+      ),
       balance: balanceAllTokenOut[item.token.id]
     }
   })
