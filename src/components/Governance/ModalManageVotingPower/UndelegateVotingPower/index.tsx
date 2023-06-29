@@ -1,8 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
-import BigNumber from 'bn.js'
 import { useConnectWallet } from '@web3-onboard/react'
+import Big from 'big.js'
 
+import { poolsKacy } from '@/constants/pools'
 import { Staking } from '@/constants/tokenAddresses'
 
 import substr from '@/utils/substr'
@@ -85,101 +86,47 @@ const UndelegateVotingPower = ({
     ])
 
     const poolInfoArr = [poolInfoOne, poolInfoTwo, poolInfoThree]
+    const userInfoArr = [userInfoOne, userInfoTwo, userInfoThree]
 
-    const userInfoArr = [userInfoOne, userInfoTwo, userInfoThree].map(
-      (userInfo, index) => {
-        const poolInfo = poolInfoArr[index]
-        const votingPowerWithoutMultiplier = new BigNumber(userInfo.amount)
+    const response = poolsKacy.map((pool, index) => {
+      const poolInfo = poolInfoArr[index]
+      const userInfo = userInfoArr[index]
+      const votingPowerWithoutMultiplier = Big(userInfo.amount).div(
+        Big(10).pow(18)
+      )
 
-        const votingPower = BNtoDecimal(
-          new BigNumber(poolInfo?.votingMultiplier ?? 0).mul(
-            votingPowerWithoutMultiplier
-          ),
-          18,
-          2
-        )
+      const votingPower = BNtoDecimal(
+        Big(poolInfo?.votingMultiplier ?? 0).mul(votingPowerWithoutMultiplier),
+        18,
+        2
+      )
 
-        if (
-          userInfo.delegatee.toLowerCase() ===
-          wallet.accounts[0].address.toLowerCase()
-        ) {
-          return {
-            msg: "Can't undelegate to your own wallet",
-            votingPower: '',
-            withdrawDelay: '',
-            nameToken: '',
-            pid: 0
-          }
-        } else {
-          return {
-            votingPower,
-            withdrawDelay: Math.round(
-              Number(poolInfo.withdrawDelay) / 86400
-            ).toString(),
-            nameToken: String(userInfo.delegatee),
-            pid: Number(userInfo.pid)
-          }
+      if (
+        userInfo.delegatee.toLowerCase() ===
+        wallet.accounts[0].address.toLowerCase()
+      ) {
+        return {
+          msg: "Can't undelegate to your own wallet",
+          votingPower: '',
+          withdrawDelay: '',
+          nameToken: '',
+          pid: 0
+        }
+      } else {
+        return {
+          votingPower,
+          withdrawDelay: Math.round(
+            Number(poolInfo.withdrawDelay) / 86400
+          ).toString(),
+          nameToken: String(userInfo.delegatee),
+          pid: pool.pid
         }
       }
-    )
+    })
 
-    setUserInfoData(userInfoArr)
+    setUserInfoData(response)
     setLoading(false)
   }
-
-  // const undelegateCallback = React.useCallback(
-  //   (receiverAddress: string): TransactionCallback => {
-  //     return async (error: MetamaskError, txHash: string) => {
-  //       if (error) {
-  //         if (error.code === 4001) {
-  //           dispatch(setModalAlertText({ errorText: `Undelegate cancelled` }))
-  //           return
-  //         }
-
-  //         dispatch(setModalAlertText({ errorText: `Error` }))
-  //         return
-  //       }
-
-  //       ToastWarning(`Confirming undelegate to ${substr(receiverAddress)}...`)
-  //       const txReceipt = await waitTransaction(txHash)
-
-  //       if (txReceipt.status) {
-  //         ToastSuccess(`Undelegate confirmed to ${substr(receiverAddress)}`)
-  //         setCurrentModal('manage')
-  //         setModalOpen(false)
-  //         return
-  //       }
-  //     }
-  //   },
-  //   []
-  // )
-
-  // const undelegateAllCallback = React.useCallback(
-  //   (receiverAddress: string): TransactionCallback => {
-  //     return async (error: MetamaskError, txHash: string) => {
-  //       if (error) {
-  //         if (error.code === 4001) {
-  //           dispatch(setModalAlertText({ errorText: `Undelegate cancelled` }))
-  //           return
-  //         }
-
-  //         dispatch(setModalAlertText({ errorText: `Error` }))
-  //         return
-  //       }
-
-  //       ToastWarning(`Confirming undelegate to ${substr(receiverAddress)}...`)
-  //       const txReceipt = await waitTransaction(txHash)
-
-  //       if (txReceipt.status) {
-  //         ToastSuccess(`Undelegate confirmed to ${substr(receiverAddress)}`)
-  //         setCurrentModal('manage')
-  //         setModalOpen(false)
-  //         return
-  //       }
-  //     }
-  //   },
-  //   []
-  // )
 
   const handleUndelegateVotes = async () => {
     if (!wallet) return

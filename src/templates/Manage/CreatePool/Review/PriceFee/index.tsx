@@ -23,30 +23,6 @@ const PriceFee = () => {
   )
 
   React.useEffect(() => {
-    // const web3 = new Web3(networks[networkId || 137].rpc)
-    // const getGasFee = async () => {
-    //   try {
-    //     const estimateGasUsed = new BigNumber(7_805_975)
-    //     const baseFee = (await web3.eth.getBlock('latest')).baseFeePerGas
-    //     console.log('baseFee', baseFee)
-
-    //     const gas = web3.utils
-    //       .fromWei(
-    //         estimateGasUsed.mul(
-    //           new BigNumber(baseFee ?? 0)
-    //             .mul(new BigNumber(13))
-    //             .div(new BigNumber(10))
-    //         ),
-    //         'ether'
-    //       )
-    //       .slice(0, 5)
-    //     console.log('gas', gas)
-    //     setEstimateGas(old => ({ ...old, gas: gas.toString() }))
-    //   } catch (error) {
-    //     console.error('Error', error)
-    //   }
-    // }
-
     async function getGasFee() {
       const gas = await gasFee(7_805_975)
       setEstimateGas(old => ({ ...old, gas: Number(gas).toFixed(6) }))

@@ -1,8 +1,8 @@
 import React from 'react'
-import BigNumber from 'bn.js'
 import 'tippy.js/dist/tippy.css'
 import Tippy from '@tippyjs/react'
 import { useConnectWallet } from '@web3-onboard/react'
+import Big from 'big.js'
 
 import { checkVoteButton } from '@/utils/checkVoteButton'
 import { IUserVotedProps } from '@/templates/Gov/Proposals/Proposal'
@@ -13,7 +13,7 @@ import ExternalLink from '@/components/ExternalLink'
 import * as S from './styles'
 
 interface IVoteCardProps {
-  yourVotingPowerInProposal: BigNumber
+  yourVotingPowerInProposal: Big
   typeVote: string
   percentage: string
   totalVotingPower: string
@@ -62,7 +62,7 @@ const VoteCard = ({
         <S.ActionWrapper>
           <Tippy
             content="You had no voting power at the time the proposal was created"
-            disabled={!wallet || yourVotingPowerInProposal.gt(new BigNumber(0))}
+            disabled={!wallet || yourVotingPowerInProposal.gt(Big(0))}
           >
             <S.VoteButtonContainer>
               <Button

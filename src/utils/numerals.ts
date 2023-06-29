@@ -1,17 +1,12 @@
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 
 export function BNtoDecimal(
-  value: Big | BigNumber,
+  value: Big,
   maximumPrecision: number,
   maximumNonZero?: number,
   minimumPrecision?: number
 ) {
-  const fullNumber = (
-    value instanceof Big
-      ? value
-      : Big(value.toString()).div(Big(10).pow(maximumPrecision))
-  ).toFixed(maximumPrecision)
+  const fullNumber = Big(value).toFixed(maximumPrecision)
   const maxPrecision = maximumNonZero || 6
   const minPrecision = minimumPrecision || 0
 
@@ -29,7 +24,7 @@ export function BNtoDecimal(
   return `${integer}${decimal.length > 0 ? '.' : ''}${decimal}`
 }
 
-export const wei = new BigNumber('10').pow(new BigNumber('18'))
+export const wei = Big('10').pow(18)
 
 export function calcChange(newPrice: number, oldPrice: number) {
   const calc = ((newPrice - oldPrice) / oldPrice) * 100

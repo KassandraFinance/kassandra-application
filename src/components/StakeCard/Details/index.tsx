@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
 
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 
 import { networks } from '@/constants/tokenAddresses'
@@ -20,7 +18,7 @@ interface IInfoStakeStaticProps {
   votingMultiplier: string
   startDate: string
   endDate: string
-  kacyRewards: BigNumber
+  kacyRewards: Big
   withdrawDelay: any
 }
 
@@ -53,9 +51,7 @@ const Details = ({
   stakingAddress,
   chainId
 }: IDetailsProps) => {
-  const [depositedAmount, setDepositedAmount] = React.useState<BigNumber>(
-    new BigNumber(-1)
-  )
+  const [depositedAmount, setDepositedAmount] = React.useState<Big>(Big(-1))
   const networkChain = networks[chainId]
 
   const { trackEventFunction } = useMatomoEcommerce()
@@ -69,9 +65,9 @@ const Details = ({
       const poolInfoResponse = await staking.poolInfo(pid)
 
       interval = setInterval(async () => {
-        setDepositedAmount(new BigNumber(poolInfoResponse.depositedAmount))
+        setDepositedAmount(Big(poolInfoResponse.depositedAmount))
       }, 10000)
-      setDepositedAmount(new BigNumber(poolInfoResponse.depositedAmount))
+      setDepositedAmount(Big(poolInfoResponse.depositedAmount))
     })()
 
     return () => clearInterval(interval)
@@ -83,14 +79,14 @@ const Details = ({
         <span>Total staked</span>
         <S.KacyUSD>
           <span>
-            {depositedAmount.lt(new BigNumber('0'))
+            {depositedAmount.lt(Big(0))
               ? '...'
-              : BNtoDecimal(depositedAmount, 18)}{' '}
+              : BNtoDecimal(depositedAmount.div(Big(10).pow(18)), 18)}{' '}
             {symbol}
           </span>
           <span className="usd">
             &#8776;{' '}
-            {depositedAmount.lt(new BigNumber('0')) || poolPrice.lt(0)
+            {depositedAmount.lt(Big(0)) || poolPrice.lt(0)
               ? '...'
               : BNtoDecimal(
                   Big(`0${depositedAmount}`)
@@ -108,21 +104,26 @@ const Details = ({
         <span>Pool Reward</span>
         <S.KacyUSD>
           <span>
-            {infoStakeStatic.kacyRewards.lt(new BigNumber(0))
-              ? '...'
-              : hasExpired
-              ? '0'
-              : BNtoDecimal(infoStakeStatic.kacyRewards, 18, 2, 2)}
-            /day
-          </span>
-          <span className="usd">
-            &#8776;{' '}
-            {infoStakeStatic.kacyRewards.lt(new BigNumber(0)) || poolPrice.lt(0)
+            {infoStakeStatic.kacyRewards.lt(Big(0))
               ? '...'
               : hasExpired
               ? '0'
               : BNtoDecimal(
-                  Big(infoStakeStatic.kacyRewards.toString())
+                  infoStakeStatic.kacyRewards.div(Big(10).pow(18)),
+                  18,
+                  2,
+                  2
+                )}
+            /day
+          </span>
+          <span className="usd">
+            &#8776;{' '}
+            {infoStakeStatic.kacyRewards.lt(Big(0)) || poolPrice.lt(0)
+              ? '...'
+              : hasExpired
+              ? '0'
+              : BNtoDecimal(
+                  infoStakeStatic.kacyRewards
                     .mul(kacyPrice)
                     .div(Big(10).pow(18)),
                   6,

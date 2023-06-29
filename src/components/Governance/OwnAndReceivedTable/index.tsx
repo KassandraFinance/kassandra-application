@@ -192,7 +192,7 @@ export const OwnAndReceivedTable = ({
                       <span>$ {handleKacyInDolar(item.kacy)}</span>
                     </S.Td>
                     <S.Td className="voting-power-allocated">
-                      <p>{BNtoDecimal(item.votingPower, 0, 2)}</p>
+                      <p>{BNtoDecimal(Big(item.votingPower), 0, 2)}</p>
                       <span>
                         {handleCheckValuePoolPerVP(item.pool)} Voting power per
                         KACY{' '}
