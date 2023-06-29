@@ -461,19 +461,19 @@ const Withdraw = ({
   }, [wallet, pool, typeAction, typeWithdraw])
 
   React.useEffect(() => {
-    const res: Big = pool.underlying_assets.reduce(
-      (accumulator, current, index) => {
-        const tokenAmount = amountAllTokenOut[current.token.id] ?? Big(0)
-        const priceUSD = priceToken(
-          current.token.wraps
-            ? current.token.wraps.id.toLocaleLowerCase()
-            : current.token.id.toLocaleLowerCase()
-        )
+    const res: Big = pool.underlying_assets.reduce((accumulator, current) => {
+      const decimals = current.token.wraps?.decimals ?? current.token.decimals
+      const tokenAmount = Big(amountAllTokenOut[current.token.id] ?? 0).div(
+        Big(10).pow(decimals)
+      )
+      const priceUSD = priceToken(
+        current.token.wraps
+          ? current.token.wraps.id.toLocaleLowerCase()
+          : current.token.id.toLocaleLowerCase()
+      )
 
-        return tokenAmount.mul(Big(priceUSD || 0)).add(accumulator)
-      },
-      Big(0)
-    )
+      return tokenAmount.mul(Big(priceUSD || 0)).add(accumulator)
+    }, Big(0))
 
     setPriceInDollarOnWithdraw(BNtoDecimal(res, 3, 2))
   }, [amountAllTokenOut])
