@@ -4,10 +4,6 @@ import Big from 'big.js'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import { usePoolTokens } from '@/context/PoolTokensContext'
-import { BNtoDecimal } from '@/utils/numerals'
-import { priceDollar } from '@/utils/priceDollar'
-
 import { Input } from './styles'
 
 interface IInputProps {
@@ -25,11 +21,8 @@ const InputTokenValue = ({
   inputRef,
   setInputValue,
   setMaxActive,
-  disabled,
-  amount,
-  address
+  disabled
 }: IInputProps) => {
-  const { poolTokens: poolTokensArray } = usePoolTokens()
   if (!disabled) {
     disabled = ''
   }
@@ -94,19 +87,6 @@ const InputTokenValue = ({
           }}
         />
       </Tippy>
-      <span className="price-dolar">
-        {address &&
-          amount &&
-          'USD: ' +
-            BNtoDecimal(
-              Big(amount.toString())
-                .mul(Big(priceDollar(address, poolTokensArray)))
-                .div(Big(10).pow(Number(decimals))),
-              18,
-              2,
-              2
-            )}
-      </span>
     </>
   )
 }
