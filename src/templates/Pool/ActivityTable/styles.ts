@@ -66,6 +66,10 @@ export const ImageWrapper = styled.div`
 
     width: 1.6rem;
     height: 1.6rem;
+
+    .poolIcon {
+      border-radius: 50%;
+    }
   `}
 `
 
