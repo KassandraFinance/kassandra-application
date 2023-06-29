@@ -1,6 +1,6 @@
 import React from 'react'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
+
 import { BrowserProvider, JsonRpcProvider, Contract } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 
@@ -76,13 +76,13 @@ const useStaking = (address: string, chainId = 43114) => {
     }
 
     const balance = async (pid: number, walletAddress: string) => {
-      const value = await contract.read.balanceOf(pid, walletAddress)
-      return new BigNumber(value)
+      const value: bigint = await contract.read.balanceOf(pid, walletAddress)
+      return value
     }
 
     const earned = async (pid: number, walletAddress: string) => {
-      const value: string = await contract.read.earned(pid, walletAddress)
-      return new BigNumber(value)
+      const value: bigint = await contract.read.earned(pid, walletAddress)
+      return value
     }
 
     const lockUntil = async (pid: number, walletAddress: string) => {
@@ -118,17 +118,8 @@ const useStaking = (address: string, chainId = 43114) => {
       walletAddress: string | string[] | undefined
     ) => {
       const value = await contract.read.userInfo(pid, walletAddress)
-      const temp = {
-        amount: value.amount,
-        depositTime: value.depositTime,
-        pendingRewards: value.pendingRewards,
-        rewardPerTokenPaid: value.rewardPerTokenPaid,
-        unstakeRequestTime: value.unstakeRequestTime,
-        withdrawn: value.withdrawn,
-        delegatee: value.delegatee,
-        pid
-      }
-      return temp
+
+      return value
     }
 
     const earnedMultChain = async (
@@ -139,19 +130,19 @@ const useStaking = (address: string, chainId = 43114) => {
     ) => {
       const provider = new JsonRpcProvider(networks[chainId].rpc)
       const infoContract = new Contract(address, StakingContract, provider)
-      const value = await infoContract.earned(pid, walletAddress)
-      return new BigNumber(value)
+      const value: bigint = await infoContract.earned(pid, walletAddress)
+      return value
     }
 
     const stake = async (
       pid: number,
-      amount: BigNumber,
+      amount: string,
       delegatee: string,
       message?: MessageType,
       callbacks?: CallbacksType
     ) => {
       try {
-        const tx = await contract.send.stake(pid, amount, delegatee)
+        const tx = await contract.send.stake(pid, amount, delegatee, delegatee)
         await txNotification(tx, message, callbacks)
       } catch (error) {
         transactionErrors(error, callbacks?.onFail)
@@ -199,7 +190,7 @@ const useStaking = (address: string, chainId = 43114) => {
 
     const withdraw = async (
       pid: number,
-      amount: BigNumber,
+      amount: string,
       message?: MessageType,
       callbacks?: CallbacksType
     ) => {

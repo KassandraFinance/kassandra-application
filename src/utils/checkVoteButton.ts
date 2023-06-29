@@ -1,4 +1,4 @@
-import BigNumber from 'bn.js'
+import Big from 'big.js'
 import { IUserVotedProps } from '../templates/Gov/Proposals/Proposal'
 
 export const checkVoteButton = (
@@ -13,7 +13,7 @@ export const checkVoteButton = (
   } else if (
     (proposalState === 'Active' &&
       userWalletAddress &&
-      yourVotingPowerInProposal.gt(new BigNumber(0))) ||
+      yourVotingPowerInProposal.gt(Big(0))) ||
     (!userWalletAddress && proposalState === 'Active')
   ) {
     return 'vote-open'

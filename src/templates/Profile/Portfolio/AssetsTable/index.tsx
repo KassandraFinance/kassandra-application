@@ -1,7 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
 
@@ -20,7 +19,7 @@ export interface IPriceType {
 }
 
 export interface IBalanceType {
-  [key: string]: BigNumber
+  [key: string]: Big
 }
 
 export interface IParamsType {
@@ -81,7 +80,9 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
           </S.ProductWrapper>
         </S.Td>
         <S.Td>${parseFloat(pool.price).toFixed(2)}</S.Td>
-        <S.Td>${pool.tvl ? BNtoDecimal(Big(pool.tvl), 2) : '0'}</S.Td>
+        <S.Td>
+          ${pool.tvl ? BNtoDecimal(Big(pool?.tvl ?? Big(0)), 2) : '0'}
+        </S.Td>
         <S.Td>
           <S.Change change={parseFloat(pool.changeMonth)}>
             {pool.changeMonth}%
@@ -95,13 +96,13 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
         <S.Td>
           <S.FlexWrapper>
             <div>
-              {pool.balance ? BNtoDecimal(Big(pool.balance), 2) : 0}{' '}
+              {pool.balance ? BNtoDecimal(Big(pool?.balance ?? Big(0)), 2) : 0}{' '}
               <span>{pool.symbol}</span>
             </div>
             <span>
               $
               {pool.balance && pool.price
-                ? BNtoDecimal(Big(pool.balanceInUSD), 2)
+                ? BNtoDecimal(Big(pool?.balanceInUSD ?? Big(0)), 2)
                 : 0}
             </span>
           </S.FlexWrapper>

@@ -51,10 +51,10 @@ const Options = ({
         style={{ display: optionsOpen ? 'block' : 'none' }}
       />
       <S.Modal isOpenOption={optionsOpen} undelegate={undelegate}>
-        {data.map((item, index) =>
+        {data.map(item =>
           item.msg ? null : (
             <S.Option
-              key={index}
+              key={item.pid}
               onClick={() => {
                 setDelegateSelected(item)
                 setOptionsOpen(false)

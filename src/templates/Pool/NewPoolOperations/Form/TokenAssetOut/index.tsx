@@ -1,7 +1,4 @@
 import React from 'react'
-// import Image from 'next/image'
-// import Tippy from '@tippyjs/react'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
@@ -97,7 +94,7 @@ const TokenAssetOut = ({
             type="number"
             placeholder="0"
             value={BNtoDecimal(
-              amountTokenOut?.div(Big(10).pow(18)) || new BigNumber(0),
+              amountTokenOut?.div(Big(10).pow(18)) || Big(0),
               18,
               6
             ).replace(/\s/g, '')}
