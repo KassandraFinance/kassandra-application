@@ -71,11 +71,12 @@ export default class operationV2 implements IOperations {
     this.withdrawContract = _poolInfo.vault
   }
 
-  async getDatasTx(slippage = '0.5') {
+  async getDatasTx(slippage = '0.5', txs: Array<any>) {
     return this.swapProvider.getDatasTx(
       this.poolInfo.chainId,
       this.contractAddress,
-      slippage
+      slippage,
+      txs
     )
   }
 
@@ -200,7 +201,7 @@ export default class operationV2 implements IOperations {
         ? '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
         : tokenInAddress
 
-    const datas = await this.getDatasTx(slippage)
+    const datas = await this.getDatasTx(slippage, data)
 
     if (datas.length < 1) {
       throw { code: 'KASS#02', message: 'please recalculate' }
@@ -244,7 +245,7 @@ export default class operationV2 implements IOperations {
 
     const nativeValue = tokenInAddress === NATIVE_ADDRESS ? amountTokenIn : '0'
 
-    const datas = await this.getDatasTx()
+    const datas = await this.getDatasTx('0.5', data)
     const estimateGas =
       await this.contract.joinPoolExactTokenInWithSwap.estimateGas(
         {

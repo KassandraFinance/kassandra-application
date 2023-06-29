@@ -76,11 +76,12 @@ export default class operationV1 implements IOperations {
     this.signerProvider = _signerProvider
   }
 
-  async getDatasTx(slippage = '0.5') {
+  async getDatasTx(slippage = '0.5', txs: Array<any>) {
     return this.swapProvider.getDatasTx(
       this.poolInfo.chainId,
       this.contractAddress,
-      slippage
+      slippage,
+      txs
     )
   }
 
