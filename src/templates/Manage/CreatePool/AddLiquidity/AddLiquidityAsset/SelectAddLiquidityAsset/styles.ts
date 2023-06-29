@@ -19,3 +19,12 @@ export const Title = styled.h2`
     text-transform: uppercase;
   `}
 `
+
+export const InputValidation = styled.input`
+  ${() => css`
+    position: absolute;
+    top: 30rem;
+
+    opacity: 0;
+  `}
+`

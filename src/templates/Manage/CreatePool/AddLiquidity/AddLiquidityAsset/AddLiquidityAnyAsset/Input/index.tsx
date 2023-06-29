@@ -176,7 +176,7 @@ const Input = ({
               ref={inputAmountTokenRef}
               type="number"
               placeholder="0"
-              step="any"
+              step={Big(1).div(Big(10).pow(tokenSelect.decimals)).toFixed()}
               onWheel={() => handleOnWheel()}
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 const target = e.target as HTMLInputElement
@@ -199,10 +199,11 @@ const Input = ({
               }}
               onChange={debounce}
               form="poolCreationForm"
-              min={0}
+              min={Big(1).div(Big(10).pow(tokenSelect.decimals)).toFixed()}
               max={selectedTokenInBalance
                 .div(Big(10).pow(tokenSelect.decimals))
                 .toString()}
+              required
             />
             <p className="price-dolar">
               {tokenSelect.address &&

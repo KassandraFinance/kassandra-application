@@ -167,6 +167,10 @@ const PoolReview = () => {
   }, [data])
 
   React.useEffect(() => {
+    if (!poolData.tokens) return
+    for (let i = 0; i < poolData.tokens?.length; i++) {
+      if (Big(poolData.tokens[i].amount).lte(0)) return
+    }
     if (poolData.methodCreate === 'any-asset') {
       setInitialPrice(getInitialPrice())
       setTotalLiquidity(getTotalLiquidity())

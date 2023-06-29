@@ -1,7 +1,7 @@
 import React from 'react'
 import stringSimilarity from 'string-similarity-js'
 import Big from 'big.js'
-import { isAddress } from 'ethers'
+import { ethers, isAddress } from 'ethers'
 
 import { NATIVE_ADDRESS, networks } from '@/constants/tokenAddresses'
 import { BNtoDecimal } from '@/utils/numerals'
@@ -33,8 +33,8 @@ const SelectAddLiquidityAsset = ({
 }: SelectAddLiquidityAssetProps) => {
   const [search, setSearch] = React.useState('')
 
-  const networkId = useAppSelector(
-    state => state.poolCreation.createPoolData.networkId
+  const { networkId, tokenIn, tokenInAmount } = useAppSelector(
+    state => state.poolCreation.createPoolData
   )
   const dispatch = useAppDispatch()
 
@@ -144,6 +144,16 @@ const SelectAddLiquidityAsset = ({
     })
   }
 
+  function handleInvalid(event: any) {
+    if (
+      !tokenIn ||
+      tokenIn.address === ethers.ZeroAddress ||
+      Number(tokenInAmount) === 0
+    ) {
+      return event.target.setCustomValidity('Please select any token.')
+    }
+  }
+
   const filteredToken =
     search.length > 1
       ? handleTokenListFiltering(tokensList)
@@ -167,6 +177,20 @@ const SelectAddLiquidityAsset = ({
         }}
         tokenPinList={[]}
         setTokenSelected={token => dispatch(setTokenIn(token))}
+      />
+      <S.InputValidation
+        form="poolCreationForm"
+        id="select-token"
+        name="select-token"
+        type="radio"
+        onInvalid={handleInvalid}
+        required
+        checked={
+          tokenIn.address !== ethers.ZeroAddress && Number(tokenInAmount) > 0
+        }
+        onChange={() => {
+          return
+        }}
       />
     </S.SelectAddLiquidityAsset>
   )
