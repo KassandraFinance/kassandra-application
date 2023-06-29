@@ -95,6 +95,7 @@ const useTransaction = () => {
         : error?.message ?? 'Transaction reverted'
 
       dispatch(setModalAlertText({ errorText: err }))
+      console.log(error)
       return error.code
     }
 
@@ -108,8 +109,7 @@ const useTransaction = () => {
       return error.code
     }
 
-    console.log('error', error)
-    dispatch(setModalAlertText({ errorText: 'error unknown' }))
+    dispatch(setModalAlertText({ errorText: error.toString() }))
     return
   }
 
