@@ -50,7 +50,7 @@ export const VotingPowerTable = ({ skip = 0, take }: IVotingPowerProps) => {
                     />
                   </S.Td>
                   <S.Td className="vote-power">
-                    {BNtoDecimal(item.votingPower, 0, 2)}
+                    {BNtoDecimal(Big(item.votingPower), 0, 2)}
                   </S.Td>
                   <S.Td className="vote-weight">
                     {BNtoDecimal(

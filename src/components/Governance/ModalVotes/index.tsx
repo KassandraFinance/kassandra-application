@@ -1,6 +1,6 @@
 import React from 'react'
 import router from 'next/router'
-import BigNumber from 'bn.js'
+import Big from 'big.js'
 
 import { useVotes } from '@/hooks/query/useVotes'
 
@@ -32,7 +32,7 @@ interface IModalVotesList {
   voter: {
     id: string
   }
-  votingPower: BigNumber
+  votingPower: string
 }
 
 const ModalVotes = ({
@@ -145,7 +145,7 @@ const ModalVotes = ({
                         />
                       </S.UserName>
                       <S.UserVote>
-                        {BNtoDecimal(user.votingPower, 0, 2)}
+                        {BNtoDecimal(Big(user.votingPower), 0, 2)}
                       </S.UserVote>
                     </S.UserData>
                   )

@@ -1,24 +1,18 @@
 import React from 'react'
-import BigNumber from 'bn.js'
 import Big from 'big.js'
 
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import { usePoolTokens } from '@/context/PoolTokensContext'
-import { BNtoDecimal } from '@/utils/numerals'
-import { priceDollar } from '@/utils/priceDollar'
-
 import { Input } from './styles'
 
 interface IInputProps {
-  max: string
-  decimals: BigNumber
+  decimals: Big
   inputRef: React.RefObject<HTMLInputElement>
-  setInputValue: React.Dispatch<React.SetStateAction<BigNumber>>
+  setInputValue: React.Dispatch<React.SetStateAction<Big>>
   setMaxActive?: React.Dispatch<React.SetStateAction<boolean>>
   disabled?: string
-  amount?: BigNumber
+  amount?: Big
   address?: string | undefined
 }
 
@@ -27,11 +21,8 @@ const InputTokenValue = ({
   inputRef,
   setInputValue,
   setMaxActive,
-  disabled,
-  amount,
-  address
+  disabled
 }: IInputProps) => {
-  const { poolTokens: poolTokensArray } = usePoolTokens()
   if (!disabled) {
     disabled = ''
   }
@@ -92,23 +83,10 @@ const InputTokenValue = ({
               decimalsNum
             )}`.slice(0, decimalsNum)}`
             setMaxActive && setMaxActive(false)
-            setInputValue && setInputValue(new BigNumber(paddedRight))
+            setInputValue && setInputValue(Big(paddedRight))
           }}
         />
       </Tippy>
-      <span className="price-dolar">
-        {address &&
-          amount &&
-          'USD: ' +
-            BNtoDecimal(
-              Big(amount.toString())
-                .mul(Big(priceDollar(address, poolTokensArray)))
-                .div(Big(10).pow(Number(decimals))),
-              18,
-              2,
-              2
-            )}
-      </span>
     </>
   )
 }

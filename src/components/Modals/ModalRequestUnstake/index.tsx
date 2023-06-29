@@ -1,5 +1,5 @@
 import React from 'react'
-import BigNumber from 'bn.js'
+import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { networks } from '@/constants/tokenAddresses'
@@ -20,7 +20,7 @@ interface IModalRequestUnstakeProps {
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   pid: number
   votingMultiplier: string
-  yourStake: BigNumber
+  yourStake: Big
   symbol: string
   chainId: number
   stakingAddress: string
@@ -95,10 +95,13 @@ const ModalRequestUnstake = ({
           </p>
           <S.Values>
             <span>
-              {BNtoDecimal(new BigNumber(votingMultiplier).mul(yourStake), 18)}
+              {BNtoDecimal(
+                Big(votingMultiplier).mul(yourStake).div(Big(10).pow(18)),
+                18
+              )}
             </span>
             <span style={{ fontWeight: 300, margin: '0 8px' }}>to</span>
-            <span>{BNtoDecimal(new BigNumber(yourStake), 18)}</span>
+            <span>{BNtoDecimal(yourStake.div(Big(10).pow(18)), 18)}</span>
           </S.Values>
           <p>Do you want to proceed?</p>
           <S.ButtonContainer>

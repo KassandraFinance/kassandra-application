@@ -1,6 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import BigNumber from 'bn.js'
 import useSWR from 'swr'
 import request from 'graphql-request'
 import Big from 'big.js'
@@ -82,11 +81,11 @@ export interface IKacyLpPool {
     title?: string
     link?: string
   }
-  amount: BigNumber
+  amount: Big
   chainLogo: string
 }
 export interface IAssetsValueWalletProps {
-  [key: string]: BigNumber
+  [key: string]: Big
 }
 
 export interface IPriceToken {
@@ -108,7 +107,7 @@ type Response = {
 
 const Profile = () => {
   const [assetsValueInWallet, setAssetsValueInWallet] =
-    React.useState<IAssetsValueWalletProps>({ '': new BigNumber(-1) })
+    React.useState<IAssetsValueWalletProps>({ '': Big(-1) })
   const [cardstakesPool, setCardStakesPool] = React.useState<IKacyLpPool[]>([])
   const [myFunds, setMyFunds] = React.useState<ImyFundsType>({})
   const [priceToken, setPriceToken] = React.useState<IPriceToken>({
@@ -165,7 +164,7 @@ const Profile = () => {
     chain: number
   ) {
     if (!profileAddress) {
-      return new BigNumber(0)
+      return Big(0)
     }
 
     const address = Array.isArray(profileAddress)
@@ -180,9 +179,9 @@ const Profile = () => {
         chain
       )
 
-      return new BigNumber(userInfoResponse.amount)
+      return Big(userInfoResponse.amount.toString())
     } catch (error) {
-      return new BigNumber(0)
+      return Big(0)
     }
   }
 
@@ -198,11 +197,11 @@ const Profile = () => {
         const balanceToken = await ERC20Contract.balance(walletUserString)
 
         Object.assign(valueInWallet, {
-          [id]: new BigNumber(balanceToken)
+          [id]: Big(balanceToken)
         })
       } catch (error) {
         Object.assign(valueInWallet, {
-          [id]: new BigNumber(0)
+          [id]: Big(0)
         })
       }
     }
@@ -256,7 +255,7 @@ const Profile = () => {
       address: '',
       symbol: '',
       poolName: '',
-      amount: new BigNumber(0),
+      amount: Big(0),
       chainLogo: ''
     }
 

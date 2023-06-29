@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import ReactMarkdown from 'react-markdown'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
@@ -46,7 +45,7 @@ export interface IUserVotedProps {
   voted: boolean
   support: boolean | null
   userWalletAddress: string
-  yourVotingPowerInProposal: BigNumber
+  yourVotingPowerInProposal: Big
 }
 
 export interface IVotesProps {
@@ -122,10 +121,10 @@ const Proposal = () => {
     voted: false,
     support: null,
     userWalletAddress: '',
-    yourVotingPowerInProposal: new BigNumber(0)
+    yourVotingPowerInProposal: Big(0)
   })
   const [yourVotingPowerInProposal, setYourVotingPowerInProposal] =
-    React.useState(new BigNumber(0))
+    React.useState(Big(0))
 
   const router = useRouter()
   const [{ wallet }] = useConnectWallet()
@@ -148,7 +147,7 @@ const Proposal = () => {
         startBlock
       )
 
-      setYourVotingPowerInProposal(new BigNumber(votingPowerAtMoment))
+      setYourVotingPowerInProposal(Big(votingPowerAtMoment.toString()))
     }
   }
 
@@ -157,7 +156,7 @@ const Proposal = () => {
       userVoted.voted ||
       proposalState !== 'Active' ||
       !wallet ||
-      yourVotingPowerInProposal.eq(new BigNumber(0))
+      yourVotingPowerInProposal.eq(Big(0))
     ) {
       return
     }
@@ -243,7 +242,7 @@ const Proposal = () => {
           voted: userAlreadyVoted ? true : false,
           support: userAlreadyVoted ? userAlreadyVoted.support : null,
           userWalletAddress: wallet.accounts[0].address,
-          yourVotingPowerInProposal: new BigNumber(0)
+          yourVotingPowerInProposal: Big(0)
         })
       }
     }
@@ -610,7 +609,7 @@ const Proposal = () => {
               yourVotingPowerInProposal={yourVotingPowerInProposal}
               typeVote="For"
               percentage={percentageVotes.for}
-              totalVotingPower={BNtoDecimal(proposal.forVotes, 0, 2, 2)}
+              totalVotingPower={BNtoDecimal(Big(proposal.forVotes), 0, 2, 2)}
               proposalState={proposalState}
               userVote={userVoted}
               handleVote={handleVote}
@@ -619,7 +618,7 @@ const Proposal = () => {
                   voteType: 'For',
                   percentage: `${percentageVotes.for}`,
                   totalVotingPower: `${BNtoDecimal(
-                    proposal.forVotes,
+                    Big(proposal.forVotes),
                     0,
                     2,
                     2
@@ -633,7 +632,12 @@ const Proposal = () => {
               yourVotingPowerInProposal={yourVotingPowerInProposal}
               typeVote="Against"
               percentage={percentageVotes.against}
-              totalVotingPower={BNtoDecimal(proposal.againstVotes, 0, 2, 2)}
+              totalVotingPower={BNtoDecimal(
+                Big(proposal.againstVotes),
+                0,
+                2,
+                2
+              )}
               proposalState={proposalState}
               userVote={userVoted}
               handleVote={handleVote}
@@ -642,7 +646,7 @@ const Proposal = () => {
                   voteType: 'Against',
                   percentage: `${percentageVotes.against}`,
                   totalVotingPower: `${BNtoDecimal(
-                    proposal.againstVotes,
+                    Big(proposal.againstVotes),
                     0,
                     2,
                     2
@@ -791,11 +795,7 @@ const Proposal = () => {
                         Value:
                         <S.DetailsText>
                           {proposal.values[index]
-                            ? BNtoDecimal(
-                                new BigNumber(proposal.values[index]),
-                                18,
-                                2
-                              )
+                            ? BNtoDecimal(Big(proposal.values[index]), 18, 2)
                             : '-'}
                         </S.DetailsText>
                       </S.DetailsSubTitle>

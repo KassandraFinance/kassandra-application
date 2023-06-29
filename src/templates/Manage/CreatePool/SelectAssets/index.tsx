@@ -1,6 +1,5 @@
 import React from 'react'
 import useSWR from 'swr'
-import BigNumber from 'bn.js'
 import request from 'graphql-request'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
@@ -47,7 +46,7 @@ export type TokensInfoResponseType = {
   decimals: number
 }
 
-type BalancesType = Record<string, BigNumber>
+type BalancesType = Record<string, Big>
 
 const SelectAssets = () => {
   const [whitelist, setWhitelist] = React.useState<string[]>()
@@ -150,11 +149,11 @@ const SelectAssets = () => {
       const balancesArr: BalancesType = {}
       if (networkId === 5) {
         for (const [i, token] of whitelist.entries()) {
-          balancesArr[mockTokens[token]] = new BigNumber(res[i].toString())
+          balancesArr[mockTokens[token]] = Big(res[i].toString())
         }
       } else {
         for (const [i, token] of whitelist.entries()) {
-          balancesArr[token.toLowerCase()] = new BigNumber(res[i].toString())
+          balancesArr[token.toLowerCase()] = Big(res[i].toString())
         }
       }
 

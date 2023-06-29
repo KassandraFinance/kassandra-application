@@ -1,6 +1,5 @@
 import React from 'react'
 import Big from 'big.js'
-import BigNumber from 'bn.js'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { networks } from '@/constants/tokenAddresses'
@@ -14,8 +13,8 @@ import * as S from './styles'
 interface IKacyEarnedProps {
   pid: number
   userWalletAddress: string
-  kacyEarned: BigNumber
-  setKacyEarned: React.Dispatch<React.SetStateAction<BigNumber>>
+  kacyEarned: Big
+  setKacyEarned: React.Dispatch<React.SetStateAction<Big>>
   kacyPrice: Big
   stakingAddress: string
   chainId: number
@@ -36,11 +35,11 @@ const KacyEarned = ({
 
   async function getKacyEaned() {
     if (wallet?.provider) {
-      const earnedResponse: BigNumber = await staking.earned(
+      const earnedResponse = await staking.earned(
         pid,
         wallet?.accounts[0].address
       )
-      setKacyEarned(earnedResponse)
+      setKacyEarned(Big(earnedResponse.toString()))
     }
   }
 
@@ -60,16 +59,16 @@ const KacyEarned = ({
         KACY <span>Earned</span>
       </p>
       <h3>
-        {kacyEarned.lt(new BigNumber('0'))
+        {kacyEarned.lt(Big(0))
           ? '...'
-          : BNtoDecimal(kacyEarned, 18, 2)}
+          : BNtoDecimal(kacyEarned.div(Big(10).pow(18)), 18, 2)}
       </h3>
       <span>
         <b>&#8776;</b>{' '}
-        {kacyEarned.lt(new BigNumber('0')) || kacyPrice.lt(0)
+        {kacyEarned.lt(Big(0)) || kacyPrice.lt(0)
           ? '...'
           : BNtoDecimal(
-              Big(kacyEarned.toString()).mul(kacyPrice).div(Big(10).pow(18)),
+              kacyEarned.mul(kacyPrice).div(Big(10).pow(18)),
               6,
               2,
               2

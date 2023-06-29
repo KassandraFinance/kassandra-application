@@ -1,5 +1,5 @@
 import React from 'react'
-import BigNumber from 'bn.js'
+import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { Staking } from '@/constants/tokenAddresses'
@@ -39,8 +39,8 @@ const Stake = () => {
       ])
 
       setInvestor([
-        res[0].gt(new BigNumber('0')),
-        res[1].gt(new BigNumber('0'))
+        Big(res[0].toString()).gt(Big(0)),
+        Big(res[1].toString()).gt(Big(0))
       ])
     }
 
