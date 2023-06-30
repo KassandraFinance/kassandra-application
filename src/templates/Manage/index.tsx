@@ -28,7 +28,7 @@ const Manage = () => {
   const [{ wallet }] = useConnectWallet()
 
   const { data } = useUserProfile({
-    address: wallet?.accounts[0].address || ''
+    address: wallet?.accounts[0].address
   })
 
   const { managerPools } = useManagerPools(

@@ -170,7 +170,7 @@ const PoolManager = () => {
   )
 
   const { data: userProfile } = useUserProfile({
-    address: wallet?.accounts[0].address || ''
+    address: wallet?.accounts[0].address
   })
 
   React.useEffect(() => {

@@ -69,7 +69,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
   const [{ wallet }] = useConnectWallet()
 
   const { data } = useUserProfile({
-    address: wallet?.accounts[0].address || ''
+    address: wallet?.accounts[0].address
   })
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
   const poolCreattionChainId = useAppSelector(

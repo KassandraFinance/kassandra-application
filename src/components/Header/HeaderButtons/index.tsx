@@ -65,7 +65,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   }
 
   const { data } = useUserProfile({
-    address: wallet?.accounts[0].address || ''
+    address: wallet?.accounts[0].address
   })
   React.useEffect(() => {
     if (wallet?.provider) {

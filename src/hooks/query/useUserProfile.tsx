@@ -1,7 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
+import { getAddress } from 'ethers'
+
+type FetchUserProfileType = {
+  address: string
+}
 
 type UseUserProfileProps = {
-  address: string
+  address: string | undefined
 }
 
 type UserProfileType = {
@@ -27,17 +32,20 @@ type UserProfileType = {
 
 export const fetchUserProfile = async ({
   address
-}: UseUserProfileProps): Promise<UserProfileType> => {
+}: FetchUserProfileType): Promise<UserProfileType> => {
   const res = await fetch(`/api/profile/${address}`).then(res => res.json())
 
   return res
 }
 
 export const useUserProfile = ({ address }: UseUserProfileProps) => {
+  const id = address ? getAddress(address) : ''
   return useQuery({
-    queryKey: ['user-profile', address],
+    queryKey: ['user-profile', id],
     queryFn: async () => {
-      return fetchUserProfile({ address })
-    }
+      return fetchUserProfile({ address: id })
+    },
+    staleTime: 1000 * 60,
+    refetchInterval: 1000 * 60
   })
 }
