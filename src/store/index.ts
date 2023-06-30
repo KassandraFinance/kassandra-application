@@ -11,7 +11,6 @@ import poolImagesReducer from './reducers/poolImages'
 import tokenAddress2IndexReducer from './reducers/tokenAddress2Index'
 import performanceValuesReducer from './reducers/performanceValues'
 import modalAlertTextReducer from './reducers/modalAlertText'
-import userReducer from './reducers/userSlice'
 import poolCreationReducer from './reducers/poolCreationSlice'
 import tokenSelectionActiveReducer from './reducers/tokenSelectionActive'
 import tokenSelectReducer from './reducers/tokenSelect'
@@ -36,7 +35,6 @@ export const rootReducer = combineReducers({
   performanceValues: performanceValuesReducer,
   periodSelected: periodSelectedReducer,
   modalAlertText: modalAlertTextReducer,
-  user: userReducer,
   poolCreation: poolCreationReducer,
   tokenSelectionActive: tokenSelectionActiveReducer,
   tokenSelect: tokenSelectReducer,

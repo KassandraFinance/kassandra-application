@@ -12,6 +12,7 @@ import {
   setToFirstStep,
   setBackStepNumber
 } from '@/store/reducers/poolCreationSlice'
+import { useUserProfile } from '@/hooks/query/useUserProfile'
 
 import substr from '@/utils/substr'
 
@@ -67,7 +68,9 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
   const [{ wallet }] = useConnectWallet()
 
-  const { nickName, image } = useAppSelector(state => state.user)
+  const { data } = useUserProfile({
+    address: wallet?.accounts[0].address || ''
+  })
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
   const poolCreattionChainId = useAppSelector(
     state => state.poolCreation.createPoolData.networkId
@@ -315,7 +318,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
               <S.UserHeader>
                 <S.UserImage>
                   <img
-                    src={image.profilePic ? image.profilePic : userIcon.src}
+                    src={data?.image ? data.image : userIcon.src}
                     width={40}
                     height={40}
                   />
@@ -323,8 +326,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
                 <S.UserNameWrapper>
                   <S.UserName isOpen={isOpen}>
-                    {nickName.length > 0
-                      ? nickName
+                    {data?.nickname
+                      ? data.nickname
                       : substr(wallet.accounts[0].address)}
                   </S.UserName>
 
@@ -338,7 +341,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             <S.UserHeader onClick={() => setIsModalWallet(!isModalWallet)}>
               <S.UserImage>
                 <img
-                  src={image.profilePic ? image.profilePic : userIcon.src}
+                  src={data?.image ? data.image : userIcon.src}
                   width={40}
                   height={40}
                 />
@@ -346,8 +349,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
               <S.UserNameWrapper>
                 <S.UserName isOpen={isOpen}>
-                  {nickName.length > 0
-                    ? nickName
+                  {data?.nickname
+                    ? data.nickname
                     : substr(wallet?.accounts[0].address || '')}
                 </S.UserName>
 

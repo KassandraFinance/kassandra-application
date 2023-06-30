@@ -1,8 +1,7 @@
 import Link from 'next/link'
-
-import useSWR from 'swr'
 import Big from 'big.js'
 
+import { useUserProfile } from '@/hooks/query/useUserProfile'
 import { BNtoDecimal } from '@/utils/numerals'
 import substr from '@/utils/substr'
 
@@ -94,12 +93,10 @@ const ActivityCard = ({
   sharesRedeemed,
   managerAddress
 }: IActivityCardProps) => {
-  const { data } = useSWR(`/api/profile/${wallet}`, {
-    refreshInterval: 60 * 60 * 5 * 1000
-  })
+  const { data } = useUserProfile({ address: wallet })
 
-  const userImage = data?.image
-  const nickname = data?.nickname
+  const userImage = data?.image || ''
+  const nickname = data?.nickname || ''
 
   return (
     <S.ActivityCard>

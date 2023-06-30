@@ -10,6 +10,7 @@ import 'tippy.js/dist/tippy.css'
 
 import { BNtoDecimal } from '../../utils/numerals'
 import substr from '@/utils/substr'
+import { useUserProfile } from '@/hooks/query/useUserProfile'
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setTokensSwapProvider } from '../../store/reducers/tokenListSwapProvider'
@@ -77,7 +78,6 @@ type ListTokensRes = {
 }
 
 const Pool = () => {
-  const [profileName, setProfileName] = React.useState(null)
   const [openModal, setOpenModal] = React.useState(false)
   const [loading, setLoading] = React.useState<boolean>(true)
   const [infoPool, setInfoPool] = React.useState<InfoPool>({
@@ -101,14 +101,7 @@ const Pool = () => {
     })
   )
 
-  async function getProfile() {
-    const response = await fetch(`/api/profile/${pool.manager.id}`)
-    const userProfile = await response.json()
-
-    if (userProfile.nickname) {
-      setProfileName(userProfile.nickname)
-    }
-  }
+  const { data: userProfile } = useUserProfile({ address: pool.manager.id })
 
   async function getTokensForOperations() {
     const resJson = await fetch(`${BACKEND_KASSANDRA}`, {
@@ -226,12 +219,6 @@ const Pool = () => {
     }
   }, [data])
 
-  React.useEffect(() => {
-    if (pool.manager.id !== '') {
-      getProfile()
-    }
-  }, [pool.manager.id])
-
   return (
     <>
       <ShareImageModal
@@ -312,7 +299,9 @@ const Pool = () => {
                       >
                         <a>
                           by{' '}
-                          {profileName ? profileName : substr(pool.manager.id)}
+                          {userProfile?.nickname
+                            ? userProfile.nickname
+                            : substr(pool.manager.id)}
                         </a>
                       </Link>
                     )}

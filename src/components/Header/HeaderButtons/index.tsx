@@ -3,8 +3,7 @@ import Link from 'next/link'
 import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
 
-import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { setNickName, setProfilePic } from '@/store/reducers/userSlice'
+import { useUserProfile } from '@/hooks/query/useUserProfile'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import substr from '@/utils/substr'
 
@@ -28,11 +27,8 @@ type styles = {
 }
 
 const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
-  const dispatch = useAppDispatch()
   const { trackEventFunction } = useMatomoEcommerce()
   const [{ wallet, connecting }, connect] = useConnectWallet()
-
-  const { nickName, image } = useAppSelector(state => state.user)
 
   const [network, setNetwork] = React.useState<styles>({
     icon: disconnectedIcon,
@@ -68,6 +64,9 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
     }
   }
 
+  const { data } = useUserProfile({
+    address: wallet?.accounts[0].address || ''
+  })
   React.useEffect(() => {
     if (wallet?.provider) {
       const chainId = wallet.chains[0].id
@@ -77,21 +76,6 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
     }
 
     setNetwork(chainStyle.disconect)
-  }, [wallet])
-
-  React.useEffect(() => {
-    if (wallet?.provider) {
-      fetch(`/api/profile/${getAddress(wallet.accounts[0].address)}`)
-        .then(res => res.json())
-        .then(data => {
-          const { nickname, image, isNFT } = data
-
-          dispatch(setNickName(nickname || ''))
-          dispatch(
-            setProfilePic({ profilePic: image || '', isNFT: isNFT || false })
-          )
-        })
-    }
   }, [wallet])
 
   return (
@@ -174,16 +158,16 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
                 </defs>
               </svg>
             }
-            image={image.profilePic}
-            isNFT={image.isNFT}
+            image={data?.image || ''}
+            isNFT={data?.isNFT !== null}
             as="a"
             size="medium"
             onClick={() => {
               trackEventFunction('open-modal', 'your-wallet', 'header')
             }}
             text={
-              nickName.length > 0
-                ? nickName
+              data?.nickname
+                ? data.nickname
                 : substr(getAddress(wallet.accounts[0].address))
             }
           />

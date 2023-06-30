@@ -12,10 +12,11 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
 import { GET_POOL_REBALANCE_TIME, GET_POOL_PRICE } from './graphql'
 
+import { useUserProfile } from '@/hooks/query/useUserProfile'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import usePoolInfo from '@/hooks/usePoolInfo'
 import usePoolAssets from '@/hooks/usePoolAssets'
-import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { useAppDispatch } from '@/store/hooks'
 import { useCountdown } from '@/hooks/useCountDown'
 import { setPerformanceValues } from '@/store/reducers/performanceValues'
 
@@ -168,7 +169,9 @@ const PoolManager = () => {
     })
   )
 
-  const { image } = useAppSelector(state => state.user)
+  const { data: userProfile } = useUserProfile({
+    address: wallet?.accounts[0].address || ''
+  })
 
   React.useEffect(() => {
     if (isManager) {
@@ -250,7 +253,7 @@ const PoolManager = () => {
             {wallet ? (
               <>
                 <img
-                  src={image?.profilePic ? image.profilePic : userIcon.src}
+                  src={userProfile?.image ? userProfile.image : userIcon.src}
                   width={20}
                   height={20}
                 />

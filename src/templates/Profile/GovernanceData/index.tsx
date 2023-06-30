@@ -81,8 +81,7 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
         data.received.map(async (prop: IUserVotingPowerProps) => {
           receivedTotal = receivedTotal.add(prop.votingPower)
 
-          const response = await fetch(`/api/profile/${prop.from.id}`)
-          const userProfile = await response.json()
+          // const userProfile = await fetchUserProfile({ address: prop.from.id })
 
           return {
             pool: prop.pool,
@@ -93,10 +92,10 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
             },
             to: {
               id: prop.to.id
-            },
-            image: userProfile.image || '',
-            name: userProfile.name || '',
-            isNFT: userProfile?.isNFT || false
+            }
+            // image: userProfile.image || '',
+            // name: userProfile.nickname || '',
+            // isNFT: userProfile?.isNFT || false
           }
         })
       )
@@ -113,8 +112,7 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
         data.delegations.map(async (prop: IUserVotingPowerProps) => {
           delegatingToTotal = delegatingToTotal.add(prop.votingPower)
 
-          const response = await fetch(`/api/profile/${prop.to.id}`)
-          const userProfile = await response.json()
+          // const userProfile = await fetchUserProfile({ address: prop.from.id })
 
           return {
             pool: prop.pool,
@@ -122,10 +120,10 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
             kacy: await getAmountKacy(prop.pool, prop.from?.id),
             to: {
               id: prop.to.id
-            },
-            image: userProfile.image || '',
-            name: userProfile.name || '',
-            isNFT: userProfile?.isNFT || false
+            }
+            // image: userProfile.image || '',
+            // name: userProfile.nickname || '',
+            // isNFT: userProfile?.isNFT || false
           }
         })
       )
