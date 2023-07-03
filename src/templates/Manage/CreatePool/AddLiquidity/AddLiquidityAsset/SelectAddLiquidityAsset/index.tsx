@@ -177,6 +177,7 @@ const SelectAddLiquidityAsset = ({
         }}
         tokenPinList={[]}
         setTokenSelected={token => dispatch(setTokenIn(token))}
+        pin={false}
       />
       <S.InputValidation
         form="poolCreationForm"
