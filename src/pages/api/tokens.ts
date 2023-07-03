@@ -7,12 +7,13 @@ type CoinsMetadataType = Record<
     name: string
     symbol: string
     logo: string
-    usd: number
+    usd: string
     marketCap: number
     volume: number
     pricePercentageChangeIn24h: number
     pricePercentageChangeIn7d: number
     sparklineFrom7d: number[]
+    decimals: number
   }
 >
 
@@ -34,6 +35,7 @@ async function getTokens(params: { tokensId?: string[]; chainId?: number }) {
         query($ids: [ID!] $chainId: Int) {
           tokensByIds(ids: $ids chainId: $chainId) {
             id
+            decimals
             coingecko_id
           }
         }
@@ -112,14 +114,23 @@ export default async (
       ? parseInt(chainIdQuery[0])
       : parseInt(chainIdQuery)
 
-    const coingeckoIdToAddress: Record<string, string> = {}
+    const coingeckoIdToAddress: Record<
+      string,
+      { address: string; decimals: number }
+    > = {}
     const coingeckoIds = []
-    const kassandraTokens = await getTokens({ tokensId, chainId })
+    const kassandraTokens = await getTokens({
+      tokensId: tokensId.length > 0 && tokensId[0] ? tokensId : undefined,
+      chainId
+    })
     for (const token of kassandraTokens) {
       if (token?.coingecko_id) {
         coingeckoIds.push(token.coingecko_id)
         Object.assign(coingeckoIdToAddress, {
-          [token.coingecko_id]: token.id.toLowerCase()
+          [token.coingecko_id]: {
+            address: token.id.toLowerCase(),
+            decimals: token.decimals
+          }
         })
       }
     }
@@ -136,17 +147,18 @@ export default async (
     const coinsMetadata: CoinsMetadataType = {}
     for (const infoToken of infoTokens) {
       Object.assign(coinsMetadata, {
-        [coingeckoIdToAddress[infoToken.id]]: {
+        [coingeckoIdToAddress[infoToken.id]?.address]: {
           heimdallId: infoToken.id,
           name: infoToken.name,
-          symbol: infoToken.symbol,
+          symbol: infoToken.symbol.toUpperCase(),
           logo: infoToken.image,
           usd: infoToken.price,
           marketCap: infoToken.marketCap,
           volume: infoToken.volume,
           pricePercentageChangeIn24h: infoToken.pricePercentageChangeIn24h,
           pricePercentageChangeIn7d: infoToken.pricePercentageChangeIn7d,
-          sparklineFrom7d: infoToken.sparklineFrom7d
+          sparklineFrom7d: infoToken.sparklineFrom7d,
+          decimals: coingeckoIdToAddress[infoToken.id]?.decimals
         }
       })
     }

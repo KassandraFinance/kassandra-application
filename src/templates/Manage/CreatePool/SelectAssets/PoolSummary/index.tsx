@@ -71,7 +71,7 @@ const PoolSummary = ({
                 price={
                   priceList && priceList[coin.address]
                     ? priceList[coin.address].usd
-                    : 0
+                    : '0'
                 }
               />
 

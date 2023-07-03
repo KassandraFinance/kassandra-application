@@ -28,7 +28,7 @@ type IPoolInfoProps = {
 interface ISelectTokenRemoveProps {
   poolInfo: IPoolInfoProps
   chainId: number
-  priceToken: (address: string) => number
+  priceToken: (address: string) => string
 }
 
 // eslint-disable-next-line prettier/prettier

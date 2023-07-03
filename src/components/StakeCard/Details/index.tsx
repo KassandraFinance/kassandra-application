@@ -19,7 +19,7 @@ interface IInfoStakeStaticProps {
   startDate: string
   endDate: string
   kacyRewards: Big
-  withdrawDelay: any
+  withdrawDelay: string
 }
 
 interface IDetailsProps {
@@ -60,7 +60,7 @@ const Details = ({
   const connect = localStorage.getItem('walletconnect')
 
   React.useEffect(() => {
-    let interval: any
+    let interval: NodeJS.Timeout
     ;(async () => {
       const poolInfoResponse = await staking.poolInfo(pid)
 

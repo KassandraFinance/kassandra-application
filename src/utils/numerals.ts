@@ -38,7 +38,7 @@ import Big from 'big.js'
  *         - `10000.2031   => 10 000`
  * @params minimumPrecision: Minimum amount of decimal places to show, useful
  *         for always displaying 2 decimal digits for USD (e.g. 2.00)
- * 
+ *
  * @returns String with the pretty printed number
  */
 export function BNtoDecimal(

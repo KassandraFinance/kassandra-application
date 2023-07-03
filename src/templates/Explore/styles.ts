@@ -30,12 +30,12 @@ export const LoadingContainer = styled.div`
 `
 
 interface ICardContainerProps {
-  loading: boolean
+  isLoading: boolean
 }
 
 // eslint-disable-next-line prettier/prettier
 export const CardContainer = styled.div<ICardContainerProps>`
-  display: ${props => (props.loading ? 'none' : 'grid')};
+  display: ${props => (props.isLoading ? 'none' : 'grid')};
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2.4rem;
 
