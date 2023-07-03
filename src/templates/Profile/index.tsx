@@ -1,7 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import Big from 'big.js'
 import { getAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
@@ -10,18 +8,17 @@ import substr from '../../utils/substr'
 import { BNtoDecimal } from '../../utils/numerals'
 
 import { useVotingPower as useVotingPowerApi } from '@/hooks/query/useVotingPower'
+import { usePools } from '@/hooks/query/usePools'
 import useStakingContract from '@/hooks/useStaking'
 import usePriceLP from '@/hooks/usePriceLPEthers'
 import { ERC20 } from '@/hooks/useERC20'
 import useCoingecko from '@/hooks/useCoingecko'
 import useTransaction from '@/hooks/useTransaction'
 
-import { GET_PROFILE } from './graphql'
 import {
   LPDaiAvax,
   Staking,
   networks,
-  BACKEND_KASSANDRA,
   KacyPoligon,
   WETH_POLYGON
 } from '@/constants/tokenAddresses'
@@ -96,15 +93,6 @@ interface ImyFundsType {
   [key: string]: string
 }
 
-type Response = {
-  pools: {
-    id: string
-    address: string
-    symbol: string
-    price_usd: string
-  }[]
-}
-
 const Profile = () => {
   const [assetsValueInWallet, setAssetsValueInWallet] =
     React.useState<IAssetsValueWalletProps>({ '': Big(-1) })
@@ -148,9 +136,7 @@ const Profile = () => {
     : ''
 
   const { data: votingPowerData } = useVotingPowerApi({ id: walletUserString })
-  const { data } = useSWR<Response>([GET_PROFILE], query =>
-    request(BACKEND_KASSANDRA, query)
-  )
+  const { data } = usePools()
 
   const { priceToken: getPriceToken } = useCoingecko(
     networks[137].chainId,
@@ -328,8 +314,8 @@ const Profile = () => {
   }, [wallet])
 
   React.useEffect(() => {
-    if (data?.pools) {
-      data.pools.map(pool => {
+    if (data) {
+      data.map(pool => {
         const prodPrice = new Big(pool.price_usd)
 
         setPriceToken(prevState => ({
@@ -451,7 +437,7 @@ const Profile = () => {
                 priceToken={priceToken}
                 myFunds={myFunds}
                 priceInDolar={priceInDolar}
-                poolsAddresses={data.pools.map(pool => pool.address)}
+                poolsAddresses={data.map(pool => pool.address)}
                 setPriceInDolar={setPriceInDolar}
               />
             )

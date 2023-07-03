@@ -1,15 +1,13 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { SUBGRAPH_URL, Staking } from '../../../constants/tokenAddresses'
-import { GET_USER } from './graphql'
+import { Staking } from '../../../constants/tokenAddresses'
 
 import useStakingContract from '@/hooks/useStaking'
+import { useDelegations } from '@/hooks/query/useDelegations'
 
 import TitleSection from '../../../components/TitleSection'
 import IntroGovernance from './IntroGovernance'
@@ -24,19 +22,16 @@ import externalLink from '../../../../public/assets/utilities/external-link.svg'
 
 import * as S from './styles'
 
-interface IUserVotingPowerProps {
+type UserVotingPowerType = {
   pool: string
   votingPower: Big
-  kacy: Big
-  from: {
+  kacy: Big | undefined
+  from?: {
     id: string
   }
   to: {
     id: string
   }
-  image: string
-  name: string
-  isNFT: boolean
 }
 
 interface IGovernanceDataProps {
@@ -47,21 +42,19 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
   const [totalUserReceived, setUserReceived] = React.useState(Big(0))
   const [totalUserDelegating, setUserDelegating] = React.useState(Big(0))
   const [userReceivedFromVP, setUserReceivedFromVP] = React.useState<
-    IUserVotingPowerProps[]
+    UserVotingPowerType[]
   >([])
   const [userDelegatingToVP, setUserDelegatingToVP] = React.useState<
-    IUserVotingPowerProps[]
+    UserVotingPowerType[]
   >([])
 
   const router = useRouter()
   const [{ wallet }] = useConnectWallet()
   const { userInfo } = useStakingContract(Staking)
 
-  const { data } = useSWR([GET_USER], query =>
-    request(SUBGRAPH_URL, query, {
-      id: address
-    })
-  )
+  const { data } = useDelegations({
+    id: Array.isArray(address) ? '' : address || ''
+  })
 
   async function getAmountKacy(pool: string, addressUrl: string | undefined) {
     const poolNumber = Number(pool)
@@ -78,10 +71,8 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
       let receivedTotal = Big(0)
 
       const receivedToVP = await Promise.all(
-        data.received.map(async (prop: IUserVotingPowerProps) => {
+        data.received.map(async prop => {
           receivedTotal = receivedTotal.add(prop.votingPower)
-
-          // const userProfile = await fetchUserProfile({ address: prop.from.id })
 
           return {
             pool: prop.pool,
@@ -93,9 +84,6 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
             to: {
               id: prop.to.id
             }
-            // image: userProfile.image || '',
-            // name: userProfile.nickname || '',
-            // isNFT: userProfile?.isNFT || false
           }
         })
       )
@@ -109,10 +97,8 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
       let delegatingToTotal = Big(0)
 
       const delegatingToVP = await Promise.all(
-        data.delegations.map(async (prop: IUserVotingPowerProps) => {
+        data.delegations.map(async prop => {
           delegatingToTotal = delegatingToTotal.add(prop.votingPower)
-
-          // const userProfile = await fetchUserProfile({ address: prop.from.id })
 
           return {
             pool: prop.pool,
@@ -121,9 +107,6 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
             to: {
               id: prop.to.id
             }
-            // image: userProfile.image || '',
-            // name: userProfile.nickname || '',
-            // isNFT: userProfile?.isNFT || false
           }
         })
       )

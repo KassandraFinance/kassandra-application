@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_CHART = gql`
-  query ($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
+query PoolChart($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
     pools(where: { id_in: $id }) {
       id
       address
@@ -80,4 +77,3 @@ export const GET_CHART = gql`
       }
     }
   }
-`

@@ -57,7 +57,7 @@ export type Activity = {
   timestamp: Scalars['Int']['output']
   txHash: Scalars['String']['output']
   /**
-   * One of 'join', 'exit' or 'swap'
+   * One of 'join', 'exit', 'swap', 'token-add', 'token-remove' or 'public'
    *
    */
   type: Scalars['String']['output']
@@ -743,7 +743,16 @@ export type Candle_OrderBy =
 
 export type Chain = {
   __typename?: 'Chain'
+  addressWrapped?: Maybe<Scalars['String']['output']>
+  blockExplorerUrl?: Maybe<Scalars['String']['output']>
+  chainName?: Maybe<Scalars['String']['output']>
   id: Scalars['ID']['output']
+  logo?: Maybe<Scalars['String']['output']>
+  nativeTokenDecimals?: Maybe<Scalars['Int']['output']>
+  nativeTokenName?: Maybe<Scalars['String']['output']>
+  nativeTokenSymbol?: Maybe<Scalars['String']['output']>
+  rpcUrls?: Maybe<Array<Maybe<Scalars['String']['output']>>>
+  secondsPerBlock?: Maybe<Scalars['Int']['output']>
 }
 
 export type Chain_Filter = {
@@ -760,96 +769,6 @@ export type Chain_Filter = {
 }
 
 export type Chain_OrderBy = 'id'
-
-/**
- * If someone delegates their votes to someone else, this links both sides
- *
- */
-export type Delegation = {
-  __typename?: 'Delegation'
-  from: User
-  /**
-   * wallet address + pool ID
-   *
-   */
-  id: Scalars['ID']['output']
-  pool: Scalars['BigInt']['output']
-  to: User
-  votingPower: Scalars['BigDecimal']['output']
-}
-
-export type Delegation_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>
-  from?: InputMaybe<Scalars['String']['input']>
-  from_?: InputMaybe<User_Filter>
-  from_contains?: InputMaybe<Scalars['String']['input']>
-  from_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  from_ends_with?: InputMaybe<Scalars['String']['input']>
-  from_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  from_gt?: InputMaybe<Scalars['String']['input']>
-  from_gte?: InputMaybe<Scalars['String']['input']>
-  from_in?: InputMaybe<Array<Scalars['String']['input']>>
-  from_lt?: InputMaybe<Scalars['String']['input']>
-  from_lte?: InputMaybe<Scalars['String']['input']>
-  from_not?: InputMaybe<Scalars['String']['input']>
-  from_not_contains?: InputMaybe<Scalars['String']['input']>
-  from_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  from_not_ends_with?: InputMaybe<Scalars['String']['input']>
-  from_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  from_not_in?: InputMaybe<Array<Scalars['String']['input']>>
-  from_not_starts_with?: InputMaybe<Scalars['String']['input']>
-  from_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  from_starts_with?: InputMaybe<Scalars['String']['input']>
-  from_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  id?: InputMaybe<Scalars['ID']['input']>
-  id_gt?: InputMaybe<Scalars['ID']['input']>
-  id_gte?: InputMaybe<Scalars['ID']['input']>
-  id_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  id_lt?: InputMaybe<Scalars['ID']['input']>
-  id_lte?: InputMaybe<Scalars['ID']['input']>
-  id_not?: InputMaybe<Scalars['ID']['input']>
-  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  pool?: InputMaybe<Scalars['BigInt']['input']>
-  pool_gt?: InputMaybe<Scalars['BigInt']['input']>
-  pool_gte?: InputMaybe<Scalars['BigInt']['input']>
-  pool_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  pool_lt?: InputMaybe<Scalars['BigInt']['input']>
-  pool_lte?: InputMaybe<Scalars['BigInt']['input']>
-  pool_not?: InputMaybe<Scalars['BigInt']['input']>
-  pool_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  to?: InputMaybe<Scalars['String']['input']>
-  to_?: InputMaybe<User_Filter>
-  to_contains?: InputMaybe<Scalars['String']['input']>
-  to_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  to_ends_with?: InputMaybe<Scalars['String']['input']>
-  to_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  to_gt?: InputMaybe<Scalars['String']['input']>
-  to_gte?: InputMaybe<Scalars['String']['input']>
-  to_in?: InputMaybe<Array<Scalars['String']['input']>>
-  to_lt?: InputMaybe<Scalars['String']['input']>
-  to_lte?: InputMaybe<Scalars['String']['input']>
-  to_not?: InputMaybe<Scalars['String']['input']>
-  to_not_contains?: InputMaybe<Scalars['String']['input']>
-  to_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  to_not_ends_with?: InputMaybe<Scalars['String']['input']>
-  to_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  to_not_in?: InputMaybe<Array<Scalars['String']['input']>>
-  to_not_starts_with?: InputMaybe<Scalars['String']['input']>
-  to_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  to_starts_with?: InputMaybe<Scalars['String']['input']>
-  to_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  votingPower?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  votingPower_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-}
-
-export type Delegation_OrderBy = 'from' | 'id' | 'pool' | 'to' | 'votingPower'
 
 /**
  * The factory creates all the pools in the protocol
@@ -870,10 +789,10 @@ export type Factory = {
   num_tx: Scalars['BigInt']['output']
   pool_count: Scalars['Int']['output']
   pools: Array<Pool>
-  total_fees_aum_btc: Scalars['BigDecimal']['output']
   total_fees_aum_kassandra_btc: Scalars['BigDecimal']['output']
   total_fees_aum_kassandra_usd: Scalars['BigDecimal']['output']
-  total_fees_aum_usd: Scalars['BigDecimal']['output']
+  total_fees_aum_manager_btc: Scalars['BigDecimal']['output']
+  total_fees_aum_manager_usd: Scalars['BigDecimal']['output']
   total_fees_exit_btc: Scalars['BigDecimal']['output']
   total_fees_exit_usd: Scalars['BigDecimal']['output']
   total_fees_join_broker_btc: Scalars['BigDecimal']['output']
@@ -998,14 +917,6 @@ export type Factory_Filter = {
   pool_count_not?: InputMaybe<Scalars['Int']['input']>
   pool_count_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
   pools_?: InputMaybe<Pool_Filter>
-  total_fees_aum_btc?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_aum_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
   total_fees_aum_kassandra_btc?: InputMaybe<Scalars['BigDecimal']['input']>
   total_fees_aum_kassandra_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
   total_fees_aum_kassandra_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
@@ -1030,14 +941,30 @@ export type Factory_Filter = {
   total_fees_aum_kassandra_usd_not_in?: InputMaybe<
     Array<Scalars['BigDecimal']['input']>
   >
-  total_fees_aum_usd?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_aum_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_fees_aum_manager_btc?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_manager_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_manager_usd?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_manager_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
   total_fees_exit_btc?: InputMaybe<Scalars['BigDecimal']['input']>
   total_fees_exit_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
   total_fees_exit_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
@@ -1167,10 +1094,10 @@ export type Factory_OrderBy =
   | 'num_tx'
   | 'pool_count'
   | 'pools'
-  | 'total_fees_aum_btc'
   | 'total_fees_aum_kassandra_btc'
   | 'total_fees_aum_kassandra_usd'
-  | 'total_fees_aum_usd'
+  | 'total_fees_aum_manager_btc'
+  | 'total_fees_aum_manager_usd'
   | 'total_fees_exit_btc'
   | 'total_fees_exit_usd'
   | 'total_fees_join_broker_btc'
@@ -1358,147 +1285,10 @@ export type Fee_OrderBy =
   | 'volume_btc'
   | 'volume_usd'
 
-/**
- * The governance contract that contains all the proposals and votes
- *
- */
-export type Governance = {
-  __typename?: 'Governance'
-  /**
-   * governance contract address
-   *
-   */
-  id: Scalars['ID']['output']
-  internal_delegatee_address?: Maybe<Scalars['String']['output']>
-  internal_delegation_amount?: Maybe<Scalars['BigDecimal']['output']>
-  internal_delegation_tx_id?: Maybe<Scalars['Bytes']['output']>
-  proposals: Array<Proposal>
-  stakingPools: Scalars['Int']['output']
-  totalVotingPower: Scalars['BigDecimal']['output']
-  votingAddresses: Scalars['Int']['output']
-}
-
-/**
- * The governance contract that contains all the proposals and votes
- *
- */
-export type GovernanceProposalsArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Proposal_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  where?: InputMaybe<Proposal_Filter>
-}
-
-export type Governance_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>
-  id?: InputMaybe<Scalars['ID']['input']>
-  id_gt?: InputMaybe<Scalars['ID']['input']>
-  id_gte?: InputMaybe<Scalars['ID']['input']>
+export type Filter_Pool = {
+  chainId?: InputMaybe<Scalars['Int']['input']>
   id_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  id_lt?: InputMaybe<Scalars['ID']['input']>
-  id_lte?: InputMaybe<Scalars['ID']['input']>
-  id_not?: InputMaybe<Scalars['ID']['input']>
-  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  internal_delegatee_address?: InputMaybe<Scalars['String']['input']>
-  internal_delegatee_address_contains?: InputMaybe<Scalars['String']['input']>
-  internal_delegatee_address_contains_nocase?: InputMaybe<
-    Scalars['String']['input']
-  >
-  internal_delegatee_address_ends_with?: InputMaybe<Scalars['String']['input']>
-  internal_delegatee_address_ends_with_nocase?: InputMaybe<
-    Scalars['String']['input']
-  >
-  internal_delegatee_address_gt?: InputMaybe<Scalars['String']['input']>
-  internal_delegatee_address_gte?: InputMaybe<Scalars['String']['input']>
-  internal_delegatee_address_in?: InputMaybe<Array<Scalars['String']['input']>>
-  internal_delegatee_address_lt?: InputMaybe<Scalars['String']['input']>
-  internal_delegatee_address_lte?: InputMaybe<Scalars['String']['input']>
-  internal_delegatee_address_not?: InputMaybe<Scalars['String']['input']>
-  internal_delegatee_address_not_contains?: InputMaybe<
-    Scalars['String']['input']
-  >
-  internal_delegatee_address_not_contains_nocase?: InputMaybe<
-    Scalars['String']['input']
-  >
-  internal_delegatee_address_not_ends_with?: InputMaybe<
-    Scalars['String']['input']
-  >
-  internal_delegatee_address_not_ends_with_nocase?: InputMaybe<
-    Scalars['String']['input']
-  >
-  internal_delegatee_address_not_in?: InputMaybe<
-    Array<Scalars['String']['input']>
-  >
-  internal_delegatee_address_not_starts_with?: InputMaybe<
-    Scalars['String']['input']
-  >
-  internal_delegatee_address_not_starts_with_nocase?: InputMaybe<
-    Scalars['String']['input']
-  >
-  internal_delegatee_address_starts_with?: InputMaybe<
-    Scalars['String']['input']
-  >
-  internal_delegatee_address_starts_with_nocase?: InputMaybe<
-    Scalars['String']['input']
-  >
-  internal_delegation_amount?: InputMaybe<Scalars['BigDecimal']['input']>
-  internal_delegation_amount_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  internal_delegation_amount_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  internal_delegation_amount_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  internal_delegation_amount_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  internal_delegation_amount_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  internal_delegation_amount_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  internal_delegation_amount_not_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  internal_delegation_tx_id?: InputMaybe<Scalars['Bytes']['input']>
-  internal_delegation_tx_id_contains?: InputMaybe<Scalars['Bytes']['input']>
-  internal_delegation_tx_id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>
-  internal_delegation_tx_id_not?: InputMaybe<Scalars['Bytes']['input']>
-  internal_delegation_tx_id_not_contains?: InputMaybe<Scalars['Bytes']['input']>
-  internal_delegation_tx_id_not_in?: InputMaybe<
-    Array<Scalars['Bytes']['input']>
-  >
-  proposals_?: InputMaybe<Proposal_Filter>
-  stakingPools?: InputMaybe<Scalars['Int']['input']>
-  stakingPools_gt?: InputMaybe<Scalars['Int']['input']>
-  stakingPools_gte?: InputMaybe<Scalars['Int']['input']>
-  stakingPools_in?: InputMaybe<Array<Scalars['Int']['input']>>
-  stakingPools_lt?: InputMaybe<Scalars['Int']['input']>
-  stakingPools_lte?: InputMaybe<Scalars['Int']['input']>
-  stakingPools_not?: InputMaybe<Scalars['Int']['input']>
-  stakingPools_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
-  totalVotingPower?: InputMaybe<Scalars['BigDecimal']['input']>
-  totalVotingPower_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  totalVotingPower_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  totalVotingPower_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  totalVotingPower_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  totalVotingPower_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  totalVotingPower_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  totalVotingPower_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  votingAddresses?: InputMaybe<Scalars['Int']['input']>
-  votingAddresses_gt?: InputMaybe<Scalars['Int']['input']>
-  votingAddresses_gte?: InputMaybe<Scalars['Int']['input']>
-  votingAddresses_in?: InputMaybe<Array<Scalars['Int']['input']>>
-  votingAddresses_lt?: InputMaybe<Scalars['Int']['input']>
-  votingAddresses_lte?: InputMaybe<Scalars['Int']['input']>
-  votingAddresses_not?: InputMaybe<Scalars['Int']['input']>
-  votingAddresses_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
 }
-
-export type Governance_OrderBy =
-  | 'id'
-  | 'internal_delegatee_address'
-  | 'internal_delegation_amount'
-  | 'internal_delegation_tx_id'
-  | 'proposals'
-  | 'stakingPools'
-  | 'totalVotingPower'
-  | 'votingAddresses'
 
 /**
  * Holds a common array for activities and weight_goals
@@ -1779,6 +1569,7 @@ export type Kassandra = {
   __typename?: 'Kassandra'
   fee_aum_kassandra: Scalars['BigDecimal']['output']
   id: Scalars['ID']['output']
+  num_managers: Scalars['Int']['output']
 }
 
 export type Kassandra_Filter = {
@@ -1800,9 +1591,17 @@ export type Kassandra_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  num_managers?: InputMaybe<Scalars['Int']['input']>
+  num_managers_gt?: InputMaybe<Scalars['Int']['input']>
+  num_managers_gte?: InputMaybe<Scalars['Int']['input']>
+  num_managers_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  num_managers_lt?: InputMaybe<Scalars['Int']['input']>
+  num_managers_lte?: InputMaybe<Scalars['Int']['input']>
+  num_managers_not?: InputMaybe<Scalars['Int']['input']>
+  num_managers_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
 }
 
-export type Kassandra_OrderBy = 'fee_aum_kassandra' | 'id'
+export type Kassandra_OrderBy = 'fee_aum_kassandra' | 'id' | 'num_managers'
 
 /**
  * Every manager of a pool in Kassandra
@@ -1922,13 +1721,28 @@ export type Manager_OrderBy =
   | 'unique_investors'
   | 'volumes'
 
+export type Mutation = {
+  __typename?: 'Mutation'
+  savePool?: Maybe<Result>
+}
+
+export type MutationSavePoolArgs = {
+  chainId: Scalars['Int']['input']
+  controller: Scalars['String']['input']
+  logo?: InputMaybe<Scalars['String']['input']>
+  signature: Scalars['String']['input']
+  summary?: InputMaybe<Scalars['String']['input']>
+}
+
 /** Defines the order direction, either ascending or descending */
 export type OrderDirection = 'asc' | 'desc'
 
-/**
- * Every pool in the protocol
- *
- */
+export type Partner = {
+  __typename?: 'Partner'
+  logo?: Maybe<Scalars['String']['output']>
+  url?: Maybe<Scalars['String']['output']>
+}
+
 export type Pool = {
   __typename?: 'Pool'
   activities: Array<Activity>
@@ -1938,7 +1752,8 @@ export type Pool = {
    */
   address: Scalars['String']['output']
   brokers: Array<Broker>
-  chain: Chain
+  chain?: Maybe<Chain>
+  chainId?: Maybe<Scalars['Int']['output']>
   chain_id: Scalars['Int']['output']
   /**
    * Controller contract that controls the vault
@@ -1955,6 +1770,7 @@ export type Pool = {
    *
    */
   factory: Factory
+  featured?: Maybe<Scalars['Boolean']['output']>
   fee_aum: Scalars['BigDecimal']['output']
   fee_aum_kassandra: Scalars['BigDecimal']['output']
   fee_exit: Scalars['BigDecimal']['output']
@@ -1962,15 +1778,13 @@ export type Pool = {
   fee_join_manager: Scalars['BigDecimal']['output']
   fee_swap: Scalars['BigDecimal']['output']
   fees: Array<Fee>
+  foundedBy?: Maybe<Scalars['String']['output']>
   history: Array<History>
-  /**
-   * Chain ID + Pool Vault ID
-   *
-   */
   id: Scalars['ID']['output']
   investors: Array<Investor>
   is_private_pool: Scalars['Boolean']['output']
   last_harvest?: Maybe<Scalars['BigInt']['output']>
+  logo?: Maybe<Scalars['String']['output']>
   /**
    * Address that controls the controlller
    *
@@ -1988,6 +1802,8 @@ export type Pool = {
   num_token_remove: Scalars['Int']['output']
   num_tx: Scalars['BigInt']['output']
   num_weight_goals: Scalars['Int']['output']
+  partners?: Maybe<Array<Maybe<Partner>>>
+  poolId?: Maybe<Scalars['Int']['output']>
   pool_version: Scalars['Int']['output']
   price_btc: Scalars['BigDecimal']['output']
   price_candles: Array<Candle>
@@ -1997,15 +1813,16 @@ export type Pool = {
    *
    */
   strategy: Scalars['String']['output']
+  summary?: Maybe<Scalars['String']['output']>
   supply: Scalars['BigDecimal']['output']
   supply_changes: Array<PoolSupply>
   symbol: Scalars['String']['output']
-  total_fees_aum: Scalars['BigDecimal']['output']
-  total_fees_aum_btc: Scalars['BigDecimal']['output']
   total_fees_aum_kassandra: Scalars['BigDecimal']['output']
   total_fees_aum_kassandra_btc: Scalars['BigDecimal']['output']
   total_fees_aum_kassandra_usd: Scalars['BigDecimal']['output']
-  total_fees_aum_usd: Scalars['BigDecimal']['output']
+  total_fees_aum_manager: Scalars['BigDecimal']['output']
+  total_fees_aum_manager_btc: Scalars['BigDecimal']['output']
+  total_fees_aum_manager_usd: Scalars['BigDecimal']['output']
   total_fees_exit: Scalars['BigDecimal']['output']
   total_fees_exit_btc: Scalars['BigDecimal']['output']
   total_fees_exit_usd: Scalars['BigDecimal']['output']
@@ -2034,6 +1851,7 @@ export type Pool = {
    *
    */
   unique_investors_broker: Scalars['Int']['output']
+  url?: Maybe<Scalars['String']['output']>
   /**
    * Contract that holds the tokens
    *
@@ -2054,10 +1872,6 @@ export type Pool = {
   whitelist: Scalars['String']['output']
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<Activity_OrderBy>
@@ -2066,10 +1880,6 @@ export type PoolActivitiesArgs = {
   where?: InputMaybe<Activity_Filter>
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolBrokersArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<Broker_OrderBy>
@@ -2078,10 +1888,6 @@ export type PoolBrokersArgs = {
   where?: InputMaybe<Broker_Filter>
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolFeesArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<Fee_OrderBy>
@@ -2090,10 +1896,6 @@ export type PoolFeesArgs = {
   where?: InputMaybe<Fee_Filter>
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolHistoryArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<History_OrderBy>
@@ -2102,10 +1904,6 @@ export type PoolHistoryArgs = {
   where?: InputMaybe<History_Filter>
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolInvestorsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<Investor_OrderBy>
@@ -2114,10 +1912,6 @@ export type PoolInvestorsArgs = {
   where?: InputMaybe<Investor_Filter>
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolPrice_CandlesArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<Candle_OrderBy>
@@ -2126,10 +1920,6 @@ export type PoolPrice_CandlesArgs = {
   where?: InputMaybe<Candle_Filter>
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolSupply_ChangesArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<PoolSupply_OrderBy>
@@ -2138,10 +1928,6 @@ export type PoolSupply_ChangesArgs = {
   where?: InputMaybe<PoolSupply_Filter>
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolTotal_Value_LockedArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<TotalValueLocked_OrderBy>
@@ -2150,10 +1936,6 @@ export type PoolTotal_Value_LockedArgs = {
   where?: InputMaybe<TotalValueLocked_Filter>
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolUnderlying_AssetsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<Asset_OrderBy>
@@ -2162,10 +1944,6 @@ export type PoolUnderlying_AssetsArgs = {
   where?: InputMaybe<Asset_Filter>
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolVolumesArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<Volume_OrderBy>
@@ -2174,10 +1952,6 @@ export type PoolVolumesArgs = {
   where?: InputMaybe<Volume_Filter>
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolWeight_GoalsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<WeightGoalPoint_OrderBy>
@@ -2186,10 +1960,6 @@ export type PoolWeight_GoalsArgs = {
   where?: InputMaybe<WeightGoalPoint_Filter>
 }
 
-/**
- * Every pool in the protocol
- *
- */
 export type PoolWeightsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<WeightPoint_OrderBy>
@@ -2697,18 +2467,6 @@ export type Pool_Filter = {
   symbol_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   symbol_starts_with?: InputMaybe<Scalars['String']['input']>
   symbol_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  total_fees_aum?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_aum_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_btc_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_aum_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
   total_fees_aum_kassandra?: InputMaybe<Scalars['BigDecimal']['input']>
   total_fees_aum_kassandra_btc?: InputMaybe<Scalars['BigDecimal']['input']>
   total_fees_aum_kassandra_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
@@ -2745,18 +2503,40 @@ export type Pool_Filter = {
   total_fees_aum_kassandra_usd_not_in?: InputMaybe<
     Array<Scalars['BigDecimal']['input']>
   >
-  total_fees_aum_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_aum_usd?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_aum_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_fees_aum_manager?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_manager_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_manager_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_fees_aum_manager_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_manager_usd?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_manager_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
   total_fees_exit?: InputMaybe<Scalars['BigDecimal']['input']>
   total_fees_exit_btc?: InputMaybe<Scalars['BigDecimal']['input']>
   total_fees_exit_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
@@ -3046,12 +2826,12 @@ export type Pool_OrderBy =
   | 'supply'
   | 'supply_changes'
   | 'symbol'
-  | 'total_fees_aum'
-  | 'total_fees_aum_btc'
   | 'total_fees_aum_kassandra'
   | 'total_fees_aum_kassandra_btc'
   | 'total_fees_aum_kassandra_usd'
-  | 'total_fees_aum_usd'
+  | 'total_fees_aum_manager'
+  | 'total_fees_aum_manager_btc'
+  | 'total_fees_aum_manager_usd'
   | 'total_fees_exit'
   | 'total_fees_exit_btc'
   | 'total_fees_exit_usd'
@@ -3079,264 +2859,6 @@ export type Pool_OrderBy =
   | 'weights'
   | 'whitelist'
 
-/**
- * A proposal made in the governance
- *
- */
-export type Proposal = {
-  __typename?: 'Proposal'
-  againstVotes: Scalars['BigDecimal']['output']
-  calldatas: Array<Scalars['Bytes']['output']>
-  canceled?: Maybe<Scalars['BigInt']['output']>
-  created: Scalars['BigInt']['output']
-  description: Scalars['String']['output']
-  endBlock: Scalars['BigInt']['output']
-  eta?: Maybe<Scalars['BigInt']['output']>
-  executed?: Maybe<Scalars['BigInt']['output']>
-  forVotes: Scalars['BigDecimal']['output']
-  governance: Governance
-  /**
-   * governance contract address + proposal number
-   *
-   */
-  id: Scalars['ID']['output']
-  /**
-   * proposal ID
-   *
-   */
-  number: Scalars['Int']['output']
-  proposer: User
-  queued?: Maybe<Scalars['BigInt']['output']>
-  quorum: Scalars['BigDecimal']['output']
-  signatures: Array<Scalars['String']['output']>
-  startBlock: Scalars['BigInt']['output']
-  targets: Array<Scalars['String']['output']>
-  values: Array<Scalars['BigDecimal']['output']>
-  votes: Array<Vote>
-}
-
-/**
- * A proposal made in the governance
- *
- */
-export type ProposalVotesArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Vote_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  where?: InputMaybe<Vote_Filter>
-}
-
-export type Proposal_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>
-  againstVotes?: InputMaybe<Scalars['BigDecimal']['input']>
-  againstVotes_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  againstVotes_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  againstVotes_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  againstVotes_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  againstVotes_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  againstVotes_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  againstVotes_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  calldatas?: InputMaybe<Array<Scalars['Bytes']['input']>>
-  calldatas_contains?: InputMaybe<Array<Scalars['Bytes']['input']>>
-  calldatas_contains_nocase?: InputMaybe<Array<Scalars['Bytes']['input']>>
-  calldatas_not?: InputMaybe<Array<Scalars['Bytes']['input']>>
-  calldatas_not_contains?: InputMaybe<Array<Scalars['Bytes']['input']>>
-  calldatas_not_contains_nocase?: InputMaybe<Array<Scalars['Bytes']['input']>>
-  canceled?: InputMaybe<Scalars['BigInt']['input']>
-  canceled_gt?: InputMaybe<Scalars['BigInt']['input']>
-  canceled_gte?: InputMaybe<Scalars['BigInt']['input']>
-  canceled_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  canceled_lt?: InputMaybe<Scalars['BigInt']['input']>
-  canceled_lte?: InputMaybe<Scalars['BigInt']['input']>
-  canceled_not?: InputMaybe<Scalars['BigInt']['input']>
-  canceled_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  created?: InputMaybe<Scalars['BigInt']['input']>
-  created_gt?: InputMaybe<Scalars['BigInt']['input']>
-  created_gte?: InputMaybe<Scalars['BigInt']['input']>
-  created_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  created_lt?: InputMaybe<Scalars['BigInt']['input']>
-  created_lte?: InputMaybe<Scalars['BigInt']['input']>
-  created_not?: InputMaybe<Scalars['BigInt']['input']>
-  created_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  description?: InputMaybe<Scalars['String']['input']>
-  description_contains?: InputMaybe<Scalars['String']['input']>
-  description_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  description_ends_with?: InputMaybe<Scalars['String']['input']>
-  description_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  description_gt?: InputMaybe<Scalars['String']['input']>
-  description_gte?: InputMaybe<Scalars['String']['input']>
-  description_in?: InputMaybe<Array<Scalars['String']['input']>>
-  description_lt?: InputMaybe<Scalars['String']['input']>
-  description_lte?: InputMaybe<Scalars['String']['input']>
-  description_not?: InputMaybe<Scalars['String']['input']>
-  description_not_contains?: InputMaybe<Scalars['String']['input']>
-  description_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  description_not_ends_with?: InputMaybe<Scalars['String']['input']>
-  description_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  description_not_in?: InputMaybe<Array<Scalars['String']['input']>>
-  description_not_starts_with?: InputMaybe<Scalars['String']['input']>
-  description_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  description_starts_with?: InputMaybe<Scalars['String']['input']>
-  description_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  endBlock?: InputMaybe<Scalars['BigInt']['input']>
-  endBlock_gt?: InputMaybe<Scalars['BigInt']['input']>
-  endBlock_gte?: InputMaybe<Scalars['BigInt']['input']>
-  endBlock_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  endBlock_lt?: InputMaybe<Scalars['BigInt']['input']>
-  endBlock_lte?: InputMaybe<Scalars['BigInt']['input']>
-  endBlock_not?: InputMaybe<Scalars['BigInt']['input']>
-  endBlock_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  eta?: InputMaybe<Scalars['BigInt']['input']>
-  eta_gt?: InputMaybe<Scalars['BigInt']['input']>
-  eta_gte?: InputMaybe<Scalars['BigInt']['input']>
-  eta_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  eta_lt?: InputMaybe<Scalars['BigInt']['input']>
-  eta_lte?: InputMaybe<Scalars['BigInt']['input']>
-  eta_not?: InputMaybe<Scalars['BigInt']['input']>
-  eta_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  executed?: InputMaybe<Scalars['BigInt']['input']>
-  executed_gt?: InputMaybe<Scalars['BigInt']['input']>
-  executed_gte?: InputMaybe<Scalars['BigInt']['input']>
-  executed_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  executed_lt?: InputMaybe<Scalars['BigInt']['input']>
-  executed_lte?: InputMaybe<Scalars['BigInt']['input']>
-  executed_not?: InputMaybe<Scalars['BigInt']['input']>
-  executed_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  forVotes?: InputMaybe<Scalars['BigDecimal']['input']>
-  forVotes_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  forVotes_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  forVotes_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  forVotes_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  forVotes_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  forVotes_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  forVotes_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  governance?: InputMaybe<Scalars['String']['input']>
-  governance_?: InputMaybe<Governance_Filter>
-  governance_contains?: InputMaybe<Scalars['String']['input']>
-  governance_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  governance_ends_with?: InputMaybe<Scalars['String']['input']>
-  governance_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  governance_gt?: InputMaybe<Scalars['String']['input']>
-  governance_gte?: InputMaybe<Scalars['String']['input']>
-  governance_in?: InputMaybe<Array<Scalars['String']['input']>>
-  governance_lt?: InputMaybe<Scalars['String']['input']>
-  governance_lte?: InputMaybe<Scalars['String']['input']>
-  governance_not?: InputMaybe<Scalars['String']['input']>
-  governance_not_contains?: InputMaybe<Scalars['String']['input']>
-  governance_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  governance_not_ends_with?: InputMaybe<Scalars['String']['input']>
-  governance_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  governance_not_in?: InputMaybe<Array<Scalars['String']['input']>>
-  governance_not_starts_with?: InputMaybe<Scalars['String']['input']>
-  governance_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  governance_starts_with?: InputMaybe<Scalars['String']['input']>
-  governance_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  id?: InputMaybe<Scalars['ID']['input']>
-  id_gt?: InputMaybe<Scalars['ID']['input']>
-  id_gte?: InputMaybe<Scalars['ID']['input']>
-  id_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  id_lt?: InputMaybe<Scalars['ID']['input']>
-  id_lte?: InputMaybe<Scalars['ID']['input']>
-  id_not?: InputMaybe<Scalars['ID']['input']>
-  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  number?: InputMaybe<Scalars['Int']['input']>
-  number_gt?: InputMaybe<Scalars['Int']['input']>
-  number_gte?: InputMaybe<Scalars['Int']['input']>
-  number_in?: InputMaybe<Array<Scalars['Int']['input']>>
-  number_lt?: InputMaybe<Scalars['Int']['input']>
-  number_lte?: InputMaybe<Scalars['Int']['input']>
-  number_not?: InputMaybe<Scalars['Int']['input']>
-  number_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
-  proposer?: InputMaybe<Scalars['String']['input']>
-  proposer_?: InputMaybe<User_Filter>
-  proposer_contains?: InputMaybe<Scalars['String']['input']>
-  proposer_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  proposer_ends_with?: InputMaybe<Scalars['String']['input']>
-  proposer_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  proposer_gt?: InputMaybe<Scalars['String']['input']>
-  proposer_gte?: InputMaybe<Scalars['String']['input']>
-  proposer_in?: InputMaybe<Array<Scalars['String']['input']>>
-  proposer_lt?: InputMaybe<Scalars['String']['input']>
-  proposer_lte?: InputMaybe<Scalars['String']['input']>
-  proposer_not?: InputMaybe<Scalars['String']['input']>
-  proposer_not_contains?: InputMaybe<Scalars['String']['input']>
-  proposer_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  proposer_not_ends_with?: InputMaybe<Scalars['String']['input']>
-  proposer_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  proposer_not_in?: InputMaybe<Array<Scalars['String']['input']>>
-  proposer_not_starts_with?: InputMaybe<Scalars['String']['input']>
-  proposer_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  proposer_starts_with?: InputMaybe<Scalars['String']['input']>
-  proposer_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  queued?: InputMaybe<Scalars['BigInt']['input']>
-  queued_gt?: InputMaybe<Scalars['BigInt']['input']>
-  queued_gte?: InputMaybe<Scalars['BigInt']['input']>
-  queued_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  queued_lt?: InputMaybe<Scalars['BigInt']['input']>
-  queued_lte?: InputMaybe<Scalars['BigInt']['input']>
-  queued_not?: InputMaybe<Scalars['BigInt']['input']>
-  queued_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  quorum?: InputMaybe<Scalars['BigDecimal']['input']>
-  quorum_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  quorum_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  quorum_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  quorum_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  quorum_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  quorum_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  quorum_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  signatures?: InputMaybe<Array<Scalars['String']['input']>>
-  signatures_contains?: InputMaybe<Array<Scalars['String']['input']>>
-  signatures_contains_nocase?: InputMaybe<Array<Scalars['String']['input']>>
-  signatures_not?: InputMaybe<Array<Scalars['String']['input']>>
-  signatures_not_contains?: InputMaybe<Array<Scalars['String']['input']>>
-  signatures_not_contains_nocase?: InputMaybe<Array<Scalars['String']['input']>>
-  startBlock?: InputMaybe<Scalars['BigInt']['input']>
-  startBlock_gt?: InputMaybe<Scalars['BigInt']['input']>
-  startBlock_gte?: InputMaybe<Scalars['BigInt']['input']>
-  startBlock_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  startBlock_lt?: InputMaybe<Scalars['BigInt']['input']>
-  startBlock_lte?: InputMaybe<Scalars['BigInt']['input']>
-  startBlock_not?: InputMaybe<Scalars['BigInt']['input']>
-  startBlock_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  targets?: InputMaybe<Array<Scalars['String']['input']>>
-  targets_contains?: InputMaybe<Array<Scalars['String']['input']>>
-  targets_contains_nocase?: InputMaybe<Array<Scalars['String']['input']>>
-  targets_not?: InputMaybe<Array<Scalars['String']['input']>>
-  targets_not_contains?: InputMaybe<Array<Scalars['String']['input']>>
-  targets_not_contains_nocase?: InputMaybe<Array<Scalars['String']['input']>>
-  values?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  values_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  values_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  values_not?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  values_not_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  values_not_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  votes_?: InputMaybe<Vote_Filter>
-}
-
-export type Proposal_OrderBy =
-  | 'againstVotes'
-  | 'calldatas'
-  | 'canceled'
-  | 'created'
-  | 'description'
-  | 'endBlock'
-  | 'eta'
-  | 'executed'
-  | 'forVotes'
-  | 'governance'
-  | 'id'
-  | 'number'
-  | 'proposer'
-  | 'queued'
-  | 'quorum'
-  | 'signatures'
-  | 'startBlock'
-  | 'targets'
-  | 'values'
-  | 'votes'
-
 export type Query = {
   __typename?: 'Query'
   /** Access to subgraph metadata */
@@ -3352,15 +2874,13 @@ export type Query = {
   candle?: Maybe<Candle>
   candles: Array<Candle>
   chain?: Maybe<Chain>
+  chainById?: Maybe<Chain>
   chains: Array<Chain>
-  delegation?: Maybe<Delegation>
-  delegations: Array<Delegation>
+  chainsByIds: Array<Maybe<Chain>>
   factories: Array<Factory>
   factory?: Maybe<Factory>
   fee?: Maybe<Fee>
   fees: Array<Fee>
-  governance?: Maybe<Governance>
-  governances: Array<Governance>
   histories: Array<History>
   history?: Maybe<History>
   investor?: Maybe<Investor>
@@ -3373,18 +2893,14 @@ export type Query = {
   poolSupplies: Array<PoolSupply>
   poolSupply?: Maybe<PoolSupply>
   pools: Array<Pool>
-  proposal?: Maybe<Proposal>
-  proposals: Array<Proposal>
+  poolsFilter: Array<Maybe<Pool>>
   token?: Maybe<Token>
   tokens: Array<Token>
+  tokensByIds: Array<Maybe<Token>>
   totalValueLocked?: Maybe<TotalValueLocked>
   totalValueLockeds: Array<TotalValueLocked>
-  user?: Maybe<User>
-  users: Array<User>
   volume?: Maybe<Volume>
   volumes: Array<Volume>
-  vote?: Maybe<Vote>
-  votes: Array<Vote>
   weight?: Maybe<Weight>
   weightGoal?: Maybe<WeightGoal>
   weightGoalPoint?: Maybe<WeightGoalPoint>
@@ -3485,6 +3001,10 @@ export type QueryChainArgs = {
   subgraphError?: _SubgraphErrorPolicy_
 }
 
+export type QueryChainByIdArgs = {
+  id: Scalars['ID']['input']
+}
+
 export type QueryChainsArgs = {
   block?: InputMaybe<Block_Height>
   first?: InputMaybe<Scalars['Int']['input']>
@@ -3495,20 +3015,8 @@ export type QueryChainsArgs = {
   where?: InputMaybe<Chain_Filter>
 }
 
-export type QueryDelegationArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
-}
-
-export type QueryDelegationsArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Delegation_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<Delegation_Filter>
+export type QueryChainsByIdsArgs = {
+  ids: Array<Scalars['ID']['input']>
 }
 
 export type QueryFactoriesArgs = {
@@ -3541,22 +3049,6 @@ export type QueryFeesArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>
   subgraphError?: _SubgraphErrorPolicy_
   where?: InputMaybe<Fee_Filter>
-}
-
-export type QueryGovernanceArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
-}
-
-export type QueryGovernancesArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Governance_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<Governance_Filter>
 }
 
 export type QueryHistoriesArgs = {
@@ -3655,20 +3147,8 @@ export type QueryPoolsArgs = {
   where?: InputMaybe<Pool_Filter>
 }
 
-export type QueryProposalArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
-}
-
-export type QueryProposalsArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Proposal_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<Proposal_Filter>
+export type QueryPoolsFilterArgs = {
+  where?: InputMaybe<Filter_Pool>
 }
 
 export type QueryTokenArgs = {
@@ -3687,6 +3167,11 @@ export type QueryTokensArgs = {
   where?: InputMaybe<Token_Filter>
 }
 
+export type QueryTokensByIdsArgs = {
+  chainId?: InputMaybe<Scalars['Int']['input']>
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>
+}
+
 export type QueryTotalValueLockedArgs = {
   block?: InputMaybe<Block_Height>
   id: Scalars['ID']['input']
@@ -3703,22 +3188,6 @@ export type QueryTotalValueLockedsArgs = {
   where?: InputMaybe<TotalValueLocked_Filter>
 }
 
-export type QueryUserArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
-}
-
-export type QueryUsersArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<User_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<User_Filter>
-}
-
 export type QueryVolumeArgs = {
   block?: InputMaybe<Block_Height>
   id: Scalars['ID']['input']
@@ -3733,22 +3202,6 @@ export type QueryVolumesArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>
   subgraphError?: _SubgraphErrorPolicy_
   where?: InputMaybe<Volume_Filter>
-}
-
-export type QueryVoteArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
-}
-
-export type QueryVotesArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Vote_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<Vote_Filter>
 }
 
 export type QueryWeightArgs = {
@@ -3815,6 +3268,20 @@ export type QueryWeightsArgs = {
   where?: InputMaybe<Weight_Filter>
 }
 
+export type Result = {
+  __typename?: 'Result'
+  message?: Maybe<Scalars['String']['output']>
+  ok?: Maybe<Scalars['Boolean']['output']>
+}
+
+export type SavePoolParams = {
+  chainId: Scalars['Int']['input']
+  controller: Scalars['String']['input']
+  logo?: InputMaybe<Scalars['String']['input']>
+  signature: Scalars['String']['input']
+  summary?: InputMaybe<Scalars['String']['input']>
+}
+
 export type Subscription = {
   __typename?: 'Subscription'
   /** Access to subgraph metadata */
@@ -3831,14 +3298,10 @@ export type Subscription = {
   candles: Array<Candle>
   chain?: Maybe<Chain>
   chains: Array<Chain>
-  delegation?: Maybe<Delegation>
-  delegations: Array<Delegation>
   factories: Array<Factory>
   factory?: Maybe<Factory>
   fee?: Maybe<Fee>
   fees: Array<Fee>
-  governance?: Maybe<Governance>
-  governances: Array<Governance>
   histories: Array<History>
   history?: Maybe<History>
   investor?: Maybe<Investor>
@@ -3851,18 +3314,12 @@ export type Subscription = {
   poolSupplies: Array<PoolSupply>
   poolSupply?: Maybe<PoolSupply>
   pools: Array<Pool>
-  proposal?: Maybe<Proposal>
-  proposals: Array<Proposal>
   token?: Maybe<Token>
   tokens: Array<Token>
   totalValueLocked?: Maybe<TotalValueLocked>
   totalValueLockeds: Array<TotalValueLocked>
-  user?: Maybe<User>
-  users: Array<User>
   volume?: Maybe<Volume>
   volumes: Array<Volume>
-  vote?: Maybe<Vote>
-  votes: Array<Vote>
   weight?: Maybe<Weight>
   weightGoal?: Maybe<WeightGoal>
   weightGoalPoint?: Maybe<WeightGoalPoint>
@@ -3973,22 +3430,6 @@ export type SubscriptionChainsArgs = {
   where?: InputMaybe<Chain_Filter>
 }
 
-export type SubscriptionDelegationArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
-}
-
-export type SubscriptionDelegationsArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Delegation_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<Delegation_Filter>
-}
-
 export type SubscriptionFactoriesArgs = {
   block?: InputMaybe<Block_Height>
   first?: InputMaybe<Scalars['Int']['input']>
@@ -4019,22 +3460,6 @@ export type SubscriptionFeesArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>
   subgraphError?: _SubgraphErrorPolicy_
   where?: InputMaybe<Fee_Filter>
-}
-
-export type SubscriptionGovernanceArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
-}
-
-export type SubscriptionGovernancesArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Governance_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<Governance_Filter>
 }
 
 export type SubscriptionHistoriesArgs = {
@@ -4133,22 +3558,6 @@ export type SubscriptionPoolsArgs = {
   where?: InputMaybe<Pool_Filter>
 }
 
-export type SubscriptionProposalArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
-}
-
-export type SubscriptionProposalsArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Proposal_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<Proposal_Filter>
-}
-
 export type SubscriptionTokenArgs = {
   block?: InputMaybe<Block_Height>
   id: Scalars['ID']['input']
@@ -4181,22 +3590,6 @@ export type SubscriptionTotalValueLockedsArgs = {
   where?: InputMaybe<TotalValueLocked_Filter>
 }
 
-export type SubscriptionUserArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
-}
-
-export type SubscriptionUsersArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<User_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<User_Filter>
-}
-
 export type SubscriptionVolumeArgs = {
   block?: InputMaybe<Block_Height>
   id: Scalars['ID']['input']
@@ -4211,22 +3604,6 @@ export type SubscriptionVolumesArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>
   subgraphError?: _SubgraphErrorPolicy_
   where?: InputMaybe<Volume_Filter>
-}
-
-export type SubscriptionVoteArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
-}
-
-export type SubscriptionVotesArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Vote_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<Vote_Filter>
 }
 
 export type SubscriptionWeightArgs = {
@@ -4293,33 +3670,23 @@ export type SubscriptionWeightsArgs = {
   where?: InputMaybe<Weight_Filter>
 }
 
-/**
- * Every token that is/was in a pool of the protocol
- *
- */
 export type Token = {
   __typename?: 'Token'
-  decimals: Scalars['Int']['output']
-  /**
-   * Token Address
-   *
-   */
+  coingecko_id?: Maybe<Scalars['String']['output']>
+  decimals?: Maybe<Scalars['Int']['output']>
   id: Scalars['ID']['output']
   is_wrap_token: Scalars['Int']['output']
-  name: Scalars['String']['output']
+  logo?: Maybe<Scalars['String']['output']>
+  name?: Maybe<Scalars['String']['output']>
   pools: Array<Asset>
   price_block: Scalars['BigInt']['output']
   price_btc: Scalars['BigDecimal']['output']
   price_timestamp: Scalars['BigInt']['output']
   price_usd: Scalars['BigDecimal']['output']
-  symbol: Scalars['String']['output']
+  symbol?: Maybe<Scalars['String']['output']>
   wraps?: Maybe<Token>
 }
 
-/**
- * Every token that is/was in a pool of the protocol
- *
- */
 export type TokenPoolsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<Asset_OrderBy>
@@ -4632,100 +3999,6 @@ export type TotalValueLocked_OrderBy =
   | 'timestamp'
 
 /**
- * User with voting power in the governance
- *
- */
-export type User = {
-  __typename?: 'User'
-  delegates: Array<Delegation>
-  /**
-   * wallet address
-   *
-   */
-  id: Scalars['ID']['output']
-  proposals: Array<Proposal>
-  unstakingPools: Array<Scalars['BigInt']['output']>
-  votes: Array<Vote>
-  votingPower: Scalars['BigDecimal']['output']
-}
-
-/**
- * User with voting power in the governance
- *
- */
-export type UserDelegatesArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Delegation_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  where?: InputMaybe<Delegation_Filter>
-}
-
-/**
- * User with voting power in the governance
- *
- */
-export type UserProposalsArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Proposal_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  where?: InputMaybe<Proposal_Filter>
-}
-
-/**
- * User with voting power in the governance
- *
- */
-export type UserVotesArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Vote_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  where?: InputMaybe<Vote_Filter>
-}
-
-export type User_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>
-  delegates_?: InputMaybe<Delegation_Filter>
-  id?: InputMaybe<Scalars['ID']['input']>
-  id_gt?: InputMaybe<Scalars['ID']['input']>
-  id_gte?: InputMaybe<Scalars['ID']['input']>
-  id_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  id_lt?: InputMaybe<Scalars['ID']['input']>
-  id_lte?: InputMaybe<Scalars['ID']['input']>
-  id_not?: InputMaybe<Scalars['ID']['input']>
-  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  proposals_?: InputMaybe<Proposal_Filter>
-  unstakingPools?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  unstakingPools_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  unstakingPools_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  unstakingPools_not?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  unstakingPools_not_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  unstakingPools_not_contains_nocase?: InputMaybe<
-    Array<Scalars['BigInt']['input']>
-  >
-  votes_?: InputMaybe<Vote_Filter>
-  votingPower?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  votingPower_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-}
-
-export type User_OrderBy =
-  | 'delegates'
-  | 'id'
-  | 'proposals'
-  | 'unstakingPools'
-  | 'votes'
-  | 'votingPower'
-
-/**
  * Transaction volume per type of operation for 1h, 1d and 7d periods (1d periods are not 24h volume as they are based from 00:00 UTC)
  *
  */
@@ -4935,98 +4208,7 @@ export type Volume_OrderBy =
   | 'volume_usd'
 
 /**
- * Vote of a single wallet for a single proposal
- *
- */
-export type Vote = {
-  __typename?: 'Vote'
-  /**
-   * proposal ID (governance ID + proposal number) + voting wallet address
-   *
-   */
-  id: Scalars['ID']['output']
-  proposal: Proposal
-  support: Scalars['Boolean']['output']
-  voter: User
-  votingPower: Scalars['BigDecimal']['output']
-}
-
-export type Vote_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>
-  id?: InputMaybe<Scalars['ID']['input']>
-  id_gt?: InputMaybe<Scalars['ID']['input']>
-  id_gte?: InputMaybe<Scalars['ID']['input']>
-  id_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  id_lt?: InputMaybe<Scalars['ID']['input']>
-  id_lte?: InputMaybe<Scalars['ID']['input']>
-  id_not?: InputMaybe<Scalars['ID']['input']>
-  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  proposal?: InputMaybe<Scalars['String']['input']>
-  proposal_?: InputMaybe<Proposal_Filter>
-  proposal_contains?: InputMaybe<Scalars['String']['input']>
-  proposal_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  proposal_ends_with?: InputMaybe<Scalars['String']['input']>
-  proposal_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  proposal_gt?: InputMaybe<Scalars['String']['input']>
-  proposal_gte?: InputMaybe<Scalars['String']['input']>
-  proposal_in?: InputMaybe<Array<Scalars['String']['input']>>
-  proposal_lt?: InputMaybe<Scalars['String']['input']>
-  proposal_lte?: InputMaybe<Scalars['String']['input']>
-  proposal_not?: InputMaybe<Scalars['String']['input']>
-  proposal_not_contains?: InputMaybe<Scalars['String']['input']>
-  proposal_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  proposal_not_ends_with?: InputMaybe<Scalars['String']['input']>
-  proposal_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  proposal_not_in?: InputMaybe<Array<Scalars['String']['input']>>
-  proposal_not_starts_with?: InputMaybe<Scalars['String']['input']>
-  proposal_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  proposal_starts_with?: InputMaybe<Scalars['String']['input']>
-  proposal_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  support?: InputMaybe<Scalars['Boolean']['input']>
-  support_in?: InputMaybe<Array<Scalars['Boolean']['input']>>
-  support_not?: InputMaybe<Scalars['Boolean']['input']>
-  support_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>
-  voter?: InputMaybe<Scalars['String']['input']>
-  voter_?: InputMaybe<User_Filter>
-  voter_contains?: InputMaybe<Scalars['String']['input']>
-  voter_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  voter_ends_with?: InputMaybe<Scalars['String']['input']>
-  voter_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  voter_gt?: InputMaybe<Scalars['String']['input']>
-  voter_gte?: InputMaybe<Scalars['String']['input']>
-  voter_in?: InputMaybe<Array<Scalars['String']['input']>>
-  voter_lt?: InputMaybe<Scalars['String']['input']>
-  voter_lte?: InputMaybe<Scalars['String']['input']>
-  voter_not?: InputMaybe<Scalars['String']['input']>
-  voter_not_contains?: InputMaybe<Scalars['String']['input']>
-  voter_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  voter_not_ends_with?: InputMaybe<Scalars['String']['input']>
-  voter_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  voter_not_in?: InputMaybe<Array<Scalars['String']['input']>>
-  voter_not_starts_with?: InputMaybe<Scalars['String']['input']>
-  voter_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  voter_starts_with?: InputMaybe<Scalars['String']['input']>
-  voter_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  votingPower?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  votingPower_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  votingPower_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-}
-
-export type Vote_OrderBy =
-  | 'id'
-  | 'proposal'
-  | 'support'
-  | 'voter'
-  | 'votingPower'
-
-/**
- * Weight of a single token at a WeightPoint
+ * DEPRECATED - Weight of a single token at a WeightPoint
  *
  */
 export type Weight = {
@@ -5319,7 +4501,7 @@ export type WeightGoal_OrderBy =
   | 'weight_normalized'
 
 /**
- * Weights per hour at close time
+ * DEPRECATED - Weights per hour at close time
  *
  */
 export type WeightPoint = {
@@ -5335,7 +4517,7 @@ export type WeightPoint = {
 }
 
 /**
- * Weights per hour at close time
+ * DEPRECATED - Weights per hour at close time
  *
  */
 export type WeightPointWeightsArgs = {
@@ -5502,307 +4684,143 @@ export type _SubgraphErrorPolicy_ =
   /** If the subgraph has indexing errors, data will be omitted. The default. */
   | 'deny'
 
-export type DelegationsQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['String']['input']>
+export type PoolChartQueryVariables = Exact<{
+  id: Array<Scalars['ID']['input']> | Scalars['ID']['input']
+  day: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  wallet: Scalars['String']['input']
 }>
 
-export type DelegationsQuery = {
+export type PoolChartQuery = {
   __typename?: 'Query'
-  delegations: Array<{
-    __typename?: 'Delegation'
-    pool: any
-    votingPower: any
-    to: { __typename?: 'User'; id: string }
-    from: { __typename?: 'User'; id: string }
-  }>
-  received: Array<{
-    __typename?: 'Delegation'
-    pool: any
-    votingPower: any
-    from: { __typename?: 'User'; id: string }
-    to: { __typename?: 'User'; id: string }
-  }>
-}
-
-export type ProposalQueryVariables = Exact<{
-  number: Scalars['Int']['input']
-  voter?: InputMaybe<Scalars['String']['input']>
-}>
-
-export type ProposalQuery = {
-  __typename?: 'Query'
-  proposal: Array<{
-    __typename?: 'Proposal'
-    number: number
-    description: string
-    forVotes: any
-    againstVotes: any
-    startBlock: any
-    endBlock: any
-    quorum: any
-    values: Array<any>
-    calldatas: Array<any>
-    signatures: Array<string>
-    targets: Array<string>
-    created: any
-    canceled?: any | null
-    queued?: any | null
-    executed?: any | null
-    eta?: any | null
-    proposer: { __typename?: 'User'; id: string }
-    votes: Array<{
-      __typename?: 'Vote'
-      support: boolean
-      voter: { __typename?: 'User'; id: string }
-    }>
-  }>
-}
-
-export type ProposalsQueryVariables = Exact<{
-  skip: Scalars['Int']['input']
-  take: Scalars['Int']['input']
-}>
-
-export type ProposalsQuery = {
-  __typename?: 'Query'
-  proposals: Array<{
-    __typename?: 'Proposal'
+  pools: Array<{
+    __typename?: 'Pool'
     id: string
-    number: number
-    targets: Array<string>
-    values: Array<any>
-    signatures: Array<string>
-    startBlock: any
-    endBlock: any
-    description: string
-    created: any
+    address: string
+    name: string
+    symbol: string
+    logo?: string | null
+    price_usd: any
+    total_value_locked_usd: any
+    now: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    day: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
   }>
-}
-
-export type UserVotesQueryVariables = Exact<{
-  id: Scalars['ID']['input']
-}>
-
-export type UserVotesQuery = {
-  __typename?: 'Query'
-  user?: {
-    __typename?: 'User'
-    votes: Array<{
-      __typename?: 'Vote'
-      support: boolean
-      proposal: {
-        __typename?: 'Proposal'
-        id: string
-        number: number
-        targets: Array<string>
-        values: Array<any>
-        signatures: Array<string>
-        startBlock: any
-        description: string
-        endBlock: any
-        created: any
-      }
-    }>
-  } | null
-}
-
-export type UsersInfoQueryVariables = Exact<{
-  skip: Scalars['Int']['input']
-  take: Scalars['Int']['input']
-}>
-
-export type UsersInfoQuery = {
-  __typename?: 'Query'
-  users: Array<{
-    __typename?: 'User'
+  managedPools: Array<{
+    __typename?: 'Pool'
     id: string
-    votingPower: any
-    votes: Array<{
-      __typename?: 'Vote'
-      proposal: { __typename?: 'Proposal'; number: number }
-    }>
-    proposals: Array<{
-      __typename?: 'Proposal'
-      proposer: { __typename?: 'User'; id: string }
-    }>
+    address: string
+    name: string
+    symbol: string
+    logo?: string | null
+    price_usd: any
+    total_value_locked_usd: any
+    investors: Array<{ __typename?: 'Investor'; amount: any }>
+    chain?: { __typename?: 'Chain'; logo?: string | null } | null
+    now: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    day: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
   }>
-  governances: Array<{ __typename?: 'Governance'; totalVotingPower: any }>
 }
 
-export type VotesQueryVariables = Exact<{
-  number: Scalars['Int']['input']
-  support: Scalars['Boolean']['input']
-}>
+export type PoolsQueryVariables = Exact<{ [key: string]: never }>
 
-export type VotesQuery = {
+export type PoolsQuery = {
   __typename?: 'Query'
-  proposals: Array<{
-    __typename?: 'Proposal'
-    votes: Array<{
-      __typename?: 'Vote'
-      support: boolean
-      votingPower: any
-      voter: { __typename?: 'User'; id: string }
-    }>
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    address: string
+    symbol: string
+    price_usd: any
   }>
 }
 
-export type VotingPowerQueryVariables = Exact<{
-  id: Scalars['ID']['input']
-}>
-
-export type VotingPowerQuery = {
-  __typename?: 'Query'
-  user?: { __typename?: 'User'; votingPower: any } | null
-  governances: Array<{
-    __typename?: 'Governance'
-    totalVotingPower: any
-    votingAddresses: number
-  }>
-}
-
-export const DelegationsDocument = gql`
-  query Delegations($id: String) {
-    delegations(where: { from: $id, votingPower_gt: 0 }) {
-      pool
-      votingPower
-      to {
-        id
-      }
-      from {
-        id
-      }
-    }
-    received: delegations(where: { to: $id, from_not: $id }) {
-      pool
-      votingPower
-      from {
-        id
-      }
-      to {
-        id
-      }
-    }
-  }
-`
-export const ProposalDocument = gql`
-  query Proposal($number: Int!, $voter: String) {
-    proposal: proposals(where: { number: $number }) {
-      number
-      description
-      forVotes
-      againstVotes
-      startBlock
-      endBlock
-      quorum
-      values
-      calldatas
-      signatures
-      targets
-      created
-      canceled
-      queued
-      executed
-      eta
-      proposer {
-        id
-      }
-      votes(where: { voter: $voter }) {
-        support
-        voter {
-          id
-        }
-      }
-    }
-  }
-`
-export const ProposalsDocument = gql`
-  query Proposals($skip: Int!, $take: Int!) {
-    proposals(
-      orderDirection: desc
-      orderBy: number
-      first: $take
-      skip: $skip
-    ) {
+export const PoolChartDocument = gql`
+  query PoolChart($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
+    pools(where: { id_in: $id }) {
       id
-      number
-      targets
-      values
-      signatures
-      startBlock
-      endBlock
-      description
-      created
-    }
-  }
-`
-export const UserVotesDocument = gql`
-  query UserVotes($id: ID!) {
-    user(id: $id) {
-      votes {
-        support
-        proposal {
-          id
-          number
-          targets
-          values
-          signatures
-          startBlock
-          description
-          endBlock
-          created
-        }
+      address
+      name
+      symbol
+      logo
+      price_usd
+      total_value_locked_usd
+      now: price_candles(
+        where: { base: "usd", period: 3600 }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      day: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $day }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
       }
     }
-  }
-`
-export const UsersInfoDocument = gql`
-  query UsersInfo($skip: Int!, $take: Int!) {
-    users(
-      orderDirection: desc
-      orderBy: votingPower
-      first: $take
-      skip: $skip
-    ) {
+    managedPools: pools(where: { investors_: { wallet: $wallet } }) {
       id
-      votingPower
-      votes {
-        proposal {
-          number
-        }
+      address
+      name
+      symbol
+      logo
+      price_usd
+      total_value_locked_usd
+      investors(where: { wallet: $wallet }) {
+        amount
       }
-      proposals {
-        proposer {
-          id
-        }
+      chain {
+        logo
       }
-    }
-    governances {
-      totalVotingPower
+      now: price_candles(
+        where: { base: "usd", period: 3600 }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      day: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $day }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
     }
   }
 `
-export const VotesDocument = gql`
-  query Votes($number: Int!, $support: Boolean!) {
-    proposals(where: { number: $number }) {
-      votes(where: { support: $support }) {
-        support
-        votingPower
-        voter {
-          id
-        }
-      }
-    }
-  }
-`
-export const VotingPowerDocument = gql`
-  query VotingPower($id: ID!) {
-    user(id: $id) {
-      votingPower
-    }
-    governances {
-      totalVotingPower
-      votingAddresses
+export const PoolsDocument = gql`
+  query Pools {
+    pools {
+      id
+      address
+      symbol
+      price_usd
     }
   }
 `
@@ -5824,101 +4842,31 @@ export function getSdk(
   withWrapper: SdkFunctionWrapper = defaultWrapper
 ) {
   return {
-    Delegations(
-      variables?: DelegationsQueryVariables,
+    PoolChart(
+      variables: PoolChartQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
-    ): Promise<DelegationsQuery> {
+    ): Promise<PoolChartQuery> {
       return withWrapper(
         wrappedRequestHeaders =>
-          client.request<DelegationsQuery>(DelegationsDocument, variables, {
+          client.request<PoolChartQuery>(PoolChartDocument, variables, {
             ...requestHeaders,
             ...wrappedRequestHeaders
           }),
-        'Delegations',
+        'PoolChart',
         'query'
       )
     },
-    Proposal(
-      variables: ProposalQueryVariables,
+    Pools(
+      variables?: PoolsQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
-    ): Promise<ProposalQuery> {
+    ): Promise<PoolsQuery> {
       return withWrapper(
         wrappedRequestHeaders =>
-          client.request<ProposalQuery>(ProposalDocument, variables, {
+          client.request<PoolsQuery>(PoolsDocument, variables, {
             ...requestHeaders,
             ...wrappedRequestHeaders
           }),
-        'Proposal',
-        'query'
-      )
-    },
-    Proposals(
-      variables: ProposalsQueryVariables,
-      requestHeaders?: GraphQLClientRequestHeaders
-    ): Promise<ProposalsQuery> {
-      return withWrapper(
-        wrappedRequestHeaders =>
-          client.request<ProposalsQuery>(ProposalsDocument, variables, {
-            ...requestHeaders,
-            ...wrappedRequestHeaders
-          }),
-        'Proposals',
-        'query'
-      )
-    },
-    UserVotes(
-      variables: UserVotesQueryVariables,
-      requestHeaders?: GraphQLClientRequestHeaders
-    ): Promise<UserVotesQuery> {
-      return withWrapper(
-        wrappedRequestHeaders =>
-          client.request<UserVotesQuery>(UserVotesDocument, variables, {
-            ...requestHeaders,
-            ...wrappedRequestHeaders
-          }),
-        'UserVotes',
-        'query'
-      )
-    },
-    UsersInfo(
-      variables: UsersInfoQueryVariables,
-      requestHeaders?: GraphQLClientRequestHeaders
-    ): Promise<UsersInfoQuery> {
-      return withWrapper(
-        wrappedRequestHeaders =>
-          client.request<UsersInfoQuery>(UsersInfoDocument, variables, {
-            ...requestHeaders,
-            ...wrappedRequestHeaders
-          }),
-        'UsersInfo',
-        'query'
-      )
-    },
-    Votes(
-      variables: VotesQueryVariables,
-      requestHeaders?: GraphQLClientRequestHeaders
-    ): Promise<VotesQuery> {
-      return withWrapper(
-        wrappedRequestHeaders =>
-          client.request<VotesQuery>(VotesDocument, variables, {
-            ...requestHeaders,
-            ...wrappedRequestHeaders
-          }),
-        'Votes',
-        'query'
-      )
-    },
-    VotingPower(
-      variables: VotingPowerQueryVariables,
-      requestHeaders?: GraphQLClientRequestHeaders
-    ): Promise<VotingPowerQuery> {
-      return withWrapper(
-        wrappedRequestHeaders =>
-          client.request<VotingPowerQuery>(VotingPowerDocument, variables, {
-            ...requestHeaders,
-            ...wrappedRequestHeaders
-          }),
-        'VotingPower',
+        'Pools',
         'query'
       )
     }
