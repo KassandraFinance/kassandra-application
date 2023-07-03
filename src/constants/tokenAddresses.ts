@@ -142,7 +142,7 @@ export const networks: NetworkType = {
   '43114': {
     chainId: 43114,
     chainName: 'Avalanche',
-    rpc: 'https://api.avax.network/ext/bc/C/rpc',
+    rpc: 'https://rpc.ankr.com/avalanche',
     kacyAddress: Kacy,
     blockExplorer: 'https://snowtrace.io',
     coingecko: 'avalanche',
