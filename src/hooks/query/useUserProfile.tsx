@@ -9,7 +9,7 @@ type UseUserProfileProps = {
   address: string | undefined
 }
 
-type UserProfileType = {
+export type UserProfileType = {
   description: string | null
   discord: string | null
   image: string | null
@@ -44,8 +44,6 @@ export const useUserProfile = ({ address }: UseUserProfileProps) => {
     queryKey: ['user-profile', id],
     queryFn: async () => {
       return fetchUserProfile({ address: id })
-    },
-    staleTime: 1000 * 60,
-    refetchInterval: 1000 * 60
+    }
   })
 }

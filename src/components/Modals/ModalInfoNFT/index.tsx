@@ -3,9 +3,9 @@ import { useRouter } from 'next/router'
 import Image from 'next/image'
 import CopyToClipboard from 'react-copy-to-clipboard'
 
+import { UserProfileType } from '@/hooks/query/useUserProfile'
 import { ToastInfo } from '../../Toastify/toast'
 import NftImage from '../../NftImage'
-import { UserProps } from '../../Governance/UserDescription'
 import ExternalLink from '../../ExternalLink'
 import Overlay from '../../Overlay'
 
@@ -15,22 +15,10 @@ import arrowDown from '../../../../public/assets/utilities/arrow-select-down.svg
 
 import * as S from './styles'
 
-type INftDataProps = {
-  token_address: string
-  token_id: string
-  contract_type: string
-  name: string
-  symbol: string
-  description: string
-  nftName: string
-  chain: string
-}
-
 interface IOperationsProps {
   modalOpen: boolean
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  userData: UserProps
-  NftUrl: string
+  userData: UserProfileType
 }
 
 const ChainLink: { [key: string]: string } = {
@@ -51,24 +39,12 @@ const ChainName: { [key: string]: string } = {
   CRO: 'Cronos'
 }
 
-// eslint-disable-next-line prettier/prettier
 const ModalCardOperations = ({
   modalOpen,
   setModalOpen,
-  userData,
-  NftUrl
+  userData
 }: IOperationsProps) => {
   const [isOpenDetails, setIsOpenDetails] = React.useState(false)
-  const [nftDetails, setNftDetails] = React.useState<INftDataProps>({
-    token_address: '',
-    token_id: '',
-    contract_type: '',
-    name: '',
-    symbol: '',
-    description: '',
-    nftName: '',
-    chain: ''
-  })
 
   const router = useRouter()
 
@@ -79,32 +55,6 @@ const ModalCardOperations = ({
   const handleCloseModalInfoNFT = () => {
     setModalOpen(false)
   }
-
-  React.useEffect(() => {
-    if (userData.nft) {
-      const {
-        chain,
-        collectionName,
-        contractType,
-        nftDescription,
-        nftName,
-        symbol,
-        tokenAddress,
-        tokenId
-      } = userData.nft
-
-      setNftDetails({
-        token_address: tokenAddress ? tokenAddress : '-',
-        token_id: tokenId ? tokenId : '-',
-        contract_type: contractType ? contractType : '-',
-        name: collectionName ? collectionName : '-',
-        symbol: symbol ? symbol : '-',
-        description: nftDescription ? nftDescription : '-',
-        nftName: nftName ? nftName : '-',
-        chain: chain ? chain : '-'
-      })
-    }
-  }, [userData])
 
   return (
     <S.ModalNftContainer>
@@ -117,7 +67,7 @@ const ModalCardOperations = ({
       <S.ImageContainerNft>
         <S.NftImage
           isOpenDetails={isOpenDetails}
-          src={NftUrl}
+          src={userData?.image || ''}
           alt="Nft Image"
         />
       </S.ImageContainerNft>
@@ -128,9 +78,10 @@ const ModalCardOperations = ({
         <S.ButtonViewNftDetails>
           {!isOpenDetails && (
             <>
-              <h1>{nftDetails.nftName}</h1>
+              <h1>{userData.nft.nftName}</h1>
               <span>
-                <p>{nftDetails.name} </p>· Verified collection by Moralis
+                <p>{userData.nft.collectionName} </p>· Verified collection by
+                Moralis
               </span>
             </>
           )}
@@ -147,21 +98,21 @@ const ModalCardOperations = ({
       >
         <S.ModalInfoNftContent>
           <S.NftHeader>
-            <h1>{nftDetails.nftName}</h1>
-            <p>{nftDetails.name}</p>
+            <h1>{userData.nft.nftName}</h1>
+            <p>{userData.nft.collectionName}</p>
             <span>Verified collection by Moralis</span>
           </S.NftHeader>
           <S.OwnerContainer>
             <h3>OWNER</h3>
             <S.OwnerContent>
-              <NftImage NftUrl={NftUrl} imageSize="small" />
+              <NftImage NftUrl={userData.image || ''} imageSize="small" />
               <span>
                 <p>{userData.nickname}</p>
                 <strong>{substr(profileAddress ? profileAddress : '')}</strong>
               </span>
               <S.SocialIconsContainer>
                 <li>
-                  <CopyToClipboard text={userData.discord}>
+                  <CopyToClipboard text={userData.discord || ''}>
                     <S.SocialIcon
                       as="button"
                       isActiveSocial={
@@ -220,7 +171,7 @@ const ModalCardOperations = ({
                 </li>
                 <li>
                   <S.SocialIcon
-                    href={userData.website}
+                    href={userData?.website || ''}
                     target="_blank"
                     rel="noopener noreferrer"
                     isActiveSocial={
@@ -243,18 +194,18 @@ const ModalCardOperations = ({
           <S.CollectionContent>
             <h3>COLLECTION</h3>
             <span>
-              {nftDetails.name}
+              {userData.nft.collectionName}
               <p>Verified collection by Moralis</p>
             </span>
-            <p>{nftDetails.description}</p>
+            <p>{userData.nft.nftDescription}</p>
           </S.CollectionContent>
           <S.NftDetailsContainer>
             <h3>NFT DETAILS</h3>
             <ul>
               <li>
                 <p>Contact Address</p>
-                <span>{substr(nftDetails.token_address)}</span>
-                <CopyToClipboard text={nftDetails.token_address}>
+                <span>{substr(userData?.nft?.tokenAddress || '')}</span>
+                <CopyToClipboard text={userData?.nft?.tokenAddress || ''}>
                   <button onClick={() => ToastInfo('Copy address')}>
                     <svg
                       width="14"
@@ -275,19 +226,21 @@ const ModalCardOperations = ({
                 <p>Blockchain</p>
                 <span>
                   {' '}
-                  {nftDetails.chain} · {ChainName[nftDetails.chain]}
+                  {userData.nft.chain} · {ChainName[userData.nft.chain || '']}
                 </span>
               </li>
               <li>
                 <p>number</p>
-                <span>
-                  #
-                  {nftDetails.token_id.length > 9
-                    ? substr(nftDetails.token_id)
-                    : nftDetails.token_id}
-                </span>
-                {nftDetails.token_id.length > 9 && (
-                  <CopyToClipboard text={nftDetails.token_id}>
+                {userData?.nft?.tokenId ? (
+                  <span>
+                    #
+                    {userData.nft.tokenId.length > 9
+                      ? substr(userData.nft.tokenId)
+                      : userData.nft.tokenId}
+                  </span>
+                ) : null}
+                {userData?.nft?.tokenId && userData.nft.tokenId.length > 9 && (
+                  <CopyToClipboard text={userData.nft.tokenId}>
                     <button onClick={() => ToastInfo('Copy number NFT')}>
                       <svg
                         width="14"
@@ -307,7 +260,7 @@ const ModalCardOperations = ({
               </li>
               <li>
                 <p>Token Standard</p>
-                <span>{nftDetails.contract_type}</span>
+                <span>{userData.nft.contractType}</span>
               </li>
             </ul>
           </S.NftDetailsContainer>
@@ -322,8 +275,8 @@ const ModalCardOperations = ({
           <S.OtherSiteContainer>
             <ExternalLink
               text="Read More"
-              hrefLink={`${ChainLink[nftDetails.chain]}/${
-                nftDetails.token_address
+              hrefLink={`${ChainLink[userData?.nft?.chain || '']}/${
+                userData.nft.tokenAddress
               }`}
             />
           </S.OtherSiteContainer>

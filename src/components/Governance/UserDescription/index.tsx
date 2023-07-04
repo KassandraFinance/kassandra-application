@@ -8,6 +8,7 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
 
 import { linkSnowtrace } from '@/constants/tokenAddresses'
+import { useUserProfile } from '@/hooks/query/useUserProfile'
 
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
@@ -57,17 +58,6 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
   const [isStateSeeMore, setIsStateSeeMore] = React.useState(false)
   const [userDescription, setUserDescription] = React.useState('')
 
-  const [imageUser, setImageUser] = React.useState({ url: '', isNFT: false })
-  const [userData, setUserData] = React.useState<UserProps>({
-    nickname: '',
-    twitter: '',
-    website: '',
-    telegram: '',
-    discord: '',
-    description: '',
-    nft: undefined
-  })
-
   const [{ wallet }] = useConnectWallet()
   const { trackEventFunction } = useMatomoEcommerce()
 
@@ -79,71 +69,42 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
     ? userWalletUrl[0]
     : userWalletUrl
 
-  React.useEffect(() => {
-    if (!walletUserString) return
-
-    fetch(`/api/profile/${walletUserString}`)
-      .then(response => {
-        if (response.ok) {
-          return response.json()
-        }
-        throw new Error('Something went wrong')
-      })
-      .then(data => {
-        const { image, ...profile } = data
-
-        setUserData({
-          ...profile,
-          description: profile.description ?? ''
-        }),
-          setImageUser({ url: image, isNFT: data.isNFT })
-      })
-      .catch(() => {
-        setUserData({
-          nickname: '',
-          twitter: '',
-          website: '',
-          telegram: '',
-          discord: '',
-          description: '',
-          nft: undefined
-        }),
-          setImageUser({ url: '', isNFT: false })
-      })
-  }, [isOpenModal, userWalletUrl])
+  const { data } = useUserProfile({ address: walletUserString })
 
   React.useEffect(() => {
+    if (!data?.description) {
+      return
+    }
+
     if (window.screen.width > 768) {
       isStateSeeMore
-        ? setUserDescription(userData.description)
-        : userData.description.length > 340
-        ? setUserDescription(userData.description.substring(0, 340) + '...')
-        : setUserDescription(userData.description)
+        ? setUserDescription(data.description)
+        : data.description.length > 340
+        ? setUserDescription(data.description.substring(0, 340) + '...')
+        : setUserDescription(data.description)
     } else {
       isStateSeeMore
-        ? setUserDescription(userData.description)
-        : userData.description.length > 100
-        ? setUserDescription(userData.description.substring(0, 200) + '...')
-        : setUserDescription(userData.description)
+        ? setUserDescription(data.description)
+        : data.description.length > 100
+        ? setUserDescription(data.description.substring(0, 200) + '...')
+        : setUserDescription(data.description)
     }
-  }, [isStateSeeMore, userData])
+  }, [isStateSeeMore, data])
 
   return (
     <>
       <S.UserDescription>
         <S.UserInfo>
           <S.UserInfoContent>
-            {imageUser.isNFT ? (
+            {data?.isNFT ? (
               <NftImage
-                NftUrl={imageUser.url}
+                NftUrl={data?.image || ''}
                 imageSize="medium"
                 openModalNFT={setIsOpenModalNft}
               />
-            ) : imageUser.url !== undefined &&
-              imageUser.url !== null &&
-              imageUser.url !== '' ? (
+            ) : data?.image && data?.image?.length > 0 ? (
               <img
-                src={imageUser.url}
+                src={data?.image}
                 alt=""
                 width="90"
                 height="90"
@@ -177,7 +138,7 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
             )}
           </S.UserInfoContent>
           <S.UserProfileContent isSelectSeeMore={isStateSeeMore}>
-            <p>{userData.nickname}</p>
+            <p>{data?.nickname}</p>
             <S.UserAddressContent>
               {walletUserString && substr(walletUserString)}
               <CopyToClipboard text={walletUserString ? walletUserString : ''}>
@@ -231,13 +192,11 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
             </S.UserAddressContent>
             <ul>
               <li>
-                <CopyToClipboard text={userData.discord}>
+                <CopyToClipboard text={data?.discord || ''}>
                   <S.SocialIcon
                     as="button"
                     isActiveSocial={
-                      userData.discord !== '' &&
-                      userData.discord !== undefined &&
-                      userData.discord !== null
+                      data && data.discord !== null && data.discord !== ''
                     }
                     onClick={() => {
                       trackEventFunction(
@@ -259,13 +218,11 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
               </li>
               <li>
                 <S.SocialIcon
-                  href={`https://twitter.com/${userData.twitter}`}
+                  href={`https://twitter.com/${data?.twitter}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   isActiveSocial={
-                    userData.twitter !== '' &&
-                    userData.twitter !== undefined &&
-                    userData.twitter !== null
+                    data && data.twitter !== null && data.twitter !== ''
                   }
                   onClick={() => {
                     trackEventFunction('click-on-link', 'twitter', 'profile')
@@ -281,13 +238,11 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
               </li>
               <li>
                 <S.SocialIcon
-                  href={`https://t.me/${userData.telegram}`}
+                  href={`https://t.me/${data?.telegram}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   isActiveSocial={
-                    userData.telegram !== '' &&
-                    userData.telegram !== undefined &&
-                    userData.telegram !== null
+                    data && data.telegram !== null && data.telegram !== ''
                   }
                   onClick={() => {
                     trackEventFunction('click-on-link', 'telegram', 'profile')
@@ -303,13 +258,11 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
               </li>
               <li>
                 <S.SocialIcon
-                  href={userData.website}
+                  href={data?.website || ''}
                   target="_blank"
                   rel="noopener noreferrer"
                   isActiveSocial={
-                    userData.website !== '' &&
-                    userData.website !== undefined &&
-                    userData.website !== null
+                    data && data.website !== null && data.website !== ''
                   }
                   onClick={() => {
                     trackEventFunction('click-on-link', 'website', 'profile')
@@ -353,11 +306,11 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
             </Tippy>
           </p>
           <S.DescriptionManagerInfo>
-            {userDescription === ''
+            {userDescription.length === 0
               ? 'This address has not written any information yet'
               : userDescription}
 
-            {userData.description.length > 340 && (
+            {data?.description && data.description?.length > 340 && (
               <S.ButtonSeeMore
                 isSeeMore={isStateSeeMore}
                 onClick={() => {
@@ -379,22 +332,18 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
           </S.DescriptionManagerInfo>
         </S.ManagerInfo>
       </S.UserDescription>
-      {isOpenModal && (
+      {isOpenModal && data && (
         <ModalUserEditInfo
           modalOpen={isOpenModal}
           setModalOpen={setIsOpenModal}
-          userData={userData}
-          imageUser={imageUser}
-          setUserImage={setImageUser}
-          setUserData={setUserData}
+          userData={data}
         />
       )}
-      {isOpenModalNft && (
+      {isOpenModalNft && data && (
         <ModalInfoNFT
           modalOpen={isOpenModalNft}
           setModalOpen={setIsOpenModalNft}
-          userData={userData}
-          NftUrl={imageUser.url}
+          userData={data}
         />
       )}
     </>
