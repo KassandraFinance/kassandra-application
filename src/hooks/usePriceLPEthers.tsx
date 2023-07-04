@@ -3,14 +3,12 @@ import { Contract, JsonRpcProvider } from 'ethers'
 import Big from 'big.js'
 
 import { ERC20 } from '@/hooks/useERC20'
-import useTransaction from '@/hooks/useTransaction'
 
 import { VAULT_POLYGON, networks } from '@/constants/tokenAddresses'
 import PriceLP from '@/constants/abi/PriceLP.json'
 import VAULT from '@/constants/abi/VaultBalancer.json'
 
 const usePriceLP = (chainId: number) => {
-  const { txNotification, transactionErrors } = useTransaction()
   const provider = new JsonRpcProvider(networks[chainId].rpc)
 
   return React.useMemo(() => {
@@ -39,11 +37,7 @@ const usePriceLP = (chainId: number) => {
 
       const wethReserve = Big(res.cash).mul(priceWETH)
 
-      const ERC20Contract = await ERC20(poolAddress, networks[137].rpc, {
-        txNotification,
-        transactionErrors,
-        wallet: null
-      })
+      const ERC20Contract = await ERC20(poolAddress, networks[137].rpc)
       const supplyLPToken = await ERC20Contract.totalSupply()
       if (Big(supplyLPToken).lte(0)) {
         return Big('0')
@@ -80,12 +74,7 @@ const usePriceLP = (chainId: number) => {
       if (getPriceLP) {
         const ERC20Contract = await ERC20(
           addressKacyAvax,
-          networks[chainId].rpc,
-          {
-            transactionErrors,
-            txNotification,
-            wallet: null
-          }
+          networks[chainId].rpc
         )
 
         const totalAvaxInDollars = Big(avaxKacyReserve).mul(avaxInDollar)
