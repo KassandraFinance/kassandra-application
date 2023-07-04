@@ -13,7 +13,7 @@ const lzChainIds: Record<number, number> = {
 }
 
 const nativeToken: Record<string, string> = {
-  '0xA86A': 'AVAX',
+  '0xa86a': 'AVAX',
   '0x89': 'MATIC'
 }
 
@@ -45,7 +45,9 @@ const useBridge = () => {
         if (
           feeNative.gte(
             Big(
-              balances !== null ? balances[nativeToken[wallet.chains[0].id]] : 0
+              balances !== null
+                ? balances[nativeToken[wallet.chains[0].id.toLowerCase()]]
+                : 0
             )
           )
         ) {
