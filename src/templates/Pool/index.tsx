@@ -1,16 +1,14 @@
 import React from 'react'
 import Image from 'next/image'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Big from 'big.js'
 import Link from 'next/link'
-
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import { BNtoDecimal } from '../../utils/numerals'
+import { BNtoDecimal } from '@/utils/numerals'
 import substr from '@/utils/substr'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
+import { usePoolInfo } from '@/hooks/query/usePoolInfo'
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setTokensSwapProvider } from '../../store/reducers/tokenListSwapProvider'
@@ -21,8 +19,6 @@ import {
   BACKEND_KASSANDRA,
   NATIVE_ADDRESS
 } from '../../constants/tokenAddresses'
-
-import { GET_INFO_POOL } from './graphql'
 
 import Breadcrumb from '../../components/Breadcrumb'
 import Loading from '../../components/Loading'
@@ -94,13 +90,10 @@ const Pool = () => {
   const { pool } = useAppSelector(state => state)
   const dispatch = useAppDispatch()
 
-  const { data } = useSWR([GET_INFO_POOL], query =>
-    request(BACKEND_KASSANDRA, query, {
-      id: pool.id,
-      day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
-    })
-  )
-
+  const { data } = usePoolInfo({
+    id: pool.id,
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
+  })
   const { data: userProfile } = useUserProfile({ address: pool.manager.id })
 
   async function getTokensForOperations() {
@@ -186,35 +179,26 @@ const Pool = () => {
   }, [pool])
 
   React.useEffect(() => {
-    if (data?.pool) {
-      const swapFees = data.pool.swap.reduce(
-        (acc: Big, current: { volume_usd: string }) => {
-          return Big(current.volume_usd).add(acc)
-        },
-        0
-      )
+    if (data) {
+      const swapFees = data.swap.reduce((acc, current) => {
+        return Big(current.volume_usd).add(acc)
+      }, Big(0))
 
-      const withdrawFees = data.pool.withdraw.reduce(
-        (acc: Big, current: { volume_usd: string }) => {
-          return Big(current.volume_usd).add(acc)
-        },
-        0
-      )
+      const withdrawFees = data.withdraw.reduce((acc, current) => {
+        return Big(current.volume_usd).add(acc)
+      }, Big(0))
 
-      const volume = data.pool.volumes.reduce(
-        (acc: Big, current: { volume_usd: string }) => {
-          return Big(current.volume_usd).add(acc)
-        },
-        0
-      )
+      const volume = data.volumes.reduce((acc, current) => {
+        return Big(current.volume_usd).add(acc)
+      }, Big(0))
 
       setInfoPool({
-        tvl: BNtoDecimal(Big(data.pool.total_value_locked_usd), 2, 2, 2),
+        tvl: BNtoDecimal(Big(data.total_value_locked_usd), 2, 2, 2),
         swapFees: BNtoDecimal(Big(swapFees), 2, 2, 2),
         withdrawFees: BNtoDecimal(Big(withdrawFees), 2, 2, 2),
         volume: BNtoDecimal(Big(volume), 2, 2, 2),
-        price: data.pool.price_usd,
-        decimals: data.pool.decimals
+        price: data.price_usd,
+        decimals: data.decimals
       })
     }
   }, [data])
@@ -379,11 +363,11 @@ const Pool = () => {
               <ScrollUpButton />
               <Change />
               <FeeBreakdown
-                feeJoinBroker={data.pool.fee_join_broker}
-                feeJoinManager={data.pool.fee_join_manager}
-                feeAum={data.pool.fee_aum}
-                feeAumKassandra={data.pool.fee_aum_kassandra}
-                withdrawFee={data.pool.fee_exit}
+                feeJoinBroker={data?.fee_join_broker || 0}
+                feeJoinManager={data?.fee_join_manager || 0}
+                feeAum={data?.fee_aum || 0}
+                feeAumKassandra={data?.fee_aum_kassandra || 0}
+                withdrawFee={data?.fee_exit || 0}
               />
               <MyAsset
                 chain={pool.chain}

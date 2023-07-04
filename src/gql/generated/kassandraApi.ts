@@ -4723,6 +4723,30 @@ export type PoolChartQuery = {
   }>
 }
 
+export type PoolInfoQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  day: Scalars['Int']['input']
+}>
+
+export type PoolInfoQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    decimals: number
+    price_usd: any
+    total_value_locked_usd: any
+    fee_exit: any
+    fee_swap: any
+    fee_join_manager: any
+    fee_join_broker: any
+    fee_aum_kassandra: any
+    fee_aum: any
+    withdraw: Array<{ __typename?: 'Fee'; volume_usd: any }>
+    swap: Array<{ __typename?: 'Fee'; volume_usd: any }>
+    volumes: Array<{ __typename?: 'Volume'; volume_usd: any }>
+  } | null
+}
+
 export type PoolsQueryVariables = Exact<{ [key: string]: never }>
 
 export type PoolsQuery = {
@@ -4814,6 +4838,32 @@ export const PoolChartDocument = gql`
     }
   }
 `
+export const PoolInfoDocument = gql`
+  query PoolInfo($id: ID!, $day: Int!) {
+    pool(id: $id) {
+      decimals
+      price_usd
+      total_value_locked_usd
+      fee_exit
+      fee_swap
+      fee_join_manager
+      fee_join_broker
+      fee_aum_kassandra
+      fee_aum
+      withdraw: fees(
+        where: { period: 3600, timestamp_gt: $day, type: "exit" }
+      ) {
+        volume_usd
+      }
+      swap: fees(where: { period: 3600, timestamp_gt: $day, type: "swap" }) {
+        volume_usd
+      }
+      volumes(where: { period: 3600, timestamp_gt: $day }) {
+        volume_usd
+      }
+    }
+  }
+`
 export const PoolsDocument = gql`
   query Pools {
     pools {
@@ -4853,6 +4903,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'PoolChart',
+        'query'
+      )
+    },
+    PoolInfo(
+      variables: PoolInfoQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolInfoQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolInfoQuery>(PoolInfoDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'PoolInfo',
         'query'
       )
     },
