@@ -19,7 +19,7 @@ import * as S from './styles'
 
 type CoinsMetadataType = {
   [key: string]: {
-    usd: number
+    usd: string
     pricePercentageChangeIn24h: number
     marketCap: number
   }
@@ -163,7 +163,7 @@ const AllocationTable = ({
                     </span>
                   </S.Holding>
                   <S.PriceContent className="price">
-                    <p>$ {coingeckoTokenInfo?.usd?.toFixed(2)}</p>
+                    <p>$ {Big(coingeckoTokenInfo?.usd ?? 0).toFixed(2)}</p>
                     <S.PriceChange
                       changePrice={
                         coingeckoTokenInfo?.pricePercentageChangeIn24h ?? 0
@@ -255,11 +255,13 @@ const AllocationTable = ({
           <ValueContainer>
             <Value>
               ${' '}
-              {coingeckoData[
-                chainId === 5
-                  ? mockTokens[viewToken?.token?.address ?? '']?.toLowerCase()
-                  : viewToken?.token?.address.toLowerCase() ?? ''
-              ]?.usd.toFixed(2) ?? 0}
+              {Big(
+                coingeckoData[
+                  chainId === 5
+                    ? mockTokens[viewToken?.token?.address ?? '']?.toLowerCase()
+                    : viewToken?.token?.address.toLowerCase() ?? ''
+                ]?.usd ?? 0
+              ).toFixed(2)}
             </Value>
             <SecondaryValue>
               <S.PriceChange

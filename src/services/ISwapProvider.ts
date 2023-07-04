@@ -23,7 +23,8 @@ export interface ISwapProvider {
   getDatasTx: (
     chainId: string,
     proxy: string,
-    slippage: string
+    slippage: string,
+    txs: Array<any>
   ) => Promise<Array<string>>
   getAmountsOut: (params: GetAmountsParams) => Promise<GetAmountsResult>
 }

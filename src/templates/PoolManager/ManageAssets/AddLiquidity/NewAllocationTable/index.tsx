@@ -39,7 +39,7 @@ const NewAllocationTable = ({ assets }: INewAllocationTablePorps) => {
                     coinImage={asset.token.logo || notFound}
                     coinName={asset.token.name}
                     coinSymbol={asset.token.symbol}
-                    price={0}
+                    price={'0'}
                     url={`https://heimdall-frontend.vercel.app/coins/${asset.token.symbol}`}
                     table
                   />

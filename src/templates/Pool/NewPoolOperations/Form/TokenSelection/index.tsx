@@ -4,18 +4,15 @@ import { stringSimilarity } from 'string-similarity-js'
 import { useConnectWallet } from '@web3-onboard/react'
 import { isAddress } from 'ethers'
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
-import { setTokenSelectionActive } from '../../../../../store/reducers/tokenSelectionActive'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { setTokenSelectionActive } from '@/store/reducers/tokenSelectionActive'
 
-import useCoingecko from '../../../../../hooks/useCoingecko'
+import useCoingecko from '@/hooks/useCoingecko'
 import useBatchRequests from '@/hooks/useBatchRequests'
 
-import { BNtoDecimal } from '../../../../../utils/numerals'
+import { BNtoDecimal } from '@/utils/numerals'
 
-import {
-  NATIVE_ADDRESS,
-  platform
-} from '../../../../../constants/tokenAddresses'
+import { NATIVE_ADDRESS } from '@/constants/tokenAddresses'
 
 import TokenPin from './TokenPin'
 import InputSearch from './InputSearch'
@@ -23,6 +20,7 @@ import TokensSwapProviderList from './TokensSwapProviderList'
 import Loading from '../../../../../components/Loading'
 
 import * as S from './styles'
+import { setTokenSelect } from '@/store/reducers/tokenSelect'
 
 export type IListbalanceTokenprops = {
   [key: string]: string
@@ -233,10 +231,10 @@ const TokenSelection = () => {
           </S.LoadingContainer>
         ) : (
           <TokensSwapProviderList
-            listBalanceToken={balanceToken}
             filteredToken={filteredToken}
             tokenPinList={tokenPinList}
             setTokenPinList={setTokenPinList}
+            setTokenSelected={token => dispatch(setTokenSelect(token))}
           />
         )}
       </S.BodyToken>

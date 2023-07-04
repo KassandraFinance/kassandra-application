@@ -40,7 +40,7 @@ export type IRebalanceWeightsProps = {
 
 type CoinsMetadataType = {
   [key: string]: {
-    usd: number
+    usd: string
     pricePercentageChangeIn24h: number
     marketCap: number
   }
@@ -115,7 +115,7 @@ const IntroReview = ({
               <S.ValueHoldingAndPrice>
                 $
                 {tokenSeleted?.holding?.value
-                  .mul(Big(coingeckoTokenInfo?.usd.toFixed(2) ?? 0))
+                  .mul(Big(coingeckoTokenInfo?.usd ?? 0))
                   .toFixed(2) ?? 0}
               </S.ValueHoldingAndPrice>
               <p>
@@ -127,7 +127,7 @@ const IntroReview = ({
               <S.TitleHoldingAndPrice>PRICE 24H</S.TitleHoldingAndPrice>
               <S.PriceDayValue>
                 <S.ValueHoldingAndPrice>
-                  ${(coingeckoTokenInfo?.usd ?? 0).toFixed(2)}
+                  ${Big(coingeckoTokenInfo?.usd ?? 0).toFixed(2)}
                 </S.ValueHoldingAndPrice>
                 <S.ChangeDayValue
                   changePrice={

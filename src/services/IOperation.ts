@@ -25,7 +25,7 @@ export interface IOperations {
   exitswapPoolAllTokenAmountIn: (
     params: ExitSwapPoolAllTokenAmountInParams
   ) => Promise<ContractTransactionResponse>
-  getDatasTx: (slippage: string) => Promise<Array<string>>
+  getDatasTx: (slippage: string, txs: Array<any>) => Promise<Array<string>>
   getAmountsOut: (params: GetAmountsParams) => Promise<GetAmountsResult>
 }
 
