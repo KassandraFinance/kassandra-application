@@ -1,4 +1,4 @@
-query PoolChart($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
+query userPoolData($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
     pools(where: { id_in: $id }) {
       id
       address

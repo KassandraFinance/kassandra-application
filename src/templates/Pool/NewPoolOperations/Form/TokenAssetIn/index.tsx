@@ -4,6 +4,7 @@ import Big from 'big.js'
 import Blockies from 'react-blockies'
 import { useConnectWallet } from '@web3-onboard/react'
 
+import { usePoolInfo } from '@/hooks/query/usePoolInfo'
 import { useAppSelector } from '../../../../../store/hooks'
 
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
@@ -13,14 +14,9 @@ import { decimalToBN } from '../../../../../utils/poolUtils'
 
 import * as S from './styles'
 
-type IPoolPriceUSDProps = {
-  price_usd: string
-  decimals: number
-}
 interface ITokenAssetInProps {
   amountTokenIn: string | Big
   setamountTokenIn: React.Dispatch<React.SetStateAction<string | Big>>
-  poolPriceUSD: IPoolPriceUSDProps
   maxActive: boolean
   setMaxActive: React.Dispatch<React.SetStateAction<boolean>>
   selectedTokenInBalance: Big
@@ -32,7 +28,6 @@ interface ITokenAssetInProps {
 const TokenAssetIn = ({
   amountTokenIn,
   setamountTokenIn,
-  poolPriceUSD,
   maxActive,
   setMaxActive,
   selectedTokenInBalance,
@@ -43,6 +38,11 @@ const TokenAssetIn = ({
   const [{ wallet }] = useConnectWallet()
   const { pool } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
+
+  const { data } = usePoolInfo({
+    id: pool.id,
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
+  })
 
   function wei2String(input: Big) {
     return input.div(Big(10).pow(Number(18)))
@@ -173,8 +173,8 @@ const TokenAssetIn = ({
               'USD: ' +
                 BNtoDecimal(
                   Big(amountTokenIn.toString())
-                    .mul(poolPriceUSD?.price_usd || 0)
-                    .div(Big(10).pow(Number(poolPriceUSD?.decimals || 18))),
+                    .mul(data?.price_usd || 0)
+                    .div(Big(10).pow(Number(data?.decimals || 18))),
                   18,
                   2,
                   2

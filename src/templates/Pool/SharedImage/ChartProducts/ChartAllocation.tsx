@@ -14,7 +14,19 @@ import CustomizedAxisTick from './CustomizedAxisTick'
 import { dictionary } from './styles'
 
 interface IChartAllocationProps {
-  data: any[]
+  data: {
+    __typename?: 'WeightPoint' | undefined
+    timestamp: number
+    weights: {
+      __typename?: 'Weight' | undefined
+      weight_normalized: any
+      token: {
+        __typename?: 'Token' | undefined
+        id: string
+        symbol?: string | null | undefined
+      }
+    }[]
+  }[]
   height?: number
 }
 

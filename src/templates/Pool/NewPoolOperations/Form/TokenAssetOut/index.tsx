@@ -1,19 +1,15 @@
 import React from 'react'
 import Big from 'big.js'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Blockies from 'react-blockies'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
+import { usePoolInfo } from '@/hooks/query/usePoolInfo'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import { getBalanceToken, getPoolPrice } from '../../../../../utils/poolUtils'
 import PoolOperationContext from '../PoolOperationContext'
 
 import { useAppSelector } from '../../../../../store/hooks'
-
-import { GET_INFO_POOL } from '../graphql'
 
 import * as S from './styles'
 
@@ -36,17 +32,16 @@ const TokenAssetOut = ({
 
   const chainId = Number(wallet?.chains[0].id ?? '0x89')
 
-  const { data } = useSWR([GET_INFO_POOL], query =>
-    request(BACKEND_KASSANDRA, query, {
-      id: pool.id
-    })
-  )
+  const { data } = usePoolInfo({
+    id: pool.id,
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
+  })
 
   React.useEffect(() => {
     if (pool.id.length === 0 || !wallet || pool.chain_id !== chainId) {
       return setOutAssetBalance(Big(0))
     }
-    // eslint-disable-next-line prettier/prettier
+
     ;(async () => {
       const balance = await getBalanceToken(
         pool.address,
@@ -102,7 +97,7 @@ const TokenAssetOut = ({
           {/* </Tippy> */}
           <S.PriceDolar>
             {amountTokenOut &&
-              data?.pool &&
+              data &&
               'USD: ' +
                 BNtoDecimal(
                   Big(amountTokenOut.toString())
@@ -113,7 +108,7 @@ const TokenAssetOut = ({
                         poolSupply: pool.supply
                       })
                     )
-                    .div(Big(10).pow(data?.pool?.decimals)),
+                    .div(Big(10).pow(data?.decimals)),
                   18,
                   2,
                   2

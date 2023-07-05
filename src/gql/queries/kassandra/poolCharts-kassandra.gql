@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_CHART = gql`
-  query ($id: ID!, $price_period: Int!, $period_selected: Int!) {
+query PoolCharts($id: ID!, $price_period: Int!, $period_selected: Int!) {
     pool(id: $id) {
       price_usd # pool asset price
       # price candlestick
@@ -47,4 +44,3 @@ export const GET_CHART = gql`
       }
     }
   }
-`

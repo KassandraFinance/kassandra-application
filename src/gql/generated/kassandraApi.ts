@@ -4684,14 +4684,136 @@ export type _SubgraphErrorPolicy_ =
   /** If the subgraph has indexing errors, data will be omitted. The default. */
   | 'deny'
 
-export type PoolChartQueryVariables = Exact<{
+export type ActivitiesQueryVariables = Exact<{
+  skip: Scalars['Int']['input']
+  take: Scalars['Int']['input']
+  id: Scalars['ID']['input']
+}>
+
+export type ActivitiesQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    num_activities: number
+    name: string
+    symbol: string
+    price_usd: any
+    chain_id: number
+    activities: Array<{
+      __typename?: 'Activity'
+      id: string
+      address: string
+      type: string
+      txHash: string
+      timestamp: number
+      symbol: Array<string>
+      amount: Array<any>
+      price_usd: Array<any>
+    }>
+  } | null
+}
+
+export type PoolChartsQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  price_period: Scalars['Int']['input']
+  period_selected: Scalars['Int']['input']
+}>
+
+export type PoolChartsQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    price_usd: any
+    price_candles: Array<{
+      __typename?: 'Candle'
+      timestamp: number
+      close: any
+    }>
+    total_value_locked: Array<{
+      __typename?: 'TotalValueLocked'
+      close: any
+      timestamp: number
+    }>
+    weights: Array<{
+      __typename?: 'WeightPoint'
+      timestamp: number
+      weights: Array<{
+        __typename?: 'Weight'
+        weight_normalized: any
+        token: { __typename?: 'Token'; id: string; symbol?: string | null }
+      }>
+    }>
+  } | null
+}
+
+export type PoolInfoQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  day: Scalars['Int']['input']
+}>
+
+export type PoolInfoQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    decimals: number
+    price_usd: any
+    total_value_locked_usd: any
+    fee_exit: any
+    fee_swap: any
+    fee_join_manager: any
+    fee_join_broker: any
+    fee_aum_kassandra: any
+    fee_aum: any
+    withdraw: Array<{ __typename?: 'Fee'; volume_usd: any }>
+    swap: Array<{ __typename?: 'Fee'; volume_usd: any }>
+    volumes: Array<{ __typename?: 'Volume'; volume_usd: any }>
+  } | null
+}
+
+export type PoolPriceQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  day: Scalars['Int']['input']
+  week: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  quarterly: Scalars['Int']['input']
+  year: Scalars['Int']['input']
+}>
+
+export type PoolPriceQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    price_usd: any
+    now: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    day: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    week: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    quarterly: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    year: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+  } | null
+}
+
+export type PoolsQueryVariables = Exact<{ [key: string]: never }>
+
+export type PoolsQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    address: string
+    symbol: string
+    price_usd: any
+  }>
+}
+
+export type UserPoolDataQueryVariables = Exact<{
   id: Array<Scalars['ID']['input']> | Scalars['ID']['input']
   day: Scalars['Int']['input']
   month: Scalars['Int']['input']
   wallet: Scalars['String']['input']
 }>
 
-export type PoolChartQuery = {
+export type UserPoolDataQuery = {
   __typename?: 'Query'
   pools: Array<{
     __typename?: 'Pool'
@@ -4723,45 +4845,174 @@ export type PoolChartQuery = {
   }>
 }
 
-export type PoolInfoQueryVariables = Exact<{
-  id: Scalars['ID']['input']
-  day: Scalars['Int']['input']
-}>
-
-export type PoolInfoQuery = {
-  __typename?: 'Query'
-  pool?: {
-    __typename?: 'Pool'
-    decimals: number
-    price_usd: any
-    total_value_locked_usd: any
-    fee_exit: any
-    fee_swap: any
-    fee_join_manager: any
-    fee_join_broker: any
-    fee_aum_kassandra: any
-    fee_aum: any
-    withdraw: Array<{ __typename?: 'Fee'; volume_usd: any }>
-    swap: Array<{ __typename?: 'Fee'; volume_usd: any }>
-    volumes: Array<{ __typename?: 'Volume'; volume_usd: any }>
-  } | null
-}
-
-export type PoolsQueryVariables = Exact<{ [key: string]: never }>
-
-export type PoolsQuery = {
-  __typename?: 'Query'
-  pools: Array<{
-    __typename?: 'Pool'
-    id: string
-    address: string
-    symbol: string
-    price_usd: any
-  }>
-}
-
-export const PoolChartDocument = gql`
-  query PoolChart($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
+export const ActivitiesDocument = gql`
+  query Activities($skip: Int!, $take: Int!, $id: ID!) {
+    pool(id: $id) {
+      num_activities
+      name
+      symbol
+      price_usd
+      chain_id
+      activities(
+        orderBy: timestamp
+        orderDirection: desc
+        skip: $skip
+        first: $take
+      ) {
+        id
+        address
+        type
+        txHash
+        timestamp
+        symbol
+        amount
+        price_usd
+      }
+    }
+  }
+`
+export const PoolChartsDocument = gql`
+  query PoolCharts($id: ID!, $price_period: Int!, $period_selected: Int!) {
+    pool(id: $id) {
+      price_usd
+      price_candles(
+        where: {
+          base: "usd"
+          period: $price_period
+          timestamp_gt: $period_selected
+        }
+        orderBy: timestamp
+        first: 365
+      ) {
+        timestamp
+        close
+      }
+      total_value_locked(
+        where: { base: "usd", timestamp_gt: $period_selected }
+        orderBy: timestamp
+        first: 365
+      ) {
+        close
+        timestamp
+      }
+      weights(
+        where: { timestamp_gt: $period_selected }
+        orderBy: timestamp
+        first: 365
+      ) {
+        timestamp
+        weights {
+          token {
+            id
+            symbol
+          }
+          weight_normalized
+        }
+      }
+    }
+  }
+`
+export const PoolInfoDocument = gql`
+  query PoolInfo($id: ID!, $day: Int!) {
+    pool(id: $id) {
+      decimals
+      price_usd
+      total_value_locked_usd
+      fee_exit
+      fee_swap
+      fee_join_manager
+      fee_join_broker
+      fee_aum_kassandra
+      fee_aum
+      withdraw: fees(
+        where: { period: 3600, timestamp_gt: $day, type: "exit" }
+      ) {
+        volume_usd
+      }
+      swap: fees(where: { period: 3600, timestamp_gt: $day, type: "swap" }) {
+        volume_usd
+      }
+      volumes(where: { period: 3600, timestamp_gt: $day }) {
+        volume_usd
+      }
+    }
+  }
+`
+export const PoolPriceDocument = gql`
+  query PoolPrice(
+    $id: ID!
+    $day: Int!
+    $week: Int!
+    $month: Int!
+    $quarterly: Int!
+    $year: Int!
+  ) {
+    pool(id: $id) {
+      price_usd
+      now: price_candles(
+        where: { base: "usd", period: 3600 }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      day: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $day }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      week: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $week }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      quarterly: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $quarterly }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      year: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $year }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+    }
+  }
+`
+export const PoolsDocument = gql`
+  query Pools {
+    pools {
+      id
+      address
+      symbol
+      price_usd
+    }
+  }
+`
+export const UserPoolDataDocument = gql`
+  query userPoolData($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
     pools(where: { id_in: $id }) {
       id
       address
@@ -4838,42 +5089,6 @@ export const PoolChartDocument = gql`
     }
   }
 `
-export const PoolInfoDocument = gql`
-  query PoolInfo($id: ID!, $day: Int!) {
-    pool(id: $id) {
-      decimals
-      price_usd
-      total_value_locked_usd
-      fee_exit
-      fee_swap
-      fee_join_manager
-      fee_join_broker
-      fee_aum_kassandra
-      fee_aum
-      withdraw: fees(
-        where: { period: 3600, timestamp_gt: $day, type: "exit" }
-      ) {
-        volume_usd
-      }
-      swap: fees(where: { period: 3600, timestamp_gt: $day, type: "swap" }) {
-        volume_usd
-      }
-      volumes(where: { period: 3600, timestamp_gt: $day }) {
-        volume_usd
-      }
-    }
-  }
-`
-export const PoolsDocument = gql`
-  query Pools {
-    pools {
-      id
-      address
-      symbol
-      price_usd
-    }
-  }
-`
 
 export type SdkFunctionWrapper = <T>(
   action: (requestHeaders?: Record<string, string>) => Promise<T>,
@@ -4892,17 +5107,31 @@ export function getSdk(
   withWrapper: SdkFunctionWrapper = defaultWrapper
 ) {
   return {
-    PoolChart(
-      variables: PoolChartQueryVariables,
+    Activities(
+      variables: ActivitiesQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
-    ): Promise<PoolChartQuery> {
+    ): Promise<ActivitiesQuery> {
       return withWrapper(
         wrappedRequestHeaders =>
-          client.request<PoolChartQuery>(PoolChartDocument, variables, {
+          client.request<ActivitiesQuery>(ActivitiesDocument, variables, {
             ...requestHeaders,
             ...wrappedRequestHeaders
           }),
-        'PoolChart',
+        'Activities',
+        'query'
+      )
+    },
+    PoolCharts(
+      variables: PoolChartsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolChartsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolChartsQuery>(PoolChartsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'PoolCharts',
         'query'
       )
     },
@@ -4920,6 +5149,20 @@ export function getSdk(
         'query'
       )
     },
+    PoolPrice(
+      variables: PoolPriceQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolPriceQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolPriceQuery>(PoolPriceDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'PoolPrice',
+        'query'
+      )
+    },
     Pools(
       variables?: PoolsQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
@@ -4931,6 +5174,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'Pools',
+        'query'
+      )
+    },
+    userPoolData(
+      variables: UserPoolDataQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<UserPoolDataQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<UserPoolDataQuery>(UserPoolDataDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'userPoolData',
         'query'
       )
     }

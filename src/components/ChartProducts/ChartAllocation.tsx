@@ -15,11 +15,17 @@ import { dictionary } from './styles'
 
 interface IChartAllocationProps {
   data: {
-    weights: {
-      token: { symbol: string; id: string }
-      weight_normalized: string
-    }[]
+    __typename?: 'WeightPoint' | undefined
     timestamp: number
+    weights: {
+      __typename?: 'Weight' | undefined
+      weight_normalized: any
+      token: {
+        __typename?: 'Token' | undefined
+        id: string
+        symbol?: string | null | undefined
+      }
+    }[]
   }[]
 }
 
@@ -43,8 +49,8 @@ const ChartAllocation = ({ data }: IChartAllocationProps) => {
       const res = data.map(item => {
         const weight = item.weights.map(weight => {
           return {
-            [invertSymbol[weight.token.id] || weight.token.symbol]:
-              weight.weight_normalized
+            [invertSymbol[weight.token.id] || weight.token?.symbol || '']:
+              Number(weight.weight_normalized)
           }
         })
 

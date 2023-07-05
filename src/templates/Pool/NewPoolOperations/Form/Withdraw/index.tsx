@@ -1,15 +1,11 @@
 import Big from 'big.js'
 import React from 'react'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Tippy from '@tippyjs/react'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import useBatchRequests from '@/hooks/useBatchRequests'
 
-import {
-  BACKEND_KASSANDRA,
-  networks
-} from '../../../../../constants/tokenAddresses'
+import { usePoolInfo } from '@/hooks/query/usePoolInfo'
+import { networks } from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -29,8 +25,6 @@ import ListOfAllAsset from '../ListOfAllAsset'
 import TokenAssetIn from '../TokenAssetIn'
 import TransactionSettings from '../TransactionSettings'
 
-import { GET_POOL } from './graphql'
-
 import * as S from './styles'
 
 const messages = {
@@ -38,7 +32,6 @@ const messages = {
   Withdraw: 'Send'
 }
 
-// eslint-disable-next-line prettier/prettier
 export type Titles = keyof typeof messages
 interface IWithdrawProps {
   typeWithdraw: string
@@ -108,9 +101,10 @@ const Withdraw = ({
 
   const { operation, priceToken } = React.useContext(PoolOperationContext)
 
-  const { data } = useSWR([GET_POOL], query =>
-    request(BACKEND_KASSANDRA, query, { id: pool.id })
-  )
+  const { data } = usePoolInfo({
+    id: pool.id,
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
+  })
 
   async function handleApproveFail() {
     setApprovals(old => {
@@ -210,7 +204,7 @@ const Withdraw = ({
       trackBuying(
         pool.id,
         pool.symbol,
-        -1 * data?.pool?.price_usd,
+        -1 * data?.price_usd,
         pool.chain.chainName
       )
 
@@ -383,7 +377,7 @@ const Withdraw = ({
 
           const valueFormatted = decimalToBN(
             inputAmountInTokenRef.current.value,
-            data?.pool?.decimals ?? 18
+            data?.decimals ?? 18
           )
 
           if (!Big(amountTokenIn).eq(valueFormatted)) return
@@ -508,8 +502,8 @@ const Withdraw = ({
 
     if (Big(amountTokenIn).gt(0) && parseFloat(amountTokenOut.toString()) > 0) {
       const usdAmountIn = Big(amountTokenIn)
-        .mul(Big(data?.pool?.price_usd ?? 0))
-        .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
+        .mul(Big(data?.price_usd ?? 0))
+        .div(Big(10).pow(Number(data?.decimals || 18)))
 
       const usdAmountOut = Big(amountTokenOut)
         .mul(Big(priceToken(tokenSelect.address.toLocaleLowerCase()) || 0))
@@ -538,7 +532,6 @@ const Withdraw = ({
         errorMsg={errorMsg}
         maxActive={maxActive}
         setMaxActive={setMaxActive}
-        poolPriceUSD={data?.pool}
         disabled={
           !wallet
             ? 'Please connect your wallet by clicking the button below'
@@ -581,7 +574,7 @@ const Withdraw = ({
         <S.ExchangeRate>
           <S.SpanLight>Withdraw fee:</S.SpanLight>
           <S.SpanLight>
-            {Big(data?.pool?.fee_exit || '0')
+            {Big(data?.fee_exit || '0')
               .mul(100)
               .toFixed(2)}
             %

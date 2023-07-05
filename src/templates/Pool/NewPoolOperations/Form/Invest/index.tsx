@@ -1,13 +1,11 @@
 import React from 'react'
 import Big from 'big.js'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Tippy from '@tippyjs/react'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
+import { usePoolInfo } from '@/hooks/query/usePoolInfo'
 import {
   NATIVE_ADDRESS,
-  BACKEND_KASSANDRA,
   networks
 } from '../../../../../constants/tokenAddresses'
 
@@ -37,11 +35,8 @@ import InputAndOutputValueToken from '../InputAndOutputValueToken'
 import TokenAssetOut from '../TokenAssetOut'
 import TransactionSettings from '../TransactionSettings'
 
-import { GET_INFO_POOL } from '../graphql'
-
 import * as S from './styles'
 
-// eslint-disable-next-line prettier/prettier
 export type Titles = keyof typeof messages
 
 const messages = {
@@ -106,11 +101,10 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
   const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
 
-  const { data } = useSWR([GET_INFO_POOL], query =>
-    request(BACKEND_KASSANDRA, query, {
-      id: pool.id
-    })
-  )
+  const { data } = usePoolInfo({
+    id: pool.id,
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
+  })
 
   const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
 
@@ -399,12 +393,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         return
       }
 
-      trackBuying(
-        pool.id,
-        pool.symbol,
-        data?.pool?.price_usd,
-        pool.chain.chainName
-      )
+      trackBuying(pool.id, pool.symbol, data?.price_usd, pool.chain.chainName)
 
       try {
         const response: any = await operation.joinswapExternAmountIn({
@@ -614,7 +603,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
       const usdAmountOut = Big(amountTokenOutWithoutFees)
         .mul(Big(poolPrice))
-        .div(Big(10).pow(Number(data?.pool?.decimals || 18)))
+        .div(Big(10).pow(Number(data?.decimals || 18)))
 
       const subValue = usdAmountIn.sub(usdAmountOut)
 
@@ -689,8 +678,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           <S.SpanLight>{fees[title]}%</S.SpanLight> */}
           <S.SpanLight>Invest fee:</S.SpanLight>
           <S.SpanLight>
-            {Big(data?.pool?.fee_join_manager || '0')
-              .add(data?.pool?.fee_join_broker || '0')
+            {Big(data?.fee_join_manager || '0')
+              .add(data?.fee_join_broker || '0')
               .mul(100)
               .toFixed(2)}
             %

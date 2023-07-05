@@ -1,8 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
 import Blockies from 'react-blockies'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Big from 'big.js'
 
 import { BNtoDecimal } from '../../../utils/numerals'
@@ -11,15 +9,12 @@ import substr from '../../../utils/substr'
 
 import { useAppSelector } from '../../../store/hooks'
 import useDate from '../../../hooks/useDate'
-
-import { BACKEND_KASSANDRA } from '../../../constants/tokenAddresses'
+import { useActivities } from '@/hooks/query/useActivities'
 
 import ExternalLink from '../../../components/ExternalLink'
 import Pagination from '../../../components/Pagination'
 
 import TokenIcons from '../TokenIcons'
-
-import { GET_ACTIVITY } from './graphql'
 
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 import arrowIcon from '@assets/utilities/arrow-left.svg'
@@ -55,7 +50,9 @@ const invertSymbol: { [key: string]: string } = {
   WMATIC: 'MATIC'
 }
 
-const typeActivity = {
+type ActivityType = 'join' | 'exit' | 'swap'
+
+const typeActivity: Record<ActivityType, string> = {
   join: 'Invest',
   exit: 'Withdraw',
   swap: 'Swap'
@@ -77,26 +74,15 @@ type HistoryMobileType = {
 }
 
 interface IActivitiesProps {
-  address: string
+  __typename?: 'Activity' | undefined
   id: string
-  timestamp: number
+  address: string
+  type: string
   txHash: string
-  type: keyof typeof typeActivity
-
-  amount: string[]
-  price_usd: string[]
-  symbol: string[] | string
-}
-
-interface IPoolProps {
-  pool: {
-    num_activities: number
-    name: string
-    symbol: string
-    price_usd: string
-    chain_id: number
-    activities: IActivitiesProps[]
-  }
+  timestamp: number
+  symbol: string[]
+  amount: any[]
+  price_usd: any[]
 }
 
 const ActivityTable = () => {
@@ -107,17 +93,9 @@ const ActivityTable = () => {
 
   const take = 6
 
-  const { data } = useSWR<IPoolProps>(
-    [GET_ACTIVITY, skip, take, pool.id],
-    (query, skip, take, productAddress) =>
-      request(BACKEND_KASSANDRA, query, {
-        skip,
-        take,
-        id: productAddress
-      })
-  )
+  const { data } = useActivities({ id: pool.id, skip, take })
 
-  function handlePageClick(data: { selected: number }, take: any) {
+  function handlePageClick(data: { selected: number }, take: number) {
     setSkip(data.selected * take)
   }
 
@@ -143,7 +121,7 @@ const ActivityTable = () => {
   const [historyMobile, setHistoryMobile] = React.useState<HistoryMobileType>()
 
   function handleView(history: IActivitiesProps) {
-    let type = typeActivity[history.type]
+    let type = typeActivity[history.type as ActivityType]
     if (history.type === 'exit') {
       type =
         history.symbol.length > 2
@@ -162,7 +140,7 @@ const ActivityTable = () => {
       symbol: history.symbol,
       amount: history.amount,
       txHash: history.txHash,
-      type: history.type,
+      type: history.type as ActivityType,
       price_usd: history.price_usd,
       address: history.address,
       time: time
@@ -222,18 +200,18 @@ const ActivityTable = () => {
 
         <TBodyWithHeight tableRowsNumber={6} lineHeight={6}>
           {data
-            ? data.pool.activities.map(activity => {
+            ? data.activities.map(activity => {
                 return (
                   <TRHead key={activity.id}>
                     <TD>
                       <ValueWrapper>
                         <S.Wrapper>
                           <Value align="left">
-                            {typeActivity[activity.type]}
+                            {typeActivity[activity.type as ActivityType]}
                           </Value>
 
                           <S.Link
-                            href={`${explorer[data.pool.chain_id]}${
+                            href={`${explorer[data.chain_id]}${
                               activity.txHash
                             }`}
                             target="_blank"
@@ -612,7 +590,7 @@ const ActivityTable = () => {
           <Pagination
             take={take}
             skip={skip}
-            totalItems={data?.pool?.num_activities || 0}
+            totalItems={data?.num_activities || 0}
             handlePageClick={handlePageClick}
           />
         </PaginationWrapper>
@@ -630,9 +608,7 @@ const ActivityTable = () => {
                 <S.DataWrapper>
                   <V>{typeActivity[historyMobile.type]}</V>
                   <S.Link
-                    href={`${explorer[data?.pool.chain_id]}${
-                      historyMobile.txHash
-                    }`}
+                    href={`${explorer[data?.chain_id]}${historyMobile.txHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

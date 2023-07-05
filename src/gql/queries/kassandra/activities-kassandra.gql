@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_ACTIVITY = gql`
-  query ($skip: Int!, $take: Int!, $id: ID!) {
+  query Activities($skip: Int!, $take: Int!, $id: ID!) {
     pool(id: $id) {
       num_activities
       name
@@ -25,4 +22,3 @@ export const GET_ACTIVITY = gql`
       }
     }
   }
-`

@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_POOL_PRICE = gql`
-  query (
+query PoolPrice(
     $id: ID!
     $day: Int!
     $week: Int!
@@ -62,4 +59,3 @@ export const GET_POOL_PRICE = gql`
       }
     }
   }
-`

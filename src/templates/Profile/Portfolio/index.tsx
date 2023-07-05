@@ -4,7 +4,7 @@ import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal, calcChange } from '@/utils/numerals'
-import { usePoolChart } from '@/hooks/query/usePoolChart'
+import { useUserPoolData } from '@/hooks/query/useUserPoolData'
 
 import { IAssetsValueWalletProps, IKacyLpPool } from '../'
 
@@ -84,7 +84,7 @@ const Portfolio = ({
 
   const [{ wallet }] = useConnectWallet()
 
-  const { data } = usePoolChart({
+  const { data } = useUserPoolData({
     id: tokenizedFunds,
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
