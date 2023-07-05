@@ -4,7 +4,7 @@ import Big from 'big.js'
 
 import { networks } from '@/constants/tokenAddresses'
 
-import useStaking from '@/hooks/useStaking'
+// import useStaking from '@/hooks/useStaking'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
 import { BNtoDecimal } from '@/utils/numerals'
@@ -14,18 +14,31 @@ import ExternalLink from '../../ExternalLink'
 
 import * as S from './styles'
 
-interface IInfoStakeStaticProps {
+// interface IInfoStakeStaticProps {
+//   votingMultiplier: string
+//   startDate: string
+//   endDate: string
+//   kacyRewards: Big
+//   withdrawDelay: any
+// }
+
+interface IPoolInfoProps {
   votingMultiplier: string
   startDate: string
   endDate: string
   kacyRewards: Big
   withdrawDelay: any
-}
-
-interface IDetailsProps {
-  pid: number
+  totalStaked: Big
   hasExpired: boolean
-  infoStakeStatic: IInfoStakeStaticProps
+  apr: Big
+  stakingToken: string
+  vestingPeriod: string
+  lockPeriod: string
+}
+interface IDetailsProps {
+  // pid: number
+  hasExpired: boolean
+  // infoStakeStatic: IInfoStakeStaticProps
   stakingToken: string
   decimals: string
   symbol: string
@@ -33,14 +46,15 @@ interface IDetailsProps {
   kacyPrice: Big
   link: string
   setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>
-  stakingAddress: string
+  // stakingAddress: string
   chainId: number
+  poolInfo: IPoolInfoProps
 }
 
 const Details = ({
-  pid,
+  // pid,
   hasExpired,
-  infoStakeStatic,
+  // infoStakeStatic,
   stakingToken,
   decimals,
   symbol,
@@ -48,30 +62,12 @@ const Details = ({
   kacyPrice,
   link,
   setIsOpenModal,
-  stakingAddress,
-  chainId
+  // stakingAddress,
+  chainId,
+  poolInfo
 }: IDetailsProps) => {
-  const [depositedAmount, setDepositedAmount] = React.useState<Big>(Big(-1))
-  const networkChain = networks[chainId]
-
   const { trackEventFunction } = useMatomoEcommerce()
-  const staking = useStaking(stakingAddress, networkChain.chainId)
-
   const connect = localStorage.getItem('walletconnect')
-
-  React.useEffect(() => {
-    let interval: any
-    ;(async () => {
-      const poolInfoResponse = await staking.poolInfo(pid)
-
-      interval = setInterval(async () => {
-        setDepositedAmount(Big(poolInfoResponse.depositedAmount))
-      }, 10000)
-      setDepositedAmount(Big(poolInfoResponse.depositedAmount))
-    })()
-
-    return () => clearInterval(interval)
-  }, [])
 
   return (
     <S.Details>
@@ -79,17 +75,17 @@ const Details = ({
         <span>Total staked</span>
         <S.KacyUSD>
           <span>
-            {depositedAmount.lt(Big(0))
+            {poolInfo.totalStaked.lt(Big(0))
               ? '...'
-              : BNtoDecimal(depositedAmount.div(Big(10).pow(18)), 18)}{' '}
+              : BNtoDecimal(poolInfo.totalStaked.div(Big(10).pow(18)), 18)}{' '}
             {symbol}
           </span>
           <span className="usd">
             &#8776;{' '}
-            {depositedAmount.lt(Big(0)) || poolPrice.lt(0)
+            {poolInfo.totalStaked.lt(Big(0)) || poolPrice.lt(0)
               ? '...'
               : BNtoDecimal(
-                  Big(`0${depositedAmount}`)
+                  Big(`0${poolInfo.totalStaked}`)
                     .mul(poolPrice)
                     .div(Big(10).pow(18)),
                   6,
@@ -104,12 +100,12 @@ const Details = ({
         <span>Pool Reward</span>
         <S.KacyUSD>
           <span>
-            {infoStakeStatic.kacyRewards.lt(Big(0))
+            {poolInfo.kacyRewards.lt(Big(0))
               ? '...'
               : hasExpired
               ? '0'
               : BNtoDecimal(
-                  infoStakeStatic.kacyRewards.div(Big(10).pow(18)),
+                  poolInfo.kacyRewards.div(Big(10).pow(18)),
                   18,
                   2,
                   2
@@ -118,14 +114,12 @@ const Details = ({
           </span>
           <span className="usd">
             &#8776;{' '}
-            {infoStakeStatic.kacyRewards.lt(Big(0)) || poolPrice.lt(0)
+            {poolInfo.kacyRewards.lt(Big(0)) || poolPrice.lt(0)
               ? '...'
               : hasExpired
               ? '0'
               : BNtoDecimal(
-                  infoStakeStatic.kacyRewards
-                    .mul(kacyPrice)
-                    .div(Big(10).pow(18)),
+                  poolInfo.kacyRewards.mul(kacyPrice).div(Big(10).pow(18)),
                   6,
                   2,
                   2
@@ -136,11 +130,11 @@ const Details = ({
       </S.ValuesKacy>
       <S.Info>
         <span>Start date</span>
-        <span>{infoStakeStatic.startDate}</span>
+        <span>{poolInfo.startDate}</span>
       </S.Info>
       <S.Info>
         <span>Rewards Update</span>
-        <span>{infoStakeStatic.endDate}</span>
+        <span>{poolInfo.endDate}</span>
       </S.Info>
       <S.Info>
         <ExternalLink
