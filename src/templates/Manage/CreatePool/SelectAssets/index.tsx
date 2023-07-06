@@ -90,7 +90,7 @@ const SelectAssets = () => {
 
   const { data: priceData } = useCoingecko(
     networkId ?? 137,
-    networks[networkId ?? 137].nativeCurrency.address,
+    networks[networkId ?? 137]?.nativeCurrency?.address,
     tokensListGoerli ?? ['']
   )
 

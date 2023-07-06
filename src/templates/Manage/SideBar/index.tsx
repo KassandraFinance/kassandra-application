@@ -10,7 +10,8 @@ import useManagerPools from '@/hooks/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
   setToFirstStep,
-  setBackStepNumber
+  setBackStepNumber,
+  setClear
 } from '@/store/reducers/poolCreationSlice'
 
 import substr from '@/utils/substr'
@@ -35,6 +36,7 @@ import {
 } from './icons'
 
 import * as S from './styles'
+import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
 
 interface ISideBarProps {
   isOpen: boolean
@@ -69,8 +71,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
   const { nickName, image } = useAppSelector(state => state.user)
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
-  const poolCreattionChainId = useAppSelector(
-    state => state.poolCreation.createPoolData.networkId
+  const { networkId: poolCreattionChainId, version } = useAppSelector(
+    state => state.poolCreation.createPoolData
   )
 
   const router = useRouter()
@@ -83,6 +85,10 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
   )
 
   function handleCreatePool() {
+    if (version !== VERSION_POOL_CREATE) {
+      dispatch(setToFirstStep())
+      dispatch(setClear())
+    }
     if (poolCreattionChainId === 0 && stepNumber > 0) {
       dispatch(setToFirstStep())
     }
