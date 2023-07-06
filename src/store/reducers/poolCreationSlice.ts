@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Big from 'big.js'
 
 import { CoinGeckoResponseType } from '../../templates/Manage/CreatePool/AddLiquidity'
+import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
 
 export type TokenType = {
   icon: string
@@ -26,6 +27,7 @@ export type TokenSelectProps = {
 }
 
 export type PoolData = {
+  version: string
   id?: string
   txHash?: string
   termsAndConditions?: boolean
@@ -168,6 +170,7 @@ const initialState: IPoolCreationDataState = {
   stepNumber: 0,
   isValid: false,
   createPoolData: {
+    version: VERSION_POOL_CREATE,
     methodCreate: 'any-asset',
     tokenIn: {
       address: '',
@@ -451,6 +454,7 @@ export const poolCreationSlice = createSlice({
     },
     setClear: state => {
       state.createPoolData = {
+        version: VERSION_POOL_CREATE,
         methodCreate: 'any-asset',
         tokenIn: {
           address: '',

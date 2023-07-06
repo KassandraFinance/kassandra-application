@@ -6,7 +6,8 @@ import useManagerPools from '@/hooks/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
   setToFirstStep,
-  setBackStepNumber
+  setBackStepNumber,
+  setClear
 } from '@/store/reducers/poolCreationSlice'
 
 import FundCard from '@ui/FundCard'
@@ -14,6 +15,7 @@ import AnyCard from '@/components/AnyCard'
 import CreatePool from '@/templates/Manage/CreatePool'
 
 import * as S from './styles'
+import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
 
 const ManagedFunds = () => {
   const [isCreatePool, setIsCreatePool] = React.useState(false)
@@ -22,8 +24,8 @@ const ManagedFunds = () => {
 
   const [{ wallet }] = useConnectWallet()
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
-  const poolCreattionChainId = useAppSelector(
-    state => state.poolCreation.createPoolData.networkId
+  const { networkId: poolCreattionChainId, version } = useAppSelector(
+    state => state.poolCreation.createPoolData
   )
 
   const router = useRouter()
@@ -40,6 +42,10 @@ const ManagedFunds = () => {
   const { managerPools } = useManagerPools(profileWalletAddress)
 
   function handleCreatePool() {
+    if (version !== VERSION_POOL_CREATE) {
+      dispatch(setToFirstStep())
+      dispatch(setClear())
+    }
     if (poolCreattionChainId === 0 && stepNumber > 0) {
       dispatch(setToFirstStep())
     }
