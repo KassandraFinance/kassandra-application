@@ -8,6 +8,9 @@ export const GET_COMMUNITYPOOLS = gql`
     $first: Int
     $skip: Int
   ) {
+    kassandras {
+      pool_count
+    }
     pools(
       where: {
         manager_not: "0xFF56b00bDaEEf52C3EBb81B0efA6e28497305175"
@@ -29,9 +32,6 @@ export const GET_COMMUNITYPOOLS = gql`
       price_usd
       total_value_locked_usd
       is_private_pool
-      factory {
-        pool_count
-      }
       volumes(
         where: { period: 86400 }
         orderBy: timestamp
