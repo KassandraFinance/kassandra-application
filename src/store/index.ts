@@ -14,7 +14,6 @@ import modalAlertTextReducer from './reducers/modalAlertText'
 import poolCreationReducer from './reducers/poolCreationSlice'
 import tokenSelectionActiveReducer from './reducers/tokenSelectionActive'
 import tokenSelectReducer from './reducers/tokenSelect'
-import poolReducer from './reducers/pool'
 import tokenListSwapProviderReducer from './reducers/tokenListSwapProvider'
 import addAssetReducer from './reducers/addAssetSlice'
 import removeAssetReducer from './reducers/removeAssetSlice'
@@ -38,7 +37,6 @@ export const rootReducer = combineReducers({
   poolCreation: poolCreationReducer,
   tokenSelectionActive: tokenSelectionActiveReducer,
   tokenSelect: tokenSelectReducer,
-  pool: poolReducer,
   tokenListSwapProvider: tokenListSwapProviderReducer,
   addAsset: addAssetReducer,
   removeAsset: removeAssetReducer,

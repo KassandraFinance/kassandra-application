@@ -1,6 +1,8 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 
-import { useAppDispatch, useAppSelector } from '../../../../../../store/hooks'
+import { usePoolData } from '@/hooks/query/usePoolData'
+import { useAppDispatch } from '../../../../../../store/hooks'
 import { setTokenSelect } from '../../../../../../store/reducers/tokenSelect'
 import { setTokenSelectionActive } from '../../../../../../store/reducers/tokenSelectionActive'
 
@@ -23,15 +25,17 @@ const TokenPin = ({
 }: ITokenPinProps) => {
   const [activeDeletePin, setactiveDeletePin] = React.useState<boolean>(false)
 
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
+
   const dispatch = useAppDispatch()
-  const { pool } = useAppSelector(state => state)
 
   function handleDeletePinToken(tokenAddress: string) {
     const tokenPinListFiltered = tokenPinList.filter(
       tokenPin => tokenPin.address !== tokenAddress
     )
     localStorage.setItem(
-      `tokenSelection-${pool.chain_id}`,
+      `tokenSelection-${pool?.chain_id}`,
       JSON.stringify(tokenPinListFiltered)
     )
     setTokenPinList(tokenPinListFiltered)
@@ -40,7 +44,7 @@ const TokenPin = ({
   React.useEffect(() => {
     if (!process.browser) return
 
-    const hasStorage = localStorage.getItem(`tokenSelection-${pool.chain_id}`)
+    const hasStorage = localStorage.getItem(`tokenSelection-${pool?.chain_id}`)
     const hasStorages: ITokenListSwapProviderProps[] =
       hasStorage && JSON.parse(hasStorage)
 
@@ -49,7 +53,7 @@ const TokenPin = ({
     } else {
       const tokenSearch = tokenListSwapProvider.slice(0, 6)
       localStorage.setItem(
-        `tokenSelection-${pool.chain_id}`,
+        `tokenSelection-${pool?.chain_id}`,
         JSON.stringify(tokenSearch)
       )
       setTokenPinList(tokenSearch)

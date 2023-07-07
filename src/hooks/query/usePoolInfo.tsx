@@ -16,6 +16,7 @@ export const usePoolInfo = ({ id, day }: UsePoolInfoProps) => {
     queryKey: ['pool-info', id],
     queryFn: async () => fetchPoolInfo({ id, day }),
     staleTime: 1000 * 60,
-    refetchInterval: 1000 * 60
+    refetchInterval: 1000 * 60,
+    enabled: id.length > 0
   })
 }

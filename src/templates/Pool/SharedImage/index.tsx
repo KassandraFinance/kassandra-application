@@ -3,9 +3,7 @@ import React from 'react'
 import Blockies from 'react-blockies'
 
 import { useAppSelector } from '../../../store/hooks'
-import { underlyingAssetsInfo } from '@/store/reducers/pool'
 
-// import substr from '../../../utils/substr'
 import ChartProducts from './ChartProducts'
 
 import imageIcon from '@assets/icons/coming-soon.svg'
@@ -25,7 +23,36 @@ interface ISharedImageProps {
   socialIndex: string
   productName: string
   poolLogo: string
-  tokens: underlyingAssetsInfo[]
+  tokens:
+    | {
+        __typename?: 'Asset' | undefined
+        balance: any
+        weight_normalized: any
+        weight_goal_normalized: any
+        token: {
+          __typename?: 'Token' | undefined
+          id: string
+          name?: string | null | undefined
+          logo?: string | null | undefined
+          symbol?: string | null | undefined
+          decimals?: number | null | undefined
+          price_usd: any
+          is_wrap_token: number
+          wraps?:
+            | {
+                __typename?: 'Token' | undefined
+                id: string
+                decimals?: number | null | undefined
+                price_usd: any
+                symbol?: string | null | undefined
+                name?: string | null | undefined
+                logo?: string | null | undefined
+              }
+            | null
+            | undefined
+        }
+      }[]
+    | undefined
 }
 
 const SharedImage = ({

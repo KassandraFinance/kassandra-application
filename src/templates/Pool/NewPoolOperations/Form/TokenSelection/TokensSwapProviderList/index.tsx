@@ -1,9 +1,12 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import { FixedSizeList as List, ListOnScrollProps } from 'react-window'
+
+import { usePoolData } from '@/hooks/query/usePoolData'
 
 import { IUserTokenProps, ITokenListSwapProviderProps } from '../'
 
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useAppDispatch } from '@/store/hooks'
 import { setTokenSelectionActive } from '@/store/reducers/tokenSelectionActive'
 import { TokenSelectProps } from '@/store/reducers/poolCreationSlice'
 
@@ -37,8 +40,10 @@ const TokensSwapProviderList = ({
 }: ITokenListProps) => {
   const [isShowShadow, setisShowShadow] = React.useState(true)
 
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
+
   const dispatch = useAppDispatch()
-  const { pool } = useAppSelector(state => state)
 
   const TokenListContainerRef = React.useRef<HTMLDivElement>(null)
 
@@ -62,7 +67,7 @@ const TokensSwapProviderList = ({
   }
 
   function handleClickAddPin(token: IUserTokenProps) {
-    const hasStorage = localStorage.getItem(`tokenSelection-${pool.chain_id}`)
+    const hasStorage = localStorage.getItem(`tokenSelection-${pool?.chain_id}`)
     const tokenPinfiltered = hasStorage && JSON.parse(hasStorage)
     const checkTokenPin = tokenPinfiltered?.some(
       (tokenPin: ITokenListSwapProviderProps) =>
@@ -74,13 +79,13 @@ const TokensSwapProviderList = ({
         tokenPin => tokenPin.address !== token.address
       )
       localStorage.setItem(
-        `tokenSelection-${pool.chain_id}`,
+        `tokenSelection-${pool?.chain_id}`,
         JSON.stringify(tokenFiltered)
       )
       setTokenPinList(tokenFiltered)
     } else {
       localStorage.setItem(
-        `tokenSelection-${pool.chain_id}`,
+        `tokenSelection-${pool?.chain_id}`,
         JSON.stringify([...tokenPinfiltered, token])
       )
       setTokenPinList([...tokenPinfiltered, token])

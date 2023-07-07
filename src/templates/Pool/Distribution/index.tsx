@@ -1,13 +1,14 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
 import Big from 'big.js'
 
 import { BNtoDecimal } from '../../../utils/numerals'
 
-import { useAppSelector } from '../../../store/hooks'
 import useMatomoEcommerce from '../../../hooks/useMatomoEcommerce'
 import useYieldYakEthers from '../../../hooks/useYieldYakEthers'
 import useCoingecko from '../../../hooks/useCoingecko'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
 import { YIELDYAK_API } from '../../../constants/tokenAddresses'
 
@@ -30,20 +31,21 @@ const Distribution = () => {
   const { convertBalanceYRTtoWrap } = useYieldYakEthers()
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const pool = useAppSelector(state => state.pool)
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
-  const tokenAddresses = pool.underlying_assets.map(token => {
+  const tokenAddresses = pool?.underlying_assets.map(token => {
     if (token.token.is_wrap_token === 0) {
       return token.token.id
     } else {
-      return token.token.wraps.id
+      return token?.token?.wraps?.id || ''
     }
   })
 
   const { data: coinGecko } = useCoingecko(
-    pool.chain.id,
-    pool.chain.addressWrapped,
-    tokenAddresses
+    Number(pool?.chain?.id || 0),
+    pool?.chain?.addressWrapped || '',
+    tokenAddresses || []
   )
 
   async function getDataYieldyak() {
@@ -81,6 +83,10 @@ const Distribution = () => {
   }
 
   function handleSortingForHighLiquidity() {
+    if (!pool) {
+      return []
+    }
+
     const tokenSorting = [...pool.underlying_assets].sort(
       (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
     )
@@ -89,6 +95,10 @@ const Distribution = () => {
   }
 
   React.useEffect(() => {
+    if (!pool) {
+      return
+    }
+
     const getBalanceYY = async () => {
       let balance = {}
       for (const token of pool.underlying_assets) {
@@ -96,7 +106,7 @@ const Distribution = () => {
           const { balancePoolYY } = await getHoldings(
             token.token.id,
             token.balance,
-            token.token.wraps.decimals.toString()
+            token?.token?.wraps?.decimals?.toString() || ''
           )
 
           balance = { ...balance, [token.token.id]: balancePoolYY }
@@ -107,7 +117,7 @@ const Distribution = () => {
     }
 
     getBalanceYY()
-  }, [])
+  }, [pool])
 
   React.useEffect(() => {
     getDataYieldyak()
@@ -203,9 +213,9 @@ const Distribution = () => {
               <S.Tr key={`key_${coin.token.name}`}>
                 <S.Td>
                   <S.Coin width={110}>
-                    <img src={coin.token.wraps.logo || none.src} alt="" />
+                    <img src={coin?.token?.wraps?.logo || none.src} alt="" />
                     <span>
-                      {coin.token.wraps.symbol}
+                      {coin.token.wraps?.symbol}
                       <p>
                         {yieldYakFarm.find(item => {
                           if (item.address === coin.token.id) {
@@ -225,7 +235,8 @@ const Distribution = () => {
                   {`$ ${BNtoDecimal(
                     (balanceYY?.[coin.token.id] || Big(0)).times(
                       Big(
-                        coinGecko?.[coin.token.wraps.id.toLowerCase()]?.usd || 0
+                        coinGecko?.[coin.token.wraps?.id?.toLowerCase() || '']
+                          ?.usd || 0
                       )
                     ),
                     18,
@@ -236,14 +247,15 @@ const Distribution = () => {
                     balanceYY?.[coin.token.id] || Big(0),
                     18,
                     5
-                  )} ${coin.token.wraps.symbol}`}</S.BalanceCoin>
+                  )} ${coin.token.wraps?.symbol}`}</S.BalanceCoin>
                 </S.Td>
                 <S.Td>
                   <span>
                     $
                     {BNtoDecimal(
                       Big(
-                        coinGecko?.[coin.token.wraps.id.toLowerCase()]?.usd || 0
+                        coinGecko?.[coin.token.wraps?.id.toLowerCase() || '']
+                          ?.usd || 0
                       ),
                       18,
                       5,
@@ -252,20 +264,20 @@ const Distribution = () => {
                   </span>
                   <S.Coin
                     negative={
-                      (coinGecko?.[coin.token.wraps.id.toLowerCase()]
+                      (coinGecko?.[coin.token.wraps?.id.toLowerCase() || '']
                         ?.pricePercentageChangeIn24h || 0) < 0
                     }
                     change24h={true}
                   >
-                    {coinGecko?.[coin.token.wraps.id.toLowerCase()]
+                    {coinGecko?.[coin.token.wraps?.id.toLowerCase() || '']
                       ?.pricePercentageChangeIn24h
                       ? `${
-                          coinGecko?.[coin.token.wraps.id.toLowerCase()]
+                          coinGecko?.[coin.token.wraps?.id.toLowerCase() || '']
                             ?.pricePercentageChangeIn24h < 0
                             ? ''
                             : '+'
                         }${coinGecko?.[
-                          coin.token.wraps.id.toLowerCase()
+                          coin.token.wraps?.id.toLowerCase() || ''
                         ]?.pricePercentageChangeIn24h.toFixed(2)}%`
                       : '-'}
                   </S.Coin>

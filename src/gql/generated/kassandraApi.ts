@@ -4746,6 +4746,92 @@ export type PoolChartsQuery = {
   } | null
 }
 
+export type PoolDataQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type PoolDataQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    id: string
+    address: string
+    vault: string
+    vault_id: string
+    controller: string
+    chain_id: number
+    logo?: string | null
+    pool_version: number
+    strategy: string
+    is_private_pool: boolean
+    supply: any
+    name: string
+    foundedBy?: string | null
+    symbol: string
+    poolId?: number | null
+    url?: string | null
+    summary?: string | null
+    underlying_assets_addresses: Array<string>
+    manager: { __typename?: 'Manager'; id: string }
+    chain?: {
+      __typename?: 'Chain'
+      id: string
+      logo?: string | null
+      chainName?: string | null
+      nativeTokenName?: string | null
+      nativeTokenSymbol?: string | null
+      nativeTokenDecimals?: number | null
+      rpcUrls?: Array<string | null> | null
+      blockExplorerUrl?: string | null
+      secondsPerBlock?: number | null
+      addressWrapped?: string | null
+    } | null
+    partners?: Array<{
+      __typename?: 'Partner'
+      logo?: string | null
+      url?: string | null
+    } | null> | null
+    underlying_assets: Array<{
+      __typename?: 'Asset'
+      balance: any
+      weight_normalized: any
+      weight_goal_normalized: any
+      token: {
+        __typename?: 'Token'
+        id: string
+        name?: string | null
+        logo?: string | null
+        symbol?: string | null
+        decimals?: number | null
+        price_usd: any
+        is_wrap_token: number
+        wraps?: {
+          __typename?: 'Token'
+          id: string
+          decimals?: number | null
+          price_usd: any
+          symbol?: string | null
+          name?: string | null
+          logo?: string | null
+        } | null
+      }
+    }>
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      start_timestamp: number
+      end_timestamp: number
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        weight_normalized: any
+        asset: {
+          __typename?: 'Asset'
+          token: { __typename?: 'Token'; id: string }
+        }
+      }>
+    }>
+  } | null
+}
+
 export type PoolInfoQueryVariables = Exact<{
   id: Scalars['ID']['input']
   day: Scalars['Int']['input']
@@ -4905,6 +4991,83 @@ export const PoolChartsDocument = gql`
           token {
             id
             symbol
+          }
+          weight_normalized
+        }
+      }
+    }
+  }
+`
+export const PoolDataDocument = gql`
+  query PoolData($id: ID!) {
+    pool(id: $id) {
+      id
+      address
+      vault
+      vault_id
+      controller
+      chain_id
+      logo
+      pool_version
+      strategy
+      is_private_pool
+      supply
+      manager {
+        id
+      }
+      chain {
+        id
+        logo
+        chainName
+        nativeTokenName
+        nativeTokenSymbol
+        nativeTokenDecimals
+        rpcUrls
+        blockExplorerUrl
+        secondsPerBlock
+        addressWrapped
+      }
+      name
+      foundedBy
+      symbol
+      poolId
+      url
+      summary
+      partners {
+        logo
+        url
+      }
+      underlying_assets_addresses
+      underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
+        balance
+        weight_normalized
+        weight_goal_normalized
+        token {
+          id
+          name
+          logo
+          symbol
+          decimals
+          price_usd
+          is_wrap_token
+          wraps {
+            id
+            decimals
+            price_usd
+            symbol
+            name
+            logo
+          }
+        }
+      }
+      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 2) {
+        start_timestamp
+        end_timestamp
+        weights(orderBy: weight_normalized, orderDirection: desc) {
+          asset {
+            token {
+              id
+            }
           }
           weight_normalized
         }
@@ -5132,6 +5295,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'PoolCharts',
+        'query'
+      )
+    },
+    PoolData(
+      variables: PoolDataQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolDataQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolDataQuery>(PoolDataDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'PoolData',
         'query'
       )
     },

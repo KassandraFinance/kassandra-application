@@ -1,8 +1,9 @@
-import Image from 'next/image'
 import React from 'react'
-import { useAppSelector } from '../../../../../store/hooks'
+import { useRouter } from 'next/router'
+import Image from 'next/image'
 import Big from 'big.js'
 
+import { usePoolData } from '@/hooks/query/usePoolData'
 import logoNone from '../../../../../../public/assets/icons/coming-soon.svg'
 
 import PoolOperationContext from '../PoolOperationContext'
@@ -19,22 +20,25 @@ const ListOfAllAsset = ({
   amountAllTokenOut,
   balanceAllTokenOut
 }: IListOfAllAssetProps) => {
-  const { pool } = useAppSelector(state => state)
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
   const { priceToken } = React.useContext(PoolOperationContext)
 
-  const ListTokenWithBalance = pool.underlying_assets.map(item => {
-    const decimals = item.token.wraps?.decimals ?? item.token.decimals
-    return {
-      ...item,
-      amount: Big(amountAllTokenOut[item.token.id] ?? 0).div(
-        Big(10).pow(decimals)
-      ),
-      balance: Big(balanceAllTokenOut[item.token.id] ?? 0).div(
-        Big(10).pow(decimals)
-      )
-    }
-  })
+  const ListTokenWithBalance = pool
+    ? pool?.underlying_assets.map(item => {
+        const decimals = item.token.wraps?.decimals || item.token.decimals || 18
+        return {
+          ...item,
+          amount: Big(amountAllTokenOut[item.token.id] ?? 0).div(
+            Big(10).pow(decimals)
+          ),
+          balance: Big(balanceAllTokenOut[item.token.id] ?? 0).div(
+            Big(10).pow(decimals)
+          )
+        }
+      })
+    : []
   const tokenSorting = [...ListTokenWithBalance].sort(
     (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
   )
@@ -61,11 +65,12 @@ const ListOfAllAsset = ({
                       height={21}
                     />
                   </S.tokenLogo>
-                  {BNtoDecimal(item.amount || Big(0), token.decimals)}{' '}
+                  {BNtoDecimal(item.amount || Big(0), token?.decimals || 18)}{' '}
                   {token.symbol}
                 </S.SymbolContainer>
                 <S.SpanLight>
-                  Balance: {BNtoDecimal(item.balance || Big(0), token.decimals)}
+                  Balance:{' '}
+                  {BNtoDecimal(item.balance || Big(0), token?.decimals || 18)}
                 </S.SpanLight>
               </S.BestValueItem>
               <S.BestValueItem style={{ paddingRight: '10px' }}>

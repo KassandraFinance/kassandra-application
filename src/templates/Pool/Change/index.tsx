@@ -1,9 +1,11 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
 
 import { usePoolPrice } from '@/hooks/query/usePoolPrice'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
-import { useAppDispatch, useAppSelector } from '../../../store/hooks'
+import { useAppDispatch } from '../../../store/hooks'
 import { setPerformanceValues } from '../../../store/reducers/performanceValues'
 
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
@@ -14,10 +16,11 @@ const Change = () => {
   const [arrChangePrice, setArrChangePrice] = React.useState<string[]>([])
 
   const dispatch = useAppDispatch()
-  const { pool } = useAppSelector(state => state)
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
   const { data } = usePoolPrice({
-    id: pool.id,
+    id: pool?.id || '',
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),

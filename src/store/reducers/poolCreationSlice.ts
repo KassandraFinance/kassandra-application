@@ -18,11 +18,11 @@ export type TokenType = {
 type MethodCreate = 'any-asset' | 'pool-assets'
 
 export type TokenSelectProps = {
-  symbol: string
-  name: string
   address: string
-  decimals: number
+  decimals: number | null | undefined
   logoURI: string
+  name: string | null | undefined
+  symbol: string | null | undefined
 }
 
 export type PoolData = {

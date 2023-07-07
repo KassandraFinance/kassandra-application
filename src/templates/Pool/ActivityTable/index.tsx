@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import Blockies from 'react-blockies'
 import Big from 'big.js'
 
@@ -7,7 +8,7 @@ import { BNtoDecimal } from '../../../utils/numerals'
 import { getDateDiff } from '../../../utils/date'
 import substr from '../../../utils/substr'
 
-import { useAppSelector } from '../../../store/hooks'
+import { usePoolData } from '@/hooks/query/usePoolData'
 import useDate from '../../../hooks/useDate'
 import { useActivities } from '@/hooks/query/useActivities'
 
@@ -88,12 +89,13 @@ interface IActivitiesProps {
 const ActivityTable = () => {
   const [skip, setSkip] = React.useState<number>(0)
 
-  const pool = useAppSelector(state => state.pool)
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
   const { date } = useDate()
 
   const take = 6
 
-  const { data } = useActivities({ id: pool.id, skip, take })
+  const { data } = useActivities({ id: pool?.id || '', skip, take })
 
   function handlePageClick(data: { selected: number }, take: number) {
     setSkip(data.selected * take)
@@ -241,7 +243,7 @@ const ActivityTable = () => {
                     <TD isView={inViewCollum === 2}>
                       <ValueWrapper>
                         <S.DataWrapper>
-                          {pool.underlying_assets.map(element => {
+                          {pool?.underlying_assets?.map(element => {
                             if (
                               activity.type === 'join' &&
                               element.token.symbol === activity.symbol[0]
@@ -290,7 +292,7 @@ const ActivityTable = () => {
                                       />
                                     ) : (
                                       <Blockies
-                                        seed={pool.name}
+                                        seed={pool?.name || ''}
                                         className="poolIcon"
                                         size={4}
                                         scale={4}
@@ -392,7 +394,7 @@ const ActivityTable = () => {
                     <TD isView={inViewCollum === 1}>
                       <ValueWrapper>
                         <S.DataWrapper>
-                          {pool.underlying_assets.map(element => {
+                          {pool?.underlying_assets?.map(element => {
                             if (
                               activity.type === 'join' &&
                               element.token.symbol === 'KACY'
@@ -407,7 +409,7 @@ const ActivityTable = () => {
                                     />
                                   ) : (
                                     <Blockies
-                                      seed={pool.name}
+                                      seed={pool?.name || ''}
                                       className="poolIcon"
                                       size={4}
                                       scale={4}
@@ -595,7 +597,7 @@ const ActivityTable = () => {
           />
         </PaginationWrapper>
 
-        {data && historyMobile && (
+        {data && pool && historyMobile && (
           <ModalViewCoin
             isOpen={isOpen}
             title={historyTitle}
@@ -636,12 +638,12 @@ const ActivityTable = () => {
               <ValueContainer>
                 <S.DataWrapper>
                   {historyMobile.type === 'exit' && (
-                    <S.ImageWrapper key={pool.id}>
-                      {pool.logo ? (
+                    <S.ImageWrapper key={pool?.id}>
+                      {pool?.logo ? (
                         <Image src={pool.logo} alt="" layout="fill" />
                       ) : (
                         <Blockies
-                          seed={pool.name}
+                          seed={pool?.name || ''}
                           className="poolIcon"
                           size={4}
                           scale={4}
@@ -650,7 +652,7 @@ const ActivityTable = () => {
                     </S.ImageWrapper>
                   )}
 
-                  {pool.underlying_assets.map(element => {
+                  {pool.underlying_assets?.map(element => {
                     if (
                       (historyMobile.type === 'join' &&
                         element.token.symbol === historyMobile.symbol[0]) ||
@@ -750,11 +752,11 @@ const ActivityTable = () => {
                 <S.DataWrapper>
                   {historyMobile.type === 'join' && (
                     <S.ImageWrapper>
-                      {pool.logo ? (
+                      {pool?.logo ? (
                         <Image src={pool.logo} alt="" layout="fill" />
                       ) : (
                         <Blockies
-                          seed={pool.name}
+                          seed={pool?.name || ''}
                           className="poolIcon"
                           size={4}
                           scale={4}

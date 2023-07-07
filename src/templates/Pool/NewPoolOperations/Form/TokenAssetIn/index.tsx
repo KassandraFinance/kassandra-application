@@ -1,11 +1,12 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { usePoolInfo } from '@/hooks/query/usePoolInfo'
-import { useAppSelector } from '../../../../../store/hooks'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
 
@@ -36,11 +37,13 @@ const TokenAssetIn = ({
   disabled
 }: ITokenAssetInProps) => {
   const [{ wallet }] = useConnectWallet()
-  const { pool } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
 
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
+
   const { data } = usePoolInfo({
-    id: pool.id,
+    id: pool?.id || '',
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
   })
 
@@ -81,18 +84,18 @@ const TokenAssetIn = ({
           <S.Title>Send</S.Title>
           <S.Token>
             <span>
-              {pool.logo ? (
+              {pool?.logo ? (
                 <img src={pool.logo} alt="" width={22} height={22} />
               ) : (
                 <Blockies
                   className="poolIcon"
-                  seed={pool.name}
+                  seed={pool?.name || ''}
                   size={8}
                   scale={3}
                 />
               )}
             </span>
-            <S.Symbol>{pool.symbol}</S.Symbol>
+            <S.Symbol>{pool?.symbol}</S.Symbol>
           </S.Token>
           <S.Span onClick={() => handleMaxUserBalance()}>
             Balance:{' '}
@@ -168,7 +171,7 @@ const TokenAssetIn = ({
             />
           </Tippy>
           <p className="price-dolar">
-            {pool.id &&
+            {pool?.id &&
               amountTokenIn &&
               'USD: ' +
                 BNtoDecimal(

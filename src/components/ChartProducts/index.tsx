@@ -1,9 +1,11 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 import { usePoolCharts } from '@/hooks/query/usePoolCharts'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
-import { useAppSelector, useAppDispatch } from '../../store/hooks'
+import { useAppDispatch } from '../../store/hooks'
 import { setChartSelected } from '../../store/reducers/chartSelected'
 import { setPerformanceValues } from '../../store/reducers/performanceValues'
 import { setPeriodSelected as reduxSetPeriodSelected } from '../../store/reducers/periodSelected'
@@ -39,10 +41,11 @@ const ChartProducts = () => {
   const [periodSelected, setPeriodSelected] = React.useState<string>('1W')
   const dateNow = new Date()
 
-  const pool = useAppSelector(state => state.pool)
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
   const [params, setParams] = React.useState({
-    id: pool.id,
+    id: pool?.id || '',
     price_period: 3600,
     period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 7)
   })

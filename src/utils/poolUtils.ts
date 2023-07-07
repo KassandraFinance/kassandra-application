@@ -65,10 +65,10 @@ export const checkTokenInThePool = (
   underlyingAssets: underlyingAssetsInfo[],
   address: string
 ) => {
-  const tokensChecked = underlyingAssets.map(item => {
+  const tokensChecked = underlyingAssets?.map(item => {
     if (item.token.is_wrap_token === 1) {
       return {
-        address: item.token.wraps.id.toLowerCase(),
+        address: item.token.wraps?.id.toLowerCase(),
         is_wraps: 1,
         yrt: item.token.id
       }
@@ -123,12 +123,31 @@ interface PoolPriceParams {
   priceToken: (address: string) => string | undefined
   poolSupply: string
   assets: {
-    balance: string
+    __typename?: 'Asset' | undefined
+    balance: any
+    weight_normalized: any
+    weight_goal_normalized: any
     token: {
+      __typename?: 'Token' | undefined
       id: string
-      wraps?: {
-        id: string
-      }
+      name?: string | null | undefined
+      logo?: string | null | undefined
+      symbol?: string | null | undefined
+      decimals?: number | null | undefined
+      price_usd: any
+      is_wrap_token: number
+      wraps?:
+        | {
+            __typename?: 'Token' | undefined
+            id: string
+            decimals?: number | null | undefined
+            price_usd: any
+            symbol?: string | null | undefined
+            name?: string | null | undefined
+            logo?: string | null | undefined
+          }
+        | null
+        | undefined
     }
   }[]
 }

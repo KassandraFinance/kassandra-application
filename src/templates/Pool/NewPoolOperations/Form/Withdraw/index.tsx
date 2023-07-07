@@ -1,9 +1,11 @@
 import Big from 'big.js'
+import { useRouter } from 'next/router'
 import React from 'react'
 import Tippy from '@tippyjs/react'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import useBatchRequests from '@/hooks/useBatchRequests'
 
+import { usePoolData } from '@/hooks/query/usePoolData'
 import { usePoolInfo } from '@/hooks/query/usePoolInfo'
 import { networks } from '../../../../../constants/tokenAddresses'
 
@@ -90,19 +92,22 @@ const Withdraw = ({
 
   const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
 
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
+
   const dispatch = useAppDispatch()
-  const { pool, tokenSelect } = useAppSelector(state => state)
+  const { tokenSelect } = useAppSelector(state => state)
   const [{ wallet, connecting }, connect] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
   const { txNotification, transactionErrors } = useTransaction()
-  const { balances } = useBatchRequests(pool.chain_id)
+  const { balances } = useBatchRequests(pool?.chain_id || 0)
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 
   const { operation, priceToken } = React.useContext(PoolOperationContext)
 
   const { data } = usePoolInfo({
-    id: pool.id,
+    id: pool?.id || '',
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
   })
 
@@ -121,7 +126,10 @@ const Withdraw = ({
     let approved = false
     while (!approved) {
       await new Promise(r => setTimeout(r, 1000)) // sleep
-      const { allowance } = await ERC20(pool.address, networks[chainId].rpc)
+      const { allowance } = await ERC20(
+        pool?.address || '',
+        networks[chainId].rpc
+      )
       const allowanceValue = await allowance(
         operation.withdrawContract,
         wallet.accounts[0].address
@@ -144,7 +152,7 @@ const Withdraw = ({
     for (let index = 0; index < 100; index++) {
       await new Promise(r => setTimeout(r, 500))
       amountPool = await getBalanceToken(
-        pool.address,
+        pool?.address || '',
         wallet.accounts[0].address,
         chainId
       )
@@ -162,7 +170,9 @@ const Withdraw = ({
         tokenSelect.address,
         wallet.accounts[0].address,
         chainId,
-        pool.pool_version === 1 ? pool.chain.addressWrapped : undefined
+        pool?.pool_version === 1
+          ? pool?.chain?.addressWrapped || undefined
+          : undefined
       )
 
       setSelectedTokenInBalance(amountPool)
@@ -181,7 +191,7 @@ const Withdraw = ({
 
     dispatch(
       setModalAlertText({
-        errorText: `Failed to withdraw ${pool.symbol}. Please try again later.`
+        errorText: `Failed to withdraw ${pool?.symbol}. Please try again later.`
       })
     )
   }
@@ -202,25 +212,29 @@ const Withdraw = ({
 
     try {
       trackBuying(
-        pool.id,
-        pool.symbol,
+        pool?.id || '0',
+        pool?.symbol || '',
         -1 * data?.price_usd,
-        pool.chain.chainName
+        pool?.chain?.chainName || ''
       )
 
       if (approvals[typeAction][0] === 0) {
-        const { approve } = await ERC20(pool.address, networks[chainId].rpc, {
-          wallet: wallet,
-          txNotification: txNotification,
-          transactionErrors: transactionErrors
-        })
+        const { approve } = await ERC20(
+          pool?.address || '',
+          networks[chainId].rpc,
+          {
+            wallet: wallet,
+            txNotification: txNotification,
+            transactionErrors: transactionErrors
+          }
+        )
 
         approve(
           operation.withdrawContract,
           {
-            error: `Failed to approve ${pool.symbol}`,
-            pending: `Waiting approval of ${pool.symbol}...`,
-            sucess: `Approval of ${pool.symbol} confirmed, wait while we sync with the latest block of the blockchain.`
+            error: `Failed to approve ${pool?.symbol}`,
+            pending: `Waiting approval of ${pool?.symbol}...`,
+            sucess: `Approval of ${pool?.symbol} confirmed, wait while we sync with the latest block of the blockchain.`
           },
           { onFail: handleApproveFail, onSuccess: handleApproveSuccess }
         )
@@ -254,9 +268,9 @@ const Withdraw = ({
           await txNotification(
             response,
             {
-              error: `Failed to withdraw ${pool.symbol}. Please try again later.`,
-              pending: `Confirming withdrawal of ${pool.symbol}...`,
-              sucess: `Withdrawal of ${pool.symbol} confirmed`
+              error: `Failed to withdraw ${pool?.symbol}. Please try again later.`,
+              pending: `Confirming withdrawal of ${pool?.symbol}...`,
+              sucess: `Withdrawal of ${pool?.symbol} confirmed`
             },
             {
               onFail: handleTransactionFail,
@@ -281,9 +295,9 @@ const Withdraw = ({
         await txNotification(
           response,
           {
-            error: `Failed to withdraw ${pool.symbol}. Please try again later.`,
-            pending: `Confirming withdrawal of ${pool.symbol}...`,
-            sucess: `Withdrawal of ${pool.symbol} confirmed`
+            error: `Failed to withdraw ${pool?.symbol}. Please try again later.`,
+            pending: `Confirming withdrawal of ${pool?.symbol}...`,
+            sucess: `Withdrawal of ${pool?.symbol} confirmed`
           },
           {
             onFail: handleTransactionFail,
@@ -308,11 +322,14 @@ const Withdraw = ({
 
     const amounts = await balances(
       wallet.accounts[0].address,
-      pool.underlying_assets_addresses
+      pool?.underlying_assets_addresses || []
     )
 
     const balanceList: Record<string, Big> = {}
-    for (const [i, token] of pool.underlying_assets_addresses.entries()) {
+    const underlyingAssetsAddresses = pool?.underlying_assets_addresses
+      ? pool.underlying_assets_addresses
+      : []
+    for (const [i, token] of underlyingAssetsAddresses.entries()) {
       balanceList[token] = amounts[i]?.toString() ?? '0'
     }
 
@@ -322,7 +339,10 @@ const Withdraw = ({
   async function updateAllowance() {
     if (!wallet) return
 
-    const { allowance } = await ERC20(pool.address, networks[pool.chain_id].rpc)
+    const { allowance } = await ERC20(
+      pool?.address || '',
+      networks[pool?.chain_id || '0'].rpc
+    )
     const allowanceValue = await allowance(
       operation.withdrawContract,
       wallet.accounts[0].address
@@ -338,11 +358,11 @@ const Withdraw = ({
   }
 
   React.useEffect(() => {
-    if (typeAction !== 'Withdraw' || tokenSelect.address === pool.id) {
+    if (typeAction !== 'Withdraw' || tokenSelect.address === pool?.id) {
       return
     }
 
-    if (chainId !== pool.chain_id || Big(amountTokenIn).lte(0)) {
+    if (chainId !== pool?.chain_id || Big(amountTokenIn).lte(0)) {
       setamountAllTokenOut({})
       setAmountTokenOut(new Big(0))
       setErrorMsg('')
@@ -436,16 +456,16 @@ const Withdraw = ({
   React.useEffect(() => {
     if (
       !wallet ||
-      pool.id.length === 0 ||
+      pool?.id?.length === 0 ||
       chainId.toString().length === 0 ||
-      chainId !== pool.chain_id
+      chainId !== pool?.chain_id
     ) {
       return setSelectedTokenInBalance(Big(0))
     }
 
     ;(async () => {
       const balance = await getBalanceToken(
-        pool.address,
+        pool?.address || '',
         wallet.accounts[0].address,
         chainId
       )
@@ -455,10 +475,10 @@ const Withdraw = ({
   }, [wallet, pool, typeAction, typeWithdraw])
 
   React.useEffect(() => {
-    const res: Big = pool.underlying_assets.reduce((accumulator, current) => {
+    const res = pool?.underlying_assets.reduce((accumulator, current) => {
       const decimals = current.token.wraps?.decimals ?? current.token.decimals
       const tokenAmount = Big(amountAllTokenOut[current.token.id] ?? 0).div(
-        Big(10).pow(decimals)
+        Big(10).pow(decimals || 18)
       )
       const priceUSD = priceToken(
         current.token.wraps
@@ -469,14 +489,14 @@ const Withdraw = ({
       return tokenAmount.mul(Big(priceUSD || 0)).add(accumulator)
     }, Big(0))
 
-    setPriceInDollarOnWithdraw(BNtoDecimal(res, 3, 2))
+    setPriceInDollarOnWithdraw(BNtoDecimal(res || Big(0), 3, 2))
   }, [amountAllTokenOut])
 
   React.useEffect(() => {
     if (
       !wallet ||
       chainId.toString().length === 0 ||
-      chainId !== pool.chain_id ||
+      chainId !== pool?.chain_id ||
       typeWithdraw === 'Best_Value'
     ) {
       return setbalanceAllTokenOut({})
@@ -487,7 +507,7 @@ const Withdraw = ({
   }, [chainId, wallet, amountTokenIn, typeWithdraw])
 
   React.useEffect(() => {
-    if (chainId !== pool.chain_id) {
+    if (chainId !== pool?.chain_id) {
       return
     }
 
@@ -535,8 +555,8 @@ const Withdraw = ({
         disabled={
           !wallet
             ? 'Please connect your wallet by clicking the button below'
-            : chainId !== pool.chain_id
-            ? `Please change to the ${pool.chain.chainName} by clicking the button below`
+            : chainId !== pool?.chain_id
+            ? `Please change to the ${pool?.chain?.chainName} by clicking the button below`
             : ''
         }
       />
@@ -596,7 +616,7 @@ const Withdraw = ({
           onClick={() => connect()}
           text="Connect Wallet"
         />
-      ) : chainId === pool.chain_id ? (
+      ) : chainId === pool?.chain_id ? (
         pool.is_private_pool &&
         !privateInvestors.some(
           address => address === wallet?.accounts[0].address
@@ -681,9 +701,9 @@ const Withdraw = ({
           fullWidth
           type="button"
           onClick={() =>
-            setChain({ chainId: `0x${pool.chain_id.toString(16)}` })
+            setChain({ chainId: `0x${pool?.chain_id?.toString(16)}` })
           }
-          text={`Change to ${pool.chain.chainName}`}
+          text={`Change to ${pool?.chain?.chainName}`}
         />
       )}
     </S.Withdraw>

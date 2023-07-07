@@ -16,9 +16,7 @@ export const fetchKacyData = async (): Promise<KacyDataType> => {
 export const useKacyData = () => {
   return useQuery({
     queryKey: ['kacy-data'],
-    queryFn: async () => {
-      return fetchKacyData()
-    },
+    queryFn: async () => fetchKacyData(),
     staleTime: 1000 * 60,
     refetchInterval: 1000 * 60
   })

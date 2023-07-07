@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import Big from 'big.js'
 import Tippy from '@tippyjs/react'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
@@ -8,6 +9,7 @@ import {
   NATIVE_ADDRESS,
   networks
 } from '../../../../../constants/tokenAddresses'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -89,9 +91,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   )
 
   const [{ wallet, connecting }, connect] = useConnectWallet()
-  const { pool, tokenSelect } = useAppSelector(state => state)
+  const { tokenSelect } = useAppSelector(state => state)
   const [{ connectedChain }, setChain] = useSetChain()
   const { txNotification, transactionErrors } = useTransaction()
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 
@@ -102,7 +106,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
 
   const { data } = usePoolInfo({
-    id: pool.id,
+    id: pool?.id || '',
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
   })
 
@@ -113,26 +117,56 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     transactionsDataTx: string[]
   }> {
     const { fromAddress, fromDecimals } =
-      tokenSelect.address === NATIVE_ADDRESS && pool.chain_id === 137
+      tokenSelect.address === NATIVE_ADDRESS && pool?.chain_id === 137
         ? {
-            fromAddress: pool.chain.addressWrapped,
-            fromDecimals: pool.chain.nativeTokenDecimals
+            fromAddress: pool.chain?.addressWrapped,
+            fromDecimals: pool.chain?.nativeTokenDecimals
           }
         : {
             fromAddress: tokenSelect.address,
             fromDecimals: tokenSelect.decimals
           }
 
-    const sortAddresses = [...pool.underlying_assets].sort((a, b) =>
-      a.token.id.toLowerCase() > b.token.id.toLowerCase() ? 1 : -1
-    )
+    let sortAddresses: {
+      __typename?: 'Asset' | undefined
+      balance: any
+      weight_normalized: any
+      weight_goal_normalized: any
+      token: {
+        __typename?: 'Token' | undefined
+        id: string
+        name?: string | null | undefined
+        logo?: string | null | undefined
+        symbol?: string | null | undefined
+        decimals?: number | null | undefined
+        price_usd: any
+        is_wrap_token: number
+        wraps?:
+          | {
+              __typename?: 'Token' | undefined
+              id: string
+              decimals?: number | null | undefined
+              price_usd: any
+              symbol?: string | null | undefined
+              name?: string | null | undefined
+              logo?: string | null | undefined
+            }
+          | null
+          | undefined
+      }
+    }[] = []
+    if (pool) {
+      sortAddresses = [...pool.underlying_assets].sort((a, b) =>
+        a.token.id.toLowerCase() > b.token.id.toLowerCase() ? 1 : -1
+      )
+    }
     const { amountsTokenIn, transactionsDataTx } =
       await operation.getAmountsOut({
         destTokens: sortAddresses,
-        srcToken: fromAddress,
-        srcDecimals: fromDecimals.toString(),
+        srcToken: fromAddress || '',
+        srcDecimals: fromDecimals?.toString() || '18',
         amount: amountTokenIn.toString(),
-        chainId: pool.chain_id.toString()
+        chainId: pool?.chain_id?.toString() || ''
       })
 
     setTrasactionData(transactionsDataTx)
@@ -148,10 +182,10 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     transactionsDataTx: string[]
   }> {
     const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(
-      pool.underlying_assets
+      pool?.underlying_assets || []
     )
     const tokenWrappedAddress = getTokenWrapped(
-      pool.underlying_assets,
+      pool?.underlying_assets || [],
       tokenWithHigherLiquidityPool.address
     )
 
@@ -166,9 +200,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       await operation.getAmountsOut({
         destTokens: [{ ...tokenWrappedAddress, weight_normalized: '1' }],
         srcToken: tokenSelect.address,
-        srcDecimals: tokenSelect.decimals.toString(),
+        srcDecimals: tokenSelect.decimals?.toString() || '18',
         amount: amountTokenIn.toString(),
-        chainId: pool.chain_id.toString()
+        chainId: pool?.chain_id?.toString() || ''
       })
 
     const datas = await operation.getDatasTx(slippage.value, transactionsDataTx)
@@ -181,11 +215,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
   async function handleTokenSelected() {
     const tokensChecked = checkTokenInThePool(
-      pool.underlying_assets,
+      pool?.underlying_assets || [],
       tokenSelect.address
     )
     const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(
-      pool.underlying_assets
+      pool?.underlying_assets || []
     )
 
     const tokenAddressOrYRT =
@@ -202,7 +236,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       amountsTokenIn: [Big(amountTokenIn).toFixed()],
       transactionsDataTx: ['']
     }
-    if (pool.pool_version === 2) {
+    if (pool?.pool_version === 2) {
       data1Inch = await handleSwapProviderV2()
     } else if (!tokensChecked) {
       data1Inch = await handleSwapProviderV1()
@@ -299,7 +333,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     for (let index = 0; index < 100; index++) {
       await new Promise(r => setTimeout(r, 500))
       amountPool = await getBalanceToken(
-        pool.address,
+        pool?.address || '',
         wallet.accounts[0].address,
         chainId
       )
@@ -314,7 +348,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       tokenSelect.address,
       wallet.accounts[0].address,
       chainId,
-      pool.pool_version === 1 ? pool.chain.addressWrapped : undefined
+      pool?.pool_version === 1
+        ? pool?.chain?.addressWrapped || undefined
+        : undefined
     )
 
     const { allowance } = await ERC20(
@@ -342,7 +378,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
     dispatch(
       setModalAlertText({
-        errorText: `Failed to invest in ${pool.symbol}. Please try again later.`
+        errorText: `Failed to invest in ${pool?.symbol}. Please try again later.`
       })
     )
   }
@@ -393,7 +429,12 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         return
       }
 
-      trackBuying(pool.id, pool.symbol, data?.price_usd, pool.chain.chainName)
+      trackBuying(
+        pool?.id || '',
+        pool?.symbol || '',
+        data?.price_usd,
+        pool?.chain?.chainName || ''
+      )
 
       try {
         const response: any = await operation.joinswapExternAmountIn({
@@ -406,7 +447,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           userWalletAddress: wallet.accounts[0].address,
           data: trasactionData,
           hasTokenInPool: !!checkTokenInThePool(
-            pool.underlying_assets,
+            pool?.underlying_assets || [],
             tokenSelect.address
           ),
           slippage: slippageVal
@@ -421,9 +462,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         await txNotification(
           response,
           {
-            error: `Failed to invest in ${pool.symbol}. Please try again later.`,
-            pending: `Confirming investment in ${pool.symbol}...`,
-            sucess: `Investment in ${pool.symbol} confirmed`
+            error: `Failed to invest in ${pool?.symbol}. Please try again later.`,
+            pending: `Confirming investment in ${pool?.symbol}...`,
+            sucess: `Investment in ${pool?.symbol} confirmed`
           },
           { onFail: handleTransactionFail, onSuccess: handleTransactionSuccess }
         )
@@ -443,7 +484,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
   // verificar se o token está aprovado
   React.useEffect(() => {
-    if (chainId !== pool.chain_id) {
+    if (chainId !== pool?.chain_id) {
       return
     }
     updateAllowance()
@@ -454,7 +495,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     if (
       typeAction !== 'Invest' ||
       tokenSelect.address.length === 0 ||
-      pool.id.length === 0 ||
+      pool?.id?.length === 0 ||
       Big(amountTokenIn).lte(0)
       // swapInAddress === crpPoolAddress
     ) {
@@ -469,11 +510,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
     const valueFormatted = decimalToBN(
       inputAmountTokenRef.current.value,
-      tokenSelect.decimals
+      tokenSelect?.decimals || 18
     )
     if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
 
-    if (chainId !== pool.chain_id) {
+    if (chainId !== pool?.chain_id) {
       setAmountTokenOut(Big(0))
       setAmountTokenOuttWithoutFees(Big(0))
       return
@@ -509,7 +550,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       try {
         const valueFormatted = decimalToBN(
           inputAmountTokenRef.current.value,
-          tokenSelect.decimals
+          tokenSelect?.decimals || 18
         )
         if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
 
@@ -596,8 +637,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         .div(Big(10).pow(tokenSelect.decimals || 18))
 
       const poolPrice = getPoolPrice({
-        assets: pool.underlying_assets,
-        poolSupply: pool.supply,
+        assets: pool?.underlying_assets || [],
+        poolSupply: pool?.supply,
         priceToken
       })
 
@@ -699,7 +740,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           onClick={() => connect()}
           text="Connect Wallet"
         />
-      ) : chainId === pool.chain_id ? (
+      ) : chainId === pool?.chain_id ? (
         pool.is_private_pool &&
         !privateInvestors.some(
           address => address === wallet?.accounts[0].address
@@ -775,9 +816,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           fullWidth
           type="button"
           onClick={() =>
-            setChain({ chainId: `0x${pool.chain_id.toString(16)}` })
+            setChain({ chainId: `0x${pool?.chain_id?.toString(16)}` })
           }
-          text={`Change to ${pool.chain.chainName}`}
+          text={`Change to ${pool?.chain?.chainName}`}
         />
       )}
     </S.Invest>

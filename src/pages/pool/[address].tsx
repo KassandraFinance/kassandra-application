@@ -1,142 +1,22 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
-import { SWRConfig } from 'swr'
 import { ParsedUrlQuery } from 'querystring'
-import { toChecksumAddress, isAddress } from 'web3-utils'
+import { dehydrate, QueryClient } from '@tanstack/react-query'
+
+import { isAddress, getAddress } from 'ethers'
 
 import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
 
-import { useAppDispatch } from '../../store/hooks'
-import { IPoolSlice, setPool } from '../../store/reducers/pool'
+import { fetchPoolData } from '@/hooks/query/usePoolData'
 
 import Pool from '../../templates/Pool'
-import { getWeightsNormalizedV2 } from '../../utils/updateAssetsToV2'
 
 interface IParams extends ParsedUrlQuery {
   address: string
 }
 
-interface IPoolProps {
-  pool: IPoolSlice
+const Index = () => {
+  return <Pool />
 }
-
-const Index = ({ pool }: IPoolProps) => {
-  const dispatch = useAppDispatch()
-
-  if (pool.chain_id === 43114) {
-    const renameWavax = pool.underlying_assets.find(
-      asset => asset.token.symbol === 'WAVAX'
-    )
-    if (renameWavax) {
-      renameWavax.token.symbol = 'AVAX'
-      renameWavax.token.name = 'Avalanche'
-    }
-  }
-  let underlying_assets = [...pool.underlying_assets].sort((a, b) =>
-    a.token.id > b.token.id ? 1 : -1
-  )
-
-  if (pool.pool_version === 2) {
-    try {
-      const assetsV2 = getWeightsNormalizedV2(
-        pool.weight_goals,
-        underlying_assets
-      )
-      if (assetsV2) {
-        underlying_assets = assetsV2
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const poolWithSortedTokens = { ...pool, underlying_assets }
-  dispatch(setPool(poolWithSortedTokens))
-
-  return (
-    <SWRConfig
-      value={{
-        refreshInterval: 30000,
-        fetcher: url => fetch(url).then(res => res.json())
-      }}
-    >
-      <Pool />
-    </SWRConfig>
-  )
-}
-
-const queryPool = `{
-  id
-  address
-  vault
-  vault_id
-  controller
-  chain_id
-  logo
-  pool_version
-  strategy
-  is_private_pool
-  supply
-  manager {
-    id
-  }
-  chain {
-    id
-    logo
-    chainName
-    nativeTokenName
-    nativeTokenSymbol
-    nativeTokenDecimals
-    rpcUrls
-    blockExplorerUrl
-    secondsPerBlock
-    addressWrapped
-  }
-  name
-  foundedBy
-  symbol
-  poolId
-  url
-  summary
-  partners {
-    logo
-    url
-  }
-  underlying_assets_addresses
-  underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
-    balance
-    weight_normalized
-    weight_goal_normalized
-    token {
-      id
-      name
-      logo
-      symbol
-      decimals
-      price_usd
-      is_wrap_token
-      wraps {
-        id
-        decimals
-        price_usd
-        symbol
-        name
-        logo
-      }
-    }
-  }
-  weight_goals(orderBy: end_timestamp orderDirection: desc first: 2) {
-    start_timestamp
-    end_timestamp
-    weights(orderBy: weight_normalized orderDirection: desc) {
-      asset {
-        token {
-          id
-        }
-      }
-      weight_normalized
-    }
-  }
-}`
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const res = await fetch(BACKEND_KASSANDRA, {
@@ -156,34 +36,30 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async context => {
-  // eslint-disable-next-line prettier/prettier
+  const queryClient = new QueryClient()
+
   const { address } = context.params as IParams
 
   let poolId = address
 
   if (isAddress(address)) {
-    poolId = toChecksumAddress(address)
+    poolId = getAddress(address)
   }
 
   try {
-    const res = await fetch(BACKEND_KASSANDRA, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        query: `query ($id: ID!) { pool (id: $id) ${queryPool}}`,
-        variables: {
-          id: poolId
-        }
-      })
+    await queryClient.prefetchQuery({
+      queryKey: ['pool-data', poolId],
+      queryFn: () => fetchPoolData({ id: poolId })
     })
 
-    const pool = (await res.json()).data?.pool
+    const res = dehydrate(queryClient)
 
-    if (!pool) throw new Error('pool not found')
+    if (!res.queries[0].state.data) throw new Error('pool not found')
 
-    return { props: { pool }, revalidate: 300 }
+    return {
+      props: { dehydrateState: res },
+      revalidate: 300
+    }
   } catch (error) {
     console.log(error)
     return { notFound: true, revalidate: 60 }

@@ -42,9 +42,7 @@ export const useUserProfile = ({ address }: UseUserProfileProps) => {
   const id = address ? getAddress(address) : ''
   return useQuery({
     queryKey: ['user-profile', id],
-    queryFn: async () => {
-      return fetchUserProfile({ address: id })
-    },
+    queryFn: async () => fetchUserProfile({ address: id }),
     enabled: id.length > 0
   })
 }
