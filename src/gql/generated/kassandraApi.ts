@@ -771,359 +771,17 @@ export type Chain_Filter = {
 export type Chain_OrderBy = 'id'
 
 /**
- * The factory creates all the pools in the protocol
- *
- */
-export type Factory = {
-  __typename?: 'Factory'
-  address: Scalars['String']['output']
-  deposits_btc: Scalars['BigDecimal']['output']
-  deposits_usd: Scalars['BigDecimal']['output']
-  fees: Array<Fee>
-  /**
-   * Chain ID + contract address
-   *
-   */
-  id: Scalars['ID']['output']
-  num_deposits: Scalars['BigInt']['output']
-  num_tx: Scalars['BigInt']['output']
-  pool_count: Scalars['Int']['output']
-  pools: Array<Pool>
-  total_fees_aum_kassandra_btc: Scalars['BigDecimal']['output']
-  total_fees_aum_kassandra_usd: Scalars['BigDecimal']['output']
-  total_fees_aum_manager_btc: Scalars['BigDecimal']['output']
-  total_fees_aum_manager_usd: Scalars['BigDecimal']['output']
-  total_fees_exit_btc: Scalars['BigDecimal']['output']
-  total_fees_exit_usd: Scalars['BigDecimal']['output']
-  total_fees_join_broker_btc: Scalars['BigDecimal']['output']
-  total_fees_join_broker_usd: Scalars['BigDecimal']['output']
-  total_fees_join_manager_btc: Scalars['BigDecimal']['output']
-  total_fees_join_manager_usd: Scalars['BigDecimal']['output']
-  total_fees_swap_btc: Scalars['BigDecimal']['output']
-  total_fees_swap_usd: Scalars['BigDecimal']['output']
-  total_value_locked_btc: Scalars['BigDecimal']['output']
-  total_value_locked_usd: Scalars['BigDecimal']['output']
-  total_volume_btc: Scalars['BigDecimal']['output']
-  total_volume_usd: Scalars['BigDecimal']['output']
-  volumes: Array<Volume>
-}
-
-/**
- * The factory creates all the pools in the protocol
- *
- */
-export type FactoryFeesArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Fee_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  where?: InputMaybe<Fee_Filter>
-}
-
-/**
- * The factory creates all the pools in the protocol
- *
- */
-export type FactoryPoolsArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Pool_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  where?: InputMaybe<Pool_Filter>
-}
-
-/**
- * The factory creates all the pools in the protocol
- *
- */
-export type FactoryVolumesArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Volume_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  where?: InputMaybe<Volume_Filter>
-}
-
-export type Factory_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>
-  address?: InputMaybe<Scalars['String']['input']>
-  address_contains?: InputMaybe<Scalars['String']['input']>
-  address_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  address_ends_with?: InputMaybe<Scalars['String']['input']>
-  address_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  address_gt?: InputMaybe<Scalars['String']['input']>
-  address_gte?: InputMaybe<Scalars['String']['input']>
-  address_in?: InputMaybe<Array<Scalars['String']['input']>>
-  address_lt?: InputMaybe<Scalars['String']['input']>
-  address_lte?: InputMaybe<Scalars['String']['input']>
-  address_not?: InputMaybe<Scalars['String']['input']>
-  address_not_contains?: InputMaybe<Scalars['String']['input']>
-  address_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  address_not_ends_with?: InputMaybe<Scalars['String']['input']>
-  address_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  address_not_in?: InputMaybe<Array<Scalars['String']['input']>>
-  address_not_starts_with?: InputMaybe<Scalars['String']['input']>
-  address_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  address_starts_with?: InputMaybe<Scalars['String']['input']>
-  address_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  deposits_btc?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  deposits_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_btc_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  deposits_usd?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  deposits_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  deposits_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  fees_?: InputMaybe<Fee_Filter>
-  id?: InputMaybe<Scalars['ID']['input']>
-  id_gt?: InputMaybe<Scalars['ID']['input']>
-  id_gte?: InputMaybe<Scalars['ID']['input']>
-  id_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  id_lt?: InputMaybe<Scalars['ID']['input']>
-  id_lte?: InputMaybe<Scalars['ID']['input']>
-  id_not?: InputMaybe<Scalars['ID']['input']>
-  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
-  num_deposits?: InputMaybe<Scalars['BigInt']['input']>
-  num_deposits_gt?: InputMaybe<Scalars['BigInt']['input']>
-  num_deposits_gte?: InputMaybe<Scalars['BigInt']['input']>
-  num_deposits_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  num_deposits_lt?: InputMaybe<Scalars['BigInt']['input']>
-  num_deposits_lte?: InputMaybe<Scalars['BigInt']['input']>
-  num_deposits_not?: InputMaybe<Scalars['BigInt']['input']>
-  num_deposits_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  num_tx?: InputMaybe<Scalars['BigInt']['input']>
-  num_tx_gt?: InputMaybe<Scalars['BigInt']['input']>
-  num_tx_gte?: InputMaybe<Scalars['BigInt']['input']>
-  num_tx_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  num_tx_lt?: InputMaybe<Scalars['BigInt']['input']>
-  num_tx_lte?: InputMaybe<Scalars['BigInt']['input']>
-  num_tx_not?: InputMaybe<Scalars['BigInt']['input']>
-  num_tx_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
-  pool_count?: InputMaybe<Scalars['Int']['input']>
-  pool_count_gt?: InputMaybe<Scalars['Int']['input']>
-  pool_count_gte?: InputMaybe<Scalars['Int']['input']>
-  pool_count_in?: InputMaybe<Array<Scalars['Int']['input']>>
-  pool_count_lt?: InputMaybe<Scalars['Int']['input']>
-  pool_count_lte?: InputMaybe<Scalars['Int']['input']>
-  pool_count_not?: InputMaybe<Scalars['Int']['input']>
-  pool_count_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
-  pools_?: InputMaybe<Pool_Filter>
-  total_fees_aum_kassandra_btc?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_btc_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_aum_kassandra_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_btc_not_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_aum_kassandra_usd?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_usd_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_aum_kassandra_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_kassandra_usd_not_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_aum_manager_btc?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_btc_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_aum_manager_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_btc_not_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_aum_manager_usd?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_usd_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_aum_manager_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_aum_manager_usd_not_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_exit_btc?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_exit_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_btc_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_exit_usd?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_exit_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_exit_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_join_broker_btc?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_btc_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_join_broker_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_btc_not_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_join_broker_usd?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_usd_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_join_broker_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_broker_usd_not_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_join_manager_btc?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_btc_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_join_manager_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_btc_not_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_join_manager_usd?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_usd_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_join_manager_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_join_manager_usd_not_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_fees_swap_btc?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_swap_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_btc_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_swap_usd?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_fees_swap_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_fees_swap_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_value_locked_btc?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_value_locked_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_btc_not_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_value_locked_usd?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_value_locked_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_value_locked_usd_not_in?: InputMaybe<
-    Array<Scalars['BigDecimal']['input']>
-  >
-  total_volume_btc?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_volume_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_btc_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_volume_usd?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  total_volume_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
-  total_volume_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
-  volumes_?: InputMaybe<Volume_Filter>
-}
-
-export type Factory_OrderBy =
-  | 'address'
-  | 'deposits_btc'
-  | 'deposits_usd'
-  | 'fees'
-  | 'id'
-  | 'num_deposits'
-  | 'num_tx'
-  | 'pool_count'
-  | 'pools'
-  | 'total_fees_aum_kassandra_btc'
-  | 'total_fees_aum_kassandra_usd'
-  | 'total_fees_aum_manager_btc'
-  | 'total_fees_aum_manager_usd'
-  | 'total_fees_exit_btc'
-  | 'total_fees_exit_usd'
-  | 'total_fees_join_broker_btc'
-  | 'total_fees_join_broker_usd'
-  | 'total_fees_join_manager_btc'
-  | 'total_fees_join_manager_usd'
-  | 'total_fees_swap_btc'
-  | 'total_fees_swap_usd'
-  | 'total_value_locked_btc'
-  | 'total_value_locked_usd'
-  | 'total_volume_btc'
-  | 'total_volume_usd'
-  | 'volumes'
-
-/**
  * Fee volume per type for 1h, 1d and 7d periods (1d periods are not 24h volume as they are based from 00:00 UTC)
  *
  */
 export type Fee = {
   __typename?: 'Fee'
-  factory: Factory
   /**
    * Pool ID + Period + Operation type + Timestamp at start of period
    *
    */
   id: Scalars['ID']['output']
+  kassandra?: Maybe<Kassandra>
   /**
    * Period in seconds, available in 1h, 24h, 7d
    *
@@ -1153,27 +811,6 @@ export type Fee = {
 export type Fee_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
-  factory?: InputMaybe<Scalars['String']['input']>
-  factory_?: InputMaybe<Factory_Filter>
-  factory_contains?: InputMaybe<Scalars['String']['input']>
-  factory_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  factory_ends_with?: InputMaybe<Scalars['String']['input']>
-  factory_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  factory_gt?: InputMaybe<Scalars['String']['input']>
-  factory_gte?: InputMaybe<Scalars['String']['input']>
-  factory_in?: InputMaybe<Array<Scalars['String']['input']>>
-  factory_lt?: InputMaybe<Scalars['String']['input']>
-  factory_lte?: InputMaybe<Scalars['String']['input']>
-  factory_not?: InputMaybe<Scalars['String']['input']>
-  factory_not_contains?: InputMaybe<Scalars['String']['input']>
-  factory_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  factory_not_ends_with?: InputMaybe<Scalars['String']['input']>
-  factory_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  factory_not_in?: InputMaybe<Array<Scalars['String']['input']>>
-  factory_not_starts_with?: InputMaybe<Scalars['String']['input']>
-  factory_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  factory_starts_with?: InputMaybe<Scalars['String']['input']>
-  factory_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -1182,6 +819,27 @@ export type Fee_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  kassandra?: InputMaybe<Scalars['String']['input']>
+  kassandra_?: InputMaybe<Kassandra_Filter>
+  kassandra_contains?: InputMaybe<Scalars['String']['input']>
+  kassandra_contains_nocase?: InputMaybe<Scalars['String']['input']>
+  kassandra_ends_with?: InputMaybe<Scalars['String']['input']>
+  kassandra_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
+  kassandra_gt?: InputMaybe<Scalars['String']['input']>
+  kassandra_gte?: InputMaybe<Scalars['String']['input']>
+  kassandra_in?: InputMaybe<Array<Scalars['String']['input']>>
+  kassandra_lt?: InputMaybe<Scalars['String']['input']>
+  kassandra_lte?: InputMaybe<Scalars['String']['input']>
+  kassandra_not?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_contains?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_ends_with?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  kassandra_not_starts_with?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  kassandra_starts_with?: InputMaybe<Scalars['String']['input']>
+  kassandra_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   period?: InputMaybe<Scalars['Int']['input']>
   period_gt?: InputMaybe<Scalars['Int']['input']>
   period_gte?: InputMaybe<Scalars['Int']['input']>
@@ -1274,8 +932,8 @@ export type Fee_Filter = {
 }
 
 export type Fee_OrderBy =
-  | 'factory'
   | 'id'
+  | 'kassandra'
   | 'period'
   | 'pool'
   | 'timestamp'
@@ -1567,14 +1225,77 @@ export type Investor_OrderBy =
  */
 export type Kassandra = {
   __typename?: 'Kassandra'
+  deposits_btc: Scalars['BigDecimal']['output']
+  deposits_usd: Scalars['BigDecimal']['output']
   fee_aum_kassandra: Scalars['BigDecimal']['output']
+  fees: Array<Fee>
   id: Scalars['ID']['output']
+  num_deposits: Scalars['BigInt']['output']
   num_managers: Scalars['Int']['output']
+  num_tx: Scalars['BigInt']['output']
+  pool_count: Scalars['Int']['output']
+  total_fees_aum_kassandra_btc: Scalars['BigDecimal']['output']
+  total_fees_aum_kassandra_usd: Scalars['BigDecimal']['output']
+  total_fees_aum_manager_btc: Scalars['BigDecimal']['output']
+  total_fees_aum_manager_usd: Scalars['BigDecimal']['output']
+  total_fees_exit_btc: Scalars['BigDecimal']['output']
+  total_fees_exit_usd: Scalars['BigDecimal']['output']
+  total_fees_join_broker_btc: Scalars['BigDecimal']['output']
+  total_fees_join_broker_usd: Scalars['BigDecimal']['output']
+  total_fees_join_manager_btc: Scalars['BigDecimal']['output']
+  total_fees_join_manager_usd: Scalars['BigDecimal']['output']
+  total_fees_swap_btc: Scalars['BigDecimal']['output']
+  total_fees_swap_usd: Scalars['BigDecimal']['output']
+  total_value_locked_btc: Scalars['BigDecimal']['output']
+  total_value_locked_usd: Scalars['BigDecimal']['output']
+  total_volume_btc: Scalars['BigDecimal']['output']
+  total_volume_usd: Scalars['BigDecimal']['output']
+  volumes: Array<Volume>
+}
+
+/**
+ * Helper object to keep track of the AUM fee that goes to Kassandra
+ *
+ */
+export type KassandraFeesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Fee_OrderBy>
+  orderDirection?: InputMaybe<OrderDirection>
+  skip?: InputMaybe<Scalars['Int']['input']>
+  where?: InputMaybe<Fee_Filter>
+}
+
+/**
+ * Helper object to keep track of the AUM fee that goes to Kassandra
+ *
+ */
+export type KassandraVolumesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Volume_OrderBy>
+  orderDirection?: InputMaybe<OrderDirection>
+  skip?: InputMaybe<Scalars['Int']['input']>
+  where?: InputMaybe<Volume_Filter>
 }
 
 export type Kassandra_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  deposits_btc?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  deposits_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_btc_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  deposits_usd?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  deposits_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  deposits_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
   fee_aum_kassandra?: InputMaybe<Scalars['BigDecimal']['input']>
   fee_aum_kassandra_gt?: InputMaybe<Scalars['BigDecimal']['input']>
   fee_aum_kassandra_gte?: InputMaybe<Scalars['BigDecimal']['input']>
@@ -1583,6 +1304,7 @@ export type Kassandra_Filter = {
   fee_aum_kassandra_lte?: InputMaybe<Scalars['BigDecimal']['input']>
   fee_aum_kassandra_not?: InputMaybe<Scalars['BigDecimal']['input']>
   fee_aum_kassandra_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  fees_?: InputMaybe<Fee_Filter>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -1591,6 +1313,14 @@ export type Kassandra_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  num_deposits?: InputMaybe<Scalars['BigInt']['input']>
+  num_deposits_gt?: InputMaybe<Scalars['BigInt']['input']>
+  num_deposits_gte?: InputMaybe<Scalars['BigInt']['input']>
+  num_deposits_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  num_deposits_lt?: InputMaybe<Scalars['BigInt']['input']>
+  num_deposits_lte?: InputMaybe<Scalars['BigInt']['input']>
+  num_deposits_not?: InputMaybe<Scalars['BigInt']['input']>
+  num_deposits_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
   num_managers?: InputMaybe<Scalars['Int']['input']>
   num_managers_gt?: InputMaybe<Scalars['Int']['input']>
   num_managers_gte?: InputMaybe<Scalars['Int']['input']>
@@ -1599,9 +1329,216 @@ export type Kassandra_Filter = {
   num_managers_lte?: InputMaybe<Scalars['Int']['input']>
   num_managers_not?: InputMaybe<Scalars['Int']['input']>
   num_managers_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  num_tx?: InputMaybe<Scalars['BigInt']['input']>
+  num_tx_gt?: InputMaybe<Scalars['BigInt']['input']>
+  num_tx_gte?: InputMaybe<Scalars['BigInt']['input']>
+  num_tx_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  num_tx_lt?: InputMaybe<Scalars['BigInt']['input']>
+  num_tx_lte?: InputMaybe<Scalars['BigInt']['input']>
+  num_tx_not?: InputMaybe<Scalars['BigInt']['input']>
+  num_tx_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  pool_count?: InputMaybe<Scalars['Int']['input']>
+  pool_count_gt?: InputMaybe<Scalars['Int']['input']>
+  pool_count_gte?: InputMaybe<Scalars['Int']['input']>
+  pool_count_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  pool_count_lt?: InputMaybe<Scalars['Int']['input']>
+  pool_count_lte?: InputMaybe<Scalars['Int']['input']>
+  pool_count_not?: InputMaybe<Scalars['Int']['input']>
+  pool_count_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  total_fees_aum_kassandra_btc?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_btc_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_kassandra_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_btc_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_kassandra_usd?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_usd_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_kassandra_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_kassandra_usd_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_manager_btc?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_manager_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_btc_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_manager_usd?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_aum_manager_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_aum_manager_usd_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_exit_btc?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_fees_exit_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_btc_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_fees_exit_usd?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_fees_exit_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_exit_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_fees_join_broker_btc?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_btc_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_join_broker_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_btc_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_join_broker_usd?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_usd_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_join_broker_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_broker_usd_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_join_manager_btc?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_btc_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_join_manager_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_btc_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_join_manager_usd?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_usd_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_join_manager_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_join_manager_usd_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_fees_swap_btc?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_fees_swap_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_btc_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_fees_swap_usd?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_fees_swap_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_fees_swap_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_value_locked_btc?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_value_locked_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_btc_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_value_locked_usd?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_value_locked_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_value_locked_usd_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']['input']>
+  >
+  total_volume_btc?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_btc_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_volume_btc_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_btc_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_btc_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_btc_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_volume_usd?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_usd_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_usd_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_usd_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  total_volume_usd_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  total_volume_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  volumes_?: InputMaybe<Volume_Filter>
 }
 
-export type Kassandra_OrderBy = 'fee_aum_kassandra' | 'id' | 'num_managers'
+export type Kassandra_OrderBy =
+  | 'deposits_btc'
+  | 'deposits_usd'
+  | 'fee_aum_kassandra'
+  | 'fees'
+  | 'id'
+  | 'num_deposits'
+  | 'num_managers'
+  | 'num_tx'
+  | 'pool_count'
+  | 'total_fees_aum_kassandra_btc'
+  | 'total_fees_aum_kassandra_usd'
+  | 'total_fees_aum_manager_btc'
+  | 'total_fees_aum_manager_usd'
+  | 'total_fees_exit_btc'
+  | 'total_fees_exit_usd'
+  | 'total_fees_join_broker_btc'
+  | 'total_fees_join_broker_usd'
+  | 'total_fees_join_manager_btc'
+  | 'total_fees_join_manager_usd'
+  | 'total_fees_swap_btc'
+  | 'total_fees_swap_usd'
+  | 'total_value_locked_btc'
+  | 'total_value_locked_usd'
+  | 'total_volume_btc'
+  | 'total_volume_usd'
+  | 'volumes'
 
 /**
  * Every manager of a pool in Kassandra
@@ -1745,6 +1682,7 @@ export type Partner = {
 
 export type Pool = {
   __typename?: 'Pool'
+  _investors: Array<Scalars['String']['output']>
   activities: Array<Activity>
   /**
    * Address of the ERC20 token
@@ -1769,7 +1707,7 @@ export type Pool = {
    * Factory that created this pool
    *
    */
-  factory: Factory
+  factory: Scalars['String']['output']
   featured?: Maybe<Scalars['Boolean']['output']>
   fee_aum: Scalars['BigDecimal']['output']
   fee_aum_kassandra: Scalars['BigDecimal']['output']
@@ -2061,6 +1999,12 @@ export type PoolSupply_OrderBy =
 export type Pool_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  _investors?: InputMaybe<Array<Scalars['String']['input']>>
+  _investors_contains?: InputMaybe<Array<Scalars['String']['input']>>
+  _investors_contains_nocase?: InputMaybe<Array<Scalars['String']['input']>>
+  _investors_not?: InputMaybe<Array<Scalars['String']['input']>>
+  _investors_not_contains?: InputMaybe<Array<Scalars['String']['input']>>
+  _investors_not_contains_nocase?: InputMaybe<Array<Scalars['String']['input']>>
   activities_?: InputMaybe<Activity_Filter>
   address?: InputMaybe<Scalars['String']['input']>
   address_contains?: InputMaybe<Scalars['String']['input']>
@@ -2173,7 +2117,6 @@ export type Pool_Filter = {
   deposits_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
   deposits_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
   factory?: InputMaybe<Scalars['String']['input']>
-  factory_?: InputMaybe<Factory_Filter>
   factory_contains?: InputMaybe<Scalars['String']['input']>
   factory_contains_nocase?: InputMaybe<Scalars['String']['input']>
   factory_ends_with?: InputMaybe<Scalars['String']['input']>
@@ -2781,6 +2724,7 @@ export type Pool_Filter = {
 }
 
 export type Pool_OrderBy =
+  | '_investors'
   | 'activities'
   | 'address'
   | 'brokers'
@@ -2877,8 +2821,6 @@ export type Query = {
   chainById?: Maybe<Chain>
   chains: Array<Chain>
   chainsByIds: Array<Maybe<Chain>>
-  factories: Array<Factory>
-  factory?: Maybe<Factory>
   fee?: Maybe<Fee>
   fees: Array<Fee>
   histories: Array<History>
@@ -3017,22 +2959,6 @@ export type QueryChainsArgs = {
 
 export type QueryChainsByIdsArgs = {
   ids: Array<Scalars['ID']['input']>
-}
-
-export type QueryFactoriesArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Factory_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<Factory_Filter>
-}
-
-export type QueryFactoryArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
 }
 
 export type QueryFeeArgs = {
@@ -3298,8 +3224,6 @@ export type Subscription = {
   candles: Array<Candle>
   chain?: Maybe<Chain>
   chains: Array<Chain>
-  factories: Array<Factory>
-  factory?: Maybe<Factory>
   fee?: Maybe<Fee>
   fees: Array<Fee>
   histories: Array<History>
@@ -3428,22 +3352,6 @@ export type SubscriptionChainsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>
   subgraphError?: _SubgraphErrorPolicy_
   where?: InputMaybe<Chain_Filter>
-}
-
-export type SubscriptionFactoriesArgs = {
-  block?: InputMaybe<Block_Height>
-  first?: InputMaybe<Scalars['Int']['input']>
-  orderBy?: InputMaybe<Factory_OrderBy>
-  orderDirection?: InputMaybe<OrderDirection>
-  skip?: InputMaybe<Scalars['Int']['input']>
-  subgraphError?: _SubgraphErrorPolicy_
-  where?: InputMaybe<Factory_Filter>
-}
-
-export type SubscriptionFactoryArgs = {
-  block?: InputMaybe<Block_Height>
-  id: Scalars['ID']['input']
-  subgraphError?: _SubgraphErrorPolicy_
 }
 
 export type SubscriptionFeeArgs = {
@@ -4004,12 +3912,12 @@ export type TotalValueLocked_OrderBy =
  */
 export type Volume = {
   __typename?: 'Volume'
-  factory: Factory
   /**
    * Pool ID + Operation type + Period + Swap pair + Timestamp at period start
    *
    */
   id: Scalars['ID']['output']
+  kassandra?: Maybe<Kassandra>
   manager?: Maybe<Manager>
   num_tx: Scalars['Int']['output']
   /**
@@ -4041,27 +3949,6 @@ export type Volume = {
 export type Volume_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
-  factory?: InputMaybe<Scalars['String']['input']>
-  factory_?: InputMaybe<Factory_Filter>
-  factory_contains?: InputMaybe<Scalars['String']['input']>
-  factory_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  factory_ends_with?: InputMaybe<Scalars['String']['input']>
-  factory_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  factory_gt?: InputMaybe<Scalars['String']['input']>
-  factory_gte?: InputMaybe<Scalars['String']['input']>
-  factory_in?: InputMaybe<Array<Scalars['String']['input']>>
-  factory_lt?: InputMaybe<Scalars['String']['input']>
-  factory_lte?: InputMaybe<Scalars['String']['input']>
-  factory_not?: InputMaybe<Scalars['String']['input']>
-  factory_not_contains?: InputMaybe<Scalars['String']['input']>
-  factory_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
-  factory_not_ends_with?: InputMaybe<Scalars['String']['input']>
-  factory_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
-  factory_not_in?: InputMaybe<Array<Scalars['String']['input']>>
-  factory_not_starts_with?: InputMaybe<Scalars['String']['input']>
-  factory_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
-  factory_starts_with?: InputMaybe<Scalars['String']['input']>
-  factory_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -4070,6 +3957,27 @@ export type Volume_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  kassandra?: InputMaybe<Scalars['String']['input']>
+  kassandra_?: InputMaybe<Kassandra_Filter>
+  kassandra_contains?: InputMaybe<Scalars['String']['input']>
+  kassandra_contains_nocase?: InputMaybe<Scalars['String']['input']>
+  kassandra_ends_with?: InputMaybe<Scalars['String']['input']>
+  kassandra_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
+  kassandra_gt?: InputMaybe<Scalars['String']['input']>
+  kassandra_gte?: InputMaybe<Scalars['String']['input']>
+  kassandra_in?: InputMaybe<Array<Scalars['String']['input']>>
+  kassandra_lt?: InputMaybe<Scalars['String']['input']>
+  kassandra_lte?: InputMaybe<Scalars['String']['input']>
+  kassandra_not?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_contains?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_ends_with?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  kassandra_not_starts_with?: InputMaybe<Scalars['String']['input']>
+  kassandra_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  kassandra_starts_with?: InputMaybe<Scalars['String']['input']>
+  kassandra_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   manager?: InputMaybe<Scalars['String']['input']>
   manager_?: InputMaybe<Manager_Filter>
   manager_contains?: InputMaybe<Scalars['String']['input']>
@@ -4195,8 +4103,8 @@ export type Volume_Filter = {
 }
 
 export type Volume_OrderBy =
-  | 'factory'
   | 'id'
+  | 'kassandra'
   | 'manager'
   | 'num_tx'
   | 'period'
@@ -4892,6 +4800,22 @@ export type PoolsQuery = {
   }>
 }
 
+export type TokensQueryVariables = Exact<{
+  chainId?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type TokensQuery = {
+  __typename?: 'Query'
+  tokensByIds: Array<{
+    __typename?: 'Token'
+    id: string
+    decimals?: number | null
+    logo?: string | null
+    name?: string | null
+    symbol?: string | null
+  } | null>
+}
+
 export type UserPoolDataQueryVariables = Exact<{
   id: Array<Scalars['ID']['input']> | Scalars['ID']['input']
   day: Scalars['Int']['input']
@@ -5174,6 +5098,17 @@ export const PoolsDocument = gql`
     }
   }
 `
+export const TokensDocument = gql`
+  query Tokens($chainId: Int) {
+    tokensByIds(chainId: $chainId) {
+      id
+      decimals
+      logo
+      name
+      symbol
+    }
+  }
+`
 export const UserPoolDataDocument = gql`
   query userPoolData($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
     pools(where: { id_in: $id }) {
@@ -5351,6 +5286,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'Pools',
+        'query'
+      )
+    },
+    Tokens(
+      variables?: TokensQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<TokensQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<TokensQuery>(TokensDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'Tokens',
         'query'
       )
     },

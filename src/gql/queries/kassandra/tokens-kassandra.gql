@@ -1,0 +1,9 @@
+query Tokens($chainId: Int) {
+  tokensByIds(chainId: $chainId) {
+    id
+    decimals
+    logo
+    name
+    symbol
+  }
+}

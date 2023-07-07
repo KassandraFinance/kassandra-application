@@ -3,7 +3,7 @@ import Link from 'next/link'
 import useWhiteList from '@/hooks/useWhiteList'
 
 import { networks, mockTokens } from '@/constants/tokenAddresses'
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import Loading from '../../Loading'
 import Overlay from '../../Overlay'
@@ -42,11 +42,11 @@ const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
   const { tokensWhitelist } = useWhiteList(
     networks[Number(isSelectTab)].chainId
   )
-  const { data: coingecko } = useCoingecko(
-    Number(isSelectTab),
-    networks[Number(isSelectTab)].nativeCurrency.address,
-    whitelist || []
-  )
+
+  const { data } = useTokensData({
+    chainId: Number(isSelectTab),
+    tokenAddresses: whitelist || []
+  })
 
   React.useEffect(() => {
     if (!isSelectTab) {
@@ -93,10 +93,10 @@ const ModalAvailableAssets = ({ setModalOpen }: IModalAvailableAssetsProps) => {
           />
 
           <S.ModalAvailableAssetsContent
-            hasToken={Object.keys(coingecko || {}).length > 0}
+            hasToken={Object.keys(data || {}).length > 0}
           >
-            {coingecko ? (
-              Object.values(coingecko).map(token => {
+            {data ? (
+              Object.values(data).map(token => {
                 return (
                   token && (
                     <Link
