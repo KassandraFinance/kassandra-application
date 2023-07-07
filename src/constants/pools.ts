@@ -14,9 +14,10 @@ export type LpPoolProps = {
   type: LpPoolType
   address: string
   chainId: number
+  balancerPoolId?: string
 }
 
-interface PoolDetails {
+export interface PoolDetails {
   pid: number
   type: PoolType
   symbol: string
@@ -339,7 +340,9 @@ const lpBalancer: PoolDetails = {
   lpPool: {
     type: LpPoolType.BALANCER,
     address: KACY_WETH,
-    chainId: 137
+    chainId: 137,
+    balancerPoolId:
+      '0xfaf3bc722d34146be83a2aac40b43148a51a9126000200000000000000000b4c'
   }
 }
 

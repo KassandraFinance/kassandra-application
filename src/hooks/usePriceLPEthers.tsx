@@ -99,12 +99,15 @@ const usePriceLP = (chainId: number) => {
 
       return Big(value?._reserve0 ?? 0)
     }
-    const getReservesBalancer = async (chainId: number) => {
-      const provider = new JsonRpcProvider(networks[137].rpc)
+
+    const getReservesBalancer = async (poolLPInfo: LpPoolProps) => {
+      if (!poolLPInfo.balancerPoolId) return Big(0)
+
+      const provider = new JsonRpcProvider(networks[poolLPInfo.chainId].rpc)
       const vault = new Contract(VAULT_POLYGON, VAULT, provider)
       const res = await vault.getPoolTokenInfo(
-        '0xfaf3bc722d34146be83a2aac40b43148a51a9126000200000000000000000b4c',
-        '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
+        poolLPInfo.balancerPoolId,
+        poolLPInfo.address
       )
 
       return Big(res.cash ?? 0)
@@ -119,7 +122,7 @@ const usePriceLP = (chainId: number) => {
       const ReserveValue =
         poolLPInfo.type === LpPoolType.AVAX
           ? await getReservesAvax(poolLPInfo.address, poolLPInfo.chainId)
-          : await getReservesBalancer(poolLPInfo.chainId)
+          : await getReservesBalancer(poolLPInfo)
 
       const totalAvaxInDollars = Big(ReserveValue).mul(tokenPoolPrice)
 
