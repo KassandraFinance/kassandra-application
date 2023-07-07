@@ -12,8 +12,9 @@ import { usePools } from '@/hooks/query/usePools'
 import useStakingContract from '@/hooks/useStaking'
 import usePriceLP from '@/hooks/usePriceLPEthers'
 import { ERC20 } from '@/hooks/useERC20'
-import useCoingecko from '@/hooks/useCoingecko'
 import useTransaction from '@/hooks/useTransaction'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 
 import {
   LPDaiAvax,
@@ -138,10 +139,13 @@ const Profile = () => {
   const { data: votingPowerData } = useVotingPowerApi({ id: walletUserString })
   const { data } = usePools()
 
-  const { priceToken: getPriceToken } = useCoingecko(
-    networks[137].chainId,
-    networks[137].nativeCurrency.address,
-    [WETH_POLYGON, KacyPoligon]
+  const { data: tokensList } = useTokensData({
+    chainId: networks[137].chainId,
+    tokenAddresses: [WETH_POLYGON, KacyPoligon]
+  })
+
+  const { priceToken: getPriceToken } = useGetToken(
+    networks[137].nativeCurrency.address
   )
 
   async function getTokenAmountInPool(
@@ -223,7 +227,11 @@ const Profile = () => {
       }
     }
 
-    const wethPrice = getPriceToken(WETH_POLYGON.toLocaleLowerCase())
+    const wethPrice = getPriceToken({
+      address: WETH_POLYGON.toLowerCase(),
+      tokens: tokensList || {}
+    })
+
     if (wethPrice) {
       const priceLPbal = await getPriceKacyAndLPBalancer(wethPrice, KACY_WETH)
       if (priceLPbal) {
@@ -344,7 +352,7 @@ const Profile = () => {
       getAmountToken()
       getLiquidityPoolPriceInDollar()
     }
-  }, [profileAddress])
+  }, [profileAddress, tokensList])
 
   React.useEffect(() => {
     let tokenAmountInTokenizedFunds = new Big(0)
