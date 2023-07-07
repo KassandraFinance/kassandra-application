@@ -17,13 +17,13 @@ const KacyEarned = ({ kacyEarned, kacyPrice }: IKacyEarnedProps) => {
         KACY <span>Earned</span>
       </p>
       <h3>
-        {kacyEarned.lt(Big(0))
+        {kacyEarned.lt(0)
           ? '...'
           : BNtoDecimal(kacyEarned.div(Big(10).pow(18)), 18, 2)}
       </h3>
       <span>
         <b>&#8776;</b>{' '}
-        {kacyEarned.lt(Big(0)) || kacyPrice.lt(0)
+        {kacyEarned.lt(0) || kacyPrice.lt(0)
           ? '...'
           : BNtoDecimal(
               kacyEarned.mul(kacyPrice).div(Big(10).pow(18)),

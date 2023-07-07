@@ -1,6 +1,7 @@
 import React from 'react'
-import Link from 'next/link'
 import Big from 'big.js'
+import Link from 'next/link'
+import { PoolDetails } from '@/constants/pools'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal } from '@/utils/numerals'
@@ -19,37 +20,29 @@ import ModalBuyKacyOnPangolin from '../ModalBuyKacyOnPangolin'
 import * as S from './styles'
 
 interface IModalStakeProps {
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  pid: number
+  pool: PoolDetails
   decimals: string
-  stakingToken: string
-  productCategories: string | string[]
-  symbol: string
-  stakeTransaction: string
-  setStakeTransaction: React.Dispatch<React.SetStateAction<string>>
-  link: string
   amountApproved: Big
+  stakingToken: string
+  stakeTransaction: string
+  productCategories: string | string[]
+  setStakeTransaction: React.Dispatch<React.SetStateAction<string>>
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   updateAllowance: () => Promise<void>
   handleApprove: () => Promise<void>
-  stakingAddress: string
-  chainId: number
 }
 
 const ModalStakeAndWithdraw = ({
+  pool,
   setModalOpen,
-  pid,
   decimals,
   stakingToken,
   productCategories,
-  symbol,
   stakeTransaction,
   setStakeTransaction,
-  link,
   amountApproved,
   updateAllowance,
-  handleApprove,
-  stakingAddress,
-  chainId
+  handleApprove
 }: IModalStakeProps) => {
   const [isAmount, setIsAmount] = React.useState<boolean>(false)
   const [balance, setBalance] = React.useState<Big>(Big(0))
@@ -69,13 +62,10 @@ const ModalStakeAndWithdraw = ({
     trackCancelBuying
   } = useMatomoEcommerce()
 
-  const networkChain = networks[chainId]
+  const networkChain = networks[pool.chain.id]
+  const productSKU = `${Staking}_${pool.pid}`
 
-  const staking = useStaking(stakingAddress, networkChain.chainId)
-
-  const productSKU = `${Staking}_${pid}`
-
-  const connect = localStorage.getItem('walletconnect')
+  const staking = useStaking(pool.stakingContract, networkChain.chainId)
 
   function handleKacyAmount(percentage: Big) {
     const kacyAmount = percentage.mul(balance).div(Big(100))
@@ -103,7 +93,7 @@ const ModalStakeAndWithdraw = ({
 
     if (stakeTransaction === 'staking') {
       const toDelegate = await staking.userInfo(
-        pid,
+        pool.pid,
         wallet?.accounts[0].address
       )
       const delegate =
@@ -119,12 +109,12 @@ const ModalStakeAndWithdraw = ({
       )
 
       await staking.stake(
-        pid,
+        pool.pid,
         amountStake.toFixed(0),
         delegate,
         {
-          pending: `Confirming stake of ${symbol}...`,
-          sucess: `Stake of ${symbol} confirmed`
+          pending: `Confirming stake of ${pool.symbol}...`,
+          sucess: `Stake of ${pool.symbol} confirmed`
         },
         {
           onSuccess: () => trackBought(productSKU, 0, 0),
@@ -134,7 +124,7 @@ const ModalStakeAndWithdraw = ({
 
       await updateAllowance()
     } else if (stakeTransaction === 'unstaking') {
-      const productSKU = `${Staking}_${pid}`
+      const productSKU = `${Staking}_${pool.pid}`
 
       trackBuying(
         productSKU,
@@ -144,11 +134,11 @@ const ModalStakeAndWithdraw = ({
       )
 
       staking.withdraw(
-        pid,
+        pool.pid,
         amountStake.toFixed(0),
         {
-          pending: `Confirming unstake of ${symbol}...`,
-          sucess: `Unstake of ${symbol} completed`
+          pending: `Confirming unstake of ${pool.symbol}...`,
+          sucess: `Unstake of ${pool.symbol} completed`
         },
         {
           onSuccess: () => trackBought(productSKU, 0, 0),
@@ -167,7 +157,7 @@ const ModalStakeAndWithdraw = ({
     } else if (stakeTransaction === 'unstaking') {
       if (wallet?.provider) {
         const balance = await staking.availableWithdraw(
-          pid,
+          pool.pid,
           wallet?.accounts[0].address
         )
         setBalance(balance)
@@ -227,7 +217,7 @@ const ModalStakeAndWithdraw = ({
       />
 
       <S.BorderGradient
-        stakeInKacy={symbol === 'KACY'}
+        stakeInKacy={pool.symbol === 'KACY'}
         unstaking={stakeTransaction}
       >
         <S.BackgroundBlack>
@@ -245,7 +235,7 @@ const ModalStakeAndWithdraw = ({
           </S.InterBackground>
           <S.Main>
             <S.Amount>
-              <span>${symbol} Total</span>
+              <span>${pool.symbol} Total</span>
               <InputTokenValue
                 inputRef={inputRef}
                 decimals={Big(decimals)}
@@ -348,43 +338,23 @@ const ModalStakeAndWithdraw = ({
               )}
             </S.WrapperButton>
 
-            {symbol === 'KACY' ? (
-              connect ? (
-                <Link
-                  href="https://app.pangolin.exchange/#/swap?outputCurrency=0xf32398dae246C5f672B52A54e9B413dFFcAe1A44"
-                  passHref
-                >
-                  <Button
-                    as="a"
-                    backgroundBlack
-                    fullWidth
-                    text={`Buy ${symbol}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => {
-                      setModalOpen(false)
-                      setStakeTransaction('')
-                    }}
-                  />
-                </Link>
-              ) : (
-                <Button
-                  backgroundBlack
-                  fullWidth
-                  text={`Buy ${symbol}`}
-                  rel="noopener noreferrer"
-                  onClick={() => {
-                    setIsOpenModalPangolin(true)
-                  }}
-                />
-              )
+            {pool.symbol === 'KACY' ? (
+              <Button
+                backgroundBlack
+                fullWidth
+                text={`Buy ${pool.symbol}`}
+                rel="noopener noreferrer"
+                onClick={() => {
+                  setIsOpenModalPangolin(true)
+                }}
+              />
             ) : (
-              <Link href={link} passHref>
+              <Link href={pool.properties?.link ?? ''} passHref>
                 <Button
                   as="a"
                   backgroundBlack
                   fullWidth
-                  text={`Get ${symbol}`}
+                  text={`Get ${pool.symbol}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
@@ -397,6 +367,7 @@ const ModalStakeAndWithdraw = ({
           </S.Main>
         </S.BackgroundBlack>
       </S.BorderGradient>
+
       {isOpenModalPangolin && (
         <ModalBuyKacyOnPangolin
           modalOpen={isOpenModalPangolin}

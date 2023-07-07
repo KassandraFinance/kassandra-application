@@ -1,6 +1,7 @@
 import React from 'react'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
+import { PoolDetails } from '@/constants/pools'
 
 import { networks } from '@/constants/tokenAddresses'
 import { BNtoDecimal } from '@/utils/numerals'
@@ -16,38 +17,32 @@ import Modal from '../Modal'
 import * as S from './styles'
 
 interface IModalRequestUnstakeProps {
+  pool: PoolDetails
   modalOpen: boolean
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  pid: number
   votingMultiplier: string
   yourStake: Big
-  symbol: string
-  chainId: number
-  stakingAddress: string
 }
 
 const ModalRequestUnstake = ({
+  pool,
   modalOpen,
   setModalOpen,
-  pid,
   votingMultiplier,
-  yourStake,
-  symbol,
-  chainId,
-  stakingAddress
+  yourStake
 }: IModalRequestUnstakeProps) => {
   const [dateWithdraw, setDateWithdraw] = React.useState<number>(0)
   const [{ wallet }] = useConnectWallet()
 
-  const networkChain = networks[chainId]
-  const staking = useStaking(stakingAddress, networkChain.chainId)
+  const networkChain = networks[pool.chain.id]
+  const staking = useStaking(pool.stakingContract, networkChain.chainId)
 
   const { trackEventFunction } = useMatomoEcommerce()
 
   async function getWithdrawDelay() {
     if (wallet?.provider) {
       const unix_timestamp = await staking.stakedUntil(
-        pid,
+        pool.pid,
         wallet?.accounts[0].address
       )
       const date = new Date(Number(unix_timestamp) * 1000).getTime()
@@ -119,16 +114,16 @@ const ModalRequestUnstake = ({
               backgroundSecondary
               onClick={() => {
                 staking.unstake(
-                  pid,
+                  pool.pid,
                   {
-                    pending: `Confirming request for unstaking of ${symbol}...`,
-                    sucess: `Request for unstaking of ${symbol} confirmed`
+                    pending: `Confirming request for unstaking of ${pool.symbol}...`,
+                    sucess: `Request for unstaking of ${pool.symbol} confirmed`
                   },
                   {
                     onSuccess: () =>
                       trackEventFunction(
                         'click-on-request-unstaking',
-                        `${symbol}`,
+                        `${pool.symbol}`,
                         'modal-staking'
                       )
                   }

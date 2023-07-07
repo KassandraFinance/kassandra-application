@@ -57,7 +57,7 @@ export const Stake = styled.div`
 
   p {
     display: flex;
-    margin: 2.4rem 0 0.4rem;
+    margin: 2.4rem 0 0;
 
     color: #fff;
     line-height: ${theme.font.sizes.font14};
@@ -73,6 +73,7 @@ export const Stake = styled.div`
   span {
     font-size: ${theme.font.sizes.font12};
     font-weight: ${theme.font.weight.normal} !important;
+    margin-bottom: 0.2rem;
   }
 `
 

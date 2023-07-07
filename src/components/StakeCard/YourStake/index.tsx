@@ -37,8 +37,6 @@ interface IYourStakeProps {
   poolPrice: Big
   kacyPrice: Big
   stakeWithLockPeriod: boolean
-  lockPeriod: number
-  availableWithdraw: Big
   userAboutPool: IUserAboutPoolProps
   poolInfo: IPoolInfoProps
 }
@@ -48,13 +46,12 @@ const YourStake = ({
   stakeWithLockPeriod,
   poolPrice,
   kacyPrice,
-  lockPeriod,
   poolInfo,
-  userAboutPool,
-  availableWithdraw
+  userAboutPool
 }: IYourStakeProps) => {
   const [{ wallet }] = useConnectWallet()
 
+  const addressZero = '0x0000000000000000000000000000000000000000'
   const yourDailyKacyReward = poolInfo.kacyRewards
     .mul(userAboutPool?.yourStake ?? Big(0))
     .div(poolInfo?.totalStaked ?? Big(0))
@@ -64,7 +61,7 @@ const YourStake = ({
       <S.Info>
         <p>Your stake</p>
         <S.Stake>
-          {userAboutPool.yourStake.lt(Big(0)) || (poolPrice || Big(0)).lt(0) ? (
+          {userAboutPool.yourStake.lt(0) || poolPrice.lt(0) ? (
             '...'
           ) : stakeWithVotingPower ? (
             <p>
@@ -74,9 +71,7 @@ const YourStake = ({
           ) : (
             <p>
               {BNtoDecimal(
-                Big(userAboutPool.yourStake.toString())
-                  .mul(poolPrice)
-                  .div(Big(10).pow(18)),
+                userAboutPool.yourStake.mul(poolPrice).div(Big(10).pow(18)),
                 2,
                 2,
                 2
@@ -87,12 +82,10 @@ const YourStake = ({
           {stakeWithVotingPower && (
             <span>
               &#8776;{' '}
-              {userAboutPool.yourStake.lt(Big(0)) || kacyPrice.lt(0)
+              {userAboutPool.yourStake.lt(0) || kacyPrice.lt(0)
                 ? '...'
                 : BNtoDecimal(
-                    Big(userAboutPool.yourStake.toString())
-                      .mul(kacyPrice)
-                      .div(Big(10).pow(18)),
+                    userAboutPool.yourStake.mul(kacyPrice).div(Big(10).pow(18)),
                     6,
                     2,
                     2
@@ -110,11 +103,7 @@ const YourStake = ({
               {userAboutPool.yourStake.lt(Big(0))
                 ? '...'
                 : BNtoDecimal(
-                    Big(
-                      userAboutPool.withdrawable || userAboutPool.unstake
-                        ? 1
-                        : poolInfo.votingMultiplier
-                    )
+                    Big(poolInfo?.votingMultiplier ?? 0)
                       .mul(userAboutPool.yourStake)
                       .div(Big(10).pow(18)),
                     18,
@@ -124,10 +113,9 @@ const YourStake = ({
           </S.Info>
           <S.Info>
             <span>Delegated To</span>
-            {userAboutPool.delegateTo.toLocaleLowerCase() ===
+            {userAboutPool.delegateTo.toLowerCase() ===
               wallet?.accounts[0].address ||
-            userAboutPool.delegateTo ===
-              '0x0000000000000000000000000000000000000000' ? (
+            userAboutPool.delegateTo === addressZero ? (
               <span>Self</span>
             ) : (
               <Link
@@ -150,6 +138,7 @@ const YourStake = ({
           /day
         </span>
       </S.Info>
+
       {stakeWithLockPeriod && (
         <>
           <S.Info>
@@ -166,13 +155,16 @@ const YourStake = ({
           </S.Info>
           <S.Info>
             <span>Locked until</span>
-            <span>{getDate(lockPeriod)}</span>
+            <span>{getDate(userAboutPool.lockPeriod)}</span>
           </S.Info>
           <S.Info>
             <span>Available for withdraw</span>
             <span>
-              {availableWithdraw.gt(-1)
-                ? BNtoDecimal(availableWithdraw.div(Big(10).pow(18)), 18)
+              {userAboutPool.currentAvailableWithdraw.gt(-1)
+                ? BNtoDecimal(
+                    userAboutPool.currentAvailableWithdraw.div(Big(10).pow(18)),
+                    18
+                  )
                 : '...'}{' '}
               KACY
             </span>

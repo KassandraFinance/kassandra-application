@@ -86,16 +86,7 @@ const Stake = () => {
         ? poolsKacy.map(pool => (
             <StakeCard
               key={pool.pid}
-              pid={pool.pid}
-              symbol={pool.symbol}
-              properties={{ ...pool.properties }}
-              stakeWithVotingPower={pool.stakeWithVotingPower}
-              stakeWithLockPeriod={pool.stakeWithLockPeriod}
-              isLP={pool.isLP}
-              chain={pool.chain}
-              stakingAddress={pool.stakingContract}
-              //
-              //pool={pool}
+              pool={pool}
               kacyPrice={Big(kacyPrice)}
               poolPrice={Big(kacyPrice)}
             />
@@ -103,16 +94,7 @@ const Stake = () => {
         : poolsKacyFuji.map(pool => (
             <StakeCard
               key={pool.pid}
-              pid={pool.pid}
-              symbol={pool.symbol}
-              properties={{ ...pool.properties }}
-              stakeWithVotingPower={pool.stakeWithVotingPower}
-              stakeWithLockPeriod={pool.stakeWithLockPeriod}
-              isLP={pool.isLP}
-              chain={pool.chain}
-              stakingAddress={pool.stakingContract}
-              //
-              //pool={pool}
+              pool={pool}
               kacyPrice={Big(kacyPrice)}
               poolPrice={Big(kacyPrice)}
             />
@@ -123,14 +105,7 @@ const Stake = () => {
             return (
               <StakeCard
                 key={pool.pid}
-                pid={pool.pid}
-                symbol={pool.symbol}
-                properties={{ ...pool.properties }}
-                stakeWithVotingPower={pool.stakeWithVotingPower}
-                stakeWithLockPeriod={pool.stakeWithLockPeriod}
-                isLP={pool.isLP}
-                chain={pool.chain}
-                stakingAddress={pool.stakingContract}
+                pool={pool}
                 kacyPrice={Big(kacyPrice)}
                 poolPrice={Big(kacyPrice)}
               />

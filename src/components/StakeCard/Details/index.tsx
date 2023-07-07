@@ -4,7 +4,6 @@ import Big from 'big.js'
 
 import { networks } from '@/constants/tokenAddresses'
 
-// import useStaking from '@/hooks/useStaking'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
 import { BNtoDecimal } from '@/utils/numerals'
@@ -13,14 +12,6 @@ import { registerToken } from '@/utils/registerToken'
 import ExternalLink from '../../ExternalLink'
 
 import * as S from './styles'
-
-// interface IInfoStakeStaticProps {
-//   votingMultiplier: string
-//   startDate: string
-//   endDate: string
-//   kacyRewards: Big
-//   withdrawDelay: any
-// }
 
 interface IPoolInfoProps {
   votingMultiplier: string
@@ -34,40 +25,37 @@ interface IPoolInfoProps {
   stakingToken: string
   vestingPeriod: string
   lockPeriod: string
+  tokenDecimals: string
 }
 interface IDetailsProps {
-  // pid: number
-  hasExpired: boolean
-  // infoStakeStatic: IInfoStakeStaticProps
-  stakingToken: string
-  decimals: string
   symbol: string
   poolPrice: Big
   kacyPrice: Big
   link: string
   setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>
-  // stakingAddress: string
   chainId: number
   poolInfo: IPoolInfoProps
 }
 
 const Details = ({
-  // pid,
-  hasExpired,
-  // infoStakeStatic,
-  stakingToken,
-  decimals,
   symbol,
   poolPrice,
   kacyPrice,
   link,
   setIsOpenModal,
-  // stakingAddress,
   chainId,
   poolInfo
 }: IDetailsProps) => {
   const { trackEventFunction } = useMatomoEcommerce()
-  const connect = localStorage.getItem('walletconnect')
+
+  function handleRegisterToken() {
+    registerToken(
+      poolInfo.stakingToken,
+      symbol.toLocaleUpperCase(),
+      Number(poolInfo.tokenDecimals)
+    )
+    trackEventFunction('click-add-metamask', `add-${symbol}`, 'stake-details')
+  }
 
   return (
     <S.Details>
@@ -75,14 +63,14 @@ const Details = ({
         <span>Total staked</span>
         <S.KacyUSD>
           <span>
-            {poolInfo.totalStaked.lt(Big(0))
+            {poolInfo.totalStaked.lt(0)
               ? '...'
               : BNtoDecimal(poolInfo.totalStaked.div(Big(10).pow(18)), 18)}{' '}
             {symbol}
           </span>
           <span className="usd">
             &#8776;{' '}
-            {poolInfo.totalStaked.lt(Big(0)) || poolPrice.lt(0)
+            {poolInfo.totalStaked.lt(0) || poolPrice.lt(0)
               ? '...'
               : BNtoDecimal(
                   Big(`0${poolInfo.totalStaked}`)
@@ -100,9 +88,9 @@ const Details = ({
         <span>Pool Reward</span>
         <S.KacyUSD>
           <span>
-            {poolInfo.kacyRewards.lt(Big(0))
+            {poolInfo.kacyRewards.lt(0)
               ? '...'
-              : hasExpired
+              : poolInfo.hasExpired
               ? '0'
               : BNtoDecimal(
                   poolInfo.kacyRewards.div(Big(10).pow(18)),
@@ -114,9 +102,9 @@ const Details = ({
           </span>
           <span className="usd">
             &#8776;{' '}
-            {poolInfo.kacyRewards.lt(Big(0)) || poolPrice.lt(0)
+            {poolInfo.kacyRewards.lt(0) || poolPrice.lt(0)
               ? '...'
-              : hasExpired
+              : poolInfo.hasExpired
               ? '0'
               : BNtoDecimal(
                   poolInfo.kacyRewards.mul(kacyPrice).div(Big(10).pow(18)),
@@ -138,39 +126,18 @@ const Details = ({
       </S.Info>
       <S.Info>
         <ExternalLink
-          hrefLink={`${networks[chainId].blockExplorer}/address/${stakingToken}`}
+          hrefLink={`${networks[chainId].blockExplorer}/address/${poolInfo.stakingToken}`}
           text="See contract"
         />
         {symbol === 'KACY' ? (
-          connect ? (
-            <ExternalLink
-              hrefLink="https://app.pangolin.exchange/#/swap?outputCurrency=0xf32398dae246C5f672B52A54e9B413dFFcAe1A44"
-              text={`Buy ${symbol}`}
-            />
-          ) : (
-            <S.AddToken onClick={() => setIsOpenModal(true)}>
-              Buy {symbol}
-            </S.AddToken>
-          )
+          <S.AddToken onClick={() => setIsOpenModal(true)}>
+            Buy {symbol}
+          </S.AddToken>
         ) : (
           <ExternalLink hrefLink={link} text={`Get ${symbol}`} />
         )}
       </S.Info>
-      <S.AddToken
-        type="button"
-        onClick={() => {
-          registerToken(
-            stakingToken,
-            symbol.toLocaleUpperCase(),
-            Number(decimals)
-          )
-          trackEventFunction(
-            'click-add-metamask',
-            `add-${symbol}`,
-            'stake-details'
-          )
-        }}
-      >
+      <S.AddToken type="button" onClick={() => handleRegisterToken()}>
         Add to Metamask <img src="/assets/logos/metamask.svg" alt="" />
       </S.AddToken>
     </S.Details>

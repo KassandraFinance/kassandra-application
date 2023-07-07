@@ -80,7 +80,6 @@ const Farm = () => {
     getPoolsPrices()
   }, [data, kacyPrice])
 
-  console.log(poolPrice)
   React.useEffect(() => {
     trackCategoryPageView([
       'farm',
@@ -94,17 +93,7 @@ const Farm = () => {
         return (
           <StakeCard
             key={pool.pid}
-            pid={pool.pid}
-            address={pool.address}
-            symbol={pool.symbol}
-            properties={{ ...pool.properties }}
-            stakeWithVotingPower={pool.stakeWithVotingPower}
-            stakeWithLockPeriod={pool.stakeWithLockPeriod}
-            isLP={pool.isLP}
-            stakingAddress={pool.stakingContract}
-            chain={pool.chain}
-            //
-            //pool={pool}
+            pool={pool}
             kacyPrice={Big(kacyPrice ?? 0)}
             poolPrice={Big(poolPrice[pool?.poolPriceAddress] ?? 0)}
           />
