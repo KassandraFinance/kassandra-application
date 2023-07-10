@@ -9,7 +9,8 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { networks, KacyPoligon } from '../../../constants/tokenAddresses'
 
 import { usePoolData } from '@/hooks/query/usePoolData'
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 
 import useERC20 from '../../../hooks/useERC20'
 import useStaking from '../../../hooks/useStaking'
@@ -74,12 +75,14 @@ const MyAsset = ({
   )
   const ERC20 = useERC20(poolToken, networks[chainInfo.chainId].rpc)
   const { trackEventFunction } = useMatomoEcommerce()
-  const { priceToken } = useCoingecko(
-    networks[137].chainId,
-    chainInfo.nativeCurrency.address,
-    [KacyPoligon]
-  )
-  // const { pool } = useAppSelector(state => state)
+  const { data } = useTokensData({
+    chainId: networks[137].chainId,
+    tokenAddresses: [KacyPoligon]
+  })
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: chainInfo.nativeCurrency.address,
+    tokens: data || {}
+  })
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
 

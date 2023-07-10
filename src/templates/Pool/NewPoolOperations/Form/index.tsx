@@ -7,11 +7,11 @@ import { OperationProvider } from './PoolOperationContext'
 import { useAppSelector } from '../../../../store/hooks'
 import usePrivateInvestors from '@/hooks/usePrivateInvestors'
 import { usePoolData } from '@/hooks/query/usePoolData'
+import useGetToken from '@/hooks/useGetToken'
 
 import {
   BalancerHelpers,
   networks,
-  platform,
   ProxyContract,
   ProxyInvestV2
 } from '../../../../constants/tokenAddresses'
@@ -25,8 +25,8 @@ import Withdraw from './Withdraw'
 
 import { corePoolContract } from '../../../../hooks/usePoolContract'
 import { YieldYakContract } from '../../../../hooks/useYieldYakEthers'
-import useCoingecko from '../../../../hooks/useCoingecko'
 import useERC20 from '@/hooks/useERC20'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import * as S from './styles'
 
@@ -57,11 +57,15 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   )
 
   const tokenAddresses = tokenListSwapProvider.map(token => token.address)
-  const { priceToken } = useCoingecko(
-    pool?.chain_id || 0,
-    pool?.chain?.addressWrapped?.toLowerCase() || '',
+  const { data } = useTokensData({
+    chainId: pool?.chain_id || 0,
     tokenAddresses
-  )
+  })
+
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: pool?.chain?.addressWrapped?.toLowerCase() || '',
+    tokens: data || {}
+  })
 
   const poolId = pool?.id?.slice(pool?.chain_id?.toString().length)
   const poolInfo = {

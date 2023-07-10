@@ -16,16 +16,16 @@ export type CoinsMetadataType = {
   }
 }
 
-const useGetToken = (nativeTokenAddress: string) => {
+const useGetToken = ({
+  nativeTokenAddress,
+  tokens
+}: {
+  nativeTokenAddress: string
+  tokens: CoinsMetadataType
+}) => {
   const nativeAddress = nativeTokenAddress
 
-  const priceToken = ({
-    address,
-    tokens
-  }: {
-    address: string
-    tokens: CoinsMetadataType
-  }) => {
+  const priceToken = (address: string) => {
     let _address = address
     if (address === NATIVE_ADDRESS) {
       _address = nativeAddress

@@ -144,9 +144,10 @@ const Profile = () => {
     tokenAddresses: [WETH_POLYGON, KacyPoligon]
   })
 
-  const { priceToken: getPriceToken } = useGetToken(
-    networks[137].nativeCurrency.address
-  )
+  const { priceToken: getPriceToken } = useGetToken({
+    nativeTokenAddress: networks[137].nativeCurrency.address,
+    tokens: tokensList || {}
+  })
 
   async function getTokenAmountInPool(
     pid: number,
@@ -227,10 +228,7 @@ const Profile = () => {
       }
     }
 
-    const wethPrice = getPriceToken({
-      address: WETH_POLYGON.toLowerCase(),
-      tokens: tokensList || {}
-    })
+    const wethPrice = getPriceToken(WETH_POLYGON.toLowerCase())
 
     if (wethPrice) {
       const priceLPbal = await getPriceKacyAndLPBalancer(wethPrice, KACY_WETH)

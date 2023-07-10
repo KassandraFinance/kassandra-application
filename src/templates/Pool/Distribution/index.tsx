@@ -159,7 +159,7 @@ const Distribution = () => {
                   <S.Td>
                     {`$ ${BNtoDecimal(
                       Big(coin.balance || 0).times(
-                        Big(data?.[coin.token.id.toLowerCase()].usd || 0)
+                        Big(data?.[coin.token.id.toLowerCase()]?.usd || 0)
                       ),
                       18,
                       5,
@@ -175,7 +175,7 @@ const Distribution = () => {
                     <span>
                       $
                       {BNtoDecimal(
-                        Big(data?.[coin.token.id.toLowerCase()].usd || 0),
+                        Big(data?.[coin.token.id.toLowerCase()]?.usd || 0),
                         18,
                         5,
                         2
@@ -184,12 +184,12 @@ const Distribution = () => {
                     <S.Coin
                       negative={
                         (data?.[coin.token.id.toLowerCase()]
-                          .pricePercentageChangeIn24h || 0) < 0
+                          ?.pricePercentageChangeIn24h || 0) < 0
                       }
                       change24h={true}
                     >
                       {data?.[coin.token.id.toLowerCase()]
-                        .pricePercentageChangeIn24h
+                        ?.pricePercentageChangeIn24h
                         ? `${
                             data?.[coin.token.id.toLowerCase()]
                               .pricePercentageChangeIn24h < 0

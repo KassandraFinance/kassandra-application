@@ -8,9 +8,10 @@ import { isAddress } from 'ethers'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setTokenSelectionActive } from '@/store/reducers/tokenSelectionActive'
 
-import useCoingecko from '@/hooks/useCoingecko'
 import useBatchRequests from '@/hooks/useBatchRequests'
 import { usePoolData } from '@/hooks/query/usePoolData'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
@@ -70,11 +71,14 @@ const TokenSelection = () => {
   const [{ wallet }] = useConnectWallet()
 
   const tokenAddresses = tokenListSwapProvider.map(token => token.address)
-  const { priceToken } = useCoingecko(
-    pool?.chain_id || 0,
-    pool?.chain?.addressWrapped || '',
+  const { data } = useTokensData({
+    chainId: pool?.chain_id || 0,
     tokenAddresses
-  )
+  })
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: pool?.chain?.addressWrapped || '',
+    tokens: data || {}
+  })
 
   function handleUserTokensBalance(
     newTokenList: ITokenListSwapProviderProps[],
