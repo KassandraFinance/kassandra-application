@@ -1,6 +1,6 @@
 import Head from 'next/head'
 
-import Manage from '../../templates/Manage'
+import Manage from '@/templates/Manage'
 
 export default function Index() {
   return (

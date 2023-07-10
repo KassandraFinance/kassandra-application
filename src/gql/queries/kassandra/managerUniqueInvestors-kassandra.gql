@@ -1,0 +1,5 @@
+query ManagerUniqueInvestors($manager: ID!) {
+    manager(id: $manager) {
+      unique_investors
+    }
+  }

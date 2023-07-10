@@ -4621,6 +4621,111 @@ export type ActivitiesQuery = {
   } | null
 }
 
+export type ManagerChangeTvlQueryVariables = Exact<{
+  manager: Scalars['ID']['input']
+  day: Scalars['Int']['input']
+  week: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  year: Scalars['Int']['input']
+}>
+
+export type ManagerChangeTvlQuery = {
+  __typename?: 'Query'
+  manager?: {
+    __typename?: 'Manager'
+    now: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+    day: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+    week: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+    month: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+    year: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+    max: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+  } | null
+}
+
+export type ManagerDepositsQueryVariables = Exact<{
+  manager: Scalars['ID']['input']
+  timestamp?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type ManagerDepositsQuery = {
+  __typename?: 'Query'
+  manager?: {
+    __typename?: 'Manager'
+    deposits: Array<{
+      __typename?: 'Volume'
+      volume_usd: any
+      timestamp: number
+    }>
+  } | null
+}
+
+export type ManagerTvmChartQueryVariables = Exact<{
+  manager: Scalars['ID']['input']
+  timestamp?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type ManagerTvmChartQuery = {
+  __typename?: 'Query'
+  manager?: {
+    __typename?: 'Manager'
+    total_value_locked: Array<{
+      __typename?: 'TotalValueLocked'
+      close: any
+      timestamp: number
+    }>
+  } | null
+}
+
+export type ManagerUniqueInvestorsQueryVariables = Exact<{
+  manager: Scalars['ID']['input']
+}>
+
+export type ManagerUniqueInvestorsQuery = {
+  __typename?: 'Query'
+  manager?: { __typename?: 'Manager'; unique_investors: number } | null
+}
+
+export type ManagerWithdrawsQueryVariables = Exact<{
+  manager: Scalars['ID']['input']
+  timestamp?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type ManagerWithdrawsQuery = {
+  __typename?: 'Query'
+  manager?: {
+    __typename?: 'Manager'
+    withdraws: Array<{
+      __typename?: 'Volume'
+      volume_usd: any
+      timestamp: number
+    }>
+  } | null
+}
+
 export type PoolChartsQueryVariables = Exact<{
   id: Scalars['ID']['input']
   price_period: Scalars['Int']['input']
@@ -4877,6 +4982,118 @@ export const ActivitiesDocument = gql`
         symbol
         amount
         price_usd
+      }
+    }
+  }
+`
+export const ManagerChangeTvlDocument = gql`
+  query ManagerChangeTVL(
+    $manager: ID!
+    $day: Int!
+    $week: Int!
+    $month: Int!
+    $year: Int!
+  ) {
+    manager(id: $manager) {
+      now: total_value_locked(
+        where: { base: "usd" }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      day: total_value_locked(
+        where: { base: "usd", timestamp_gt: $day }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      week: total_value_locked(
+        where: { base: "usd", timestamp_gt: $week }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      month: total_value_locked(
+        where: { base: "usd", timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      year: total_value_locked(
+        where: { base: "usd", timestamp_gt: $year }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      max: total_value_locked(
+        where: { base: "usd", timestamp_gt: 0 }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+    }
+  }
+`
+export const ManagerDepositsDocument = gql`
+  query ManagerDeposits($manager: ID!, $timestamp: Int) {
+    manager(id: $manager) {
+      deposits: volumes(
+        where: {
+          period: 86400
+          type: "join"
+          swap_pair_in: ["manager", "broker"]
+          timestamp_gt: $timestamp
+        }
+      ) {
+        volume_usd
+        timestamp
+      }
+    }
+  }
+`
+export const ManagerTvmChartDocument = gql`
+  query ManagerTVMChart($manager: ID!, $timestamp: Int) {
+    manager(id: $manager) {
+      total_value_locked(
+        where: { base: "usd", timestamp_gt: $timestamp }
+        orderBy: timestamp
+        orderDirection: asc
+        first: 1000
+      ) {
+        close
+        timestamp
+      }
+    }
+  }
+`
+export const ManagerUniqueInvestorsDocument = gql`
+  query ManagerUniqueInvestors($manager: ID!) {
+    manager(id: $manager) {
+      unique_investors
+    }
+  }
+`
+export const ManagerWithdrawsDocument = gql`
+  query ManagerWithdraws($manager: ID!, $timestamp: Int) {
+    manager(id: $manager) {
+      withdraws: volumes(
+        where: { period: 86400, type: "exit", timestamp_gt: $timestamp }
+      ) {
+        volume_usd
+        timestamp
       }
     }
   }
@@ -5216,6 +5433,81 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'Activities',
+        'query'
+      )
+    },
+    ManagerChangeTVL(
+      variables: ManagerChangeTvlQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ManagerChangeTvlQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ManagerChangeTvlQuery>(
+            ManagerChangeTvlDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'ManagerChangeTVL',
+        'query'
+      )
+    },
+    ManagerDeposits(
+      variables: ManagerDepositsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ManagerDepositsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ManagerDepositsQuery>(
+            ManagerDepositsDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'ManagerDeposits',
+        'query'
+      )
+    },
+    ManagerTVMChart(
+      variables: ManagerTvmChartQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ManagerTvmChartQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ManagerTvmChartQuery>(
+            ManagerTvmChartDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'ManagerTVMChart',
+        'query'
+      )
+    },
+    ManagerUniqueInvestors(
+      variables: ManagerUniqueInvestorsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ManagerUniqueInvestorsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ManagerUniqueInvestorsQuery>(
+            ManagerUniqueInvestorsDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'ManagerUniqueInvestors',
+        'query'
+      )
+    },
+    ManagerWithdraws(
+      variables: ManagerWithdrawsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ManagerWithdrawsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ManagerWithdrawsQuery>(
+            ManagerWithdrawsDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'ManagerWithdraws',
         'query'
       )
     },

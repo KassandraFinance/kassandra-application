@@ -1,0 +1,15 @@
+query ManagerDeposits($manager: ID!, $timestamp: Int) {
+    manager(id: $manager) {
+      deposits: volumes(
+        where: {
+          period: 86400
+          type: "join"
+          swap_pair_in: ["manager", "broker"]
+          timestamp_gt: $timestamp
+        }
+      ) {
+        volume_usd
+        timestamp
+      }
+    }
+  }

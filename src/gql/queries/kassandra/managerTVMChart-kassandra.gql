@@ -1,0 +1,13 @@
+query ManagerTVMChart($manager: ID!, $timestamp: Int) {
+    manager(id: $manager) {
+      total_value_locked(
+        where: { base: "usd", timestamp_gt: $timestamp }
+        orderBy: timestamp
+        orderDirection: asc
+        first: 1000
+      ) {
+        close
+        timestamp
+      }
+    }
+  }
