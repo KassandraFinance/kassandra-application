@@ -7,11 +7,10 @@ import useWhiteList from '@/hooks/useWhiteList'
 import { getAddress } from 'ethers'
 import Big from 'big.js'
 
+import { useTokensData } from '@/hooks/query/useTokensData'
 import useBatchRequests from '@/hooks/useBatchRequests'
-import useCoingecko from '@/hooks/useCoingecko'
 import {
   BACKEND_KASSANDRA,
-  networks,
   mockTokens,
   mockTokensReverse
 } from '../../../../constants/tokenAddresses'
@@ -76,11 +75,10 @@ const SelectAssets = () => {
     request(BACKEND_KASSANDRA, query, params)
   )
 
-  const { data: priceData } = useCoingecko(
+  const { data: priceData } = useTokensData({
     chainId,
-    networks[chainId].nativeCurrency.address,
-    tokensListGoerli ?? []
-  )
+    tokenAddresses: tokensListGoerli ?? []
+  })
 
   React.useEffect(() => {
     if (!data) {

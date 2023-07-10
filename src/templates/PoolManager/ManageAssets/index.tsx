@@ -10,8 +10,8 @@ import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
 import usePoolAssets from '@/hooks/usePoolAssets'
 import usePoolInfo from '@/hooks/usePoolInfo'
-import useCoingecko from '@/hooks/useCoingecko'
 import useTransaction from '@/hooks/useTransaction'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import { mockTokensReverse } from '../../../constants/tokenAddresses'
 
@@ -99,11 +99,10 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     networks[poolInfo?.chain_id ?? 137].rpc
   )
 
-  const { data: priceData } = useCoingecko(
-    poolInfo?.chain_id ?? 137,
-    networks[poolInfo?.chain_id ?? 137].nativeCurrency.address,
-    [token.id]
-  )
+  const { data: priceData } = useTokensData({
+    chainId: poolInfo?.chain_id || 137,
+    tokenAddresses: [token.id]
+  })
 
   const buttonTextActionAdd = {
     [TransactionStatus.START]: `Start ${token.symbol} Addition`,

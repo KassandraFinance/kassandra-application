@@ -10,7 +10,8 @@ import {
   setPoolTokensList,
   setWeight
 } from '@/store/reducers/removeAssetSlice'
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 import useERC20 from '@/hooks/useERC20'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import usePoolInfo from '@/hooks/usePoolInfo'
@@ -42,11 +43,15 @@ const TokenRemoval = () => {
     networks[poolInfo?.chain_id ?? 137].rpc
   )
 
-  const { priceToken } = useCoingecko(
-    poolInfo?.chain_id ?? 137,
-    poolInfo?.chain.addressWrapped ?? '',
-    handleMockToken(poolInfo?.underlying_assets_addresses ?? [])
-  )
+  const { data } = useTokensData({
+    chainId: poolInfo?.chain_id ?? 137,
+    tokenAddresses: handleMockToken(poolInfo?.underlying_assets_addresses ?? [])
+  })
+
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: poolInfo?.chain.addressWrapped ?? '',
+    tokens: data || {}
+  })
 
   const { totalSupply } = useManagedPool(
     poolInfo?.address ?? '',
@@ -120,7 +125,6 @@ const TokenRemoval = () => {
     if (tokenSelection.address === '' || !poolAssets) return
 
     const poolWeightInfo = poolAssets.map(item => {
-      // eslint-disable-next-line prettier/prettier
       const currentWeight = item.weight_normalized ?? '0'
       const isSelectedToken = tokenSelection.address === item.token.id
 

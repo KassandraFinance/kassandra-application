@@ -7,7 +7,7 @@ import useSWR from 'swr'
 import { GET_TOKENS_POOL } from './graphql'
 import { BACKEND_KASSANDRA, mockTokens } from '@/constants/tokenAddresses'
 
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData } from '@/hooks/query/useTokensData'
 import usePoolAssets from '@/hooks/usePoolAssets'
 import { underlyingAssetsInfo } from '@/store/reducers/pool'
 
@@ -87,11 +87,10 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
       })
   )
 
-  const { data: coingeckoData } = useCoingecko(
-    data?.pool.chain_id ?? 137,
-    data?.pool?.chain?.addressWrapped ?? '',
-    handleMockToken(poolAssets ?? [])
-  )
+  const { data: tokensInfo } = useTokensData({
+    chainId: data?.pool.chain_id || 137,
+    tokenAddresses: handleMockToken(poolAssets ?? [])
+  })
 
   const poolInfo = {
     name: data?.pool.name ?? '',
@@ -245,13 +244,13 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
         listTokenWeights={listTokenWeights}
         rebalanceWeights={rebalanceWeights}
         countDownDate={countDownDate}
-        coingeckoData={coingeckoData ?? {}}
+        coingeckoData={tokensInfo ?? {}}
         chainId={data?.pool.chain_id ?? 137}
       />
       <AllocationTable
         allocationData={listTokenWeights}
         isRebalance={isRebalancing}
-        coingeckoData={coingeckoData ?? {}}
+        coingeckoData={tokensInfo ?? {}}
         chainId={data?.pool.chain_id ?? 137}
       />
       <AllocationHistory poolInfo={poolInfo} />

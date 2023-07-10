@@ -19,7 +19,7 @@ import {
 } from '../../../../../store/reducers/addAssetSlice'
 import { ERC20 } from '../../../../../hooks/useERC20'
 import usePoolInfo from '@/hooks/usePoolInfo'
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
@@ -87,11 +87,10 @@ const AddLiquidityOperation = () => {
 
   const { poolInfo } = usePoolInfo(wallet, poolId)
 
-  const { data: priceData } = useCoingecko(
-    poolInfo?.chain_id ?? 137,
-    networks[poolInfo?.chain_id ?? 137].nativeCurrency.address,
-    [token.id]
-  )
+  const { data: priceData } = useTokensData({
+    chainId: poolInfo?.chain_id || 137,
+    tokenAddresses: [token.id]
+  })
 
   React.useEffect(() => {
     if (poolInfo) {

@@ -4,16 +4,14 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import Blockies from 'react-blockies'
 import Big from 'big.js'
 
-import { networks } from '@/constants/tokenAddresses'
-
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   TokenType,
   setLiquidity,
   setTxs
 } from '@/store/reducers/poolCreationSlice'
-import useCoingecko from '@/hooks/useCoingecko'
 import { ParaSwap } from '@/services/ParaSwap'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import substr from '@/utils/substr'
 import { BNtoDecimal } from '@/utils/numerals'
@@ -49,11 +47,10 @@ const PoolReview = () => {
     addressesList = [...addressesList, token.address]
   }
 
-  const { data } = useCoingecko(
-    poolData.networkId ?? 137,
-    networks[poolData.networkId ?? 137].nativeCurrency.address,
-    addressesList
-  )
+  const { data } = useTokensData({
+    chainId: poolData?.networkId || 137,
+    tokenAddresses: addressesList
+  })
 
   function handleCurrentViewTable(method: string, value: number) {
     if (method === 'next') {

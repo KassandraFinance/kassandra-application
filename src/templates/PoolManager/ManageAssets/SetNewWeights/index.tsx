@@ -3,9 +3,10 @@ import Big from 'big.js'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { mockTokens, networks } from '@/constants/tokenAddresses'
+import { mockTokens } from '@/constants/tokenAddresses'
 
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   lockToken,
@@ -36,11 +37,15 @@ const SetNewWeights = () => {
   const { poolAssets } = usePoolAssets(poolId)
   const { poolInfo } = usePoolInfo(wallet, poolId)
 
-  const { priceToken } = useCoingecko(
-    poolInfo?.chain_id ?? 137,
-    poolInfo?.chain.addressWrapped ?? '',
-    handleMockToken(poolAssets ?? [])
-  )
+  const { data } = useTokensData({
+    chainId: poolInfo?.chain_id ?? 137,
+    tokenAddresses: handleMockToken(poolAssets ?? [])
+  })
+
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: poolInfo?.chain.addressWrapped ?? '',
+    tokens: data || {}
+  })
 
   function handleMockToken(tokenList: any) {
     if (poolInfo?.chain_id === 5) {

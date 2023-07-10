@@ -4,13 +4,11 @@ import Big from 'big.js'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { networks } from '../../../../../constants/tokenAddresses'
-
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
 import { useAppSelector } from '../../../../../store/hooks'
 import usePoolInfo from '@/hooks/usePoolInfo'
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
 
@@ -30,11 +28,10 @@ const TransactionSummary = () => {
 
   const { poolInfo } = usePoolInfo(wallet, poolId)
 
-  const { data: priceData } = useCoingecko(
-    poolInfo?.chain_id ?? 137,
-    networks[poolInfo?.chain_id ?? 137].nativeCurrency.address,
-    [token.id]
-  )
+  const { data: priceData } = useTokensData({
+    chainId: poolInfo?.chain_id || 137,
+    tokenAddresses: [token.id]
+  })
 
   return (
     <S.TransactionSummary>

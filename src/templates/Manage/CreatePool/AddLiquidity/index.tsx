@@ -9,7 +9,8 @@ import {
   setLiquidity,
   setMethodCreate
 } from '@/store/reducers/poolCreationSlice'
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 
 import {
   mockTokens,
@@ -124,11 +125,15 @@ const AddLiquidity = () => {
     )
   }
 
-  const { data, priceToken } = useCoingecko(
-    networkId ?? 137,
-    networks[networkId ?? 137].nativeCurrency.address,
-    []
-  )
+  const { data } = useTokensData({
+    chainId: networkId || 137,
+    tokenAddresses: []
+  })
+
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: networks[networkId ?? 137].nativeCurrency.address,
+    tokens: data || {}
+  })
 
   React.useEffect(() => {
     if (!tokensList) {

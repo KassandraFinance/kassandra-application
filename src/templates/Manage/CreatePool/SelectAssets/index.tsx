@@ -5,7 +5,7 @@ import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
 
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData } from '@/hooks/query/useTokensData'
 import useWhiteList from '@/hooks/useWhiteList'
 import useBatchRequests from '@/hooks/useBatchRequests'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
@@ -16,11 +16,7 @@ import {
   TokenType
 } from '@/store/reducers/poolCreationSlice'
 
-import {
-  BACKEND_KASSANDRA,
-  mockTokens,
-  networks
-} from '@/constants/tokenAddresses'
+import { BACKEND_KASSANDRA, mockTokens } from '@/constants/tokenAddresses'
 import { GET_INFO_TOKENS } from './graphql'
 
 import Steps from '@/components/Steps'
@@ -88,11 +84,10 @@ const SelectAssets = () => {
     return element !== null
   })
 
-  const { data: priceData } = useCoingecko(
-    networkId ?? 137,
-    networks[networkId ?? 137].nativeCurrency.address,
-    tokensListGoerli ?? ['']
-  )
+  const { data: priceData } = useTokensData({
+    chainId: networkId || 137,
+    tokenAddresses: tokensListGoerli || ['']
+  })
 
   function handleInput(
     e: React.ChangeEvent<HTMLInputElement>,
