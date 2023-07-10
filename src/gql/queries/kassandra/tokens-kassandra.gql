@@ -1,5 +1,5 @@
-query Tokens($chainId: Int) {
-  tokensByIds(chainId: $chainId) {
+query Tokens($tokensList: [ID!]!) {
+  tokensByIds(ids: $tokensList) {
     id
     decimals
     logo

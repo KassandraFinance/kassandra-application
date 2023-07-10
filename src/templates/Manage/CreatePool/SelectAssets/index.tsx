@@ -1,10 +1,9 @@
 import React from 'react'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
 
+import { useTokens } from '@/hooks/query/useTokens'
 import { useTokensData } from '@/hooks/query/useTokensData'
 import useWhiteList from '@/hooks/useWhiteList'
 import useBatchRequests from '@/hooks/useBatchRequests'
@@ -16,8 +15,7 @@ import {
   TokenType
 } from '@/store/reducers/poolCreationSlice'
 
-import { BACKEND_KASSANDRA, mockTokens } from '@/constants/tokenAddresses'
-import { GET_INFO_TOKENS } from './graphql'
+import { mockTokens } from '@/constants/tokenAddresses'
 
 import Steps from '@/components/Steps'
 import CreatePoolHeader from '../CreatePoolHeader'
@@ -35,11 +33,12 @@ export type CoinGeckoAssetsResponseType = {
 }
 
 export type TokensInfoResponseType = {
+  __typename?: 'Token' | undefined
   id: string
-  logo: string
-  name: string
-  symbol: string
-  decimals: number
+  decimals?: number | null | undefined
+  logo?: string | null | undefined
+  name?: string | null | undefined
+  symbol?: string | null | undefined
 }
 
 type BalancesType = Record<string, Big>
@@ -72,21 +71,17 @@ const SelectAssets = () => {
     totalAllocation = totalAllocation.plus(token.allocation)
   }
 
-  const { data } = useSWR<{ tokensByIds: TokensInfoResponseType[] }>(
-    [GET_INFO_TOKENS, tokensListGoerli],
-    (query, whitelist) =>
-      request(BACKEND_KASSANDRA, query, {
-        whitelist
-      })
-  )
+  const { data: data } = useTokens({ tokensList: tokensListGoerli || [] })
 
-  const tokensListFiltered = data?.tokensByIds.filter(element => {
-    return element !== null
-  })
+  const tokensListFiltered = data
+    ? data?.filter((element): element is Exclude<typeof element, null> => {
+        return element !== null
+      })
+    : []
 
   const { data: priceData } = useTokensData({
     chainId: networkId || 137,
-    tokenAddresses: tokensListGoerli || ['']
+    tokenAddresses: tokensListGoerli || []
   })
 
   function handleInput(

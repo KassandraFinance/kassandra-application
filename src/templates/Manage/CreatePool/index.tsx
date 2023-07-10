@@ -1,7 +1,7 @@
 import React from 'react'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
-import { ethers, keccak256 } from 'ethers'
+import { keccak256, ZeroAddress } from 'ethers'
 
 import useSignMessage from '@/hooks/useSignMessage'
 import useCreatePool from '@/hooks/useCreatePool'
@@ -403,10 +403,10 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         {
           address,
           amount: Big(poolData.tokenInAmount)
-            .mul(Big(10).pow(decimals))
+            .mul(Big(10).pow(decimals || 18))
             .toFixed(0),
           normalizedAmount: poolData.tokenInAmount,
-          symbol
+          symbol: symbol || ''
         }
       ]
     } else {
@@ -639,10 +639,10 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         {
           address,
           amount: Big(poolData.tokenInAmount)
-            .mul(Big(10).pow(decimals))
+            .mul(Big(10).pow(decimals || 18))
             .toFixed(0),
           normalizedAmount: poolData.tokenInAmount,
-          symbol
+          symbol: symbol || ''
         }
       ]
     } else {
@@ -724,7 +724,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
             token: { decimals: token.decimals, id: token.address },
             weight_normalized: Big(token.allocation).div(100).toString()
           })) ?? [],
-        srcDecimals: poolData.tokenIn.decimals.toString(),
+        srcDecimals: poolData.tokenIn?.decimals?.toString() || '',
         srcToken: poolData.tokenIn.address
       })
       datas = await swapProvider.getDatasTx(
@@ -765,7 +765,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         tokenIn:
           poolData.methodCreate === 'any-asset'
             ? poolData.tokenIn.address
-            : ethers.ZeroAddress,
+            : ZeroAddress,
         amountIn:
           poolData.methodCreate === 'any-asset' ? poolData.tokenInAmount : '0',
         datas

@@ -4801,7 +4801,7 @@ export type PoolsQuery = {
 }
 
 export type TokensQueryVariables = Exact<{
-  chainId?: InputMaybe<Scalars['Int']['input']>
+  tokensList: Array<Scalars['ID']['input']> | Scalars['ID']['input']
 }>
 
 export type TokensQuery = {
@@ -5099,8 +5099,8 @@ export const PoolsDocument = gql`
   }
 `
 export const TokensDocument = gql`
-  query Tokens($chainId: Int) {
-    tokensByIds(chainId: $chainId) {
+  query Tokens($tokensList: [ID!]!) {
+    tokensByIds(ids: $tokensList) {
       id
       decimals
       logo
@@ -5290,7 +5290,7 @@ export function getSdk(
       )
     },
     Tokens(
-      variables?: TokensQueryVariables,
+      variables: TokensQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
     ): Promise<TokensQuery> {
       return withWrapper(
