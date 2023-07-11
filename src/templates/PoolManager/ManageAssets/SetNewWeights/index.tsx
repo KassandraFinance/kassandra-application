@@ -14,7 +14,7 @@ import {
   setPoolTokensList,
   setTotalWeight
 } from '@/store/reducers/rebalanceAssetsSlice'
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 
 import ExecutionPeriod from './ExecutionPeriod'
@@ -35,20 +35,23 @@ const SetNewWeights = () => {
   const { newTokensWights } = useAppSelector(state => state.rebalanceAssets)
   const [{ wallet }] = useConnectWallet()
   const { data: poolAssets } = usePoolAssets({ id: poolId })
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   const { data } = useTokensData({
-    chainId: poolInfo?.chain_id ?? 137,
+    chainId: (poolInfo && poolInfo[0]?.chain_id) ?? 137,
     tokenAddresses: handleMockToken(poolAssets ?? [])
   })
 
   const { priceToken } = useGetToken({
-    nativeTokenAddress: poolInfo?.chain.addressWrapped ?? '',
+    nativeTokenAddress: (poolInfo && poolInfo[0]?.chain?.addressWrapped) ?? '',
     tokens: data || {}
   })
 
   function handleMockToken(tokenList: any) {
-    if (poolInfo?.chain_id === 5) {
+    if (poolInfo && poolInfo[0]?.chain_id === 5) {
       return tokenList?.map((item: any) => {
         return mockTokens[item.token.id]
       })
@@ -131,7 +134,7 @@ const SetNewWeights = () => {
         <S.AllocationsAndExecutionPeriod>
           <AllocationsTable
             priceToken={priceToken}
-            chainId={poolInfo?.chain_id || 0}
+            chainId={(poolInfo && poolInfo[0]?.chain_id) || 0}
           />
           <ExecutionPeriod />
         </S.AllocationsAndExecutionPeriod>

@@ -23,7 +23,7 @@ export const fetchPoolAssets = async ({ id }: UsePoolAssetsProps) => {
       }
     }
 
-    return underlying_assets
+    return underlying_assets || null
   })
 }
 
@@ -32,6 +32,7 @@ export const usePoolAssets = ({ id }: UsePoolAssetsProps) => {
     queryKey: ['pool-assets', id],
     queryFn: async () => fetchPoolAssets({ id }),
     staleTime: 1000 * 60,
-    refetchInterval: 1000 * 60
+    refetchInterval: 1000 * 60,
+    enabled: id.length > 0
   })
 }

@@ -14,7 +14,7 @@ import { GET_POOL_REBALANCE_TIME, GET_POOL_PRICE } from './graphql'
 
 import { useUserProfile } from '@/hooks/query/useUserProfile'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 import { useAppDispatch } from '@/store/hooks'
 import { useCountdown } from '@/hooks/useCountDown'
@@ -118,7 +118,10 @@ const PoolManager = () => {
   const [{ connectedChain }] = useSetChain()
   const [{ settingChain }, setChain] = useSetChain()
 
-  const { poolInfo, isManager } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
   const { data: poolAssets } = usePoolAssets({ id: poolId })
   const { data } = useSWR([GET_POOL_REBALANCE_TIME, poolId], (query, poolId) =>
     request(BACKEND_KASSANDRA, query, { id: poolId })
@@ -174,11 +177,11 @@ const PoolManager = () => {
   })
 
   React.useEffect(() => {
+    const isManager = poolInfo?.length === 0 ? true : false
     if (isManager) {
       router.push(`/pool/${poolId}`)
     }
-    return
-  }, [isManager])
+  }, [poolInfo])
 
   React.useEffect(() => {
     if (!router.isReady) {
@@ -285,29 +288,29 @@ const PoolManager = () => {
                   <S.GridIntro>
                     <TokenWithNetworkImage
                       tokenImage={{
-                        url: poolInfo?.logo,
+                        url: poolInfo[0]?.logo || '',
                         height: 75,
                         width: 75,
                         withoutBorder: true
                       }}
                       networkImage={{
-                        url: poolInfo?.chain?.logo,
+                        url: poolInfo[0]?.chain?.logo || '',
                         height: 20,
                         width: 20
                       }}
                       blockies={{
                         size: 8,
                         scale: 9,
-                        seedName: poolInfo?.name
+                        seedName: poolInfo[0]?.name
                       }}
                     />
                     <S.NameIndex>
                       <S.NameAndSymbol>
-                        <h1>{poolInfo?.name}</h1>
+                        <h1>{poolInfo[0]?.name}</h1>
                       </S.NameAndSymbol>
                       <S.SymbolAndLink>
-                        <h3>${poolInfo?.symbol}</h3>
-                        <Link href={`/pool/${poolInfo?.id}`}>
+                        <h3>${poolInfo[0]?.symbol}</h3>
+                        <Link href={`/pool/${poolInfo[0]?.id}`}>
                           <button className="circle">
                             <Image
                               src="/assets/icons/website-with-bg.svg"
@@ -317,7 +320,7 @@ const PoolManager = () => {
                           </button>
                         </Link>
                         <a
-                          href={`${poolInfo?.chain?.blockExplorerUrl}/address/${poolInfo?.address}`}
+                          href={`${poolInfo[0]?.chain?.blockExplorerUrl}/address/${poolInfo[0]?.address}`}
                           className="circle"
                           target="_blank"
                           rel="noopener noreferrer"
@@ -333,7 +336,7 @@ const PoolManager = () => {
                             setOpenModal(true)
                             trackEventFunction(
                               'click',
-                              `social-share-${poolInfo?.name}`,
+                              `social-share-${poolInfo[0]?.name}`,
                               'pool'
                             )
                           }}
@@ -349,10 +352,10 @@ const PoolManager = () => {
                     </S.NameIndex>
                   </S.GridIntro>
 
-                  {poolInfo.chain_id !== chainId ? (
+                  {poolInfo[0]?.chain_id !== chainId ? (
                     <Button
                       text={`Connect to ${
-                        networks[poolInfo.chain_id].chainName
+                        networks[poolInfo[0]?.chain_id]?.chainName
                       }`}
                       backgroundSecondary
                       size="large"
@@ -360,7 +363,7 @@ const PoolManager = () => {
                       disabledNoEvent={settingChain}
                       onClick={() =>
                         setChain({
-                          chainId: `0x${poolInfo.chain_id.toString(16)}`
+                          chainId: `0x${poolInfo[0].chain_id.toString(16)}`
                         })
                       }
                     />
@@ -418,20 +421,20 @@ const PoolManager = () => {
       )}
       {poolInfo && poolAssets && (
         <ShareImageModal
-          poolId={poolInfo?.id}
+          poolId={poolInfo[0]?.id}
           setOpenModal={setOpenModal}
           openModal={openModal}
-          productName={poolInfo?.symbol}
+          productName={poolInfo[0]?.symbol}
         >
           <SharedImage
-            crpPoolAddress={poolInfo?.id}
+            crpPoolAddress={poolInfo[0]?.id}
             totalValueLocked={BNtoDecimal(
-              Big(poolInfo?.total_value_locked_usd) || '0',
+              Big(poolInfo[0]?.total_value_locked_usd || 0),
               0
             )}
-            socialIndex={poolInfo?.symbol}
-            productName={poolInfo?.name}
-            poolLogo={poolInfo?.logo}
+            socialIndex={poolInfo[0]?.symbol}
+            productName={poolInfo[0]?.name}
+            poolLogo={poolInfo[0]?.logo || ''}
             tokens={poolAssets}
           />
         </ShareImageModal>

@@ -4768,6 +4768,46 @@ export type ManagerDepositsQuery = {
   } | null
 }
 
+export type ManagerPoolInfoQueryVariables = Exact<{
+  manager?: InputMaybe<Scalars['String']['input']>
+  id?: InputMaybe<Scalars['ID']['input']>
+}>
+
+export type ManagerPoolInfoQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    address: string
+    vault: string
+    chain_id: number
+    logo?: string | null
+    pool_version: number
+    is_private_pool: boolean
+    decimals: number
+    name: string
+    symbol: string
+    poolId?: number | null
+    total_value_locked_usd: any
+    underlying_assets_addresses: Array<string>
+    controller: string
+    price_usd: any
+    chain?: {
+      __typename?: 'Chain'
+      id: string
+      logo?: string | null
+      chainName?: string | null
+      nativeTokenName?: string | null
+      nativeTokenSymbol?: string | null
+      nativeTokenDecimals?: number | null
+      rpcUrls?: Array<string | null> | null
+      blockExplorerUrl?: string | null
+      secondsPerBlock?: number | null
+      addressWrapped?: string | null
+    } | null
+  }>
+}
+
 export type ManagerPoolsQueryVariables = Exact<{
   manager?: InputMaybe<Scalars['String']['input']>
 }>
@@ -5334,6 +5374,39 @@ export const ManagerDepositsDocument = gql`
     }
   }
 `
+export const ManagerPoolInfoDocument = gql`
+  query ManagerPoolInfo($manager: String, $id: ID) {
+    pools(where: { manager: $manager, id: $id }) {
+      id
+      address
+      vault
+      chain_id
+      logo
+      pool_version
+      is_private_pool
+      decimals
+      chain {
+        id
+        logo
+        chainName
+        nativeTokenName
+        nativeTokenSymbol
+        nativeTokenDecimals
+        rpcUrls
+        blockExplorerUrl
+        secondsPerBlock
+        addressWrapped
+      }
+      name
+      symbol
+      poolId
+      total_value_locked_usd
+      underlying_assets_addresses
+      controller
+      price_usd
+    }
+  }
+`
 export const ManagerPoolsDocument = gql`
   query ManagerPools($manager: String) {
     pools(where: { manager: $manager }) {
@@ -5804,6 +5877,21 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'ManagerDeposits',
+        'query'
+      )
+    },
+    ManagerPoolInfo(
+      variables?: ManagerPoolInfoQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ManagerPoolInfoQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ManagerPoolInfoQuery>(
+            ManagerPoolInfoDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'ManagerPoolInfo',
         'query'
       )
     },

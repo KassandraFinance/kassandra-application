@@ -18,7 +18,7 @@ import {
   AssetType
 } from '../../../../../store/reducers/addAssetSlice'
 import { ERC20 } from '../../../../../hooks/useERC20'
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import { useTokensData } from '@/hooks/query/useTokensData'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
@@ -85,17 +85,20 @@ const AddLiquidityOperation = () => {
     dispatch(setAmount(amount.toString()))
   }
 
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   const { data: priceData } = useTokensData({
-    chainId: poolInfo?.chain_id || 137,
+    chainId: (poolInfo && poolInfo[0]?.chain_id) || 137,
     tokenAddresses: [token.id]
   })
 
   React.useEffect(() => {
     if (poolInfo) {
-      dispatch(setTVL(poolInfo.total_value_locked_usd))
-      dispatch(setController(poolInfo.controller))
+      dispatch(setTVL(poolInfo[0].total_value_locked_usd))
+      dispatch(setController(poolInfo[0].controller))
     }
   }, [])
 
@@ -111,7 +114,7 @@ const AddLiquidityOperation = () => {
 
       const { balance } = await ERC20(
         token,
-        networks[poolInfo?.chain_id ?? 137].rpc
+        networks[(poolInfo && poolInfo[0]?.chain_id) ?? 137].rpc
       )
       const balanceValue = await balance(wallet.accounts[0].address)
       setUserBalance(Big(balanceValue))
@@ -200,10 +203,10 @@ const AddLiquidityOperation = () => {
         {poolInfo && priceData && (
           <S.InputContainer>
             <CoinSummary
-              coinName={poolInfo.name}
-              coinSymbol={poolInfo.symbol}
-              coinImage={poolInfo.logo}
-              chainImage={poolInfo.chain.logo}
+              coinName={poolInfo[0].name}
+              coinSymbol={poolInfo[0].symbol}
+              coinImage={poolInfo[0]?.logo || ''}
+              chainImage={poolInfo[0].chain?.logo || ''}
               price={'0'}
             />
 
@@ -211,7 +214,7 @@ const AddLiquidityOperation = () => {
               <S.Value>
                 {Big(liquidit.amount || 0)
                   .mul(priceData[token.id.toLowerCase()]?.usd ?? 0)
-                  .div(poolInfo.price_usd)
+                  .div(poolInfo[0].price_usd)
                   .toFixed(2)}
               </S.Value>
 

@@ -3,11 +3,11 @@ import Image from 'next/image'
 import useSWR from 'swr'
 import { request } from 'graphql-request'
 import { useRouter } from 'next/router'
-import { keccak256 } from 'web3-utils'
+import { keccak256 } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import useSignMessage from '@/hooks/useSignMessage'
 
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
@@ -49,11 +49,18 @@ const PoolImage = () => {
     : router.query.pool ?? ''
 
   const { signMessage } = useSignMessage()
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   const img = poolImage.icon?.image_preview ? poolImage.icon.image_preview : ''
   const hasPoolImage =
-    img.length > 0 ? img : poolInfo?.logo ? poolInfo.logo : defaultImage
+    img.length > 0
+      ? img
+      : poolInfo && poolInfo[0]?.logo
+      ? poolInfo[0].logo
+      : defaultImage
 
   async function sendPoolData(
     controller: string,
@@ -178,25 +185,27 @@ const PoolImage = () => {
             }
           }}
         />
-        <S.PoolSettingsName>
-          <p>{poolInfo?.name}</p>
-          <strong>{poolInfo?.symbol}</strong>
-        </S.PoolSettingsName>
+        {poolInfo && (
+          <S.PoolSettingsName>
+            <p>{poolInfo[0]?.name}</p>
+            <strong>{poolInfo[0]?.symbol}</strong>
+          </S.PoolSettingsName>
+        )}
       </S.UploadImage>
       <S.ErrorParagraph>{errorMessage}</S.ErrorParagraph>
 
       {poolImage.icon.image_preview.length > 0 ? (
         <>
-          {poolInfo?.controller && data?.pool && (
+          {poolInfo && poolInfo[0]?.controller && data?.pool && (
             <Button
               text="Upload image"
               backgroundSecondary
               onClick={() =>
                 sendPoolData(
-                  poolInfo?.controller,
+                  poolInfo[0]?.controller,
                   poolImage.icon.image_preview,
                   data?.pool.summary,
-                  poolInfo?.chain_id
+                  poolInfo[0]?.chain_id
                 )
               }
             />

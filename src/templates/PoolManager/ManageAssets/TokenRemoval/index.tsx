@@ -14,7 +14,7 @@ import { useTokensData } from '@/hooks/query/useTokensData'
 import useGetToken from '@/hooks/useGetToken'
 import useERC20 from '@/hooks/useERC20'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 import useManagedPool from '@/hooks/useManagedPool'
 
@@ -37,25 +37,30 @@ const TokenRemoval = () => {
 
   const { data: poolAssets } = usePoolAssets({ id: poolId })
   const [{ wallet }] = useConnectWallet()
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
   const { balance } = useERC20(
-    poolInfo?.address ?? '',
-    networks[poolInfo?.chain_id ?? 137].rpc
+    (poolInfo && poolInfo[0]?.address) ?? '',
+    networks[(poolInfo && poolInfo[0]?.chain_id) ?? 137].rpc
   )
 
   const { data } = useTokensData({
-    chainId: poolInfo?.chain_id ?? 137,
-    tokenAddresses: handleMockToken(poolInfo?.underlying_assets_addresses ?? [])
+    chainId: (poolInfo && poolInfo[0]?.chain_id) ?? 137,
+    tokenAddresses: handleMockToken(
+      (poolInfo && poolInfo[0]?.underlying_assets_addresses) ?? []
+    )
   })
 
   const { priceToken } = useGetToken({
-    nativeTokenAddress: poolInfo?.chain.addressWrapped ?? '',
+    nativeTokenAddress: (poolInfo && poolInfo[0]?.chain?.addressWrapped) ?? '',
     tokens: data || {}
   })
 
   const { totalSupply } = useManagedPool(
-    poolInfo?.address ?? '',
-    networks[poolInfo?.chain_id ?? 137].rpc
+    (poolInfo && poolInfo[0]?.address) ?? '',
+    networks[(poolInfo && poolInfo[0]?.chain_id) ?? 137].rpc
   )
 
   function handleMockToken(tokenList: string[]) {
@@ -118,7 +123,7 @@ const TokenRemoval = () => {
   React.useEffect(() => {
     if (!poolInfo) return
 
-    handleCheckLpNeeded(tokenSelection?.weight, poolInfo?.price_usd)
+    handleCheckLpNeeded(tokenSelection?.weight, poolInfo[0]?.price_usd)
   }, [tokenSelection])
 
   React.useEffect(() => {
@@ -176,15 +181,17 @@ const TokenRemoval = () => {
         <p>Select the token you wish to be removed from the pool</p>
 
         <S.SelectTokenAndTableAllocation>
-          <SelectTokenRemove
-            chainId={poolInfo?.chain_id ?? 137}
-            priceToken={priceToken}
-            poolInfo={{
-              name: poolInfo?.name ?? '',
-              symbol: poolInfo?.symbol ?? '',
-              logo: poolInfo?.logo
-            }}
-          />
+          {poolInfo && (
+            <SelectTokenRemove
+              chainId={poolInfo[0]?.chain_id ?? 137}
+              priceToken={priceToken}
+              poolInfo={{
+                name: poolInfo[0]?.name ?? '',
+                symbol: poolInfo[0]?.symbol ?? '',
+                logo: poolInfo[0]?.logo || ''
+              }}
+            />
+          )}
           <NewAllocationTable
             assets={tokenSelection.address === '' ? undefined : weights}
           />
