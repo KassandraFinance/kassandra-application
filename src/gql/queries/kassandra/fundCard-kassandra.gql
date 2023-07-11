@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_POOL = gql`
-  query (
+query FundCard(
     $id: ID!
     $price_period: Int!
     $period_selected: Int!
@@ -63,17 +60,23 @@ export const GET_POOL = gql`
         weight_normalized # current allocation in the pool between 0 and 1
         weight_goal_normalized # expected allocation in the pool between 0 and 1
         # token information
-        token {
+         token {
+        id
+        name
+        logo
+        symbol
+        decimals
+        price_usd
+        is_wrap_token
+        wraps {
           id
+          decimals
+          price_usd
+          symbol
           name
           logo
-          decimals
-          symbol
-          price_usd
-          wraps {
-            logo
-          }
         }
+      }
       }
       now: price_candles(
         where: { base: "usd", period: 3600 }
@@ -114,4 +117,3 @@ export const GET_POOL = gql`
       }
     }
   }
-`

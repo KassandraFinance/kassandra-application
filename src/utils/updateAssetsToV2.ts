@@ -1,7 +1,23 @@
 import Big from 'big.js'
-import { WeightsV2 } from '../store/reducers/pool'
 
-type UnderlyingAssetsInfoType = {
+type WeightsV2 = {
+  __typename?: 'WeightGoalPoint' | undefined
+  start_timestamp: number
+  end_timestamp: number
+  weights: {
+    __typename?: 'WeightGoal' | undefined
+    weight_normalized: any
+    asset: {
+      __typename?: 'Asset' | undefined
+      token: {
+        __typename?: 'Token' | undefined
+        id: string
+      }
+    }
+  }[]
+}
+
+export type UnderlyingAssetsInfoType = {
   __typename?: 'Asset' | undefined
   balance: any
   weight_normalized: any
@@ -28,12 +44,12 @@ type UnderlyingAssetsInfoType = {
       | null
       | undefined
   }
-}[]
+}
 
 export function getWeightsNormalizedV2(
   weights: WeightsV2[],
-  underlying_assets: UnderlyingAssetsInfoType
-): UnderlyingAssetsInfoType | undefined {
+  underlying_assets: UnderlyingAssetsInfoType[]
+): UnderlyingAssetsInfoType[] | undefined {
   if (weights.length <= 0) return
 
   const currentTime = new Date().getTime() / 1000

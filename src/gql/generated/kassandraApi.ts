@@ -4621,6 +4621,91 @@ export type ActivitiesQuery = {
   } | null
 }
 
+export type FundCardQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  price_period: Scalars['Int']['input']
+  period_selected: Scalars['Int']['input']
+  day: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+}>
+
+export type FundCardQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    name: string
+    symbol: string
+    logo?: string | null
+    address: string
+    foundedBy?: string | null
+    price_usd: any
+    pool_version: number
+    total_value_locked_usd: any
+    strategy: string
+    chain?: { __typename?: 'Chain'; logo?: string | null } | null
+    price_candles: Array<{
+      __typename?: 'Candle'
+      timestamp: number
+      close: any
+    }>
+    total_value_locked: Array<{
+      __typename?: 'TotalValueLocked'
+      close: any
+      timestamp: number
+    }>
+    weights: Array<{
+      __typename?: 'WeightPoint'
+      timestamp: number
+      weights: Array<{
+        __typename?: 'Weight'
+        weight_normalized: any
+        token: { __typename?: 'Token'; id: string; symbol?: string | null }
+      }>
+    }>
+    underlying_assets: Array<{
+      __typename?: 'Asset'
+      balance: any
+      weight_normalized: any
+      weight_goal_normalized: any
+      token: {
+        __typename?: 'Token'
+        id: string
+        name?: string | null
+        logo?: string | null
+        symbol?: string | null
+        decimals?: number | null
+        price_usd: any
+        is_wrap_token: number
+        wraps?: {
+          __typename?: 'Token'
+          id: string
+          decimals?: number | null
+          price_usd: any
+          symbol?: string | null
+          name?: string | null
+          logo?: string | null
+        } | null
+      }
+    }>
+    now: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    day: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      start_timestamp: number
+      end_timestamp: number
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        weight_normalized: any
+        asset: {
+          __typename?: 'Asset'
+          token: { __typename?: 'Token'; id: string }
+        }
+      }>
+    }>
+  } | null
+}
+
 export type ManagerChangeTvlQueryVariables = Exact<{
   manager: Scalars['ID']['input']
   day: Scalars['Int']['input']
@@ -4982,6 +5067,119 @@ export const ActivitiesDocument = gql`
         symbol
         amount
         price_usd
+      }
+    }
+  }
+`
+export const FundCardDocument = gql`
+  query FundCard(
+    $id: ID!
+    $price_period: Int!
+    $period_selected: Int!
+    $day: Int!
+    $month: Int!
+  ) {
+    pool(id: $id) {
+      name
+      symbol
+      name
+      logo
+      address
+      foundedBy
+      price_usd
+      pool_version
+      chain {
+        logo
+      }
+      price_candles(
+        where: {
+          base: "usd"
+          period: $price_period
+          timestamp_gt: $period_selected
+        }
+        orderBy: timestamp
+        first: 365
+      ) {
+        timestamp
+        close
+      }
+      total_value_locked(
+        where: { base: "usd", timestamp_gt: $period_selected }
+        orderBy: timestamp
+      ) {
+        close
+        timestamp
+      }
+      weights(where: { timestamp_gt: $period_selected }, orderBy: timestamp) {
+        timestamp
+        weights {
+          token {
+            id
+            symbol
+          }
+          weight_normalized
+        }
+      }
+      total_value_locked_usd
+      strategy
+      underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
+        balance
+        weight_normalized
+        weight_goal_normalized
+        token {
+          id
+          name
+          logo
+          symbol
+          decimals
+          price_usd
+          is_wrap_token
+          wraps {
+            id
+            decimals
+            price_usd
+            symbol
+            name
+            logo
+          }
+        }
+      }
+      now: price_candles(
+        where: { base: "usd", period: 3600 }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      day: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $day }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 2) {
+        start_timestamp
+        end_timestamp
+        weights(orderBy: weight_normalized, orderDirection: desc) {
+          weight_normalized
+          asset {
+            token {
+              id
+            }
+          }
+        }
       }
     }
   }
@@ -5433,6 +5631,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'Activities',
+        'query'
+      )
+    },
+    FundCard(
+      variables: FundCardQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<FundCardQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<FundCardQuery>(FundCardDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'FundCard',
         'query'
       )
     },

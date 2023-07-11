@@ -748,6 +748,7 @@ export type Candle_OrderBy =
 export type Chain = {
   __typename?: 'Chain'
   id: Scalars['ID']['output']
+  pool_count: Scalars['Int']['output']
 }
 
 export type Chain_Filter = {
@@ -761,9 +762,17 @@ export type Chain_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  pool_count?: InputMaybe<Scalars['Int']['input']>
+  pool_count_gt?: InputMaybe<Scalars['Int']['input']>
+  pool_count_gte?: InputMaybe<Scalars['Int']['input']>
+  pool_count_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  pool_count_lt?: InputMaybe<Scalars['Int']['input']>
+  pool_count_lte?: InputMaybe<Scalars['Int']['input']>
+  pool_count_not?: InputMaybe<Scalars['Int']['input']>
+  pool_count_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
 }
 
-export type Chain_OrderBy = 'id'
+export type Chain_OrderBy = 'id' | 'pool_count'
 
 /**
  * If someone delegates their votes to someone else, this links both sides
@@ -1442,7 +1451,7 @@ export type Investor_OrderBy =
   | 'wallet'
 
 /**
- * Helper object to keep track of the AUM fee that goes to Kassandra
+ * General data about the whole Kassandra
  *
  */
 export type Kassandra = {
@@ -1476,7 +1485,7 @@ export type Kassandra = {
 }
 
 /**
- * Helper object to keep track of the AUM fee that goes to Kassandra
+ * General data about the whole Kassandra
  *
  */
 export type KassandraFeesArgs = {
@@ -1488,7 +1497,7 @@ export type KassandraFeesArgs = {
 }
 
 /**
- * Helper object to keep track of the AUM fee that goes to Kassandra
+ * General data about the whole Kassandra
  *
  */
 export type KassandraVolumesArgs = {
