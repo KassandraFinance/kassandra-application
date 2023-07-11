@@ -5,15 +5,13 @@ export enum PoolType {
   FARM,
   LP
 }
-export enum LpPoolType {
+export enum lpPoolType {
   AVAX,
   BALANCER
 }
 
 export type LpPoolProps = {
-  type: LpPoolType
-  address: string
-  chainId: number
+  type: lpPoolType
   balancerPoolId?: string
 }
 
@@ -23,6 +21,7 @@ export interface PoolDetails {
   symbol: string
   stakingContract: string
   poolPriceAddress: string
+  // tokenAddressInPoolForPrice
   chain: {
     id: number
     logo: string
@@ -40,7 +39,6 @@ export interface PoolDetails {
   stakeWithVotingPower: boolean
   stakeWithLockPeriod: boolean
   address: string
-  isLP: boolean
   lpPool?: LpPoolProps
 }
 
@@ -90,8 +88,7 @@ const kacyInvestor1: PoolDetails = {
   },
   stakeWithVotingPower: true,
   stakeWithLockPeriod: true,
-  address: KACY_ADDRESS,
-  isLP: false
+  address: KACY_ADDRESS
 }
 
 const kacyInvestor2: PoolDetails = {
@@ -112,8 +109,7 @@ const kacyInvestor2: PoolDetails = {
   },
   stakeWithVotingPower: true,
   stakeWithLockPeriod: true,
-  address: KACY_ADDRESS,
-  isLP: false
+  address: KACY_ADDRESS
 }
 
 const kacy1x: PoolDetails = {
@@ -135,8 +131,7 @@ const kacy1x: PoolDetails = {
   },
   stakeWithVotingPower: true,
   stakeWithLockPeriod: false,
-  address: KACY_ADDRESS,
-  isLP: false
+  address: KACY_ADDRESS
 }
 
 const kacy2x: PoolDetails = {
@@ -158,8 +153,7 @@ const kacy2x: PoolDetails = {
   },
   stakeWithVotingPower: true,
   stakeWithLockPeriod: false,
-  address: KACY_ADDRESS,
-  isLP: false
+  address: KACY_ADDRESS
 }
 
 const kacy3x: PoolDetails = {
@@ -181,8 +175,7 @@ const kacy3x: PoolDetails = {
   },
   stakeWithVotingPower: true,
   stakeWithLockPeriod: false,
-  address: KACY_ADDRESS,
-  isLP: false
+  address: KACY_ADDRESS
 }
 
 const lpPNG: PoolDetails = {
@@ -206,11 +199,8 @@ const lpPNG: PoolDetails = {
   stakeWithVotingPower: false,
   stakeWithLockPeriod: false,
   address: LP_KACY_AVAX_PNG,
-  isLP: true,
   lpPool: {
-    type: LpPoolType.AVAX,
-    address: LP_KACY_AVAX_PNG,
-    chainId: 43114
+    type: lpPoolType.AVAX
   }
 }
 
@@ -235,11 +225,8 @@ const lpJoe: PoolDetails = {
   stakeWithVotingPower: false,
   stakeWithLockPeriod: false,
   address: LP_KACY_AVAX_JOE,
-  isLP: true,
   lpPool: {
-    type: LpPoolType.AVAX,
-    address: LP_KACY_AVAX_JOE,
-    chainId: 43114
+    type: lpPoolType.AVAX
   }
 }
 
@@ -263,8 +250,7 @@ const ahype: PoolDetails = {
   },
   stakeWithVotingPower: false,
   stakeWithLockPeriod: false,
-  address: AHYPE_ADDRESS,
-  isLP: false
+  address: AHYPE_ADDRESS
 }
 
 const tricrypto: PoolDetails = {
@@ -287,8 +273,7 @@ const tricrypto: PoolDetails = {
   },
   stakeWithVotingPower: false,
   stakeWithLockPeriod: false,
-  address: TRICRYPTO_ADDRESS,
-  isLP: false
+  address: TRICRYPTO_ADDRESS
 }
 
 const phype: PoolDetails = {
@@ -311,8 +296,7 @@ const phype: PoolDetails = {
   },
   stakeWithVotingPower: false,
   stakeWithLockPeriod: false,
-  address: PHYPE.address,
-  isLP: false
+  address: PHYPE.address
 }
 
 const lpBalancer: PoolDetails = {
@@ -336,15 +320,21 @@ const lpBalancer: PoolDetails = {
   stakeWithVotingPower: false,
   stakeWithLockPeriod: false,
   address: KACY_WETH,
-  isLP: true,
   lpPool: {
-    type: LpPoolType.BALANCER,
-    address: KACY_WETH,
-    chainId: 137,
+    type: lpPoolType.BALANCER,
     balancerPoolId:
       '0xfaf3bc722d34146be83a2aac40b43148a51a9126000200000000000000000b4c'
   }
 }
+
+// addresses list to get price on the stake page
+export const addressesForReqStakePool = [KacyPoligon]
+export const addressesForReqLpPool = [WETH_POLYGON, KacyPoligon, WAVAX_POLYGON]
+export const addressesForReqFarmPool = [
+  PHYPE.id,
+  TRICRYPTO_ADDRESS,
+  AHYPE_ADDRESS
+]
 
 export const poolsKacy = [kacy1x, kacy2x, kacy3x]
 export const poolsInvestor = [kacyInvestor1, kacyInvestor2]

@@ -75,9 +75,8 @@ const StakeFarm = () => {
           />
         </S.StakeFarmHeader>
 
-        {isSelectTab === 'farm' && <Farm />}
-
         {isSelectTab === 'stake' && <Stake />}
+        {isSelectTab === 'farm' && <Farm />}
       </S.StakeFarm>
     </>
   )

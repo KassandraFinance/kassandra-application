@@ -1,31 +1,35 @@
 import React from 'react'
+import Big from 'big.js'
+import useSWR from 'swr'
+import request from 'graphql-request'
 
+import {
+  BACKEND_KASSANDRA,
+  KacyPoligon,
+  networks
+} from '@/constants/tokenAddresses'
+import { GET_INFO_POOL } from './graphql'
+import {
+  PoolType,
+  addressesForReqFarmPool,
+  addressesForReqLpPool,
+  poolsFunds
+} from '@/constants/pools'
+
+import useCoingecko from '@/hooks/useCoingecko'
+import usePriceLP from '@/hooks/usePriceLPEthers'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
 import StakeCard from '@/components/StakeCard'
 
-import {
-  AHYPE_ADDRESS,
-  PHYPE,
-  PoolType,
-  TRICRYPTO_ADDRESS,
-  WAVAX_POLYGON,
-  poolsFunds
-} from '@/constants/pools'
-
 import * as S from './styles'
-import {
-  BACKEND_KASSANDRA,
-  KacyPoligon,
-  WETH_POLYGON,
-  networks
-} from '@/constants/tokenAddresses'
-import useCoingecko from '@/hooks/useCoingecko'
-import Big from 'big.js'
-import { GET_INFO_POOL } from '../graphql'
-import request from 'graphql-request'
-import useSWR from 'swr'
-import usePriceLP from '@/hooks/usePriceLPEthers'
+
+interface IDataFarmPriceProps {
+  pools: {
+    price_usd: string
+    address: string
+  }[]
+}
 
 const Farm = () => {
   const [poolPrice, setPoolPrice] = React.useState<Record<string, Big>>({})
@@ -34,40 +38,45 @@ const Farm = () => {
   const { priceToken } = useCoingecko(
     networkChain.chainId,
     networkChain.nativeCurrency.address,
-    [WETH_POLYGON, KacyPoligon, WAVAX_POLYGON]
+    addressesForReqLpPool
   )
-  const { trackCategoryPageView } = useMatomoEcommerce()
   const { getPricePoolLP } = usePriceLP(137)
+  const { trackCategoryPageView } = useMatomoEcommerce()
 
-  const poolFarmsAddresses = [PHYPE.id, TRICRYPTO_ADDRESS, AHYPE_ADDRESS]
-  const { data } = useSWR(
-    [GET_INFO_POOL, poolFarmsAddresses],
+  const { data } = useSWR<IDataFarmPriceProps>(
+    [GET_INFO_POOL, addressesForReqFarmPool],
     (query, addresses) => request(BACKEND_KASSANDRA, query, { addresses })
   )
 
   const kacyPrice = priceToken(KacyPoligon.toLowerCase())
 
   async function getPoolsPrices() {
-    if (!data || Big(kacyPrice ?? 0).lte(0)) return
+    if (!data || Big(kacyPrice).lte(0)) return
 
     const poolPriceList = {}
-    for (const [i, pool] of poolsFunds.entries()) {
+    for (const pool of poolsFunds) {
       switch (pool.type) {
         case PoolType.FARM:
           Object.assign(poolPriceList, {
             [pool.poolPriceAddress]:
               data?.pools?.find(
-                (token: any) => token.address === pool.poolPriceAddress
+                token => token.address === pool.poolPriceAddress
               )?.price_usd ?? '0'
           })
           break
 
         case PoolType.LP:
           Object.assign(poolPriceList, {
-            [pool.poolPriceAddress]: await getPricePoolLP(
-              Big(priceToken(pool?.poolPriceAddress.toLowerCase()) ?? '0'),
-              pool?.lpPool
-            )
+            [pool.poolPriceAddress]: await getPricePoolLP({
+              lpType: pool.lpPool?.type,
+              chainId: pool.chain.id,
+              poolAddress: pool.address,
+              tokenPoolAddress: pool.poolPriceAddress,
+              balancerPoolId: pool.lpPool?.balancerPoolId,
+              tokenPoolPrice: Big(
+                priceToken(pool?.poolPriceAddress.toLowerCase())
+              )
+            })
           })
           break
       }
@@ -94,7 +103,7 @@ const Farm = () => {
           <StakeCard
             key={pool.pid}
             pool={pool}
-            kacyPrice={Big(kacyPrice ?? 0)}
+            kacyPrice={Big(kacyPrice)}
             poolPrice={Big(poolPrice[pool?.poolPriceAddress] ?? 0)}
           />
         )
