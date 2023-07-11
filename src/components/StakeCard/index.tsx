@@ -1,60 +1,40 @@
 import React from 'react'
+import Big from 'big.js'
 import Link from 'next/link'
 import Image from 'next/image'
-
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
-import Big from 'big.js'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
-import { networks } from '@/constants/tokenAddresses'
 import { PoolDetails } from '@/constants/pools'
+import { networks } from '@/constants/tokenAddresses'
 
 import { getDate } from '@/utils/date'
 import { handleCalcAPR } from './utils'
-
-import { ERC20 } from '@/hooks/useERC20'
-import useTransaction from '@/hooks/useTransaction'
-import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
-import useStaking from '@/hooks/useStaking'
-
 import { BNtoDecimal } from '@/utils/numerals'
 
+import { ERC20 } from '@/hooks/useERC20'
+import useStaking from '@/hooks/useStaking'
+import useTransaction from '@/hooks/useTransaction'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
+
 import Button from '../Button'
-import ModalRequestUnstake from '../Modals/ModalRequestUnstake'
-import ModalCancelUnstake from '../Modals/ModalCancelUnstake'
-import ModalStakeAndWithdraw from '../Modals/ModalStakeAndWithdraw'
 import TokenWithNetworkImage from '../TokenWithNetworkImage'
+import ModalCancelUnstake from '../Modals/ModalCancelUnstake'
+import ModalRequestUnstake from '../Modals/ModalRequestUnstake'
+import ModalStakeAndWithdraw from '../Modals/ModalStakeAndWithdraw'
 import ModalBuyKacyOnPangolin from '../Modals/ModalBuyKacyOnPangolin'
 import Loading from '../Loading'
 
 import Details from './Details'
 import YourStake from './YourStake'
-import WithdrawDate from './WithdrawDate'
 import KacyEarned from './KacyEarned'
+import WithdrawDate from './WithdrawDate'
 
-import infoCyanIcon from '@assets/notificationStatus/info.svg'
 import tooltip from '@assets/utilities/tooltip.svg'
+import infoCyanIcon from '@assets/notificationStatus/info.svg'
 
 import * as S from './styles'
-
-export interface IInfoStaked {
-  yourStake: Big
-  withdrawable: boolean
-  votingMultiplier: string
-  startDate: string
-  endDate: string
-  kacyRewards: Big
-  yourDailyKacyReward: Big
-  withdrawDelay: any
-  totalStaked: Big
-  hasExpired: boolean
-  unstake: boolean
-  apr: Big
-  stakingToken: string
-  vestingPeriod: string
-  lockPeriod: string
-}
 
 interface IStakingProps {
   pool: PoolDetails
@@ -67,7 +47,7 @@ interface IPoolInfoProps {
   startDate: string
   endDate: string
   kacyRewards: Big
-  withdrawDelay: any
+  withdrawDelay: number
   totalStaked: Big
   hasExpired: boolean
   apr: Big
@@ -97,7 +77,6 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
     React.useState<boolean>(false)
   const [isModalRequestUnstake, setIsModalRequestUnstake] =
     React.useState<boolean>(false)
-  //
   const [amountApproveKacyStaking, setAmountApproveKacyStaking] =
     React.useState<Big>(Big(0))
   const [stakeTransaction, setStakeTransaction] = React.useState<string>('')
@@ -117,7 +96,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
     startDate: '...',
     endDate: '...',
     kacyRewards: Big(-1),
-    withdrawDelay: '...',
+    withdrawDelay: -1,
     totalStaked: Big(-1),
     hasExpired: false,
     apr: Big(-1),
@@ -174,7 +153,6 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
     )
   }
 
-  console.log('TEST')
   async function updateAllowance() {
     const erc20 = await ERC20(poolInfo.stakingToken, networkChain.rpc)
 
@@ -249,22 +227,22 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
       hasExpired: periodFinish < timestampNow,
       vestingPeriod: poolInfoRes.vestingPeriod,
       votingMultiplier: poolInfoRes.votingMultiplier.toString(),
-      withdrawDelay: poolInfoRes.withdrawDelay.toString()
+      withdrawDelay: Number(poolInfoRes.withdrawDelay)
     })
   }, [wallet, poolPrice, kacyPrice])
 
-  // USER ABOUT INFO POOL
   const getUserInfoAboutPool = React.useCallback(async () => {
     if (!wallet) return
 
-    const promise = []
-    promise.push(staking.availableWithdraw(pid, wallet?.accounts[0].address))
-    promise.push(staking.lockUntil(pid, wallet?.accounts[0].address))
-    promise.push(staking.userInfo(pid, wallet?.accounts[0].address))
-    promise.push(staking.balance(pid, wallet?.accounts[0].address))
-    promise.push(staking.withdrawable(pid, wallet?.accounts[0].address))
-    promise.push(staking.unstaking(pid, wallet?.accounts[0].address))
-    promise.push(staking.earned(pid, wallet?.accounts[0].address))
+    const promise = [
+      staking.availableWithdraw(pid, wallet?.accounts[0].address),
+      staking.lockUntil(pid, wallet?.accounts[0].address),
+      staking.userInfo(pid, wallet?.accounts[0].address),
+      staking.balance(pid, wallet?.accounts[0].address),
+      staking.withdrawable(pid, wallet?.accounts[0].address),
+      staking.unstaking(pid, wallet?.accounts[0].address),
+      staking.earned(pid, wallet?.accounts[0].address)
+    ]
 
     const result = await Promise.all(promise)
 
@@ -371,7 +349,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                   <h3>Withdraw delay</h3>
                   <S.Days>
                     <p>
-                      {poolInfo.withdrawDelay.length === 0
+                      {poolInfo.withdrawDelay === -1
                         ? '...'
                         : poolInfo.withdrawDelay / 60 / 60 / 24 < 1
                         ? poolInfo.withdrawDelay / 60
@@ -458,6 +436,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               size="huge"
                               backgroundSecondary
                               fullWidth
+                              image="/assets/icons/rebalance.svg"
                               disabledNoEvent={settingChain}
                               onClick={() =>
                                 setChain({
@@ -468,7 +447,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               }
                             />
                           ) : stakeWithLockPeriod ? null : poolInfo.withdrawDelay !==
-                              '0' && userAboutPool.withdrawable ? (
+                              0 && userAboutPool.withdrawable ? (
                             <Button
                               type="button"
                               text={`Stake ${symbol}`}
@@ -484,20 +463,17 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               size="huge"
                               backgroundSecondary
                               fullWidth
-                              onClick={() => {
-                                openStakeAndWithdraw('staking')
-                              }}
+                              onClick={() => openStakeAndWithdraw('staking')}
                             />
                           )}
-                          {stakeWithLockPeriod ||
-                          (userAboutPool.yourStake.toString() !== '0' &&
-                            userAboutPool.withdrawable) ? (
+                          {userAboutPool.withdrawable ? (
                             <Button
                               type="button"
                               text="Withdraw"
                               size="huge"
                               backgroundBlack
                               disabledNoEvent={
+                                userAboutPool.yourStake.lte(0) ||
                                 (stakeWithLockPeriod &&
                                   userAboutPool.currentAvailableWithdraw.lte(
                                     0
@@ -506,9 +482,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                                   Number(wallet?.chains[0].id)
                               }
                               fullWidth
-                              onClick={() => {
-                                openStakeAndWithdraw('unstaking')
-                              }}
+                              onClick={() => openStakeAndWithdraw('unstaking')}
                             />
                           ) : (
                             <Button
@@ -517,7 +491,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               size="huge"
                               backgroundBlack
                               disabledNoEvent={
-                                userAboutPool.yourStake.toString() === '0' ||
+                                userAboutPool.yourStake.lte(0) ||
                                 networkChain.chainId !==
                                   Number(wallet?.chains[0].id)
                               }
@@ -597,7 +571,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
           stakingToken={poolInfo.stakingToken}
           openStakeAndWithdraw={openStakeAndWithdraw}
           isStaking={
-            poolInfo.withdrawDelay !== '0' && userAboutPool.withdrawable
+            poolInfo.withdrawDelay === -1 && userAboutPool.withdrawable
           }
         />
       )}

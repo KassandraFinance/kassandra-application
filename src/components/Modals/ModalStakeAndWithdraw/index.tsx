@@ -166,13 +166,7 @@ const ModalStakeAndWithdraw = ({
   }
 
   async function handleEventProductPageView() {
-    const erc20 = await ERC20(stakingToken, networkChain.rpc)
-
-    const track = async () => {
-      const tokenName = await erc20.name()
-      trackProductPageView(productSKU, tokenName, productCategories)
-    }
-    track()
+    trackProductPageView(productSKU, pool.symbol, productCategories)
   }
 
   React.useEffect(() => {

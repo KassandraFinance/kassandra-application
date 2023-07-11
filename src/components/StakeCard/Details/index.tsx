@@ -18,7 +18,7 @@ interface IPoolInfoProps {
   startDate: string
   endDate: string
   kacyRewards: Big
-  withdrawDelay: any
+  withdrawDelay: number
   totalStaked: Big
   hasExpired: boolean
   apr: Big
