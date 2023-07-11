@@ -31,6 +31,7 @@ interface IModalStakeProps {
   updateAllowance: () => Promise<void>
   handleApprove: () => Promise<void>
 }
+const porcentageButtonArray = [25, 50, 75, 100]
 
 const ModalStakeAndWithdraw = ({
   pool,
@@ -86,10 +87,15 @@ const ModalStakeAndWithdraw = ({
     setIsAmount(true)
   }
 
-  async function handleConfirm() {
-    const erc20 = await ERC20(stakingToken, networkChain.rpc)
+  function handleMultiplier(percentage: number) {
+    if (percentage === multiplier) {
+      setMultiplier(0)
+      handleKacyAmount(Big(0))
+    }
 
-    const tokenName = await erc20.name()
+    setMultiplier(percentage)
+    handleKacyAmount(Big(percentage))
+  }
 
     if (stakeTransaction === 'staking') {
       const toDelegate = await staking.userInfo(
@@ -237,71 +243,22 @@ const ModalStakeAndWithdraw = ({
               />
               <h5>Balance: {BNtoDecimal(balance.div(Big(10).pow(18)), 18)}</h5>
             </S.Amount>
+
             <S.ButtonContainer>
-              <button
+              {porcentageButtonArray.map(number => {
+                return (
+                  <S.PorcentageButton
+                    key={number}
                 type="button"
-                style={{
-                  background: multiplier === 25 ? '#fff' : 'transparent',
-                  color: multiplier === 25 ? '#000' : '#fff'
-                }}
-                onClick={() => {
-                  multiplier === 25 ? setMultiplier(0) : setMultiplier(25)
-                  multiplier === 25
-                    ? handleKacyAmount(Big(0))
-                    : handleKacyAmount(Big(25))
-                }}
+                    isActive={multiplier === number}
+                    onClick={() => handleMultiplier(number)}
               >
-                25%
-              </button>
-
-              <button
-                type="button"
-                style={{
-                  background: multiplier === 50 ? '#fff' : 'transparent',
-                  color: multiplier === 50 ? '#000' : '#fff'
-                }}
-                onClick={() => {
-                  multiplier === 50 ? setMultiplier(0) : setMultiplier(50)
-                  multiplier === 50
-                    ? handleKacyAmount(Big(0))
-                    : handleKacyAmount(Big(50))
-                }}
-              >
-                50%
-              </button>
-
-              <button
-                type="button"
-                style={{
-                  background: multiplier === 75 ? '#fff' : 'transparent',
-                  color: multiplier === 75 ? '#000' : '#fff'
-                }}
-                onClick={() => {
-                  multiplier === 75 ? setMultiplier(0) : setMultiplier(75)
-                  multiplier === 75
-                    ? handleKacyAmount(Big(0))
-                    : handleKacyAmount(Big(75))
-                }}
-              >
-                75%
-              </button>
-
-              <button
-                type="button"
-                style={{
-                  background: multiplier === 100 ? '#fff' : 'transparent',
-                  color: multiplier === 100 ? '#000' : '#fff'
-                }}
-                onClick={() => {
-                  multiplier === 100 ? setMultiplier(0) : setMultiplier(100)
-                  multiplier === 100
-                    ? handleKacyAmount(Big(0))
-                    : handleKacyAmount(Big(100))
-                }}
-              >
-                max
-              </button>
+                    {number}%
+                  </S.PorcentageButton>
+                )
+              })}
             </S.ButtonContainer>
+
             <S.WrapperButton>
               {amountApproved.lt(amountStake.toString()) &&
               stakeTransaction === 'staking' ? (

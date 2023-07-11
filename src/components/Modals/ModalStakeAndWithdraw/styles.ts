@@ -1,13 +1,7 @@
 import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
 
-interface IBorderGradientProps {
-  stakeInKacy: boolean
-  unstaking: string
-}
-
-// prettier-ignore
-export const BorderGradient = styled.div<IBorderGradientProps>`
+export const BorderGradient = styled.div`
   position: fixed;
   top: 50%;
   left: 50%;
@@ -130,20 +124,26 @@ export const ButtonContainer = styled.div`
 
   width: 100%;
   margin: 2rem 0 2.4rem;
+`
 
-  button {
+interface IPorcentageButtonProps {
+  isActive: boolean
+}
+
+export const PorcentageButton = styled.button<IPorcentageButtonProps>`
+  ${({ isActive, theme }) => css`
     width: 5.6rem;
     padding: 0.3rem;
     border: 0.1rem solid ${theme.colors.snow};
     border-radius: 0.3rem;
 
-    color: #fff;
+    color: ${isActive ? '#000' : theme.colors.white};
     font-weight: ${theme.font.weight.normal};
     font-size: ${theme.font.sizes.font12};
     line-height: 1.2rem;
     text-transform: uppercase;
 
-    background: transparent;
+    background: ${isActive ? theme.colors.white : 'transparent'};
 
     cursor: pointer;
 
@@ -154,13 +154,7 @@ export const ButtonContainer = styled.div`
 
       background: ${theme.colors.snow};
     }
-
-    &:active {
-      color: #000;
-
-      background: ${theme.colors.snow};
-    }
-  }
+  `}
 `
 
 export const WrapperButton = styled.div`
