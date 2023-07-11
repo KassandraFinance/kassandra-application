@@ -3,7 +3,9 @@ import theme from '../../../styles/theme'
 
 import * as ButtonStyles from '../../Button/styles'
 
-export const ModalCancelUnstake = styled.div``
+export const ModalCancelUnstake = styled.div`
+  position: absolute;
+`
 
 export const ModalContent = styled.div`
   display: flex;

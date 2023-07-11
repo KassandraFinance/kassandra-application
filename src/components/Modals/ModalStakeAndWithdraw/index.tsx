@@ -1,7 +1,7 @@
 import React from 'react'
 import Big from 'big.js'
 import Link from 'next/link'
-import { PoolDetails } from '@/constants/pools'
+import { PoolDetails, PoolType } from '@/constants/pools'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal } from '@/utils/numerals'
@@ -24,13 +24,21 @@ interface IModalStakeProps {
   decimals: string
   amountApproved: Big
   stakingToken: string
-  stakeTransaction: string
   productCategories: string | string[]
-  setStakeTransaction: React.Dispatch<React.SetStateAction<string>>
+  stakeTransaction: typeTransaction
+  setStakeTransaction: React.Dispatch<React.SetStateAction<typeTransaction>>
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   updateAllowance: () => Promise<void>
   handleApprove: () => Promise<void>
+  getUserInfoAboutPool: () => Promise<void>
 }
+
+export enum typeTransaction {
+  NONE,
+  STAKING,
+  UNSTAKING
+}
+
 const porcentageButtonArray = [25, 50, 75, 100]
 
 const ModalStakeAndWithdraw = ({
@@ -43,7 +51,8 @@ const ModalStakeAndWithdraw = ({
   setStakeTransaction,
   amountApproved,
   updateAllowance,
-  handleApprove
+  handleApprove,
+  getUserInfoAboutPool
 }: IModalStakeProps) => {
   const [isAmount, setIsAmount] = React.useState<boolean>(false)
   const [balance, setBalance] = React.useState<Big>(Big(0))
@@ -97,70 +106,82 @@ const ModalStakeAndWithdraw = ({
     handleKacyAmount(Big(percentage))
   }
 
-    if (stakeTransaction === 'staking') {
-      const toDelegate = await staking.userInfo(
-        pool.pid,
-        wallet?.accounts[0].address
-      )
-      const delegate =
-        toDelegate.delegatee === '0x0000000000000000000000000000000000000000'
-          ? wallet?.accounts[0].address
-          : toDelegate.delegatee
+  async function handleStaking() {
+    const toDelegate = await staking.userInfo(
+      pool.pid,
+      wallet?.accounts[0].address
+    )
+    const delegate =
+      toDelegate.delegatee === '0x0000000000000000000000000000000000000000'
+        ? wallet?.accounts[0].address
+        : toDelegate.delegatee
 
-      trackBuying(
-        productSKU,
-        tokenName,
-        amountStake.div(Big(10).pow(18)).toNumber(),
-        productCategories
-      )
+    trackBuying(
+      productSKU,
+      pool.symbol,
+      amountStake.div(Big(10).pow(18)).toNumber(),
+      productCategories
+    )
 
-      await staking.stake(
-        pool.pid,
-        amountStake.toFixed(0),
-        delegate,
-        {
-          pending: `Confirming stake of ${pool.symbol}...`,
-          sucess: `Stake of ${pool.symbol} confirmed`
+    await staking.stake(
+      pool.pid,
+      amountStake.toFixed(0),
+      delegate,
+      {
+        pending: `Confirming stake of ${pool.symbol}...`,
+        sucess: `Stake of ${pool.symbol} confirmed`
+      },
+      {
+        onSuccess: () => {
+          getUserInfoAboutPool()
+          trackBought(productSKU, 0, 0)
         },
-        {
-          onSuccess: () => trackBought(productSKU, 0, 0),
-          onFail: () => trackCancelBuying()
-        }
-      )
+        onFail: () => trackCancelBuying()
+      }
+    )
 
-      await updateAllowance()
-    } else if (stakeTransaction === 'unstaking') {
-      const productSKU = `${Staking}_${pool.pid}`
+    await updateAllowance()
+  }
 
-      trackBuying(
-        productSKU,
-        tokenName,
-        -Big(amountStake.toString()).div(Big(10).pow(18)).toNumber(),
-        productCategories
-      )
+  async function handleUnstaking() {
+    const productSKU = `${Staking}_${pool.pid}`
 
-      staking.withdraw(
-        pool.pid,
-        amountStake.toFixed(0),
-        {
-          pending: `Confirming unstake of ${pool.symbol}...`,
-          sucess: `Unstake of ${pool.symbol} completed`
-        },
-        {
-          onSuccess: () => trackBought(productSKU, 0, 0),
-          onFail: () => trackCancelBuying()
-        }
-      )
+    trackBuying(
+      productSKU,
+      pool.symbol,
+      -Big(amountStake.toString()).div(Big(10).pow(18)).toNumber(),
+      productCategories
+    )
+
+    staking.withdraw(
+      pool.pid,
+      amountStake.toFixed(0),
+      {
+        pending: `Confirming unstake of ${pool.symbol}...`,
+        sucess: `Unstake of ${pool.symbol} completed`
+      },
+      {
+        onSuccess: () => trackBought(productSKU, 0, 0),
+        onFail: () => trackCancelBuying()
+      }
+    )
+  }
+
+  async function handleConfirm() {
+    if (stakeTransaction === typeTransaction.STAKING) {
+      handleStaking()
+    } else if (stakeTransaction === typeTransaction.UNSTAKING) {
+      handleUnstaking()
     }
   }
 
   async function getBalance() {
-    if (wallet?.provider && stakeTransaction === 'staking') {
+    if (wallet?.provider && stakeTransaction === typeTransaction.STAKING) {
       const erc20 = await ERC20(stakingToken, networkChain.rpc)
 
       const balanceKacy = await erc20.balance(wallet?.accounts[0].address)
       setBalance(Big(balanceKacy))
-    } else if (stakeTransaction === 'unstaking') {
+    } else if (stakeTransaction === typeTransaction.UNSTAKING) {
       if (wallet?.provider) {
         const balance = await staking.availableWithdraw(
           pool.pid,
@@ -193,15 +214,15 @@ const ModalStakeAndWithdraw = ({
   }, [])
 
   React.useEffect(() => {
-    if (stakeTransaction === 'staking') {
+    if (stakeTransaction === typeTransaction.STAKING) {
       handleEventProductPageView()
     }
   }, [stakingToken])
 
   let title: string
-  if (stakeTransaction === 'staking') {
+  if (stakeTransaction === typeTransaction.STAKING) {
     title = 'Stake in Pool'
-  } else if (stakeTransaction === 'unstaking') {
+  } else if (stakeTransaction === typeTransaction.UNSTAKING) {
     title = 'Withdraw'
   } else {
     title = 'Transaction not defined'
@@ -212,14 +233,11 @@ const ModalStakeAndWithdraw = ({
       <Overlay
         onClick={() => {
           setModalOpen(false)
-          setStakeTransaction('')
+          setStakeTransaction(typeTransaction.NONE)
         }}
       />
 
-      <S.BorderGradient
-        stakeInKacy={pool.symbol === 'KACY'}
-        unstaking={stakeTransaction}
-      >
+      <S.BorderGradient>
         <S.BackgroundBlack>
           <S.InterBackground>
             <span>{title}</span>
@@ -227,7 +245,7 @@ const ModalStakeAndWithdraw = ({
               type="button"
               onClick={() => {
                 setModalOpen(false)
-                setStakeTransaction('')
+                setStakeTransaction(typeTransaction.NONE)
               }}
             >
               <img src="assets/utilities/close-icon.svg" alt="Close" />
@@ -249,10 +267,10 @@ const ModalStakeAndWithdraw = ({
                 return (
                   <S.PorcentageButton
                     key={number}
-                type="button"
+                    type="button"
                     isActive={multiplier === number}
                     onClick={() => handleMultiplier(number)}
-              >
+                  >
                     {number}%
                   </S.PorcentageButton>
                 )
@@ -261,7 +279,7 @@ const ModalStakeAndWithdraw = ({
 
             <S.WrapperButton>
               {amountApproved.lt(amountStake.toString()) &&
-              stakeTransaction === 'staking' ? (
+              stakeTransaction === typeTransaction.STAKING ? (
                 <Button
                   type="button"
                   text="Approve Contract"
@@ -283,13 +301,13 @@ const ModalStakeAndWithdraw = ({
                     setModalOpen(false)
                     handleConfirm()
                     setAmountStake(Big(0))
-                    setStakeTransaction('')
+                    setStakeTransaction(typeTransaction.NONE)
                   }}
                 />
               )}
             </S.WrapperButton>
 
-            {pool.symbol === 'KACY' ? (
+            {pool.type === PoolType.STAKE ? (
               <Button
                 backgroundBlack
                 fullWidth
@@ -309,8 +327,8 @@ const ModalStakeAndWithdraw = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
+                    setStakeTransaction(typeTransaction.NONE)
                     setModalOpen(false)
-                    setStakeTransaction('')
                   }}
                 />
               </Link>

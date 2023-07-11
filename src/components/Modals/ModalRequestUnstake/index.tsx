@@ -51,6 +51,26 @@ const ModalRequestUnstake = ({
     }
   }
 
+  function handleUnstake() {
+    staking.unstake(
+      pool.pid,
+      {
+        pending: `Confirming request for unstaking of ${pool.symbol}...`,
+        sucess: `Request for unstaking of ${pool.symbol} confirmed`
+      },
+      {
+        onSuccess: () =>
+          trackEventFunction(
+            'click-on-request-unstaking',
+            `${pool.symbol}`,
+            'modal-staking'
+          )
+      }
+    )
+
+    setModalOpen(false)
+  }
+
   React.useEffect(() => {
     if (modalOpen) {
       getWithdrawDelay()
@@ -112,24 +132,7 @@ const ModalRequestUnstake = ({
               as="button"
               text="Yes"
               backgroundSecondary
-              onClick={() => {
-                staking.unstake(
-                  pool.pid,
-                  {
-                    pending: `Confirming request for unstaking of ${pool.symbol}...`,
-                    sucess: `Request for unstaking of ${pool.symbol} confirmed`
-                  },
-                  {
-                    onSuccess: () =>
-                      trackEventFunction(
-                        'click-on-request-unstaking',
-                        `${pool.symbol}`,
-                        'modal-staking'
-                      )
-                  }
-                )
-                setModalOpen(false)
-              }}
+              onClick={() => handleUnstake()}
             />
           </S.ButtonContainer>
         </S.ModalContent>

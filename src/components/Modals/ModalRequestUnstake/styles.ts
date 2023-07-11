@@ -3,7 +3,9 @@ import theme from '../../../styles/theme'
 
 import * as ButtonStyles from '../../Button/styles'
 
-export const ModalRequestUnstake = styled.div``
+export const ModalRequestUnstake = styled.div`
+  position: absolute;
+`
 
 export const ModalContent = styled.div`
   display: flex;

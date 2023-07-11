@@ -12,11 +12,16 @@ import Modal from '../Modal'
 
 import * as S from './styles'
 
+export enum typeTransaction {
+  NONE,
+  STAKING,
+  UNSTAKING
+}
 interface IModalRequestUnstakeProps {
   pool: PoolDetails
   isStaking: boolean
   stakingToken: string
-  openStakeAndWithdraw: (transaction: 'staking' | 'unstaking') => void
+  openStakeAndWithdraw: (transaction: typeTransaction) => void
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -35,7 +40,7 @@ const ModalCancelUnstake = ({
 
   function handleCancelUnstake() {
     if (isStaking) {
-      openStakeAndWithdraw('staking')
+      openStakeAndWithdraw(typeTransaction.STAKING)
     } else {
       staking.cancelUnstake(
         pool.pid,

@@ -22,9 +22,11 @@ import Button from '../Button'
 import TokenWithNetworkImage from '../TokenWithNetworkImage'
 import ModalCancelUnstake from '../Modals/ModalCancelUnstake'
 import ModalRequestUnstake from '../Modals/ModalRequestUnstake'
-import ModalStakeAndWithdraw from '../Modals/ModalStakeAndWithdraw'
 import ModalBuyKacyOnPangolin from '../Modals/ModalBuyKacyOnPangolin'
 import Loading from '../Loading'
+import ModalStakeAndWithdraw, {
+  typeTransaction
+} from '../Modals/ModalStakeAndWithdraw'
 
 import Details from './Details'
 import YourStake from './YourStake'
@@ -79,7 +81,8 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
     React.useState<boolean>(false)
   const [amountApproveKacyStaking, setAmountApproveKacyStaking] =
     React.useState<Big>(Big(0))
-  const [stakeTransaction, setStakeTransaction] = React.useState<string>('')
+  const [stakeTransaction, setStakeTransaction] =
+    React.useState<typeTransaction>(typeTransaction.NONE)
   const [userAboutPool, setUserAboutPool] = React.useState<IUserAboutPoolProps>(
     {
       currentAvailableWithdraw: Big(-1),
@@ -134,7 +137,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
   const transaction = useTransaction()
   const staking = useStaking(stakingContract, networkChain.chainId)
 
-  function openStakeAndWithdraw(transaction: 'staking' | 'unstaking') {
+  function openStakeAndWithdraw(transaction: typeTransaction) {
     setIsModalStake(true)
     setStakeTransaction(transaction)
   }
@@ -463,7 +466,9 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               size="huge"
                               backgroundSecondary
                               fullWidth
-                              onClick={() => openStakeAndWithdraw('staking')}
+                              onClick={() =>
+                                openStakeAndWithdraw(typeTransaction.STAKING)
+                              }
                             />
                           )}
                           {userAboutPool.withdrawable ? (
@@ -482,7 +487,9 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                                   Number(wallet?.chains[0].id)
                               }
                               fullWidth
-                              onClick={() => openStakeAndWithdraw('unstaking')}
+                              onClick={() =>
+                                openStakeAndWithdraw(typeTransaction.UNSTAKING)
+                              }
                             />
                           ) : (
                             <Button
@@ -562,6 +569,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
           amountApproved={amountApproveKacyStaking}
           handleApprove={handleApproveKacy}
           updateAllowance={updateAllowance}
+          getUserInfoAboutPool={getUserInfoAboutPool}
         />
       )}
       {isModalCancelUnstake && (
