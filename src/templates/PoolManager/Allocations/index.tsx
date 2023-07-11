@@ -6,10 +6,10 @@ import useSWR from 'swr'
 
 import { GET_TOKENS_POOL } from './graphql'
 import { BACKEND_KASSANDRA, mockTokens } from '@/constants/tokenAddresses'
+import { UnderlyingAssetsInfoType } from '@/utils/updateAssetsToV2'
 
 import { useTokensData } from '@/hooks/query/useTokensData'
-import usePoolAssets from '@/hooks/usePoolAssets'
-import { underlyingAssetsInfo } from '@/store/reducers/pool'
+import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 
 import { getDateDiff } from '@/utils/date'
 
@@ -78,7 +78,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolAssets } = usePoolAssets(poolId)
+  const { data: poolAssets } = usePoolAssets({ id: poolId })
   const { data } = useSWR<IAllocationProps>(
     [GET_TOKENS_POOL, poolId],
     (query, poolId) =>
@@ -116,7 +116,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     return Big(value).mul(100).toFixed(2, 2)
   }
 
-  function handleCurrentAllocationInfo(poolAssets: underlyingAssetsInfo[]) {
+  function handleCurrentAllocationInfo(poolAssets: UnderlyingAssetsInfoType[]) {
     const tokenList = poolAssets.map(item => {
       return {
         token: {
@@ -166,7 +166,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     name: string,
     price: string,
     weightGoals: IWeightGoalsProps[],
-    poolAssets: underlyingAssetsInfo[]
+    poolAssets: UnderlyingAssetsInfoType[]
   ) {
     const targetWeights = weightGoals[0]
     const previousWeights = weightGoals[1]
@@ -211,7 +211,11 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
 
     const tokenList = poolAssets && handleCurrentAllocationInfo(poolAssets)
 
-    setlistTokenWeights(tokenList ?? [])
+    if (!tokenList) {
+      return
+    }
+
+    setlistTokenWeights(tokenList)
   }, [data])
 
   React.useEffect(() => {
@@ -233,6 +237,10 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
       data.pool.weight_goals,
       poolAssets
     )
+
+    if (!rebalanceWeights) {
+      return
+    }
 
     setRebalanceWeights(rebalanceWeights)
   }, [data])

@@ -4768,6 +4768,21 @@ export type ManagerDepositsQuery = {
   } | null
 }
 
+export type ManagerPoolsQueryVariables = Exact<{
+  manager?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type ManagerPoolsQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    name: string
+    logo?: string | null
+    chain?: { __typename?: 'Chain'; logo?: string | null } | null
+  }>
+}
+
 export type ManagerTvmChartQueryVariables = Exact<{
   manager: Scalars['ID']['input']
   timestamp?: InputMaybe<Scalars['Int']['input']>
@@ -4807,6 +4822,63 @@ export type ManagerWithdrawsQuery = {
       __typename?: 'Volume'
       volume_usd: any
       timestamp: number
+    }>
+  } | null
+}
+
+export type PoolAssetsQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type PoolAssetsQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    pool_version: number
+    underlying_assets: Array<{
+      __typename?: 'Asset'
+      balance: any
+      weight_normalized: any
+      weight_goal_normalized: any
+      token: {
+        __typename?: 'Token'
+        id: string
+        name?: string | null
+        logo?: string | null
+        symbol?: string | null
+        decimals?: number | null
+        price_usd: any
+        is_wrap_token: number
+        wraps?: {
+          __typename?: 'Token'
+          id: string
+          decimals?: number | null
+          price_usd: any
+          symbol?: string | null
+          name?: string | null
+          logo?: string | null
+        } | null
+      }
+    }>
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      start_timestamp: number
+      end_timestamp: number
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        weight_normalized: any
+        asset: {
+          __typename?: 'Asset'
+          token: {
+            __typename?: 'Token'
+            id: string
+            name?: string | null
+            symbol?: string | null
+            decimals?: number | null
+            price_usd: any
+          }
+        }
+      }>
     }>
   } | null
 }
@@ -5262,6 +5334,18 @@ export const ManagerDepositsDocument = gql`
     }
   }
 `
+export const ManagerPoolsDocument = gql`
+  query ManagerPools($manager: String) {
+    pools(where: { manager: $manager }) {
+      id
+      name
+      logo
+      chain {
+        logo
+      }
+    }
+  }
+`
 export const ManagerTvmChartDocument = gql`
   query ManagerTVMChart($manager: ID!, $timestamp: Int) {
     manager(id: $manager) {
@@ -5292,6 +5376,51 @@ export const ManagerWithdrawsDocument = gql`
       ) {
         volume_usd
         timestamp
+      }
+    }
+  }
+`
+export const PoolAssetsDocument = gql`
+  query PoolAssets($id: ID!) {
+    pool(id: $id) {
+      pool_version
+      underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
+        balance
+        weight_normalized
+        weight_goal_normalized
+        token {
+          id
+          name
+          logo
+          symbol
+          decimals
+          price_usd
+          is_wrap_token
+          wraps {
+            id
+            decimals
+            price_usd
+            symbol
+            name
+            logo
+          }
+        }
+      }
+      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 2) {
+        start_timestamp
+        end_timestamp
+        weights(orderBy: weight_normalized, orderDirection: desc) {
+          asset {
+            token {
+              id
+              name
+              symbol
+              decimals
+              price_usd
+            }
+          }
+          weight_normalized
+        }
       }
     }
   }
@@ -5678,6 +5807,20 @@ export function getSdk(
         'query'
       )
     },
+    ManagerPools(
+      variables?: ManagerPoolsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ManagerPoolsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ManagerPoolsQuery>(ManagerPoolsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'ManagerPools',
+        'query'
+      )
+    },
     ManagerTVMChart(
       variables: ManagerTvmChartQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
@@ -5720,6 +5863,20 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'ManagerWithdraws',
+        'query'
+      )
+    },
+    PoolAssets(
+      variables: PoolAssetsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolAssetsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolAssetsQuery>(PoolAssetsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'PoolAssets',
         'query'
       )
     },

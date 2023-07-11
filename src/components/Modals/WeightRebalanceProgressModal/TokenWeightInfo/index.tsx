@@ -3,11 +3,14 @@ import Link from 'next/link'
 
 import * as S from './styles'
 
-import { ITokenProps } from '..'
-
 interface ITokenWeightInfoProps {
   token: {
-    token: Omit<ITokenProps, 'decimals'>
+    token: {
+      address: string
+      logo: string
+      name: string | null | undefined
+      symbol: string | null | undefined
+    }
     previous: string
     current: string
     final: string
@@ -15,7 +18,6 @@ interface ITokenWeightInfoProps {
 }
 
 const TokenWeightInfo = ({ token }: ITokenWeightInfoProps) => {
-  // eslint-disable-next-line prettier/prettier
   const [isOpenTokenInfoMobile, setIsOpenTokenInfoMobile] =
     React.useState(false)
 

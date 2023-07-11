@@ -15,7 +15,7 @@ import { GET_POOL_REBALANCE_TIME, GET_POOL_PRICE } from './graphql'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import usePoolInfo from '@/hooks/usePoolInfo'
-import usePoolAssets from '@/hooks/usePoolAssets'
+import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 import { useAppDispatch } from '@/store/hooks'
 import { useCountdown } from '@/hooks/useCountDown'
 import { setPerformanceValues } from '@/store/reducers/performanceValues'
@@ -119,7 +119,7 @@ const PoolManager = () => {
   const [{ settingChain }, setChain] = useSetChain()
 
   const { poolInfo, isManager } = usePoolInfo(wallet, poolId)
-  const { poolAssets } = usePoolAssets(poolId)
+  const { data: poolAssets } = usePoolAssets({ id: poolId })
   const { data } = useSWR([GET_POOL_REBALANCE_TIME, poolId], (query, poolId) =>
     request(BACKEND_KASSANDRA, query, { id: poolId })
   )

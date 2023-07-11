@@ -15,7 +15,7 @@ import {
   setTotalWeight
 } from '@/store/reducers/rebalanceAssetsSlice'
 import usePoolInfo from '@/hooks/usePoolInfo'
-import usePoolAssets from '@/hooks/usePoolAssets'
+import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 
 import ExecutionPeriod from './ExecutionPeriod'
 import Steps from '../../../../components/Steps'
@@ -34,7 +34,7 @@ const SetNewWeights = () => {
   const dispatch = useAppDispatch()
   const { newTokensWights } = useAppSelector(state => state.rebalanceAssets)
   const [{ wallet }] = useConnectWallet()
-  const { poolAssets } = usePoolAssets(poolId)
+  const { data: poolAssets } = usePoolAssets({ id: poolId })
   const { poolInfo } = usePoolInfo(wallet, poolId)
 
   const { data } = useTokensData({
@@ -67,11 +67,11 @@ const SetNewWeights = () => {
         currentAmount: Big(item.balance),
         currentWeight: Big(Number(item.weight_normalized) * 100 ?? 0),
         token: {
-          decimals: item.token.decimals,
+          decimals: item.token?.decimals || 18,
           address: item.token.id,
-          logo: item.token.logo,
-          name: item.token.name,
-          symbol: item.token.symbol
+          logo: item.token?.logo || '',
+          name: item.token?.name || '',
+          symbol: item.token?.symbol || ''
         }
       }
     })

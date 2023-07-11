@@ -8,7 +8,7 @@ import { ERC20 } from '../../../hooks/useERC20'
 import useManagePoolController from '@/hooks/useManagePoolController'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
-import usePoolAssets from '@/hooks/usePoolAssets'
+import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 import usePoolInfo from '@/hooks/usePoolInfo'
 import useTransaction from '@/hooks/useTransaction'
 import { useTokensData } from '@/hooks/query/useTokensData'
@@ -92,7 +92,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolAssets } = usePoolAssets(poolId)
+  const { data: poolAssets } = usePoolAssets({ id: poolId })
   const { poolInfo } = usePoolInfo(wallet, poolId)
   const managePool = useManagePoolController(
     poolInfo?.controller ?? '',

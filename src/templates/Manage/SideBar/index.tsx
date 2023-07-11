@@ -4,9 +4,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
-import useManagerPools from '@/hooks/useManagerPools'
+import { useManagerPools } from '@/hooks/query/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
   setToFirstStep,
@@ -81,9 +80,9 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
   const dispatch = useAppDispatch()
 
-  const { managerPools } = useManagerPools(
-    wallet?.provider ? getAddress(wallet?.accounts[0].address) : ''
-  )
+  const { data: managerPools } = useManagerPools({
+    manager: wallet?.accounts[0].address
+  })
 
   function handleCreatePool() {
     if (poolCreattionChainId === 0 && stepNumber > 0) {
@@ -366,7 +365,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
       <S.Line isOpen={isOpen} />
 
       <S.SideBarBody>
-        {wallet?.provider && managerPools && managerPools.pools.length > 0 ? (
+        {wallet?.provider && managerPools && managerPools.length > 0 ? (
           <>
             <SideBarLink
               name="Overview"
@@ -412,22 +411,20 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
         )}
         <S.SideBarContainer>
           <S.ButtonWrapper isOpen={isOpen}>
-            {wallet?.provider &&
-              managerPools &&
-              managerPools.pools.length > 0 && (
-                <Button
-                  text="Create New Pool"
-                  backgroundSecondary
-                  fullWidth
-                  type="button"
-                  icon={
-                    <S.PlusIconWrapper>
-                      <Image src={plusIcon} width={12} height={12} />
-                    </S.PlusIconWrapper>
-                  }
-                  onClick={handleCreatePool}
-                />
-              )}
+            {wallet?.provider && managerPools && managerPools.length > 0 && (
+              <Button
+                text="Create New Pool"
+                backgroundSecondary
+                fullWidth
+                type="button"
+                icon={
+                  <S.PlusIconWrapper>
+                    <Image src={plusIcon} width={12} height={12} />
+                  </S.PlusIconWrapper>
+                }
+                onClick={handleCreatePool}
+              />
+            )}
           </S.ButtonWrapper>
         </S.SideBarContainer>
       </S.SideBarBody>

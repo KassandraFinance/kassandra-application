@@ -2,7 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import useManagerPools from '@/hooks/useManagerPools'
+import { useManagerPools } from '@/hooks/query/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
   setToFirstStep,
@@ -37,7 +37,9 @@ const ManagedFunds = () => {
   const isPoolOwner =
     wallet?.accounts[0].address === profileWalletAddress.toLowerCase()
 
-  const { managerPools } = useManagerPools(profileWalletAddress)
+  const { data: managerPools } = useManagerPools({
+    manager: profileWalletAddress
+  })
 
   function handleCreatePool() {
     if (poolCreattionChainId === 0 && stepNumber > 0) {
@@ -51,9 +53,9 @@ const ManagedFunds = () => {
 
   return (
     <S.ManagedFunds>
-      {managerPools && managerPools.pools.length > 0 ? (
+      {managerPools && managerPools.length > 0 ? (
         <S.ManagedPoolsContainer>
-          {managerPools?.pools.map(pool => (
+          {managerPools?.map(pool => (
             <FundCard
               key={pool.id}
               poolAddress={pool.id}

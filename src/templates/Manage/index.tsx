@@ -1,9 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
-import useManagerPools from '@/hooks/useManagerPools'
+import { useManagerPools } from '@/hooks/query/useManagerPools'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
 
 import Overlay from '@/components/Overlay'
@@ -31,9 +30,9 @@ const Manage = () => {
     address: wallet?.accounts[0].address
   })
 
-  const { managerPools } = useManagerPools(
-    wallet?.provider ? getAddress(wallet?.accounts[0]?.address) : ''
-  )
+  const { data: managerPools } = useManagerPools({
+    manager: wallet?.accounts[0]?.address
+  })
 
   function handleDashBoardButton() {
     setIsOpen(!isOpen)
@@ -97,7 +96,7 @@ const Manage = () => {
 
         <S.Content>
           <Header />
-          {wallet?.provider && managerPools && managerPools.pools.length > 0 ? (
+          {wallet?.provider && managerPools && managerPools.length > 0 ? (
             <Overview />
           ) : (
             <GetStarted />

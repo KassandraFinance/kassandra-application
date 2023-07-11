@@ -15,7 +15,7 @@ import useGetToken from '@/hooks/useGetToken'
 import useERC20 from '@/hooks/useERC20'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import usePoolInfo from '@/hooks/usePoolInfo'
-import usePoolAssets from '@/hooks/usePoolAssets'
+import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 import useManagedPool from '@/hooks/useManagedPool'
 
 import Steps from '@/components/Steps'
@@ -35,7 +35,7 @@ const TokenRemoval = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolAssets } = usePoolAssets(poolId)
+  const { data: poolAssets } = usePoolAssets({ id: poolId })
   const [{ wallet }] = useConnectWallet()
   const { poolInfo } = usePoolInfo(wallet, poolId)
   const { balance } = useERC20(
@@ -103,10 +103,10 @@ const TokenRemoval = () => {
     const poolInfo = poolAssets.map(item => {
       return {
         address: item.token.id,
-        name: item.token.name,
-        symbol: item.token.symbol,
-        logo: item.token.logo,
-        decimals: item.token.decimals,
+        name: item.token?.name || '',
+        symbol: item.token?.symbol || '',
+        logo: item.token?.logo || '',
+        decimals: item.token?.decimals || 18,
         balance: item.balance,
         weight: item.weight_normalized ?? 0
       }
@@ -134,11 +134,11 @@ const TokenRemoval = () => {
           ? '0'
           : handleCalcNewWeight(currentWeight, tokenSelection.weight),
         token: {
-          decimals: item.token.decimals,
+          decimals: item.token?.decimals || 18,
           id: item.token.id,
-          logo: item.token.logo,
-          name: item.token.name,
-          symbol: item.token.symbol
+          logo: item.token?.logo || '',
+          name: item.token?.name || '',
+          symbol: item.token?.symbol || ''
         }
       }
     })
