@@ -42,8 +42,7 @@ export const ProxyContract =
 
 export const VERSION_POOL_CREATE = '1.0'
 
-// export const ProxyInvestV2 = '0x2CA2CF9624c4b0c5d87a3204780408cDA9EB9BfD' // Goerli
-// export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Goerli
+export const MIN_DOLLAR_TO_CREATE_POOL = 100
 
 export const ProxyInvestV2 = '0x77F18A3963796Dd252EbEF15C9eadfE229c7c89a' // Polygon
 export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Polygon
