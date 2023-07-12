@@ -100,7 +100,7 @@ export const Label = styled.label<InputWrapProps>`
     border: 1px solid rgb(252 252 252 / 0.3);
     border-radius: 8px;
 
-    color: ${theme.colors.grayDisabled};
+    color: ${checked ? theme.colors.snow : theme.colors.grayDisabled};
     font-size: ${theme.font.sizes.font12};
     line-height: ${theme.font.sizes.font14};
     letter-spacing: 0.12rem;

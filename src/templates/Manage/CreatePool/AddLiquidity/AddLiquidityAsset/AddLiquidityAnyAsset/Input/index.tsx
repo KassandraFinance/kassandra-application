@@ -8,6 +8,7 @@ import { getBalanceToken, decimalToBN } from '@/utils/poolUtils'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import { useDebounce } from '@/hooks/useDebounce'
 import { TokenSelectProps } from '@/store/reducers/poolCreationSlice'
+import { useAppSelector } from '@/store/hooks'
 
 import TokenSelected from '@/templates/Pool/NewPoolOperations/Form/TokenSelected'
 
@@ -49,7 +50,10 @@ const Input = ({
   errorMsg = ''
 }: InputProps) => {
   const [{ wallet }] = useConnectWallet()
-  const chainId = Number(wallet?.chains[0].id ?? '0x89')
+  const networkId = useAppSelector(
+    state => state.poolCreation.createPoolData.networkId
+  )
+  const chainId = Number(networkId ?? 137)
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { value } = e.target
