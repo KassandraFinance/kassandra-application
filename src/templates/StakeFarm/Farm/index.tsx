@@ -34,7 +34,8 @@ interface IDataFarmPriceProps {
 const Farm = () => {
   const [poolPrice, setPoolPrice] = React.useState<Record<string, Big>>({})
 
-  const networkChain = networks[137]
+  const polygonChainId = 137 // choose chain to get token price
+  const networkChain = networks[polygonChainId]
   const { priceToken } = useCoingecko(
     networkChain.chainId,
     networkChain.nativeCurrency.address,
@@ -58,23 +59,23 @@ const Farm = () => {
       switch (pool.type) {
         case PoolType.FARM:
           Object.assign(poolPriceList, {
-            [pool.poolPriceAddress]:
+            [pool.poolTokenAddress]:
               data?.pools?.find(
-                token => token.address === pool.poolPriceAddress
+                token => token.address === pool.poolTokenAddress
               )?.price_usd ?? '0'
           })
           break
 
         case PoolType.LP:
           Object.assign(poolPriceList, {
-            [pool.poolPriceAddress]: await getPricePoolLP({
+            [pool.poolTokenAddress]: await getPricePoolLP({
               lpType: pool.lpPool?.type,
               chainId: pool.chain.id,
               poolAddress: pool.address,
-              tokenPoolAddress: pool.poolPriceAddress,
+              tokenPoolAddress: pool.poolTokenAddress,
               balancerPoolId: pool.lpPool?.balancerPoolId,
               tokenPoolPrice: Big(
-                priceToken(pool?.poolPriceAddress.toLowerCase())
+                priceToken(pool?.poolTokenAddress.toLowerCase())
               )
             })
           })
@@ -104,7 +105,7 @@ const Farm = () => {
             key={pool.pid}
             pool={pool}
             kacyPrice={Big(kacyPrice)}
-            poolPrice={Big(poolPrice[pool?.poolPriceAddress] ?? 0)}
+            poolPrice={Big(poolPrice[pool?.poolTokenAddress] ?? 0)}
           />
         )
       })}

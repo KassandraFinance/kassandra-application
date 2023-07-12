@@ -20,8 +20,7 @@ export interface PoolDetails {
   type: PoolType
   symbol: string
   stakingContract: string
-  poolPriceAddress: string
-  // tokenAddressInPoolForPrice
+  poolTokenAddress: string
   chain: {
     id: number
     logo: string
@@ -74,7 +73,7 @@ const kacyInvestor1: PoolDetails = {
   type: PoolType.STAKE,
   symbol: 'KACY',
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
-  poolPriceAddress: KacyPoligon,
+  poolTokenAddress: KACY_ADDRESS,
   chain: {
     id: 43114,
     logo: '/assets/logos/avax.png'
@@ -96,7 +95,7 @@ const kacyInvestor2: PoolDetails = {
   type: PoolType.STAKE,
   symbol: 'KACY',
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
-  poolPriceAddress: KacyPoligon,
+  poolTokenAddress: KACY_ADDRESS,
   chain: {
     id: 43114,
     logo: '/assets/logos/avax.png'
@@ -117,7 +116,7 @@ const kacy1x: PoolDetails = {
   symbol: 'KACY',
   type: PoolType.STAKE,
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
-  poolPriceAddress: KacyPoligon,
+  poolTokenAddress: KACY_ADDRESS,
   chain: {
     id: 43114,
     logo: '/assets/logos/avax.png'
@@ -139,7 +138,7 @@ const kacy2x: PoolDetails = {
   type: PoolType.STAKE,
   symbol: 'KACY',
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
-  poolPriceAddress: KacyPoligon,
+  poolTokenAddress: KACY_ADDRESS,
   chain: {
     id: 43114,
     logo: '/assets/logos/avax.png'
@@ -161,7 +160,7 @@ const kacy3x: PoolDetails = {
   type: PoolType.STAKE,
   symbol: 'KACY',
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
-  poolPriceAddress: KacyPoligon,
+  poolTokenAddress: KACY_ADDRESS,
   chain: {
     id: 43114,
     logo: '/assets/logos/avax.png'
@@ -183,7 +182,7 @@ const lpPNG: PoolDetails = {
   type: PoolType.LP,
   symbol: 'LP-PNG',
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
-  poolPriceAddress: WAVAX_POLYGON,
+  poolTokenAddress: WAVAX_POLYGON,
   chain: {
     id: 43114,
     logo: '/assets/logos/avax.png'
@@ -209,7 +208,7 @@ const lpJoe: PoolDetails = {
   type: PoolType.LP,
   symbol: 'LP-JOE',
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
-  poolPriceAddress: WAVAX_POLYGON,
+  poolTokenAddress: WAVAX_POLYGON,
   chain: {
     id: 43114,
     logo: '/assets/logos/avax.png'
@@ -235,7 +234,7 @@ const ahype: PoolDetails = {
   type: PoolType.FARM,
   symbol: 'aHYPE',
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
-  poolPriceAddress: AHYPE_ADDRESS,
+  poolTokenAddress: AHYPE_ADDRESS,
   chain: {
     id: 43114,
     logo: '/assets/logos/avax.png'
@@ -258,7 +257,7 @@ const tricrypto: PoolDetails = {
   type: PoolType.FARM,
   symbol: 'K3C',
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
-  poolPriceAddress: TRICRYPTO_ADDRESS,
+  poolTokenAddress: TRICRYPTO_ADDRESS,
   chain: {
     id: 43114,
     logo: '/assets/logos/avax.png'
@@ -281,7 +280,7 @@ const phype: PoolDetails = {
   type: PoolType.FARM,
   symbol: 'pHYPE',
   stakingContract: '0xd530f3ce79c9eb03e59dce89a7504dd41d4899bb',
-  poolPriceAddress: PHYPE.address,
+  poolTokenAddress: PHYPE.address,
   chain: {
     id: 137,
     logo: '/assets/logos/polygon.svg'
@@ -304,7 +303,7 @@ const lpBalancer: PoolDetails = {
   type: PoolType.LP,
   symbol: 'KACY-WETH',
   stakingContract: '0xd530f3ce79c9eb03e59dce89a7504dd41d4899bb',
-  poolPriceAddress: WETH_POLYGON,
+  poolTokenAddress: WETH_POLYGON,
   chain: {
     id: 137,
     logo: '/assets/logos/polygon.svg'
