@@ -2,15 +2,14 @@ import React, { ReactElement } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import Tippy from '@tippyjs/react'
 import { BNtoDecimal } from '../../utils/numerals'
 import Big from 'big.js'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
-import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
-import { GET_POOL_REBALANCE_TIME, GET_POOL_PRICE } from './graphql'
+import { networks } from '@/constants/tokenAddresses'
+import { usePoolPrice } from '@/hooks/query/usePoolPrice'
+import { usePoolRebalanceTime } from '@/hooks/query/usePoolRebalanceTime'
 
 import { useUserProfile } from '@/hooks/query/useUserProfile'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
@@ -123,14 +122,12 @@ const PoolManager = () => {
     id: poolId
   })
   const { data: poolAssets } = usePoolAssets({ id: poolId })
-  const { data } = useSWR([GET_POOL_REBALANCE_TIME, poolId], (query, poolId) =>
-    request(BACKEND_KASSANDRA, query, { id: poolId })
-  )
+  const { data } = usePoolRebalanceTime({ id: poolId })
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 
   const currentTime = new Date().getTime()
-  const endRebalanceTime = data?.pool?.weight_goals[0].end_timestamp * 1000
+  const endRebalanceTime = data ? data * 1000 : 0
 
   const { dateFormated } = useCountdown(endRebalanceTime)
 
@@ -161,16 +158,14 @@ const PoolManager = () => {
     }
   }
 
-  const { data: change } = useSWR([GET_POOL_PRICE], query =>
-    request(BACKEND_KASSANDRA, query, {
-      id: poolId,
-      day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-      week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
-      month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-      quarterly: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 90),
-      year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365)
-    })
-  )
+  const { data: change } = usePoolPrice({
+    id: poolId,
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+    week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    quarterly: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 90),
+    year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365)
+  })
 
   const { data: userProfile } = useUserProfile({
     address: wallet?.accounts[0].address
@@ -196,27 +191,18 @@ const PoolManager = () => {
   }, [router])
 
   React.useEffect(() => {
-    if (change?.pool) {
-      const changeDay = calcChange(
-        change.pool.now[0].close,
-        change.pool.day[0]?.close
-      )
-      const changeWeek = calcChange(
-        change.pool.now[0].close,
-        change.pool.week[0]?.close
-      )
+    if (change) {
+      const changeDay = calcChange(change.now[0].close, change.day[0]?.close)
+      const changeWeek = calcChange(change.now[0].close, change.week[0]?.close)
       const changeMonth = calcChange(
-        change.pool.now[0].close,
-        change.pool.month[0]?.close
+        change.now[0].close,
+        change.month[0]?.close
       )
       const changeQuarterly = calcChange(
-        change.pool.now[0].close,
-        change.pool.quarterly[0]?.close
+        change.now[0].close,
+        change.quarterly[0]?.close
       )
-      const changeYear = calcChange(
-        change.pool.now[0].close,
-        change.pool.year[0]?.close
-      )
+      const changeYear = calcChange(change.now[0].close, change.year[0]?.close)
 
       dispatch(
         setPerformanceValues({

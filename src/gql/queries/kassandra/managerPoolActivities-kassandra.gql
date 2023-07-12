@@ -1,11 +1,9 @@
-import { gql } from 'graphql-request'
-
-export const GET_ACTIVITIES = gql`
-  query ($id: ID!, $first: Int!, $skip: Int!, $options: [String!]!) {
+query ManagerPoolActivities($id: ID!, $first: Int!, $skip: Int!, $options: [String!]!) {
     pool(id: $id) {
       name
       symbol
       logo
+      num_activities
       manager {
         id
       }
@@ -80,4 +78,3 @@ export const GET_ACTIVITIES = gql`
       }
     }
   }
-`
