@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_TOKENS_POOL = gql`
-  query ($id: ID!) {
+ query TokensPool($id: ID!) {
     pool(id: $id) {
       name
       symbol
@@ -38,4 +35,3 @@ export const GET_TOKENS_POOL = gql`
       }
     }
   }
-`

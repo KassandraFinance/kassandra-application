@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_ALLOCATION_POOL = gql`
-  query ($id: ID!, $skip: Int) {
+query PoolAllocation($id: ID!, $skip: Int) {
     pool(id: $id) {
       num_token_add
       num_token_remove
@@ -51,4 +48,3 @@ export const GET_ALLOCATION_POOL = gql`
       }
     }
   }
-`

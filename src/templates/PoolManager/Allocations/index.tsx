@@ -1,15 +1,13 @@
 import Big from 'big.js'
 import React from 'react'
-import request from 'graphql-request'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
 
-import { GET_TOKENS_POOL } from './graphql'
-import { BACKEND_KASSANDRA, mockTokens } from '@/constants/tokenAddresses'
+import { mockTokens } from '@/constants/tokenAddresses'
 import { UnderlyingAssetsInfoType } from '@/utils/updateAssetsToV2'
 
 import { useTokensData } from '@/hooks/query/useTokensData'
 import { usePoolAssets } from '@/hooks/query/usePoolAssets'
+import { useTokensPool } from '@/hooks/query/useTokensPool'
 
 import { getDateDiff } from '@/utils/date'
 
@@ -24,40 +22,33 @@ import IntroReview, {
 import * as S from './styles'
 
 type IWeightGoalsProps = {
+  __typename?: 'WeightGoalPoint' | undefined
   id: string
-  type: 'add' | 'rebalance' | 'removed'
+  type: string
   end_timestamp: number
   start_timestamp: number
-  token: {
-    symbol: string
-    logo: string
-    price_usd: string
-  }
+  token?:
+    | {
+        __typename?: 'Token' | undefined
+        symbol?: string | null | undefined
+        logo?: string | null | undefined
+        price_usd: any
+      }
+    | null
+    | undefined
   weights: {
-    weight_normalized: string
+    __typename?: 'WeightGoal' | undefined
+    weight_normalized: any
     asset: {
-      balance: string
+      __typename?: 'Asset' | undefined
+      balance: any
       token: {
-        symbol: string
-        logo: string
+        __typename?: 'Token' | undefined
+        symbol?: string | null | undefined
+        logo?: string | null | undefined
       }
     }
   }[]
-}
-
-interface IAllocationProps {
-  pool: {
-    logo: string
-    name: string
-    symbol: string
-    price_usd: string
-    chain_id: number
-    weight_goals: IWeightGoalsProps[]
-    chain: {
-      blockExplorerUrl: string
-      addressWrapped: string
-    }
-  }
 }
 
 interface IAllocationsProps {
@@ -79,31 +70,24 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     : router.query.pool ?? ''
 
   const { data: poolAssets } = usePoolAssets({ id: poolId })
-  const { data } = useSWR<IAllocationProps>(
-    [GET_TOKENS_POOL, poolId],
-    (query, poolId) =>
-      request(BACKEND_KASSANDRA, query, {
-        id: poolId
-      })
-  )
+  const { data } = useTokensPool({ id: poolId })
 
   const { data: tokensInfo } = useTokensData({
-    chainId: data?.pool.chain_id || 137,
+    chainId: data?.chain_id || 137,
     tokenAddresses: handleMockToken(poolAssets ?? [])
   })
 
   const poolInfo = {
-    name: data?.pool.name ?? '',
-    symbol: data?.pool.symbol ?? '',
-    logo: data?.pool?.logo ?? '',
-    blockExplorerUrl: data?.pool?.chain?.blockExplorerUrl ?? ''
+    name: data?.name ?? '',
+    symbol: data?.symbol ?? '',
+    logo: data?.logo ?? '',
+    blockExplorerUrl: data?.chain?.blockExplorerUrl ?? ''
   }
   const isRebalancing =
-    (data?.pool?.weight_goals[0].end_timestamp ?? 0) * 1000 >
-    new Date().getTime()
+    (data?.weight_goals[0].end_timestamp ?? 0) * 1000 > new Date().getTime()
 
   function handleMockToken(tokenList: any) {
-    if (data?.pool.chain_id === 5) {
+    if (data?.chain_id === 5) {
       return tokenList?.map((item: any) => {
         return mockTokens[item.token.id]
       })
@@ -222,7 +206,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     if (!data) return
 
     const rebalancingTimeProgress = handleRebalancingTimeProgress(
-      data.pool.weight_goals
+      data?.weight_goals
     )
 
     setRebalancingProgress(rebalancingTimeProgress)
@@ -232,9 +216,9 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     if (!data || !poolAssets) return
 
     const rebalanceWeights = handleRebalanceWeights(
-      data.pool.name,
-      Big(data.pool.price_usd).toFixed(2, 2),
-      data.pool.weight_goals,
+      data.name,
+      Big(data.price_usd).toFixed(2, 2),
+      data.weight_goals,
       poolAssets
     )
 
@@ -253,13 +237,13 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
         rebalanceWeights={rebalanceWeights}
         countDownDate={countDownDate}
         coingeckoData={tokensInfo ?? {}}
-        chainId={data?.pool.chain_id ?? 137}
+        chainId={data?.chain_id ?? 137}
       />
       <AllocationTable
         allocationData={listTokenWeights}
         isRebalance={isRebalancing}
         coingeckoData={tokensInfo ?? {}}
-        chainId={data?.pool.chain_id ?? 137}
+        chainId={data?.chain_id ?? 137}
       />
       <AllocationHistory poolInfo={poolInfo} />
     </S.Allocations>

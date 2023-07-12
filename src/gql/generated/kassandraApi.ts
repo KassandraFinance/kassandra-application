@@ -4947,6 +4947,62 @@ export type ManagerWithdrawsQuery = {
   } | null
 }
 
+export type PoolAllocationQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  skip?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type PoolAllocationQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    num_token_add: number
+    num_token_remove: number
+    num_weight_goals: number
+    num_join: any
+    num_exit: any
+    manager: { __typename?: 'Manager'; id: string }
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      id: string
+      type: string
+      end_timestamp: number
+      start_timestamp: number
+      txHash: string
+      previous?: {
+        __typename?: 'WeightGoalPoint'
+        weights: Array<{
+          __typename?: 'WeightGoal'
+          weight_normalized: any
+          asset: {
+            __typename?: 'Asset'
+            token: { __typename?: 'Token'; symbol?: string | null }
+          }
+        }>
+      } | null
+      token?: {
+        __typename?: 'Token'
+        symbol?: string | null
+        logo?: string | null
+        price_usd: any
+      } | null
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        weight_normalized: any
+        asset: {
+          __typename?: 'Asset'
+          balance: any
+          token: {
+            __typename?: 'Token'
+            symbol?: string | null
+            logo?: string | null
+          }
+        }
+      }>
+    }>
+  } | null
+}
+
 export type PoolAssetsQueryVariables = Exact<{
   id: Scalars['ID']['input']
 }>
@@ -5212,6 +5268,56 @@ export type TokensQuery = {
     name?: string | null
     symbol?: string | null
   } | null>
+}
+
+export type TokensPoolQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type TokensPoolQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    name: string
+    symbol: string
+    logo?: string | null
+    price_usd: any
+    chain_id: number
+    num_token_add: number
+    num_token_remove: number
+    num_weight_goals: number
+    chain?: {
+      __typename?: 'Chain'
+      blockExplorerUrl?: string | null
+      addressWrapped?: string | null
+    } | null
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      id: string
+      type: string
+      end_timestamp: number
+      start_timestamp: number
+      token?: {
+        __typename?: 'Token'
+        symbol?: string | null
+        logo?: string | null
+        price_usd: any
+      } | null
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        weight_normalized: any
+        asset: {
+          __typename?: 'Asset'
+          balance: any
+          token: {
+            __typename?: 'Token'
+            symbol?: string | null
+            logo?: string | null
+          }
+        }
+      }>
+    }>
+  } | null
 }
 
 export type UserPoolDataQueryVariables = Exact<{
@@ -5636,6 +5742,58 @@ export const ManagerWithdrawsDocument = gql`
     }
   }
 `
+export const PoolAllocationDocument = gql`
+  query PoolAllocation($id: ID!, $skip: Int) {
+    pool(id: $id) {
+      num_token_add
+      num_token_remove
+      num_weight_goals
+      num_join
+      num_exit
+      manager {
+        id
+      }
+      weight_goals(
+        orderBy: end_timestamp
+        orderDirection: desc
+        first: 4
+        skip: $skip
+        where: { previous_not: null }
+      ) {
+        id
+        type
+        end_timestamp
+        start_timestamp
+        txHash
+        previous {
+          weights {
+            weight_normalized
+            asset {
+              token {
+                symbol
+              }
+            }
+          }
+        }
+        token {
+          symbol
+          logo
+          price_usd
+        }
+        weights {
+          weight_normalized
+          asset {
+            balance
+            token {
+              symbol
+              logo
+            }
+          }
+        }
+      }
+    }
+  }
+`
 export const PoolAssetsDocument = gql`
   query PoolAssets($id: ID!) {
     pool(id: $id) {
@@ -5918,6 +6076,45 @@ export const TokensDocument = gql`
     }
   }
 `
+export const TokensPoolDocument = gql`
+  query TokensPool($id: ID!) {
+    pool(id: $id) {
+      name
+      symbol
+      logo
+      price_usd
+      chain_id
+      num_token_add
+      num_token_remove
+      num_weight_goals
+      chain {
+        blockExplorerUrl
+        addressWrapped
+      }
+      weight_goals(orderBy: end_timestamp, orderDirection: desc) {
+        id
+        type
+        end_timestamp
+        start_timestamp
+        token {
+          symbol
+          logo
+          price_usd
+        }
+        weights {
+          weight_normalized
+          asset {
+            balance
+            token {
+              symbol
+              logo
+            }
+          }
+        }
+      }
+    }
+  }
+`
 export const UserPoolDataDocument = gql`
   query userPoolData($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
     pools(where: { id_in: $id }) {
@@ -6161,6 +6358,21 @@ export function getSdk(
         'query'
       )
     },
+    PoolAllocation(
+      variables: PoolAllocationQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolAllocationQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolAllocationQuery>(
+            PoolAllocationDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'PoolAllocation',
+        'query'
+      )
+    },
     PoolAssets(
       variables: PoolAssetsQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
@@ -6271,6 +6483,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'Tokens',
+        'query'
+      )
+    },
+    TokensPool(
+      variables: TokensPoolQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<TokensPoolQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<TokensPoolQuery>(TokensPoolDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'TokensPool',
         'query'
       )
     },
