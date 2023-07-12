@@ -7,11 +7,7 @@ import Big from 'big.js'
 import { networks } from '@/constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import {
-  TokenType,
-  setLiquidity,
-  setTxs
-} from '@/store/reducers/poolCreationSlice'
+import { TokenType, setLiquidity } from '@/store/reducers/poolCreationSlice'
 import useCoingecko from '@/hooks/useCoingecko'
 import { ParaSwap } from '@/services/ParaSwap'
 
@@ -150,7 +146,6 @@ const PoolReview = () => {
         })
       )
     }
-    dispatch(setTxs(amounts.transactionsDataTx))
     return amounts
   }
 
