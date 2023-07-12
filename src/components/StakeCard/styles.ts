@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes, css } from 'styled-components'
 import theme from '../../styles/theme'
 
 import * as ButtonStyles from '../Button/styles'
@@ -228,6 +228,10 @@ export const Claim = styled.div`
 `
 
 export const StakeContainer = styled.div`
+  .chnageChainButton {
+    padding: 0;
+  }
+
   ${ButtonStyles.Wrapper} {
     margin-bottom: 1.6rem;
   }
@@ -276,5 +280,37 @@ export const ButtonDetails = styled.button<IButtonDetailsProps>`
     margin-left: 0.8rem;
 
     transition-duration: 200ms;
+  }
+`
+
+interface ILoadingAnimationProps {
+  width?: number
+  height?: number
+}
+
+export const LoadingAnimation = styled.div<ILoadingAnimationProps>`
+  ${({ width = 4, height = 2 }) => css`
+    height: ${height}rem;
+    width: ${width}rem;
+
+    border-radius: 0.4rem;
+    background-color: #ffffff12;
+    background: linear-gradient(
+        100deg,
+        rgba(255, 255, 255, 0) 40%,
+        #ffffff20 50%,
+        rgba(255, 255, 255, 0) 60%
+      )
+      #ffffff12;
+    background-size: 200% 100%;
+    background-position-x: 180%;
+
+    animation: 1.2s ${skeletonScreenLoadingAni} ease infinite;
+  `}
+`
+
+const skeletonScreenLoadingAni = keyframes`
+  to {
+    background-position-x: -20%;
   }
 `
