@@ -12,6 +12,7 @@ import { registerToken } from '@/utils/registerToken'
 import ExternalLink from '../../ExternalLink'
 
 import * as S from './styles'
+import { LoadingAnimation } from '../styles'
 
 interface IPoolInfoProps {
   votingMultiplier: string
@@ -62,67 +63,83 @@ const Details = ({
       <S.ValuesKacy>
         <span>Total staked</span>
         <S.KacyUSD>
-          <span>
-            {poolInfo.totalStaked.lt(0)
-              ? '...'
-              : BNtoDecimal(poolInfo.totalStaked.div(Big(10).pow(18)), 18)}{' '}
-            {symbol}
-          </span>
-          <span className="usd">
-            &#8776;{' '}
-            {poolInfo.totalStaked.lt(0) || poolPrice.lt(0)
-              ? '...'
-              : BNtoDecimal(
-                  Big(`0${poolInfo.totalStaked}`)
-                    .mul(poolPrice)
-                    .div(Big(10).pow(18)),
-                  6,
-                  2,
-                  2
-                )}{' '}
-            USD
-          </span>
+          {poolInfo.totalStaked.lt(0) ? (
+            <LoadingAnimation width={7} />
+          ) : (
+            <span>
+              {BNtoDecimal(poolInfo.totalStaked.div(Big(10).pow(18)), 18)}
+              {symbol}
+            </span>
+          )}
+          {poolInfo.totalStaked.lt(0) || poolPrice.lt(0) ? (
+            <LoadingAnimation width={7} className="usd" />
+          ) : (
+            <span className="usd">
+              &#8776;{' '}
+              {BNtoDecimal(
+                Big(`0${poolInfo.totalStaked}`)
+                  .mul(poolPrice)
+                  .div(Big(10).pow(18)),
+                6,
+                2,
+                2
+              )}{' '}
+              USD
+            </span>
+          )}
         </S.KacyUSD>
       </S.ValuesKacy>
       <S.ValuesKacy>
         <span>Pool Reward</span>
         <S.KacyUSD>
-          <span>
-            {poolInfo.kacyRewards.lt(0)
-              ? '...'
-              : poolInfo.hasExpired
-              ? '0'
-              : BNtoDecimal(
-                  poolInfo.kacyRewards.div(Big(10).pow(18)),
-                  18,
-                  2,
-                  2
-                )}
-            /day
-          </span>
-          <span className="usd">
-            &#8776;{' '}
-            {poolInfo.kacyRewards.lt(0) || poolPrice.lt(0)
-              ? '...'
-              : poolInfo.hasExpired
-              ? '0'
-              : BNtoDecimal(
-                  poolInfo.kacyRewards.mul(kacyPrice).div(Big(10).pow(18)),
-                  6,
-                  2,
-                  2
-                )}{' '}
-            USD
-          </span>
+          {poolInfo.kacyRewards.lt(0) ? (
+            <LoadingAnimation width={7} />
+          ) : (
+            <span>
+              {poolInfo.hasExpired
+                ? '0'
+                : BNtoDecimal(
+                    poolInfo.kacyRewards.div(Big(10).pow(18)),
+                    18,
+                    2,
+                    2
+                  )}
+              /day
+            </span>
+          )}
+          {poolInfo.kacyRewards.lt(0) || poolPrice.lt(0) ? (
+            <LoadingAnimation width={7} className="usd" />
+          ) : (
+            <span className="usd">
+              &#8776;{' '}
+              {poolInfo.hasExpired
+                ? '0'
+                : BNtoDecimal(
+                    poolInfo.kacyRewards.mul(kacyPrice).div(Big(10).pow(18)),
+                    6,
+                    2,
+                    2
+                  )}{' '}
+              USD
+            </span>
+          )}
         </S.KacyUSD>
       </S.ValuesKacy>
       <S.Info>
         <span>Start date</span>
-        <span>{poolInfo.startDate}</span>
+        {poolInfo.startDate ? (
+          <span>{poolInfo.startDate}</span>
+        ) : (
+          <LoadingAnimation width={7} />
+        )}
       </S.Info>
       <S.Info>
         <span>Rewards Update</span>
-        <span>{poolInfo.endDate}</span>
+        {poolInfo.startDate ? (
+          <span>{poolInfo.endDate}</span>
+        ) : (
+          <LoadingAnimation width={7} />
+        )}
       </S.Info>
       <S.Info>
         <ExternalLink

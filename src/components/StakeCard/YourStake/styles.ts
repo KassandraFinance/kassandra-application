@@ -55,6 +55,10 @@ export const Stake = styled.div`
   font-weight: ${theme.font.weight.light};
   text-transform: uppercase;
 
+  .animationYourStake {
+    margin: 2.4rem 0 0;
+  }
+
   p {
     display: flex;
     margin: 2.4rem 0 0;

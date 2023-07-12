@@ -23,7 +23,6 @@ import TokenWithNetworkImage from '../TokenWithNetworkImage'
 import ModalCancelUnstake from '../Modals/ModalCancelUnstake'
 import ModalRequestUnstake from '../Modals/ModalRequestUnstake'
 import ModalBuyKacyOnPangolin from '../Modals/ModalBuyKacyOnPangolin'
-import Loading from '../Loading'
 import ModalStakeAndWithdraw, {
   typeTransaction
 } from '../Modals/ModalStakeAndWithdraw'
@@ -70,7 +69,6 @@ interface IUserAboutPoolProps {
 }
 
 const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
-  const [isLoading, setIsLoading] = React.useState<boolean>(true)
   const [isDetails, setIsDetails] = React.useState<boolean>(false)
   const [isModalStake, setIsModalStake] = React.useState<boolean>(false)
   const [isOpenModalPangolin, setIsOpenModalPangolin] =
@@ -88,24 +86,24 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
       currentAvailableWithdraw: Big(-1),
       delegateTo: '',
       lockPeriod: 0,
-      yourStake: Big(0),
+      yourStake: Big(-1),
       unstake: false,
       withdrawable: false,
-      kacyEarned: Big(0)
+      kacyEarned: Big(-1)
     }
   )
   const [poolInfo, setpoolInfo] = React.useState<IPoolInfoProps>({
-    votingMultiplier: '0',
-    startDate: '...',
-    endDate: '...',
+    votingMultiplier: '-1',
+    startDate: '',
+    endDate: '',
     kacyRewards: Big(-1),
     withdrawDelay: -1,
     totalStaked: Big(-1),
     hasExpired: false,
     apr: Big(-1),
-    stakingToken: '...',
-    vestingPeriod: '...',
-    lockPeriod: '...',
+    stakingToken: '',
+    vestingPeriod: '',
+    lockPeriod: '',
     tokenDecimals: '18'
   })
 
@@ -195,6 +193,8 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
   }
 
   const getInfoPool = React.useCallback(async () => {
+    if (poolPrice.lte(0) && poolPrice.lte(0)) return
+
     const poolInfoRes = await staking.poolInfo(pid)
     const erc20 = await ERC20(poolInfoRes.stakingToken, networkChain.rpc)
     const decimals = await erc20.decimals()
@@ -268,11 +268,6 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
   }, [getInfoPool])
 
   React.useEffect(() => {
-    if (poolInfo.apr.lt(0)) return
-    setIsLoading(false)
-  }, [poolInfo])
-
-  React.useEffect(() => {
     getUserInfoAboutPool()
   }, [wallet])
 
@@ -280,19 +275,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
     <>
       <div>
         <S.BorderGradient stakeWithVotingPower={!stakeWithVotingPower}>
-          {isLoading && (
-            <div
-              style={{
-                height: `${wallet?.accounts[0].address ? '56.6rem' : '28rem'}`,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <Loading marginTop={0} />
-            </div>
-          )}
-          <S.StakeCard style={{ display: `${isLoading ? 'none' : 'block'}` }}>
+          <S.StakeCard>
             <S.InterBackground stakeWithVotingPower={!stakeWithVotingPower}>
               <TokenWithNetworkImage
                 tokenImage={{
@@ -315,12 +298,17 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                   </Tippy>
                   <h4>APR</h4>
                 </S.APR>
-                <S.Percentage>
-                  {poolInfo.apr.lte(Big(0)) || poolInfo.hasExpired
-                    ? 0
-                    : BNtoDecimal(poolInfo.apr, 0)}
-                  %
-                </S.Percentage>
+                {poolInfo.apr.lte(Big(0)) ? (
+                  <S.LoadingAnimation width={5} height={2.4} />
+                ) : (
+                  <S.Percentage>
+                    {BNtoDecimal(
+                      poolInfo.hasExpired ? Big(0) : poolInfo.apr,
+                      0
+                    )}
+                    %
+                  </S.Percentage>
+                )}
               </S.IntroStaking>
             </S.InterBackground>
             {!stakeWithVotingPower ? (
@@ -343,36 +331,44 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
               <S.VotingPowerAndWithdrawDelay>
                 <S.InfoPool>
                   <h3>Voting Power</h3>
-                  <p>
-                    {poolInfo.votingMultiplier || '...'}
-                    <span>/$KACY</span>
-                  </p>
+                  {Big(poolInfo.votingMultiplier).lte(0) ? (
+                    <S.LoadingAnimation width={6} />
+                  ) : (
+                    <p>
+                      {poolInfo.votingMultiplier}
+                      <span>/$KACY</span>
+                    </p>
+                  )}
                 </S.InfoPool>
                 <S.InfoPool>
                   <h3>Withdraw delay</h3>
                   <S.Days>
-                    <p>
-                      {poolInfo.withdrawDelay === -1
-                        ? '...'
-                        : poolInfo.withdrawDelay / 60 / 60 / 24 < 1
-                        ? poolInfo.withdrawDelay / 60
-                        : poolInfo.withdrawDelay / 60 / 60 / 24}
-                      <span>
-                        {poolInfo.withdrawDelay / 60 / 60 / 24 < 1
-                          ? ' min'
-                          : ' days'}
-                      </span>
-                    </p>
-                    <Tippy content="To redeem your assets you will have to first request a withdrawal and wait this amount of time to be able to redeem your assets. You will stop receiving rewards during this period and your voting power multiplier will be reduced to 1.">
-                      <S.TooltipAPR tabIndex={0}>
-                        <Image
-                          src={tooltip}
-                          alt="Explanation"
-                          width={16}
-                          height={16}
-                        />
-                      </S.TooltipAPR>
-                    </Tippy>
+                    {Big(poolInfo.withdrawDelay).lt(0) ? (
+                      <S.LoadingAnimation width={8} />
+                    ) : (
+                      <>
+                        <p>
+                          {poolInfo.withdrawDelay / 60 / 60 / 24 < 1
+                            ? poolInfo.withdrawDelay / 60
+                            : poolInfo.withdrawDelay / 60 / 60 / 24}
+                          <span>
+                            {poolInfo.withdrawDelay / 60 / 60 / 24 < 1
+                              ? ' min'
+                              : ' days'}
+                          </span>
+                        </p>
+                        <Tippy content="To redeem your assets you will have to first request a withdrawal and wait this amount of time to be able to redeem your assets. You will stop receiving rewards during this period and your voting power multiplier will be reduced to 1.">
+                          <S.TooltipAPR tabIndex={0}>
+                            <Image
+                              src={tooltip}
+                              alt="Explanation"
+                              width={16}
+                              height={16}
+                            />
+                          </S.TooltipAPR>
+                        </Tippy>
+                      </>
+                    )}
                   </S.Days>
                 </S.InfoPool>
               </S.VotingPowerAndWithdrawDelay>
@@ -435,6 +431,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                           Number(wallet?.chains[0].id) ? (
                             <Button
                               type="button"
+                              className="chnageChainButton"
                               text={`Connect to ${networkChain.chainName}`}
                               size="huge"
                               backgroundSecondary
