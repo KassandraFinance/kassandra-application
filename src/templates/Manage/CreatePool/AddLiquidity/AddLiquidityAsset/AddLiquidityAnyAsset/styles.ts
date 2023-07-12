@@ -49,3 +49,24 @@ export const Tippy = styled.div`
     }
   `}
 `
+
+export const TippyContent = styled.div`
+  ${({ theme }) => css`
+    padding: 0.8rem;
+    border-radius: 4px;
+
+    font-weight: 300;
+    font-size: ${theme.font.sizes.font14};
+
+    background-color: ${theme.colors.darkGray};
+  `}
+`
+
+export const InputValidation = styled.input`
+  ${() => css`
+    position: absolute;
+    top: 30rem;
+
+    opacity: 0;
+  `}
+`

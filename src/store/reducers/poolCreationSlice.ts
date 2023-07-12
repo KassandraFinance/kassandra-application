@@ -56,7 +56,6 @@ export type PoolData = {
   methodCreate: MethodCreate
   tokenIn: TokenSelectProps
   tokenInAmount: string
-  txs?: Array<any>
 }
 
 export interface IPoolCreationDataState {
@@ -180,7 +179,6 @@ const initialState: IPoolCreationDataState = {
       symbol: ''
     },
     tokenInAmount: '0',
-    txs: [],
     network: '',
     networkId: 0,
     poolName: '',
@@ -464,7 +462,6 @@ export const poolCreationSlice = createSlice({
           symbol: ''
         },
         tokenInAmount: '0',
-        txs: [],
         network: '',
         networkId: 0,
         poolName: '',
@@ -506,9 +503,6 @@ export const poolCreationSlice = createSlice({
     },
     setTokenInAmount: (state, action: PayloadAction<string>) => {
       state.createPoolData.tokenInAmount = action.payload
-    },
-    setTxs: (state, action: PayloadAction<Array<any>>) => {
-      state.createPoolData.txs = action.payload
     }
   }
 })
@@ -532,8 +526,7 @@ export const {
   setToFirstStep,
   setMethodCreate,
   setTokenIn,
-  setTokenInAmount,
-  setTxs
+  setTokenInAmount
 } = poolCreationSlice.actions
 
 export default poolCreationSlice.reducer
