@@ -11,8 +11,8 @@ import {
 } from '@/constants/pools'
 
 import useStaking from '@/hooks/useStaking'
-import useCoingecko from '@/hooks/useCoingecko'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import StakeCard from '@/components/StakeCard'
 
@@ -21,18 +21,18 @@ import * as S from './styles'
 const Stake = () => {
   const [investor, setInvestor] = React.useState([false, false])
 
+  const polygonChainId = 137 // choose chain to get token price
+  const networkChain = networks[polygonChainId]
+
   const { trackCategoryPageView } = useMatomoEcommerce()
   const stakingContract = useStaking(Staking)
   const [{ wallet }] = useConnectWallet()
+  const { data } = useTokensData({
+    chainId: networkChain.chainId,
+    tokenAddresses: addressesForReqStakePool
+  })
 
-  const networkChain = networks[137]
-  const { priceToken } = useCoingecko(
-    networkChain.chainId,
-    networkChain.nativeCurrency.address,
-    addressesForReqStakePool
-  )
-
-  const kacyPrice = priceToken(KacyPoligon.toLowerCase()) ?? 0
+  const kacyPrice = data ? data[KacyPoligon.toLowerCase()].usd : 0
 
   React.useEffect(() => {
     trackCategoryPageView([
