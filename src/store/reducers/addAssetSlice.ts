@@ -29,7 +29,7 @@ interface IAddAssetsProps {
   liquidit: {
     amount: string
     allocation: string
-    price: number
+    price: string
   }
   weights: (AssetType & { newWeight: string })[]
 }
@@ -49,7 +49,7 @@ const initialState: IAddAssetsProps = {
   liquidit: {
     amount: '',
     allocation: '',
-    price: 0
+    price: '0'
   },
   weights: []
 }
@@ -84,7 +84,7 @@ export const poolCreationSlice = createSlice({
     setTVL: (state, action: PayloadAction<string>) => {
       state.tvl = action.payload
     },
-    setPrice: (state, action: PayloadAction<number>) => {
+    setPrice: (state, action: PayloadAction<string>) => {
       state.liquidit.price = action.payload
     },
     setWeights: (

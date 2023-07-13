@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Big from 'big.js'
 
 import { CoinGeckoResponseType } from '../../templates/Manage/CreatePool/AddLiquidity'
+import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
 
 export type TokenType = {
   icon: string
@@ -15,7 +16,18 @@ export type TokenType = {
   isLocked: boolean
 }
 
+type MethodCreate = 'any-asset' | 'pool-assets'
+
+export type TokenSelectProps = {
+  symbol: string
+  name: string
+  address: string
+  decimals: number
+  logoURI: string
+}
+
 export type PoolData = {
+  version: string
   id?: string
   txHash?: string
   termsAndConditions?: boolean
@@ -41,6 +53,9 @@ export type PoolData = {
       managerShare?: number
     }
   }
+  methodCreate: MethodCreate
+  tokenIn: TokenSelectProps
+  tokenInAmount: string
 }
 
 export interface IPoolCreationDataState {
@@ -126,7 +141,7 @@ export function handleLiquidity(
   }
 
   const tokenInputDolar = Big(tokenInputLiquidity).mul(
-    Big(tokenPriceList[inputAddress].usd)
+    Big(tokenPriceList[inputAddress.toLowerCase()]?.usd ?? 0)
   )
 
   const newArr = tokensArr.map(token => {
@@ -154,6 +169,16 @@ const initialState: IPoolCreationDataState = {
   stepNumber: 0,
   isValid: false,
   createPoolData: {
+    version: VERSION_POOL_CREATE,
+    methodCreate: 'any-asset',
+    tokenIn: {
+      address: '',
+      decimals: 0,
+      logoURI: '',
+      name: '',
+      symbol: ''
+    },
+    tokenInAmount: '0',
     network: '',
     networkId: 0,
     poolName: '',
@@ -199,7 +224,7 @@ export const poolCreationSlice = createSlice({
     setIsValid: (state, action: PayloadAction<boolean>) => {
       state.isValid = action.payload
     },
-    setPoolData: (state, action: PayloadAction<PoolData>) => {
+    setPoolData: (state, action: PayloadAction<Partial<PoolData>>) => {
       state.createPoolData = {
         ...state.createPoolData,
         ...action.payload
@@ -427,6 +452,16 @@ export const poolCreationSlice = createSlice({
     },
     setClear: state => {
       state.createPoolData = {
+        version: VERSION_POOL_CREATE,
+        methodCreate: 'any-asset',
+        tokenIn: {
+          address: '',
+          decimals: 0,
+          logoURI: '',
+          name: '',
+          symbol: ''
+        },
+        tokenInAmount: '0',
         network: '',
         networkId: 0,
         poolName: '',
@@ -459,6 +494,15 @@ export const poolCreationSlice = createSlice({
     },
     setToFirstStep: state => {
       state.stepNumber = 0
+    },
+    setMethodCreate: (state, action: PayloadAction<MethodCreate>) => {
+      state.createPoolData.methodCreate = action.payload
+    },
+    setTokenIn: (state, action: PayloadAction<TokenSelectProps>) => {
+      state.createPoolData.tokenIn = action.payload
+    },
+    setTokenInAmount: (state, action: PayloadAction<string>) => {
+      state.createPoolData.tokenInAmount = action.payload
     }
   }
 })
@@ -479,7 +523,10 @@ export const {
   setRefferalFee,
   setTermsAndConditions,
   setClear,
-  setToFirstStep
+  setToFirstStep,
+  setMethodCreate,
+  setTokenIn,
+  setTokenInAmount
 } = poolCreationSlice.actions
 
 export default poolCreationSlice.reducer

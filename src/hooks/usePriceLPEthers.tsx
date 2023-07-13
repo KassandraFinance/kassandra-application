@@ -27,7 +27,7 @@ const usePriceLP = (chainId: number) => {
     }
 
     const getPriceKacyAndLPBalancer = async (
-      priceWETH: number,
+      priceWETH: string,
       poolAddress: string
     ) => {
       const provider = new JsonRpcProvider(networks[137].rpc)

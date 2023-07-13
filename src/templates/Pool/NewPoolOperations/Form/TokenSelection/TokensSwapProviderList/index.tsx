@@ -1,25 +1,22 @@
 import React from 'react'
 import { FixedSizeList as List, ListOnScrollProps } from 'react-window'
 
-import {
-  IListbalanceTokenprops,
-  IUserTokenProps,
-  ITokenListSwapProviderProps
-} from '..'
+import { IUserTokenProps, ITokenListSwapProviderProps } from '../'
 
-import { useAppDispatch, useAppSelector } from '../../../../../../store/hooks'
-import { setTokenSelect } from '../../../../../../store/reducers/tokenSelect'
-import { setTokenSelectionActive } from '../../../../../../store/reducers/tokenSelectionActive'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { setTokenSelectionActive } from '@/store/reducers/tokenSelectionActive'
+import { TokenSelectProps } from '@/store/reducers/poolCreationSlice'
 
 import * as S from './styles'
 
-interface IToken1inchListProps {
+interface ITokenListProps {
   filteredToken: IUserTokenProps[]
-  listBalanceToken: IListbalanceTokenprops
   tokenPinList: ITokenListSwapProviderProps[]
   setTokenPinList: React.Dispatch<
     React.SetStateAction<ITokenListSwapProviderProps[]>
   >
+  setTokenSelected: (token: TokenSelectProps) => void
+  pin?: boolean
 }
 
 export type ITokenPinprops = {
@@ -33,11 +30,11 @@ interface ICurrencyRowProps {
 
 const TokensSwapProviderList = ({
   filteredToken,
-  listBalanceToken,
   tokenPinList,
-  setTokenPinList
-}: IToken1inchListProps) => {
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth)
+  setTokenPinList,
+  setTokenSelected,
+  pin = true
+}: ITokenListProps) => {
   const [isShowShadow, setisShowShadow] = React.useState(true)
 
   const dispatch = useAppDispatch()
@@ -102,7 +99,8 @@ const TokensSwapProviderList = ({
           key={token?.symbol}
           style={style}
           onClick={() => {
-            dispatch(setTokenSelect(token))
+            // dispatch(setTokenSelect(token))
+            setTokenSelected(token)
             dispatch(setTokenSelectionActive(false))
           }}
         >
@@ -134,54 +132,44 @@ const TokensSwapProviderList = ({
               </span>
               <p>{token?.balance || 0}</p>
             </S.TokenValueInWallet>
-            <S.PinContainer onClick={() => handleClickAddPin(token)}>
-              {tokenListPin[token?.address] ? (
-                <svg
-                  width="10"
-                  height="14"
-                  viewBox="0 0 10 14"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M7.66683 4.99992V1.66659H8.3335C8.70016 1.66659 9.00016 1.36659 9.00016 0.999919C9.00016 0.633252 8.70016 0.333252 8.3335 0.333252H1.66683C1.30016 0.333252 1.00016 0.633252 1.00016 0.999919C1.00016 1.36659 1.30016 1.66659 1.66683 1.66659H2.3335V4.99992C2.3335 6.10659 1.44016 6.99992 0.333496 6.99992V8.33325H4.3135V12.9999L4.98016 13.6666L5.64683 12.9999V8.33325H9.66683V6.99992C8.56016 6.99992 7.66683 6.10659 7.66683 4.99992Z"
-                    fill="#FCFCFC"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  width="10"
-                  height="14"
-                  viewBox="0 0 10 14"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6.3335 1.66659V4.99992C6.3335 5.74659 6.58016 6.43992 7.00016 6.99992H3.00016C3.4335 6.42659 3.66683 5.73325 3.66683 4.99992V1.66659H6.3335ZM8.3335 0.333252H1.66683C1.30016 0.333252 1.00016 0.633252 1.00016 0.999919C1.00016 1.36659 1.30016 1.66659 1.66683 1.66659H2.3335V4.99992C2.3335 6.10659 1.44016 6.99992 0.333496 6.99992V8.33325H4.3135V12.9999L4.98016 13.6666L5.64683 12.9999V8.33325H9.66683V6.99992C8.56016 6.99992 7.66683 6.10659 7.66683 4.99992V1.66659H8.3335C8.70016 1.66659 9.00016 1.36659 9.00016 0.999919C9.00016 0.633252 8.70016 0.333252 8.3335 0.333252Z"
-                    fill="#FCFCFC"
-                  />
-                </svg>
-              )}
-            </S.PinContainer>
+            {pin && (
+              <S.PinContainer onClick={() => handleClickAddPin(token)}>
+                {tokenListPin[token?.address] ? (
+                  <svg
+                    width="10"
+                    height="14"
+                    viewBox="0 0 10 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M7.66683 4.99992V1.66659H8.3335C8.70016 1.66659 9.00016 1.36659 9.00016 0.999919C9.00016 0.633252 8.70016 0.333252 8.3335 0.333252H1.66683C1.30016 0.333252 1.00016 0.633252 1.00016 0.999919C1.00016 1.36659 1.30016 1.66659 1.66683 1.66659H2.3335V4.99992C2.3335 6.10659 1.44016 6.99992 0.333496 6.99992V8.33325H4.3135V12.9999L4.98016 13.6666L5.64683 12.9999V8.33325H9.66683V6.99992C8.56016 6.99992 7.66683 6.10659 7.66683 4.99992Z"
+                      fill="#FCFCFC"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    width="10"
+                    height="14"
+                    viewBox="0 0 10 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M6.3335 1.66659V4.99992C6.3335 5.74659 6.58016 6.43992 7.00016 6.99992H3.00016C3.4335 6.42659 3.66683 5.73325 3.66683 4.99992V1.66659H6.3335ZM8.3335 0.333252H1.66683C1.30016 0.333252 1.00016 0.633252 1.00016 0.999919C1.00016 1.36659 1.30016 1.66659 1.66683 1.66659H2.3335V4.99992C2.3335 6.10659 1.44016 6.99992 0.333496 6.99992V8.33325H4.3135V12.9999L4.98016 13.6666L5.64683 12.9999V8.33325H9.66683V6.99992C8.56016 6.99992 7.66683 6.10659 7.66683 4.99992V1.66659H8.3335C8.70016 1.66659 9.00016 1.36659 9.00016 0.999919C9.00016 0.633252 8.70016 0.333252 8.3335 0.333252Z"
+                      fill="#FCFCFC"
+                    />
+                  </svg>
+                )}
+              </S.PinContainer>
+            )}
           </S.TokenValueInWalletContainer>
         </S.Token>
       )
     })
   }, [tokenPinList, filteredToken])
-
-  React.useEffect(() => {
-    function watchWidth() {
-      setWindowWidth(window.innerWidth)
-    }
-
-    window.addEventListener('resize', watchWidth)
-
-    return function () {
-      window.removeEventListener('resize', watchWidth)
-    }
-  }, [])
 
   return (
     <S.TokenListContainer ref={TokenListContainerRef}>
@@ -192,7 +180,7 @@ const TokensSwapProviderList = ({
             itemCount={filteredToken.length}
             itemSize={58}
             height={3000}
-            width={windowWidth < 550 ? 260 : 384}
+            width="100%"
             onScroll={event => handleOnScroll(event)}
           >
             {CurrencyRow}

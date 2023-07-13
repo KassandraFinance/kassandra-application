@@ -1,46 +1,5 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "factory",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IPrivateInvestors",
-        "name": "privateInvestors",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IAuthorizedManagers",
-        "name": "authorizationContract",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IVault",
-        "name": "vault",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "rules",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "assetManagerAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_proxyInvest",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -134,57 +93,38 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "assetManager",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "authorizedManagers",
-    "outputs": [
-      {
-        "internalType": "contract IAuthorizedManagers",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "symbol",
-        "type": "string"
-      },
-      {
-        "internalType": "bool",
-        "name": "isPrivatePool",
-        "type": "bool"
-      },
-      {
-        "internalType": "contract IWhitelist",
-        "name": "whitelist",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "amountsIn",
-        "type": "uint256[]"
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPrivatePool",
+            "type": "bool"
+          },
+          {
+            "internalType": "contract IWhitelist",
+            "name": "whitelist",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "amountsIn",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct KassandraControlledManagedPoolFactory.PoolParams",
+        "name": "poolParams",
+        "type": "tuple"
       },
       {
         "components": [
@@ -246,6 +186,28 @@
         "type": "tuple"
       },
       {
+        "components": [
+          {
+            "internalType": "contract IERC20",
+            "name": "tokenIn",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountIn",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "datas",
+            "type": "bytes[]"
+          }
+        ],
+        "internalType": "struct KassandraControlledManagedPoolFactory.JoinParams",
+        "name": "joinParams",
+        "type": "tuple"
+      },
+      {
         "internalType": "bytes32",
         "name": "salt",
         "type": "bytes32"
@@ -264,6 +226,194 @@
         "type": "address"
       }
     ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAssetManager",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAuthorizedManagers",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getKassandraRules",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getManagedPoolFactory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPrivateInvestors",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getProxyInvest",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getProxyProviderTransfer",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getSwapProvider",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getVault",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getWETH",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "factory",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IPrivateInvestors",
+        "name": "privateInvestors",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IAuthorizedManagers",
+        "name": "authorizationContract",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IVault",
+        "name": "vault",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "rules",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "assetManagerAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "proxyInvest",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "swapProvider",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "proxyProviderTransfer",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IWETH",
+        "name": "weth",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -301,46 +451,7 @@
   },
   {
     "inputs": [],
-    "name": "kassandraRules",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "managedPoolFactory",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "proxyInvest",
     "outputs": [
       {
         "internalType": "address",

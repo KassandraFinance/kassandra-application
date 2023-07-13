@@ -32,7 +32,7 @@ import * as S from './styles'
 
 export type CoinGeckoAssetsResponseType = {
   [key: string]: {
-    usd: number
+    usd: string
     pricePercentageChangeIn24h: number
     marketCap: number
   }
@@ -90,7 +90,7 @@ const SelectAssets = () => {
 
   const { data: priceData } = useCoingecko(
     networkId ?? 137,
-    networks[networkId ?? 137].nativeCurrency.address,
+    networks[networkId ?? 137]?.nativeCurrency?.address,
     tokensListGoerli ?? ['']
   )
 

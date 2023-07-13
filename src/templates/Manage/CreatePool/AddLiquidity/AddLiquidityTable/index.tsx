@@ -18,6 +18,7 @@ import {
   handleLiquidity
 } from '../../../../../store/reducers/poolCreationSlice'
 import { CoinGeckoResponseType } from '..'
+import { MIN_DOLLAR_TO_CREATE_POOL } from '@/constants/tokenAddresses'
 
 interface IAddLiquidityTableProps {
   coinsList: TokenType[]
@@ -88,6 +89,10 @@ const AddLiquidityTable = ({
     return total
   }
 
+  function handleInvalid(event: any) {
+    return event.target.setCustomValidity(' ')
+  }
+
   return (
     <S.AddLiquidityTable>
       <Table>
@@ -115,7 +120,7 @@ const AddLiquidityTable = ({
                   coinImage={coin.icon}
                   coinName={coin.name}
                   coinSymbol={coin.symbol}
-                  price={priceList ? priceList[coin.address]?.usd : 0}
+                  price={priceList ? priceList[coin.address].usd : '0'}
                   url={coin.url}
                   balance={
                     tokensBalance[coin.address]
@@ -239,8 +244,14 @@ const AddLiquidityTable = ({
 
         <S.Footer>
           <Tr>
-            <S.Title>Total</S.Title>
-
+            <S.TitleContainer>
+              <S.Title>Total</S.Title>
+              <S.MinAmountError
+                isError={totalLiquidity().lt(MIN_DOLLAR_TO_CREATE_POOL)}
+              >
+                Must be greater than ${MIN_DOLLAR_TO_CREATE_POOL}
+              </S.MinAmountError>
+            </S.TitleContainer>
             <S.TotalContainer>
               <S.Total>
                 ${priceList ? BNtoDecimal(totalLiquidity(), 2) : 0}
@@ -263,6 +274,20 @@ const AddLiquidityTable = ({
             </S.TotalContainer>
           </Tr>
         </S.Footer>
+        {totalLiquidity().lt(MIN_DOLLAR_TO_CREATE_POOL) && (
+          <S.InputValidation
+            form="poolCreationForm"
+            id="select-token"
+            name="select-token"
+            type="radio"
+            onInvalid={handleInvalid}
+            required
+            checked={totalLiquidity().gte(MIN_DOLLAR_TO_CREATE_POOL)}
+            onChange={() => {
+              return
+            }}
+          />
+        )}
       </Table>
     </S.AddLiquidityTable>
   )

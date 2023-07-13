@@ -120,7 +120,7 @@ export const decimalToBN = (value: string, decimals?: number) => {
 }
 
 interface PoolPriceParams {
-  priceToken: (address: string) => number | undefined
+  priceToken: (address: string) => string | undefined
   poolSupply: string
   assets: {
     balance: string

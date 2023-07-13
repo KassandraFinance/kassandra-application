@@ -6,8 +6,11 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
   setToFirstStep,
-  setBackStepNumber
+  setBackStepNumber,
+  setClear
 } from '@/store/reducers/poolCreationSlice'
+
+import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
 
 import Button from '@/components/Button'
 import CreatePool from '../CreatePool'
@@ -24,11 +27,15 @@ const GetStarted = () => {
   const dispatch = useAppDispatch()
 
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
-  const poolCreattionChainId = useAppSelector(
-    state => state.poolCreation.createPoolData.networkId
+  const { networkId: poolCreattionChainId, version } = useAppSelector(
+    state => state.poolCreation.createPoolData
   )
 
   function handleCreatePool() {
+    if (version !== VERSION_POOL_CREATE) {
+      dispatch(setToFirstStep())
+      dispatch(setClear())
+    }
     if (poolCreattionChainId === 0 && stepNumber > 0) {
       dispatch(setToFirstStep())
     }

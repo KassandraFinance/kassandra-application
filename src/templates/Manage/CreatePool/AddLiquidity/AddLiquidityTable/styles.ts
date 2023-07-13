@@ -95,6 +95,14 @@ export const Footer = styled.div`
   `}
 `
 
+export const TitleContainer = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  `}
+`
+
 export const Title = styled.span`
   ${({ theme }) => css`
     color: ${theme.colors.snow};
@@ -157,13 +165,13 @@ interface IInputWrapperProps {
   isBiggerThanBalance: boolean
 }
 
-// prettier-ignore
 export const InputWrapper = styled.div<IInputWrapperProps>`
   ${() => css`
     width: 11.6rem;
   `}
   ${({ theme, isBiggerThanZero, isBiggerThanBalance }) =>
-    (isBiggerThanZero || isBiggerThanBalance) && css`
+    (isBiggerThanZero || isBiggerThanBalance) &&
+    css`
       ${Input} {
         border-left: 0.1rem solid ${theme.colors.error};
         border-block: 0.1rem solid ${theme.colors.error};
@@ -174,7 +182,7 @@ export const InputWrapper = styled.div<IInputWrapperProps>`
         border-left: none !inportant;
         border-block: 0.1rem solid ${theme.colors.error} !important;
       }
-  `}
+    `}
 `
 
 export const MaxButton = styled.button`
@@ -229,6 +237,40 @@ export const Error = styled.p<IErrorProps>`
     transition-property: opacity;
   `}
   ${({ isError }) => isError && css`
+      opacity: 10;
+  `}
+`
+
+export const MinAmountError = styled.p<IErrorProps>`
+  ${({ theme }) => css`
+    max-height: 0;
+
+    color: ${theme.colors.error};
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font14};
+    line-height: 100%;
+    white-space: nowrap;
+
+    opacity: 0;
+
+    transition-timing-function: ease-in-out;
+    transition-duration: 300ms;
+    transition-property: opacity max-height;
+  `}
+  ${({ isError }) =>
+    isError &&
+    css`
+      max-height: 1em;
+
       opacity: 1;
+    `}
+`
+
+export const InputValidation = styled.input`
+  ${() => css`
+    position: absolute;
+    top: 30rem;
+
+    opacity: 0;
   `}
 `

@@ -1,16 +1,20 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
+import { useAppDispatch } from '../../../../../store/hooks'
 
 import { setTokenSelectionActive } from '../../../../../store/reducers/tokenSelectionActive'
+import { TokenSelectProps } from '@/store/reducers/poolCreationSlice'
 
-import none from '../../../../../../public/assets/icons/coming-soon.svg'
+import none from '@assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 
-const TokenSelected = () => {
-  const { tokenSelect } = useAppSelector(state => state)
+type TokenSelectedProps = {
+  tokenSelect: TokenSelectProps
+}
+
+const TokenSelected = ({ tokenSelect }: TokenSelectedProps) => {
   const dispatch = useAppDispatch()
 
   return (
