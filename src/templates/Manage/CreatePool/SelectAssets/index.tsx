@@ -1,11 +1,10 @@
 import React from 'react'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
 
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokens } from '@/hooks/query/useTokens'
+import { useTokensData } from '@/hooks/query/useTokensData'
 import useWhiteList from '@/hooks/useWhiteList'
 import useBatchRequests from '@/hooks/useBatchRequests'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
@@ -16,12 +15,7 @@ import {
   TokenType
 } from '@/store/reducers/poolCreationSlice'
 
-import {
-  BACKEND_KASSANDRA,
-  mockTokens,
-  networks
-} from '@/constants/tokenAddresses'
-import { GET_INFO_TOKENS } from './graphql'
+import { mockTokens } from '@/constants/tokenAddresses'
 
 import Steps from '@/components/Steps'
 import CreatePoolHeader from '../CreatePoolHeader'
@@ -32,18 +26,19 @@ import * as S from './styles'
 
 export type CoinGeckoAssetsResponseType = {
   [key: string]: {
-    usd: number
+    usd: string
     pricePercentageChangeIn24h: number
     marketCap: number
   }
 }
 
 export type TokensInfoResponseType = {
+  __typename?: 'Token' | undefined
   id: string
-  logo: string
-  name: string
-  symbol: string
-  decimals: number
+  decimals?: number | null | undefined
+  logo?: string | null | undefined
+  name?: string | null | undefined
+  symbol?: string | null | undefined
 }
 
 type BalancesType = Record<string, Big>
@@ -76,23 +71,18 @@ const SelectAssets = () => {
     totalAllocation = totalAllocation.plus(token.allocation)
   }
 
-  const { data } = useSWR<{ tokensByIds: TokensInfoResponseType[] }>(
-    [GET_INFO_TOKENS, tokensListGoerli],
-    (query, whitelist) =>
-      request(BACKEND_KASSANDRA, query, {
-        whitelist
+  const { data: data } = useTokens({ tokensList: tokensListGoerli || [] })
+
+  const tokensListFiltered = data
+    ? data?.filter((element): element is Exclude<typeof element, null> => {
+        return element !== null
       })
-  )
+    : []
 
-  const tokensListFiltered = data?.tokensByIds.filter(element => {
-    return element !== null
+  const { data: priceData } = useTokensData({
+    chainId: networkId || 137,
+    tokenAddresses: tokensListGoerli || []
   })
-
-  const { data: priceData } = useCoingecko(
-    networkId ?? 137,
-    networks[networkId ?? 137].nativeCurrency.address,
-    tokensListGoerli ?? ['']
-  )
 
   function handleInput(
     e: React.ChangeEvent<HTMLInputElement>,

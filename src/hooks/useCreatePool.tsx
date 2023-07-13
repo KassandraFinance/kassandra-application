@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  JsonRpcProvider,
-  BrowserProvider,
-  Contract,
-  zeroPadValue
-} from 'ethers'
+import { JsonRpcProvider, BrowserProvider, Contract, ethers } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import KassandraManagedControllerFactoryAbi from '@/constants/abi/KassandraManagedControllerFactory.json'
 
@@ -15,11 +10,13 @@ import useTransaction, {
 import { networks } from '@/constants/tokenAddresses'
 
 type PoolCreationType = {
-  name: string | undefined
-  symbol: string | undefined
-  isPrivatePool: boolean
-  whitelist: string
-  maxAmountsIn: string[]
+  poolParams: {
+    name: string | undefined
+    symbol: string | undefined
+    isPrivatePool: boolean
+    whitelist: string
+    amountsIn: string[]
+  }
   settingsParams: {
     tokens: string[]
     normalizedWeights: string[]
@@ -32,6 +29,11 @@ type PoolCreationType = {
   feesSettings: {
     feesToManager: string
     feesToReferral: string
+  }
+  joinParams: {
+    tokenIn: string
+    amountIn: string
+    datas: string[]
   }
 }
 
@@ -61,31 +63,23 @@ const useCreatePool = (address: string) => {
     callbacks?: CallbacksType
   ) {
     try {
-      const salt = zeroPadValue('0x', 32)
-
       const response = await contract.send.create.staticCall(
-        pool.name,
-        pool.symbol,
-        pool.isPrivatePool,
-        pool.whitelist,
-        pool.maxAmountsIn,
+        pool.poolParams,
         pool.settingsParams,
         pool.feesSettings,
-        salt,
+        pool.joinParams,
+        ethers.ZeroHash,
         {
           from: wallet?.accounts[0].address
         }
       )
 
       const tx = await contract.send.create(
-        pool.name,
-        pool.symbol,
-        pool.isPrivatePool,
-        pool.whitelist,
-        pool.maxAmountsIn,
+        pool.poolParams,
         pool.settingsParams,
         pool.feesSettings,
-        salt
+        pool.joinParams,
+        ethers.ZeroHash
       )
 
       const receipt = await txNotification(tx, message, callbacks)

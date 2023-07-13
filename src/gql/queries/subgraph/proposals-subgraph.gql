@@ -1,0 +1,18 @@
+query Proposals($skip: Int!, $take: Int!) {
+  proposals(
+    orderDirection: desc
+    orderBy: number
+    first: $take
+    skip: $skip
+  ) {
+    id
+    number
+    targets
+    values
+    signatures
+    startBlock
+    endBlock
+    description
+    created
+  }
+}

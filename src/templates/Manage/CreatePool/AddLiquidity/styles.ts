@@ -17,3 +17,11 @@ export const PoolContainer = styled.div`
     }
   `}
 `
+
+export const AddLiquidityContainer = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    gap: 2.2rem;
+  `}
+`

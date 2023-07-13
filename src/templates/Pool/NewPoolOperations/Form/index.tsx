@@ -1,15 +1,17 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 import { BrowserProvider, JsonRpcSigner } from 'ethers'
 
 import { OperationProvider } from './PoolOperationContext'
 import { useAppSelector } from '../../../../store/hooks'
 import usePrivateInvestors from '@/hooks/usePrivateInvestors'
+import { usePoolData } from '@/hooks/query/usePoolData'
+import useGetToken from '@/hooks/useGetToken'
 
 import {
   BalancerHelpers,
   networks,
-  platform,
   ProxyContract,
   ProxyInvestV2
 } from '../../../../constants/tokenAddresses'
@@ -23,8 +25,8 @@ import Withdraw from './Withdraw'
 
 import { corePoolContract } from '../../../../hooks/usePoolContract'
 import { YieldYakContract } from '../../../../hooks/useYieldYakEthers'
-import useCoingecko from '../../../../hooks/useCoingecko'
 import useERC20 from '@/hooks/useERC20'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import * as S from './styles'
 
@@ -45,29 +47,35 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   const [signerProvider, setsignerProvider] = React.useState<JsonRpcSigner>()
 
   const [{ wallet }] = useConnectWallet()
-  const { pool, tokenListSwapProvider } = useAppSelector(state => state)
-  const ERC20 = useERC20(pool.address, networks[pool.chain_id].rpc)
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
+  const { tokenListSwapProvider } = useAppSelector(state => state)
+  const ERC20 = useERC20(pool?.address || '', networks[pool?.chain_id || 0].rpc)
   const { privateAddresses } = usePrivateInvestors(
-    networks[pool.chain_id].privateInvestor,
-    pool.chain_id
+    networks[pool?.chain_id || 0].privateInvestor,
+    pool?.chain_id
   )
 
   const tokenAddresses = tokenListSwapProvider.map(token => token.address)
-  const { priceToken } = useCoingecko(
-    pool.chain_id,
-    pool.chain.addressWrapped?.toLowerCase(),
+  const { data } = useTokensData({
+    chainId: pool?.chain_id || 0,
     tokenAddresses
-  )
+  })
 
-  const poolId = pool.id.slice(pool.chain_id.toString().length)
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: pool?.chain?.addressWrapped?.toLowerCase() || '',
+    tokens: data || {}
+  })
+
+  const poolId = pool?.id?.slice(pool?.chain_id?.toString().length)
   const poolInfo = {
     id: poolId,
-    address: pool.address,
-    controller: pool.controller,
-    vault: pool.vault,
-    tokens: pool.underlying_assets,
-    tokensAddresses: pool.underlying_assets_addresses,
-    chainId: pool.chain_id.toString()
+    address: pool?.address || '',
+    controller: pool?.controller || '',
+    vault: pool?.vault || '',
+    tokens: pool?.underlying_assets || '',
+    tokensAddresses: pool?.underlying_assets_addresses || [],
+    chainId: pool?.chain_id?.toString() || ''
   }
 
   async function handleGetSigner() {
@@ -80,12 +88,12 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   }
 
   const operationVersion =
-    pool.pool_version === 1
+    pool?.pool_version === 1
       ? new operationV1(
           ProxyContract,
-          pool.address,
+          pool?.address || '',
           poolInfo,
-          corePoolContract(pool.vault),
+          corePoolContract(pool?.vault || ''),
           ERC20,
           YieldYakContract(43114),
           new ParaSwap(),
@@ -100,12 +108,12 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
         )
 
   const setAddressesOfPrivateInvestors = async () => {
-    const addresses = await privateAddresses(pool.address)
+    const addresses = await privateAddresses(pool?.address || '')
     setPrivateInvestors(addresses)
   }
 
   React.useEffect(() => {
-    if (!pool.is_private_pool) return
+    if (!pool?.is_private_pool) return
     setAddressesOfPrivateInvestors()
   }, [wallet, pool])
 

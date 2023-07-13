@@ -18,7 +18,12 @@ export type IRebalanceWeightsProps = {
   poolName: string
   poolPrice: string
   listTokenWeights: {
-    token: Omit<ITokenProps, 'decimals'>
+    token: {
+      address: string
+      logo: string
+      name: string | null | undefined
+      symbol: string | null | undefined
+    }
     previous: string
     current: string
     final: string
@@ -81,12 +86,9 @@ const WeightRebalanceProgressModal = ({
             </S.Tablehead>
             <S.TableBody>
               {rebalanceWeights
-                ? rebalanceWeights.listTokenWeights.map(token => {
+                ? rebalanceWeights.listTokenWeights.map(item => {
                     return (
-                      <TokenWeightInfo
-                        key={token.token.address}
-                        token={token}
-                      />
+                      <TokenWeightInfo key={item.token.address} token={item} />
                     )
                   })
                 : null}

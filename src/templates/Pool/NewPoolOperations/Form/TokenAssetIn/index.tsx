@@ -1,10 +1,12 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { useAppSelector } from '../../../../../store/hooks'
+import { usePoolInfo } from '@/hooks/query/usePoolInfo'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
 
@@ -13,14 +15,9 @@ import { decimalToBN } from '../../../../../utils/poolUtils'
 
 import * as S from './styles'
 
-type IPoolPriceUSDProps = {
-  price_usd: string
-  decimals: number
-}
 interface ITokenAssetInProps {
   amountTokenIn: string | Big
   setamountTokenIn: React.Dispatch<React.SetStateAction<string | Big>>
-  poolPriceUSD: IPoolPriceUSDProps
   maxActive: boolean
   setMaxActive: React.Dispatch<React.SetStateAction<boolean>>
   selectedTokenInBalance: Big
@@ -32,7 +29,6 @@ interface ITokenAssetInProps {
 const TokenAssetIn = ({
   amountTokenIn,
   setamountTokenIn,
-  poolPriceUSD,
   maxActive,
   setMaxActive,
   selectedTokenInBalance,
@@ -41,8 +37,15 @@ const TokenAssetIn = ({
   disabled
 }: ITokenAssetInProps) => {
   const [{ wallet }] = useConnectWallet()
-  const { pool } = useAppSelector(state => state)
   const { trackEventFunction } = useMatomoEcommerce()
+
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
+
+  const { data } = usePoolInfo({
+    id: pool?.id || '',
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
+  })
 
   function wei2String(input: Big) {
     return input.div(Big(10).pow(Number(18)))
@@ -81,18 +84,18 @@ const TokenAssetIn = ({
           <S.Title>Send</S.Title>
           <S.Token>
             <span>
-              {pool.logo ? (
+              {pool?.logo ? (
                 <img src={pool.logo} alt="" width={22} height={22} />
               ) : (
                 <Blockies
                   className="poolIcon"
-                  seed={pool.name}
+                  seed={pool?.name || ''}
                   size={8}
                   scale={3}
                 />
               )}
             </span>
-            <S.Symbol>{pool.symbol}</S.Symbol>
+            <S.Symbol>{pool?.symbol}</S.Symbol>
           </S.Token>
           <S.Span onClick={() => handleMaxUserBalance()}>
             Balance:{' '}
@@ -168,13 +171,13 @@ const TokenAssetIn = ({
             />
           </Tippy>
           <p className="price-dolar">
-            {pool.id &&
+            {pool?.id &&
               amountTokenIn &&
               'USD: ' +
                 BNtoDecimal(
                   Big(amountTokenIn.toString())
-                    .mul(poolPriceUSD?.price_usd || 0)
-                    .div(Big(10).pow(Number(poolPriceUSD?.decimals || 18))),
+                    .mul(data?.price_usd || 0)
+                    .div(Big(10).pow(Number(data?.decimals || 18))),
                   18,
                   2,
                   2

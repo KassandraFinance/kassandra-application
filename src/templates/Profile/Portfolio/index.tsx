@@ -1,14 +1,11 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal, calcChange } from '@/utils/numerals'
+import { useUserPoolData } from '@/hooks/query/useUserPoolData'
 
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { GET_CHART } from './AssetsTable/graphql'
 import { IAssetsValueWalletProps, IKacyLpPool } from '../'
 
 import AssetsTable from './AssetsTable'
@@ -55,38 +52,14 @@ type PoolProps = {
   address: string
   name: string
   symbol: string
-  logo: string
-  logoChain: string
+  logo: string | null | undefined
   changeDay: string
   changeMonth: string
-  price: string
-  tvl: string
-  balance: string
+  price: any
+  tvl: any
   balanceInUSD: string
-}
-
-type PoolResponse = {
-  id: string
-  now: { close: number }[]
-  day: { close: number }[]
-  month: { close: number }[]
-  price_usd: string
-  total_value_locked_usd: string
-  address: string
-  name: string
-  symbol: string
-  logo: string
-  investors?: {
-    amount: string
-  }[]
-  chain?: {
-    logo: string
-  }
-}
-
-type Response = {
-  pools: Array<PoolResponse>
-  managedPools: Array<PoolResponse>
+  balance: string
+  logoChain: string
 }
 
 const Portfolio = ({
@@ -111,16 +84,12 @@ const Portfolio = ({
 
   const [{ wallet }] = useConnectWallet()
 
-  const { data } = useSWR<Response>(
-    [GET_CHART, profileAddress, tokenizedFunds],
-    (query, profileAddress, assets) =>
-      request(BACKEND_KASSANDRA, query, {
-        id: assets,
-        day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-        month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-        wallet: profileAddress
-      })
-  )
+  const { data } = useUserPoolData({
+    id: tokenizedFunds,
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    wallet: profileAddress
+  })
 
   React.useEffect(() => {
     setCardStakesPoolNew([])
@@ -182,7 +151,7 @@ const Portfolio = ({
       return
     }
 
-    const pools: PoolProps[] = [
+    const pools = [
       ...data.pools.map(pool => {
         const balance = Big(balanceFunds[pool.address].toString()).div(
           Big(10).pow(18)
@@ -199,7 +168,7 @@ const Portfolio = ({
           tvl: pool.total_value_locked_usd,
           balanceInUSD: balance.mul(pool.price_usd).toFixed(),
           balance: balance.toFixed(),
-          logoChain: pool.chain?.logo ?? '/assets/logos/avalanche.svg'
+          logoChain: '/assets/logos/avalanche.svg'
         }
       })
     ]

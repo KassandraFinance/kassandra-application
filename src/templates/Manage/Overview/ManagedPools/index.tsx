@@ -1,22 +1,35 @@
 import React from 'react'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
-import useManagerPools, { GetManagerPoolsType } from '@/hooks/useManagerPools'
+import { useManagerPools } from '@/hooks/query/useManagerPools'
 
 import FundCard from '@ui/FundCard'
 import InputFilter from '@ui/Inputs/InputFilter'
 
 import * as S from './styles'
 
+type ManagerPoolsType = {
+  __typename?: 'Pool' | undefined
+  id: string
+  name: string
+  logo?: string | null | undefined
+  chain?:
+    | {
+        __typename?: 'Chain' | undefined
+        logo?: string | null | undefined
+      }
+    | null
+    | undefined
+}
+
 const ManagedPools = () => {
   const [filter, setFilter] = React.useState('')
 
   const [{ wallet }] = useConnectWallet()
 
-  const { managerPools } = useManagerPools(
-    wallet?.provider ? getAddress(wallet?.accounts[0].address) : ''
-  )
+  const { data: managerPools } = useManagerPools({
+    manager: wallet?.accounts[0].address
+  })
 
   function handleFilter(e: React.ChangeEvent<HTMLInputElement>) {
     setFilter(e.target.value)
@@ -26,9 +39,9 @@ const ManagedPools = () => {
     setFilter('')
   }
 
-  function searchPool(search: string, managerPools: GetManagerPoolsType) {
+  function searchPool(search: string, managerPools: ManagerPoolsType[]) {
     const expressao = new RegExp(search, 'i')
-    const arr = managerPools.pools.filter(pool => expressao.test(pool.name))
+    const arr = managerPools.filter(pool => expressao.test(pool.name))
     return arr
   }
 

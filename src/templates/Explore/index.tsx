@@ -150,7 +150,7 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
               </S.LoadingContainer>
             )}
 
-            <S.CardContainer loading={loading}>
+            <S.CardContainer isLoading={loading}>
               {poolsKassandra.map(pool => (
                 <FundCard
                   key={pool.id}

@@ -1,19 +1,15 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import Big from 'big.js'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Blockies from 'react-blockies'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { BACKEND_KASSANDRA } from '../../../../../constants/tokenAddresses'
+import { usePoolInfo } from '@/hooks/query/usePoolInfo'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import { getBalanceToken, getPoolPrice } from '../../../../../utils/poolUtils'
 import PoolOperationContext from '../PoolOperationContext'
-
-import { useAppSelector } from '../../../../../store/hooks'
-
-import { GET_INFO_POOL } from '../graphql'
 
 import * as S from './styles'
 
@@ -31,25 +27,26 @@ const TokenAssetOut = ({
   setOutAssetBalance
 }: ITokenAssetOutProps) => {
   const [{ wallet }] = useConnectWallet()
-  const { pool } = useAppSelector(state => state)
   const { priceToken } = React.useContext(PoolOperationContext)
+
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
   const chainId = Number(wallet?.chains[0].id ?? '0x89')
 
-  const { data } = useSWR([GET_INFO_POOL], query =>
-    request(BACKEND_KASSANDRA, query, {
-      id: pool.id
-    })
-  )
+  const { data } = usePoolInfo({
+    id: pool?.id || '',
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
+  })
 
   React.useEffect(() => {
-    if (pool.id.length === 0 || !wallet || pool.chain_id !== chainId) {
+    if (pool?.id?.length === 0 || !wallet || pool?.chain_id !== chainId) {
       return setOutAssetBalance(Big(0))
     }
-    // eslint-disable-next-line prettier/prettier
+
     ;(async () => {
       const balance = await getBalanceToken(
-        pool.address,
+        pool?.address || '',
         wallet.accounts[0].address,
         chainId
       )
@@ -64,25 +61,25 @@ const TokenAssetOut = ({
           <S.Title>Swap to</S.Title>
           <S.Token>
             <div className="img">
-              {pool.logo ? (
+              {pool?.logo ? (
                 <img src={pool.logo} alt="" width={22} height={22} />
               ) : (
                 <Blockies
                   className="poolIcon"
-                  seed={pool.name}
+                  seed={pool?.name || ''}
                   size={8}
                   scale={3}
                 />
               )}
             </div>
-            <S.Symbol>{pool.symbol}</S.Symbol>
+            <S.Symbol>{pool?.symbol}</S.Symbol>
           </S.Token>
           <S.Balance>
             Balance:{' '}
             {outAssetBalance.gt(-1)
               ? BNtoDecimal(
                   Big(outAssetBalance).div(Big(10).pow(18)),
-                  pool.chain.nativeTokenDecimals
+                  pool?.chain?.nativeTokenDecimals || 0
                 )
               : '...'}
           </S.Balance>
@@ -102,18 +99,18 @@ const TokenAssetOut = ({
           {/* </Tippy> */}
           <S.PriceDolar>
             {amountTokenOut &&
-              data?.pool &&
+              data &&
               'USD: ' +
                 BNtoDecimal(
                   Big(amountTokenOut.toString())
                     .mul(
                       getPoolPrice({
-                        assets: pool.underlying_assets,
+                        assets: pool?.underlying_assets || [],
                         priceToken,
-                        poolSupply: pool.supply
+                        poolSupply: pool?.supply
                       })
                     )
-                    .div(Big(10).pow(data?.pool?.decimals)),
+                    .div(Big(10).pow(data?.decimals)),
                   18,
                   2,
                   2

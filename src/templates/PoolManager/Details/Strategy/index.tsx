@@ -14,7 +14,7 @@ import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 import { GET_STRATEGY, SAVE_POOL } from './graphql'
 import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 
 import TitleSection from '@/components/TitleSection'
 import Button from '@/components/Button'
@@ -118,7 +118,10 @@ const Strategy = () => {
     )
   }
 
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   const { data } = useSWR<GetStrategyType>(
     [GET_STRATEGY, poolId],
@@ -164,17 +167,17 @@ const Strategy = () => {
           />
 
           <S.ButtonContainer>
-            {poolInfo?.controller && (
+            {poolInfo && poolInfo[0]?.controller && (
               <Button
                 text="Update"
                 backgroundSecondary
                 fullWidth
                 onClick={() =>
                   sendPoolData(
-                    poolInfo?.controller,
-                    poolInfo.logo,
+                    poolInfo[0]?.controller,
+                    poolInfo[0]?.logo || '',
                     value,
-                    poolInfo.chain_id
+                    poolInfo[0].chain_id
                   )
                 }
               />

@@ -1,10 +1,55 @@
 import Big from 'big.js'
-import { underlyingAssetsInfo, WeightsV2 } from '../store/reducers/pool'
+
+type WeightsV2 = {
+  __typename?: 'WeightGoalPoint' | undefined
+  start_timestamp: number
+  end_timestamp: number
+  weights: {
+    __typename?: 'WeightGoal' | undefined
+    weight_normalized: any
+    asset: {
+      __typename?: 'Asset' | undefined
+      token: {
+        __typename?: 'Token' | undefined
+        id: string
+      }
+    }
+  }[]
+}
+
+export type UnderlyingAssetsInfoType = {
+  __typename?: 'Asset' | undefined
+  balance: any
+  weight_normalized: any
+  weight_goal_normalized: any
+  token: {
+    __typename?: 'Token' | undefined
+    id: string
+    name?: string | null | undefined
+    logo?: string | null | undefined
+    symbol?: string | null | undefined
+    decimals?: number | null | undefined
+    price_usd: any
+    is_wrap_token: number
+    wraps?:
+      | {
+          __typename?: 'Token' | undefined
+          id: string
+          decimals?: number | null | undefined
+          price_usd: any
+          symbol?: string | null | undefined
+          name?: string | null | undefined
+          logo?: string | null | undefined
+        }
+      | null
+      | undefined
+  }
+}
 
 export function getWeightsNormalizedV2(
   weights: WeightsV2[],
-  underlying_assets: underlyingAssetsInfo[]
-): underlyingAssetsInfo[] | undefined {
+  underlying_assets: UnderlyingAssetsInfoType[]
+): UnderlyingAssetsInfoType[] | undefined {
   if (weights.length <= 0) return
 
   const currentTime = new Date().getTime() / 1000

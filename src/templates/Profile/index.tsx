@@ -1,7 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import Big from 'big.js'
 import { getAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
@@ -9,19 +7,19 @@ import { useConnectWallet } from '@web3-onboard/react'
 import substr from '../../utils/substr'
 import { BNtoDecimal } from '../../utils/numerals'
 
+import { useVotingPower as useVotingPowerApi } from '@/hooks/query/useVotingPower'
+import { usePools } from '@/hooks/query/usePools'
 import useStakingContract from '@/hooks/useStaking'
-import useVotingPower from '@/hooks/useVotings'
 import usePriceLP from '@/hooks/usePriceLPEthers'
 import { ERC20 } from '@/hooks/useERC20'
-import useCoingecko from '@/hooks/useCoingecko'
 import useTransaction from '@/hooks/useTransaction'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 
-import { GET_PROFILE } from './graphql'
 import {
   LPDaiAvax,
   Staking,
   networks,
-  BACKEND_KASSANDRA,
   KacyPoligon,
   WETH_POLYGON
 } from '@/constants/tokenAddresses'
@@ -96,21 +94,11 @@ interface ImyFundsType {
   [key: string]: string
 }
 
-type Response = {
-  pools: {
-    id: string
-    address: string
-    symbol: string
-    price_usd: string
-  }[]
-}
-
 const Profile = () => {
   const [assetsValueInWallet, setAssetsValueInWallet] =
     React.useState<IAssetsValueWalletProps>({ '': Big(-1) })
   const [cardstakesPool, setCardStakesPool] = React.useState<IKacyLpPool[]>([])
   const [myFunds, setMyFunds] = React.useState<ImyFundsType>({})
-  const [totalVotingPower, setTotalVotingPower] = React.useState(Big(0))
   const [priceToken, setPriceToken] = React.useState<IPriceToken>({
     'LP-PNG': Big(0),
     'LP-JOE': Big(0),
@@ -135,7 +123,6 @@ const Profile = () => {
   const { txNotification, transactionErrors } = useTransaction()
   const router = useRouter()
   const [{ wallet }] = useConnectWallet()
-  const votingPower = useVotingPower(Staking)
   const { getUserInfo } = useStakingContract(Staking)
   const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(
     chain.chainId
@@ -149,15 +136,18 @@ const Profile = () => {
       : profileAddress
     : ''
 
-  const { data } = useSWR<Response>([GET_PROFILE], query =>
-    request(BACKEND_KASSANDRA, query)
-  )
+  const { data: votingPowerData } = useVotingPowerApi({ id: walletUserString })
+  const { data } = usePools()
 
-  const { priceToken: getPriceToken } = useCoingecko(
-    networks[137].chainId,
-    networks[137].nativeCurrency.address,
-    [WETH_POLYGON, KacyPoligon]
-  )
+  const { data: tokensList } = useTokensData({
+    chainId: networks[137].chainId,
+    tokenAddresses: [WETH_POLYGON, KacyPoligon]
+  })
+
+  const { priceToken: getPriceToken } = useGetToken({
+    nativeTokenAddress: networks[137].nativeCurrency.address,
+    tokens: tokensList || {}
+  })
 
   async function getTokenAmountInPool(
     pid: number,
@@ -238,7 +228,8 @@ const Profile = () => {
       }
     }
 
-    const wethPrice = getPriceToken(WETH_POLYGON.toLocaleLowerCase())
+    const wethPrice = getPriceToken(WETH_POLYGON.toLowerCase())
+
     if (wethPrice) {
       const priceLPbal = await getPriceKacyAndLPBalancer(wethPrice, KACY_WETH)
       if (priceLPbal) {
@@ -329,8 +320,8 @@ const Profile = () => {
   }, [wallet])
 
   React.useEffect(() => {
-    if (data?.pools) {
-      data.pools.map(pool => {
+    if (data) {
+      data.map(pool => {
         const prodPrice = new Big(pool.price_usd)
 
         setPriceToken(prevState => ({
@@ -359,7 +350,7 @@ const Profile = () => {
       getAmountToken()
       getLiquidityPoolPriceInDollar()
     }
-  }, [profileAddress])
+  }, [profileAddress, tokensList])
 
   React.useEffect(() => {
     let tokenAmountInTokenizedFunds = new Big(0)
@@ -390,16 +381,6 @@ const Profile = () => {
       assetsToken: tokenAmountInTokenizedFunds
     }))
   }, [profileAddress, priceToken, assetsValueInWallet])
-
-  React.useEffect(() => {
-    async function getVotingPower() {
-      const currentVotes = await votingPower.currentVotes(profileAddress)
-
-      setTotalVotingPower(Big(currentVotes?.toString() ?? 0))
-    }
-
-    getVotingPower()
-  }, [profileAddress])
 
   return (
     <>
@@ -439,7 +420,11 @@ const Profile = () => {
               textTitle="TOTAL MANAGED"
             />
             <AnyCardTotal
-              text={BNtoDecimal(totalVotingPower.div(Big(10).pow(18)), 18, 2)}
+              text={BNtoDecimal(
+                Big(votingPowerData?.user?.votingPower || 0),
+                18,
+                2
+              )}
               TooltipText="The voting power of this address. Voting power is used to vote on governance proposals, and it can be earned by staking KACY."
               textTitle="VOTING POWER"
             />
@@ -458,7 +443,7 @@ const Profile = () => {
                 priceToken={priceToken}
                 myFunds={myFunds}
                 priceInDolar={priceInDolar}
-                poolsAddresses={data.pools.map(pool => pool.address)}
+                poolsAddresses={data.map(pool => pool.address)}
                 setPriceInDolar={setPriceInDolar}
               />
             )

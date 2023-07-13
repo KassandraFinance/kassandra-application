@@ -7,7 +7,6 @@ interface IInputSearchProps {
   setSearchToken: React.Dispatch<React.SetStateAction<string>>
 }
 
-// eslint-disable-next-line prettier/prettier
 const InputSearch = ({ searchToken, setSearchToken }: IInputSearchProps) => {
   function handleSearchToken(text: string) {
     setSearchToken(text.trim().toLocaleLowerCase())

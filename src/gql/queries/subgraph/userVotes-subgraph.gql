@@ -1,0 +1,18 @@
+  query UserVotes($id: ID!) {
+    user(id: $id) {
+      votes {
+        support
+        proposal {
+          id
+          number
+          targets
+          values
+          signatures
+          startBlock
+          description
+          endBlock
+          created
+        }
+      }
+    }
+  }

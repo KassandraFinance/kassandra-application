@@ -1,7 +1,7 @@
 import React from 'react'
 import useSWR from 'swr'
 
-import usePoolAssets from '@/hooks/usePoolAssets'
+import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 
 import CoinCard from '@/templates/PoolManager/Analytics/CoinCard'
 import { mockTokens } from '@/constants/tokenAddresses'
@@ -32,7 +32,7 @@ type Result = {
 }
 
 const PoolAssets = (props: IPoolAssetsProps) => {
-  const { poolAssets } = usePoolAssets(props.poolId)
+  const { data: poolAssets } = usePoolAssets({ id: props.poolId })
 
   let addresses
   if (props.chainId === 5) {

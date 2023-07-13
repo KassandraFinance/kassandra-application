@@ -8,10 +8,10 @@ import { ERC20 } from '../../../hooks/useERC20'
 import useManagePoolController from '@/hooks/useManagePoolController'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setModalAlertText } from '../../../store/reducers/modalAlertText'
-import usePoolAssets from '@/hooks/usePoolAssets'
-import usePoolInfo from '@/hooks/usePoolInfo'
-import useCoingecko from '@/hooks/useCoingecko'
+import { usePoolAssets } from '@/hooks/query/usePoolAssets'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import useTransaction from '@/hooks/useTransaction'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import { mockTokensReverse } from '../../../constants/tokenAddresses'
 
@@ -92,18 +92,20 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolAssets } = usePoolAssets(poolId)
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolAssets } = usePoolAssets({ id: poolId })
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
   const managePool = useManagePoolController(
-    poolInfo?.controller ?? '',
-    networks[poolInfo?.chain_id ?? 137].rpc
+    (poolInfo && poolInfo[0]?.controller) ?? '',
+    networks[(poolInfo && poolInfo[0]?.chain_id) ?? 137].rpc
   )
 
-  const { data: priceData } = useCoingecko(
-    poolInfo?.chain_id ?? 137,
-    networks[poolInfo?.chain_id ?? 137].nativeCurrency.address,
-    [token.id]
-  )
+  const { data: priceData } = useTokensData({
+    chainId: (poolInfo && poolInfo[0]?.chain_id) || 137,
+    tokenAddresses: [token.id]
+  })
 
   const buttonTextActionAdd = {
     [TransactionStatus.START]: `Start ${token.symbol} Addition`,
@@ -185,7 +187,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
                   {BNtoDecimal(
                     Big(tokenLiquidity.amount || 0)
                       .mul(priceData[token.id.toLowerCase()]?.usd ?? 0)
-                      .div(poolInfo.price_usd),
+                      .div(poolInfo[0].price_usd),
                     2
                   )}
                 </Value>
@@ -204,20 +206,20 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
               <ImageWrapper>
                 <TokenWithNetworkImage
                   tokenImage={{
-                    url: poolInfo?.logo ?? '',
+                    url: poolInfo[0]?.logo ?? '',
                     height: 20,
                     width: 20,
                     withoutBorder: true
                   }}
                   networkImage={{
-                    url: poolInfo?.chain.logo ?? '',
+                    url: poolInfo[0]?.chain?.logo ?? '',
                     height: 10,
                     width: 10
                   }}
                   blockies={{
                     size: 4,
                     scale: 7,
-                    seedName: poolInfo?.name ?? ''
+                    seedName: poolInfo[0]?.name ?? ''
                   }}
                 />
               </ImageWrapper>
@@ -246,9 +248,9 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     <AssetRemovelCard
       key="AssetRemovelCard"
       poolInfo={{
-        name: poolInfo?.name ?? '',
-        chainLogo: poolInfo?.chain.logo ?? '',
-        logo: poolInfo?.logo ?? ''
+        name: (poolInfo && poolInfo[0]?.name) ?? '',
+        chainLogo: (poolInfo && poolInfo[0]?.chain?.logo) ?? '',
+        logo: (poolInfo && poolInfo[0]?.logo) ?? ''
       }}
       setIsOpenManageAssets={setIsOpenManageAssets}
     />
@@ -298,7 +300,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
     const { allowance } = await ERC20(
       tokenId,
-      networks[poolInfo?.chain_id ?? 137].rpc,
+      networks[(poolInfo && poolInfo[0]?.chain_id) ?? 137].rpc,
       {
         wallet: null,
         txNotification: txNotification,
@@ -352,7 +354,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     ])
 
     const weightsArray: string[] = []
-    poolInfo.underlying_assets_addresses.forEach(item => {
+    poolInfo[0].underlying_assets_addresses.forEach(item => {
       weightsArray.push(
         newTokensWights[item].newWeight.mul(Big(10).pow(16)).toFixed()
       )
@@ -395,7 +397,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       await managePool.rebalancePool(
         Math.floor(currentDateAdded / 1000),
         Math.floor(periodSelectedFormatted / 1000),
-        poolInfo.underlying_assets_addresses,
+        poolInfo[0].underlying_assets_addresses,
         weightsArray,
         handleSuccess,
         handleFail
@@ -431,10 +433,10 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
         Number(amount[amount.length - 1]) + 1
       }`
       const status = await handleApproveToken({
-        address: poolInfo.address,
+        address: poolInfo[0].address,
         amount: lpNeeded.value.mul(Big(10).pow(18)).toFixed(0),
         normalizedAmount: amount,
-        symbol: poolInfo.symbol
+        symbol: poolInfo[0].symbol
       })
 
       if (!status) return
@@ -597,7 +599,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
     const { approve, allowance } = await ERC20(
       token.address,
-      networks[poolInfo?.chain_id ?? 137].rpc,
+      networks[poolInfo[0]?.chain_id ?? 137].rpc,
       {
         wallet: wallet,
         txNotification: txNotification,
@@ -605,11 +607,11 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       }
     )
     const oldAllowance = await allowance(
-      poolInfo?.controller,
+      poolInfo[0]?.controller,
       wallet.accounts[0].address
     )
     const receipt = await approve(
-      poolInfo?.controller,
+      poolInfo[0]?.controller,
       {},
       {
         onFail: handleFail
@@ -619,7 +621,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     if (receipt?.status === 1) {
       const status = await handleApproveSuccess({
         allowance,
-        contractApprove: poolInfo?.controller,
+        contractApprove: poolInfo[0]?.controller,
         oldAllowance,
         token
       })
@@ -720,19 +722,19 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
       if (!poolInfo) return
 
       getTransactionsList(
-        poolInfo.address,
-        poolInfo.controller,
+        poolInfo[0].address,
+        poolInfo[0].controller,
         'Remove',
         'RemoveToken',
         tokenSelection.symbol,
         lpNeeded.value.mul(Big(10).pow(18)).toFixed(0),
-        poolInfo.symbol
+        poolInfo[0].symbol
       )
     }
     if (actionSelected === chooseActionStep.Add && step === 2) {
       getTransactionsList(
         chainId === 5 ? mockTokensReverse[token.id.toLowerCase()] : token.id,
-        poolInfo.controller,
+        poolInfo[0].controller,
         'Add',
         'addToken',
         token.symbol,
@@ -758,7 +760,8 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
               actionSelected={actionSelected}
               setActionSelected={setActionSelected}
               amountTokenInPool={
-                poolInfo?.underlying_assets_addresses.length ?? 0
+                (poolInfo && poolInfo[0]?.underlying_assets_addresses.length) ??
+                0
               }
             />
           ) : (

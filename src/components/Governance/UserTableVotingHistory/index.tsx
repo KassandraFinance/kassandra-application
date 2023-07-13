@@ -1,17 +1,14 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import { getAddress } from 'ethers'
 
-import { GovernorAlpha, SUBGRAPH_URL } from '@/constants/tokenAddresses'
+import { useUserVotes } from '@/hooks/query/useUserVotes'
+import { GovernorAlpha } from '@/constants/tokenAddresses'
 
 import useGov, { StateProposal } from '@/hooks/useGov'
 
 import AnyCard from '../../AnyCard'
-
-import { GET_PROPOSALS } from './graphql'
 
 import * as S from './styles'
 
@@ -26,31 +23,20 @@ const statsSecundaryProposalLibColor: { [key: string]: string } = {
   canceled: '#BDBDBD'
 }
 
-// const statsPrimaryProposalLibColor: { [key: string]: string } = {
-//   active: '#E843C4',
-//   succeeded: '#2CE878',
-//   failed: '#EA3224'
-// }
-
 interface IProposalsTableProps {
+  timeToEndProposal: string
+  state: StateProposal
+  support: boolean
+  __typename?: 'Proposal' | undefined
   id: string
   number: number
-  support: boolean
-  targets: []
-  values: []
-  signatures: []
-  startBlock: string
+  targets: string[]
+  values: any[]
+  signatures: string[]
+  startBlock: any
   description: string
-  timestamp: number
-  state: StateProposal
-  endBlock: string
-  created: string
-  timeToEndProposal: string
-}
-
-interface IProposalsListProps {
-  support: boolean
-  proposal: IProposalsTableProps
+  endBlock: any
+  created: any
 }
 
 interface IUserTableProps {
@@ -68,31 +54,44 @@ export const UserTableVotingHistory = ({
 
   const secondsPerBlock = 2
 
-  const { data } = useSWR([GET_PROPOSALS], query =>
-    request(SUBGRAPH_URL, query, {
-      id: userAddressUrl
-    })
-  )
+  const { data } = useUserVotes({
+    id: Array.isArray(userAddressUrl) ? '' : userAddressUrl || ''
+  })
 
   const governance = useGov(GovernorAlpha)
 
-  async function handleAddStateOnProposal(proposals: IProposalsListProps[]) {
-    const proposal = proposals.map(prop => {
+  async function handleAddStateOnProposal(
+    proposals: {
+      __typename?: 'Vote' | undefined
+      support: boolean
+      proposal: {
+        __typename?: 'Proposal' | undefined
+        id: string
+        number: number
+        targets: string[]
+        values: any[]
+        signatures: string[]
+        startBlock: any
+        description: string
+        endBlock: any
+        created: any
+      }
+    }[]
+  ) {
+    const proposal = proposals.map(async prop => {
       const proposal = { ...prop.proposal, support: prop.support }
-      return governance.stateProposals(proposal.number).then(res => {
-        const createdProposal = new Date(Number(proposal.created) * 1000)
-        const secondsToEndProposal =
-          (Number(proposal.endBlock) - Number(proposal.startBlock)) *
-          secondsPerBlock
-        proposal.timeToEndProposal = new Date(
-          Number(createdProposal) + secondsToEndProposal * 1000
-        )
-          .toLocaleString()
-          .split(', ')[0]
-        proposal.state = res
-
-        return proposal
-      })
+      const res = await governance.stateProposals(proposal.number)
+      const createdProposal = new Date(Number(proposal.created) * 1000)
+      const secondsToEndProposal =
+        (Number(proposal.endBlock) - Number(proposal.startBlock)) *
+        secondsPerBlock
+      const timeToEndProposal = new Date(
+        Number(createdProposal) + secondsToEndProposal * 1000
+      )
+        .toLocaleString()
+        .split(', ')[0]
+      const state = res
+      return { ...proposal, timeToEndProposal, state }
     })
     const proposalComplete = await Promise.all(proposal)
 
@@ -118,11 +117,11 @@ export const UserTableVotingHistory = ({
   }
 
   React.useEffect(() => {
-    if (data) {
-      data.user === null
-        ? setProposalsList([])
-        : handleAddStateOnProposal(data.user.votes)
+    if (!data) {
+      return
     }
+
+    handleAddStateOnProposal(data.votes)
   }, [data])
 
   return (

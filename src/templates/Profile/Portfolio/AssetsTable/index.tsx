@@ -37,13 +37,13 @@ type PoolProps = {
   address: string
   name: string
   symbol: string
-  logo: string
+  logo: string | null | undefined
   changeDay: string
   changeMonth: string
-  price: string
-  tvl: string
-  balance: string
+  price: any
+  tvl: any
   balanceInUSD: string
+  balance: string
   logoChain: string
 }
 

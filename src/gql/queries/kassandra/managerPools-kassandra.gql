@@ -1,0 +1,10 @@
+query ManagerPools($manager: String) {
+    pools(where: { manager: $manager }) {
+        id
+        name
+        logo
+        chain {
+            logo
+        }
+    }
+}

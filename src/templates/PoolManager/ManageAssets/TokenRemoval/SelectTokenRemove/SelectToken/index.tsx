@@ -8,7 +8,7 @@ import { mockTokens } from '@/constants/tokenAddresses'
 import * as S from './styles'
 
 interface ISelectTokenProps {
-  priceToken: (address: string) => number
+  priceToken: (address: string) => string
   chainId: number
 }
 

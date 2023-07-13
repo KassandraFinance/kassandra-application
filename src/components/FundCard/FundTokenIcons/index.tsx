@@ -3,13 +3,12 @@ import Image from 'next/image'
 
 import none from '@assets/icons/coming-soon.svg'
 
+import { UnderlyingAssetsInfoType } from '@/utils/updateAssetsToV2'
+
 import * as S from './styles'
 
 interface TokenIconsProps {
-  poolInfo: {
-    weight_normalized: string
-    token: { logo?: string; wraps?: { logo?: string } }
-  }[]
+  poolInfo: UnderlyingAssetsInfoType[]
 }
 
 const FundTokenIcons = ({ poolInfo }: TokenIconsProps) => {

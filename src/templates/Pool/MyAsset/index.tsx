@@ -8,9 +8,9 @@ import { useConnectWallet } from '@web3-onboard/react'
 
 import { networks, KacyPoligon } from '../../../constants/tokenAddresses'
 
-import { useAppSelector } from '../../../store/hooks'
-import { ChainInfo } from '../../../store/reducers/pool'
-import useCoingecko from '@/hooks/useCoingecko'
+import { usePoolData } from '@/hooks/query/usePoolData'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 
 import useERC20 from '../../../hooks/useERC20'
 import useStaking from '../../../hooks/useStaking'
@@ -26,7 +26,22 @@ import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 import * as S from './styles'
 
 interface IMyAssetProps {
-  chain: ChainInfo
+  chain:
+    | {
+        __typename?: 'Chain' | undefined
+        id: string
+        logo?: string | null | undefined
+        chainName?: string | null | undefined
+        nativeTokenName?: string | null | undefined
+        nativeTokenSymbol?: string | null | undefined
+        nativeTokenDecimals?: number | null | undefined
+        rpcUrls?: (string | null)[] | null | undefined
+        blockExplorerUrl?: string | null | undefined
+        secondsPerBlock?: number | null | undefined
+        addressWrapped?: string | null | undefined
+      }
+    | null
+    | undefined
   poolToken: string
   symbol: string
   price: string
@@ -51,7 +66,7 @@ const MyAsset = ({
   const [balance, setBalance] = React.useState<Big>(Big(0))
   const [apr, setApr] = React.useState<Big>(Big(0))
 
-  const chainInfo = networks[chain.id]
+  const chainInfo = networks[Number(chain?.id || 0)]
 
   const [{ wallet, connecting }, connect] = useConnectWallet()
   const stakingContract = useStaking(
@@ -60,13 +75,16 @@ const MyAsset = ({
   )
   const ERC20 = useERC20(poolToken, networks[chainInfo.chainId].rpc)
   const { trackEventFunction } = useMatomoEcommerce()
-  const { priceToken } = useCoingecko(
-    networks[137].chainId,
-    chainInfo.nativeCurrency.address,
-    [KacyPoligon]
-  )
-  const { pool } = useAppSelector(state => state)
+  const { data } = useTokensData({
+    chainId: networks[137].chainId,
+    tokenAddresses: [KacyPoligon]
+  })
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: chainInfo.nativeCurrency.address,
+    tokens: data || {}
+  })
   const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
   const kacyPrice = priceToken(KacyPoligon.toLowerCase())
 
@@ -179,7 +197,7 @@ const MyAsset = ({
           <S.Tr>
             <S.Td>
               <S.TdWrapper>
-                {pool.logo ? (
+                {pool?.logo ? (
                   <img
                     src={pool.logo}
                     width={20}
@@ -189,7 +207,7 @@ const MyAsset = ({
                   />
                 ) : (
                   <Blockies
-                    seed={pool.name}
+                    seed={pool?.name || ''}
                     className="poolIcon"
                     size={7}
                     scale={4}

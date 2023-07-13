@@ -1,0 +1,10 @@
+query VotingPower($id: ID!) {
+  user(id: $id) {
+    votingPower
+  }
+
+  governances {
+    totalVotingPower
+    votingAddresses
+  }
+}

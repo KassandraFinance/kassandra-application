@@ -116,7 +116,7 @@ export default class operationV1 implements IOperations {
     tokenInAddress
   }: CalcAmountOutParams) {
     const checkedTokenInPool = checkTokenInThePool(
-      this.poolInfo.tokens,
+      Array.isArray(this.poolInfo.tokens) ? this.poolInfo.tokens : [],
       tokenInAddress
     )
 
@@ -143,10 +143,10 @@ export default class operationV1 implements IOperations {
         }
       }
       const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(
-        this.poolInfo.tokens
+        Array.isArray(this.poolInfo.tokens) ? this.poolInfo.tokens : []
       )
       const tokenWrappedAddress = getTokenWrapped(
-        this.poolInfo.tokens,
+        Array.isArray(this.poolInfo.tokens) ? this.poolInfo.tokens : [],
         tokenExchange
       )
 
@@ -244,10 +244,10 @@ export default class operationV1 implements IOperations {
     }
 
     const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(
-      this.poolInfo.tokens
+      Array.isArray(this.poolInfo.tokens) ? this.poolInfo.tokens : []
     )
     const tokenWrappedAddress = getTokenWrapped(
-      this.poolInfo.tokens,
+      Array.isArray(this.poolInfo.tokens) ? this.poolInfo.tokens : [],
       tokenExchange
     )
 
@@ -273,12 +273,12 @@ export default class operationV1 implements IOperations {
     data
   }: EstimatedGasParams) {
     const tokensChecked = checkTokenInThePool(
-      this.poolInfo.tokens,
+      Array.isArray(this.poolInfo.tokens) ? this.poolInfo.tokens : [],
       tokenInAddress
     )
     const avaxValue = tokenInAddress === NATIVE_ADDRESS ? amountTokenIn : '0'
     const tokenWithHigherLiquidity = checkTokenWithHigherLiquidityPool(
-      this.poolInfo.tokens
+      Array.isArray(this.poolInfo.tokens) ? this.poolInfo.tokens : []
     )
 
     let estimateGas
@@ -439,16 +439,19 @@ export default class operationV1 implements IOperations {
   }: CalcAllOutGivenPoolInParams) {
     const withdrawAllAmoutOut: Record<string, Big> = {}
     let transactionError: string | undefined = undefined
-    const tokensInPool = this.poolInfo.tokens.map(
-      item => item.token.wraps?.id ?? item.token.id
-    )
+
+    const arr = Array.isArray(this.poolInfo.tokens) ? this.poolInfo.tokens : []
+    const tokensInPool = arr.map(item => item.token.wraps?.id ?? item.token.id)
 
     try {
       const poolSupply = await this.ER20Contract.totalSupply()
       const exitFee = await this.corePoolContract.exitFee()
 
+      const arr = Array.isArray(this.poolInfo.tokens)
+        ? this.poolInfo.tokens
+        : []
       await Promise.all(
-        this.poolInfo.tokens.map(async item => {
+        arr.map(async item => {
           const swapOutTotalPoolBalance = await this.corePoolContract.balance(
             item.token.id
           )
@@ -533,14 +536,16 @@ export default class operationV1 implements IOperations {
     slippageExp,
     userWalletAddress
   }: ExitSwapPoolAllTokenAmountInParams) {
-    const swapOutAmounts = this.poolInfo.tokens.map(asset =>
+    const arr = Array.isArray(this.poolInfo.tokens) ? this.poolInfo.tokens : []
+    const swapOutAmounts = arr.map(asset =>
       amountAllTokenOut[asset.token.id]
         .mul(slippageBase)
         .div(slippageExp)
         .toFixed(0)
     )
 
-    const tokensWithdraw = this.poolInfo.tokens.map(token =>
+    const arr2 = Array.isArray(this.poolInfo.tokens) ? this.poolInfo.tokens : []
+    const tokensWithdraw = arr2.map(token =>
       token.token.wraps ? token.token.wraps.id : token.token.id
     )
 

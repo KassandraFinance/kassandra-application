@@ -21,17 +21,17 @@ export const UserTableVotingHistory = styled.section`
       tr {
         cursor: pointer;
 
-        &:last-child {
-          .td-container,
-          .td-container:hover {
-            border-bottom: none;
-          }
-        }
-
         &:first-child {
           .td-container,
           .td-container:hover {
             border-top: none;
+          }
+        }
+
+        &:last-child {
+          .td-container,
+          .td-container:hover {
+            border-bottom: none;
           }
         }
       }

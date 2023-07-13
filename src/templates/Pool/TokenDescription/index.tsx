@@ -1,37 +1,19 @@
 import React from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
 
-import { useAppSelector } from '../../../store/hooks'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 
-//import { ProductSymbols } from '../../../constants/tokenAddresses'
-
 import * as S from './styles'
 
-// import AhypeDescription from './ahype'
-// import TricryptoDescription from './tricrypto'
-
-// interface DescriptionType {
-//   //[key: ProductSymbols]: JSX.Element;
-//   [key: string]: JSX.Element;
-// }
-
-// interface Input {
-//   symbol: string;
-// }
-
-// const descriptions: DescriptionType = {
-//   ahype: <AhypeDescription />,
-//   k3c: <TricryptoDescription />
-// }
-
 const TokenDescription = () => {
-  // const description = descriptions[symbol.toLowerCase()]
-  const { pool } = useAppSelector(state => state)
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
-  return pool.summary ? (
+  return pool?.summary ? (
     <>
       <S.Title>
         <Image src={iconBar} alt="" height={18} width={18} />

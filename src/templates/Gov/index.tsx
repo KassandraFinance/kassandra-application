@@ -1,4 +1,3 @@
-import React from 'react'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
 

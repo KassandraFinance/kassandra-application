@@ -1,8 +1,10 @@
 import Image from 'next/image'
 import React from 'react'
+import { useRouter } from 'next/router'
 
 import { setTokenSelect } from '../../../../../store/reducers/tokenSelect'
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
 import logoNone from '../../../../../../public/assets/icons/coming-soon.svg'
 
@@ -11,12 +13,17 @@ import * as S from './styles'
 const TokenSelect = () => {
   const [openOptions, setOpenOptions] = React.useState<boolean>(false)
 
-  const { pool, tokenSelect } = useAppSelector(state => state)
+  const { tokenSelect } = useAppSelector(state => state)
   const dispatch = useAppDispatch()
 
-  const listTokensWithinPool = [...pool.underlying_assets].sort(
-    (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
-  )
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
+
+  const listTokensWithinPool = pool
+    ? [...pool.underlying_assets].sort(
+        (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
+      )
+    : []
 
   React.useEffect(() => {
     const tokenInfo = listTokensWithinPool[0]?.token

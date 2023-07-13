@@ -1,21 +1,21 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import Big from 'big.js'
 import { stringSimilarity } from 'string-similarity-js'
 import { useConnectWallet } from '@web3-onboard/react'
 import { isAddress } from 'ethers'
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
-import { setTokenSelectionActive } from '../../../../../store/reducers/tokenSelectionActive'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { setTokenSelectionActive } from '@/store/reducers/tokenSelectionActive'
 
-import useCoingecko from '../../../../../hooks/useCoingecko'
 import useBatchRequests from '@/hooks/useBatchRequests'
+import { usePoolData } from '@/hooks/query/usePoolData'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 
-import { BNtoDecimal } from '../../../../../utils/numerals'
+import { BNtoDecimal } from '@/utils/numerals'
 
-import {
-  NATIVE_ADDRESS,
-  platform
-} from '../../../../../constants/tokenAddresses'
+import { NATIVE_ADDRESS } from '@/constants/tokenAddresses'
 
 import TokenPin from './TokenPin'
 import InputSearch from './InputSearch'
@@ -23,6 +23,7 @@ import TokensSwapProviderList from './TokensSwapProviderList'
 import Loading from '../../../../../components/Loading'
 
 import * as S from './styles'
+import { setTokenSelect } from '@/store/reducers/tokenSelect'
 
 export type IListbalanceTokenprops = {
   [key: string]: string
@@ -35,11 +36,13 @@ export type IListTokenPricesprops = {
 }
 
 export interface ITokenListSwapProviderProps {
-  symbol: string
-  name: string
+  tags?: string[]
+
   address: string
-  decimals: number
+  decimals: number | null | undefined
   logoURI: string
+  name: string | null | undefined
+  symbol: string | null | undefined
 }
 
 export interface IUserTokenProps extends ITokenListSwapProviderProps {
@@ -59,17 +62,23 @@ const TokenSelection = () => {
       ['']: '0'
     })
 
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
+
   const dispatch = useAppDispatch()
-  const { tokenListSwapProvider, pool } = useAppSelector(state => state)
-  const { balances } = useBatchRequests(pool.chain_id)
+  const { tokenListSwapProvider } = useAppSelector(state => state)
+  const { balances } = useBatchRequests(pool?.chain_id || 0)
   const [{ wallet }] = useConnectWallet()
 
   const tokenAddresses = tokenListSwapProvider.map(token => token.address)
-  const { priceToken } = useCoingecko(
-    pool.chain_id,
-    pool.chain.addressWrapped,
+  const { data } = useTokensData({
+    chainId: pool?.chain_id || 0,
     tokenAddresses
-  )
+  })
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: pool?.chain?.addressWrapped || '',
+    tokens: data || {}
+  })
 
   function handleUserTokensBalance(
     newTokenList: ITokenListSwapProviderProps[],
@@ -77,25 +86,25 @@ const TokenSelection = () => {
   ) {
     const userTokensBalance = newTokenList.map(token => {
       const score = isWithScore
-        ? stringSimilarity(token.symbol + token.name, searchToken)
+        ? stringSimilarity(token?.symbol || '' + token?.name, searchToken)
         : 0
       const checkToken =
         token.address === NATIVE_ADDRESS
-          ? pool.chain.addressWrapped.toLocaleLowerCase()
+          ? pool?.chain?.addressWrapped?.toLocaleLowerCase() || ''
           : token.address
 
       const tokenBalance = balanceToken[token.address.toLowerCase()] || 0
       const tokenPriceInDollar = priceToken(checkToken.toLowerCase()) ?? 0
 
       const balanceTokenFormated = Big(tokenBalance || '0').div(
-        Big(10).pow(token.decimals)
+        Big(10).pow(token?.decimals || 18)
       )
       const balanceInDollar = balanceTokenFormated.mul(tokenPriceInDollar)
 
       return {
         ...token,
         tokenScore: score,
-        balance: BNtoDecimal(balanceTokenFormated, token.decimals, 2),
+        balance: BNtoDecimal(balanceTokenFormated, token?.decimals || 18, 2),
         balanceInDollar: balanceInDollar.toNumber()
       }
     })
@@ -119,8 +128,8 @@ const TokenSelection = () => {
 
     const tokenFiltered = newTokenList.filter(
       token =>
-        token.symbol.toLocaleLowerCase().includes(searchToken) ||
-        token.name.toLocaleLowerCase().includes(searchToken)
+        token.symbol?.toLocaleLowerCase().includes(searchToken) ||
+        token.name?.toLocaleLowerCase().includes(searchToken)
     )
 
     const userTokensBalance: IUserTokenProps[] = handleUserTokensBalance(
@@ -233,10 +242,10 @@ const TokenSelection = () => {
           </S.LoadingContainer>
         ) : (
           <TokensSwapProviderList
-            listBalanceToken={balanceToken}
             filteredToken={filteredToken}
             tokenPinList={tokenPinList}
             setTokenPinList={setTokenPinList}
+            setTokenSelected={token => dispatch(setTokenSelect(token))}
           />
         )}
       </S.BodyToken>

@@ -31,7 +31,12 @@ export type IRebalanceWeightsProps = {
   poolName: string
   poolPrice: string
   listTokenWeights: {
-    token: Omit<ITokenProps, 'decimals'>
+    token: {
+      address: string
+      logo: string
+      name: string | null | undefined
+      symbol: string | null | undefined
+    }
     previous: string
     current: string
     final: string
@@ -40,13 +45,19 @@ export type IRebalanceWeightsProps = {
 
 type CoinsMetadataType = {
   [key: string]: {
-    usd: number
+    usd: string
     pricePercentageChangeIn24h: number
     marketCap: number
   }
 }
 export interface IlistTokenWeightsProps {
-  token: ITokenProps
+  token: {
+    address: string
+    logo: string
+    name: string | null | undefined
+    symbol: string | null | undefined
+    decimals: number | null | undefined
+  }
   allocation: string
   holding: {
     value: Big
@@ -69,7 +80,6 @@ const IntroReview = ({
   coingeckoData,
   chainId
 }: IIntroReviewProps) => {
-  // eslint-disable-next-line prettier/prettier
   const [isOpenTokenInfoMobile, setIsOpenTokenInfoMobile] =
     React.useState(false)
   const [activeIndex, setActiveIndex] = React.useState(0)
@@ -77,7 +87,7 @@ const IntroReview = ({
   const tokenSeleted = listTokenWeights[activeIndex] ?? {}
   const allocationsDataChart = listTokenWeights.map(item => ({
     image: item.token.logo,
-    symbol: item.token.symbol,
+    symbol: item.token?.symbol || '',
     value: Number(item.allocation)
   }))
   const coingeckoTokenInfo =
@@ -115,7 +125,7 @@ const IntroReview = ({
               <S.ValueHoldingAndPrice>
                 $
                 {tokenSeleted?.holding?.value
-                  .mul(Big(coingeckoTokenInfo?.usd.toFixed(2) ?? 0))
+                  .mul(Big(coingeckoTokenInfo?.usd ?? 0))
                   .toFixed(2) ?? 0}
               </S.ValueHoldingAndPrice>
               <p>
@@ -127,7 +137,7 @@ const IntroReview = ({
               <S.TitleHoldingAndPrice>PRICE 24H</S.TitleHoldingAndPrice>
               <S.PriceDayValue>
                 <S.ValueHoldingAndPrice>
-                  ${(coingeckoTokenInfo?.usd ?? 0).toFixed(2)}
+                  ${Big(coingeckoTokenInfo?.usd ?? 0).toFixed(2)}
                 </S.ValueHoldingAndPrice>
                 <S.ChangeDayValue
                   changePrice={

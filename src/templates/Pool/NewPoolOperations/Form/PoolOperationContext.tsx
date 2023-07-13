@@ -4,7 +4,7 @@ import { IOperations } from '../../../../services/IOperation'
 
 interface IOperationModel {
   operation: IOperations
-  priceToken: (address: string) => number | undefined
+  priceToken: (address: string) => string | undefined
 }
 
 // eslint-disable-next-line prettier/prettier

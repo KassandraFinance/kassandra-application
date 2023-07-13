@@ -9,7 +9,7 @@ import { networks } from '@/constants/tokenAddresses'
 
 import useManagePoolController from '@/hooks/useManagePoolController'
 
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 
 import Button from '@/components/Button'
 import InputText from '@/components/Inputs/InputText'
@@ -44,12 +44,15 @@ const AddInvestorModal = ({
 
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 
   const { addAllowedAddresses } = useManagePoolController(
-    poolInfo?.controller ?? '',
+    (poolInfo && poolInfo[0]?.controller) ?? '',
     networks[chainId].rpc
   )
 
@@ -134,7 +137,7 @@ const AddInvestorModal = ({
             ))}
           </S.Addresses>
 
-          {poolInfo?.chain_id === chainId ? (
+          {poolInfo && poolInfo[0]?.chain_id === chainId ? (
             <>
               {!isTransaction ? (
                 <Button
@@ -157,14 +160,18 @@ const AddInvestorModal = ({
             </>
           ) : (
             <>
-              {poolInfo?.chain_id && (
+              {poolInfo && poolInfo[0]?.chain_id && (
                 <Button
-                  text={`Connect to ${networks[poolInfo.chain_id].chainName}`}
+                  text={`Connect to ${
+                    networks[poolInfo[0].chain_id].chainName
+                  }`}
                   type="button"
                   backgroundPrimary
                   fullWidth
                   onClick={() =>
-                    setChain({ chainId: `0x${poolInfo.chain_id.toString(16)}` })
+                    setChain({
+                      chainId: `0x${poolInfo[0].chain_id.toString(16)}`
+                    })
                   }
                 />
               )}

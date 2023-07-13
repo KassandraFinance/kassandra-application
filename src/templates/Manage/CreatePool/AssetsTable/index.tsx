@@ -8,21 +8,21 @@ import { abbreviateNumber } from '@/utils/abbreviateNumber'
 
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { setTokens, TokenType } from '@/store/reducers/poolCreationSlice'
+import { setTokenSelectionActive } from '@/store/reducers/tokenSelectionActive'
 
 import InputSearch from '@/components/Inputs/InputSearch'
 import Checkbox from '@/components/Inputs/Checkbox'
 import CoinSummary from '../SelectAssets/CoinSummary'
 import Button from '@/components/Button'
-
-import * as S from './styles'
-
 import {
   CoinGeckoAssetsResponseType,
   TokensInfoResponseType
 } from '../SelectAssets'
 
+import * as S from './styles'
+
 interface IAssetsTable {
-  tokensData: TokensInfoResponseType[] | undefined
+  tokensData: TokensInfoResponseType[]
   tokenBalance: { [key: string]: Big }
   priceList: CoinGeckoAssetsResponseType | undefined
 }
@@ -63,12 +63,13 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
 
   React.useEffect(() => {
     const expressao = new RegExp(search, 'i')
-    const arr = tokensData ? tokensData : []
+    const arr = tokensData
     const tokensFiltered = arr.filter(token => {
-      return expressao.test(token.symbol)
+      return expressao.test(token?.symbol || '')
     })
 
     setTokensArr(tokensFiltered)
+    dispatch(setTokenSelectionActive(true))
   }, [tokensData, search])
 
   return (
@@ -118,13 +119,13 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                 >
                   <S.Td className="asset">
                     <CoinSummary
-                      coinImage={coin.logo}
-                      coinName={coin.name}
-                      coinSymbol={coin.symbol}
+                      coinImage={coin?.logo || ''}
+                      coinName={coin?.name || ''}
+                      coinSymbol={coin?.symbol || ''}
                       price={
-                        priceList ? priceList[coin.id.toLowerCase()]?.usd : 0
+                        priceList ? priceList[coin.id.toLowerCase()]?.usd : '0'
                       }
-                      url={`https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`}
+                      url={`https://heimdall-frontend.vercel.app/coins/${coin?.symbol?.toLocaleLowerCase()}`}
                       table
                     />
                   </S.Td>
@@ -145,7 +146,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                     tokenBalance[coin.id.toLowerCase()].gt(Big(0))
                       ? abbreviateNumber(
                           Big(tokenBalance[coin.id.toLowerCase()].toString())
-                            .div(Big(10).pow(coin.decimals))
+                            .div(Big(10).pow(coin?.decimals || 18))
                             .toFixed()
                         )
                       : 0}{' '}
@@ -154,7 +155,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                       {tokenBalance[coin.id.toLowerCase()] && priceList
                         ? abbreviateNumber(
                             Big(tokenBalance[coin.id.toLowerCase()].toString())
-                              .div(Big(10).pow(coin.decimals))
+                              .div(Big(10).pow(coin?.decimals || 18))
                               .mul(
                                 Big(priceList[coin.id.toLowerCase()]?.usd ?? 0)
                               )
@@ -166,18 +167,18 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                   <S.Td className="add">
                     <Checkbox
                       form="poolCreationForm"
-                      name={coin.symbol}
-                      label={coin.symbol}
-                      checked={handleChecked(coin.symbol)}
+                      name={coin?.symbol || ''}
+                      label={coin?.symbol || ''}
+                      checked={handleChecked(coin?.symbol || '')}
                       showLabel={false}
                       onChange={() =>
                         handleCheckbox({
-                          address: coin.id.toLowerCase(),
-                          name: coin.name,
-                          icon: coin.logo,
-                          symbol: coin.symbol,
-                          decimals: coin.decimals,
-                          url: `https://heimdall-frontend.vercel.app/coins/${coin.symbol.toLocaleLowerCase()}`,
+                          address: coin?.id?.toLowerCase(),
+                          name: coin?.name || '',
+                          icon: coin?.logo || '',
+                          symbol: coin?.symbol || '',
+                          decimals: coin?.decimals ? coin.decimals : 18,
+                          url: `https://heimdall-frontend.vercel.app/coins/${coin?.symbol?.toLocaleLowerCase()}`,
                           allocation: '100',
                           amount: '0',
                           isLocked: false

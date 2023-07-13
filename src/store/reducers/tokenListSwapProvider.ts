@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface ITokenListSwapProviderProps {
-  symbol: string
-  name: string
-  address: string
-  decimals: number
-  logoURI: string
   tags?: string[]
+
+  address: string
+  decimals: number | null | undefined
+  logoURI: string
+  name: string | null | undefined
+  symbol: string | null | undefined
 }
 
 const initialState: ITokenListSwapProviderProps[] = [

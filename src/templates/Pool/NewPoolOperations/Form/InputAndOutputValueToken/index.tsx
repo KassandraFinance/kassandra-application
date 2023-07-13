@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
@@ -7,6 +8,7 @@ import { BNtoDecimal } from '../../../../../utils/numerals'
 import { getBalanceToken, decimalToBN } from '../../../../../utils/poolUtils'
 
 import { useAppSelector } from '../../../../../store/hooks'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
 import PoolOperationContext from '../PoolOperationContext'
 
@@ -50,8 +52,11 @@ const InputAndOutputValueToken = ({
   errorMsg = ''
 }: IInputAndOutputValueTokenProps) => {
   const [{ wallet }] = useConnectWallet()
-  const { pool, tokenSelect } = useAppSelector(state => state)
+  const { tokenSelect } = useAppSelector(state => state)
   const { priceToken } = React.useContext(PoolOperationContext)
+
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
   const chainId = Number(wallet?.chains[0].id ?? '0x89')
 
@@ -68,7 +73,7 @@ const InputAndOutputValueToken = ({
       e.target.value = `0${e.target.value}`
     }
 
-    const valueFormatted = decimalToBN(value, tokenSelect.decimals)
+    const valueFormatted = decimalToBN(value, tokenSelect?.decimals || 18)
 
     setMaxActive && setMaxActive(false)
     setAmountTokenIn(valueFormatted)
@@ -83,7 +88,7 @@ const InputAndOutputValueToken = ({
     if (
       !amountTokenIn ||
       !inputAmountTokenRef ||
-      pool.chain_id !== chainId ||
+      pool?.chain_id !== chainId ||
       Big(selectedTokenInBalance).lte(0)
     ) {
       return
@@ -113,8 +118,8 @@ const InputAndOutputValueToken = ({
 
   const disabled = !wallet
     ? 'Please connect your wallet by clicking the button below'
-    : chainId !== pool.chain_id
-    ? `Please change to the ${pool.chain.chainName} by clicking the button below`
+    : chainId !== pool?.chain_id
+    ? `Please change to the ${pool?.chain?.chainName} by clicking the button below`
     : ''
 
   const isInvestType = typeAction === 'Invest' ? true : false
@@ -134,7 +139,7 @@ const InputAndOutputValueToken = ({
   React.useEffect(() => {
     if (
       !wallet ||
-      chainId !== pool.chain_id ||
+      chainId !== pool?.chain_id ||
       chainId.toString().length === 0 ||
       tokenSelect.address.length === 0
     ) {
@@ -146,7 +151,9 @@ const InputAndOutputValueToken = ({
         tokenSelect.address,
         wallet.accounts[0].address,
         chainId,
-        pool.pool_version === 1 ? pool.chain.addressWrapped : undefined
+        pool?.pool_version === 1
+          ? pool?.chain?.addressWrapped || undefined
+          : undefined
       )
 
       setSelectedTokenInBalance(userTokenBalance)
@@ -159,15 +166,19 @@ const InputAndOutputValueToken = ({
         <S.Top>
           <S.Info>
             <S.Title>{isInvestType ? 'Pay with' : 'Swap to'}</S.Title>
-            {isInvestType ? <TokenSelected /> : <TokenSelect />}
+            {isInvestType ? (
+              <TokenSelected tokenSelect={tokenSelect} />
+            ) : (
+              <TokenSelect />
+            )}
             <S.Span spanlight={true} onClick={debounceMax}>
               Balance:{' '}
               {selectedTokenInBalance > new Big(-1)
                 ? BNtoDecimal(
                     selectedTokenInBalance.div(
-                      Big(10).pow(tokenSelect.decimals)
+                      Big(10).pow(tokenSelect?.decimals || 18)
                     ),
-                    tokenSelect.decimals
+                    tokenSelect?.decimals || 18
                   )
                 : '...'}
             </S.Span>
@@ -224,9 +235,9 @@ const InputAndOutputValueToken = ({
                 <S.amountTokenOutText>
                   {BNtoDecimal(
                     Big(amountTokenIn)?.div(
-                      Big(10).pow(tokenSelect.decimals)
+                      Big(10).pow(tokenSelect?.decimals || 18)
                     ) || Big(0),
-                    tokenSelect.decimals,
+                    tokenSelect?.decimals || 18,
                     6
                   ).replace(/\s/g, '')}
                 </S.amountTokenOutText>
