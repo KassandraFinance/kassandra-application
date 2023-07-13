@@ -7,38 +7,10 @@ import SegmentedControls from '../../Inputs/SegmentedControls'
 
 import * as S from './styles'
 
-type Change =
-  | readonly [
-      {
-        readonly name: '1 Day'
-        readonly key: 'day'
-        readonly value: 0
-      },
-      {
-        readonly name: '1 Week'
-        readonly key: 'week'
-        readonly value: 0
-      },
-      {
-        readonly name: '1 Month'
-        readonly key: 'month'
-        readonly value: 0
-      },
-      {
-        readonly name: '1 Year'
-        readonly key: 'year'
-        readonly value: 0
-      },
-      {
-        readonly name: 'All'
-        readonly key: 'max'
-        readonly value: 0
-      }
-    ]
-  | {
-      name: '1 Week' | '1 Month' | '1 Year' | 'All' | '1 Day'
-      value: number
-    }[]
+type Change = {
+  name: string
+  value: number
+}[]
 
 type Props = {
   data: DataType[]

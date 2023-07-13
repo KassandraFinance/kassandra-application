@@ -33,7 +33,13 @@ const periods: Record<string, number> = {
   ALL: new Date().getTime() / 1000
 }
 
-const changeList = [
+type ChangeListType = {
+  name: string
+  key: 'day' | 'week' | 'month' | 'year' | 'max'
+  value: number
+}
+
+const changeList: ChangeListType[] = [
   {
     name: '1 Day',
     key: 'day',
@@ -60,7 +66,7 @@ const changeList = [
     key: 'max',
     value: 0
   }
-] as const
+]
 
 const Overview = () => {
   const [depostiPeriod, setDepositPeriod] = React.useState<string>('1D')
