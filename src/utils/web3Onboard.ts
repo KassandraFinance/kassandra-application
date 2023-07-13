@@ -3,7 +3,9 @@ import injectedModule from '@web3-onboard/injected-wallets'
 import gnosisModule from '@web3-onboard/gnosis'
 import walletConnectModule from '@web3-onboard/walletconnect'
 
-const injected = injectedModule()
+const injected = injectedModule({
+  displayUnavailable: true
+})
 const walletConnect = walletConnectModule()
 const gnosis = gnosisModule()
 
