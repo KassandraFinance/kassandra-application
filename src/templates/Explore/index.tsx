@@ -47,9 +47,6 @@ type GetCommunityPoolsType = {
     symbol: string
     total_value_locked_usd: string
     is_private_pool: boolean
-    factory: {
-      pool_count: number
-    }
     chain: {
       logo: string
     }
@@ -77,6 +74,9 @@ type GetCommunityPoolsType = {
         }
       }[]
     }[]
+  }[]
+  kassandras: {
+    pool_count: number
   }[]
 }
 
@@ -116,7 +116,7 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
   React.useEffect(() => {
     if (!data?.pools.length) return
 
-    setTotalPoolsTable(data?.pools[0].factory.pool_count - 1)
+    setTotalPoolsTable(data?.kassandras[1].pool_count - 1)
   }, [data])
 
   return (
