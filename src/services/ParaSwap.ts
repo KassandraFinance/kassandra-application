@@ -72,7 +72,7 @@ export class ParaSwap implements ISwapProvider {
         srcToken,
         srcDecimals,
         destToken: asset.token.id,
-        destDecimals: asset.token.decimals.toString(),
+        destDecimals: asset.token.decimals?.toString() || '18',
         amount: Big(amount).mul(asset.weight_normalized).toFixed(0),
         side: 'SELL',
         network: chainId

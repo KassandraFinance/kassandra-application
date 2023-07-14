@@ -9,7 +9,7 @@ import {
   setLiquidity,
   setMethodCreate
 } from '@/store/reducers/poolCreationSlice'
-import { useTokensData } from '@/hooks/query/useTokensData'
+import { useTokensData, CoinsMetadataType } from '@/hooks/query/useTokensData'
 import useGetToken from '@/hooks/useGetToken'
 
 import {
@@ -26,22 +26,6 @@ import AddLiquidityTable from './AddLiquidityTable'
 import AddLiquidityAsset from './AddLiquidityAsset'
 
 import * as S from './styles'
-
-export type CoinGeckoResponseType = {
-  [key: string]: {
-    heimdallId: string
-    name: string
-    symbol: string
-    logo: string
-    usd: string
-    marketCap: number
-    volume: number
-    pricePercentageChangeIn24h: number
-    pricePercentageChangeIn7d: number
-    decimals: number
-    sparklineFrom7d: number[]
-  }
-}
 
 export type BalancesType = Record<string, Big>
 
@@ -95,7 +79,7 @@ const AddLiquidity = () => {
     )
   }
 
-  function handleMaxClick(priceList: CoinGeckoResponseType) {
+  function handleMaxClick(priceList: CoinsMetadataType) {
     let min = Big('99999999999999999999999999999999999999999999999999')
     let tokenSymbol = ''
     let liquidity = Big(0)

@@ -132,7 +132,7 @@ const PoolReview = () => {
         },
         weight_normalized: Big(token.allocation).div(100).toString()
       })),
-      srcDecimals: poolData.tokenIn.decimals.toString(),
+      srcDecimals: poolData.tokenIn.decimals?.toString() || '18',
       srcToken: poolData.tokenIn.address
     })
 

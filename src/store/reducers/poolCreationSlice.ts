@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Big from 'big.js'
 
-import { CoinGeckoResponseType } from '../../templates/Manage/CreatePool/AddLiquidity'
+import { CoinsMetadataType } from '@/hooks/query/useTokensData'
 
 export type TokenType = {
   icon: string
@@ -128,7 +128,7 @@ export function handleLiquidity(
   tokenInputLiquidity: string,
   inputToken: string,
   tokensArr: TokenType[],
-  tokenPriceList: CoinGeckoResponseType
+  tokenPriceList: CoinsMetadataType
 ) {
   let inputAddress = ''
   let tokenInputAllocation = '0'
@@ -294,7 +294,7 @@ export const poolCreationSlice = createSlice({
       action: PayloadAction<{
         token: string
         liquidity: string
-        tokenPriceList: CoinGeckoResponseType
+        tokenPriceList: CoinsMetadataType
       }>
     ) => {
       const tokensArr = state.createPoolData.tokens

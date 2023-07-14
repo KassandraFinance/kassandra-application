@@ -5,6 +5,7 @@ import Link from 'next/link'
 
 import { BNtoDecimal } from '@/utils/numerals'
 import { abbreviateNumber } from '@/utils/abbreviateNumber'
+import { CoinsMetadataType } from '@/hooks/query/useTokensData'
 
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { setTokens, TokenType } from '@/store/reducers/poolCreationSlice'
@@ -14,17 +15,14 @@ import InputSearch from '@/components/Inputs/InputSearch'
 import Checkbox from '@/components/Inputs/Checkbox'
 import CoinSummary from '../SelectAssets/CoinSummary'
 import Button from '@/components/Button'
-import {
-  CoinGeckoAssetsResponseType,
-  TokensInfoResponseType
-} from '../SelectAssets'
+import { TokensInfoResponseType } from '../SelectAssets'
 
 import * as S from './styles'
 
 interface IAssetsTable {
   tokensData: TokensInfoResponseType[]
   tokenBalance: { [key: string]: Big }
-  priceList: CoinGeckoAssetsResponseType | undefined
+  priceList: CoinsMetadataType | undefined
 }
 
 const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
@@ -123,7 +121,9 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                       coinName={coin?.name || ''}
                       coinSymbol={coin?.symbol || ''}
                       price={
-                        priceList ? priceList[coin.id.toLowerCase()]?.usd : '0'
+                        priceList
+                          ? priceList[coin.id.toLowerCase()]?.usd.toString()
+                          : '0'
                       }
                       url={`https://heimdall-frontend.vercel.app/coins/${coin?.symbol?.toLocaleLowerCase()}`}
                       table

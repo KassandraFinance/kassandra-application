@@ -192,7 +192,7 @@ export default class operationV2 implements IOperations {
     slippage
   }: JoinSwapAmountInParams) {
     const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(
-      this.poolInfo.tokens
+      typeof this.poolInfo.tokens === 'string' ? [] : this.poolInfo.tokens
     )
     const nativeValue = tokenInAddress === NATIVE_ADDRESS ? tokenAmountIn : '0'
 
@@ -235,7 +235,7 @@ export default class operationV2 implements IOperations {
     data
   }: EstimatedGasParams) {
     const { address: tokenExchange } = checkTokenWithHigherLiquidityPool(
-      this.poolInfo.tokens
+      typeof this.poolInfo.tokens === 'string' ? [] : this.poolInfo.tokens
     )
 
     const tokenIn =

@@ -1,20 +1,5 @@
-import { NATIVE_ADDRESS } from '../constants/tokenAddresses'
-
-export type CoinsMetadataType = {
-  [key: string]: {
-    heimdallId: string
-    name: string
-    symbol: string
-    logo: string
-    usd: string
-    marketCap: number
-    volume: number
-    pricePercentageChangeIn24h: number
-    pricePercentageChangeIn7d: number
-    sparklineFrom7d: number[]
-    decimals: number
-  }
-}
+import { NATIVE_ADDRESS } from '@/constants/tokenAddresses'
+import { CoinsMetadataType } from '@/hooks/query/useTokensData'
 
 const useGetToken = ({
   nativeTokenAddress,
@@ -31,7 +16,7 @@ const useGetToken = ({
       _address = nativeAddress
     }
 
-    return tokens[_address]?.usd ?? '0'
+    return tokens[_address]?.usd.toString() ?? '0'
   }
 
   return { priceToken }
