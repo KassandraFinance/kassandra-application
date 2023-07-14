@@ -5406,6 +5406,15 @@ export type PoolsQuery = {
   }>
 }
 
+export type PoolsPriceListQueryVariables = Exact<{
+  addresses?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>
+}>
+
+export type PoolsPriceListQuery = {
+  __typename?: 'Query'
+  pools: Array<{ __typename?: 'Pool'; price_usd: any; address: string }>
+}
+
 export type TokensQueryVariables = Exact<{
   tokensList: Array<Scalars['ID']['input']> | Scalars['ID']['input']
 }>
@@ -6389,6 +6398,14 @@ export const PoolsDocument = gql`
     }
   }
 `
+export const PoolsPriceListDocument = gql`
+  query PoolsPriceList($addresses: [ID!]) {
+    pools(where: { id_in: $addresses }) {
+      price_usd
+      address
+    }
+  }
+`
 export const TokensDocument = gql`
   query Tokens($tokensList: [ID!]!) {
     tokensByIds(ids: $tokensList) {
@@ -6908,6 +6925,21 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'Pools',
+        'query'
+      )
+    },
+    PoolsPriceList(
+      variables?: PoolsPriceListQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolsPriceListQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolsPriceListQuery>(
+            PoolsPriceListDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'PoolsPriceList',
         'query'
       )
     },

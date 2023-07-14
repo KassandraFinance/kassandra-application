@@ -3,6 +3,7 @@ import React from 'react'
 import useStaking from '@/hooks/useStaking'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
+import { PoolDetails } from '@/constants/pools'
 import { networks } from '@/constants/tokenAddresses'
 
 import Button from '../../Button'
@@ -11,30 +12,54 @@ import Modal from '../Modal'
 
 import * as S from './styles'
 
+export enum typeTransaction {
+  NONE,
+  STAKING,
+  UNSTAKING
+}
 interface IModalRequestUnstakeProps {
-  openStakeAndWithdraw: (transaction: 'staking' | 'unstaking') => void
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  pid: number
+  pool: PoolDetails
   isStaking: boolean
-  symbol: string
-  chainId: number
   stakingToken: string
+  openStakeAndWithdraw: (transaction: typeTransaction) => void
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ModalCancelUnstake = ({
-  setModalOpen,
-  openStakeAndWithdraw,
-  pid,
+  pool,
   isStaking,
-  symbol,
-  chainId,
-  stakingToken
+  stakingToken,
+  setModalOpen,
+  openStakeAndWithdraw
 }: IModalRequestUnstakeProps) => {
-  const networkChain = networks[chainId]
+  const networkChain = networks[pool.chain.id]
 
   const staking = useStaking(stakingToken, networkChain.chainId)
 
   const { trackEventFunction } = useMatomoEcommerce()
+
+  function handleCancelUnstake() {
+    if (isStaking) {
+      openStakeAndWithdraw(typeTransaction.STAKING)
+    } else {
+      staking.cancelUnstake(
+        pool.pid,
+        {
+          pending: `Confirming cancelling of unstaking ${pool.symbol}...`,
+          sucess: `Cancelling of unstaking ${pool.symbol} completed`
+        },
+        {
+          onSuccess: () =>
+            trackEventFunction(
+              'click-on-cancel',
+              `${pool.symbol}`,
+              'modal-cancel-unstaking'
+            )
+        }
+      )
+    }
+    setModalOpen(false)
+  }
 
   return (
     <S.ModalCancelUnstake>
@@ -111,28 +136,7 @@ const ModalCancelUnstake = ({
               as="button"
               text="Yes"
               backgroundSecondary
-              onClick={() => {
-                if (isStaking) {
-                  openStakeAndWithdraw('staking')
-                } else {
-                  staking.cancelUnstake(
-                    pid,
-                    {
-                      pending: `Confirming cancelling of unstaking ${symbol}...`,
-                      sucess: `Cancelling of unstaking ${symbol} completed`
-                    },
-                    {
-                      onSuccess: () =>
-                        trackEventFunction(
-                          'click-on-cancel',
-                          `${symbol}`,
-                          'modal-cancel-unstaking'
-                        )
-                    }
-                  )
-                }
-                setModalOpen(false)
-              }}
+              onClick={() => handleCancelUnstake()}
             />
           </S.ButtonContainer>
         </S.ModalContent>

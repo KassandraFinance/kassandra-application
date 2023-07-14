@@ -1,6 +1,7 @@
 import React from 'react'
-import Link from 'next/link'
 import Big from 'big.js'
+import Link from 'next/link'
+import { PoolDetails, PoolType } from '@/constants/pools'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal } from '@/utils/numerals'
@@ -19,37 +20,39 @@ import ModalBuyKacyOnPangolin from '../ModalBuyKacyOnPangolin'
 import * as S from './styles'
 
 interface IModalStakeProps {
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  pid: number
+  pool: PoolDetails
   decimals: string
+  amountApproved: Big
   stakingToken: string
   productCategories: string | string[]
-  symbol: string
-  stakeTransaction: string
-  setStakeTransaction: React.Dispatch<React.SetStateAction<string>>
-  link: string
-  amountApproved: Big
+  stakeTransaction: typeTransaction
+  setStakeTransaction: React.Dispatch<React.SetStateAction<typeTransaction>>
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   updateAllowance: () => Promise<void>
   handleApprove: () => Promise<void>
-  stakingAddress: string
-  chainId: number
+  getUserInfoAboutPool: () => Promise<void>
 }
 
+export enum typeTransaction {
+  NONE,
+  STAKING,
+  UNSTAKING
+}
+
+const porcentageButtonArray = [25, 50, 75, 100]
+
 const ModalStakeAndWithdraw = ({
+  pool,
   setModalOpen,
-  pid,
   decimals,
   stakingToken,
   productCategories,
-  symbol,
   stakeTransaction,
   setStakeTransaction,
-  link,
   amountApproved,
   updateAllowance,
   handleApprove,
-  stakingAddress,
-  chainId
+  getUserInfoAboutPool
 }: IModalStakeProps) => {
   const [isAmount, setIsAmount] = React.useState<boolean>(false)
   const [balance, setBalance] = React.useState<Big>(Big(0))
@@ -69,13 +72,10 @@ const ModalStakeAndWithdraw = ({
     trackCancelBuying
   } = useMatomoEcommerce()
 
-  const networkChain = networks[chainId]
+  const networkChain = networks[pool.chain.id]
+  const productSKU = `${Staking}_${pool.pid}`
 
-  const staking = useStaking(stakingAddress, networkChain.chainId)
-
-  const productSKU = `${Staking}_${pid}`
-
-  const connect = localStorage.getItem('walletconnect')
+  const staking = useStaking(pool.stakingContract, networkChain.chainId)
 
   function handleKacyAmount(percentage: Big) {
     const kacyAmount = percentage.mul(balance).div(Big(100))
@@ -96,78 +96,95 @@ const ModalStakeAndWithdraw = ({
     setIsAmount(true)
   }
 
+  function handleMultiplier(percentage: number) {
+    if (percentage === multiplier) {
+      setMultiplier(0)
+      handleKacyAmount(Big(0))
+    }
+
+    setMultiplier(percentage)
+    handleKacyAmount(Big(percentage))
+  }
+
+  async function handleStaking() {
+    const toDelegate = await staking.userInfo(
+      pool.pid,
+      wallet?.accounts[0].address
+    )
+    const delegate =
+      toDelegate.delegatee === '0x0000000000000000000000000000000000000000'
+        ? wallet?.accounts[0].address
+        : toDelegate.delegatee
+
+    trackBuying(
+      productSKU,
+      pool.symbol,
+      amountStake.div(Big(10).pow(18)).toNumber(),
+      productCategories
+    )
+
+    await staking.stake(
+      pool.pid,
+      amountStake.toFixed(0),
+      delegate,
+      {
+        pending: `Confirming stake of ${pool.symbol}...`,
+        sucess: `Stake of ${pool.symbol} confirmed`
+      },
+      {
+        onSuccess: () => {
+          getUserInfoAboutPool()
+          trackBought(productSKU, 0, 0)
+        },
+        onFail: () => trackCancelBuying()
+      }
+    )
+
+    await updateAllowance()
+  }
+
+  async function handleUnstaking() {
+    const productSKU = `${Staking}_${pool.pid}`
+
+    trackBuying(
+      productSKU,
+      pool.symbol,
+      -Big(amountStake.toString()).div(Big(10).pow(18)).toNumber(),
+      productCategories
+    )
+
+    staking.withdraw(
+      pool.pid,
+      amountStake.toFixed(0),
+      {
+        pending: `Confirming unstake of ${pool.symbol}...`,
+        sucess: `Unstake of ${pool.symbol} completed`
+      },
+      {
+        onSuccess: () => trackBought(productSKU, 0, 0),
+        onFail: () => trackCancelBuying()
+      }
+    )
+  }
+
   async function handleConfirm() {
-    const erc20 = await ERC20(stakingToken, networkChain.rpc)
-
-    const tokenName = await erc20.name()
-
-    if (stakeTransaction === 'staking') {
-      const toDelegate = await staking.userInfo(
-        pid,
-        wallet?.accounts[0].address
-      )
-      const delegate =
-        toDelegate.delegatee === '0x0000000000000000000000000000000000000000'
-          ? wallet?.accounts[0].address
-          : toDelegate.delegatee
-
-      trackBuying(
-        productSKU,
-        tokenName,
-        amountStake.div(Big(10).pow(18)).toNumber(),
-        productCategories
-      )
-
-      await staking.stake(
-        pid,
-        amountStake.toFixed(0),
-        delegate,
-        {
-          pending: `Confirming stake of ${symbol}...`,
-          sucess: `Stake of ${symbol} confirmed`
-        },
-        {
-          onSuccess: () => trackBought(productSKU, 0, 0),
-          onFail: () => trackCancelBuying()
-        }
-      )
-
-      await updateAllowance()
-    } else if (stakeTransaction === 'unstaking') {
-      const productSKU = `${Staking}_${pid}`
-
-      trackBuying(
-        productSKU,
-        tokenName,
-        -Big(amountStake.toString()).div(Big(10).pow(18)).toNumber(),
-        productCategories
-      )
-
-      staking.withdraw(
-        pid,
-        amountStake.toFixed(0),
-        {
-          pending: `Confirming unstake of ${symbol}...`,
-          sucess: `Unstake of ${symbol} completed`
-        },
-        {
-          onSuccess: () => trackBought(productSKU, 0, 0),
-          onFail: () => trackCancelBuying()
-        }
-      )
+    if (stakeTransaction === typeTransaction.STAKING) {
+      handleStaking()
+    } else if (stakeTransaction === typeTransaction.UNSTAKING) {
+      handleUnstaking()
     }
   }
 
   async function getBalance() {
-    if (wallet?.provider && stakeTransaction === 'staking') {
+    if (wallet?.provider && stakeTransaction === typeTransaction.STAKING) {
       const erc20 = await ERC20(stakingToken, networkChain.rpc)
 
       const balanceKacy = await erc20.balance(wallet?.accounts[0].address)
       setBalance(Big(balanceKacy))
-    } else if (stakeTransaction === 'unstaking') {
+    } else if (stakeTransaction === typeTransaction.UNSTAKING) {
       if (wallet?.provider) {
         const balance = await staking.availableWithdraw(
-          pid,
+          pool.pid,
           wallet?.accounts[0].address
         )
         setBalance(balance)
@@ -176,13 +193,7 @@ const ModalStakeAndWithdraw = ({
   }
 
   async function handleEventProductPageView() {
-    const erc20 = await ERC20(stakingToken, networkChain.rpc)
-
-    const track = async () => {
-      const tokenName = await erc20.name()
-      trackProductPageView(productSKU, tokenName, productCategories)
-    }
-    track()
+    trackProductPageView(productSKU, pool.symbol, productCategories)
   }
 
   React.useEffect(() => {
@@ -203,15 +214,15 @@ const ModalStakeAndWithdraw = ({
   }, [])
 
   React.useEffect(() => {
-    if (stakeTransaction === 'staking') {
+    if (stakeTransaction === typeTransaction.STAKING) {
       handleEventProductPageView()
     }
   }, [stakingToken])
 
   let title: string
-  if (stakeTransaction === 'staking') {
+  if (stakeTransaction === typeTransaction.STAKING) {
     title = 'Stake in Pool'
-  } else if (stakeTransaction === 'unstaking') {
+  } else if (stakeTransaction === typeTransaction.UNSTAKING) {
     title = 'Withdraw'
   } else {
     title = 'Transaction not defined'
@@ -222,14 +233,11 @@ const ModalStakeAndWithdraw = ({
       <Overlay
         onClick={() => {
           setModalOpen(false)
-          setStakeTransaction('')
+          setStakeTransaction(typeTransaction.NONE)
         }}
       />
 
-      <S.BorderGradient
-        stakeInKacy={symbol === 'KACY'}
-        unstaking={stakeTransaction}
-      >
+      <S.BorderGradient>
         <S.BackgroundBlack>
           <S.InterBackground>
             <span>{title}</span>
@@ -237,7 +245,7 @@ const ModalStakeAndWithdraw = ({
               type="button"
               onClick={() => {
                 setModalOpen(false)
-                setStakeTransaction('')
+                setStakeTransaction(typeTransaction.NONE)
               }}
             >
               <img src="assets/utilities/close-icon.svg" alt="Close" />
@@ -245,7 +253,7 @@ const ModalStakeAndWithdraw = ({
           </S.InterBackground>
           <S.Main>
             <S.Amount>
-              <span>${symbol} Total</span>
+              <span>${pool.symbol} Total</span>
               <InputTokenValue
                 inputRef={inputRef}
                 decimals={Big(decimals)}
@@ -253,74 +261,25 @@ const ModalStakeAndWithdraw = ({
               />
               <h5>Balance: {BNtoDecimal(balance.div(Big(10).pow(18)), 18)}</h5>
             </S.Amount>
+
             <S.ButtonContainer>
-              <button
-                type="button"
-                style={{
-                  background: multiplier === 25 ? '#fff' : 'transparent',
-                  color: multiplier === 25 ? '#000' : '#fff'
-                }}
-                onClick={() => {
-                  multiplier === 25 ? setMultiplier(0) : setMultiplier(25)
-                  multiplier === 25
-                    ? handleKacyAmount(Big(0))
-                    : handleKacyAmount(Big(25))
-                }}
-              >
-                25%
-              </button>
-
-              <button
-                type="button"
-                style={{
-                  background: multiplier === 50 ? '#fff' : 'transparent',
-                  color: multiplier === 50 ? '#000' : '#fff'
-                }}
-                onClick={() => {
-                  multiplier === 50 ? setMultiplier(0) : setMultiplier(50)
-                  multiplier === 50
-                    ? handleKacyAmount(Big(0))
-                    : handleKacyAmount(Big(50))
-                }}
-              >
-                50%
-              </button>
-
-              <button
-                type="button"
-                style={{
-                  background: multiplier === 75 ? '#fff' : 'transparent',
-                  color: multiplier === 75 ? '#000' : '#fff'
-                }}
-                onClick={() => {
-                  multiplier === 75 ? setMultiplier(0) : setMultiplier(75)
-                  multiplier === 75
-                    ? handleKacyAmount(Big(0))
-                    : handleKacyAmount(Big(75))
-                }}
-              >
-                75%
-              </button>
-
-              <button
-                type="button"
-                style={{
-                  background: multiplier === 100 ? '#fff' : 'transparent',
-                  color: multiplier === 100 ? '#000' : '#fff'
-                }}
-                onClick={() => {
-                  multiplier === 100 ? setMultiplier(0) : setMultiplier(100)
-                  multiplier === 100
-                    ? handleKacyAmount(Big(0))
-                    : handleKacyAmount(Big(100))
-                }}
-              >
-                max
-              </button>
+              {porcentageButtonArray.map(number => {
+                return (
+                  <S.PorcentageButton
+                    key={number}
+                    type="button"
+                    isActive={multiplier === number}
+                    onClick={() => handleMultiplier(number)}
+                  >
+                    {number}%
+                  </S.PorcentageButton>
+                )
+              })}
             </S.ButtonContainer>
+
             <S.WrapperButton>
               {amountApproved.lt(amountStake.toString()) &&
-              stakeTransaction === 'staking' ? (
+              stakeTransaction === typeTransaction.STAKING ? (
                 <Button
                   type="button"
                   text="Approve Contract"
@@ -342,54 +301,34 @@ const ModalStakeAndWithdraw = ({
                     setModalOpen(false)
                     handleConfirm()
                     setAmountStake(Big(0))
-                    setStakeTransaction('')
+                    setStakeTransaction(typeTransaction.NONE)
                   }}
                 />
               )}
             </S.WrapperButton>
 
-            {symbol === 'KACY' ? (
-              connect ? (
-                <Link
-                  href="https://app.pangolin.exchange/#/swap?outputCurrency=0xf32398dae246C5f672B52A54e9B413dFFcAe1A44"
-                  passHref
-                >
-                  <Button
-                    as="a"
-                    backgroundBlack
-                    fullWidth
-                    text={`Buy ${symbol}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => {
-                      setModalOpen(false)
-                      setStakeTransaction('')
-                    }}
-                  />
-                </Link>
-              ) : (
-                <Button
-                  backgroundBlack
-                  fullWidth
-                  text={`Buy ${symbol}`}
-                  rel="noopener noreferrer"
-                  onClick={() => {
-                    setIsOpenModalPangolin(true)
-                  }}
-                />
-              )
+            {pool.type === PoolType.STAKE ? (
+              <Button
+                backgroundBlack
+                fullWidth
+                text={`Buy ${pool.symbol}`}
+                rel="noopener noreferrer"
+                onClick={() => {
+                  setIsOpenModalPangolin(true)
+                }}
+              />
             ) : (
-              <Link href={link} passHref>
+              <Link href={pool.properties?.link ?? ''} passHref>
                 <Button
                   as="a"
                   backgroundBlack
                   fullWidth
-                  text={`Get ${symbol}`}
+                  text={`Get ${pool.symbol}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
+                    setStakeTransaction(typeTransaction.NONE)
                     setModalOpen(false)
-                    setStakeTransaction('')
                   }}
                 />
               </Link>
@@ -397,6 +336,7 @@ const ModalStakeAndWithdraw = ({
           </S.Main>
         </S.BackgroundBlack>
       </S.BorderGradient>
+
       {isOpenModalPangolin && (
         <ModalBuyKacyOnPangolin
           modalOpen={isOpenModalPangolin}
