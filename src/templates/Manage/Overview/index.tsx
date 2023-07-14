@@ -83,6 +83,16 @@ const Overview = () => {
     timestamp: Math.trunc(new Date().getTime() / 1000 - periods[tvlPeriod])
   })
 
+  const totalValueLockedChart = React.useMemo(() => {
+    if (!data) return
+    return data.total_value_locked.map(value => {
+      return {
+        close: Number(value.close),
+        timestamp: value.timestamp
+      }
+    })
+  }, [data])
+
   const { data: dataChange } = useManagerChangeTVL({
     manager: walletAddress,
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
@@ -142,9 +152,9 @@ const Overview = () => {
 
       <S.ManagerOverviewContainer>
         <S.ChartWrapper>
-          {data && dataChange ? (
+          {totalValueLockedChart && dataChange ? (
             <TVMChart
-              data={data?.total_value_locked || []}
+              data={totalValueLockedChart}
               changeList={change}
               selectedPeriod={tvlPeriod}
               setSelectedPeriod={setTvlPeriod}

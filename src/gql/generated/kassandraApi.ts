@@ -5274,6 +5274,31 @@ export type PoolInfoQuery = {
   } | null
 }
 
+export type PoolInvestorsTableQueryVariables = Exact<{
+  poolId: Scalars['ID']['input']
+  skip?: InputMaybe<Scalars['Int']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type PoolInvestorsTableQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    supply: any
+    price_usd: any
+    unique_investors: number
+    investors: Array<{
+      __typename?: 'Investor'
+      id: string
+      wallet: string
+      first_deposit_timestamp: number
+      last_deposit_timestamp: number
+      amount: any
+    }>
+  }>
+}
+
 export type PoolJoinsQueryVariables = Exact<{
   id: Scalars['ID']['input']
   timestamp: Scalars['Int']['input']
@@ -6212,6 +6237,28 @@ export const PoolInfoDocument = gql`
     }
   }
 `
+export const PoolInvestorsTableDocument = gql`
+  query poolInvestorsTable($poolId: ID!, $skip: Int, $first: Int) {
+    pools(where: { id: $poolId }) {
+      id
+      supply
+      price_usd
+      unique_investors
+      investors(
+        orderBy: amount
+        orderDirection: desc
+        skip: $skip
+        first: $first
+      ) {
+        id
+        wallet
+        first_deposit_timestamp
+        last_deposit_timestamp
+        amount
+      }
+    }
+  }
+`
 export const PoolJoinsDocument = gql`
   query PoolJoins($id: ID!, $timestamp: Int!) {
     pool(id: $id) {
@@ -6746,6 +6793,21 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'PoolInfo',
+        'query'
+      )
+    },
+    poolInvestorsTable(
+      variables: PoolInvestorsTableQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolInvestorsTableQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolInvestorsTableQuery>(
+            PoolInvestorsTableDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'poolInvestorsTable',
         'query'
       )
     },

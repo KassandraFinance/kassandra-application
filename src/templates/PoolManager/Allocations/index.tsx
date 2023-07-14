@@ -84,7 +84,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     blockExplorerUrl: data?.chain?.blockExplorerUrl ?? ''
   }
   const isRebalancing =
-    (data?.weight_goals[0].end_timestamp ?? 0) * 1000 > new Date().getTime()
+    (data?.weight_goals[0]?.end_timestamp ?? 0) * 1000 > new Date().getTime()
 
   function handleMockToken(tokenList: any) {
     if (data?.chain_id === 5) {
@@ -122,7 +122,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
 
   function handleRebalancingTimeProgress(weightGoals: IWeightGoalsProps[]) {
     const currentTime = new Date().getTime()
-    const endTime = weightGoals[0].end_timestamp * 1000
+    const endTime = (weightGoals[0]?.end_timestamp || 0) * 1000
 
     if (currentTime < endTime) {
       const oneHourInTimestamp = 3600000
@@ -155,7 +155,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     const targetWeights = weightGoals[0]
     const previousWeights = weightGoals[1]
     const currentTime = new Date().getTime()
-    const endTime = targetWeights.end_timestamp * 1000
+    const endTime = (targetWeights?.end_timestamp || 0) * 1000
 
     if (currentTime < endTime) {
       const listTokenWeightsSorted = poolAssets.sort((a, b) =>

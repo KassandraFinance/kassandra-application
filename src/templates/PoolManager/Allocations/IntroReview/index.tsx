@@ -45,7 +45,7 @@ export type IRebalanceWeightsProps = {
 
 type CoinsMetadataType = {
   [key: string]: {
-    usd: string
+    usd: number
     pricePercentageChangeIn24h: number
     marketCap: number
   }
