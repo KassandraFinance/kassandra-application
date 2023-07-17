@@ -13,6 +13,7 @@ import usePriceLP from '@/hooks/usePriceLPEthers'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import { usePoolsPriceList } from '@/hooks/query/usePoolsPriceList'
 import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 
 import StakeCard from '@/components/StakeCard'
 
@@ -29,12 +30,14 @@ const Farm = () => {
     chainId: networkChain.chainId,
     tokenAddresses: addressesForReqLpPool
   })
-  const { getPricePoolLP } = usePriceLP(137)
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: networkChain.nativeCurrency.address,
+    tokens: priceTokensData || {}
+  })
+  const { getPricePoolLP } = usePriceLP()
   const { trackCategoryPageView } = useMatomoEcommerce()
 
-  const kacyPrice = priceTokensData
-    ? priceTokensData[KacyPoligon.toLowerCase()].usd
-    : 0
+  const kacyPrice = priceToken(KacyPoligon.toLowerCase())
 
   async function getPoolsPrices() {
     if (!data || Big(kacyPrice).lte(0)) return
@@ -59,9 +62,7 @@ const Farm = () => {
               tokenPoolAddress: pool.poolTokenAddress,
               balancerPoolId: pool.lpPool?.balancerPoolId,
               tokenPoolPrice: Big(
-                priceTokensData
-                  ? priceTokensData[pool.poolTokenAddress.toLowerCase()].usd
-                  : 0
+                priceToken(pool.poolTokenAddress.toLowerCase())
               )
             })
           })
