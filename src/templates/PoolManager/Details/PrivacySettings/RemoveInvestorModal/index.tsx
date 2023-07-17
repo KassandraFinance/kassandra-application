@@ -1,12 +1,10 @@
 import React from 'react'
 import Big from 'big.js'
-import useSWR from 'swr'
 import { useRouter } from 'next/router'
-import { request } from 'graphql-request'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
-import { GET_INVESTORS_AMOUNT } from './graphql'
-import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
+import { networks } from '@/constants/tokenAddresses'
+import { useInvestorsAmount } from '@/hooks/query/useInvestorsAmount'
 
 import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import useManagePoolController from '@/hooks/useManagePoolController'
@@ -41,12 +39,10 @@ const RemoveInvestorModal = ({
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { data } = useSWR([GET_INVESTORS_AMOUNT], query =>
-    request(BACKEND_KASSANDRA, query, {
-      id: poolId,
-      investorsAddresses: addressesList
-    })
-  )
+  const { data } = useInvestorsAmount({
+    id: poolId,
+    investorsAddresses: addressesList
+  })
 
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
@@ -119,10 +115,11 @@ const RemoveInvestorModal = ({
 
             {addressesList.map(address => {
               const value = data
-                ? data.investors.find(
-                    (wallet: any) => wallet?.wallet === address
-                  )
-                : 0
+                ? data.find(wallet => wallet?.wallet === address)
+                : {
+                    wallet: '',
+                    amount: 0
+                  }
 
               return (
                 <S.InvestorContainer key={address}>

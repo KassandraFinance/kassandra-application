@@ -104,7 +104,7 @@ const AddLiquidityOperation = () => {
 
   React.useEffect(() => {
     if (priceData) {
-      dispatch(setPrice(priceData[token.id.toLowerCase()]?.usd))
+      dispatch(setPrice(priceData[token.id.toLowerCase()]?.usd.toString()))
     }
   }, [priceData])
 

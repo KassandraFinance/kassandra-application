@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer'
 
 import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
 import { setSelectedToken } from '../../../../../store/reducers/addAssetSlice'
+import { CoinsMetadataType } from '@/hooks/query/useTokensData'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
@@ -26,20 +27,17 @@ import {
 
 import * as S from './styles'
 
-import {
-  TokensInfoResponseType,
-  CoinGeckoAssetsResponseType
-} from '../../SelectAssets'
+import { TokensInfoResponseType } from '../../SelectAssets'
 
 interface IAddAssestsTableProps {
-  tokensData: (TokensInfoResponseType & { balance?: Big })[] | undefined
-  priceList: CoinGeckoAssetsResponseType | undefined
+  tokensData: TokensInfoResponseType[] | undefined
+  priceList: CoinsMetadataType | undefined
 }
 
 const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
   const [searchValue, setSearchValue] = React.useState('')
   const [filteredArr, setFilteredArr] = React.useState<
-    (TokensInfoResponseType & { balance?: Big })[]
+    TokensInfoResponseType[]
   >([])
   const [inViewCollum, setInViewCollum] = React.useState(1)
   const [token, setToken] = React.useState({
@@ -80,15 +78,15 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
 
   function handleInputRadio(event: React.ChangeEvent<HTMLInputElement>) {
     filteredArr.forEach(item => {
-      if (item.id === event.target.id) {
+      if (item?.id === event.target.id) {
         dispatch(
           setSelectedToken({
             id: event.target.id,
-            logo: item.logo,
-            name: item.name,
-            symbol: item.symbol,
-            image: item.logo,
-            decimals: item.decimals
+            logo: item?.logo || '',
+            name: item?.name || '',
+            symbol: item?.symbol || '',
+            image: item?.logo || '',
+            decimals: item?.decimals || 18
           })
         )
       }
@@ -124,7 +122,7 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
       return a?.balance?.lt(b?.balance || Big(0)) ? 1 : -1
     })
     const tokensFiltered = sortedArr.filter(token => {
-      return expressao.test(token.symbol)
+      return expressao.test(token?.symbol || '')
     })
 
     setFilteredArr(tokensFiltered)
@@ -179,96 +177,108 @@ const AddAssetTable = ({ tokensData, priceList }: IAddAssestsTableProps) => {
             {filteredArr &&
               filteredArr[0]?.id &&
               filteredArr[0]?.balance &&
-              filteredArr.map((coin, i) => (
-                <S.Tr
-                  key={coin.id}
-                  ref={i === filteredArr.length - 1 ? ref : null}
-                >
-                  <S.Td className="select">
-                    <S.InputWrapper>
-                      <InputRadio
-                        form="manageAssetsForm"
-                        name="selectAssets"
-                        inputId={coin.id}
-                        inputChecked={coin.id === tokenId}
-                        handleClickInput={handleInputRadio}
-                        text=""
-                        required
-                      />
-                    </S.InputWrapper>
-                  </S.Td>
-                  <S.Td className="asset">
-                    <CoinSummary
-                      coinImage={coin.logo}
-                      coinName={coin.name}
-                      coinSymbol={coin.symbol}
-                      price={
-                        priceList ? priceList[coin.id?.toLowerCase()]?.usd : '0'
-                      }
-                      url={`https://heimdall-frontend.vercel.app/coins/${coin.symbol?.toLocaleLowerCase()}`}
-                      table
-                    />
-                  </S.Td>
-                  <S.Td className="price" isView={inViewCollum === 1}>
-                    $
-                    {priceList
-                      ? Big(
-                          priceList[coin.id?.toLowerCase()]?.usd ?? 0
-                        ).toFixed(2)
-                      : 0}
-                  </S.Td>
-                  <S.Td className="marketCap" isView={inViewCollum === 2}>
-                    $
-                    {priceList
-                      ? BNtoDecimal(
-                          Big(
-                            priceList[coin.id?.toLowerCase()]?.marketCap ?? 0
-                          ),
-                          2
-                        )
-                      : 0}
-                  </S.Td>
-                  <S.Td className="balance" isView={inViewCollum === 3}>
-                    {coin.balance
-                      ? BNtoDecimal(
-                          coin.balance?.div(Big(10).pow(coin.decimals)) ??
-                            Big(0),
-                          2
-                        )
-                      : 0}
-                    <S.SecondaryText>
-                      ~$
-                      {coin.balance && priceList
-                        ? BNtoDecimal(
-                            coin.balance
-                              ?.div(Big(10).pow(coin.decimals))
-                              ?.mul(
-                                Big(priceList[coin.id?.toLowerCase()]?.usd ?? 0)
-                              ) ?? Big(0),
-                            2
-                          )
-                        : 0}
-                    </S.SecondaryText>
-                  </S.Td>
-                  <S.Td className="button">
-                    <S.ViewButton
-                      type="button"
-                      onClick={() =>
-                        handleView(
-                          coin.name,
-                          coin.logo,
-                          coin.id,
-                          coin.symbol,
-                          coin.decimals,
-                          coin.balance || Big(0)
-                        )
-                      }
+              filteredArr.flatMap(
+                (coin, i) =>
+                  coin && (
+                    <S.Tr
+                      key={coin.id}
+                      ref={i === filteredArr.length - 1 ? ref : null}
                     >
-                      <Image src={eyeShowIcon} />
-                    </S.ViewButton>
-                  </S.Td>
-                </S.Tr>
-              ))}
+                      <S.Td className="select">
+                        <S.InputWrapper>
+                          <InputRadio
+                            form="manageAssetsForm"
+                            name="selectAssets"
+                            inputId={coin.id}
+                            inputChecked={coin.id === tokenId}
+                            handleClickInput={handleInputRadio}
+                            text=""
+                            required
+                          />
+                        </S.InputWrapper>
+                      </S.Td>
+                      <S.Td className="asset">
+                        <CoinSummary
+                          coinImage={coin?.logo || ''}
+                          coinName={coin?.name || ''}
+                          coinSymbol={coin?.symbol || ''}
+                          price={
+                            priceList
+                              ? priceList[
+                                  coin.id?.toLowerCase()
+                                ]?.usd.toString()
+                              : '0'
+                          }
+                          url={`https://heimdall-frontend.vercel.app/coins/${coin.symbol?.toLocaleLowerCase()}`}
+                          table
+                        />
+                      </S.Td>
+                      <S.Td className="price" isView={inViewCollum === 1}>
+                        $
+                        {priceList
+                          ? Big(
+                              priceList[coin.id?.toLowerCase()]?.usd ?? 0
+                            ).toFixed(2)
+                          : 0}
+                      </S.Td>
+                      <S.Td className="marketCap" isView={inViewCollum === 2}>
+                        $
+                        {priceList
+                          ? BNtoDecimal(
+                              Big(
+                                priceList[coin.id?.toLowerCase()]?.marketCap ??
+                                  0
+                              ),
+                              2
+                            )
+                          : 0}
+                      </S.Td>
+                      <S.Td className="balance" isView={inViewCollum === 3}>
+                        {coin.balance
+                          ? BNtoDecimal(
+                              coin.balance?.div(
+                                Big(10).pow(coin?.decimals || 18)
+                              ) ?? Big(0),
+                              2
+                            )
+                          : 0}
+                        <S.SecondaryText>
+                          ~$
+                          {coin.balance && priceList
+                            ? BNtoDecimal(
+                                coin.balance
+                                  ?.div(Big(10).pow(coin?.decimals || 18))
+                                  ?.mul(
+                                    Big(
+                                      priceList[coin.id?.toLowerCase()]?.usd ??
+                                        0
+                                    )
+                                  ) ?? Big(0),
+                                2
+                              )
+                            : 0}
+                        </S.SecondaryText>
+                      </S.Td>
+                      <S.Td className="button">
+                        <S.ViewButton
+                          type="button"
+                          onClick={() =>
+                            handleView(
+                              coin?.name || '',
+                              coin?.logo || '',
+                              coin.id,
+                              coin?.symbol || '',
+                              coin?.decimals || 18,
+                              coin.balance || Big(0)
+                            )
+                          }
+                        >
+                          <Image src={eyeShowIcon} />
+                        </S.ViewButton>
+                      </S.Td>
+                    </S.Tr>
+                  )
+              )}
             <S.Shadow inView={inView}></S.Shadow>
           </S.TBody>
         </S.Table>

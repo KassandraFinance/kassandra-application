@@ -1,7 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import useWhiteList from '@/hooks/useWhiteList'
 import { getAddress } from 'ethers'
@@ -9,40 +7,30 @@ import Big from 'big.js'
 
 import { useTokensData } from '@/hooks/query/useTokensData'
 import useBatchRequests from '@/hooks/useBatchRequests'
-import {
-  BACKEND_KASSANDRA,
-  mockTokens,
-  mockTokensReverse
-} from '../../../../constants/tokenAddresses'
-import { GET_INFO_TOKENS } from './graphql'
+import { mockTokens, mockTokensReverse } from '@/constants/tokenAddresses'
+import { useTokensInfo } from '@/hooks/query/useTokensInfo'
 
 import AddAssetTable from './AddAssetTable'
 import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
-import Steps from '../../../../components/Steps'
+import Steps from '@/components/Steps'
 
 import * as S from './styles'
 
 export type TokensInfoResponseType = {
+  __typename?: 'Token' | undefined
   id: string
-  logo: string
-  name: string
-  symbol: string
-  decimals: number
-}
-
-export type TokensListType = TokensInfoResponseType & { balance?: Big }
-
-export type CoinGeckoAssetsResponseType = {
-  [key: string]: {
-    usd: string
-    pricePercentageChangeIn24h: number
-    marketCap: number
-  }
-}
+  name?: string | null | undefined
+  logo?: string | null | undefined
+  symbol?: string | null | undefined
+  decimals?: number | null | undefined
+  balance?: Big
+} | null
 
 const SelectAssets = () => {
   const [whitelist, setWhitelist] = React.useState<string[]>()
-  const [tokensList, setTokensList] = React.useState<TokensListType[]>([])
+  const [tokensList, setTokensList] = React.useState<TokensInfoResponseType[]>(
+    []
+  )
 
   const router = useRouter()
 
@@ -65,15 +53,10 @@ const SelectAssets = () => {
 
   const params = {
     id: poolId,
-    whitelist: tokensListGoerli
+    whitelist: tokensListGoerli || []
   }
 
-  const { data } = useSWR<{
-    tokensByIds: TokensInfoResponseType[]
-    pool: { underlying_assets_addresses: string[] }
-  }>([GET_INFO_TOKENS, params], (query, params) =>
-    request(BACKEND_KASSANDRA, query, params)
-  )
+  const { data } = useTokensInfo(params)
 
   const { data: priceData } = useTokensData({
     chainId,
@@ -87,7 +70,7 @@ const SelectAssets = () => {
 
     if (chainId === 5) {
       setTokensList(
-        data?.tokensByIds.filter(
+        data?.tokensByIds?.filter(
           element =>
             element &&
             !data?.pool?.underlying_assets_addresses.includes(
@@ -97,7 +80,7 @@ const SelectAssets = () => {
       )
     } else {
       setTokensList(
-        data?.tokensByIds.filter(
+        data?.tokensByIds?.filter(
           element =>
             element &&
             !data?.pool?.underlying_assets_addresses.includes(element?.id)
@@ -139,7 +122,9 @@ const SelectAssets = () => {
 
       setTokensList(prev => {
         const newArr = prev.map(item => {
-          item.balance = balanceArr[item?.id?.toLowerCase()]
+          if (item) {
+            item.balance = balanceArr[item?.id?.toLowerCase()]
+          }
           return item
         })
         return newArr

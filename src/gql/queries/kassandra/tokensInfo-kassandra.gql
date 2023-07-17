@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_INFO_TOKENS = gql`
-  query ($whitelist: [ID!]!, $id: ID!) {
+query TokensInfo($whitelist: [ID!]!, $id: ID!) {
     tokensByIds(ids: $whitelist) {
       id
       name
@@ -12,5 +9,4 @@ export const GET_INFO_TOKENS = gql`
     pool(id: $id) {
       underlying_assets_addresses
     }
-  }
-`
+}

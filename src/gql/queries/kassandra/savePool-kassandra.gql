@@ -1,15 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_STRATEGY = gql`
-  query ($id: ID!) {
-    pool(id: $id) {
-      summary
-    }
-  }
-`
-
-export const SAVE_POOL = gql`
-  mutation (
+mutation SavePool(
     $controller: String!
     $chainId: Int!
     $signature: String!
@@ -26,5 +15,4 @@ export const SAVE_POOL = gql`
       message
       ok
     }
-  }
-`
+}

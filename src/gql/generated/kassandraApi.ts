@@ -4791,6 +4791,18 @@ export type FundCardQuery = {
   } | null
 }
 
+export type InvestorsAmountQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']['input']>
+  investorsAddresses?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >
+}>
+
+export type InvestorsAmountQuery = {
+  __typename?: 'Query'
+  investors: Array<{ __typename?: 'Investor'; wallet: string; amount: any }>
+}
+
 export type ManagerChangeTvlQueryVariables = Exact<{
   manager: Scalars['ID']['input']
   day: Scalars['Int']['input']
@@ -5493,6 +5505,15 @@ export type PoolRebalanceTimeQuery = {
   } | null
 }
 
+export type PoolStrategyQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type PoolStrategyQuery = {
+  __typename?: 'Query'
+  pool?: { __typename?: 'Pool'; summary?: string | null } | null
+}
+
 export type PoolTvmChartQueryVariables = Exact<{
   id: Scalars['ID']['input']
   timestamp: Scalars['Int']['input']
@@ -5545,6 +5566,23 @@ export type PoolsPriceListQuery = {
   pools: Array<{ __typename?: 'Pool'; price_usd: any; address: string }>
 }
 
+export type SavePoolMutationVariables = Exact<{
+  controller: Scalars['String']['input']
+  chainId: Scalars['Int']['input']
+  signature: Scalars['String']['input']
+  logo?: InputMaybe<Scalars['String']['input']>
+  summary?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type SavePoolMutation = {
+  __typename?: 'Mutation'
+  savePool?: {
+    __typename?: 'Result'
+    message?: string | null
+    ok?: boolean | null
+  } | null
+}
+
 export type TokensQueryVariables = Exact<{
   tokensList: Array<Scalars['ID']['input']> | Scalars['ID']['input']
 }>
@@ -5559,6 +5597,27 @@ export type TokensQuery = {
     name?: string | null
     symbol?: string | null
   } | null>
+}
+
+export type TokensInfoQueryVariables = Exact<{
+  whitelist: Array<Scalars['ID']['input']> | Scalars['ID']['input']
+  id: Scalars['ID']['input']
+}>
+
+export type TokensInfoQuery = {
+  __typename?: 'Query'
+  tokensByIds: Array<{
+    __typename?: 'Token'
+    id: string
+    name?: string | null
+    logo?: string | null
+    symbol?: string | null
+    decimals?: number | null
+  } | null>
+  pool?: {
+    __typename?: 'Pool'
+    underlying_assets_addresses: Array<string>
+  } | null
 }
 
 export type TokensPoolQueryVariables = Exact<{
@@ -5878,6 +5937,14 @@ export const FundCardDocument = gql`
           }
         }
       }
+    }
+  }
+`
+export const InvestorsAmountDocument = gql`
+  query InvestorsAmount($id: String, $investorsAddresses: [String!]) {
+    investors(where: { pool: $id, wallet_in: $investorsAddresses }) {
+      wallet
+      amount
     }
   }
 `
@@ -6621,6 +6688,13 @@ export const PoolRebalanceTimeDocument = gql`
     }
   }
 `
+export const PoolStrategyDocument = gql`
+  query PoolStrategy($id: ID!) {
+    pool(id: $id) {
+      summary
+    }
+  }
+`
 export const PoolTvmChartDocument = gql`
   query PoolTvmChart($id: ID!, $timestamp: Int!) {
     pool(id: $id) {
@@ -6663,6 +6737,26 @@ export const PoolsPriceListDocument = gql`
     }
   }
 `
+export const SavePoolDocument = gql`
+  mutation SavePool(
+    $controller: String!
+    $chainId: Int!
+    $signature: String!
+    $logo: String
+    $summary: String
+  ) {
+    savePool(
+      controller: $controller
+      chainId: $chainId
+      signature: $signature
+      logo: $logo
+      summary: $summary
+    ) {
+      message
+      ok
+    }
+  }
+`
 export const TokensDocument = gql`
   query Tokens($tokensList: [ID!]!) {
     tokensByIds(ids: $tokensList) {
@@ -6671,6 +6765,20 @@ export const TokensDocument = gql`
       logo
       name
       symbol
+    }
+  }
+`
+export const TokensInfoDocument = gql`
+  query TokensInfo($whitelist: [ID!]!, $id: ID!) {
+    tokensByIds(ids: $whitelist) {
+      id
+      name
+      logo
+      symbol
+      decimals
+    }
+    pool(id: $id) {
+      underlying_assets_addresses
     }
   }
 `
@@ -6876,6 +6984,21 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'FundCard',
+        'query'
+      )
+    },
+    InvestorsAmount(
+      variables?: InvestorsAmountQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<InvestorsAmountQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<InvestorsAmountQuery>(
+            InvestorsAmountDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'InvestorsAmount',
         'query'
       )
     },
@@ -7215,6 +7338,20 @@ export function getSdk(
         'query'
       )
     },
+    PoolStrategy(
+      variables: PoolStrategyQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolStrategyQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolStrategyQuery>(PoolStrategyDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'PoolStrategy',
+        'query'
+      )
+    },
     PoolTvmChart(
       variables: PoolTvmChartQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
@@ -7272,6 +7409,20 @@ export function getSdk(
         'query'
       )
     },
+    SavePool(
+      variables: SavePoolMutationVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<SavePoolMutation> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<SavePoolMutation>(SavePoolDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'SavePool',
+        'mutation'
+      )
+    },
     Tokens(
       variables: TokensQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
@@ -7283,6 +7434,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'Tokens',
+        'query'
+      )
+    },
+    TokensInfo(
+      variables: TokensInfoQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<TokensInfoQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<TokensInfoQuery>(TokensInfoDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'TokensInfo',
         'query'
       )
     },
