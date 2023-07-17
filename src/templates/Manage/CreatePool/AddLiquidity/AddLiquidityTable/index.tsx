@@ -4,6 +4,7 @@ import Big from 'big.js'
 
 import { BNtoDecimal } from '@/utils/numerals'
 import { abbreviateNumber } from '@/utils/abbreviateNumber'
+import { CoinsMetadataType } from '@/hooks/query/useTokensData'
 
 import CoinSummary from '../../SelectAssets/CoinSummary'
 import InputNumberRight from '@/components/Inputs/InputNumberRight'
@@ -17,15 +18,14 @@ import {
   TokenType,
   handleLiquidity
 } from '../../../../../store/reducers/poolCreationSlice'
-import { CoinGeckoResponseType } from '..'
 
 interface IAddLiquidityTableProps {
   coinsList: TokenType[]
   tokensBalance: { [key: string]: Big }
-  priceList: CoinGeckoResponseType | undefined
+  priceList: CoinsMetadataType | undefined
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onInputMaxClick: (token: string, liquidity: string) => void
-  onMaxClick: (priceList: CoinGeckoResponseType) => void
+  onMaxClick: (priceList: CoinsMetadataType) => void
 }
 
 const AddLiquidityTable = ({
@@ -115,7 +115,9 @@ const AddLiquidityTable = ({
                   coinImage={coin.icon}
                   coinName={coin.name}
                   coinSymbol={coin.symbol}
-                  price={priceList ? priceList[coin.address].usd : '0'}
+                  price={
+                    priceList ? priceList[coin.address].usd.toString() : '0'
+                  }
                   url={coin.url}
                   balance={
                     tokensBalance[coin.address]

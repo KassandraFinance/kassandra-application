@@ -2,9 +2,37 @@ import Big from 'big.js'
 import { JsonRpcProvider } from 'ethers'
 
 import { ERC20 } from '../hooks/useERC20'
-import { underlyingAssetsInfo } from '../store/reducers/pool'
 
 import { NATIVE_ADDRESS, networks } from '../constants/tokenAddresses'
+
+type underlyingAssetsInfo = {
+  __typename?: 'Asset' | undefined
+  balance: any
+  weight_normalized: any
+  weight_goal_normalized: any
+  token: {
+    __typename?: 'Token' | undefined
+    id: string
+    name?: string | null | undefined
+    logo?: string | null | undefined
+    symbol?: string | null | undefined
+    decimals?: number | null | undefined
+    price_usd: any
+    is_wrap_token: number
+    wraps?:
+      | {
+          __typename?: 'Token' | undefined
+          id: string
+          decimals?: number | null | undefined
+          price_usd: any
+          symbol?: string | null | undefined
+          name?: string | null | undefined
+          logo?: string | null | undefined
+        }
+      | null
+      | undefined
+  }
+}
 
 export const checkTokenWithHigherLiquidityPool = (
   underlyingAssets: underlyingAssetsInfo[]

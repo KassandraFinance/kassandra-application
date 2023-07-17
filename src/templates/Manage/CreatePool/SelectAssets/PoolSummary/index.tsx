@@ -2,13 +2,12 @@ import React from 'react'
 import Image from 'next/image'
 
 import { TokenType } from '@/store/reducers/poolCreationSlice'
+import { CoinsMetadataType } from '@/hooks/query/useTokensData'
 
 import CoinSummary from '../CoinSummary'
 import InputNumberRight from '@/components/Inputs/InputNumberRight'
 
 import closeIcon from '@assets/utilities/close-icon.svg'
-
-import { CoinGeckoResponseType } from '../../AddLiquidity'
 
 import * as S from './styles'
 
@@ -23,7 +22,7 @@ interface IPoolSummaryProps {
   ) => void
   onRemoveToken?: (token: TokenType) => void
   onLockToken?: (id: string) => void
-  priceList: CoinGeckoResponseType | undefined
+  priceList: CoinsMetadataType | undefined
 }
 
 const PoolSummary = ({
@@ -70,7 +69,7 @@ const PoolSummary = ({
                 coinSymbol={coin.symbol}
                 price={
                   priceList && priceList[coin.address]
-                    ? priceList[coin.address].usd
+                    ? priceList[coin.address].usd.toString()
                     : '0'
                 }
               />

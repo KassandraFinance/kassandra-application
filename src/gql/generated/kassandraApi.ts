@@ -5060,6 +5060,77 @@ export type PoolAssetsQuery = {
   } | null
 }
 
+export type PoolChainIdQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+}>
+
+export type PoolChainIdQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    chain_id: number
+    unique_investors: number
+  } | null
+}
+
+export type PoolChangePriceQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  week: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  year: Scalars['Int']['input']
+}>
+
+export type PoolChangePriceQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    now: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    week: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    year: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    max: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+  } | null
+}
+
+export type PoolChangeTvlQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  week: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  year: Scalars['Int']['input']
+}>
+
+export type PoolChangeTvlQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    now: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+    week: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+    month: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+    year: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+    max: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+  } | null
+}
+
 export type PoolChartsQueryVariables = Exact<{
   id: Scalars['ID']['input']
   price_period: Scalars['Int']['input']
@@ -5203,6 +5274,44 @@ export type PoolInfoQuery = {
   } | null
 }
 
+export type PoolInvestorsTableQueryVariables = Exact<{
+  poolId: Scalars['ID']['input']
+  skip?: InputMaybe<Scalars['Int']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type PoolInvestorsTableQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    supply: any
+    price_usd: any
+    unique_investors: number
+    investors: Array<{
+      __typename?: 'Investor'
+      id: string
+      wallet: string
+      first_deposit_timestamp: number
+      last_deposit_timestamp: number
+      amount: any
+    }>
+  }>
+}
+
+export type PoolJoinsQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  timestamp: Scalars['Int']['input']
+}>
+
+export type PoolJoinsQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    volumes: Array<{ __typename?: 'Volume'; volume_usd: any }>
+  } | null
+}
+
 export type PoolPriceQueryVariables = Exact<{
   id: Scalars['ID']['input']
   day: Scalars['Int']['input']
@@ -5226,6 +5335,19 @@ export type PoolPriceQuery = {
   } | null
 }
 
+export type PoolPriceChartQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  timestamp: Scalars['Int']['input']
+}>
+
+export type PoolPriceChartQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    value: Array<{ __typename?: 'Candle'; close: any; timestamp: number }>
+  } | null
+}
+
 export type PoolRebalanceTimeQueryVariables = Exact<{
   id: Scalars['ID']['input']
 }>
@@ -5238,6 +5360,36 @@ export type PoolRebalanceTimeQuery = {
       __typename?: 'WeightGoalPoint'
       end_timestamp: number
     }>
+  } | null
+}
+
+export type PoolTvmChartQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  timestamp: Scalars['Int']['input']
+}>
+
+export type PoolTvmChartQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    value: Array<{
+      __typename?: 'TotalValueLocked'
+      close: any
+      timestamp: number
+    }>
+  } | null
+}
+
+export type PoolWithdrawsQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  timestamp: Scalars['Int']['input']
+}>
+
+export type PoolWithdrawsQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    volumes: Array<{ __typename?: 'Volume'; volume_usd: any }>
   } | null
 }
 
@@ -5848,6 +6000,108 @@ export const PoolAssetsDocument = gql`
     }
   }
 `
+export const PoolChainIdDocument = gql`
+  query PoolChainId($id: ID!) {
+    pool(id: $id) {
+      chain_id
+      unique_investors
+    }
+  }
+`
+export const PoolChangePriceDocument = gql`
+  query PoolChangePrice($id: ID!, $week: Int!, $month: Int!, $year: Int!) {
+    pool(id: $id) {
+      now: price_candles(
+        where: { base: "usd", period: 3600 }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      week: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $week }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      year: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $year }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      max: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: 0 }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+    }
+  }
+`
+export const PoolChangeTvlDocument = gql`
+  query PoolChangeTvl($id: ID!, $week: Int!, $month: Int!, $year: Int!) {
+    pool(id: $id) {
+      now: total_value_locked(
+        where: { base: "usd" }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      week: total_value_locked(
+        where: { base: "usd", timestamp_gt: $week }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      month: total_value_locked(
+        where: { base: "usd", timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      year: total_value_locked(
+        where: { base: "usd", timestamp_gt: $year }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      max: total_value_locked(
+        where: { base: "usd", timestamp_gt: 0 }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+    }
+  }
+`
 export const PoolChartsDocument = gql`
   query PoolCharts($id: ID!, $price_period: Int!, $period_selected: Int!) {
     pool(id: $id) {
@@ -5992,6 +6246,37 @@ export const PoolInfoDocument = gql`
     }
   }
 `
+export const PoolInvestorsTableDocument = gql`
+  query poolInvestorsTable($poolId: ID!, $skip: Int, $first: Int) {
+    pools(where: { id: $poolId }) {
+      id
+      supply
+      price_usd
+      unique_investors
+      investors(
+        orderBy: amount
+        orderDirection: desc
+        skip: $skip
+        first: $first
+      ) {
+        id
+        wallet
+        first_deposit_timestamp
+        last_deposit_timestamp
+        amount
+      }
+    }
+  }
+`
+export const PoolJoinsDocument = gql`
+  query PoolJoins($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      volumes(where: { period: 3600, type: "join", timestamp_gt: $timestamp }) {
+        volume_usd
+      }
+    }
+  }
+`
 export const PoolPriceDocument = gql`
   query PoolPrice(
     $id: ID!
@@ -6055,11 +6340,50 @@ export const PoolPriceDocument = gql`
     }
   }
 `
+export const PoolPriceChartDocument = gql`
+  query poolPriceChart($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      value: price_candles(
+        where: { base: "usd", timestamp_gt: $timestamp, period: 3600 }
+        orderBy: timestamp
+        orderDirection: asc
+        first: 1000
+      ) {
+        close
+        timestamp
+      }
+    }
+  }
+`
 export const PoolRebalanceTimeDocument = gql`
   query PoolRebalanceTime($id: ID!) {
     pool(id: $id) {
       weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 1) {
         end_timestamp
+      }
+    }
+  }
+`
+export const PoolTvmChartDocument = gql`
+  query PoolTvmChart($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      value: total_value_locked(
+        where: { base: "usd", timestamp_gt: $timestamp }
+        orderBy: timestamp
+        orderDirection: asc
+        first: 1000
+      ) {
+        close
+        timestamp
+      }
+    }
+  }
+`
+export const PoolWithdrawsDocument = gql`
+  query PoolWithdraws($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      volumes(where: { period: 3600, type: "exit", timestamp_gt: $timestamp }) {
+        volume_usd
       }
     }
   }
@@ -6404,6 +6728,49 @@ export function getSdk(
         'query'
       )
     },
+    PoolChainId(
+      variables: PoolChainIdQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolChainIdQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolChainIdQuery>(PoolChainIdDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'PoolChainId',
+        'query'
+      )
+    },
+    PoolChangePrice(
+      variables: PoolChangePriceQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolChangePriceQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolChangePriceQuery>(
+            PoolChangePriceDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'PoolChangePrice',
+        'query'
+      )
+    },
+    PoolChangeTvl(
+      variables: PoolChangeTvlQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolChangeTvlQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolChangeTvlQuery>(PoolChangeTvlDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'PoolChangeTvl',
+        'query'
+      )
+    },
     PoolCharts(
       variables: PoolChartsQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
@@ -6446,6 +6813,35 @@ export function getSdk(
         'query'
       )
     },
+    poolInvestorsTable(
+      variables: PoolInvestorsTableQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolInvestorsTableQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolInvestorsTableQuery>(
+            PoolInvestorsTableDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'poolInvestorsTable',
+        'query'
+      )
+    },
+    PoolJoins(
+      variables: PoolJoinsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolJoinsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolJoinsQuery>(PoolJoinsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'PoolJoins',
+        'query'
+      )
+    },
     PoolPrice(
       variables: PoolPriceQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
@@ -6457,6 +6853,21 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'PoolPrice',
+        'query'
+      )
+    },
+    poolPriceChart(
+      variables: PoolPriceChartQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolPriceChartQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolPriceChartQuery>(
+            PoolPriceChartDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'poolPriceChart',
         'query'
       )
     },
@@ -6472,6 +6883,34 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'PoolRebalanceTime',
+        'query'
+      )
+    },
+    PoolTvmChart(
+      variables: PoolTvmChartQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolTvmChartQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolTvmChartQuery>(PoolTvmChartDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'PoolTvmChart',
+        'query'
+      )
+    },
+    PoolWithdraws(
+      variables: PoolWithdrawsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolWithdrawsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolWithdrawsQuery>(PoolWithdrawsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'PoolWithdraws',
         'query'
       )
     },

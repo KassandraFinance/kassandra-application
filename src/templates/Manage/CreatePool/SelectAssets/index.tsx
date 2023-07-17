@@ -24,14 +24,6 @@ import AssetsTable from '../AssetsTable'
 
 import * as S from './styles'
 
-export type CoinGeckoAssetsResponseType = {
-  [key: string]: {
-    usd: string
-    pricePercentageChangeIn24h: number
-    marketCap: number
-  }
-}
-
 export type TokensInfoResponseType = {
   __typename?: 'Token' | undefined
   id: string

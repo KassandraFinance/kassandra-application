@@ -11,11 +11,11 @@ export type CoinsMetadataType = {
     name: string
     symbol: string
     logo: string
-    usd: string
+    usd: number
     marketCap: number
     volume: number
-    pricePercentageChangeIn24h: number
     pricePercentageChangeIn7d: number
+    pricePercentageChangeIn24h: number
     sparklineFrom7d: number[]
     decimals: number
   }

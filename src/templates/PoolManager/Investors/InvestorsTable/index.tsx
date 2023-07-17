@@ -1,16 +1,13 @@
 import React, { Dispatch, SetStateAction } from 'react'
 import Image from 'next/image'
 import CopyToClipboard from 'react-copy-to-clipboard'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
 import Link from 'next/link'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { GET_INVESTORS } from './graphql'
 import substr from '@/utils/substr'
+import { usePoolInvestorsTable } from '@/hooks/query/usePoolInvestorsTable'
 
 import { getDateDiff } from '@/utils/date'
 import { ToastInfo } from '@/components/Toastify/toast'
@@ -42,22 +39,6 @@ import {
   ValueContainer,
   Value as V
 } from '@ui/Modals/ModalViewCoin/styles'
-
-type GetInvestorsType = {
-  pools: {
-    id: string
-    price_usd: string
-    supply: string
-    unique_investors: number
-    investors: {
-      id: string
-      wallet: string
-      first_deposit_timestamp: number
-      last_deposit_timestamp: number
-      amount: string
-    }[]
-  }[]
-}
 
 interface IInvestorsTable {
   skip: number
@@ -130,12 +111,8 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
     setIsOpen(true)
   }
 
-  const { data } = useSWR<GetInvestorsType>(
-    wallet && poolId.length > 0 ? [GET_INVESTORS, params] : null,
-    (query, params) => request(BACKEND_KASSANDRA, query, params)
-  )
+  const { data } = usePoolInvestorsTable(params)
 
-  // eslint-disable-next-line prettier/prettier
   function handleClickCopyToClipboard(
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) {
@@ -148,7 +125,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
       return
     }
 
-    setTotalItems(data.pools[0]?.unique_investors - 1)
+    setTotalItems(data.unique_investors - 1)
   }, [data])
 
   return (
@@ -192,7 +169,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
       </THead>
 
       <TBody>
-        {data?.pools[0]?.investors.map((investor, index) => {
+        {data?.investors?.map((investor, index) => {
           const firstDeposit = getDateDiff(
             investor.first_deposit_timestamp * 1000
           )
@@ -228,10 +205,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
                   </TD>
                   <TD isView={inViewCollum === 3}>
                     <Value>
-                      $
-                      {Big(investor.amount)
-                        .mul(data?.pools[0]?.price_usd || 0)
-                        .toFixed(2)}
+                      ${Big(investor.amount).mul(data.price_usd).toFixed(2)}
                     </Value>
                   </TD>
                   <TD isView={inViewCollum === 4}>
@@ -241,7 +215,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
                     <Value>
                       {Big(investor.amount)
                         .mul(100)
-                        .div(data?.pools[0]?.supply || 0)
+                        .div(data.supply)
                         .toFixed(2)}
                       %
                     </Value>
@@ -276,11 +250,11 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
                       handleView(investor.wallet, '', investor.wallet, {
                         percentage: Big(investor.amount)
                           .mul(100)
-                          .div(data?.pools[0]?.supply || 0)
+                          .div(data.supply)
                           .toFixed(2),
                         investorShare: Big(investor.amount).toFixed(2),
                         totalInvested: Big(investor.amount)
-                          .mul(data?.pools[0]?.price_usd || 0)
+                          .mul(data.price_usd)
                           .toFixed(2),
                         lastDeposit: `${lastDeposit?.value} ${lastDeposit?.string}`,
                         firstDeposit: `${firstDeposit?.value} ${firstDeposit?.string}`,

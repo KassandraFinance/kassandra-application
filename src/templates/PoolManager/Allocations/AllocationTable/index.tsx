@@ -20,7 +20,7 @@ import * as S from './styles'
 
 type CoinsMetadataType = {
   [key: string]: {
-    usd: string
+    usd: number
     pricePercentageChangeIn24h: number
     marketCap: number
   }

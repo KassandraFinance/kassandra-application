@@ -1,7 +1,5 @@
-import React from 'react'
-import useSWR from 'swr'
-
 import { usePoolAssets } from '@/hooks/query/usePoolAssets'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import CoinCard from '@/templates/PoolManager/Analytics/CoinCard'
 import { mockTokens } from '@/constants/tokenAddresses'
@@ -14,50 +12,28 @@ interface IPoolAssetsProps {
   chainId: number
 }
 
-type Result = {
-  tokens: {
-    [id: string]: {
-      heimdallId: string
-      name: string
-      symbol: string
-      logo: string
-      usd: number
-      marketCap: number
-      volume: number
-      pricePercentageChangeIn24h: number
-      pricePercentageChangeIn7d: number
-      sparklineFrom7d: number[]
-    }
-  }
-}
-
 const PoolAssets = (props: IPoolAssetsProps) => {
   const { data: poolAssets } = usePoolAssets({ id: props.poolId })
 
   let addresses
   if (props.chainId === 5) {
-    addresses = poolAssets
-      ?.map(asset => mockTokens[asset.token.id].toLocaleLowerCase())
-      .toString()
+    addresses = poolAssets?.map(asset =>
+      mockTokens[asset.token.id].toLocaleLowerCase()
+    )
   } else {
-    addresses = poolAssets
-      ?.map(asset => asset.token.id.toLowerCase())
-      .toString()
+    addresses = poolAssets?.map(asset => asset.token.id.toLowerCase())
   }
 
-  const url = addresses
-    ? `/api/tokens?chainId=${137}&addressesSeparatedByComma=${addresses}`
-    : null
-
-  const { data } = useSWR<Result>(url, {
-    refreshInterval: 60 * 5 * 1000
+  const { data: data } = useTokensData({
+    chainId: props.chainId,
+    tokenAddresses: addresses || []
   })
 
   return (
     <S.PoolAssets>
       {data ? (
         <S.CoinCardContainer>
-          {Object.values(data.tokens).map(token => (
+          {Object.values(data).map(token => (
             <CoinCard
               key={token.heimdallId}
               image={token.logo ?? ''}

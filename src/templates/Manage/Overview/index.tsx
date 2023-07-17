@@ -33,7 +33,13 @@ const periods: Record<string, number> = {
   ALL: new Date().getTime() / 1000
 }
 
-const changeList = [
+type ChangeListType = {
+  name: string
+  key: 'day' | 'week' | 'month' | 'year' | 'max'
+  value: number
+}
+
+const changeList: ChangeListType[] = [
   {
     name: '1 Day',
     key: 'day',
@@ -60,7 +66,7 @@ const changeList = [
     key: 'max',
     value: 0
   }
-] as const
+]
 
 const Overview = () => {
   const [depostiPeriod, setDepositPeriod] = React.useState<string>('1D')
@@ -76,6 +82,16 @@ const Overview = () => {
     manager: walletAddress,
     timestamp: Math.trunc(new Date().getTime() / 1000 - periods[tvlPeriod])
   })
+
+  const totalValueLockedChart = React.useMemo(() => {
+    if (!data) return
+    return data.total_value_locked.map(value => {
+      return {
+        close: Number(value.close),
+        timestamp: value.timestamp
+      }
+    })
+  }, [data])
 
   const { data: dataChange } = useManagerChangeTVL({
     manager: walletAddress,
@@ -136,9 +152,9 @@ const Overview = () => {
 
       <S.ManagerOverviewContainer>
         <S.ChartWrapper>
-          {data && dataChange ? (
+          {totalValueLockedChart && dataChange ? (
             <TVMChart
-              data={data?.total_value_locked || []}
+              data={totalValueLockedChart}
               changeList={change}
               selectedPeriod={tvlPeriod}
               setSelectedPeriod={setTvlPeriod}

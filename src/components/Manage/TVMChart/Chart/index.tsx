@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   XAxis,
   YAxis,
@@ -13,7 +12,7 @@ import CustomizedTooltip from './CustomizedTooltip'
 import * as S from './styles'
 
 export type DataType = {
-  close: string
+  close: number
   timestamp: number
 }
 

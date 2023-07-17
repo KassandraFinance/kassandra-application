@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_INVESTORS = gql`
-  query ($poolId: ID!, $skip: Int, $first: Int) {
+query poolInvestorsTable($poolId: ID!, $skip: Int, $first: Int) {
     pools(where: { id: $poolId }) {
       id
       supply
@@ -21,4 +18,3 @@ export const GET_INVESTORS = gql`
       }
     }
   }
-`
