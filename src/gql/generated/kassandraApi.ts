@@ -4621,6 +4621,40 @@ export type ActivitiesQuery = {
   } | null
 }
 
+export type FeesQueryVariables = Exact<{
+  poolId: Scalars['ID']['input']
+}>
+
+export type FeesQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    chain_id: number
+    price_usd: any
+    symbol: string
+    controller: string
+    fee_join_manager: any
+    fee_join_broker: any
+    total_fees_join_manager_usd: any
+    total_fees_join_broker_usd: any
+    total_fees_aum_manager_usd: any
+    total_fees_aum_kassandra_usd: any
+    fee_aum: any
+    fee_aum_kassandra: any
+    last_harvest?: any | null
+    manager: { __typename?: 'Manager'; id: string }
+    fees: Array<{
+      __typename?: 'Fee'
+      type: string
+      period: number
+      volume_usd: any
+      volume_broker_usd?: any | null
+      timestamp: number
+    }>
+    lasCollectedAum: Array<{ __typename?: 'Fee'; timestamp: number }>
+  } | null
+}
+
 export type FundCardQueryVariables = Exact<{
   id: Scalars['ID']['input']
   price_period: Scalars['Int']['input']
@@ -5542,6 +5576,48 @@ export const ActivitiesDocument = gql`
         symbol
         amount
         price_usd
+      }
+    }
+  }
+`
+export const FeesDocument = gql`
+  query Fees($poolId: ID!) {
+    pool(id: $poolId) {
+      chain_id
+      manager {
+        id
+      }
+      price_usd
+      symbol
+      controller
+      fee_join_manager
+      fee_join_broker
+      total_fees_join_manager_usd
+      total_fees_join_broker_usd
+      total_fees_aum_manager_usd
+      total_fees_aum_kassandra_usd
+      fee_aum
+      fee_aum_kassandra
+      last_harvest
+      fees(
+        where: { period: 604800, type_in: ["join", "aum"] }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 96
+      ) {
+        type
+        period
+        volume_usd
+        volume_broker_usd
+        timestamp
+      }
+      lasCollectedAum: fees(
+        orderBy: timestamp
+        orderDirection: desc
+        where: { type: "aum" }
+        first: 1
+      ) {
+        timestamp
       }
     }
   }
@@ -6563,6 +6639,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'Activities',
+        'query'
+      )
+    },
+    Fees(
+      variables: FeesQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<FeesQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<FeesQuery>(FeesDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'Fees',
         'query'
       )
     },

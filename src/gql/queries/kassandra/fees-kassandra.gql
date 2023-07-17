@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_FEES = gql`
-  query ($poolId: ID!) {
+query Fees($poolId: ID!) {
     pool(id: $poolId) {
       chain_id
       manager {
@@ -46,4 +43,3 @@ export const GET_FEES = gql`
       }
     }
   }
-`
