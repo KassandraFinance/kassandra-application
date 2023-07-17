@@ -15,6 +15,7 @@ import PoolImage from './PoolImage'
 import PrivacySettings from './PrivacySettings'
 
 import privacyIcon from '@assets/iconGradient/product-bar.svg'
+import notFound from '@assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 
@@ -42,16 +43,16 @@ const Details = () => {
 
             <S.ContractInfoContainer>
               <Image
-                src={poolInfo[0]?.chain?.logo || ''}
+                src={poolInfo[0]?.chain?.logo || notFound}
                 width={17}
                 height={17}
               />
 
-              <S.ChainName>{poolInfo[0].chain?.chainName}</S.ChainName>
+              <S.ChainName>{poolInfo[0]?.chain?.chainName}</S.ChainName>
 
-              <CopyToClipboard text={poolInfo[0].address}>
+              <CopyToClipboard text={poolInfo[0]?.address}>
                 <S.Address>
-                  {substr(poolInfo[0].address)}
+                  {substr(poolInfo[0]?.address || '')}
 
                   <svg
                     width="12"
@@ -72,8 +73,8 @@ const Details = () => {
                 type="button"
                 onClick={() => {
                   registerToken(
-                    poolInfo[0].address,
-                    poolInfo[0].symbol.toLocaleUpperCase(),
+                    poolInfo[0]?.address,
+                    poolInfo[0]?.symbol?.toLocaleUpperCase(),
                     Number(18)
                   )
                 }}
