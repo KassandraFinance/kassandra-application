@@ -12,22 +12,21 @@ import { usePools } from '@/hooks/query/usePools'
 import useStakingContract from '@/hooks/useStaking'
 import usePriceLP from '@/hooks/usePriceLPEthers'
 import { ERC20 } from '@/hooks/useERC20'
-import useTransaction from '@/hooks/useTransaction'
 import { useTokensData } from '@/hooks/query/useTokensData'
 import useGetToken from '@/hooks/useGetToken'
 
 import {
-  LPDaiAvax,
   Staking,
   networks,
   KacyPoligon,
   WETH_POLYGON
 } from '@/constants/tokenAddresses'
 import {
-  LP_KACY_AVAX_PNG,
-  LP_KACY_AVAX_JOE,
   allPools,
-  KACY_WETH
+  poolsFunds,
+  PoolType,
+  WAVAX_POLYGON,
+  poolsKacy
 } from '@/constants/pools'
 
 import Breadcrumb from '../../components/Breadcrumb'
@@ -120,13 +119,10 @@ const Profile = () => {
 
   const chain = networks[43114]
 
-  const { txNotification, transactionErrors } = useTransaction()
   const router = useRouter()
   const [{ wallet }] = useConnectWallet()
   const { getUserInfo } = useStakingContract(Staking)
-  const { getPriceKacyAndLP, getPriceKacyAndLPBalancer } = usePriceLP(
-    chain.chainId
-  )
+  const { getPricePoolLP } = usePriceLP()
 
   const profileAddress = router.query.profileAddress
   const isSelectQueryTab = router.query.tab
@@ -141,7 +137,7 @@ const Profile = () => {
 
   const { data: tokensList } = useTokensData({
     chainId: networks[137].chainId,
-    tokenAddresses: [WETH_POLYGON, KacyPoligon]
+    tokenAddresses: [WETH_POLYGON, WAVAX_POLYGON, KacyPoligon]
   })
 
   const { priceToken: getPriceToken } = useGetToken({
@@ -180,11 +176,7 @@ const Profile = () => {
     const valueInWallet: IAssetsValueWalletProps = {}
     for (const id of ids) {
       try {
-        const ERC20Contract = await ERC20(id, chain.rpc, {
-          transactionErrors,
-          txNotification,
-          wallet: null
-        })
+        const ERC20Contract = await ERC20(id, chain.rpc)
         const balanceToken = await ERC20Contract.balance(walletUserString)
 
         Object.assign(valueInWallet, {
@@ -200,45 +192,48 @@ const Profile = () => {
     setAssetsValueInWallet(valueInWallet)
   }
 
-  async function getLiquidityPoolPriceInDollar() {
-    const { kacyPriceInDollar, priceLP } = await getPriceKacyAndLP(
-      LP_KACY_AVAX_PNG,
-      LPDaiAvax,
-      true
-    )
-    if (priceLP) {
-      setPriceToken(prevState => ({
-        ...prevState,
-        'LP-PNG': priceLP,
-        KACY: kacyPriceInDollar
-      }))
-    }
+  async function poolPriceList() {
+    if (!data || !tokensList) return
 
-    if (priceLP) {
-      const priceLPJoe = await getPriceKacyAndLP(
-        LP_KACY_AVAX_JOE,
-        LPDaiAvax,
-        true
-      )
-      if (priceLPJoe.priceLP) {
-        setPriceToken(prevState => ({
-          ...prevState,
-          'LP-JOE': priceLPJoe.priceLP
-        }))
+    const poolPriceList = {}
+    for (const pool of [...poolsFunds, ...poolsKacy]) {
+      switch (pool.type) {
+        case PoolType.STAKE:
+          Object.assign(poolPriceList, {
+            [pool.symbol]: getPriceToken
+              ? getPriceToken(KacyPoligon.toLowerCase())
+              : '0'
+          })
+          break
+
+        case PoolType.FARM:
+          Object.assign(poolPriceList, {
+            [pool.symbol]:
+              data?.find(token => token.address === pool.poolTokenAddress)
+                ?.price_usd ?? '0'
+          })
+          break
+
+        case PoolType.LP:
+          Object.assign(poolPriceList, {
+            [pool.symbol]: await getPricePoolLP({
+              lpType: pool.lpPool?.type,
+              chainId: pool.chain.id,
+              poolAddress: pool.address,
+              tokenPoolAddress: pool.poolTokenAddress,
+              balancerPoolId: pool.lpPool?.balancerPoolId,
+              tokenPoolPrice: Big(
+                getPriceToken
+                  ? getPriceToken(pool.poolTokenAddress.toLowerCase())
+                  : '0'
+              )
+            })
+          })
+          break
       }
     }
 
-    const wethPrice = getPriceToken(WETH_POLYGON.toLowerCase())
-
-    if (wethPrice) {
-      const priceLPbal = await getPriceKacyAndLPBalancer(wethPrice, KACY_WETH)
-      if (priceLPbal) {
-        setPriceToken(prevState => ({
-          ...prevState,
-          'KACY-WETH': priceLPbal
-        }))
-      }
-    }
+    setPriceToken(poolPriceList)
   }
 
   async function getAmountToken() {
@@ -322,13 +317,6 @@ const Profile = () => {
   React.useEffect(() => {
     if (data) {
       data.map(pool => {
-        const prodPrice = new Big(pool.price_usd)
-
-        setPriceToken(prevState => ({
-          ...prevState,
-          [pool.symbol]: prodPrice
-        }))
-
         setMyFunds(prevState => ({
           ...prevState,
           [pool.address]: pool.address
@@ -348,9 +336,9 @@ const Profile = () => {
   React.useEffect(() => {
     if (profileAddress) {
       getAmountToken()
-      getLiquidityPoolPriceInDollar()
+      poolPriceList()
     }
-  }, [profileAddress, tokensList])
+  }, [profileAddress, data, tokensList])
 
   React.useEffect(() => {
     let tokenAmountInTokenizedFunds = new Big(0)

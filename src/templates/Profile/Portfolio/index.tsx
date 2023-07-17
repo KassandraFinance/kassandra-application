@@ -57,8 +57,8 @@ type PoolProps = {
   changeMonth: string
   price: any
   tvl: any
-  balanceInUSD: string
-  balance: string
+  balanceInUSD: Big
+  balance: Big
   logoChain: string
 }
 
@@ -147,15 +147,14 @@ const Portfolio = ({
   }, [profileAddress, assetsValueInWallet, router, wallet?.accounts[0].address])
 
   React.useEffect(() => {
-    if (!data?.pools) {
-      return
-    }
+    if (!data?.pools) return
 
     const pools = [
       ...data.pools.map(pool => {
         const balance = Big(balanceFunds[pool.address].toString()).div(
           Big(10).pow(18)
         )
+
         return {
           id: pool.id,
           address: pool.address,
@@ -166,8 +165,8 @@ const Portfolio = ({
           changeMonth: calcChange(pool.now[0]?.close, pool.month[0]?.close),
           price: pool.price_usd,
           tvl: pool.total_value_locked_usd,
-          balanceInUSD: balance.mul(pool.price_usd).toFixed(),
-          balance: balance.toFixed(),
+          balanceInUSD: balance.mul(pool.price_usd),
+          balance: balance,
           logoChain: '/assets/logos/avalanche.svg'
         }
       })
@@ -176,10 +175,14 @@ const Portfolio = ({
     if (data.managedPools.length > 0) {
       pools.push(
         ...data.managedPools.map(pool => {
-          const balance =
+          const balanceInWalletOrPool = Big(
+            balanceFunds[pool.address]?.toString() ?? 0
+          ).div(Big(10).pow(18))
+          const balanceManagedPools =
             pool.investors && pool.investors.length > 0
-              ? Big(pool.investors[0].amount)
+              ? Big(pool.investors[0].amount).add(balanceInWalletOrPool)
               : Big('0')
+
           return {
             id: pool.id,
             address: pool.address,
@@ -190,8 +193,8 @@ const Portfolio = ({
             changeMonth: calcChange(pool.now[0]?.close, pool.month[0]?.close),
             price: pool.price_usd,
             tvl: pool.total_value_locked_usd,
-            balanceInUSD: balance.mul(pool.price_usd).toFixed(),
-            balance: balance.toFixed(),
+            balanceInUSD: balanceManagedPools.mul(pool.price_usd),
+            balance: balanceManagedPools,
             logoChain: pool.chain?.logo ?? '/assets/icons/coming-soon.svg'
           }
         })
