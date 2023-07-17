@@ -1,16 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
 import CopyToClipboard from 'react-copy-to-clipboard'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
+import { useBrokers } from '@/hooks/query/useBrokers'
 import substr from '@/utils/substr'
-import { GET_BROKERS } from './graphql'
 
 import ImageProfile from '@/components/Governance/ImageProfile'
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
@@ -45,20 +40,6 @@ import {
   Value as V
 } from '@ui/Modals/ModalViewCoin/styles'
 
-type GetBrokersType = {
-  pools: {
-    num_brokers: number
-
-    brokers: {
-      wallet: string
-      num_deposits: number
-      unique_investors: number
-      deposits_usd: string
-      fees_usd: string
-    }[]
-  }[]
-}
-
 const BrokersTable = () => {
   const [skip, setSkip] = React.useState(0)
   const [inViewCollum, setInViewCollum] = React.useState(1)
@@ -76,7 +57,6 @@ const BrokersTable = () => {
     address: ''
   })
 
-  const [{ wallet }] = useConnectWallet()
   const router = useRouter()
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -84,20 +64,9 @@ const BrokersTable = () => {
 
   const take = 4
 
-  const { data } = useSWR<GetBrokersType>(
-    wallet && poolId.length > 0
-      ? [GET_BROKERS, wallet.accounts[0].address, poolId]
-      : null,
-    (query, userWalletAddress, poolId) =>
-      request(BACKEND_KASSANDRA, query, {
-        id: getAddress(userWalletAddress),
-        poolId: poolId,
-        first: take,
-        skip
-      })
-  )
+  const { data } = useBrokers({ poolId, first: take, skip })
 
-  const brokersList = data?.pools[0]?.brokers
+  const brokersList = data ? data[0]?.brokers : []
 
   function handleCurrentInView(n: number, columns: number) {
     setInViewCollum(prev => {
@@ -133,7 +102,6 @@ const BrokersTable = () => {
     setIsOpen(true)
   }
 
-  // eslint-disable-next-line prettier/prettier
   function handleClickCopyToClipboard(
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) {
@@ -272,7 +240,7 @@ const BrokersTable = () => {
         <Pagination
           skip={skip}
           take={take}
-          totalItems={data?.pools[0]?.num_brokers ?? 0}
+          totalItems={data ? data[0]?.num_brokers : 0}
           handlePageClick={({ selected }) => {
             setSkip(selected * take)
           }}

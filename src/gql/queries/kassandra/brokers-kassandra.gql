@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_BROKERS = gql`
-  query ($poolId: ID!, $first: Int, $skip: Int) {
+  query Brokers($poolId: ID!, $first: Int, $skip: Int) {
     pools(where: { id: $poolId }) {
       num_brokers
       brokers(first: $first, skip: $skip) {
@@ -13,4 +10,3 @@ export const GET_BROKERS = gql`
       }
     }
   }
-`

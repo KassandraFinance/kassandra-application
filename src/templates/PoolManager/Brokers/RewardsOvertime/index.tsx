@@ -1,13 +1,9 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { GET_JOIN_FESS } from './graphql'
+import { useManagerJoinFees } from '@/hooks/query/useManagerJoinFees'
 
 import FeesChart, {
   FeeGraph
@@ -17,10 +13,10 @@ import Loading from '@ui/Loading'
 import * as S from './styles'
 
 type Fees = {
-  type: 'join'
-  period: number
-  volume_usd: string
-  volume_broker_usd: string | null
+  __typename?: 'Fee' | undefined
+  type: string
+  volume_usd: any
+  volume_broker_usd?: any
   timestamp: number
 }
 
@@ -28,15 +24,6 @@ type VolumesType = {
   volume_usd: string
   swap_pair: string
   timestamp: number
-}
-
-type GetJoinFeesType = {
-  manager: {
-    pools: {
-      fees: Fees[]
-      volumes: VolumesType[]
-    }[]
-  }
 }
 
 const rewardsLegend: Record<string, string> = {
@@ -170,26 +157,22 @@ const RewardsOvertime = () => {
     return aggFees
   }
 
-  const { data } = useSWR<GetJoinFeesType>(
-    wallet && [GET_JOIN_FESS, wallet.accounts[0].address, poolId],
-    (query, userWalletAddress, poolId) =>
-      request(BACKEND_KASSANDRA, query, {
-        id: getAddress(userWalletAddress),
-        poolId: poolId
-      })
-  )
+  const { data } = useManagerJoinFees({
+    id: wallet?.accounts[0].address,
+    poolId
+  })
 
-  if (data?.manager?.pools) {
+  if (data?.pools) {
     return (
       <S.RewardsOvertime>
         <FeesChart
-          fees={addTotalOnFees(data?.manager?.pools[0]?.fees || [])}
+          fees={addTotalOnFees(data?.pools[0]?.fees)}
           title="Rewards History"
           legend={rewardsLegend}
         />
 
         <FeesChart
-          fees={addTotalOnVolumes(data?.manager?.pools[0]?.volumes || [])}
+          fees={addTotalOnVolumes(data?.pools[0]?.volumes)}
           title="Deposits comparisson"
           legend={depositsLegend}
         />

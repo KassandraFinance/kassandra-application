@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_JOIN_FESS = gql`
-  query ($id: ID!, $poolId: ID!) {
+query ManagerJoinFees($id: ID!, $poolId: ID!) {
     manager(id: $id) {
       pools(where: { id: $poolId }) {
         fees(where: { type: "join" }) {
@@ -24,4 +21,3 @@ export const GET_JOIN_FESS = gql`
       }
     }
   }
-`

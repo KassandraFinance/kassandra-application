@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_BROKERS_FEES = gql`
-  query (
+query BrokersFees(
     $id: ID!
     $poolId: ID!
     $depositsTimestamp: Int
@@ -35,4 +32,3 @@ export const GET_BROKERS_FEES = gql`
       }
     }
   }
-`

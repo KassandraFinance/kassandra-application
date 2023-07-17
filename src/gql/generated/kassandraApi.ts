@@ -4621,6 +4621,57 @@ export type ActivitiesQuery = {
   } | null
 }
 
+export type BrokersQueryVariables = Exact<{
+  poolId: Scalars['ID']['input']
+  first?: InputMaybe<Scalars['Int']['input']>
+  skip?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type BrokersQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    num_brokers: number
+    brokers: Array<{
+      __typename?: 'Broker'
+      wallet: string
+      num_deposits: number
+      unique_investors: number
+      deposits_usd: any
+      fees_usd: any
+    }>
+  }>
+}
+
+export type BrokersFeesQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  poolId: Scalars['ID']['input']
+  depositsTimestamp?: InputMaybe<Scalars['Int']['input']>
+  rewardsTimestamp?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type BrokersFeesQuery = {
+  __typename?: 'Query'
+  manager?: {
+    __typename?: 'Manager'
+    pools: Array<{
+      __typename?: 'Pool'
+      num_deposits_broker: any
+      unique_investors_broker: number
+      brokeredDeposits: Array<{
+        __typename?: 'Volume'
+        volume_usd: any
+        timestamp: number
+      }>
+      brokersRewards: Array<{
+        __typename?: 'Fee'
+        volume_broker_usd?: any | null
+        timestamp: number
+      }>
+    }>
+  } | null
+}
+
 export type FeesQueryVariables = Exact<{
   poolId: Scalars['ID']['input']
 }>
@@ -4785,6 +4836,23 @@ export type ManagerChangeTvlQuery = {
   } | null
 }
 
+export type ManagerDepositFeeQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  poolId: Scalars['ID']['input']
+}>
+
+export type ManagerDepositFeeQuery = {
+  __typename?: 'Query'
+  manager?: {
+    __typename?: 'Manager'
+    pools: Array<{
+      __typename?: 'Pool'
+      fee_join_broker: any
+      fee_join_manager: any
+    }>
+  } | null
+}
+
 export type ManagerDepositsQueryVariables = Exact<{
   manager: Scalars['ID']['input']
   timestamp?: InputMaybe<Scalars['Int']['input']>
@@ -4798,6 +4866,34 @@ export type ManagerDepositsQuery = {
       __typename?: 'Volume'
       volume_usd: any
       timestamp: number
+    }>
+  } | null
+}
+
+export type ManagerJoinFeesQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  poolId: Scalars['ID']['input']
+}>
+
+export type ManagerJoinFeesQuery = {
+  __typename?: 'Query'
+  manager?: {
+    __typename?: 'Manager'
+    pools: Array<{
+      __typename?: 'Pool'
+      fees: Array<{
+        __typename?: 'Fee'
+        type: string
+        volume_usd: any
+        volume_broker_usd?: any | null
+        timestamp: number
+      }>
+      volumes: Array<{
+        __typename?: 'Volume'
+        volume_usd: any
+        swap_pair: string
+        timestamp: number
+      }>
     }>
   } | null
 }
@@ -5580,6 +5676,56 @@ export const ActivitiesDocument = gql`
     }
   }
 `
+export const BrokersDocument = gql`
+  query Brokers($poolId: ID!, $first: Int, $skip: Int) {
+    pools(where: { id: $poolId }) {
+      num_brokers
+      brokers(first: $first, skip: $skip) {
+        wallet
+        num_deposits
+        unique_investors
+        deposits_usd
+        fees_usd
+      }
+    }
+  }
+`
+export const BrokersFeesDocument = gql`
+  query BrokersFees(
+    $id: ID!
+    $poolId: ID!
+    $depositsTimestamp: Int
+    $rewardsTimestamp: Int
+  ) {
+    manager(id: $id) {
+      pools(where: { id: $poolId }) {
+        num_deposits_broker
+        unique_investors_broker
+        brokeredDeposits: volumes(
+          where: {
+            period: 86400
+            type: "join"
+            swap_pair_in: ["broker"]
+            timestamp_gt: $depositsTimestamp
+          }
+        ) {
+          volume_usd
+          timestamp
+        }
+        brokersRewards: fees(
+          where: {
+            period: 86400
+            type: "join"
+            timestamp_gt: $rewardsTimestamp
+          }
+        ) {
+          volume_broker_usd
+          timestamp
+        }
+      }
+    }
+  }
+`
 export const FeesDocument = gql`
   query Fees($poolId: ID!) {
     pool(id: $poolId) {
@@ -5796,6 +5942,16 @@ export const ManagerChangeTvlDocument = gql`
     }
   }
 `
+export const ManagerDepositFeeDocument = gql`
+  query ManagerDepositFee($id: ID!, $poolId: ID!) {
+    manager(id: $id) {
+      pools(where: { id: $poolId }) {
+        fee_join_broker
+        fee_join_manager
+      }
+    }
+  }
+`
 export const ManagerDepositsDocument = gql`
   query ManagerDeposits($manager: ID!, $timestamp: Int) {
     manager(id: $manager) {
@@ -5809,6 +5965,31 @@ export const ManagerDepositsDocument = gql`
       ) {
         volume_usd
         timestamp
+      }
+    }
+  }
+`
+export const ManagerJoinFeesDocument = gql`
+  query ManagerJoinFees($id: ID!, $poolId: ID!) {
+    manager(id: $id) {
+      pools(where: { id: $poolId }) {
+        fees(where: { type: "join" }) {
+          type
+          volume_usd
+          volume_broker_usd
+          timestamp
+        }
+        volumes(
+          where: {
+            period: 86400
+            type: "join"
+            swap_pair_in: ["broker", "manager"]
+          }
+        ) {
+          volume_usd
+          swap_pair
+          timestamp
+        }
       }
     }
   }
@@ -6642,6 +6823,34 @@ export function getSdk(
         'query'
       )
     },
+    Brokers(
+      variables: BrokersQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<BrokersQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<BrokersQuery>(BrokersDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'Brokers',
+        'query'
+      )
+    },
+    BrokersFees(
+      variables: BrokersFeesQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<BrokersFeesQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<BrokersFeesQuery>(BrokersFeesDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'BrokersFees',
+        'query'
+      )
+    },
     Fees(
       variables: FeesQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
@@ -6685,6 +6894,21 @@ export function getSdk(
         'query'
       )
     },
+    ManagerDepositFee(
+      variables: ManagerDepositFeeQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ManagerDepositFeeQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ManagerDepositFeeQuery>(
+            ManagerDepositFeeDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'ManagerDepositFee',
+        'query'
+      )
+    },
     ManagerDeposits(
       variables: ManagerDepositsQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
@@ -6697,6 +6921,21 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'ManagerDeposits',
+        'query'
+      )
+    },
+    ManagerJoinFees(
+      variables: ManagerJoinFeesQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ManagerJoinFeesQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ManagerJoinFeesQuery>(
+            ManagerJoinFeesDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'ManagerJoinFees',
         'query'
       )
     },
