@@ -4,7 +4,6 @@ import { MatomoProvider, createInstance } from '@datapunt/matomo-tracker-react'
 import Head from 'next/head'
 import { ThemeProvider } from 'styled-components'
 import { useRouter } from 'next/router'
-import { SWRConfig } from 'swr'
 import { Web3OnboardProvider } from '@web3-onboard/react'
 import {
   Hydrate,
@@ -78,16 +77,9 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 </Head>
                 <Toastify />
                 <GlobalStyles selectBackground={true} />
-                <SWRConfig
-                  value={{
-                    refreshInterval: 10000,
-                    fetcher: url => fetch(url).then(res => res.json())
-                  }}
-                >
-                  {pathClearHashtag[0] !== 'manage' ? <Header /> : null}
+                {pathClearHashtag[0] !== 'manage' ? <Header /> : null}
 
-                  <Component {...pageProps} />
-                </SWRConfig>
+                <Component {...pageProps} />
                 {router.pathname === '/404' ||
                 pathClearHashtag[0] === 'manage' ? null : (
                   <Footer />
