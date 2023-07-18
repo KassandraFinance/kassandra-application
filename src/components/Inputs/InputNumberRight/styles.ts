@@ -135,16 +135,15 @@ export const Placeholder = styled.span`
 `
 
 export const Line = styled.span`
-  ${() =>
-    css`
-      position: absolute;
-      left: 0;
+  ${() => css`
+    position: absolute;
+    left: 0;
 
-      width: 0.1rem;
-      height: 1.4rem;
+    width: 0.1rem;
+    height: 1.4rem;
 
-      background-color: rgb(255 255 255 / 0.15);
-    `}
+    background-color: rgb(255 255 255 / 0.15);
+  `}
 `
 
 export const InputButton = styled.button`

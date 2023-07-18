@@ -22,9 +22,8 @@ const ModalFullWindow = ({
       style.zIndex = '0'
     }
 
-    const userDashBoardButton = document.getElementById(
-      'userDashBoardButton'
-    )?.style
+    const userDashBoardButton = document.getElementById('userDashBoardButton')
+      ?.style
     if (userDashBoardButton) {
       userDashBoardButton.zIndex = '0'
     }

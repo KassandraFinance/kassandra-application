@@ -340,9 +340,8 @@ const PoolManager = () => {
 
                   {poolInfo[0]?.chain_id !== chainId ? (
                     <Button
-                      text={`Connect to ${
-                        networks[poolInfo[0]?.chain_id]?.chainName
-                      }`}
+                      text={`Connect to ${networks[poolInfo[0]?.chain_id]
+                        ?.chainName}`}
                       backgroundSecondary
                       size="large"
                       className="btn-manage-assets"

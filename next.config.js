@@ -27,8 +27,7 @@ module.exports = {
           },
           {
             key: 'Access-Control-Allow-Headers',
-            value:
-              'X-Requested-With, content-type, Authorization'
+            value: 'X-Requested-With, content-type, Authorization'
           }
         ]
       }

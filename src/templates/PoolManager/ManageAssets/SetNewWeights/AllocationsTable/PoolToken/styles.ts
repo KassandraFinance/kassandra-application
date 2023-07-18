@@ -92,7 +92,10 @@ export const CurrentAmountContainer = styled.td<IMoreInfoProps>`
     display: flex;
     align-items: center;
 
-    transition: height 0.4s ease, opacity 0.4s ease, margin-top 0.4s ease;
+    transition:
+      height 0.4s ease,
+      opacity 0.4s ease,
+      margin-top 0.4s ease;
 
     @media (max-width: 745px) {
       height: ${isOpen ? '5.5rem' : '0'};
@@ -316,7 +319,10 @@ export const NewAmount = styled.td<IMoreInfoProps>`
       line-height: 104%;
     }
 
-    transition: height 0.4s ease, opacity 0.4s ease, margin-top 0.4s ease;
+    transition:
+      height 0.4s ease,
+      opacity 0.4s ease,
+      margin-top 0.4s ease;
 
     @media (max-width: 745px) {
       height: ${isOpen ? '5.5rem' : '0'};

@@ -48,14 +48,13 @@ export const Body = styled.div`
 `
 
 export const CoinsContainer = styled.div`
-  ${() =>
-    css`
-      display: flex;
-      flex-direction: column;
-      gap: 2.4rem;
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
 
-      margin-bottom: 2.4rem;
-    `}
+    margin-bottom: 2.4rem;
+  `}
 `
 
 export const CoinContainer = styled.div`
