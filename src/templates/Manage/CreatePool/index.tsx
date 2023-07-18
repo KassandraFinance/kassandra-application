@@ -397,14 +397,12 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
     let tokensForVerifyIsApproved: Token[]
     if (poolData.methodCreate === 'any-asset') {
-      const { address, decimals, symbol } = poolData.tokenIn
+      const { address, symbol } = poolData.tokenIn
 
       tokensForVerifyIsApproved = [
         {
           address,
-          amount: Big(poolData.tokenInAmount)
-            .mul(Big(10).pow(decimals || 18))
-            .toFixed(0),
+          amount: poolData.tokenInAmount,
           normalizedAmount: poolData.tokenInAmount,
           symbol: symbol || ''
         }
@@ -633,14 +631,11 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
     let tokensForVerifyIsApproved: Token[]
     if (poolData.methodCreate === 'any-asset') {
-      const { address, decimals, symbol } = poolData.tokenIn
-
+      const { address, symbol } = poolData.tokenIn
       tokensForVerifyIsApproved = [
         {
           address,
-          amount: Big(poolData.tokenInAmount)
-            .mul(Big(10).pow(decimals || 18))
-            .toFixed(0),
+          amount: poolData.tokenInAmount,
           normalizedAmount: poolData.tokenInAmount,
           symbol: symbol || ''
         }
@@ -650,10 +645,13 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     }
 
     const notAprovedTokens = await getIsAproved(tokensForVerifyIsApproved)
-
     setTransactions(prev =>
       prev.map((item, index) => {
-        if (index === tokens.length - notAprovedTokens.length) {
+        const operationIndex =
+          poolData.methodCreate === 'any-asset'
+            ? notAprovedTokens.length - 1
+            : tokens.length - notAprovedTokens.length
+        if (index === operationIndex) {
           return {
             ...item,
             status: 'APPROVING'

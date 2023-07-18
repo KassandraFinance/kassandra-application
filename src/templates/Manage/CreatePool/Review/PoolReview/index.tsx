@@ -5,11 +5,7 @@ import Blockies from 'react-blockies'
 import Big from 'big.js'
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import {
-  TokenType,
-  setLiquidity,
-  setTxs
-} from '@/store/reducers/poolCreationSlice'
+import { TokenType, setLiquidity } from '@/store/reducers/poolCreationSlice'
 import { ParaSwap } from '@/services/ParaSwap'
 import { useTokensData } from '@/hooks/query/useTokensData'
 
@@ -147,7 +143,6 @@ const PoolReview = () => {
         })
       )
     }
-    dispatch(setTxs(amounts.transactionsDataTx))
     return amounts
   }
 

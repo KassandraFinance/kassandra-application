@@ -20,7 +20,7 @@ const PoolCreated = ({ data }: IPoolCreatedProps) => {
         <img src={createFundSucess.src} alt="" width={80} height={80} />
         <S.FundCreatedTitle>Your Pool has been created!</S.FundCreatedTitle>
         <S.FundCreatedParagraph>
-          Your smart contracts have been deploysed in the following transacion:
+          Your smart contracts have been deployed in the following transaction:
         </S.FundCreatedParagraph>
         <Link
           href={`${networks[data.networkId].blockExplorer}/tx/${data?.txHash}`}

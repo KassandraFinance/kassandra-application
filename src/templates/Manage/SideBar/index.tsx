@@ -9,7 +9,8 @@ import { useManagerPools } from '@/hooks/query/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
   setToFirstStep,
-  setBackStepNumber
+  setBackStepNumber,
+  setClear
 } from '@/store/reducers/poolCreationSlice'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
 
@@ -35,6 +36,7 @@ import {
 } from './icons'
 
 import * as S from './styles'
+import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
 
 interface ISideBarProps {
   isOpen: boolean
@@ -71,8 +73,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
     address: wallet?.accounts[0].address
   })
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
-  const poolCreattionChainId = useAppSelector(
-    state => state.poolCreation.createPoolData.networkId
+  const { networkId: poolCreattionChainId, version } = useAppSelector(
+    state => state.poolCreation.createPoolData
   )
 
   const router = useRouter()
@@ -85,6 +87,10 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
   })
 
   function handleCreatePool() {
+    if (version !== VERSION_POOL_CREATE) {
+      dispatch(setToFirstStep())
+      dispatch(setClear())
+    }
     if (poolCreattionChainId === 0 && stepNumber > 0) {
       dispatch(setToFirstStep())
     }

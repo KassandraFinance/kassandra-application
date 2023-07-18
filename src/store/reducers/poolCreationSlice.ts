@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Big from 'big.js'
 
 import { CoinsMetadataType } from '@/hooks/query/useTokensData'
+import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
 
 export type TokenType = {
   icon: string
@@ -26,6 +27,7 @@ export type TokenSelectProps = {
 }
 
 export type PoolData = {
+  version: string
   id?: string
   txHash?: string
   termsAndConditions?: boolean
@@ -54,7 +56,6 @@ export type PoolData = {
   methodCreate: MethodCreate
   tokenIn: TokenSelectProps
   tokenInAmount: string
-  txs?: Array<any>
 }
 
 export interface IPoolCreationDataState {
@@ -168,6 +169,7 @@ const initialState: IPoolCreationDataState = {
   stepNumber: 0,
   isValid: false,
   createPoolData: {
+    version: VERSION_POOL_CREATE,
     methodCreate: 'any-asset',
     tokenIn: {
       address: '',
@@ -177,7 +179,6 @@ const initialState: IPoolCreationDataState = {
       symbol: ''
     },
     tokenInAmount: '0',
-    txs: [],
     network: '',
     networkId: 0,
     poolName: '',
@@ -451,6 +452,7 @@ export const poolCreationSlice = createSlice({
     },
     setClear: state => {
       state.createPoolData = {
+        version: VERSION_POOL_CREATE,
         methodCreate: 'any-asset',
         tokenIn: {
           address: '',
@@ -460,7 +462,6 @@ export const poolCreationSlice = createSlice({
           symbol: ''
         },
         tokenInAmount: '0',
-        txs: [],
         network: '',
         networkId: 0,
         poolName: '',
@@ -502,9 +503,6 @@ export const poolCreationSlice = createSlice({
     },
     setTokenInAmount: (state, action: PayloadAction<string>) => {
       state.createPoolData.tokenInAmount = action.payload
-    },
-    setTxs: (state, action: PayloadAction<Array<any>>) => {
-      state.createPoolData.txs = action.payload
     }
   }
 })
@@ -528,8 +526,7 @@ export const {
   setToFirstStep,
   setMethodCreate,
   setTokenIn,
-  setTokenInAmount,
-  setTxs
+  setTokenInAmount
 } = poolCreationSlice.actions
 
 export default poolCreationSlice.reducer

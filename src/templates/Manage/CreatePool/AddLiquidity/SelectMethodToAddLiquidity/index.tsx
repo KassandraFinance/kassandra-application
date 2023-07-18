@@ -19,13 +19,21 @@ const SelectMethodToAddLiquidity = ({
     <S.SelectMethodToAddLiquidity>
       <S.Title>
         <S.H2>Select how would you like to add liquidity</S.H2>
-        <Tippy content="Select the way you would like to add liquidity to the pool you are creating">
+        <Tippy
+          content={
+            <S.TippyContent>
+              Select the way you would like to add liquidity to the pool you are
+              creating
+            </S.TippyContent>
+          }
+        >
           <span>
             <Image src={tooltip} alt="Explanation" width={14} height={14} />
           </span>
         </Tippy>
       </S.Title>
       <S.RadiosContainer>
+        <S.Switch position={method === 'any-asset' ? 'left' : 'right'} />
         <S.Label checked={method === 'any-asset'}>
           <S.Input
             type="radio"
