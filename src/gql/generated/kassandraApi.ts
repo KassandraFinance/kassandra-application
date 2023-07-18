@@ -4711,6 +4711,13 @@ export type CommunityPoolsQuery = {
   }>
 }
 
+export type FeaturedPoolsQueryVariables = Exact<{ [key: string]: never }>
+
+export type FeaturedPoolsQuery = {
+  __typename?: 'Query'
+  pools: Array<{ __typename?: 'Pool'; id: string; featured?: boolean | null }>
+}
+
 export type FeesQueryVariables = Exact<{
   poolId: Scalars['ID']['input']
 }>
@@ -5926,6 +5933,14 @@ export const CommunityPoolsDocument = gql`
           }
         }
       }
+    }
+  }
+`
+export const FeaturedPoolsDocument = gql`
+  query FeaturedPools {
+    pools {
+      id
+      featured
     }
   }
 `
@@ -7153,6 +7168,20 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'CommunityPools',
+        'query'
+      )
+    },
+    FeaturedPools(
+      variables?: FeaturedPoolsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<FeaturedPoolsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<FeaturedPoolsQuery>(FeaturedPoolsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'FeaturedPools',
         'query'
       )
     },

@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { IIndexProps } from '../../pages'
 import { useCommunityPools } from '@/hooks/query/useCommunityPools'
+import { useFeaturedPools } from '@/hooks/query/useFeaturedPools'
 
 import TitleSection from '../../components/TitleSection'
 import FundCard from '../../components/FundCard'
@@ -34,7 +34,7 @@ const tabs = [
   }
 ]
 
-export default function Explore({ poolsKassandra }: IIndexProps) {
+export default function Explore() {
   const [loading, setLoading] = React.useState(true)
   const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
   const [skip, setSkip] = React.useState(0)
@@ -46,6 +46,7 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
 
   const take = 8
 
+  const { data: poolsKassandra } = useFeaturedPools()
   const { data } = useCommunityPools({
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
@@ -100,7 +101,7 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
             )}
 
             <S.CardContainer isLoading={loading}>
-              {poolsKassandra.map(pool => (
+              {poolsKassandra?.poolsKassandra.map(pool => (
                 <FundCard
                   key={pool.id}
                   poolAddress={pool.id}
