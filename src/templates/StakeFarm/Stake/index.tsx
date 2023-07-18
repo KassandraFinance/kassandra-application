@@ -13,6 +13,7 @@ import {
 import useStaking from '@/hooks/useStaking'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 
 import StakeCard from '@/components/StakeCard'
 
@@ -31,8 +32,11 @@ const Stake = () => {
     chainId: networkChain.chainId,
     tokenAddresses: addressesForReqStakePool
   })
-
-  const kacyPrice = data ? data[KacyPoligon.toLowerCase()].usd : 0
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: networkChain.nativeCurrency.address,
+    tokens: data || {}
+  })
+  const kacyPrice = priceToken(KacyPoligon.toLowerCase())
 
   React.useEffect(() => {
     trackCategoryPageView([

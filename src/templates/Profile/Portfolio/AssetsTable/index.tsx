@@ -42,8 +42,8 @@ type PoolProps = {
   changeMonth: string
   price: any
   tvl: any
-  balanceInUSD: string
-  balance: string
+  balanceInUSD: Big
+  balance: Big
   logoChain: string
 }
 
@@ -96,13 +96,15 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
         <S.Td>
           <S.FlexWrapper>
             <div>
-              {pool.balance ? BNtoDecimal(Big(pool?.balance ?? Big(0)), 2) : 0}{' '}
+              {pool.balance
+                ? BNtoDecimal(Big(pool?.balance ?? Big(0)), 18, 2)
+                : 0}{' '}
               <span>{pool.symbol}</span>
             </div>
             <span>
               $
               {pool.balance && pool.price
-                ? BNtoDecimal(Big(pool?.balanceInUSD ?? Big(0)), 2)
+                ? BNtoDecimal(Big(pool?.balanceInUSD ?? Big(0)), 18, 2)
                 : 0}
             </span>
           </S.FlexWrapper>
