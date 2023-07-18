@@ -86,14 +86,13 @@ export const THead = styled.div`
 `
 
 export const TBody = styled.div`
-  ${() =>
-    css`
-      overflow-y: auto;
+  ${() => css`
+    overflow-y: auto;
 
-      max-height: 41.1rem;
+    max-height: 41.1rem;
 
-      background: rgba(255, 255, 255, 0.04);
-    `}
+    background: rgba(255, 255, 255, 0.04);
+  `}
 `
 
 export const Tr = styled.div`

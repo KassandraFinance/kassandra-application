@@ -1,0 +1,13 @@
+query PoolTvmChart($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      value: total_value_locked(
+        where: { base: "usd", timestamp_gt: $timestamp }
+        orderBy: timestamp
+        orderDirection: asc
+        first: 1000
+      ) {
+        close
+        timestamp
+      }
+    }
+  }

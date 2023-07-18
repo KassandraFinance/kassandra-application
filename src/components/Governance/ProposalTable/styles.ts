@@ -111,8 +111,11 @@ export const Td = styled.td`
     border-top: 0.1rem solid rgba(255, 255, 255, 0);
     border-bottom: 0.1rem solid rgba(255, 255, 255, 0.3);
 
-    transition: background-color ease-in-out 0.3s, border ease-in-out 0.3s,
-      padding ease-in-out 0.3s, margin ease-in-out 0.3s;
+    transition:
+      background-color ease-in-out 0.3s,
+      border ease-in-out 0.3s,
+      padding ease-in-out 0.3s,
+      margin ease-in-out 0.3s;
 
     @media (max-width: 768px) {
       height: 9.8rem;

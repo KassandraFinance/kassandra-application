@@ -29,7 +29,8 @@ export const BorderGradient = styled.div`
       ${theme.colors.blue} 0%,
       ${theme.colors.cyan} 100%
     );
-    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
     mask-composite: exclude;

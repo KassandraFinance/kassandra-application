@@ -19,33 +19,32 @@ export const AvailableRewards = styled.div`
 `
 
 export const AvailableAumFees = styled.div`
-  ${({ theme }) =>
-    css`
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+
+    padding: 2.4rem;
+    border-radius: 8px;
+
+    background-color: rgb(255 255 255 / 0.05);
+
+    h3 {
+      color: ${theme.colors.white};
+      font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font14};
+      line-height: 1.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    @media (min-width: 576px) {
       display: flex;
       flex-direction: column;
-      gap: 1.6rem;
-
-      padding: 2.4rem;
-      border-radius: 8px;
-
-      background-color: rgb(255 255 255 / 0.05);
-
-      h3 {
-        color: ${theme.colors.white};
-        font-weight: ${theme.font.weight.normal};
-        font-size: ${theme.font.sizes.font14};
-        line-height: 1.6rem;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-      }
-
-      @media (min-width: 576px) {
-        display: flex;
-        flex-direction: column;
-        gap: 2.4rem;
-        justify-content: center;
-      }
-    `}
+      gap: 2.4rem;
+      justify-content: center;
+    }
+  `}
 `
 
 export const ManagerFee = styled.div`

@@ -1,0 +1,24 @@
+  query UsersInfo($skip: Int!, $take: Int!) {
+    users(
+      orderDirection: desc
+      orderBy: votingPower
+      first: $take
+      skip: $skip
+    ) {
+      id
+      votingPower
+      votes {
+        proposal {
+          number
+        }
+      }
+      proposals {
+        proposer {
+          id
+        }
+      }
+    }
+    governances {
+      totalVotingPower
+    }
+  }

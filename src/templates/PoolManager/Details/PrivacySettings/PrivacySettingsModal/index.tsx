@@ -4,7 +4,7 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
 import { networks } from '@/constants/tokenAddresses'
 
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import useManagePoolController from '@/hooks/useManagePoolController'
 
 import Button from '@/components/Button'
@@ -27,12 +27,15 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
 
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 
   const { setPublicPool } = useManagePoolController(
-    poolInfo?.controller ?? '',
+    (poolInfo && poolInfo[0]?.controller) ?? '',
     networks[chainId].rpc
   )
 
@@ -72,7 +75,7 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
           </S.WarningText>
 
           <S.ButtonContainer>
-            {poolInfo?.chain_id === chainId ? (
+            {poolInfo && poolInfo[0]?.chain_id === chainId ? (
               <>
                 {!isTransaction ? (
                   <Button
@@ -93,15 +96,17 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
               </>
             ) : (
               <>
-                {poolInfo?.chain_id && (
+                {poolInfo && poolInfo[0]?.chain_id && (
                   <Button
-                    text={`Connect to ${networks[poolInfo.chain_id].chainName}`}
+                    text={`Connect to ${
+                      networks[poolInfo[0].chain_id].chainName
+                    }`}
                     backgroundPrimary
                     fullWidth
                     type="button"
                     onClick={() =>
                       setChain({
-                        chainId: `0x${poolInfo.chain_id.toString(16)}`
+                        chainId: `0x${poolInfo[0].chain_id.toString(16)}`
                       })
                     }
                   />

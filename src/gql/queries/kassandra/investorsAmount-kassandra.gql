@@ -1,0 +1,6 @@
+query InvestorsAmount($id: String, $investorsAddresses: [String!]) {
+    investors(where: { pool: $id, wallet_in: $investorsAddresses }) {
+      wallet
+      amount
+    }
+}

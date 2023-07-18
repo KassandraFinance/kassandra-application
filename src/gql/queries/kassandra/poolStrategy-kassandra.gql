@@ -1,0 +1,5 @@
+query PoolStrategy($id: ID!) {
+    pool(id: $id) {
+        summary
+    }
+}

@@ -43,9 +43,8 @@ const Header = () => {
 
     setIsShowMenu(!isShowMenu)
     setShowOverlay(true)
-    const userDashBoardButton = document.getElementById(
-      'userDashBoardButton'
-    )?.style
+    const userDashBoardButton = document.getElementById('userDashBoardButton')
+      ?.style
     if (userDashBoardButton) {
       if (isShowMenu) {
         userDashBoardButton.zIndex = '1021'

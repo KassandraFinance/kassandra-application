@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { useAppSelector } from '@/store/hooks'
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
@@ -24,7 +24,10 @@ const TransactionSummaryCard = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   return (
     <S.TransactionSummaryCard>
@@ -32,7 +35,7 @@ const TransactionSummaryCard = () => {
 
       <S.TransactionSummaryCardBody>
         <S.LpSendWrapper>
-          <p>{poolInfo?.symbol} Sent</p>
+          <p>{poolInfo && poolInfo[0]?.symbol} Sent</p>
 
           <S.LpSendValueWrapper>
             <S.LpSendValue>
@@ -41,20 +44,20 @@ const TransactionSummaryCard = () => {
             </S.LpSendValue>
             <TokenWithNetworkImage
               tokenImage={{
-                url: poolInfo?.logo ?? '',
+                url: (poolInfo && poolInfo[0]?.logo) ?? '',
                 height: 20,
                 width: 20,
                 withoutBorder: true
               }}
               networkImage={{
-                url: poolInfo?.chain.logo ?? '',
+                url: (poolInfo && poolInfo[0]?.chain?.logo) ?? '',
                 height: 10,
                 width: 10
               }}
               blockies={{
                 size: 4,
                 scale: 7,
-                seedName: poolInfo?.name ?? ''
+                seedName: (poolInfo && poolInfo[0]?.name) ?? ''
               }}
             />
           </S.LpSendValueWrapper>

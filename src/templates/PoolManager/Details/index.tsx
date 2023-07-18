@@ -4,7 +4,7 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 
 import substr from '@/utils/substr'
 import { registerToken } from '../../../utils/registerToken'
@@ -15,6 +15,7 @@ import PoolImage from './PoolImage'
 import PrivacySettings from './PrivacySettings'
 
 import privacyIcon from '@assets/iconGradient/product-bar.svg'
+import notFound from '@assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 
@@ -26,7 +27,10 @@ const Details = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   return (
     <S.Details>
@@ -38,13 +42,17 @@ const Details = () => {
             <S.Title>Contract</S.Title>
 
             <S.ContractInfoContainer>
-              <Image src={poolInfo?.chain?.logo} width={17} height={17} />
+              <Image
+                src={poolInfo[0]?.chain?.logo || notFound}
+                width={17}
+                height={17}
+              />
 
-              <S.ChainName>{poolInfo.chain.chainName}</S.ChainName>
+              <S.ChainName>{poolInfo[0]?.chain?.chainName}</S.ChainName>
 
-              <CopyToClipboard text={poolInfo.address}>
+              <CopyToClipboard text={poolInfo[0]?.address}>
                 <S.Address>
-                  {substr(poolInfo.address)}
+                  {substr(poolInfo[0]?.address || '')}
 
                   <svg
                     width="12"
@@ -65,8 +73,8 @@ const Details = () => {
                 type="button"
                 onClick={() => {
                   registerToken(
-                    poolInfo.address,
-                    poolInfo.symbol.toLocaleUpperCase(),
+                    poolInfo[0]?.address,
+                    poolInfo[0]?.symbol?.toLocaleUpperCase(),
                     Number(18)
                   )
                 }}
@@ -88,7 +96,7 @@ const Details = () => {
       <S.Wrapper2>
         <PoolImage />
 
-        {poolInfo?.is_private_pool && (
+        {poolInfo && poolInfo[0]?.is_private_pool && (
           <>
             <S.TitleWrapper>
               <TitleSection title="Privacy settings" image={privacyIcon} />

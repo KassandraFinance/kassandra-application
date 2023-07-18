@@ -3,9 +3,10 @@ import Big from 'big.js'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { mockTokens, networks } from '@/constants/tokenAddresses'
+import { mockTokens } from '@/constants/tokenAddresses'
 
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   lockToken,
@@ -13,8 +14,8 @@ import {
   setPoolTokensList,
   setTotalWeight
 } from '@/store/reducers/rebalanceAssetsSlice'
-import usePoolInfo from '@/hooks/usePoolInfo'
-import usePoolAssets from '@/hooks/usePoolAssets'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
+import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 
 import ExecutionPeriod from './ExecutionPeriod'
 import Steps from '../../../../components/Steps'
@@ -33,17 +34,24 @@ const SetNewWeights = () => {
   const dispatch = useAppDispatch()
   const { newTokensWights } = useAppSelector(state => state.rebalanceAssets)
   const [{ wallet }] = useConnectWallet()
-  const { poolAssets } = usePoolAssets(poolId)
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolAssets } = usePoolAssets({ id: poolId })
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
-  const { priceToken } = useCoingecko(
-    poolInfo?.chain_id ?? 137,
-    poolInfo?.chain.addressWrapped ?? '',
-    handleMockToken(poolAssets ?? [])
-  )
+  const { data } = useTokensData({
+    chainId: (poolInfo && poolInfo[0]?.chain_id) ?? 137,
+    tokenAddresses: handleMockToken(poolAssets ?? [])
+  })
+
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: (poolInfo && poolInfo[0]?.chain?.addressWrapped) ?? '',
+    tokens: data || {}
+  })
 
   function handleMockToken(tokenList: any) {
-    if (poolInfo?.chain_id === 5) {
+    if (poolInfo && poolInfo[0]?.chain_id === 5) {
       return tokenList?.map((item: any) => {
         return mockTokens[item.token.id]
       })
@@ -62,11 +70,11 @@ const SetNewWeights = () => {
         currentAmount: Big(item.balance),
         currentWeight: Big(Number(item.weight_normalized) * 100 ?? 0),
         token: {
-          decimals: item.token.decimals,
+          decimals: item.token?.decimals || 18,
           address: item.token.id,
-          logo: item.token.logo,
-          name: item.token.name,
-          symbol: item.token.symbol
+          logo: item.token?.logo || '',
+          name: item.token?.name || '',
+          symbol: item.token?.symbol || ''
         }
       }
     })
@@ -126,7 +134,7 @@ const SetNewWeights = () => {
         <S.AllocationsAndExecutionPeriod>
           <AllocationsTable
             priceToken={priceToken}
-            chainId={poolInfo?.chain_id || 0}
+            chainId={(poolInfo && poolInfo[0]?.chain_id) || 0}
           />
           <ExecutionPeriod />
         </S.AllocationsAndExecutionPeriod>

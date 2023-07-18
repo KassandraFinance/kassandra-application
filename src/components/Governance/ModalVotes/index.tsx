@@ -1,18 +1,13 @@
 import React from 'react'
 import router from 'next/router'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Big from 'big.js'
-// import { useInView } from 'react-intersection-observer'
 
-import { SUBGRAPH_URL } from '../../../constants/tokenAddresses'
+import { useVotes } from '@/hooks/query/useVotes'
 
-import { BNtoDecimal } from '../../../utils/numerals'
-import { checkVoteButton } from '../../../utils/checkVoteButton'
+import { BNtoDecimal } from '@/utils/numerals'
+import { checkVoteButton } from '@/utils/checkVoteButton'
 
-import { IUserVotedProps } from '../../../templates/Gov/Proposals/Proposal'
-
-import { GET_MODALVOTES } from './graphql'
+import { IUserVotedProps } from '@/templates/Gov/Proposals/Proposal'
 
 import Button from '../../Button'
 import ImageProfile from '../ImageProfile'
@@ -56,10 +51,6 @@ const ModalVotes = ({
   )
   const [isLoading, setIsLoading] = React.useState(true)
 
-  // const { ref, inView } = useInView({
-  //   threshold: 0.1
-  // })
-
   function getTextButton(typeVote: string) {
     if (typeVote === 'For') {
       if (userVote.voted && userVote.support) return 'Voted in Favor'
@@ -75,14 +66,10 @@ const ModalVotes = ({
     setIsModalOpen(false)
   }
 
-  const { data } = useSWR(
-    [GET_MODALVOTES, checkAllVoterModal],
-    (query, checkAllVoterModal) =>
-      request(SUBGRAPH_URL, query, {
-        number: Number(router.query.proposal),
-        support: checkAllVoterModal
-      })
-  )
+  const { data } = useVotes({
+    number: Number(router.query.proposal),
+    support: checkAllVoterModal
+  })
 
   React.useEffect(() => {
     setIsLoading(true)
@@ -147,15 +134,7 @@ const ModalVotes = ({
               <S.Tbody>
                 {modalVotesList.map((user, index) => {
                   return (
-                    <S.UserData
-                      key={index + user.voter.id}
-                      // ref={
-                      //   index === modalVotesList.length - 1 &&
-                      //   modalVotesList.length !== 0
-                      //     ? ref
-                      //     : null
-                      // }
-                    >
+                    <S.UserData key={index + user.voter.id}>
                       <S.UserName>
                         <ImageProfile
                           address={user.voter.id}
@@ -171,7 +150,6 @@ const ModalVotes = ({
                     </S.UserData>
                   )
                 })}
-                {/* <S.shadow inView={inView} /> */}
               </S.Tbody>
             </>
           ) : (

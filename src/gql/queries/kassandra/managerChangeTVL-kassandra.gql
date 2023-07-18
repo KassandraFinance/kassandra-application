@@ -1,0 +1,53 @@
+ query ManagerChangeTVL($manager: ID!, $day: Int!, $week: Int!, $month: Int!, $year: Int!) {
+    manager(id: $manager) {
+      now: total_value_locked(
+        where: { base: "usd" }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      day: total_value_locked(
+        where: { base: "usd", timestamp_gt: $day }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      week: total_value_locked(
+        where: { base: "usd", timestamp_gt: $week }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      month: total_value_locked(
+        where: { base: "usd", timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      year: total_value_locked(
+        where: { base: "usd", timestamp_gt: $year }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      max: total_value_locked(
+        where: { base: "usd", timestamp_gt: 0 }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+    }
+  }

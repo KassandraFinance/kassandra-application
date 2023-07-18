@@ -1,12 +1,12 @@
-import React, { FormEvent } from 'react'
+import React from 'react'
 import Image from 'next/image'
 import 'tippy.js/dist/tippy.css'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import { useConnectWallet } from '@web3-onboard/react'
-import useSignMessage from '@/hooks/useSignMessage'
-import { getAddress } from 'ethers'
 
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
+import { UserProfileType } from '@/hooks/query/useUserProfile'
+import { useSendUserProfile } from '@/hooks/query/useSendUserProfile'
 
 import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
@@ -14,7 +14,6 @@ import { setModalAlertText } from '@/store/reducers/modalAlertText'
 import Button from '@/components/Button'
 import UserNFTs, { INftDetailsListProps } from '@/components/UserNFts'
 import NftImage from '@/components/NftImage'
-import { NftDetailsProps } from '@/components/Governance/UserDescription'
 import Overlay from '@/components/Overlay'
 import Modal from '../Modal'
 
@@ -23,34 +22,13 @@ import * as S from './styles'
 interface IModalUserEditInfoProps {
   modalOpen: boolean
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  userData: UserEditInfoFormProps
-  setUserImage: React.Dispatch<
-    React.SetStateAction<{ url: string; isNFT: boolean }>
-  >
-  setUserData: React.Dispatch<React.SetStateAction<UserEditInfoFormProps>>
-  imageUser: {
-    url: string
-    isNFT: boolean
-  }
-}
-
-type UserEditInfoFormProps = {
-  nickname: string
-  twitter: string
-  website: string
-  telegram: string
-  discord: string
-  description: string
-  nft: NftDetailsProps | undefined
+  userData: UserProfileType
 }
 
 const ModalUserEditInfo = ({
   modalOpen,
   setModalOpen,
-  userData,
-  imageUser,
-  setUserImage,
-  setUserData
+  userData
 }: IModalUserEditInfoProps) => {
   const [isStateSocialMidia, setIsStateSocialMidia] = React.useState(false)
   const [isStateManagerInfo, setIsStateManagerInfo] = React.useState(false)
@@ -58,25 +36,29 @@ const ModalUserEditInfo = ({
   const [userNftDetails, setUserNftDetails] =
     React.useState<INftDetailsListProps>()
   const [editYourProfileInput, setEditYourProfileInput] =
-    React.useState<UserEditInfoFormProps>({
-      ...userData
+    React.useState<UserProfileType>({
+      ...userData,
+      nft: {
+        ...userData.nft
+      }
     })
   const [userImageModal, setUserImageModal] = React.useState<{
     image_preview: string
     image_file: Blob | null
     isNFTPreviewModal: boolean
   }>({
-    image_preview: imageUser.url,
+    image_preview: userData?.image || '',
     image_file: null,
-    isNFTPreviewModal: imageUser.isNFT
+    isNFTPreviewModal: userData?.isNFT === true
   })
 
   const dispatch = useAppDispatch()
   const [{ wallet }] = useConnectWallet()
-  const { signMessage } = useSignMessage()
   const inputRefModal = React.useRef<HTMLInputElement>(null)
 
   const { trackEventFunction } = useMatomoEcommerce()
+
+  const { handleFormChangeEditInfo } = useSendUserProfile()
 
   function handleCloseModal() {
     setModalOpen(false)
@@ -84,93 +66,6 @@ const ModalUserEditInfo = ({
 
   function handleValueTextarea(value: number) {
     return 0 + value
-  }
-
-  async function handleFormChangeEditInfo(event: FormEvent) {
-    event.preventDefault()
-
-    if (!wallet?.provider) return
-
-    const { nickname, twitter, website, telegram, discord, description } =
-      editYourProfileInput
-
-    const nftDetails = userImageModal.isNFTPreviewModal
-      ? {
-          contractType: userNftDetails?.contract_type,
-          collectionName: userNftDetails?.name,
-          symbol: userNftDetails?.symbol,
-          tokenAddress: userNftDetails?.token_address,
-          tokenId: userNftDetails?.token_id,
-          chain: userNftDetails?.chain,
-          nftName: userNftDetails?.metadata.name,
-          nftDescription: userNftDetails?.metadata.description
-        }
-      : undefined
-
-    try {
-      const response = await fetch('/api/nonce')
-      const { nonce } = await response.json()
-      const message = JSON.stringify(
-        {
-          ...editYourProfileInput,
-          nonce,
-          address: getAddress(wallet.accounts[0].address)
-        },
-        null,
-        2
-      )
-
-      const signature = await signMessage(message)
-
-      const responseAuth = await fetch('/api/auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ message: JSON.parse(message), signature })
-      })
-
-      const { authorized } = await responseAuth.json()
-      if (authorized) {
-        await fetch(`/api/profile/${getAddress(wallet.accounts[0].address)}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            nickname,
-            twitter,
-            website,
-            telegram,
-            discord,
-            description,
-            image: userImageModal.image_file
-              ? ''
-              : userImageModal.image_preview,
-            isNFT: userImageModal.isNFTPreviewModal,
-            nft: nftDetails
-          })
-        })
-        setUserData(editYourProfileInput)
-
-        if (userImageModal.image_file) {
-          const formData = new FormData()
-          formData.append('image', userImageModal.image_file)
-
-          fetch(`/api/profile/${wallet.accounts[0].address}/upload-img`, {
-            method: 'PUT',
-            body: formData
-          })
-            .then(res => res.json())
-            .then(data => setUserImage({ url: data.image, isNFT: false }))
-          setModalOpen(false)
-          return
-        }
-        setModalOpen(false)
-      }
-    } catch (error) {
-      return error
-    }
   }
 
   function handleImagePreview(event: FileList) {
@@ -223,7 +118,16 @@ const ModalUserEditInfo = ({
       <Overlay onClick={handleCloseModal} />
 
       <Modal title="Edit Your Profile" onCloseModal={() => setModalOpen(false)}>
-        <S.BodyModalEditInfo onSubmit={handleFormChangeEditInfo}>
+        <S.BodyModalEditInfo
+          onSubmit={event => {
+            handleFormChangeEditInfo(event, {
+              editYourProfileInput,
+              userImageModal,
+              userNftDetails
+            })
+            setModalOpen(false)
+          }}
+        >
           <S.UserProfileInfoContent>
             <S.UserProfileInfo>
               <S.UserImageContent>
@@ -322,7 +226,7 @@ const ModalUserEditInfo = ({
                       nickname: event.target.value
                     })
                   }
-                  value={editYourProfileInput?.nickname}
+                  value={editYourProfileInput?.nickname || ''}
                   maxLength={15}
                 />
               </S.UserNameContent>
@@ -362,7 +266,7 @@ const ModalUserEditInfo = ({
                         twitter: event.target.value
                       })
                     }
-                    value={editYourProfileInput?.twitter}
+                    value={editYourProfileInput?.twitter || ''}
                   />
                 </S.SocialIcon>
                 <S.SocialIcon>
@@ -382,7 +286,7 @@ const ModalUserEditInfo = ({
                         website: event.target.value
                       })
                     }
-                    value={editYourProfileInput?.website}
+                    value={editYourProfileInput?.website || ''}
                   />
                 </S.SocialIcon>
                 <S.SocialIcon>
@@ -402,7 +306,7 @@ const ModalUserEditInfo = ({
                         telegram: event.target.value
                       })
                     }
-                    value={editYourProfileInput?.telegram}
+                    value={editYourProfileInput?.telegram || ''}
                   />
                 </S.SocialIcon>
                 <S.SocialIcon>
@@ -422,7 +326,7 @@ const ModalUserEditInfo = ({
                         discord: event.target.value
                       })
                     }
-                    value={editYourProfileInput?.discord}
+                    value={editYourProfileInput?.discord || ''}
                   />
                 </S.SocialIcon>
               </ul>
@@ -455,10 +359,11 @@ const ModalUserEditInfo = ({
                   description: event.target.value
                 })
               }
-              value={editYourProfileInput?.description}
+              value={editYourProfileInput?.description || ''}
             />
             <span>
-              {handleValueTextarea(editYourProfileInput.description.length)}
+              {editYourProfileInput.description &&
+                handleValueTextarea(editYourProfileInput.description.length)}
               /500
             </span>
           </S.ModalManagerInfo>

@@ -1,30 +1,21 @@
 import React from 'react'
 import Image from 'next/image'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import { useRouter } from 'next/router'
-import { keccak256 } from 'web3-utils'
+import { keccak256 } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import useSignMessage from '@/hooks/useSignMessage'
 
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
-
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { GET_STRATEGY, SAVE_POOL } from './graphql'
+import { useSavePool } from '@/hooks/query/useSavePool'
+import { usePoolStrategy } from '@/hooks/query/usePoolStrategy'
 
 import Button from '@/components/Button'
 
 import defaultImage from '@assets/images/image-default.svg'
 
 import * as S from './styles'
-
-type GetStrategyType = {
-  pool: {
-    summary: string
-  }
-}
 
 const PoolImage = () => {
   const [errorMessage, setErrorMessage] = React.useState<string>('')
@@ -48,12 +39,27 @@ const PoolImage = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
+  const { mutate } = useSavePool({
+    id: poolId,
+    user: wallet?.accounts[0].address
+  })
+
   const { signMessage } = useSignMessage()
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+
+  const { data } = usePoolStrategy({ id: poolId })
+
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   const img = poolImage.icon?.image_preview ? poolImage.icon.image_preview : ''
   const hasPoolImage =
-    img.length > 0 ? img : poolInfo?.logo ? poolInfo.logo : defaultImage
+    img.length > 0
+      ? img
+      : poolInfo && poolInfo[0]?.logo
+      ? poolInfo[0].logo
+      : defaultImage
 
   async function sendPoolData(
     controller: string,
@@ -68,43 +74,45 @@ const PoolImage = () => {
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
       const signature = await signMessage(message)
 
-      const body = {
-        controller,
-        logo,
-        summary,
-        chainId,
-        signature
-      }
+      // const body = {
+      //   controller,
+      //   logo,
+      //   summary,
+      //   chainId,
+      //   signature
+      // }
 
-      const response = await fetch(BACKEND_KASSANDRA, {
-        body: JSON.stringify({
-          query: SAVE_POOL,
-          variables: body
-        }),
-        headers: { 'content-type': 'application/json' },
-        method: 'POST'
-      })
+      mutate({ chainId, controller, signature: signature || '', summary, logo })
 
-      if (response.status === 200) {
-        const { data } = await response.json()
-        if (data?.savePool?.ok) {
-          setPoolImage({
-            icon: {
-              image_preview: '',
-              image_file: ''
-            }
-          })
-          return
-        }
-      } else {
-        dispatch(
-          setModalAlertText({
-            errorText: 'Could not save pool image',
-            solutionText: 'Please try adding it later'
-          })
-        )
-        return
-      }
+      // const response = await fetch(BACKEND_KASSANDRA, {
+      //   body: JSON.stringify({
+      //     query: SAVE_POOL,
+      //     variables: body
+      //   }),
+      //   headers: { 'content-type': 'application/json' },
+      //   method: 'POST'
+      // })
+
+      // if (response.status === 200) {
+      //   const { data } = await response.json()
+      //   if (data?.savePool?.ok) {
+      //     setPoolImage({
+      //       icon: {
+      //         image_preview: '',
+      //         image_file: ''
+      //       }
+      //     })
+      //     return
+      //   }
+      // } else {
+      //   dispatch(
+      //     setModalAlertText({
+      //       errorText: 'Could not save pool image',
+      //       solutionText: 'Please try adding it later'
+      //     })
+      //   )
+      //   return
+      // }
     } catch (error) {
       console.error(error)
     }
@@ -149,14 +157,6 @@ const PoolImage = () => {
     })
   }
 
-  const { data } = useSWR<GetStrategyType>(
-    [GET_STRATEGY, poolId],
-    (query, poolId) =>
-      request(BACKEND_KASSANDRA, query, {
-        id: poolId
-      })
-  )
-
   return (
     <S.PoolImage>
       <S.PoolSettingTitle>Pool image</S.PoolSettingTitle>
@@ -178,25 +178,27 @@ const PoolImage = () => {
             }
           }}
         />
-        <S.PoolSettingsName>
-          <p>{poolInfo?.name}</p>
-          <strong>{poolInfo?.symbol}</strong>
-        </S.PoolSettingsName>
+        {poolInfo && (
+          <S.PoolSettingsName>
+            <p>{poolInfo[0]?.name}</p>
+            <strong>{poolInfo[0]?.symbol}</strong>
+          </S.PoolSettingsName>
+        )}
       </S.UploadImage>
       <S.ErrorParagraph>{errorMessage}</S.ErrorParagraph>
 
       {poolImage.icon.image_preview.length > 0 ? (
         <>
-          {poolInfo?.controller && data?.pool && (
+          {poolInfo && poolInfo[0]?.controller && data && (
             <Button
               text="Upload image"
               backgroundSecondary
               onClick={() =>
                 sendPoolData(
-                  poolInfo?.controller,
+                  poolInfo[0]?.controller,
                   poolImage.icon.image_preview,
-                  data?.pool.summary,
-                  poolInfo?.chain_id
+                  data?.summary || '',
+                  poolInfo[0]?.chain_id
                 )
               }
             />

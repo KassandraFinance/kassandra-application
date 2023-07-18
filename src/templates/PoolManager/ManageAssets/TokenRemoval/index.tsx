@@ -10,11 +10,12 @@ import {
   setPoolTokensList,
   setWeight
 } from '@/store/reducers/removeAssetSlice'
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 import useERC20 from '@/hooks/useERC20'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import usePoolInfo from '@/hooks/usePoolInfo'
-import usePoolAssets from '@/hooks/usePoolAssets'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
+import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 import useManagedPool from '@/hooks/useManagedPool'
 
 import Steps from '@/components/Steps'
@@ -34,23 +35,32 @@ const TokenRemoval = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolAssets } = usePoolAssets(poolId)
+  const { data: poolAssets } = usePoolAssets({ id: poolId })
   const [{ wallet }] = useConnectWallet()
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
   const { balance } = useERC20(
-    poolInfo?.address ?? '',
-    networks[poolInfo?.chain_id ?? 137].rpc
+    (poolInfo && poolInfo[0]?.address) ?? '',
+    networks[(poolInfo && poolInfo[0]?.chain_id) ?? 137].rpc
   )
 
-  const { priceToken } = useCoingecko(
-    poolInfo?.chain_id ?? 137,
-    poolInfo?.chain.addressWrapped ?? '',
-    handleMockToken(poolInfo?.underlying_assets_addresses ?? [])
-  )
+  const { data } = useTokensData({
+    chainId: (poolInfo && poolInfo[0]?.chain_id) ?? 137,
+    tokenAddresses: handleMockToken(
+      (poolInfo && poolInfo[0]?.underlying_assets_addresses) ?? []
+    )
+  })
+
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: (poolInfo && poolInfo[0]?.chain?.addressWrapped) ?? '',
+    tokens: data || {}
+  })
 
   const { totalSupply } = useManagedPool(
-    poolInfo?.address ?? '',
-    networks[poolInfo?.chain_id ?? 137].rpc
+    (poolInfo && poolInfo[0]?.address) ?? '',
+    networks[(poolInfo && poolInfo[0]?.chain_id) ?? 137].rpc
   )
 
   function handleMockToken(tokenList: string[]) {
@@ -98,10 +108,10 @@ const TokenRemoval = () => {
     const poolInfo = poolAssets.map(item => {
       return {
         address: item.token.id,
-        name: item.token.name,
-        symbol: item.token.symbol,
-        logo: item.token.logo,
-        decimals: item.token.decimals,
+        name: item.token?.name || '',
+        symbol: item.token?.symbol || '',
+        logo: item.token?.logo || '',
+        decimals: item.token?.decimals || 18,
         balance: item.balance,
         weight: item.weight_normalized ?? 0
       }
@@ -113,14 +123,13 @@ const TokenRemoval = () => {
   React.useEffect(() => {
     if (!poolInfo) return
 
-    handleCheckLpNeeded(tokenSelection?.weight, poolInfo?.price_usd)
+    handleCheckLpNeeded(tokenSelection?.weight, poolInfo[0]?.price_usd)
   }, [tokenSelection])
 
   React.useEffect(() => {
     if (tokenSelection.address === '' || !poolAssets) return
 
     const poolWeightInfo = poolAssets.map(item => {
-      // eslint-disable-next-line prettier/prettier
       const currentWeight = item.weight_normalized ?? '0'
       const isSelectedToken = tokenSelection.address === item.token.id
 
@@ -130,11 +139,11 @@ const TokenRemoval = () => {
           ? '0'
           : handleCalcNewWeight(currentWeight, tokenSelection.weight),
         token: {
-          decimals: item.token.decimals,
+          decimals: item.token?.decimals || 18,
           id: item.token.id,
-          logo: item.token.logo,
-          name: item.token.name,
-          symbol: item.token.symbol
+          logo: item.token?.logo || '',
+          name: item.token?.name || '',
+          symbol: item.token?.symbol || ''
         }
       }
     })
@@ -172,15 +181,17 @@ const TokenRemoval = () => {
         <p>Select the token you wish to be removed from the pool</p>
 
         <S.SelectTokenAndTableAllocation>
-          <SelectTokenRemove
-            chainId={poolInfo?.chain_id ?? 137}
-            priceToken={priceToken}
-            poolInfo={{
-              name: poolInfo?.name ?? '',
-              symbol: poolInfo?.symbol ?? '',
-              logo: poolInfo?.logo
-            }}
-          />
+          {poolInfo && (
+            <SelectTokenRemove
+              chainId={poolInfo[0]?.chain_id ?? 137}
+              priceToken={priceToken}
+              poolInfo={{
+                name: poolInfo[0]?.name ?? '',
+                symbol: poolInfo[0]?.symbol ?? '',
+                logo: poolInfo[0]?.logo || ''
+              }}
+            />
+          )}
           <NewAllocationTable
             assets={tokenSelection.address === '' ? undefined : weights}
           />

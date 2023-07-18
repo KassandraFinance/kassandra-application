@@ -1,29 +1,22 @@
 import Image from 'next/image'
 import React from 'react'
+import { useRouter } from 'next/router'
 
-import { useAppSelector } from '../../../store/hooks'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
 import none from '../../../../public/assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 
-type ITokenInfoProps = {
-  id: string
-  balance_in_pool: string
-  address: string
-  name: string
-  symbol: string
-  allocation: number
-  price: number
-}
-
 const TokenIcons = () => {
-  const assets = useAppSelector(state => state.pool.underlying_assets)
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
+  const assets = pool?.underlying_assets
   return (
     <S.Container>
       {assets
-        .slice(0, assets.length >= 3 ? 3 : assets.length)
+        ?.slice(0, assets.length >= 3 ? 3 : assets.length)
         .map((asset, index) => (
           <S.ImageWrapper
             key={index}
@@ -31,7 +24,7 @@ const TokenIcons = () => {
             index={index}
           >
             <Image
-              src={asset.token.logo ?? asset.token.wraps.logo ?? none.src}
+              src={asset.token.logo ?? asset.token.wraps?.logo ?? none.src}
               alt=""
               width={18}
               height={18}

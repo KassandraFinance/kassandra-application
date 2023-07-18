@@ -1,8 +1,9 @@
 import React from 'react'
 import stringSimilarity from 'string-similarity-js'
 import Big from 'big.js'
-import { ethers, isAddress } from 'ethers'
+import { isAddress, ZeroAddress } from 'ethers'
 
+import { CoinsMetadataType } from '@/hooks/query/useTokensData'
 import { NATIVE_ADDRESS, networks } from '@/constants/tokenAddresses'
 import { BNtoDecimal } from '@/utils/numerals'
 
@@ -17,13 +18,8 @@ import { IUserTokenProps } from '@/templates/Pool/NewPoolOperations/Form/TokenSe
 
 import * as S from './styles'
 
-type TokenDic = Record<
-  string,
-  { usd: string; symbol: string; name: string; decimals: number; logo: string }
->
-
 type SelectAddLiquidityAssetProps = {
-  tokensList: TokenDic
+  tokensList: CoinsMetadataType
   tokensBalance: BalancesType
 }
 
@@ -44,7 +40,7 @@ const SelectAddLiquidityAsset = ({
   ) {
     const userTokensBalance = newTokenList.map(token => {
       const score = isWithScore
-        ? stringSimilarity(token.symbol + token.name, search)
+        ? stringSimilarity(token?.symbol || '' + token?.name, search)
         : 0
       const checkToken =
         token.address === NATIVE_ADDRESS
@@ -53,14 +49,14 @@ const SelectAddLiquidityAsset = ({
       const tokenBalance = tokensBalance[token.address.toLowerCase()] || 0
       const tokenPriceInDollar = tokensList[checkToken.toLowerCase()]?.usd ?? 0
       const balanceTokenFormated = Big(tokenBalance.toString() || '0').div(
-        Big(10).pow(token.decimals)
+        Big(10).pow(token?.decimals || 18)
       )
       const balanceInDollar = balanceTokenFormated.mul(tokenPriceInDollar)
 
       return {
         ...token,
         tokenScore: score,
-        balance: BNtoDecimal(balanceTokenFormated, token.decimals, 2),
+        balance: BNtoDecimal(balanceTokenFormated, token?.decimals || 18, 2),
         balanceInDollar: balanceInDollar.toNumber()
       }
     })
@@ -68,7 +64,7 @@ const SelectAddLiquidityAsset = ({
     return userTokensBalance
   }
 
-  function handleTokenListFiltering(tokens: TokenDic) {
+  function handleTokenListFiltering(tokens: CoinsMetadataType) {
     const token: ITokenListSwapProviderProps[] = []
     if (isAddress(search)) {
       for (const [key, value] of Object.entries(tokens)) {
@@ -117,7 +113,7 @@ const SelectAddLiquidityAsset = ({
     return userTokensBalanceFilteredByScore
   }
 
-  function handleTokenListFilteringBybalance(tokens: TokenDic) {
+  function handleTokenListFilteringBybalance(tokens: CoinsMetadataType) {
     const _tokens: ITokenListSwapProviderProps[] = []
     for (const [key, value] of Object.entries(tokens)) {
       if (
@@ -147,7 +143,7 @@ const SelectAddLiquidityAsset = ({
   function handleInvalid(event: any) {
     if (
       !tokenIn ||
-      tokenIn.address === ethers.ZeroAddress ||
+      tokenIn.address === ZeroAddress ||
       Number(tokenInAmount) === 0
     ) {
       return event.target.setCustomValidity('Please select any token.')
@@ -186,9 +182,7 @@ const SelectAddLiquidityAsset = ({
         type="radio"
         onInvalid={handleInvalid}
         required
-        checked={
-          tokenIn.address !== ethers.ZeroAddress && Number(tokenInAmount) > 0
-        }
+        checked={tokenIn.address !== ZeroAddress && Number(tokenInAmount) > 0}
         onChange={() => {
           return
         }}

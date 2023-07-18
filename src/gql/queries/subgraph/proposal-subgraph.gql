@@ -1,0 +1,29 @@
+  query Proposal($number: Int!, $voter: String) {
+    proposal: proposals(where: { number: $number }) {
+      number
+      description
+      forVotes
+      againstVotes
+      startBlock
+      endBlock
+      quorum
+      values
+      calldatas
+      signatures
+      targets
+      created
+      canceled
+      queued
+      executed
+      eta
+      proposer {
+        id
+      }
+      votes(where: { voter: $voter }) {
+        support
+        voter {
+          id
+        }
+      }
+    }
+  }

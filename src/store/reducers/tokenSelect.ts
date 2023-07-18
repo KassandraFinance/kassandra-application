@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface ITokenSelectProps {
-  symbol: string
-  name: string
   address: string
-  decimals: number
+  decimals: number | null | undefined
   logoURI: string
+  name: string | null | undefined
+  symbol: string | null | undefined
 }
 
-const initialState = {
+const initialState: ITokenSelectProps = {
   address: '',
   decimals: 0,
   logoURI: '',
@@ -20,10 +20,7 @@ export const tokenSelect = createSlice({
   name: 'tokenSelect',
   initialState,
   reducers: {
-    setTokenSelect: (
-      state: ITokenSelectProps,
-      action: PayloadAction<ITokenSelectProps>
-    ) => {
+    setTokenSelect: (state, action: PayloadAction<ITokenSelectProps>) => {
       return action.payload
     }
   }

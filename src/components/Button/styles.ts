@@ -125,7 +125,9 @@ const wrapperModifiers = {
 
     background: transparent;
 
-    transition: color 300ms ease-in-out, background 300ms ease-in-out;
+    transition:
+      color 300ms ease-in-out,
+      background 300ms ease-in-out;
 
     svg {
       path {

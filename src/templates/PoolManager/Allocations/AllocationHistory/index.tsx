@@ -1,15 +1,11 @@
-import useSWR from 'swr'
 import React from 'react'
-import request from 'graphql-request'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { GET_ALLOCATION_POOL } from './graphql'
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
+import { usePoolAllocation } from '@/hooks/query/usePoolAllocation'
 
 import { getManagerActivity } from '../../utils'
 
-import Loading from '@/components/Loading'
 import Pagination from '@/components/Pagination'
 import TitleSection from '@/components/TitleSection'
 import ActivityCard, { actionsType } from '../../ActivityCard'
@@ -65,20 +61,13 @@ const AllocationHistory = ({ poolInfo }: IAllocationHistoryProps) => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { data } = useSWR(
-    [GET_ALLOCATION_POOL, poolId, skip],
-    (query, poolId) =>
-      request(BACKEND_KASSANDRA, query, {
-        id: poolId,
-        skip: skip
-      })
-  )
+  const { data } = usePoolAllocation({ id: poolId, skip })
 
   React.useEffect(() => {
-    if (!data || !wallet) return setAllocationHistory([])
+    if (!data || !wallet) return
 
     const managerActivities = getManagerActivity(
-      data.pool.weight_goals,
+      data.weight_goals,
       wallet.accounts[0].address
     )
 
@@ -86,7 +75,7 @@ const AllocationHistory = ({ poolInfo }: IAllocationHistoryProps) => {
       managerActivities.sort((a, b) => b.date.getTime() - a.date.getTime())
     )
 
-    setTotalAllocationHistory(Number(data.pool.num_weight_goals))
+    setTotalAllocationHistory(Number(data.num_weight_goals))
   }, [data])
 
   return (
@@ -107,7 +96,7 @@ const AllocationHistory = ({ poolInfo }: IAllocationHistoryProps) => {
               pool={poolInfo}
               sharesRedeemed={allocation.sharesRedeemed}
               newBalancePool={allocation.newBalancePool}
-              managerAddress={data?.pool?.manager?.id ?? ''}
+              managerAddress={data?.manager?.id ?? ''}
             />
           ))
         ) : (

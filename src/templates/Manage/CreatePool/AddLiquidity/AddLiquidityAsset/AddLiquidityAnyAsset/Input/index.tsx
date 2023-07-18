@@ -68,7 +68,7 @@ const Input = ({
       e.target.value = `0${e.target.value}`
     }
 
-    const valueFormatted = decimalToBN(value, tokenSelect.decimals)
+    const valueFormatted = decimalToBN(value, tokenSelect?.decimals || 18)
 
     setMaxActive && setMaxActive(false)
     setAmountTokenIn(valueFormatted)
@@ -153,9 +153,9 @@ const Input = ({
               {selectedTokenInBalance > new Big(-1)
                 ? BNtoDecimal(
                     selectedTokenInBalance.div(
-                      Big(10).pow(tokenSelect.decimals)
+                      Big(10).pow(tokenSelect?.decimals || 18)
                     ),
-                    tokenSelect.decimals
+                    tokenSelect?.decimals || 18
                   )
                 : '...'}
             </S.Span>
@@ -180,7 +180,9 @@ const Input = ({
               ref={inputAmountTokenRef}
               type="number"
               placeholder="0"
-              step={Big(1).div(Big(10).pow(tokenSelect.decimals)).toFixed()}
+              step={Big(1)
+                .div(Big(10).pow(tokenSelect?.decimals || 18))
+                .toFixed()}
               onWheel={() => handleOnWheel()}
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 const target = e.target as HTMLInputElement
@@ -203,9 +205,11 @@ const Input = ({
               }}
               onChange={debounce}
               form="poolCreationForm"
-              min={Big(1).div(Big(10).pow(tokenSelect.decimals)).toFixed()}
+              min={Big(1)
+                .div(Big(10).pow(tokenSelect?.decimals || 18))
+                .toFixed()}
               max={selectedTokenInBalance
-                .div(Big(10).pow(tokenSelect.decimals))
+                .div(Big(10).pow(tokenSelect?.decimals || 18))
                 .toString()}
               required
             />

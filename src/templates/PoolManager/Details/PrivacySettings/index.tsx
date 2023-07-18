@@ -4,7 +4,7 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import usePrivateInvestors from '@/hooks/usePrivateInvestors'
 
 import { networks } from '@/constants/tokenAddresses'
@@ -35,17 +35,20 @@ const PrivacySettings = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
   const { privateAddresses } = usePrivateInvestors(
-    networks[poolInfo?.chain_id ?? 137].privateInvestor,
-    poolInfo?.chain_id ?? 137
+    networks[(poolInfo && poolInfo[0]?.chain_id) ?? 137].privateInvestor,
+    (poolInfo && poolInfo[0]?.chain_id) ?? 137
   )
 
   const setAddressesOfPrivateInvestors = async () => {
     if (!poolInfo) return
 
     try {
-      const addresses = await privateAddresses(poolInfo.address)
+      const addresses = await privateAddresses(poolInfo[0].address)
       setPrivateInvestors(addresses)
     } catch (error) {
       console.log(error)
@@ -106,26 +109,28 @@ const PrivacySettings = () => {
                   </S.Link>
                 </CopyToClipboard>
 
-                <S.Link
-                  href={`${poolInfo?.chain.blockExplorerUrl}address/${investor}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <svg
-                    width="13"
-                    height="12"
-                    viewBox="0 0 13 12"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                {poolInfo && (
+                  <S.Link
+                    href={`${poolInfo[0]?.chain?.blockExplorerUrl}address/${investor}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M7.30469 0.934974C7.30469 0.634338 7.56826 0.390625 7.8934 0.390625L11.4257 0.390625C11.7508 0.390625 12.0144 0.634338 12.0144 0.934974V4.20107C12.0144 4.50171 11.7508 4.74542 11.4257 4.74542C11.1005 4.74542 10.837 4.50171 10.837 4.20107V2.35839L4.77453 7.96398C4.54462 8.17656 4.17187 8.17656 3.94196 7.96398C3.71205 7.7514 3.71205 7.40673 3.94196 7.19415L10.1225 1.47932H7.8934C7.56826 1.47932 7.30469 1.23561 7.30469 0.934974ZM2.00442 3.44026C1.84829 3.44026 1.69854 3.49761 1.58814 3.5997C1.47773 3.70178 1.41571 3.84024 1.41571 3.98461L1.41571 9.97245C1.41571 10.1168 1.47773 10.2553 1.58814 10.3574C1.69854 10.4594 1.84829 10.5168 2.00442 10.5168H8.48027C8.63641 10.5168 8.78615 10.4594 8.89656 10.3574C9.00696 10.2553 9.06899 10.1168 9.06899 9.97245V6.70636C9.06899 6.40572 9.33256 6.16201 9.6577 6.16201C9.98284 6.16201 10.2464 6.40572 10.2464 6.70636V9.97245C10.2464 10.4056 10.0603 10.8209 9.72912 11.1272C9.39791 11.4334 8.94868 11.6055 8.48027 11.6055H2.00442C1.53601 11.6055 1.08679 11.4334 0.755572 11.1272C0.424356 10.8209 0.238281 10.4056 0.238281 9.97245L0.238281 3.98461C0.238281 3.5515 0.424356 3.13613 0.755572 2.82987C1.08679 2.52362 1.53601 2.35156 2.00442 2.35156H5.5367C5.86184 2.35156 6.12542 2.59528 6.12542 2.89591C6.12542 3.19655 5.86184 3.44026 5.5367 3.44026H2.00442Z"
-                      fill="white"
-                    />
-                  </svg>
-                </S.Link>
+                    <svg
+                      width="13"
+                      height="12"
+                      viewBox="0 0 13 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M7.30469 0.934974C7.30469 0.634338 7.56826 0.390625 7.8934 0.390625L11.4257 0.390625C11.7508 0.390625 12.0144 0.634338 12.0144 0.934974V4.20107C12.0144 4.50171 11.7508 4.74542 11.4257 4.74542C11.1005 4.74542 10.837 4.50171 10.837 4.20107V2.35839L4.77453 7.96398C4.54462 8.17656 4.17187 8.17656 3.94196 7.96398C3.71205 7.7514 3.71205 7.40673 3.94196 7.19415L10.1225 1.47932H7.8934C7.56826 1.47932 7.30469 1.23561 7.30469 0.934974ZM2.00442 3.44026C1.84829 3.44026 1.69854 3.49761 1.58814 3.5997C1.47773 3.70178 1.41571 3.84024 1.41571 3.98461L1.41571 9.97245C1.41571 10.1168 1.47773 10.2553 1.58814 10.3574C1.69854 10.4594 1.84829 10.5168 2.00442 10.5168H8.48027C8.63641 10.5168 8.78615 10.4594 8.89656 10.3574C9.00696 10.2553 9.06899 10.1168 9.06899 9.97245V6.70636C9.06899 6.40572 9.33256 6.16201 9.6577 6.16201C9.98284 6.16201 10.2464 6.40572 10.2464 6.70636V9.97245C10.2464 10.4056 10.0603 10.8209 9.72912 11.1272C9.39791 11.4334 8.94868 11.6055 8.48027 11.6055H2.00442C1.53601 11.6055 1.08679 11.4334 0.755572 11.1272C0.424356 10.8209 0.238281 10.4056 0.238281 9.97245L0.238281 3.98461C0.238281 3.5515 0.424356 3.13613 0.755572 2.82987C1.08679 2.52362 1.53601 2.35156 2.00442 2.35156H5.5367C5.86184 2.35156 6.12542 2.59528 6.12542 2.89591C6.12542 3.19655 5.86184 3.44026 5.5367 3.44026H2.00442Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </S.Link>
+                )}
               </S.LinksContainer>
             </S.Address>
           ))}

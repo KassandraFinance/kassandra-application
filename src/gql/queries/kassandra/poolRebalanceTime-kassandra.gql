@@ -1,0 +1,7 @@
+query PoolRebalanceTime($id: ID!) {
+    pool(id: $id) {
+      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 1) {
+        end_timestamp
+      }
+    }
+}

@@ -1,16 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 
-import { GovernorAlpha, SUBGRAPH_URL } from '@/constants/tokenAddresses'
+import { GovernorAlpha } from '@/constants/tokenAddresses'
 
 import useGov, { StateProposal } from '@/hooks/useGov'
+import { useProposals } from '@/hooks/query/useProposals'
 
 import Loading from '@/components/Loading'
-
-import { GET_PROPOSALS } from './graphql'
 
 import * as S from './styles'
 
@@ -32,6 +29,8 @@ const statsPrimaryProposalLibColor: { [key: string]: string } = {
 }
 
 interface IProposalsListProps {
+  timeToEndProposal: string
+  state: StateProposal
   id: string
   number: number
   targets: []
@@ -41,8 +40,6 @@ interface IProposalsListProps {
   endBlock: string
   description: string
   created: string
-  state: StateProposal
-  timeToEndProposal: string
 }
 
 interface IProposalTableProps {
@@ -51,36 +48,54 @@ interface IProposalTableProps {
 }
 
 export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
-  const [proposalsList, setProposalsList] = React.useState<
-    Array<IProposalsListProps>
-  >([])
+  const [proposalsList, setProposalsList] =
+    React.useState<IProposalsListProps[]>()
 
   const secondsPerBlock = 2
 
-  const { data } = useSWR([GET_PROPOSALS, skip, take], (query, skip, take) =>
-    request(SUBGRAPH_URL, query, { skip, take })
-  )
+  const { data } = useProposals({ skip, take })
 
   const governance = useGov(GovernorAlpha)
 
-  async function handleAddStateOnProposal(proposals: IProposalsListProps[]) {
-    const proposal = proposals.map((proposal: IProposalsListProps) =>
+  async function handleAddStateOnProposal(
+    proposals:
+      | IProposalsListProps[]
+      | {
+          __typename?: 'Proposal' | undefined
+          id: string
+          number: number
+          targets: string[]
+          values: any[]
+          signatures: string[]
+          startBlock: any
+          endBlock: any
+          description: string
+          created: any
+        }[]
+  ) {
+    const proposal = proposals.map(proposal =>
       governance.stateProposals(proposal.number).then(res => {
         const createdProposal = new Date(Number(proposal.created) * 1000)
         const secondsToEndProposal =
           (Number(proposal.endBlock) - Number(proposal.startBlock)) *
           secondsPerBlock
-        proposal.timeToEndProposal = new Date(
+        const timeToEndProposal = new Date(
           Number(createdProposal) + secondsToEndProposal * 1000
         )
           .toLocaleString()
           .split(', ')[0]
-        proposal.state = res
-        return proposal
+        const state = res
+        return {
+          ...proposal,
+          timeToEndProposal: timeToEndProposal,
+          state: state
+        }
       })
     )
     const proposalComplete = await Promise.all(proposal)
-    setProposalsList(proposalComplete)
+    if (proposalComplete[0].state) {
+      setProposalsList(proposalComplete as IProposalsListProps[])
+    }
   }
 
   function getTitleProposal(description: string) {
@@ -103,7 +118,7 @@ export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
 
   React.useEffect(() => {
     if (data) {
-      handleAddStateOnProposal(data.proposals)
+      handleAddStateOnProposal(data)
     }
   }, [data])
 
@@ -117,7 +132,7 @@ export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
           </tr>
         </S.Th>
         <tbody>
-          {proposalsList.length > 0 ? (
+          {proposalsList ? (
             proposalsList?.map(proposal => (
               <Link
                 key={proposal.id}
@@ -136,7 +151,7 @@ export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
                       <S.StatusProposal
                         statusColor={
                           statsPrimaryProposalLibColor[
-                            proposal.state[0].toLowerCase()
+                            proposal?.state[0].toLowerCase()
                           ]
                         }
                       >

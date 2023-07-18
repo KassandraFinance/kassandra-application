@@ -1,0 +1,9 @@
+query Tokens($tokensList: [ID!]!) {
+  tokensByIds(ids: $tokensList) {
+    id
+    decimals
+    logo
+    name
+    symbol
+  }
+}

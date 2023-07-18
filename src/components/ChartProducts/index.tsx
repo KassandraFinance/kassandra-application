@@ -1,12 +1,11 @@
 import React from 'react'
-import useSWR from 'swr'
-import request from 'graphql-request'
+import { useRouter } from 'next/router'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+import { usePoolCharts } from '@/hooks/query/usePoolCharts'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
-import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
-
-import { useAppSelector, useAppDispatch } from '../../store/hooks'
+import { useAppDispatch } from '../../store/hooks'
 import { setChartSelected } from '../../store/reducers/chartSelected'
 import { setPerformanceValues } from '../../store/reducers/performanceValues'
 import { setPeriodSelected as reduxSetPeriodSelected } from '../../store/reducers/periodSelected'
@@ -17,8 +16,6 @@ import ChartPrice from './ChartPrice'
 import ChartTVL from './ChartTVL'
 import ChartAllocation from './ChartAllocation'
 
-import { GET_CHART } from './graphql'
-
 import * as S from './styles'
 
 const arrPeriod: string[] = ['1W', '1M', '3M', '1Y']
@@ -27,27 +24,35 @@ const ChartProducts = () => {
   const dispatch = useAppDispatch()
 
   const [inputChecked, setInputChecked] = React.useState<string>('Price')
-  const [price, setPrice] = React.useState([])
-  const [tvl, setTvl] = React.useState([])
-  const [allocation, setAllocation] = React.useState([])
+  const [price, setPrice] = React.useState<
+    {
+      timestamp: number
+      close: number
+    }[]
+  >([])
+  const [tvl, setTvl] = React.useState<
+    {
+      timestamp: number
+      value: number
+    }[]
+  >([])
   const [loading, setLoading] = React.useState<boolean>(true)
 
   const [periodSelected, setPeriodSelected] = React.useState<string>('1W')
   const dateNow = new Date()
 
-  const pool = useAppSelector(state => state.pool)
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
   const [params, setParams] = React.useState({
-    id: pool.id,
+    id: pool?.id || '',
     price_period: 3600,
     period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 7)
   })
 
   const { trackEventFunction } = useMatomoEcommerce()
 
-  const { data } = useSWR([GET_CHART, params], (query, params) =>
-    request(BACKEND_KASSANDRA, query, params)
-  )
+  const { data } = usePoolCharts(params)
 
   function returnDate(period: string) {
     switch (period) {
@@ -144,27 +149,22 @@ const ChartProducts = () => {
 
   React.useEffect(() => {
     if (data) {
-      const newTVL = data?.pool?.total_value_locked.map(
-        (item: { timestamp: number; close: string }) => {
-          return {
-            timestamp: item.timestamp,
-            value: Number(item.close)
-          }
+      const newTVL = data?.total_value_locked.map(item => {
+        return {
+          timestamp: item.timestamp,
+          value: Number(item.close)
         }
-      )
+      })
 
-      const newPrice = data?.pool?.price_candles.map(
-        (item: { timestamp: number; close: string }) => {
-          return {
-            timestamp: item.timestamp,
-            close: Number(item.close)
-          }
+      const newPrice = data?.price_candles.map(item => {
+        return {
+          timestamp: item.timestamp,
+          close: Number(item.close)
         }
-      )
+      })
 
       setTvl(newTVL)
       setPrice(newPrice)
-      setAllocation(data?.pool?.weights)
     }
   }, [data])
 
@@ -286,7 +286,7 @@ const ChartProducts = () => {
         <ChartTVL data={tvl} color="#26DBDB" />
       )}
       {inputChecked === 'Allocation' && !loading && (
-        <ChartAllocation data={allocation} />
+        <ChartAllocation data={data?.weights ? data?.weights : []} />
       )}
     </S.ChartProduct>
   )

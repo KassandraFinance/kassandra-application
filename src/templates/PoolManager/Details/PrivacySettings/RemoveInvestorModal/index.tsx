@@ -1,14 +1,12 @@
 import React from 'react'
 import Big from 'big.js'
-import useSWR from 'swr'
 import { useRouter } from 'next/router'
-import { request } from 'graphql-request'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
-import { GET_INVESTORS_AMOUNT } from './graphql'
-import { BACKEND_KASSANDRA, networks } from '@/constants/tokenAddresses'
+import { networks } from '@/constants/tokenAddresses'
+import { useInvestorsAmount } from '@/hooks/query/useInvestorsAmount'
 
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import useManagePoolController from '@/hooks/useManagePoolController'
 
 import Button from '@/components/Button'
@@ -41,21 +39,22 @@ const RemoveInvestorModal = ({
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { data } = useSWR([GET_INVESTORS_AMOUNT], query =>
-    request(BACKEND_KASSANDRA, query, {
-      id: poolId,
-      investorsAddresses: addressesList
-    })
-  )
+  const { data } = useInvestorsAmount({
+    id: poolId,
+    investorsAddresses: addressesList
+  })
 
   const [{ wallet }] = useConnectWallet()
   const [{ connectedChain }, setChain] = useSetChain()
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 
   const { removeAllowedAddresses } = useManagePoolController(
-    poolInfo?.controller ?? '',
+    (poolInfo && poolInfo[0]?.controller) ?? '',
     networks[chainId].rpc
   )
 
@@ -116,10 +115,11 @@ const RemoveInvestorModal = ({
 
             {addressesList.map(address => {
               const value = data
-                ? data.investors.find(
-                    (wallet: any) => wallet?.wallet === address
-                  )
-                : 0
+                ? data.find(wallet => wallet?.wallet === address)
+                : {
+                    wallet: '',
+                    amount: 0
+                  }
 
               return (
                 <S.InvestorContainer key={address}>
@@ -144,7 +144,7 @@ const RemoveInvestorModal = ({
             })}
           </S.Investors>
 
-          {poolInfo?.chain_id === chainId ? (
+          {poolInfo && poolInfo[0]?.chain_id === chainId ? (
             <>
               {!isTransaction ? (
                 <Button
@@ -166,14 +166,18 @@ const RemoveInvestorModal = ({
             </>
           ) : (
             <>
-              {poolInfo?.chain_id && (
+              {poolInfo && poolInfo[0]?.chain_id && (
                 <Button
-                  text={`Connect to ${networks[poolInfo.chain_id].chainName}`}
+                  text={`Connect to ${
+                    networks[poolInfo[0].chain_id].chainName
+                  }`}
                   backgroundPrimary
                   fullWidth
                   type="button"
                   onClick={() =>
-                    setChain({ chainId: `0x${poolInfo.chain_id.toString(16)}` })
+                    setChain({
+                      chainId: `0x${poolInfo[0].chain_id.toString(16)}`
+                    })
                   }
                 />
               )}

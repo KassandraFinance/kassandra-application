@@ -1,6 +1,6 @@
 import Head from 'next/head'
 
-import Proposals from '../../../templates/Gov/Proposals'
+import Proposals from '@/templates/Gov/Proposals'
 
 export default function Index() {
   return (
@@ -18,6 +18,7 @@ export default function Index() {
           content="Create proposals, vote and help the Kassandra community flourish."
         />
       </Head>
+
       <Proposals />
     </>
   )

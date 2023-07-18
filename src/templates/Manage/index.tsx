@@ -1,10 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
 
-import useManagerPools from '@/hooks/useManagerPools'
-import { useAppSelector } from '@/store/hooks'
+import { useManagerPools } from '@/hooks/query/useManagerPools'
+import { useUserProfile } from '@/hooks/query/useUserProfile'
 
 import Overlay from '@/components/Overlay'
 import Header from '@/components/Header'
@@ -27,11 +26,13 @@ const Manage = () => {
 
   const [{ wallet }] = useConnectWallet()
 
-  const { image } = useAppSelector(state => state.user)
+  const { data } = useUserProfile({
+    address: wallet?.accounts[0].address
+  })
 
-  const { managerPools } = useManagerPools(
-    wallet?.provider ? getAddress(wallet?.accounts[0]?.address) : ''
-  )
+  const { data: managerPools } = useManagerPools({
+    manager: wallet?.accounts[0]?.address
+  })
 
   function handleDashBoardButton() {
     setIsOpen(!isOpen)
@@ -70,7 +71,7 @@ const Manage = () => {
             {wallet?.provider ? (
               <>
                 <img
-                  src={image?.profilePic ? image.profilePic : userIcon.src}
+                  src={data?.image ? data.image : userIcon.src}
                   width={20}
                   height={20}
                 />
@@ -95,7 +96,7 @@ const Manage = () => {
 
         <S.Content>
           <Header />
-          {wallet?.provider && managerPools && managerPools.pools.length > 0 ? (
+          {wallet?.provider && managerPools && managerPools.length > 0 ? (
             <Overview />
           ) : (
             <GetStarted />

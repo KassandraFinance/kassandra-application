@@ -1,0 +1,6 @@
+query FeaturedPools {
+  pools {
+    id
+    featured
+  }
+}

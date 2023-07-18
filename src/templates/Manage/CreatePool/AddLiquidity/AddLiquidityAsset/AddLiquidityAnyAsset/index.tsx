@@ -38,7 +38,7 @@ const AddLiquidityAnyAsset = ({ priceToken }: AddLiquidityAnyAssetProps) => {
   }, [tokenSelectionActive])
 
   const totalDollarIn = Big(tokenInAmount)
-    .div(Big(10).pow(tokenIn.decimals))
+    .div(Big(10).pow(tokenIn?.decimals || 18))
     .mul(priceToken(tokenIn.address))
 
   return (

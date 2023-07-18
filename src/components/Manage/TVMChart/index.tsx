@@ -10,7 +10,7 @@ import * as S from './styles'
 type Change = {
   name: string
   value: number
-}
+}[]
 
 type Props = {
   data: DataType[]
@@ -18,7 +18,7 @@ type Props = {
   setSelectedPeriod: React.Dispatch<React.SetStateAction<string>>
   selectedType?: string
   setSelectedType?: React.Dispatch<React.SetStateAction<string>>
-  changeList: Change[]
+  changeList: Change
   dataList?: string[]
 }
 

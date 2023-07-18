@@ -1,6 +1,6 @@
 import Head from 'next/head'
 
-import PoolManager from '../../templates/PoolManager'
+import PoolManager from '@/templates/PoolManager'
 
 const Index = () => {
   return (

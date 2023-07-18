@@ -1,4 +1,4 @@
-import React from 'react'
+import { CoinsMetadataType } from '@/hooks/query/useTokensData'
 
 import { BalancesType } from '..'
 import SelectAddLiquidityAsset from './SelectAddLiquidityAsset'
@@ -8,13 +8,8 @@ import { useAppSelector } from '@/store/hooks'
 
 import * as S from './styles'
 
-type TokenDic = Record<
-  string,
-  { usd: string; symbol: string; name: string; decimals: number; logo: string }
->
-
 type AddLiquidityAssetProps = {
-  tokensList: TokenDic
+  tokensList: CoinsMetadataType
   tokensBalance: BalancesType
   priceToken: (address: string) => string
 }
