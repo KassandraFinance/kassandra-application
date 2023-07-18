@@ -1,10 +1,7 @@
 import React from 'react'
-import useSWR from 'swr'
-import request from 'graphql-request'
 
 import { IIndexProps } from '../../pages'
-import { BACKEND_KASSANDRA, multisig } from '../../constants/tokenAddresses'
-import { GET_COMMUNITYPOOLS } from './graphql'
+import { useCommunityPools } from '@/hooks/query/useCommunityPools'
 
 import TitleSection from '../../components/TitleSection'
 import FundCard from '../../components/FundCard'
@@ -37,49 +34,6 @@ const tabs = [
   }
 ]
 
-type GetCommunityPoolsType = {
-  pools: {
-    id: string
-    address: string
-    logo: string | null
-    name: string
-    price_usd: string
-    symbol: string
-    total_value_locked_usd: string
-    is_private_pool: boolean
-    factory: {
-      pool_count: number
-    }
-    chain: {
-      logo: string
-    }
-    now: {
-      close: string
-      timestamp: number
-    }[]
-    day: {
-      close: string
-      timestamp: number
-    }[]
-    month: {
-      close: string
-      timestamp: number
-    }[]
-    volumes: {
-      volume_usd: string
-    }[]
-    weight_goals: {
-      weights: {
-        asset: {
-          token: {
-            logo: string
-          }
-        }
-      }[]
-    }[]
-  }[]
-}
-
 export default function Explore({ poolsKassandra }: IIndexProps) {
   const [loading, setLoading] = React.useState(true)
   const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
@@ -92,18 +46,13 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
 
   const take = 8
 
-  const { data } = useSWR<GetCommunityPoolsType>(
-    [GET_COMMUNITYPOOLS, communityPoolSorted, skip],
-    query =>
-      request(BACKEND_KASSANDRA, query, {
-        day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-        month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-        multisig: multisig,
-        orderDirection: communityPoolSorted,
-        first: take,
-        skip
-      })
-  )
+  const { data } = useCommunityPools({
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    orderDirection: communityPoolSorted,
+    first: take,
+    skip
+  })
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -116,7 +65,7 @@ export default function Explore({ poolsKassandra }: IIndexProps) {
   React.useEffect(() => {
     if (!data?.pools.length) return
 
-    setTotalPoolsTable(data?.pools[0].factory.pool_count - 1)
+    setTotalPoolsTable(data?.kassandras[1].pool_count - 1)
   }, [data])
 
   return (

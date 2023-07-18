@@ -4672,6 +4672,45 @@ export type BrokersFeesQuery = {
   } | null
 }
 
+export type CommunityPoolsQueryVariables = Exact<{
+  day?: InputMaybe<Scalars['Int']['input']>
+  month?: InputMaybe<Scalars['Int']['input']>
+  orderDirection?: InputMaybe<OrderDirection>
+  first?: InputMaybe<Scalars['Int']['input']>
+  skip?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type CommunityPoolsQuery = {
+  __typename?: 'Query'
+  kassandras: Array<{ __typename?: 'Kassandra'; pool_count: number }>
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    name: string
+    symbol: string
+    logo?: string | null
+    address: string
+    price_usd: any
+    total_value_locked_usd: any
+    is_private_pool: boolean
+    chain?: { __typename?: 'Chain'; logo?: string | null } | null
+    volumes: Array<{ __typename?: 'Volume'; volume_usd: any }>
+    now: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    day: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: any }>
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        asset: {
+          __typename?: 'Asset'
+          token: { __typename?: 'Token'; logo?: string | null }
+        }
+      }>
+    }>
+  }>
+}
+
 export type FeesQueryVariables = Exact<{
   poolId: Scalars['ID']['input']
 }>
@@ -5087,6 +5126,36 @@ export type ManagerWithdrawsQuery = {
       timestamp: number
     }>
   } | null
+}
+
+export type ManagersPoolsQueryVariables = Exact<{
+  day?: InputMaybe<Scalars['Int']['input']>
+  month?: InputMaybe<Scalars['Int']['input']>
+  orderDirection?: InputMaybe<OrderDirection>
+  skip?: InputMaybe<Scalars['Int']['input']>
+  first?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type ManagersPoolsQuery = {
+  __typename?: 'Query'
+  totalManagers: Array<{ __typename?: 'Manager'; id: string }>
+  managers: Array<{
+    __typename?: 'Manager'
+    id: string
+    pool_count: number
+    unique_investors: number
+    total_value_locked_usd: any
+    TVLDay: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+    TVLMonthly: Array<{
+      __typename?: 'TotalValueLocked'
+      timestamp: number
+      close: any
+    }>
+  }>
 }
 
 export type PoolAllocationQueryVariables = Exact<{
@@ -5785,6 +5854,81 @@ export const BrokersFeesDocument = gql`
     }
   }
 `
+export const CommunityPoolsDocument = gql`
+  query CommunityPools(
+    $day: Int
+    $month: Int
+    $orderDirection: OrderDirection
+    $first: Int
+    $skip: Int
+  ) {
+    kassandras {
+      pool_count
+    }
+    pools(
+      where: {
+        manager_not: "0xFF56b00bDaEEf52C3EBb81B0efA6e28497305175"
+        id_not: "1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52"
+      }
+      orderBy: total_value_locked_usd
+      orderDirection: $orderDirection
+      first: $first
+      skip: $skip
+    ) {
+      id
+      name
+      symbol
+      logo
+      address
+      chain {
+        logo
+      }
+      price_usd
+      total_value_locked_usd
+      is_private_pool
+      volumes(
+        where: { period: 86400 }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        volume_usd
+      }
+      now: price_candles(
+        where: { base: "usd", period: 3600 }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      day: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $day }
+      ) {
+        timestamp
+        close
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 1) {
+        weights(orderBy: weight_normalized, orderDirection: desc) {
+          asset {
+            token {
+              logo
+            }
+          }
+        }
+      }
+    }
+  }
+`
 export const FeesDocument = gql`
   query Fees($poolId: ID!) {
     pool(id: $poolId) {
@@ -6223,6 +6367,44 @@ export const ManagerWithdrawsDocument = gql`
       ) {
         volume_usd
         timestamp
+      }
+    }
+  }
+`
+export const ManagersPoolsDocument = gql`
+  query ManagersPools(
+    $day: Int
+    $month: Int
+    $orderDirection: OrderDirection
+    $skip: Int
+    $first: Int
+  ) {
+    totalManagers: managers {
+      id
+    }
+    managers(
+      orderBy: total_value_locked_usd
+      orderDirection: $orderDirection
+      skip: $skip
+      first: $first
+    ) {
+      id
+      pool_count
+      unique_investors
+      total_value_locked_usd
+      TVLDay: total_value_locked(
+        where: { base: "usd", timestamp_gt: $day }
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      TVLMonthly: total_value_locked(
+        where: { base: "usd", timestamp_gt: $month }
+        first: 1
+      ) {
+        timestamp
+        close
       }
     }
   }
@@ -6959,6 +7141,21 @@ export function getSdk(
         'query'
       )
     },
+    CommunityPools(
+      variables?: CommunityPoolsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<CommunityPoolsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<CommunityPoolsQuery>(
+            CommunityPoolsDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'CommunityPools',
+        'query'
+      )
+    },
     Fees(
       variables: FeesQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
@@ -7148,6 +7345,20 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'ManagerWithdraws',
+        'query'
+      )
+    },
+    ManagersPools(
+      variables?: ManagersPoolsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ManagersPoolsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ManagersPoolsQuery>(ManagersPoolsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'ManagersPools',
         'query'
       )
     },

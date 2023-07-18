@@ -5577,6 +5577,16 @@ export type UsersInfoQuery = {
   governances: Array<{ __typename?: 'Governance'; totalVotingPower: any }>
 }
 
+export type UsersVoteWeightsQueryVariables = Exact<{
+  id_in?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>
+}>
+
+export type UsersVoteWeightsQuery = {
+  __typename?: 'Query'
+  users: Array<{ __typename?: 'User'; id: string; votingPower: any }>
+  governances: Array<{ __typename?: 'Governance'; totalVotingPower: any }>
+}
+
 export type VotesQueryVariables = Exact<{
   number: Scalars['Int']['input']
   support: Scalars['Boolean']['input']
@@ -5730,6 +5740,17 @@ export const UsersInfoDocument = gql`
     }
   }
 `
+export const UsersVoteWeightsDocument = gql`
+  query UsersVoteWeights($id_in: [ID!]) {
+    users(where: { id_in: $id_in }) {
+      id
+      votingPower
+    }
+    governances {
+      totalVotingPower
+    }
+  }
+`
 export const VotesDocument = gql`
   query Votes($number: Int!, $support: Boolean!) {
     proposals(where: { number: $number }) {
@@ -5839,6 +5860,21 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'UsersInfo',
+        'query'
+      )
+    },
+    UsersVoteWeights(
+      variables?: UsersVoteWeightsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<UsersVoteWeightsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<UsersVoteWeightsQuery>(
+            UsersVoteWeightsDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'UsersVoteWeights',
         'query'
       )
     },

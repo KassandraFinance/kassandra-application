@@ -1,0 +1,9 @@
+query UsersVoteWeights($id_in: [ID!]) {
+    users(where: { id_in: $id_in }) {
+      id
+      votingPower
+    }
+    governances {
+      totalVotingPower
+    }
+  }

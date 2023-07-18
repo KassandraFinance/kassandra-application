@@ -1,7 +1,4 @@
-import { gql } from 'graphql-request'
-
-export const GET_MANAGERS_POOLS = gql`
-  query (
+  query ManagersPools(
     $day: Int
     $month: Int
     $orderDirection: OrderDirection
@@ -37,16 +34,3 @@ export const GET_MANAGERS_POOLS = gql`
       }
     }
   }
-`
-
-export const GET_USERS_VOTEWEIGHTS = gql`
-  query ($id_in: [ID!]) {
-    users(where: { id_in: $id_in }) {
-      id
-      votingPower
-    }
-    governances {
-      totalVotingPower
-    }
-  }
-`
