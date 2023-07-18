@@ -1,7 +1,6 @@
 import Head from 'next/head'
-import { SWRConfig } from 'swr'
 
-import StakeFarm from '../templates/StakeFarm'
+import StakeFarm from '@/templates/StakeFarm'
 
 export default function Index() {
   return (
@@ -19,14 +18,8 @@ export default function Index() {
           content="Earn rewards and voting power by staking kacy and other assets"
         />
       </Head>
-      <SWRConfig
-        value={{
-          refreshInterval: 60000,
-          fetcher: url => fetch(url).then(res => res.json())
-        }}
-      >
-        <StakeFarm />
-      </SWRConfig>
+
+      <StakeFarm />
     </>
   )
 }
