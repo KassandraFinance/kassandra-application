@@ -54,7 +54,7 @@ const PoolSummary = ({
   return (
     <S.PoolSummary>
       <S.Header>
-        <S.HeaderTitle>Fund Summary</S.HeaderTitle>
+        <S.HeaderTitle>Pool Summary</S.HeaderTitle>
 
         <S.HeaderTitle>Allocation</S.HeaderTitle>
       </S.Header>
