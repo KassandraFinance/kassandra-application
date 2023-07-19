@@ -2,10 +2,9 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
-import {
-  SwapWidget as SwapWidgetType,
-  PangolinProvider as PangolinProviderType
-} from '@pangolindex/components'
+// import { NetworkContextName } from '@pangolindex/components'
+import { createWeb3ReactRoot } from '@web3-react/core'
+import { Web3Provider } from '@ethersproject/providers'
 
 import { Kacy, networks } from '@/constants/tokenAddresses'
 
@@ -22,13 +21,31 @@ const SwapWidget = dynamic(
   {
     ssr: false
   }
-) as typeof SwapWidgetType
+)
 
 const PangolinProvider = dynamic(
   () =>
     import('@pangolindex/components').then(module => module.PangolinProvider),
   { ssr: false }
-) as typeof PangolinProviderType
+)
+
+const Web3ReactProvider = dynamic(
+  () => import('@web3-react/core').then(module => module.Web3ReactProvider),
+  { ssr: false }
+)
+
+const Web3ProviderNetwork =
+  typeof window !== 'undefined' && createWeb3ReactRoot('NETWORK')
+
+function getLibrary(provider: any): Web3Provider {
+  try {
+    const library = new Web3Provider(provider, 'any')
+    library.pollingInterval = 15000
+    return library
+  } catch (error) {
+    return provider
+  }
+}
 
 interface IModalBuyKacyOnPangolinProps {
   modalOpen: boolean
@@ -77,21 +94,26 @@ const ModalBuyKacyOnPangolin = ({
           ) : null}
         </S.LoadingContent>
       </S.LoadingContainer>
-      {wallet?.provider &&
+      {Web3ProviderNetwork &&
+        wallet?.provider &&
         Number(wallet.chains[0].id) === avalanche.chainId && (
-          <PangolinProvider
-            account={wallet.accounts[0].address}
-            chainId={Number(wallet.chains[0].id)}
-            library={wallet.provider}
-            theme={swapTheme}
-          >
-            <S.ModalBuyKacyContainer>
-              <SwapWidget
-                isLimitOrderVisible={false}
-                defaultOutputToken={Kacy}
-              />
-            </S.ModalBuyKacyContainer>
-          </PangolinProvider>
+          <Web3ReactProvider getLibrary={getLibrary}>
+            <Web3ProviderNetwork getLibrary={getLibrary}>
+              <PangolinProvider
+                account={wallet.accounts[0].address}
+                chainId={Number(wallet.chains[0].id)}
+                library={wallet.provider}
+                theme={swapTheme}
+              >
+                <S.ModalBuyKacyContainer>
+                  <SwapWidget
+                    isLimitOrderVisible={false}
+                    defaultOutputToken={Kacy}
+                  />
+                </S.ModalBuyKacyContainer>
+              </PangolinProvider>
+            </Web3ProviderNetwork>
+          </Web3ReactProvider>
         )}
     </>
   )
