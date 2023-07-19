@@ -42,7 +42,7 @@ export const useSavePool = ({ id, user }: { id: string; user?: string }) => {
     onError: () => {
       dispatch(
         setModalAlertText({
-          errorText: 'Could not save investment strategy',
+          errorText: 'Could not save pool metadata',
           solutionText: 'Please try adding it later'
         })
       )
