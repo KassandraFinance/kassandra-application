@@ -1,13 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { keccak256 } from 'ethers'
+import { keccak256, toUtf8Bytes } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import useSignMessage from '@/hooks/useSignMessage'
 
 import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
-import { useAppDispatch } from '@/store/hooks'
-import { setModalAlertText } from '@/store/reducers/modalAlertText'
 import { useSavePool } from '@/hooks/query/useSavePool'
 import { usePoolStrategy } from '@/hooks/query/usePoolStrategy'
 
@@ -32,14 +30,13 @@ const PoolImage = () => {
   })
 
   const [{ wallet }] = useConnectWallet()
-  const dispatch = useAppDispatch()
   const router = useRouter()
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { mutate } = useSavePool({
+  const { mutate, isSuccess } = useSavePool({
     id: poolId,
     user: wallet?.accounts[0].address
   })
@@ -58,8 +55,8 @@ const PoolImage = () => {
     img.length > 0
       ? img
       : poolInfo && poolInfo[0]?.logo
-      ? poolInfo[0].logo
-      : defaultImage
+        ? poolInfo[0].logo
+        : defaultImage
 
   async function sendPoolData(
     controller: string,
@@ -70,59 +67,14 @@ const PoolImage = () => {
     if (!wallet) return
 
     try {
-      const logoToSign = logo ? keccak256(logo) : ''
+      const logoToSign = logo ? keccak256(toUtf8Bytes(logo)) : ''
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
       const signature = await signMessage(message)
 
-      // const body = {
-      //   controller,
-      //   logo,
-      //   summary,
-      //   chainId,
-      //   signature
-      // }
-
       mutate({ chainId, controller, signature: signature || '', summary, logo })
-
-      // const response = await fetch(BACKEND_KASSANDRA, {
-      //   body: JSON.stringify({
-      //     query: SAVE_POOL,
-      //     variables: body
-      //   }),
-      //   headers: { 'content-type': 'application/json' },
-      //   method: 'POST'
-      // })
-
-      // if (response.status === 200) {
-      //   const { data } = await response.json()
-      //   if (data?.savePool?.ok) {
-      //     setPoolImage({
-      //       icon: {
-      //         image_preview: '',
-      //         image_file: ''
-      //       }
-      //     })
-      //     return
-      //   }
-      // } else {
-      //   dispatch(
-      //     setModalAlertText({
-      //       errorText: 'Could not save pool image',
-      //       solutionText: 'Please try adding it later'
-      //     })
-      //   )
-      //   return
-      // }
     } catch (error) {
       console.error(error)
     }
-
-    dispatch(
-      setModalAlertText({
-        errorText: 'Could not save pool image',
-        solutionText: 'Please try adding it later'
-      })
-    )
   }
 
   async function handleImagePreview(event: FileList) {
@@ -156,6 +108,17 @@ const PoolImage = () => {
       }
     })
   }
+
+  React.useEffect(() => {
+    if (isSuccess) {
+      setPoolImage({
+        icon: {
+          image_preview: '',
+          image_file: ''
+        }
+      })
+    }
+  }, [isSuccess])
 
   return (
     <S.PoolImage>

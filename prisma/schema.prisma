@@ -18,7 +18,7 @@ model sharedImageFund {
 }
 
 model User {
-  walletAddress String   @id @map("wallet_address")
+  walletAddress String   @id @map("id")
   nickname      String?  @unique
   twitter       String?
   website       String?
@@ -28,18 +28,17 @@ model User {
   image         String?
   isNFT         Boolean? @default(false) @map("is_nft")
 
-  contractType   String? @map("contract_type")
-  collectionName String? @map("collection_name")
-  symbol         String?
-  tokenAddress   String? @map("token_address")
-  tokenId        String? @map("token_id")
-  chain          String?
+  contractType   String? @map("nft_contract_type")
+  collectionName String? @map("nft_collection_name")
+  symbol         String? @map("nft_symbol")
+  tokenAddress   String? @map("nft_token_address")
+  tokenId        String? @map("nft_token_num")
+  chain          String? @map("nft_chain")
   nftName        String? @map("nft_name")
   nftDescription String? @map("nft_description")
 
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
-  nftContractType String?
 
   @@map("users")
 }

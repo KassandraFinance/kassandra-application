@@ -7,8 +7,6 @@ import 'react-markdown-editor-lite/lib/index.css'
 import { useConnectWallet } from '@web3-onboard/react'
 import useSignMessage from '@/hooks/useSignMessage'
 
-import { useAppDispatch } from '@/store/hooks'
-import { setModalAlertText } from '@/store/reducers/modalAlertText'
 import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import { usePoolStrategy } from '@/hooks/query/usePoolStrategy'
 import { useSavePool } from '@/hooks/query/useSavePool'
@@ -31,7 +29,6 @@ const Strategy = () => {
 
   const { signMessage } = useSignMessage()
   const [{ wallet }] = useConnectWallet()
-  const dispatch = useAppDispatch()
   const router = useRouter()
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -53,7 +50,7 @@ const Strategy = () => {
 
   const { data } = usePoolStrategy({ id: poolId })
 
-  const { mutate } = useSavePool({ id: poolId })
+  const { mutate, isSuccess } = useSavePool({ id: poolId })
 
   async function sendPoolData(
     controller: string,
@@ -68,49 +65,10 @@ const Strategy = () => {
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
       const signature = await signMessage(message)
 
-      // const body = {
-      //   controller,
-      //   summary,
-      //   chainId,
-      //   signature
-      // }
-
       mutate({ chainId, controller, signature: signature || '', summary })
-
-      // const response = await fetch(BACKEND_KASSANDRA, {
-      //   body: JSON.stringify({
-      //     query: SAVE_POOL,
-      //     variables: body
-      //   }),
-      //   headers: { 'content-type': 'application/json' },
-      //   method: 'POST'
-      // })
-
-      // if (response.status === 200) {
-      //   const { data } = await response.json()
-      //   if (data?.savePool?.ok) {
-      //     setIsEdit(false)
-      //     return
-      //   }
-      // } else {
-      //   dispatch(
-      //     setModalAlertText({
-      //       errorText: 'Could not save investment strategy',
-      //       solutionText: 'Please try adding it later'
-      //     })
-      //   )
-      //   return
-      // }
     } catch (error) {
       console.error(error)
     }
-
-    dispatch(
-      setModalAlertText({
-        errorText: 'Could not save investment strategy',
-        solutionText: 'Please try adding it later'
-      })
-    )
   }
 
   const { data: poolInfo } = useManagerPoolInfo({
@@ -122,6 +80,12 @@ const Strategy = () => {
     if (!data?.summary) return
     setValue(data.summary)
   }, [data])
+
+  React.useEffect(() => {
+    if (isSuccess) {
+      setIsEdit(false)
+    }
+  }, [isSuccess])
 
   return (
     <S.Strategy>

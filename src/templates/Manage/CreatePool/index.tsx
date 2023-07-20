@@ -1,7 +1,7 @@
 import React from 'react'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
-import { keccak256, ZeroAddress } from 'ethers'
+import { keccak256, toUtf8Bytes, ZeroAddress } from 'ethers'
 
 import useSignMessage from '@/hooks/useSignMessage'
 import useCreatePool from '@/hooks/useCreatePool'
@@ -515,7 +515,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         return
       }
 
-      const logoToSign = logo ? keccak256(logo) : ''
+      const logoToSign = logo ? keccak256(toUtf8Bytes(logo)) : ''
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
       const signature = await signMessage(message)
 

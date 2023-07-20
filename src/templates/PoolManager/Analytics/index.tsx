@@ -144,7 +144,7 @@ const Analytics = (props: IAnalyticsProps) => {
       return {
         name: change.name,
         value: Number(
-          calcChange(dataChange.now[0]?.close, dataChange[change.key][0].close)
+          calcChange(dataChange.now[0]?.close, dataChange[change.key][0]?.close)
         )
       }
     })
