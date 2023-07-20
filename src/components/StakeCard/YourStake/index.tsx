@@ -3,172 +3,76 @@ import Link from 'next/link'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { networks } from '@/constants/tokenAddresses'
-
-import useStaking from '@/hooks/useStaking'
-
 import { getDate } from '@/utils/date'
 import { BNtoDecimal } from '@/utils/numerals'
 import substr from '@/utils/substr'
 
-import { IInfoStaked } from '../'
-
 import * as S from './styles'
+import { LoadingAnimation } from '../styles'
+
+interface IPoolInfoProps {
+  votingMultiplier: string
+  startDate: string
+  endDate: string
+  kacyRewards: Big
+  withdrawDelay: number
+  totalStaked: Big
+  hasExpired: boolean
+  apr: Big
+  stakingToken: string
+  vestingPeriod: string
+  lockPeriod: string
+}
+
+interface IUserAboutPoolProps {
+  currentAvailableWithdraw: Big
+  lockPeriod: number
+  delegateTo: string
+  yourStake: Big
+  withdrawable: boolean
+  unstake: boolean
+}
 
 interface IYourStakeProps {
-  pid: number
-  infoStaked: IInfoStaked
-  setInfoStaked: React.Dispatch<React.SetStateAction<IInfoStaked>>
   stakeWithVotingPower: boolean
   poolPrice: Big
   kacyPrice: Big
   stakeWithLockPeriod: boolean
-  lockPeriod: number
-  availableWithdraw: Big
-  stakingAddress: string
-  chainId: number
+  userAboutPool: IUserAboutPoolProps
+  poolInfo: IPoolInfoProps
 }
 
 const YourStake = ({
-  pid,
-  infoStaked,
-  setInfoStaked,
   stakeWithVotingPower,
   stakeWithLockPeriod,
   poolPrice,
   kacyPrice,
-  lockPeriod,
-  availableWithdraw,
-  stakingAddress,
-  chainId
+  poolInfo,
+  userAboutPool
 }: IYourStakeProps) => {
-  const [delegateTo, setDelegateTo] = React.useState<string>('')
-
-  const networkChain = networks[chainId]
-
-  const staking = useStaking(stakingAddress, networkChain.chainId)
   const [{ wallet }] = useConnectWallet()
 
-  const getYourStake = React.useCallback(async () => {
-    const poolInfoResponse = await staking.poolInfo(pid)
-
-    if (!poolInfoResponse.withdrawDelay.toString()) {
-      return
-    }
-
-    const kacyRewards = Big(poolInfoResponse.rewardRate.toString()).mul(
-      Big(86400)
-    )
-    const totalStaked = Big(poolInfoResponse.depositedAmount.toString())
-
-    const apr =
-      poolInfoResponse.depositedAmount.toString() !== '0' &&
-      kacyPrice.gt('-1') &&
-      (poolPrice || Big(0)).gt('0')
-        ? Big(
-            kacyRewards
-              .mul('365')
-              .mul('100')
-              .mul(kacyPrice)
-              .div(
-                (poolPrice || Big(1)).mul(
-                  Big(poolInfoResponse.depositedAmount.toString())
-                )
-              )
-              .toFixed(0)
-          )
-        : Big(0)
-
-    const startDate = getDate(
-      Number(poolInfoResponse.periodFinish) -
-        Number(poolInfoResponse.rewardsDuration)
-    )
-    const endDate = getDate(Number(poolInfoResponse.periodFinish))
-
-    const timestampNow = new Date().getTime()
-    const periodFinish = new Date(
-      Number(poolInfoResponse.periodFinish) * 1000
-    ).getTime()
-
-    let balance = Big(0)
-    let withdrawableResponse = false
-    let unstakeResponse = false
-    let yourDailyKacyReward = Big(0)
-
-    if (wallet?.provider) {
-      const stakingBalance = await staking.balance(
-        pid,
-        wallet?.accounts[0].address
-      )
-      balance = Big(stakingBalance.toString())
-      withdrawableResponse = await staking.withdrawable(
-        pid,
-        wallet?.accounts[0].address
-      )
-      unstakeResponse = await staking.unstaking(
-        pid,
-        wallet?.accounts[0].address
-      )
-
-      if (balance.gt(Big(0))) {
-        yourDailyKacyReward = kacyRewards.mul(balance).div(totalStaked)
-      }
-    }
-
-    setInfoStaked({
-      yourStake: balance,
-      withdrawable: withdrawableResponse,
-      votingMultiplier: poolInfoResponse.votingMultiplier,
-      startDate,
-      endDate,
-      kacyRewards,
-      yourDailyKacyReward,
-      withdrawDelay: poolInfoResponse.withdrawDelay.toString(),
-      totalStaked,
-      hasExpired: periodFinish < timestampNow,
-      unstake: unstakeResponse,
-      apr,
-      stakingToken: poolInfoResponse.stakingToken,
-      vestingPeriod: poolInfoResponse.vestingPeriod,
-      lockPeriod: poolInfoResponse.lockPeriod
-    })
-  }, [wallet, poolPrice, kacyPrice])
-
-  React.useEffect(() => {
-    getYourStake()
-    const interval = setInterval(getYourStake, 10000)
-
-    return () => clearInterval(interval)
-  }, [getYourStake])
-
-  React.useEffect(() => {
-    const delegateInfo = async () => {
-      const delegate = await staking.userInfo(pid, wallet?.accounts[0].address)
-      setDelegateTo(delegate.delegatee)
-    }
-    if (wallet?.accounts[0].address) {
-      delegateInfo()
-    }
-  }, [])
+  const addressZero = '0x0000000000000000000000000000000000000000'
+  const yourDailyKacyReward = poolInfo.kacyRewards
+    .mul(userAboutPool?.yourStake ?? Big(0))
+    .div(poolInfo?.totalStaked ?? Big(0))
 
   return wallet?.accounts[0].address ? (
     <>
       <S.Info>
         <p>Your stake</p>
         <S.Stake>
-          {infoStaked.yourStake.lt(Big(0)) || (poolPrice || Big(0)).lt(0) ? (
-            '...'
+          {userAboutPool.yourStake.lt(0) || poolPrice.lt(0) ? (
+            <LoadingAnimation className="animationYourStake" width={10} />
           ) : stakeWithVotingPower ? (
             <p>
-              {BNtoDecimal(infoStaked.yourStake.div(Big(10).pow(18)), 18)}
+              {BNtoDecimal(userAboutPool.yourStake.div(Big(10).pow(18)), 18)}
               <S.Symbol>KACY</S.Symbol>
             </p>
           ) : (
             <p>
               {BNtoDecimal(
-                Big(infoStaked.yourStake.toString())
-                  .mul(poolPrice)
-                  .div(Big(10).pow(18)),
+                userAboutPool.yourStake.mul(poolPrice).div(Big(10).pow(18)),
                 2,
                 2,
                 2
@@ -176,22 +80,20 @@ const YourStake = ({
               <S.Symbol>USD</S.Symbol>
             </p>
           )}
-          {stakeWithVotingPower && (
-            <span>
-              &#8776;{' '}
-              {infoStaked.yourStake.lt(Big(0)) || kacyPrice.lt(0)
-                ? '...'
-                : BNtoDecimal(
-                    Big(infoStaked.yourStake.toString())
-                      .mul(kacyPrice)
-                      .div(Big(10).pow(18)),
-                    6,
-                    2,
-                    2
-                  )}{' '}
-              USD
-            </span>
-          )}
+          {stakeWithVotingPower &&
+            userAboutPool.yourStake.gt(0) &&
+            kacyPrice.gt(0) && (
+              <span>
+                &#8776;{' '}
+                {BNtoDecimal(
+                  userAboutPool.yourStake.mul(kacyPrice).div(Big(10).pow(18)),
+                  6,
+                  2,
+                  2
+                )}{' '}
+                USD
+              </span>
+            )}
         </S.Stake>
       </S.Info>
       {stakeWithVotingPower && (
@@ -199,29 +101,32 @@ const YourStake = ({
           <S.Info>
             <span>Pool Voting Power</span>
             <span>
-              {infoStaked.yourStake.lt(Big(0))
-                ? '...'
-                : BNtoDecimal(
-                    Big(
-                      infoStaked.withdrawable || infoStaked.unstake
-                        ? 1
-                        : infoStaked.votingMultiplier
-                    )
-                      .mul(infoStaked.yourStake)
-                      .div(Big(10).pow(18)),
-                    18,
-                    2
-                  )}
+              {userAboutPool.yourStake.lt(Big(0)) ? (
+                <LoadingAnimation className="animationYourStake" width={6} />
+              ) : (
+                BNtoDecimal(
+                  Big(poolInfo?.votingMultiplier ?? 0)
+                    .mul(userAboutPool.yourStake)
+                    .div(Big(10).pow(18)),
+                  18,
+                  2
+                )
+              )}
             </span>
           </S.Info>
           <S.Info>
             <span>Delegated To</span>
-            {delegateTo.toLocaleLowerCase() === wallet?.accounts[0].address ||
-            delegateTo === '0x0000000000000000000000000000000000000000' ? (
+            {userAboutPool.delegateTo == '' ? (
+              <LoadingAnimation width={6} />
+            ) : userAboutPool.delegateTo.toLowerCase() ===
+                wallet?.accounts[0].address ||
+              userAboutPool.delegateTo === addressZero ? (
               <span>Self</span>
             ) : (
-              <Link href={`/profile/${delegateTo}?tab=governance-data`}>
-                {substr(delegateTo)}
+              <Link
+                href={`/profile/${userAboutPool.delegateTo}?tab=governance-data`}
+              >
+                {substr(userAboutPool.delegateTo)}
               </Link>
             )}
           </S.Info>
@@ -230,44 +135,60 @@ const YourStake = ({
       <S.Info>
         <span>Your daily KACY reward</span>
         <span>
-          {infoStaked.yourDailyKacyReward.lt(Big(0))
-            ? '...'
-            : infoStaked.hasExpired
-            ? '0'
-            : BNtoDecimal(
-                infoStaked.yourDailyKacyReward.div(Big(10).pow(18)),
-                18,
-                2
-              )}
-          /day
+          {poolInfo.kacyRewards.lt(Big(0)) ? (
+            <LoadingAnimation className="animationYourStake" width={6} />
+          ) : poolInfo.hasExpired ? (
+            '0/day'
+          ) : (
+            BNtoDecimal(yourDailyKacyReward.div(Big(10).pow(18)), 18, 2) +
+            '/day'
+          )}
         </span>
       </S.Info>
+
       {stakeWithLockPeriod && (
         <>
           <S.Info>
             <span>Lock period</span>
-            <span>
-              {parseInt(infoStaked.lockPeriod) / 60 / 60 / 24 / 30} months
-            </span>
+            {poolInfo.lockPeriod ? (
+              <span>
+                {parseInt(poolInfo.lockPeriod) / 60 / 60 / 24 / 30} months
+              </span>
+            ) : (
+              <LoadingAnimation width={6} />
+            )}
           </S.Info>
           <S.Info>
             <span>Vesting period</span>
-            <span>
-              {parseInt(infoStaked.vestingPeriod) / 60 / 60 / 24 / 30} months
-            </span>
+            {poolInfo.vestingPeriod ? (
+              <span>
+                {parseInt(poolInfo.vestingPeriod) / 60 / 60 / 24 / 30} months
+              </span>
+            ) : (
+              <LoadingAnimation width={6} />
+            )}
           </S.Info>
           <S.Info>
             <span>Locked until</span>
-            <span>{getDate(lockPeriod)}</span>
+            {userAboutPool.lockPeriod ? (
+              <span>{getDate(userAboutPool.lockPeriod)}</span>
+            ) : (
+              <LoadingAnimation width={6} />
+            )}
           </S.Info>
           <S.Info>
             <span>Available for withdraw</span>
-            <span>
-              {availableWithdraw.gt(-1)
-                ? BNtoDecimal(availableWithdraw.div(Big(10).pow(18)), 18)
-                : '...'}{' '}
-              KACY
-            </span>
+            {userAboutPool.currentAvailableWithdraw.gt(-1) ? (
+              <span>
+                {BNtoDecimal(
+                  userAboutPool.currentAvailableWithdraw.div(Big(10).pow(18)),
+                  18
+                )}
+                KACY
+              </span>
+            ) : (
+              <LoadingAnimation width={6} />
+            )}
           </S.Info>
         </>
       )}

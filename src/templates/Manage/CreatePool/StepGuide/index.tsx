@@ -43,7 +43,7 @@ const stepGuide = [
   },
   {
     icon: reviewIcon,
-    title: 'Step 5 - review and create fund',
+    title: 'Step 5 - review and create pool',
     text: 'Review and publish it to the network of your choice.'
   }
 ]

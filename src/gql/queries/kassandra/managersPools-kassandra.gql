@@ -1,0 +1,36 @@
+  query ManagersPools(
+    $day: Int
+    $month: Int
+    $orderDirection: OrderDirection
+    $skip: Int
+    $first: Int
+  ) {
+    totalManagers: managers {
+      id
+    }
+    managers(
+      orderBy: total_value_locked_usd
+      orderDirection: $orderDirection
+      skip: $skip
+      first: $first
+    ) {
+      id
+      pool_count
+      unique_investors
+      total_value_locked_usd
+      TVLDay: total_value_locked(
+        where: { base: "usd", timestamp_gt: $day }
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      TVLMonthly: total_value_locked(
+        where: { base: "usd", timestamp_gt: $month }
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+    }
+  }

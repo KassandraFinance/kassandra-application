@@ -1,0 +1,6 @@
+query PoolChainId($id: ID!) {
+    pool(id: $id) {
+      chain_id
+      unique_investors
+    }
+  }

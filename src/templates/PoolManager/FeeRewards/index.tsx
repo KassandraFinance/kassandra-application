@@ -1,60 +1,60 @@
 import React from 'react'
 import router from 'next/router'
 import Big from 'big.js'
-import request from 'graphql-request'
-import useSWR from 'swr'
 
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { GET_FEES } from './graphql'
+import { useFees } from '@/hooks/query/useFees'
 
 import TitleSection from '@/components/TitleSection'
 import FeesChart, { FeeGraph } from './FeesChart'
 import AvailableRewards from './AvailableRewards'
 
 import Loading from '@ui/Loading'
-
-import poolsAssetsIcon from '../../../../public/assets/iconGradient/assets-distribution.svg'
-
-import * as S from './styles'
 import FeeBreakDown from './FeeBreakDown'
 
+import poolsAssetsIcon from '@assets/iconGradient/assets-distribution.svg'
+
+import * as S from './styles'
+
 type Fees = {
-  type: 'join' | 'aum'
+  __typename?: 'Fee' | undefined
+  type: string
   period: number
-  volume_usd: string
-  volume_broker_usd: string | null
+  volume_usd: any
+  volume_broker_usd?: any
   timestamp: number
 }
 
 export type Pool = {
+  __typename?: 'Pool' | undefined
   chain_id: number
-  manager: {
-    id: string
-  }
-
-  price_usd: string
+  price_usd: any
   symbol: string
   controller: string
-  fee_join_manager: string
-  fee_join_broker: string
-
-  total_fees_join_manager_usd: string
-  total_fees_join_broker_usd: string
-
-  total_fees_aum_manager_usd: string
-  total_fees_aum_kassandra_usd: string
-  fee_aum: string
-  fee_aum_kassandra: string
-
-  last_harvest: number
-
-  fees: Fees[]
-
-  lasCollectedAum: Fees[]
-}
-
-type Result = {
-  pool: Pool
+  fee_join_manager: any
+  fee_join_broker: any
+  total_fees_join_manager_usd: any
+  total_fees_join_broker_usd: any
+  total_fees_aum_manager_usd: any
+  total_fees_aum_kassandra_usd: any
+  fee_aum: any
+  fee_aum_kassandra: any
+  last_harvest?: any
+  manager: {
+    __typename?: 'Manager' | undefined
+    id: string
+  }
+  fees: {
+    __typename?: 'Fee' | undefined
+    type: string
+    period: number
+    volume_usd: any
+    volume_broker_usd?: any
+    timestamp: number
+  }[]
+  lasCollectedAum: {
+    __typename?: 'Fee' | undefined
+    timestamp: number
+  }[]
 }
 
 const legend: Record<string, string> = {
@@ -67,11 +67,9 @@ const FeeRewards = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { data } = useSWR<Result>([GET_FEES, poolId], (query, poolId) =>
-    request(BACKEND_KASSANDRA, query, { poolId })
-  )
+  const { data } = useFees({ poolId })
 
-  const pool = data?.pool ?? undefined
+  const pool = data ?? undefined
 
   function createIntervalTime(months = 12): Array<number> {
     const date = new Date()

@@ -21,17 +21,17 @@ export const UserTableVotingHistory = styled.section`
       tr {
         cursor: pointer;
 
-        &:last-child {
-          .td-container,
-          .td-container:hover {
-            border-bottom: none;
-          }
-        }
-
         &:first-child {
           .td-container,
           .td-container:hover {
             border-top: none;
+          }
+        }
+
+        &:last-child {
+          .td-container,
+          .td-container:hover {
+            border-bottom: none;
           }
         }
       }
@@ -102,8 +102,11 @@ export const Td = styled.td`
     border-top: 0.1rem solid rgb(255 255 255 / 0);
     border-bottom: 0.1rem solid rgb(255 255 255 / 0.3);
 
-    transition: background-color ease-in-out 0.3s, border ease-in-out 0.3s,
-      padding ease-in-out 0.3s, margin ease-in-out 0.3s;
+    transition:
+      background-color ease-in-out 0.3s,
+      border ease-in-out 0.3s,
+      padding ease-in-out 0.3s,
+      margin ease-in-out 0.3s;
 
     &:hover {
       margin: 0;

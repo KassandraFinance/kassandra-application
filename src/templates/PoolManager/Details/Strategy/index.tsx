@@ -2,19 +2,14 @@ import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
 import 'react-markdown-editor-lite/lib/index.css'
-// import crypto from 'crypto'
 import { useConnectWallet } from '@web3-onboard/react'
 import useSignMessage from '@/hooks/useSignMessage'
 
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { GET_STRATEGY, SAVE_POOL } from './graphql'
-import { useAppDispatch } from '@/store/hooks'
-import { setModalAlertText } from '@/store/reducers/modalAlertText'
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
+import { usePoolStrategy } from '@/hooks/query/usePoolStrategy'
+import { useSavePool } from '@/hooks/query/useSavePool'
 
 import TitleSection from '@/components/TitleSection'
 import Button from '@/components/Button'
@@ -26,12 +21,6 @@ const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
   ssr: false
 })
 
-type GetStrategyType = {
-  pool: {
-    summary: string
-  }
-}
-
 import * as S from './styles'
 
 const Strategy = () => {
@@ -40,19 +29,17 @@ const Strategy = () => {
 
   const { signMessage } = useSignMessage()
   const [{ wallet }] = useConnectWallet()
-  const dispatch = useAppDispatch()
   const router = useRouter()
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
     : router.query.pool ?? ''
-  // const poolId = '0x38918142779e2CD1189cBd9e932723C968363D1E'
 
   function handleEditorChange({ text }: { text: string }) {
     setValue(text)
   }
 
   function handleEditClick() {
-    setValue(data?.pool?.summary || '')
+    setValue(data?.summary || '')
     setIsEdit(true)
   }
 
@@ -60,6 +47,10 @@ const Strategy = () => {
     setIsEdit(false)
     setValue('')
   }
+
+  const { data } = usePoolStrategy({ id: poolId })
+
+  const { mutate, isSuccess } = useSavePool({ id: poolId })
 
   async function sendPoolData(
     controller: string,
@@ -70,68 +61,31 @@ const Strategy = () => {
     if (!wallet) return
 
     try {
-      // const nonce = crypto.randomBytes(12).toString('base64')
       const logoToSign = ''
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
       const signature = await signMessage(message)
 
-      const body = {
-        controller,
-        summary,
-        chainId,
-        signature
-      }
-
-      const response = await fetch(BACKEND_KASSANDRA, {
-        body: JSON.stringify({
-          query: SAVE_POOL,
-          variables: body
-        }),
-        headers: { 'content-type': 'application/json' },
-        method: 'POST'
-      })
-
-      if (response.status === 200) {
-        const { data } = await response.json()
-        if (data?.savePool?.ok) {
-          setIsEdit(false)
-          return
-        }
-      } else {
-        dispatch(
-          setModalAlertText({
-            errorText: 'Could not save investment strategy',
-            solutionText: 'Please try adding it later'
-          })
-        )
-        return
-      }
+      mutate({ chainId, controller, signature: signature || '', summary })
     } catch (error) {
       console.error(error)
     }
-
-    dispatch(
-      setModalAlertText({
-        errorText: 'Could not save investment strategy',
-        solutionText: 'Please try adding it later'
-      })
-    )
   }
 
-  const { poolInfo } = usePoolInfo(wallet, poolId)
-
-  const { data } = useSWR<GetStrategyType>(
-    [GET_STRATEGY, poolId],
-    (query, poolId) =>
-      request(BACKEND_KASSANDRA, query, {
-        id: poolId
-      })
-  )
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   React.useEffect(() => {
-    if (!data?.pool?.summary) return
-    setValue(data.pool.summary)
+    if (!data?.summary) return
+    setValue(data.summary)
   }, [data])
+
+  React.useEffect(() => {
+    if (isSuccess) {
+      setIsEdit(false)
+    }
+  }, [isSuccess])
 
   return (
     <S.Strategy>
@@ -146,7 +100,7 @@ const Strategy = () => {
       {!isEdit ? (
         <S.Text>
           <ReactMarkdown skipHtml={true} linkTarget={'_blank'}>
-            {data?.pool?.summary || ''}
+            {data?.summary || ''}
           </ReactMarkdown>
         </S.Text>
       ) : (
@@ -164,17 +118,17 @@ const Strategy = () => {
           />
 
           <S.ButtonContainer>
-            {poolInfo?.controller && (
+            {poolInfo && poolInfo[0]?.controller && (
               <Button
                 text="Update"
                 backgroundSecondary
                 fullWidth
                 onClick={() =>
                   sendPoolData(
-                    poolInfo?.controller,
-                    poolInfo.logo,
+                    poolInfo[0]?.controller,
+                    poolInfo[0]?.logo || '',
                     value,
-                    poolInfo.chain_id
+                    poolInfo[0].chain_id
                   )
                 }
               />

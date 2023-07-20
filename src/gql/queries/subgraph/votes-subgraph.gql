@@ -1,0 +1,11 @@
+  query Votes($number: Int!, $support: Boolean!) {
+    proposals(where: { number: $number }) {
+      votes(where: { support: $support }) {
+        support
+        votingPower
+        voter {
+          id
+        }
+      }
+    }
+  }

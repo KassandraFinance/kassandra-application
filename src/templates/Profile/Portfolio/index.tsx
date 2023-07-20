@@ -1,14 +1,11 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import Big from 'big.js'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal, calcChange } from '@/utils/numerals'
+import { useUserPoolData } from '@/hooks/query/useUserPoolData'
 
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { GET_CHART } from './AssetsTable/graphql'
 import { IAssetsValueWalletProps, IKacyLpPool } from '../'
 
 import AssetsTable from './AssetsTable'
@@ -55,38 +52,14 @@ type PoolProps = {
   address: string
   name: string
   symbol: string
-  logo: string
-  logoChain: string
+  logo: string | null | undefined
   changeDay: string
   changeMonth: string
-  price: string
-  tvl: string
-  balance: string
-  balanceInUSD: string
-}
-
-type PoolResponse = {
-  id: string
-  now: { close: number }[]
-  day: { close: number }[]
-  month: { close: number }[]
-  price_usd: string
-  total_value_locked_usd: string
-  address: string
-  name: string
-  symbol: string
-  logo: string
-  investors?: {
-    amount: string
-  }[]
-  chain?: {
-    logo: string
-  }
-}
-
-type Response = {
-  pools: Array<PoolResponse>
-  managedPools: Array<PoolResponse>
+  price: any
+  tvl: any
+  balanceInUSD: Big
+  balance: Big
+  logoChain: string
 }
 
 const Portfolio = ({
@@ -111,16 +84,12 @@ const Portfolio = ({
 
   const [{ wallet }] = useConnectWallet()
 
-  const { data } = useSWR<Response>(
-    [GET_CHART, profileAddress, tokenizedFunds],
-    (query, profileAddress, assets) =>
-      request(BACKEND_KASSANDRA, query, {
-        id: assets,
-        day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-        month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-        wallet: profileAddress
-      })
-  )
+  const { data } = useUserPoolData({
+    id: tokenizedFunds,
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    wallet: profileAddress
+  })
 
   React.useEffect(() => {
     setCardStakesPoolNew([])
@@ -178,15 +147,14 @@ const Portfolio = ({
   }, [profileAddress, assetsValueInWallet, router, wallet?.accounts[0].address])
 
   React.useEffect(() => {
-    if (!data?.pools) {
-      return
-    }
+    if (!data?.pools) return
 
-    const pools: PoolProps[] = [
+    const pools = [
       ...data.pools.map(pool => {
         const balance = Big(balanceFunds[pool.address].toString()).div(
           Big(10).pow(18)
         )
+
         return {
           id: pool.id,
           address: pool.address,
@@ -197,9 +165,9 @@ const Portfolio = ({
           changeMonth: calcChange(pool.now[0]?.close, pool.month[0]?.close),
           price: pool.price_usd,
           tvl: pool.total_value_locked_usd,
-          balanceInUSD: balance.mul(pool.price_usd).toFixed(),
-          balance: balance.toFixed(),
-          logoChain: pool.chain?.logo ?? '/assets/logos/avalanche.svg'
+          balanceInUSD: balance.mul(pool.price_usd),
+          balance: balance,
+          logoChain: '/assets/logos/avalanche.svg'
         }
       })
     ]
@@ -207,10 +175,14 @@ const Portfolio = ({
     if (data.managedPools.length > 0) {
       pools.push(
         ...data.managedPools.map(pool => {
-          const balance =
+          const balanceInWalletOrPool = Big(
+            balanceFunds[pool.address]?.toString() ?? 0
+          ).div(Big(10).pow(18))
+          const balanceManagedPools =
             pool.investors && pool.investors.length > 0
-              ? Big(pool.investors[0].amount)
+              ? Big(pool.investors[0].amount).add(balanceInWalletOrPool)
               : Big('0')
+
           return {
             id: pool.id,
             address: pool.address,
@@ -221,8 +193,8 @@ const Portfolio = ({
             changeMonth: calcChange(pool.now[0]?.close, pool.month[0]?.close),
             price: pool.price_usd,
             tvl: pool.total_value_locked_usd,
-            balanceInUSD: balance.mul(pool.price_usd).toFixed(),
-            balance: balance.toFixed(),
+            balanceInUSD: balanceManagedPools.mul(pool.price_usd),
+            balance: balanceManagedPools,
             logoChain: pool.chain?.logo ?? '/assets/icons/coming-soon.svg'
           }
         })

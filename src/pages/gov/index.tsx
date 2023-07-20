@@ -1,16 +1,10 @@
-import React from 'react'
 import Head from 'next/head'
-import { SWRConfig } from 'swr'
 
-import Gov from '../../templates/Gov'
+import Gov from '@/templates/Gov'
 
 export default function Index() {
   return (
-    <SWRConfig
-      value={{
-        refreshInterval: 30000
-      }}
-    >
+    <>
       <Head>
         <meta property="og:image:width" content="1012" />
         <meta property="og:image:height" content="506" />
@@ -24,7 +18,8 @@ export default function Index() {
           content="Create proposals, vote and help the Kassandra community flourish."
         />
       </Head>
+
       <Gov />
-    </SWRConfig>
+    </>
   )
 }

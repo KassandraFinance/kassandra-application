@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { useAppSelector } from '@/store/hooks'
-import usePoolInfo from '@/hooks/usePoolInfo'
+import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 
 import { AssetType } from '@/store/reducers/rebalanceAssetsSlice'
 
@@ -50,7 +50,10 @@ const ReviewTable = () => {
   )
 
   const [{ wallet }] = useConnectWallet()
-  const { poolInfo } = usePoolInfo(wallet, poolId)
+  const { data: poolInfo } = useManagerPoolInfo({
+    manager: wallet?.accounts[0].address,
+    id: poolId
+  })
 
   function handleCurrentViewTable(method: string, value: number) {
     if (method === 'next') {
@@ -91,26 +94,28 @@ const ReviewTable = () => {
       <S.PoolInfoContainer>
         <TokenWithNetworkImage
           tokenImage={{
-            url: poolInfo?.logo ?? '',
+            url: (poolInfo && poolInfo[0]?.logo) ?? '',
             height: 64,
             width: 64,
             withoutBorder: true
           }}
           networkImage={{
-            url: poolInfo?.chain.logo,
+            url: (poolInfo && poolInfo[0]?.chain?.logo) || '',
             height: 16,
             width: 16
           }}
           blockies={{
             size: 8,
             scale: 8,
-            seedName: poolInfo?.name ?? ''
+            seedName: (poolInfo && poolInfo[0]?.name) ?? ''
           }}
         />
-        <S.PoolInfo>
-          <p>{poolInfo?.name ?? ''}</p>
-          <span>{poolInfo?.symbol ?? ''}</span>
-        </S.PoolInfo>
+        {poolInfo && (
+          <S.PoolInfo>
+            <p>{poolInfo[0]?.name ?? ''}</p>
+            <span>{poolInfo[0]?.symbol ?? ''}</span>
+          </S.PoolInfo>
+        )}
       </S.PoolInfoContainer>
       <S.TableContainer>
         <S.Thead>

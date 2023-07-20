@@ -1,18 +1,13 @@
 import React from 'react'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
 
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import {
-  GET_TVM_CHART,
-  GET_CHANGE_TVL,
-  GET_WITHDRAWS,
-  GET_DEPOSITS,
-  GET_UNIQUE_INVESTORS
-} from './graphql'
+import { useManagerChangeTVL } from '@/hooks/query/useManagerChangeTVL'
+import { useManagerDeposits } from '@/hooks/query/useManagerDeposits'
+import { useManagerTVMChart } from '@/hooks/query/useManagerTVMChart'
+import { useManagerUniqueInvestors } from '@/hooks/query/useManagerUniqueInvestors'
+import { useManagerWithdraws } from '@/hooks/query/useManagerWithdraws'
 
 import { calcChange } from '@/utils/numerals'
 
@@ -38,7 +33,13 @@ const periods: Record<string, number> = {
   ALL: new Date().getTime() / 1000
 }
 
-const changeList = [
+type ChangeListType = {
+  name: string
+  key: 'day' | 'week' | 'month' | 'year' | 'max'
+  value: number
+}
+
+const changeList: ChangeListType[] = [
   {
     name: '1 Day',
     key: 'day',
@@ -77,56 +78,44 @@ const Overview = () => {
     ? getAddress(wallet.accounts[0].address)
     : ''
 
-  const { data } = useSWR(
-    [GET_TVM_CHART, walletAddress, tvlPeriod],
-    (query, userWalletAddress, tvlPeriod) =>
-      request(BACKEND_KASSANDRA, query, {
-        manager: userWalletAddress,
-        timestamp: Math.trunc(new Date().getTime() / 1000 - periods[tvlPeriod])
-      })
-  )
+  const { data } = useManagerTVMChart({
+    manager: walletAddress,
+    timestamp: Math.trunc(new Date().getTime() / 1000 - periods[tvlPeriod])
+  })
 
-  const { data: dataChange } = useSWR(
-    [GET_CHANGE_TVL, walletAddress],
-    (query, userWalletAddress) =>
-      request(BACKEND_KASSANDRA, query, {
-        manager: userWalletAddress,
-        day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-        week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
-        month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-        year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365)
-      })
-  )
+  const totalValueLockedChart = React.useMemo(() => {
+    if (!data) return
+    return data.total_value_locked.map(value => {
+      return {
+        close: Number(value.close),
+        timestamp: value.timestamp
+      }
+    })
+  }, [data])
 
-  const { data: withdraws } = useSWR(
-    [GET_WITHDRAWS, walletAddress, withdrawalPeriod],
-    (query, userWalletAddress, withdrawalPeriod) =>
-      request(BACKEND_KASSANDRA, query, {
-        manager: userWalletAddress,
-        timestamp: Math.trunc(
-          new Date().getTime() / 1000 - periods[withdrawalPeriod]
-        )
-      })
-  )
+  const { data: dataChange } = useManagerChangeTVL({
+    manager: walletAddress,
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+    week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365)
+  })
 
-  const { data: deposit } = useSWR(
-    [GET_DEPOSITS, walletAddress, depostiPeriod],
-    (query, userWalletAddress, depostiPeriod) =>
-      request(BACKEND_KASSANDRA, query, {
-        manager: userWalletAddress,
-        timestamp: Math.trunc(
-          new Date().getTime() / 1000 - periods[depostiPeriod]
-        )
-      })
-  )
+  const { data: withdraws } = useManagerWithdraws({
+    manager: walletAddress,
+    timestamp: Math.trunc(
+      new Date().getTime() / 1000 - periods[withdrawalPeriod]
+    )
+  })
 
-  const { data: uniqueInvestors } = useSWR(
-    [GET_UNIQUE_INVESTORS, walletAddress],
-    (query, userWalletAddress) =>
-      request(BACKEND_KASSANDRA, query, {
-        manager: userWalletAddress
-      })
-  )
+  const { data: deposit } = useManagerDeposits({
+    manager: walletAddress,
+    timestamp: Math.trunc(new Date().getTime() / 1000 - periods[depostiPeriod])
+  })
+
+  const { data: uniqueInvestors } = useManagerUniqueInvestors({
+    manager: walletAddress
+  })
 
   function handleWithdraws(
     withdraws: {
@@ -143,15 +132,12 @@ const Overview = () => {
   }
 
   const change = React.useMemo(() => {
-    if (!dataChange?.manager) return changeList
+    if (!dataChange) return changeList
     const calcChangeList = changeList.map(change => {
       return {
         name: change.name,
         value: Number(
-          calcChange(
-            dataChange.manager.now[0]?.close,
-            dataChange.manager[change.key][0]?.close
-          )
+          calcChange(dataChange.now[0]?.close, dataChange[change.key][0]?.close)
         )
       }
     })
@@ -166,9 +152,9 @@ const Overview = () => {
 
       <S.ManagerOverviewContainer>
         <S.ChartWrapper>
-          {data?.manager && dataChange?.manager ? (
+          {totalValueLockedChart && dataChange ? (
             <TVMChart
-              data={data?.manager?.total_value_locked || []}
+              data={totalValueLockedChart}
               changeList={change}
               selectedPeriod={tvlPeriod}
               setSelectedPeriod={setTvlPeriod}
@@ -181,9 +167,7 @@ const Overview = () => {
         <S.StatsContainer>
           <StatusCard
             title="Total Deposits"
-            value={`+${handleWithdraws(
-              deposit?.manager?.deposits || []
-            ).toFixed(2)}`}
+            value={`+${handleWithdraws(deposit?.deposits || []).toFixed(2)}`}
             status="POSITIVE"
             dataList={dataList}
             selected={depostiPeriod}
@@ -191,9 +175,7 @@ const Overview = () => {
           />
           <StatusCard
             title="Total Withdrawals"
-            value={`-${handleWithdraws(
-              withdraws?.manager?.withdraws || []
-            ).toFixed(2)}`}
+            value={`-${handleWithdraws(withdraws?.withdraws || []).toFixed(2)}`}
             status="NEGATIVE"
             dataList={dataList}
             selected={withdrawalPeriod}
@@ -201,9 +183,7 @@ const Overview = () => {
           />
           <StatusCard
             title="Unique Depositors"
-            value={
-              uniqueInvestors?.manager?.unique_investors?.toString() || '0'
-            }
+            value={uniqueInvestors?.unique_investors?.toString() || '0'}
           />
         </S.StatsContainer>
       </S.ManagerOverviewContainer>

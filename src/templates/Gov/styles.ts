@@ -8,10 +8,8 @@ export const VoteContent = styled.div`
   a {
     display: flex;
     justify-content: center;
-    margin-top: 3.2rem;
-    margin-right: auto;
-    margin-left: auto;
-    margin-bottom: 10rem;
+
+    margin: 3.2rem auto 10rem;
   }
 
   @media (max-width: 1200px) {
@@ -56,17 +54,25 @@ export const LinkForum = styled.a`
   display: flex;
   align-items: center;
 
-  line-height: ${theme.font.sizes.font16};
-  font-size: ${theme.font.sizes.font16};
-  text-decoration: none;
-
   margin: 0 !important;
   padding: 1.6rem 2.4rem;
-
-  border: 0.1rem solid rgba(255, 255, 255, 0.04);
+  border: 0.1rem solid rgb(255 255 255 / 0.04);
   border-radius: 0.8rem;
-  background: rgba(255, 255, 255, 0.04);
+
   color: ${theme.colors.grayDisabled};
+  font-size: ${theme.font.sizes.font16};
+  line-height: ${theme.font.sizes.font16};
+  text-decoration: none;
+
+  background: rgb(255 255 255 / 0.04);
+
+  &:hover {
+    border: 0.1rem solid rgb(255 255 255 / 0.5);
+  }
+
+  span {
+    margin-right: ${theme.spacings.space16};
+  }
 
   @media (max-width: 960px) {
     font-size: ${theme.font.sizes.font14};
@@ -82,13 +88,5 @@ export const LinkForum = styled.a`
 
   @media (max-width: 350px) {
     font-size: 1.2rem;
-  }
-
-  &:hover {
-    border: 0.1rem solid rgba(255, 255, 255, 0.5);
-  }
-
-  span {
-    margin-right: ${theme.spacings.space16};
   }
 `

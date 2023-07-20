@@ -1,18 +1,12 @@
 import Head from 'next/head'
 import { GetStaticProps } from 'next'
+import { dehydrate, QueryClient } from '@tanstack/react-query'
 
-import { BACKEND_KASSANDRA } from '../constants/tokenAddresses'
+import { fetchFeaturedPools } from '@/hooks/query/useFeaturedPools'
 
-import Explore from '../templates/Explore'
+import Explore from '@/templates/Explore'
 
-export interface IPoolAddress {
-  id: string
-}
-export interface IIndexProps {
-  poolsKassandra: IPoolAddress[]
-}
-
-export default function Index({ poolsKassandra }: IIndexProps) {
+export default function Index() {
   return (
     <>
       <Head>
@@ -61,53 +55,23 @@ export default function Index({ poolsKassandra }: IIndexProps) {
         <meta property="twitter:site" content="@dao_kassandra" />
       </Head>
 
-      <Explore poolsKassandra={poolsKassandra} />
+      <Explore />
     </>
   )
 }
 
-const props = `{
-  id
-  featured
-}`
-
-type Props = {
-  id: string
-  featured: null | boolean
-}
-
 export const getStaticProps: GetStaticProps = async () => {
+  const queryClient = new QueryClient()
+
   try {
-    const res = await fetch(BACKEND_KASSANDRA, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        query: `query { pools ${props} }`
-      })
+    await queryClient.prefetchQuery({
+      queryKey: ['featured-pools'],
+      queryFn: () => fetchFeaturedPools()
     })
-
-    const pools: Props[] = (await res.json())?.data.pools
-
-    if (!pools) throw new Error('pools not found')
-
-    const poolsId = pools.reduce(
-      (acc, { featured, id }) => {
-        if (featured) {
-          acc.poolsKassandra.push({ id })
-        }
-        return acc
-      },
-      {
-        // eslint-disable-next-line prettier/prettier
-        poolsKassandra: [] as Array<{ id: string }>
-      }
-    )
 
     return {
       props: {
-        poolsKassandra: poolsId.poolsKassandra
+        dehydrateState: dehydrate(queryClient)
       },
       revalidate: 30
     }

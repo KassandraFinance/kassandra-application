@@ -3,19 +3,13 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Big from 'big.js'
 import ReactMarkdown from 'react-markdown'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import {
-  GovernorAlpha,
-  Staking,
-  SUBGRAPH_URL
-} from '@/constants/tokenAddresses'
-import { GET_PROPOSAL } from './graphql'
+import { useProposal } from '@/hooks/query/useProposal'
+import { GovernorAlpha, Staking } from '@/constants/tokenAddresses'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
@@ -39,40 +33,6 @@ import proposalStatusHistory from '@assets/iconGradient/timer-grandient.svg'
 import tooltip from '@assets/utilities/tooltip.svg'
 
 import * as S from './styles'
-
-interface IRequestDataProposal {
-  proposal: [
-    {
-      number: number
-      description: string
-      forVotes: Big
-      againstVotes: Big
-      startBlock: string
-      endBlock: string
-      quorum: string
-      canceled: string
-      queued: string
-      values: []
-      calldatas: []
-      created: string
-      eta: string
-      executed: string
-      signatures: []
-      targets: []
-      proposer: {
-        id: string
-      }
-      votes: [
-        {
-          support: boolean
-          voter: {
-            id: string
-          }
-        }
-      ]
-    }
-  ]
-}
 
 export interface ModalProps {
   voteType: string
@@ -171,17 +131,10 @@ const Proposal = () => {
   const governance = useGov(GovernorAlpha)
   const votingPower = useVotingPower(Staking)
 
-  const idProposal = router.query.proposal
+  const idProposal = Number(router?.query?.proposal || 0)
 
   const walletAddress = wallet ? getAddress(wallet.accounts[0].address) : ''
-  const { data } = useSWR<IRequestDataProposal>(
-    [GET_PROPOSAL, idProposal, walletAddress],
-    (query, number, voter) =>
-      request(SUBGRAPH_URL, query, {
-        number: Number(number),
-        voter
-      })
-  )
+  const { data } = useProposal({ number: idProposal, voter: walletAddress })
 
   async function getProposalState(number: number) {
     governance.stateProposals(number).then(res => setProposalState(res[0]))

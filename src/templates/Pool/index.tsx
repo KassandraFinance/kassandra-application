@@ -1,17 +1,18 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 import Big from 'big.js'
 import Link from 'next/link'
-
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import { BNtoDecimal } from '../../utils/numerals'
+import { BNtoDecimal } from '@/utils/numerals'
 import substr from '@/utils/substr'
+import { useUserProfile } from '@/hooks/query/useUserProfile'
+import { usePoolInfo } from '@/hooks/query/usePoolInfo'
+import { usePoolData } from '@/hooks/query/usePoolData'
 
-import { useAppSelector, useAppDispatch } from '../../store/hooks'
+import { useAppDispatch } from '../../store/hooks'
 import { setTokensSwapProvider } from '../../store/reducers/tokenListSwapProvider'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
@@ -20,8 +21,6 @@ import {
   BACKEND_KASSANDRA,
   NATIVE_ADDRESS
 } from '../../constants/tokenAddresses'
-
-import { GET_INFO_POOL } from './graphql'
 
 import Breadcrumb from '../../components/Breadcrumb'
 import Loading from '../../components/Loading'
@@ -77,7 +76,6 @@ type ListTokensRes = {
 }
 
 const Pool = () => {
-  const [profileName, setProfileName] = React.useState(null)
   const [openModal, setOpenModal] = React.useState(false)
   const [loading, setLoading] = React.useState<boolean>(true)
   const [infoPool, setInfoPool] = React.useState<InfoPool>({
@@ -91,24 +89,16 @@ const Pool = () => {
 
   const { trackProductPageView, trackEventFunction } = useMatomoEcommerce()
 
-  const { pool } = useAppSelector(state => state)
   const dispatch = useAppDispatch()
 
-  const { data } = useSWR([GET_INFO_POOL], query =>
-    request(BACKEND_KASSANDRA, query, {
-      id: pool.id,
-      day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
-    })
-  )
+  const router = useRouter()
+  const { data: pool } = usePoolData({ id: router.query.address as string })
 
-  async function getProfile() {
-    const response = await fetch(`/api/profile/${pool.manager.id}`)
-    const userProfile = await response.json()
-
-    if (userProfile.nickname) {
-      setProfileName(userProfile.nickname)
-    }
-  }
+  const { data } = usePoolInfo({
+    id: pool?.id || '',
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
+  })
+  const { data: userProfile } = useUserProfile({ address: pool?.manager?.id })
 
   async function getTokensForOperations() {
     const resJson = await fetch(`${BACKEND_KASSANDRA}`, {
@@ -128,23 +118,53 @@ const Pool = () => {
             }
         }
         `,
-        variables: { chainId: pool.chain_id }
+        variables: { chainId: pool?.chain_id }
       })
     })
     const response = await resJson.json()
 
     const tokensSwapProvider = response.data.tokensByIds as ListTokensRes[]
     const tokenAddressesSwapProvider = tokensSwapProvider.map(token => token.id)
-    const poolAssets = [...pool.underlying_assets].sort(
-      (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
-    )
+    let poolAssets: {
+      __typename?: 'Asset' | undefined
+      balance: any
+      weight_normalized: any
+      weight_goal_normalized: any
+      token: {
+        __typename?: 'Token' | undefined
+        id: string
+        name?: string | null | undefined
+        logo?: string | null | undefined
+        symbol?: string | null | undefined
+        decimals?: number | null | undefined
+        price_usd: any
+        is_wrap_token: number
+        wraps?:
+          | {
+              __typename?: 'Token' | undefined
+              id: string
+              decimals?: number | null | undefined
+              price_usd: any
+              symbol?: string | null | undefined
+              name?: string | null | undefined
+              logo?: string | null | undefined
+            }
+          | null
+          | undefined
+      }
+    }[] = []
+    if (pool?.underlying_assets) {
+      poolAssets = [...pool.underlying_assets].sort(
+        (a, b) => Number(b.weight_normalized) - Number(a.weight_normalized)
+      )
+    }
     const formatTokensSwapProvider = [
       {
         address: NATIVE_ADDRESS,
-        decimals: pool.chain.nativeTokenDecimals,
-        logoURI: pool.chain.logo ?? '',
-        name: pool.chain.nativeTokenName,
-        symbol: pool.chain.nativeTokenSymbol
+        decimals: pool?.chain?.nativeTokenDecimals,
+        logoURI: pool?.chain?.logo ?? '',
+        name: pool?.chain?.nativeTokenName,
+        symbol: pool?.chain?.nativeTokenSymbol
       }
     ]
 
@@ -185,7 +205,7 @@ const Pool = () => {
     if (pool) {
       try {
         getTokensForOperations()
-        trackProductPageView(pool.id, pool.symbol, pool.name)
+        trackProductPageView(pool?.id || '', pool?.symbol || '', pool.name)
       } catch (error) {
         console.log(error)
       }
@@ -193,66 +213,54 @@ const Pool = () => {
   }, [pool])
 
   React.useEffect(() => {
-    if (data?.pool) {
-      const swapFees = data.pool.swap.reduce(
-        (acc: Big, current: { volume_usd: string }) => {
-          return Big(current.volume_usd).add(acc)
-        },
-        0
-      )
+    if (data) {
+      const swapFees = data.swap.reduce((acc, current) => {
+        return Big(current.volume_usd).add(acc)
+      }, Big(0))
 
-      const withdrawFees = data.pool.withdraw.reduce(
-        (acc: Big, current: { volume_usd: string }) => {
-          return Big(current.volume_usd).add(acc)
-        },
-        0
-      )
+      const withdrawFees = data.withdraw.reduce((acc, current) => {
+        return Big(current.volume_usd).add(acc)
+      }, Big(0))
 
-      const volume = data.pool.volumes.reduce(
-        (acc: Big, current: { volume_usd: string }) => {
-          return Big(current.volume_usd).add(acc)
-        },
-        0
-      )
+      const volume = data.volumes.reduce((acc, current) => {
+        return Big(current.volume_usd).add(acc)
+      }, Big(0))
 
       setInfoPool({
-        tvl: BNtoDecimal(Big(data.pool.total_value_locked_usd), 2, 2, 2),
+        tvl: BNtoDecimal(Big(data.total_value_locked_usd), 2, 2, 2),
         swapFees: BNtoDecimal(Big(swapFees), 2, 2, 2),
         withdrawFees: BNtoDecimal(Big(withdrawFees), 2, 2, 2),
         volume: BNtoDecimal(Big(volume), 2, 2, 2),
-        price: data.pool.price_usd,
-        decimals: data.pool.decimals
+        price: data.price_usd,
+        decimals: data.decimals
       })
     }
   }, [data])
 
-  React.useEffect(() => {
-    if (pool.manager.id !== '') {
-      getProfile()
-    }
-  }, [pool.manager.id])
-
   return (
     <>
       <ShareImageModal
-        poolId={pool.id}
+        poolId={pool?.id || ''}
         setOpenModal={setOpenModal}
         openModal={openModal}
-        productName={pool.symbol}
+        productName={pool?.symbol || ''}
       >
         <SharedImage
-          crpPoolAddress={pool.id}
+          crpPoolAddress={pool?.id || ''}
           totalValueLocked={infoPool.tvl}
-          socialIndex={pool.symbol}
-          productName={pool.name}
-          poolLogo={pool.logo}
-          tokens={pool.underlying_assets}
+          socialIndex={pool?.symbol || ''}
+          productName={pool?.name || ''}
+          poolLogo={pool?.logo || ''}
+          tokens={pool?.underlying_assets || []}
         />
       </ShareImageModal>
       <Breadcrumb>
         <BreadcrumbItem href="/">Invest</BreadcrumbItem>
-        <BreadcrumbItem href={`/pool/${pool.symbol.toLowerCase()}`} isLastPage>
-          ${pool.symbol}
+        <BreadcrumbItem
+          href={`/pool/${pool?.symbol?.toLowerCase()}`}
+          isLastPage
+        >
+          ${pool?.symbol}
         </BreadcrumbItem>
       </Breadcrumb>
       {loading ? (
@@ -266,31 +274,31 @@ const Pool = () => {
               <S.Intro introMobile={false} introDesktop={true}>
                 <TokenWithNetworkImage
                   tokenImage={{
-                    url: pool.logo,
+                    url: pool?.logo || '',
                     height: 75,
                     width: 75,
                     withoutBorder: true
                   }}
                   networkImage={{
-                    url: pool.chain?.logo,
+                    url: pool?.chain?.logo || '',
                     height: 20,
                     width: 20
                   }}
                   blockies={{
                     size: 8,
                     scale: 9,
-                    seedName: pool.name
+                    seedName: pool?.name || ''
                   }}
                 />
                 <S.NameIndex>
                   <S.NameAndSymbol>
-                    <h1>{pool.name}</h1>
+                    <h1>{pool?.name}</h1>
                     <button
                       onClick={() => {
                         setOpenModal(true)
                         trackEventFunction(
                           'click',
-                          `social-share-${pool.name}`,
+                          `social-share-${pool?.name}`,
                           'pool'
                         )
                       }}
@@ -304,15 +312,17 @@ const Pool = () => {
                     </button>
                   </S.NameAndSymbol>
                   <S.SymbolAndMade>
-                    <h3>${pool.symbol}</h3>
-                    {pool.manager.id && (
+                    <h3>${pool?.symbol}</h3>
+                    {pool?.manager?.id && (
                       <Link
-                        href={`/profile/${pool.manager.id}?tab=managed-pools`}
+                        href={`/profile/${pool?.manager.id}?tab=managed-pools`}
                         passHref
                       >
                         <a>
                           by{' '}
-                          {profileName ? profileName : substr(pool.manager.id)}
+                          {userProfile?.nickname
+                            ? userProfile.nickname
+                            : substr(pool?.manager?.id)}
                         </a>
                       </Link>
                     )}
@@ -390,22 +400,24 @@ const Pool = () => {
               <ScrollUpButton />
               <Change />
               <FeeBreakdown
-                feeJoinBroker={data.pool.fee_join_broker}
-                feeJoinManager={data.pool.fee_join_manager}
-                feeAum={data.pool.fee_aum}
-                feeAumKassandra={data.pool.fee_aum_kassandra}
-                withdrawFee={data.pool.fee_exit}
+                feeJoinBroker={data?.fee_join_broker || 0}
+                feeJoinManager={data?.fee_join_manager || 0}
+                feeAum={data?.fee_aum || 0}
+                feeAumKassandra={data?.fee_aum_kassandra || 0}
+                withdrawFee={data?.fee_exit || 0}
               />
-              <MyAsset
-                chain={pool.chain}
-                poolToken={pool.address}
-                symbol={pool.symbol}
-                price={infoPool.price}
-                pid={pool.poolId}
-                decimals={infoPool.decimals}
-              />
+              {pool && (
+                <MyAsset
+                  chain={pool?.chain}
+                  poolToken={pool?.address || ''}
+                  symbol={pool?.symbol || ''}
+                  price={infoPool.price}
+                  pid={pool.poolId || 0}
+                  decimals={infoPool.decimals}
+                />
+              )}
               <Summary />
-              {pool.partners && <PoweredBy />}
+              {pool?.partners && <PoweredBy />}
               <Distribution />
               <ActivityTable />
               <TokenDescription />

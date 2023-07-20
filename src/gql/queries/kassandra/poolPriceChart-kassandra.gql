@@ -1,0 +1,13 @@
+query poolPriceChart($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      value: price_candles(
+        where: { base: "usd", timestamp_gt: $timestamp, period: 3600 }
+        orderBy: timestamp
+        orderDirection: asc
+        first: 1000
+      ) {
+        close
+        timestamp
+      }
+    }
+  }

@@ -1,0 +1,31 @@
+query ManagerPoolInfo($manager: String, $id: ID) {
+      pools(where: { manager: $manager, id: $id }) {
+        id
+        address
+        vault
+        chain_id
+        logo
+        pool_version
+        is_private_pool
+        decimals
+        chain {
+          id
+          logo
+          chainName
+          nativeTokenName
+          nativeTokenSymbol
+          nativeTokenDecimals
+          rpcUrls
+          blockExplorerUrl
+          secondsPerBlock
+          addressWrapped
+        }
+        name
+        symbol
+        poolId
+        total_value_locked_usd
+        underlying_assets_addresses
+        controller
+        price_usd
+      }
+    }

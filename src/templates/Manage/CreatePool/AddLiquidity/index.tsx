@@ -9,7 +9,8 @@ import {
   setLiquidity,
   setMethodCreate
 } from '@/store/reducers/poolCreationSlice'
-import useCoingecko from '@/hooks/useCoingecko'
+import { useTokensData, CoinsMetadataType } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 
 import {
   mockTokens,
@@ -25,22 +26,6 @@ import AddLiquidityTable from './AddLiquidityTable'
 import AddLiquidityAsset from './AddLiquidityAsset'
 
 import * as S from './styles'
-
-export type CoinGeckoResponseType = {
-  [key: string]: {
-    heimdallId: string
-    name: string
-    symbol: string
-    logo: string
-    usd: string
-    marketCap: number
-    volume: number
-    pricePercentageChangeIn24h: number
-    pricePercentageChangeIn7d: number
-    decimals: number
-    sparklineFrom7d: number[]
-  }
-}
 
 export type BalancesType = Record<string, Big>
 
@@ -94,7 +79,7 @@ const AddLiquidity = () => {
     )
   }
 
-  function handleMaxClick(priceList: CoinGeckoResponseType) {
+  function handleMaxClick(priceList: CoinsMetadataType) {
     let min = Big('99999999999999999999999999999999999999999999999999')
     let tokenSymbol = ''
     let liquidity = Big(0)
@@ -124,11 +109,15 @@ const AddLiquidity = () => {
     )
   }
 
-  const { data, priceToken } = useCoingecko(
-    networkId ?? 137,
-    networks[networkId ?? 137].nativeCurrency.address,
-    []
-  )
+  const { data } = useTokensData({
+    chainId: networkId || 137,
+    tokenAddresses: []
+  })
+
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: networks[networkId ?? 137].nativeCurrency.address,
+    tokens: data || {}
+  })
 
   React.useEffect(() => {
     if (!tokensList) {

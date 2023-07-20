@@ -1,0 +1,6 @@
+query PoolsPriceList($addresses: [ID!]) {
+  pools(where: { id_in: $addresses }) {
+    price_usd
+    address
+  }
+}

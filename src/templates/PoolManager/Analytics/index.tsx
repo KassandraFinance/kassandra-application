@@ -1,31 +1,23 @@
 import React from 'react'
 import router from 'next/router'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import Big from 'big.js'
 
-import TitleSection from '../../../components/TitleSection'
-import TVMChart from '../../../components/Manage/TVMChart'
-import StatusCard from '../../../components/Manage/StatusCard'
+import { usePoolChainId } from '@/hooks/query/usePoolChainId'
+import { usePoolJoins } from '@/hooks/query/usePoolJoins'
+import { usePoolWithdraws } from '@/hooks/query/usePoolWithdraws'
+import { usePoolChangePrice } from '@/hooks/query/usePoolChangePrice'
+import { usePoolChangeTvl } from '@/hooks/query/usePoolChangeTvl'
+import { usePoolTvmChart } from '@/hooks/query/usePoolTvmChart'
+import { usePoolPriceChart } from '@/hooks/query/usePoolPriceChart'
+
+import TitleSection from '@/components/TitleSection'
+import TVMChart from '@/components/Manage/TVMChart'
+import StatusCard from '@/components/Manage/StatusCard'
 import Loading from '@/components/Loading'
-import { DataType } from '@/components/Manage/TVMChart/Chart'
 
 import PoolAssets from './PoolAssets'
 
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 import { BNtoDecimal, calcChange } from '@/utils/numerals'
-import { calcVolatility } from '../utils'
-import {
-  GET_CHAINID,
-  GET_CHANGE_PRICE,
-  GET_CHANGE_TVL,
-  GET_JOINS,
-  GET_PRICE_CHART,
-  GET_SHARPRATIO,
-  GET_TVM_CHART,
-  GET_VOLATILITY,
-  GET_WITHDRAWS
-} from './graphql'
 
 import poolsAssetsIcon from '@assets/iconGradient/assets-distribution.svg'
 
@@ -41,13 +33,18 @@ const periods: Record<string, number> = {
   ALL: new Date().getTime() / 1000
 }
 
-const changeList = [
+type ChangeListType = {
+  name: string
+  key: 'week' | 'month' | 'year' | 'max'
+  value: number
+}
+
+const changeList: ChangeListType[] = [
   {
     name: '1 Week',
     key: 'week',
     value: 0
   },
-
   {
     name: '1 Month',
     key: 'month',
@@ -69,22 +66,7 @@ interface IAnalyticsProps {
   poolId: string
 }
 
-type Result = {
-  pool: {
-    value: DataType[]
-  }
-}
-
-type ResultOperation = {
-  pool: {
-    volumes: {
-      volume_usd: string
-    }[]
-  }
-}
-
 const Analytics = (props: IAnalyticsProps) => {
-  // const [volatilityPeriod, setVolatilityPeriod] = React.useState<string>('1M')
   const [withdrawalPeriod, setWithdrawalPeriod] = React.useState<string>('1D')
   const [investPeriod, setInvestPeriod] = React.useState<string>('1D')
   const [selectedPeriod, setSelectedPeriod] = React.useState<string>('1W')
@@ -94,167 +76,93 @@ const Analytics = (props: IAnalyticsProps) => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { data } = useSWR<Result>(
-    [
-      selectedType === 'price' ? GET_PRICE_CHART : GET_TVM_CHART,
-      id,
-      selectedPeriod
-    ],
-    (query, id, selectedPeriod) =>
-      request(BACKEND_KASSANDRA, query, {
-        id,
-        timestamp: Math.trunc(
-          new Date().getTime() / 1000 - periods[selectedPeriod]
-        )
-      }),
-    {
-      refreshInterval: 60 * 1000
-    }
-  )
+  const { data: dataTvmChart } = usePoolTvmChart({
+    id,
+    timestamp: Math.trunc(
+      new Date().getTime() / 1000 - periods[selectedPeriod]
+    ),
+    enabled: selectedType !== 'price'
+  })
+  const { data: dataPriceChart } = usePoolPriceChart({
+    id,
+    timestamp: Math.trunc(
+      new Date().getTime() / 1000 - periods[selectedPeriod]
+    ),
+    enabled: selectedType === 'price'
+  })
 
-  const { data: dataChainId } = useSWR(
-    [GET_CHAINID, id],
-    (query, id) =>
-      request(BACKEND_KASSANDRA, query, {
-        id
-      }),
-    {
-      refreshInterval: 60 * 60 * 1000
-    }
-  )
+  const data = selectedType === 'price' ? dataPriceChart : dataTvmChart
 
-  const { data: dataChange } = useSWR(
-    [
-      selectedType === 'price' ? GET_CHANGE_PRICE : GET_CHANGE_TVL,
-      id,
-      selectedPeriod
-    ],
-    (query, id) =>
-      request(BACKEND_KASSANDRA, query, {
-        id,
-        week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
-        month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-        year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365)
-      }),
-    {
-      refreshInterval: 60 * 1000
-    }
-  )
+  const { data: dataChainId } = usePoolChainId({ id })
 
-  // const { data: dataVolatility } = useSWR<Result>(
-  //   [GET_VOLATILITY, id, volatilityPeriod],
-  //   (query, id, volatilityPeriod) =>
-  //     request(BACKEND_KASSANDRA, query, {
-  //       id,
-  //       timestamp: Math.trunc(
-  //         new Date().getTime() / 1000 - periods[volatilityPeriod]
-  //       )
-  //     }),
-  //   {
-  //     refreshInterval: 60 * 1000
-  //   }
-  // )
+  const { data: dataChangePrice } = usePoolChangePrice({
+    id,
+    week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365),
+    enabled: selectedType === 'price'
+  })
 
-  const { data: dataWithdraws } = useSWR<ResultOperation>(
-    [GET_WITHDRAWS, id, withdrawalPeriod],
-    (query, id, withdrawalPeriod) =>
-      request(BACKEND_KASSANDRA, query, {
-        id,
-        timestamp: Math.trunc(
-          new Date().getTime() / 1000 - periods[withdrawalPeriod]
-        )
-      }),
-    {
-      refreshInterval: 60 * 1000
-    }
-  )
+  const { data: dataChangeTvl } = usePoolChangeTvl({
+    id,
+    week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365),
+    enabled: selectedType !== 'price'
+  })
 
-  const { data: dataInvest } = useSWR<ResultOperation>(
-    [GET_JOINS, id, investPeriod],
-    (query, id, investPeriod) =>
-      request(BACKEND_KASSANDRA, query, {
-        id,
-        timestamp: Math.trunc(
-          new Date().getTime() / 1000 - periods[investPeriod]
-        )
-      }),
-    {
-      refreshInterval: 60 * 1000
-    }
-  )
+  const { data: dataWithdraws } = usePoolWithdraws({
+    id,
+    timestamp: Math.trunc(
+      new Date().getTime() / 1000 - periods[withdrawalPeriod]
+    )
+  })
 
-  // const { data: dataSharpRatio } = useSWR<Result>(
-  //   [GET_SHARPRATIO, id, volatilityPeriod],
-  //   (query, id) =>
-  //     request(BACKEND_KASSANDRA, query, {
-  //       id,
-  //       timestamp: Math.trunc(new Date().getTime() / 1000 - 60 * 60 * 24 * 365)
-  //     }),
-  //   {
-  //     refreshInterval: 60 * 1000
-  //   }
-  // )
+  const { data: dataInvest } = usePoolJoins({
+    id,
+    timestamp: Math.trunc(new Date().getTime() / 1000 - periods[investPeriod])
+  })
 
   const withdraws = React.useMemo(() => {
-    if (!dataWithdraws?.pool) return '0'
-    return dataWithdraws.pool.volumes
+    if (!dataWithdraws) return '0'
+    return dataWithdraws.volumes
       .reduce((acc, volume) => acc.add(volume.volume_usd), Big(0))
       .toFixed(3)
   }, [dataWithdraws])
 
   const joins = React.useMemo(() => {
-    if (!dataInvest?.pool) return '0'
-    return dataInvest.pool.volumes
+    if (!dataInvest) return '0'
+    return dataInvest.volumes
       .reduce((acc, volume) => acc.add(volume.volume_usd), Big(0))
       .toFixed(3)
   }, [dataInvest])
 
-  // const volatility = React.useMemo(() => {
-  //   if (dataVolatility?.pool?.value?.length) {
-  //     return calcVolatility(dataVolatility.pool.value)
-  //   }
-  //   return '0'
-  // }, [dataVolatility])
-
+  const dataChange = selectedType === 'price' ? dataChangePrice : dataChangeTvl
   const change = React.useMemo(() => {
-    if (!dataChange?.pool) return changeList
+    if (!dataChange) return changeList
     const calcChangeList = changeList.map(change => {
       return {
         name: change.name,
         value: Number(
-          calcChange(
-            dataChange.pool.now[0]?.close,
-            dataChange.pool[change.key][0]?.close
-          )
+          calcChange(dataChange.now[0]?.close, dataChange[change.key][0]?.close)
         )
       }
     })
     return calcChangeList
   }, [dataChange])
 
-  // const sharpRatio = React.useMemo(() => {
-  //   if (!dataSharpRatio?.pool?.value?.length) return '0'
-  //   const volatility = calcVolatility(dataSharpRatio.pool.value)
-  //   if (Big(volatility).lte(0)) return '0'
-  //   const total = dataSharpRatio.pool.value.reduce((acc, value, i) => {
-  //     const oldClose = dataSharpRatio.pool.value[i + 1]?.close
-  //     if (!oldClose) return acc
-  //     return acc.add(calcChange(Number(value.close), Number(oldClose)))
-  //   }, Big(0))
-
-  //   return total
-  //     .div(dataSharpRatio.pool.value.length)
-  //     .div(volatility)
-  //     .toFixed(2)
-  // }, [dataSharpRatio])
-
   return (
     <S.Analytics>
       <S.ManagerOverviewContainer>
         <S.ChartWrapper>
-          {data?.pool && dataChange?.pool ? (
+          {data && dataChange ? (
             <TVMChart
-              data={data.pool.value}
+              data={data.value.map(value => {
+                return {
+                  close: Number(value.close),
+                  timestamp: value.timestamp
+                }
+              })}
               selectedPeriod={selectedPeriod}
               setSelectedPeriod={setSelectedPeriod}
               selectedType={selectedType}
@@ -268,14 +176,6 @@ const Analytics = (props: IAnalyticsProps) => {
         </S.ChartWrapper>
 
         <S.StatsContainer>
-          {/* <StatusCard
-            title="Volatility"
-            value={volatility}
-            status={'NEUTRAL'}
-            dataList={['1M', '3M', '6M', '1Y', 'ALL']}
-            selected={volatilityPeriod}
-            onClick={(period: string) => setVolatilityPeriod(period)}
-          /> */}
           <StatusCard
             title="Total Deposits"
             value={`${Big(joins).eq(0) ? '$' : '+$'}${BNtoDecimal(
@@ -300,29 +200,15 @@ const Analytics = (props: IAnalyticsProps) => {
           />
           <StatusCard
             title="Unique Depositors"
-            value={
-              dataChainId?.pool?.unique_investors
-              // uniqueInvestors?.manager?.unique_investors?.toString() || '0'
-            }
+            value={dataChainId?.unique_investors?.toString() || ''}
           />
-          {/* <StatusCard
-            title="Sharpe ratio"
-            value={sharpRatio}
-            status={
-              Big(sharpRatio).lt(1)
-                ? 'NEGATIVE'
-                : Big(sharpRatio).lt(2)
-                ? 'NEUTRAL'
-                : 'POSITIVE'
-            }
-          /> */}
         </S.StatsContainer>
       </S.ManagerOverviewContainer>
       <S.TitleWrapper>
         <TitleSection title="Pool Assets" image={poolsAssetsIcon} />
       </S.TitleWrapper>
-      {dataChainId?.pool && (
-        <PoolAssets poolId={props.poolId} chainId={dataChainId.pool.chain_id} />
+      {dataChainId && (
+        <PoolAssets poolId={props.poolId} chainId={dataChainId.chain_id} />
       )}
     </S.Analytics>
   )

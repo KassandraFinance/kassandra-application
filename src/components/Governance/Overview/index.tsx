@@ -1,17 +1,12 @@
-import React from 'react'
 import Image from 'next/image'
-import useSWR from 'swr'
 import 'tippy.js/dist/tippy.css'
 import Tippy from '@tippyjs/react'
-import { getAddress } from 'ethers'
-import { request } from 'graphql-request'
 import { useConnectWallet } from '@web3-onboard/react'
 import Big from 'big.js'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
-import { SUBGRAPH_URL } from '@/constants/tokenAddresses'
-import { GET_GOVERNANCES } from './graphql'
+import { useVotingPower } from '@/hooks/query/useVotingPower'
 
 import Button from '@/components/Button'
 
@@ -22,13 +17,7 @@ import * as S from './styles'
 export const Overview = () => {
   const [{ wallet, connecting }, conect] = useConnectWallet()
 
-  const userWalletAddress = wallet ? getAddress(wallet.accounts[0].address) : ''
-
-  const { data } = useSWR(
-    [GET_GOVERNANCES, userWalletAddress],
-    (query, userWalletAddress) =>
-      request(SUBGRAPH_URL, query, { id: userWalletAddress })
-  )
+  const { data } = useVotingPower({ id: wallet?.accounts[0].address || '' })
 
   return (
     <>

@@ -24,37 +24,50 @@ import {
 } from '@ui/Modals/ModalViewCoin/styles'
 
 type IPoolsInfosProps = {
+  __typename?: 'Pool' | undefined
   id: string
-  address: string
-  logo: string | null
   name: string
-  price_usd: string
   symbol: string
-  total_value_locked_usd: string
+  logo?: string | null | undefined
+  address: string
+  price_usd: any
+  total_value_locked_usd: any
   is_private_pool: boolean
-  chain: {
-    logo: string
-  }
+  chain?:
+    | {
+        __typename?: 'Chain' | undefined
+        logo?: string | null | undefined
+      }
+    | null
+    | undefined
+  volumes: {
+    __typename?: 'Volume' | undefined
+    volume_usd: any
+  }[]
   now: {
-    close: string
+    __typename?: 'Candle' | undefined
     timestamp: number
+    close: any
   }[]
   day: {
-    close: string
+    __typename?: 'Candle' | undefined
     timestamp: number
+    close: any
   }[]
   month: {
-    close: string
+    __typename?: 'Candle' | undefined
     timestamp: number
-  }[]
-  volumes: {
-    volume_usd: string
+    close: any
   }[]
   weight_goals: {
+    __typename?: 'WeightGoalPoint' | undefined
     weights: {
+      __typename?: 'WeightGoal' | undefined
       asset: {
+        __typename?: 'Asset' | undefined
         token: {
-          logo: string
+          __typename?: 'Token' | undefined
+          logo?: string | null | undefined
         }
       }
     }[]
@@ -89,9 +102,12 @@ const CommunityPoolsTable = ({
     price: string
     tvl: string
     assets: {
+      __typename?: 'WeightGoal' | undefined
       asset: {
+        __typename?: 'Asset' | undefined
         token: {
-          logo: string | null
+          __typename?: 'Token' | undefined
+          logo?: string | null | undefined
         }
       }
     }[]
@@ -134,9 +150,12 @@ const CommunityPoolsTable = ({
     price: string,
     tvl: string,
     assets: {
+      __typename?: 'WeightGoal' | undefined
       asset: {
+        __typename?: 'Asset' | undefined
         token: {
-          logo: string | null
+          __typename?: 'Token' | undefined
+          logo?: string | null | undefined
         }
       }
     }[],
@@ -360,7 +379,7 @@ const CommunityPoolsTable = ({
                         event.preventDefault()
                         handleViewMobile(
                           pool.name,
-                          pool.logo,
+                          pool?.logo || '',
                           pool.price_usd,
                           pool.total_value_locked_usd,
                           pool.weight_goals[0].weights,

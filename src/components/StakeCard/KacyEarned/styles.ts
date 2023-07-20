@@ -4,6 +4,7 @@ import theme from '../../../styles/theme'
 export const KacyEarned = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 0.2rem;
 
   p {
     font-size: ${theme.font.sizes.font14};
@@ -17,7 +18,7 @@ export const KacyEarned = styled.div`
   h3 {
     font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.medium};
-    margin: 2px 0 !important;
+    margin: 0.2rem 0 !important;
   }
 
   span {

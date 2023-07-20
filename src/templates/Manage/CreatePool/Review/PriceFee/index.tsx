@@ -1,9 +1,9 @@
 import React from 'react'
-import useSWR from 'swr'
 
 import useGasFee from '@/hooks/useGasFee'
 import { useAppSelector } from '@/store/hooks'
-import { COINGECKO_API, networks } from '@/constants/tokenAddresses'
+import { networks } from '@/constants/tokenAddresses'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import * as S from './styles'
 
@@ -18,9 +18,10 @@ const PriceFee = () => {
   )
   const { gasFee } = useGasFee(networkId || 137)
 
-  const { data } = useSWR(
-    `${COINGECKO_API}/simple/price?ids=wmatic&vs_currencies=usd`
-  )
+  const { data } = useTokensData({
+    chainId: 137,
+    tokenAddresses: ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']
+  })
 
   React.useEffect(() => {
     async function getGasFee() {
@@ -50,7 +51,11 @@ const PriceFee = () => {
               </span>
               {data && (
                 <p>
-                  ${(data?.wmatic?.usd * Number(estimateGas.gas)).toFixed(6)}{' '}
+                  $
+                  {(
+                    data['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'].usd *
+                    Number(estimateGas.gas)
+                  ).toFixed(6)}{' '}
                   USD
                 </p>
               )}

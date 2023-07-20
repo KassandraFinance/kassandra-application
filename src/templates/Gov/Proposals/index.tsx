@@ -1,12 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
-import useSWR from 'swr'
 import { getAddress } from 'ethers'
-import { request } from 'graphql-request'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { SUBGRAPH_URL } from '@/constants/tokenAddresses'
-import { GET_ALL_PROPOSALS } from './graphql'
+import { useProposals } from '@/hooks/query/useProposals'
 
 import TitleSection from '@/components/TitleSection'
 import Breadcrumb from '@/components/Breadcrumb'
@@ -33,9 +30,7 @@ const Proposals = () => {
     setSkip(data.selected * take)
   }
 
-  const { data: allProposals } = useSWR([GET_ALL_PROPOSALS], query =>
-    request(SUBGRAPH_URL, query)
-  )
+  const { data } = useProposals({ skip: 0, take: 1 })
 
   return (
     <>
@@ -84,9 +79,7 @@ const Proposals = () => {
         <Pagination
           take={take}
           skip={skip}
-          totalItems={
-            (allProposals?.proposals && allProposals?.proposals.length) || 0
-          }
+          totalItems={(data && data[0].number) || 0}
           handlePageClick={handlePageClick}
         />
       </S.VoteContent>

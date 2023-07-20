@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import useSWR from 'swr'
 import { useConnectWallet } from '@web3-onboard/react'
 import Big from 'big.js'
 
@@ -8,6 +7,7 @@ import { ERC20 } from '@/hooks/useERC20'
 import useStakingContract from '@/hooks/useStaking'
 import { poolsKacy, allPools } from '@/constants/pools'
 import { Staking, networks } from '@/constants/tokenAddresses'
+import { useKacyData } from '@/hooks/query/useKacyData'
 
 import { abbreviateNumber } from '@/utils/abbreviateNumber'
 
@@ -19,13 +19,6 @@ import ModalBridge from '../ModalBridge'
 import kacyIcon from '@assets/logos/kacy-96.svg'
 
 import * as S from './styles'
-
-interface IKacyMarketDataProps {
-  price: number
-  marketCap: number
-  supply: number
-  kacyPercentage: number
-}
 
 const KACY_MULTICHAIN = [
   {
@@ -40,13 +33,6 @@ const ModalKacy = () => {
   const [isModalKacy, setIsModalKacy] = React.useState(false)
   const [isOpenModal, setIsOpenModal] = React.useState<boolean>(false)
   const [isModalBridge, setIsModalBridge] = React.useState(false)
-  const [kacyMarketData, setKacyMarketData] =
-    React.useState<IKacyMarketDataProps>({
-      price: 0,
-      marketCap: 0,
-      supply: 0,
-      kacyPercentage: 0
-    })
   const [kacyStaked, setKacyStaked] = React.useState<Big>(Big(0))
   const [kacyUnclaimed, setKacyUnclaimed] = React.useState<Record<number, Big>>(
     {
@@ -60,22 +46,11 @@ const ModalKacy = () => {
   const [kacyTotal, setKacyTotal] = React.useState<Big>(Big(0))
 
   const [{ wallet }] = useConnectWallet()
-  const { data } = useSWR('/api/overview')
+  const { data } = useKacyData()
 
   const { userInfo, earnedMultChain } = useStakingContract(Staking)
 
   const isKacyZeroValue = kacyTotal.eq(Big(0))
-
-  React.useEffect(() => {
-    if (data) {
-      setKacyMarketData({
-        price: data.kacyPrice,
-        marketCap: data.marketCap,
-        supply: data.supply,
-        kacyPercentage: data.kacyPercentage
-      })
-    }
-  }, [data])
 
   React.useEffect(() => {
     async function getKacyBalanceInWallet(wallet: string) {
@@ -182,8 +157,8 @@ const ModalKacy = () => {
 
       {isModalKacy && (
         <Kacy
-          price={kacyMarketData.price ?? 0}
-          supply={kacyMarketData.supply}
+          price={data?.kacyPrice || 0}
+          supply={data?.supply || 0}
           kacyStaked={kacyStaked}
           kacyUnclaimed={kacyUnclaimed}
           kacyWallet={kacyWallet}

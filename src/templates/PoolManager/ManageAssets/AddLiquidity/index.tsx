@@ -3,9 +3,9 @@ import { useRouter } from 'next/router'
 import Big from 'big.js'
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import usePoolAssets from '@/hooks/usePoolAssets'
+import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 
-import { setWeights, AssetType } from '../../../../store/reducers/addAssetSlice'
+import { setWeights } from '../../../../store/reducers/addAssetSlice'
 
 import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 import Steps from '../../../../components/Steps'
@@ -26,7 +26,7 @@ const AddLiquidity = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { poolAssets } = usePoolAssets(poolId)
+  const { data: poolAssets } = usePoolAssets({ id: poolId })
 
   const allocationTokenAdd = useAppSelector(
     state => state.addAsset.liquidit.allocation
@@ -36,10 +36,7 @@ const AddLiquidity = () => {
 
   const dispatch = useAppDispatch()
 
-  function getNewAllocation(
-    tokensArr: AssetType[],
-    allocationTokenAdd: string
-  ) {
+  function getNewAllocation(tokensArr: any[], allocationTokenAdd: string) {
     const allocationTokenAddFormatted = Big(allocationTokenAdd || '0').div(100)
 
     const newArr = tokensArr.map(token => {
@@ -68,9 +65,10 @@ const AddLiquidity = () => {
   }
 
   React.useEffect(() => {
-    if (poolAssets) {
-      dispatch(setWeights(getNewAllocation(poolAssets, allocationTokenAdd)))
+    if (!poolAssets) {
+      return
     }
+    dispatch(setWeights(getNewAllocation(poolAssets, allocationTokenAdd)))
   }, [allocationTokenAdd])
 
   return (

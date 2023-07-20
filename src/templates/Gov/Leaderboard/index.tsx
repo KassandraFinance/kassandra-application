@@ -17,7 +17,7 @@ const Leaderboard = () => {
   const router = useRouter()
 
   const take = 10
-  const page = typeof router.query.page === 'string' ? router.query.page : '0'
+  const page = typeof router.query.page === 'string' ? router.query.page : '1'
 
   function handlePageClick(data: { selected: number }) {
     router.push({
@@ -43,7 +43,7 @@ const Leaderboard = () => {
       <S.VoteContent>
         <S.VotingPowerLeaderboard>
           <TitleSection image={votingPower} title="Voting Power Leaderboard" />
-          {<VotingPowerTable skip={skip} take={take} />}
+          <VotingPowerTable skip={skip} take={take} />
         </S.VotingPowerLeaderboard>
       </S.VoteContent>
 

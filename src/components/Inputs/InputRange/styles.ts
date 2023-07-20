@@ -61,7 +61,8 @@ export const InputRange = styled.input`
 
     ::-webkit-slider-thumb:active {
       box-shadow: #8b8b8b50 0 0 0 1.1rem;
-      transition: box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+      transition:
+        box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
         left 350ms cubic- bezier(0.4, 0, 0.2, 1) 0ms,
         bottom 350ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     }

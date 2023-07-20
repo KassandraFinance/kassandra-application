@@ -26,12 +26,11 @@ export const ImageWrapper = styled.div`
 `
 
 export const TextWrapper = styled.div`
-  ${() =>
-    css`
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    `}
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  `}
 `
 
 export const Name = styled.span`

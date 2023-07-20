@@ -5,54 +5,76 @@ import { BNtoDecimal } from '@/utils/numerals'
 import { ActivityCardProps, activityProps } from '../Activity'
 
 type IActivityProps = {
+  __typename?: 'Activity' | undefined
   id: string
-  type: 'join' | 'exit'
-  symbol: string[]
-  amount: string[]
-  price_usd: string[]
-  txHash: string
+  type: string
   timestamp: number
+  price_usd: any[]
+  txHash: string
   address: string
+  symbol: string[]
+  amount: any[]
 }
 
 type IUnderlyingAssetsProps = {
+  __typename?: 'Asset' | undefined
   token: {
-    logo: string
-    symbol: string
-    wraps: {
-      symbol: string
-      logo: string
-    }
+    __typename?: 'Token' | undefined
+    logo?: string | null | undefined
+    symbol?: string | null | undefined
+    wraps?:
+      | {
+          __typename?: 'Token' | undefined
+          symbol?: string | null | undefined
+          logo?: string | null | undefined
+        }
+      | null
+      | undefined
   }
 }
 
 type IWeightGoalsProps = {
+  __typename?: 'WeightGoalPoint' | undefined
   id: string
-  type: 'rebalance' | 'add' | 'removed'
+  type: string
   txHash: string
   end_timestamp: number
-  previous: {
-    weights: {
-      weight_normalized: string
-      asset: {
-        token: {
-          symbol: string
-        }
+  previous?:
+    | {
+        __typename?: 'WeightGoalPoint' | undefined
+        weights: {
+          __typename?: 'WeightGoal' | undefined
+          weight_normalized: any
+          asset: {
+            __typename?: 'Asset' | undefined
+            token: {
+              __typename?: 'Token' | undefined
+              symbol?: string | null | undefined
+            }
+          }
+        }[]
       }
-    }[]
-  }
-  token: {
-    symbol: string
-    logo: string
-    price_usd: string
-  }
+    | null
+    | undefined
+  token?:
+    | {
+        __typename?: 'Token' | undefined
+        symbol?: string | null | undefined
+        price_usd: any
+        logo?: string | null | undefined
+      }
+    | null
+    | undefined
   weights: {
-    weight_normalized: string
+    __typename?: 'WeightGoal' | undefined
+    weight_normalized: any
     asset: {
-      balance: string
+      __typename?: 'Asset' | undefined
+      balance: any
       token: {
-        symbol: string
-        logo: string
+        __typename?: 'Token' | undefined
+        symbol?: string | null | undefined
+        logo?: string | null | undefined
       }
     }
   }[]
@@ -135,8 +157,10 @@ export function getManagerActivity(
           amount: '0',
           logo: operation.asset.token.logo ?? '',
           newWeight: Big(operation.weight_normalized).mul(100).toFixed(2),
-          symbol: operation.asset.token.symbol,
-          weight: Big(weightGoals[i].previous.weights[_i].weight_normalized)
+          symbol: operation.asset.token?.symbol || '',
+          weight: Big(
+            weightGoals[i].previous?.weights[_i].weight_normalized || 0
+          )
             .mul(100)
             .toFixed(2),
           value: '0'
@@ -154,12 +178,12 @@ export function getManagerActivity(
           wallet: userWalletAddress
         })
         const indexOfActivityInfo = activityInfo.length - 1
-        const symbol = activity.token.symbol
+        const symbol = activity.token?.symbol || ''
         let weightNormalized = '0'
         let newWeight = '0'
         if (activity.type === 'removed') {
           weightNormalized =
-            weightGoals[i].previous.weights.find(
+            weightGoals[i].previous?.weights.find(
               weight => weight.asset.token.symbol === symbol
             )?.weight_normalized ?? '0'
         } else {
@@ -177,9 +201,9 @@ export function getManagerActivity(
               amount: '0',
               logo: operation.asset.token.logo ?? '',
               newWeight: Big(operation.weight_normalized).mul(100).toFixed(2),
-              symbol: operation.asset.token.symbol,
+              symbol: operation.asset.token?.symbol || '',
               weight: Big(
-                weightGoals[i].previous.weights.find(
+                weightGoals[i].previous?.weights.find(
                   item =>
                     item.asset.token.symbol === operation.asset.token.symbol
                 )?.weight_normalized ?? 0
@@ -193,7 +217,7 @@ export function getManagerActivity(
 
         activityInfo[indexOfActivityInfo].activityInfo.push({
           amount: '0',
-          logo: activity.token.logo ?? '',
+          logo: activity.token?.logo ?? '',
           symbol,
           value: '0',
           newWeight: Big(newWeight).mul(100).toFixed(2),

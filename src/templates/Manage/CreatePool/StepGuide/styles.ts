@@ -12,10 +12,9 @@ const colorDict: colorDictType = {
 }
 
 export const StepGuide = styled.div`
-  ${() =>
-    css`
-      overflow: auto;
-    `}
+  ${() => css`
+    overflow: auto;
+  `}
 `
 
 export const ContainerCardAndNetwork = styled.div`

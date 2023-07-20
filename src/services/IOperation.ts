@@ -1,7 +1,6 @@
 import Big from 'big.js'
 
 import { ItokenSelectedProps } from './operationV1'
-import { underlyingAssetsInfo } from '../store/reducers/pool'
 import { GetAmountsParams, GetAmountsResult } from './ISwapProvider'
 import { ContractTransactionResponse } from 'ethers'
 
@@ -30,11 +29,40 @@ export interface IOperations {
 }
 
 export type IPoolInfoProps = {
+  id: string | undefined
   address: string
-  id: string
   controller: string
   vault: string
-  tokens: underlyingAssetsInfo[]
+  tokens:
+    | string
+    | {
+        __typename?: 'Asset' | undefined
+        balance: any
+        weight_normalized: any
+        weight_goal_normalized: any
+        token: {
+          __typename?: 'Token' | undefined
+          id: string
+          name?: string | null | undefined
+          logo?: string | null | undefined
+          symbol?: string | null | undefined
+          decimals?: number | null | undefined
+          price_usd: any
+          is_wrap_token: number
+          wraps?:
+            | {
+                __typename?: 'Token' | undefined
+                id: string
+                decimals?: number | null | undefined
+                price_usd: any
+                symbol?: string | null | undefined
+                name?: string | null | undefined
+                logo?: string | null | undefined
+              }
+            | null
+            | undefined
+        }
+      }[]
   tokensAddresses: string[]
   chainId: string
 }

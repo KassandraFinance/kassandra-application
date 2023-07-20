@@ -1,0 +1,10 @@
+query ManagerWithdraws($manager: ID!, $timestamp: Int) {
+    manager(id: $manager) {
+      withdraws: volumes(
+        where: { period: 86400, type: "exit", timestamp_gt: $timestamp }
+      ) {
+        volume_usd
+        timestamp
+      }
+    }
+  }

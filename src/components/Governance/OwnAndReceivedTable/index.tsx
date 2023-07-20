@@ -1,11 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
-import useSWR from 'swr'
 import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
 
 import { BNtoDecimal } from '@/utils/numerals'
+import { useKacyData } from '@/hooks/query/useKacyData'
 
 import AnyCard from '../../AnyCard'
 import ImageProfile from '../ImageProfile'
@@ -15,24 +15,21 @@ import avaxLogo from '@assets/logos/avax.png'
 
 import * as S from './styles'
 
-interface IUserVotingPowerProps {
+interface UserVotingPowerType {
   pool: string
   votingPower: Big
-  kacy: Big
-  from: {
+  kacy: Big | undefined
+  from?: {
     id: string
   }
   to: {
     id: string
   }
-  image: string
-  name: string
-  isNFT: boolean
 }
 
 interface IOwnAndReceivedTableProps {
   userAddressUrl: string | string[] | undefined
-  userVotingPower: IUserVotingPowerProps[]
+  userVotingPower: UserVotingPowerType[]
   isDelegationTable: boolean
 }
 
@@ -41,11 +38,9 @@ export const OwnAndReceivedTable = ({
   userVotingPower,
   isDelegationTable
 }: IOwnAndReceivedTableProps) => {
-  const [kacyDolarPrice, setKacyDolarPrice] = React.useState(0)
-
   const [{ wallet }] = useConnectWallet()
 
-  const { data } = useSWR('/api/overview')
+  const { data } = useKacyData()
 
   const isMasterBranch = process.env.NEXT_PUBLIC_MASTER === '1' ? true : false
 
@@ -102,18 +97,12 @@ export const OwnAndReceivedTable = ({
   }
 
   function handleKacyInDolar(value: Big) {
-    if (kacyDolarPrice) {
-      const valueNumber = value.mul(kacyDolarPrice)
+    if (data) {
+      const valueNumber = value.mul(data.kacyPrice)
       return BNtoDecimal(valueNumber, 0, 2)
     }
     return
   }
-
-  React.useEffect(() => {
-    if (data) {
-      setKacyDolarPrice(data.kacyPrice)
-    }
-  }, [data])
 
   return (
     <>
@@ -171,7 +160,7 @@ export const OwnAndReceivedTable = ({
                       ) : (
                         <>
                           <ImageProfile
-                            address={item.from.id}
+                            address={item?.from?.id || ''}
                             diameter={24}
                             hasAddress={true}
                             isLink={true}
@@ -186,10 +175,10 @@ export const OwnAndReceivedTable = ({
                     </S.Td>
                     <S.Td className="staked">
                       <p>
-                        {BNtoDecimal(item.kacy, 18, 2)}
+                        {BNtoDecimal(item?.kacy || Big(0), 18, 2)}
                         <span> KACY</span>
                       </p>
-                      <span>$ {handleKacyInDolar(item.kacy)}</span>
+                      <span>$ {handleKacyInDolar(item?.kacy || Big(0))}</span>
                     </S.Td>
                     <S.Td className="voting-power-allocated">
                       <p>{BNtoDecimal(Big(item.votingPower), 0, 2)}</p>

@@ -2,15 +2,12 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Big from 'big.js'
-import useSWR from 'swr'
-import { request } from 'graphql-request'
 
-import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
+import { useFundCard } from '@/hooks/query/useFundCard'
 
-import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
-
-import { getWeightsNormalizedV2 } from '../../utils/updateAssetsToV2'
-import { BNtoDecimal, calcChange } from '../../utils/numerals'
+import { getWeightsNormalizedV2 } from '@/utils/updateAssetsToV2'
+import { BNtoDecimal, calcChange } from '@/utils/numerals'
 
 import FundAreaChart from './FundAreaChart'
 import FundBarChart from './FundBarChart'
@@ -20,9 +17,7 @@ import TokenWithNetworkImage from '../TokenWithNetworkImage'
 import arrowAscend from '@assets/notificationStatus/arrow-ascend.svg'
 import arrowDescend from '@assets/notificationStatus/arrow-descend.svg'
 
-import { underlyingAssetsInfo } from '@/store/reducers/pool'
-
-import { GET_POOL } from './graphql'
+import { UnderlyingAssetsInfoType } from '@/utils/updateAssetsToV2'
 
 import * as S from './styles'
 
@@ -45,10 +40,15 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
     tvl: '...',
     price: '...'
   })
-  const [poolInfo, setPoolInfo] = React.useState<underlyingAssetsInfo[]>([])
+  const [poolInfo, setPoolInfo] = React.useState<UnderlyingAssetsInfoType[]>([])
   const [poolObject, setPoolObject] = React.useState<Record<string, number>>({})
 
-  const [price, setPrice] = React.useState([])
+  const [price, setPrice] = React.useState<
+    {
+      timestamp: number
+      close: number
+    }[]
+  >([])
 
   const [changeWeek, setChangeWeek] = React.useState<string[]>(
     Array(2).fill('')
@@ -62,9 +62,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30)
   })
 
-  const { data } = useSWR([GET_POOL, params], (query, params) =>
-    request(BACKEND_KASSANDRA, query, params)
-  )
+  const { data } = useFundCard(params)
 
   const getPercentage = (weight: number) => {
     return Number((weight * 100).toFixed(2))
@@ -73,24 +71,16 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
   React.useEffect(() => {
     const arrChangePrice = []
 
-    if (data?.pool) {
-      const newPrice = data?.pool?.price_candles.map(
-        (item: { timestamp: number; close: string }) => {
-          return {
-            timestamp: item.timestamp,
-            close: Number(item.close)
-          }
+    if (data) {
+      const newPrice = data.price_candles.map(item => {
+        return {
+          timestamp: item.timestamp,
+          close: Number(item.close)
         }
-      )
+      })
 
-      const changeDay = calcChange(
-        data.pool.now[0]?.close,
-        data.pool.day[0]?.close
-      )
-      const changeMonth = calcChange(
-        data.pool.now[0]?.close,
-        data.pool.month[0]?.close
-      )
+      const changeDay = calcChange(data.now[0]?.close, data.day[0]?.close)
+      const changeMonth = calcChange(data.now[0]?.close, data.month[0]?.close)
 
       arrChangePrice[0] = changeDay
       arrChangePrice[1] = changeMonth
@@ -98,24 +88,24 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
       setChangeWeek(arrChangePrice)
 
       setInfoPool({
-        tvl: BNtoDecimal(Big(data?.pool?.total_value_locked_usd ?? 0), 2, 2, 2),
-        price: data.pool.price_usd
+        tvl: BNtoDecimal(Big(data.total_value_locked_usd ?? 0), 2, 2, 2),
+        price: data.price_usd
       })
 
       setPrice(newPrice)
 
-      if (data.pool.pool_version === 2) {
+      if (data.pool_version === 2) {
         try {
           const poolInfo = getWeightsNormalizedV2(
-            data.pool.weight_goals,
-            data.pool.underlying_assets
+            data.weight_goals,
+            data.underlying_assets
           )
-          setPoolInfo(poolInfo ?? data.pool.underlying_assets)
+          setPoolInfo(poolInfo ?? data.underlying_assets)
         } catch (error) {
-          setPoolInfo(data.pool.underlying_assets)
+          setPoolInfo(data.underlying_assets)
         }
       } else {
-        setPoolInfo(data.pool.underlying_assets)
+        setPoolInfo(data.underlying_assets)
       }
     }
   }, [data])
@@ -134,14 +124,14 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
 
   return (
     <>
-      {infoPool.price > '0.1' ? (
+      {data && infoPool.price > '0.1' ? (
         <S.CardContainer isLink={!!link}>
           <Link href={link ?? ''} passHref>
             <S.CardLinkContent
               onClick={() =>
                 trackEventFunction(
                   'click-on-link',
-                  `${data.pool.symbol.toLocaleLowerCase()}`,
+                  `${data?.symbol?.toLocaleLowerCase()}`,
                   'feature-funds'
                 )
               }
@@ -150,19 +140,19 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
                 <S.ImageContainer>
                   <TokenWithNetworkImage
                     tokenImage={{
-                      url: data.pool?.logo,
+                      url: data?.logo || '',
                       height: 36,
                       width: 36
                     }}
                     networkImage={{
-                      url: data.pool.chain?.logo,
+                      url: data?.chain?.logo || '',
                       height: 16,
                       width: 16
                     }}
                     blockies={{
                       size: 8,
                       scale: 5,
-                      seedName: data.pool.name ?? ''
+                      seedName: data.name
                     }}
                   />
                 </S.ImageContainer>
@@ -170,17 +160,15 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
                 <S.FundPrice>
                   <h3>Price</h3>
                   <span>
-                    {data?.pool
-                      ? `$${parseFloat(infoPool.price).toFixed(2)}`
-                      : '...'}
+                    {data ? `$${parseFloat(infoPool.price).toFixed(2)}` : '...'}
                   </span>
                 </S.FundPrice>
               </S.CardHeader>
 
               <S.CardBody>
                 <S.FundName>
-                  <h3>{data?.pool?.name}</h3>
-                  <span>by {data?.pool?.foundedBy ?? 'Community'}</span>
+                  <h3>{data?.name}</h3>
+                  <span>by {data?.foundedBy ?? 'Community'}</span>
                 </S.FundName>
 
                 <S.FundStatusContainer>

@@ -1,0 +1,7 @@
+query PoolJoins($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      volumes(where: { period: 3600, type: "join", timestamp_gt: $timestamp }) {
+        volume_usd
+      }
+    }
+  }

@@ -1,0 +1,12 @@
+query TokensInfo($whitelist: [ID!]!, $id: ID!) {
+    tokensByIds(ids: $whitelist) {
+      id
+      name
+      logo
+      symbol
+      decimals
+    }
+    pool(id: $id) {
+      underlying_assets_addresses
+    }
+}

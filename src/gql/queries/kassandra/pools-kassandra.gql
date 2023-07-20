@@ -1,0 +1,8 @@
+query Pools {
+  pools {
+    id
+    address
+    symbol
+    price_usd
+  }
+}

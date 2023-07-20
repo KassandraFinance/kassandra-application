@@ -15,39 +15,19 @@ import {
   SecondaryValue
 } from '../../../../components/Modals/ModalViewCoin/styles'
 
+import { IlistTokenWeightsProps } from '@/templates/PoolManager/Allocations/IntroReview'
 import * as S from './styles'
 
 type CoinsMetadataType = {
   [key: string]: {
-    usd: string
+    usd: number
     pricePercentageChangeIn24h: number
     marketCap: number
   }
 }
 
-type IAllocationDataProps = {
-  token: {
-    address: string
-    logo: string
-    symbol: string
-  }
-  allocation: string
-  holding: {
-    value: Big
-    // valueUSD: Big
-  }
-  // price: {
-  //   value: number,
-  //   changeValue: number
-  // }
-  // yields: {
-  //   apy: string,
-  //   url: string
-  // }
-}
-
 interface IAllocationTableProps {
-  allocationData: IAllocationDataProps[]
+  allocationData: IlistTokenWeightsProps[]
   isRebalance: boolean
   coingeckoData: CoinsMetadataType
   chainId: number
@@ -59,7 +39,7 @@ const AllocationTable = ({
   coingeckoData,
   chainId
 }: IAllocationTableProps) => {
-  const [viewToken, setViewToken] = React.useState<IAllocationDataProps>()
+  const [viewToken, setViewToken] = React.useState<IlistTokenWeightsProps>()
   const [viewColumnInTable, setViewColumnInTable] = React.useState(1)
   const [isOpen, setIsOpen] = React.useState(false)
   const [token, setToken] = React.useState({
@@ -67,10 +47,10 @@ const AllocationTable = ({
     name: ''
   })
 
-  function handleViewTokenMobile(token: IAllocationDataProps) {
+  function handleViewTokenMobile(token: IlistTokenWeightsProps) {
     setToken({
       logo: token.token.logo,
-      name: token.token.symbol
+      name: token.token?.symbol || ''
     })
     setViewToken(token)
     setIsOpen(true)

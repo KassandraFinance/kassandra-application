@@ -1,4 +1,4 @@
-import { XAxis, YAxis, AreaChart, Area, ResponsiveContainer } from 'recharts'
+import { YAxis, AreaChart, Area, ResponsiveContainer } from 'recharts'
 
 import * as S from './styles'
 

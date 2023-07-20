@@ -3,13 +3,9 @@ import router from 'next/router'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
 import Big from 'big.js'
-import useSWRInfinite from 'swr/infinite'
-import request from 'graphql-request'
 
 import { getActivityInfo, getManagerActivity } from '../utils'
-
-import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
-import { GET_ACTIVITIES } from './graphql'
+import { useManagerPoolActivities } from '@/hooks/query/useManagerPoolActivities'
 
 import Loading from '@/components/Loading'
 import ActivityCard, { actionsType, ActivityInfo } from '../ActivityCard'
@@ -60,14 +56,15 @@ type Asset = {
 }
 
 type Activity = {
+  __typename?: 'Activity' | undefined
   id: string
-  type: 'join' | 'exit'
-  symbol: string[]
-  amount: string[]
-  price_usd: string[]
-  txHash: string
+  type: string
   timestamp: number
+  price_usd: any[]
+  txHash: string
   address: string
+  symbol: string[]
+  amount: any[]
 }
 
 export type Result = {
@@ -131,32 +128,6 @@ export type ActivityCardProps = {
   }
 }
 
-type RequestParams = {
-  first: number
-  skip: number
-  id: string
-  options: string[]
-}
-
-const getKey = (
-  pageIndex: number,
-  prevData: any,
-  options: string[],
-  poolId: string
-) => {
-  if (
-    prevData &&
-    !prevData.pool.activities.length &&
-    !prevData.pool.weight_goals.length
-  ) {
-    return null
-  }
-  return [
-    GET_ACTIVITIES,
-    { skip: pageIndex * first, first, id: poolId, options }
-  ]
-}
-
 Big.RM = 2
 const first = 10
 const Activity = () => {
@@ -170,30 +141,20 @@ const Activity = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
-  const { data, size, setSize } = useSWRInfinite<Result>(
-    (index, prevData) =>
-      getKey(
-        index,
-        prevData,
-        optionsSelected.length > 0
-          ? optionsSelected
-          : options.map(option => option.key),
-        poolId
-      ),
-    (query: string, { first, skip, id, options }: RequestParams) =>
-      request(BACKEND_KASSANDRA, query, {
-        first,
-        skip,
-        id,
-        options
-      }),
-    { refreshInterval: 0 }
-  )
-  const isLoading = data && typeof data[size - 1] === 'undefined'
+  const { data, fetchNextPage, isFetchingNextPage } = useManagerPoolActivities({
+    id: poolId,
+    first,
+    options:
+      optionsSelected.length > 0
+        ? optionsSelected
+        : options.map(option => option.key)
+  })
+
   const isEnd =
     data &&
-    data[data.length - 1].pool.activities.length < first &&
-    data[data.length - 1].pool.weight_goals.length < first
+    data.pages &&
+    (data.pages[data.pages.length - 1]?.activities?.length || 0) < first &&
+    (data.pages[data.pages.length - 1]?.weight_goals?.length || 0) < first
 
   function handleCheckbox(key: string) {
     const index = optionsSelected.findIndex(option => option === key)
@@ -209,7 +170,7 @@ const Activity = () => {
   }
 
   const activityHistory = React.useMemo((): ActivityCardProps[] => {
-    if (!data?.length || !wallet) return []
+    if (!data?.pages.length || !wallet) return []
     let filters: Record<string, boolean> = {
       join: false,
       exit: false,
@@ -236,19 +197,19 @@ const Activity = () => {
 
     const _activities: Activity[] = []
     const weights = []
-    const _length = data.length
+    const _length = data.pages.length
     for (let index = 0; index < _length; index++) {
-      for (const activity of data[index].pool.activities) {
+      for (const activity of data.pages[index]?.activities || []) {
         _activities.push(activity)
       }
-      for (const weight of data[index].pool.weight_goals) {
+      for (const weight of data.pages[index]?.weight_goals || []) {
         weights.push(weight)
       }
     }
 
     const activitiesInvestors = getActivityInfo(
       _activities,
-      data[0].pool.underlying_assets,
+      data.pages[0]?.underlying_assets || [],
       filters
     )
     const managerActivities = getManagerActivity(
@@ -264,31 +225,33 @@ const Activity = () => {
   return (
     <S.Activity>
       <S.ActivityCardsContainer>
-        {activityHistory.length > 0 && data?.length ? (
+        {activityHistory.length > 0 && data?.pages.length ? (
           <>
-            {activityHistory.slice(0, size * first).map(activity => (
-              <ActivityCard
-                key={activity.key}
-                actionType={activity.actionType}
-                date={activity.date}
-                scan={data[0].pool.chain?.blockExplorerUrl}
-                wallet={activity.wallet}
-                txHash={activity.txHash}
-                activityInfo={activity.activityInfo}
-                pool={{
-                  name: data[0].pool.name,
-                  symbol: data[0].pool.symbol,
-                  logo: data[0].pool.logo
-                }}
-                sharesRedeemed={activity.sharesRedeemed}
-                newBalancePool={activity.newBalancePool}
-                managerAddress={data[0]?.pool?.manager.id ?? ''}
-              />
-            ))}
-            {isLoading && <Loading marginTop={0} />}
+            {activityHistory
+              .slice(0, Number(data?.pageParams?.at(-1) || '0') + 10)
+              .map(activity => (
+                <ActivityCard
+                  key={activity.key}
+                  actionType={activity.actionType}
+                  date={activity.date}
+                  scan={data.pages[0]?.chain?.blockExplorerUrl || ''}
+                  wallet={activity.wallet}
+                  txHash={activity.txHash}
+                  activityInfo={activity.activityInfo}
+                  pool={{
+                    name: data.pages[0]?.name || '',
+                    symbol: data.pages[0]?.symbol || '',
+                    logo: data.pages[0]?.logo || ''
+                  }}
+                  sharesRedeemed={activity.sharesRedeemed}
+                  newBalancePool={activity.newBalancePool}
+                  managerAddress={data.pages[0]?.manager.id ?? ''}
+                />
+              ))}
+            {isFetchingNextPage && <Loading marginTop={0} />}
             {!isEnd && (
               <S.LoadMoreContainer>
-                <S.LoadMore onClick={() => setSize(size + 1)}>
+                <S.LoadMore onClick={() => fetchNextPage()}>
                   <Image
                     src="/assets/utilities/arrow-select-down.svg"
                     width={16}
@@ -298,7 +261,7 @@ const Activity = () => {
               </S.LoadMoreContainer>
             )}
           </>
-        ) : data?.length && data[0]?.pool ? (
+        ) : data?.pages.length && data.pages[0] ? (
           <></>
         ) : (
           <Loading marginTop={0} />

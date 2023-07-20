@@ -51,7 +51,7 @@ const PoolImage = () => {
 
   return (
     <S.PoolImage>
-      <S.PoolSettingTitle>Fund image</S.PoolSettingTitle>
+      <S.PoolSettingTitle>Pool image</S.PoolSettingTitle>
       <S.PoolSettingParagraph>
         Select an image as icon for your pool.
       </S.PoolSettingParagraph>

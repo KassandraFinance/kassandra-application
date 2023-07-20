@@ -2,13 +2,11 @@ import React from 'react'
 import Image from 'next/image'
 import Big from 'big.js'
 import Link from 'next/link'
-import useSWR from 'swr'
-import request from 'graphql-request'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 
-import { GET_MANAGERS_POOLS, GET_USERS_VOTEWEIGHTS } from './graphql'
-import { BACKEND_KASSANDRA, SUBGRAPH_URL } from '@/constants/tokenAddresses'
+import { useManagersPools } from '@/hooks/query/useManagersPools'
+import { useUsersVoteWeights } from '@/hooks/query/useUsersVoteWeights'
 
 import { calcChange } from '@/utils/numerals'
 import { abbreviateNumber } from '@/utils/abbreviateNumber'
@@ -46,32 +44,7 @@ import {
   Value as V
 } from '@ui/Modals/ModalViewCoin/styles'
 import Pagination from '@/components/Pagination'
-
-type ITvlProps = {
-  close: string
-}
-
-type IManagerAddress = {
-  totalManagers: string[]
-  managers: {
-    id: string
-    pool_count: number
-    unique_investors: number
-    total_value_locked_usd: string
-    TVLDay: ITvlProps[]
-    TVLMonthly: ITvlProps[]
-  }[]
-}
-
-type IVoteWeightsProps = {
-  governances: {
-    totalVotingPower: string
-  }[]
-  users: {
-    id: string
-    votingPower: string
-  }[]
-}
+import { ManagersPoolsQuery } from '@/gql/generated/kassandraApi'
 
 type IManagerListProps = {
   rank: number
@@ -124,22 +97,15 @@ const ManagersPoolTable = () => {
     skip
   }
 
-  const { data } = useSWR<IManagerAddress>(
-    [GET_MANAGERS_POOLS, params],
-    (query, params) => request(BACKEND_KASSANDRA, query, params)
-  )
+  const { data } = useManagersPools(params)
 
   const usersWalletAddresses = data && data.managers.map(manager => manager.id)
 
-  const { data: voteWeights } = useSWR<IVoteWeightsProps>(
-    [GET_USERS_VOTEWEIGHTS, usersWalletAddresses],
-    (query, usersWalletAddresses) =>
-      request(SUBGRAPH_URL, query, {
-        id_in: usersWalletAddresses
-      })
-  )
+  const { data: voteWeights } = useUsersVoteWeights({
+    id_in: usersWalletAddresses || []
+  })
 
-  function handleGetManagers(data: IManagerAddress | undefined) {
+  function handleGetManagers(data: ManagersPoolsQuery | undefined) {
     if (!data || !voteWeights) return
 
     const voteWeightsList: Record<string, string> = {}
