@@ -68,6 +68,9 @@ const GlobalStyles: GlobalStyleComponent<
         --onboard-font-size-5: 1.6rem;
         --onboard-font-size-6: 1.2rem;
         --onboard-modal-z-index: 1050;
+
+        //classname to wallect connect modal
+        --wcm-z-index: 1060 !important;
       }
     }
 
