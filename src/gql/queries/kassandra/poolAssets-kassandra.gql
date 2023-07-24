@@ -11,12 +11,10 @@ query PoolAssets($id: ID!) {
             logo
             symbol
             decimals
-            price_usd
             is_wrap_token
             wraps {
               id
               decimals
-              price_usd
               symbol
               name
               logo
@@ -33,7 +31,6 @@ query PoolAssets($id: ID!) {
                 name
                 symbol
                 decimals
-                price_usd
               }
             }
             weight_normalized

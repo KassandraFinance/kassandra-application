@@ -1,5 +1,5 @@
 query Tokens($tokensList: [ID!]!) {
-  tokensByIds(ids: $tokensList) {
+  tokens(where: { id_in: $tokensList }) {
     id
     decimals
     logo

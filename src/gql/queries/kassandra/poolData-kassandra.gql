@@ -16,26 +16,26 @@ query PoolData($id: ID!) {
     }
     chain {
       id
-      logo
-      chainName
-      nativeTokenName
-      nativeTokenSymbol
-      nativeTokenDecimals
-      rpcUrls
-      blockExplorerUrl
-      secondsPerBlock
-      addressWrapped
+      logo: icon
+      name
+      token_name
+      token_symbol
+      token_decimals
+      rpc_urls
+      block_explorer_url
+      seconds_per_block
+      address_wrapped
     }
     name
-    foundedBy
+    founded_by
     symbol
-    poolId
+    pool_id
     url
     summary
-    partners {
-      logo
-      url
-    }
+    # partners {
+    #   logo
+    #   url
+    # }
     underlying_assets_addresses
     underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
       balance
@@ -47,12 +47,10 @@ query PoolData($id: ID!) {
         logo
         symbol
         decimals
-        price_usd
         is_wrap_token
         wraps {
           id
           decimals
-          price_usd
           symbol
           name
           logo

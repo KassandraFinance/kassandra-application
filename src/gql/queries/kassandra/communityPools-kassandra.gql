@@ -24,7 +24,7 @@ query CommunityPools(
       logo
       address
       chain {
-        logo
+        logo: icon
       }
       price_usd
       total_value_locked_usd
