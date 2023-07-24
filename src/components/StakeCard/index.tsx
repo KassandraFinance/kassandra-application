@@ -409,7 +409,8 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                       </S.Claim>
                     )}
                     <S.StakeContainer>
-                      {userAboutPool.unstake ? (
+                      {userAboutPool.unstake &&
+                      networkChain.chainId === Number(wallet?.chains[0].id) ? (
                         <>
                           <Button
                             type="button"
@@ -573,8 +574,9 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
         <ModalCancelUnstake
           pool={pool}
           setModalOpen={setIsModalCancelUnstake}
-          stakingToken={poolInfo.stakingToken}
+          stakingContract={stakingContract}
           openStakeAndWithdraw={openStakeAndWithdraw}
+          getUserInfoAboutPool={getUserInfoAboutPool}
           isStaking={
             poolInfo.withdrawDelay === -1 && userAboutPool.withdrawable
           }
@@ -587,6 +589,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
           setModalOpen={setIsModalRequestUnstake}
           votingMultiplier={poolInfo.votingMultiplier}
           yourStake={userAboutPool.yourStake}
+          getUserInfoAboutPool={getUserInfoAboutPool}
         />
       )}
       {isOpenModalPangolin && (
