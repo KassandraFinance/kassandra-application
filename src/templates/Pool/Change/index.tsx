@@ -8,6 +8,8 @@ import { usePoolData } from '@/hooks/query/usePoolData'
 import { useAppDispatch } from '../../../store/hooks'
 import { setPerformanceValues } from '../../../store/reducers/performanceValues'
 
+import { calcChange } from '@/utils/numerals'
+
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
 
 import * as S from './styles'
@@ -27,11 +29,6 @@ const Change = () => {
     quarterly: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 90),
     year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365)
   })
-
-  function calcChange(newPrice: number, oldPrice: number) {
-    const calc = ((newPrice - oldPrice) / oldPrice) * 100
-    return calc ? calc.toFixed(2) : '0'
-  }
 
   React.useEffect(() => {
     const arrChangePrice = []
