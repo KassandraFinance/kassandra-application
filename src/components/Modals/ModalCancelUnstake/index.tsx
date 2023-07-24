@@ -20,24 +20,34 @@ export enum typeTransaction {
 interface IModalRequestUnstakeProps {
   pool: PoolDetails
   isStaking: boolean
-  stakingToken: string
+  stakingContract: string
   openStakeAndWithdraw: (transaction: typeTransaction) => void
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  getUserInfoAboutPool: () => Promise<void>
 }
 
 const ModalCancelUnstake = ({
   pool,
   isStaking,
-  stakingToken,
+  stakingContract,
   setModalOpen,
-  openStakeAndWithdraw
+  openStakeAndWithdraw,
+  getUserInfoAboutPool
 }: IModalRequestUnstakeProps) => {
   const networkChain = networks[pool.chain.id]
 
-  const staking = useStaking(stakingToken, networkChain.chainId)
+  const staking = useStaking(stakingContract, networkChain.chainId)
 
   const { trackEventFunction } = useMatomoEcommerce()
 
+  function handleSucess() {
+    trackEventFunction(
+      'click-on-cancel',
+      `${pool.symbol}`,
+      'modal-cancel-unstaking'
+    )
+    getUserInfoAboutPool()
+  }
   function handleCancelUnstake() {
     if (isStaking) {
       openStakeAndWithdraw(typeTransaction.STAKING)
@@ -49,12 +59,7 @@ const ModalCancelUnstake = ({
           sucess: `Cancelling of unstaking ${pool.symbol} completed`
         },
         {
-          onSuccess: () =>
-            trackEventFunction(
-              'click-on-cancel',
-              `${pool.symbol}`,
-              'modal-cancel-unstaking'
-            )
+          onSuccess: () => handleSucess()
         }
       )
     }
