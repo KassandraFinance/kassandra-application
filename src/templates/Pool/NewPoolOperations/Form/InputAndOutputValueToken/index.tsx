@@ -119,7 +119,7 @@ const InputAndOutputValueToken = ({
   const disabled = !wallet
     ? 'Please connect your wallet by clicking the button below'
     : chainId !== pool?.chain_id
-    ? `Please change to the ${pool?.chain?.chainName} by clicking the button below`
+    ? `Please change to the ${pool?.chain?.name} by clicking the button below`
     : ''
 
   const isInvestType = typeAction === 'Invest' ? true : false
@@ -152,7 +152,7 @@ const InputAndOutputValueToken = ({
         wallet.accounts[0].address,
         chainId,
         pool?.pool_version === 1
-          ? pool?.chain?.addressWrapped || undefined
+          ? pool?.chain?.address_wrapped || undefined
           : undefined
       )
 

@@ -64,7 +64,7 @@ export const YIELDYAK_API = 'https://staging-api.yieldyak.com'
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3'
 
 export const SUBGRAPH_URL =
-  'https://graph.kassandra.finance/subgraphs/name/KassandraAvalanche'
+  'https://graph.kassandra.finance/subgraphs/name/Kassandra'
 
 export const BACKEND_KASSANDRA =
   process.env.NEXT_PUBLIC_BACKEND_KASSANDRA ?? 'http://localhost:3001'

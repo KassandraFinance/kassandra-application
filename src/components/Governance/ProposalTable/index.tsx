@@ -65,12 +65,12 @@ export const ProposalTable = ({ skip = 0, take }: IProposalTableProps) => {
           id: string
           number: number
           targets: string[]
-          values: any[]
+          values: string[]
           signatures: string[]
-          startBlock: any
-          endBlock: any
+          startBlock: string
+          endBlock: string
           description: string
-          created: any
+          created: string
         }[]
   ) {
     const proposal = proposals.map(proposal =>

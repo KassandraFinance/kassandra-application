@@ -76,7 +76,7 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
 
           return {
             pool: prop.pool,
-            votingPower: prop.votingPower,
+            votingPower: Big(prop.votingPower),
             kacy: await getAmountKacy(prop.pool, prop.from?.id),
             from: {
               id: prop.from?.id
@@ -102,7 +102,7 @@ const GovernanceData = ({ address }: IGovernanceDataProps) => {
 
           return {
             pool: prop.pool,
-            votingPower: prop.votingPower,
+            votingPower: Big(prop.votingPower),
             kacy: await getAmountKacy(prop.pool, prop.from?.id),
             to: {
               id: prop.to.id

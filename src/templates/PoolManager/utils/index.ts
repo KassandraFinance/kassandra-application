@@ -9,11 +9,11 @@ type IActivityProps = {
   id: string
   type: string
   timestamp: number
-  price_usd: any[]
+  price_usd: string[]
   txHash: string
   address: string
   symbol: string[]
-  amount: any[]
+  amount: string[]
 }
 
 type IUnderlyingAssetsProps = {
@@ -21,11 +21,11 @@ type IUnderlyingAssetsProps = {
   token: {
     __typename?: 'Token' | undefined
     logo?: string | null | undefined
-    symbol?: string | null | undefined
+    symbol: string
     wraps?:
       | {
           __typename?: 'Token' | undefined
-          symbol?: string | null | undefined
+          symbol: string
           logo?: string | null | undefined
         }
       | null
@@ -44,12 +44,12 @@ type IWeightGoalsProps = {
         __typename?: 'WeightGoalPoint' | undefined
         weights: {
           __typename?: 'WeightGoal' | undefined
-          weight_normalized: any
+          weight_normalized: string
           asset: {
             __typename?: 'Asset' | undefined
             token: {
               __typename?: 'Token' | undefined
-              symbol?: string | null | undefined
+              symbol: string
             }
           }
         }[]
@@ -59,21 +59,20 @@ type IWeightGoalsProps = {
   token?:
     | {
         __typename?: 'Token' | undefined
-        symbol?: string | null | undefined
-        price_usd: any
+        symbol: string
         logo?: string | null | undefined
       }
     | null
     | undefined
   weights: {
     __typename?: 'WeightGoal' | undefined
-    weight_normalized: any
+    weight_normalized: string
     asset: {
       __typename?: 'Asset' | undefined
-      balance: any
+      balance: string
       token: {
         __typename?: 'Token' | undefined
-        symbol?: string | null | undefined
+        symbol: string
         logo?: string | null | undefined
       }
     }

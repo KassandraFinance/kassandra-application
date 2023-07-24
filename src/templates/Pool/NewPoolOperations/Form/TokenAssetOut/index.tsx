@@ -79,7 +79,7 @@ const TokenAssetOut = ({
             {outAssetBalance.gt(-1)
               ? BNtoDecimal(
                   Big(outAssetBalance).div(Big(10).pow(18)),
-                  pool?.chain?.nativeTokenDecimals || 0
+                  pool?.chain?.token_decimals || 0
                 )
               : '...'}
           </S.Balance>
@@ -107,7 +107,7 @@ const TokenAssetOut = ({
                       getPoolPrice({
                         assets: pool?.underlying_assets || [],
                         priceToken,
-                        poolSupply: pool?.supply
+                        poolSupply: pool?.supply ?? ''
                       })
                     )
                     .div(Big(10).pow(data?.decimals)),

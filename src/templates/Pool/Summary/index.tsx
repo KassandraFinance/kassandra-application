@@ -134,7 +134,7 @@ const Summary = () => {
             </>
           )}
 
-          <S.ContractsName>{pool?.chain?.chainName} CONTRACTS</S.ContractsName>
+          <S.ContractsName>{pool?.chain?.name} CONTRACTS</S.ContractsName>
           <S.CopyContract>
             <S.Blockchain>
               <div className="image">
@@ -155,7 +155,7 @@ const Summary = () => {
                 )}
               </div>
               <a
-                href={`${pool.chain?.blockExplorerUrl}/address/${pool.address}`}
+                href={`${pool.chain?.block_explorer_url}/address/${pool.address}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -246,7 +246,7 @@ const Summary = () => {
                 )}
               </div>
               <a
-                href={`${pool.chain?.blockExplorerUrl}/address/${pool.vault}`}
+                href={`${pool.chain?.block_explorer_url}/address/${pool.vault}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -315,7 +315,7 @@ const Summary = () => {
                 )}
               </div>
               <a
-                href={`${pool.chain?.blockExplorerUrl}/address/${pool.strategy}`}
+                href={`${pool.chain?.block_explorer_url}/address/${pool.strategy}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >

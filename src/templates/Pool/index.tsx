@@ -127,26 +127,24 @@ const Pool = () => {
     const tokenAddressesSwapProvider = tokensSwapProvider.map(token => token.id)
     let poolAssets: {
       __typename?: 'Asset' | undefined
-      balance: any
-      weight_normalized: any
-      weight_goal_normalized: any
+      balance: string
+      weight_normalized: string
+      weight_goal_normalized: string
       token: {
         __typename?: 'Token' | undefined
         id: string
-        name?: string | null | undefined
+        name: string
         logo?: string | null | undefined
-        symbol?: string | null | undefined
-        decimals?: number | null | undefined
-        price_usd: any
+        symbol: string
+        decimals: number
         is_wrap_token: number
         wraps?:
           | {
               __typename?: 'Token' | undefined
               id: string
-              decimals?: number | null | undefined
-              price_usd: any
-              symbol?: string | null | undefined
-              name?: string | null | undefined
+              decimals: number
+              symbol: string
+              name: string
               logo?: string | null | undefined
             }
           | null
@@ -161,10 +159,10 @@ const Pool = () => {
     const formatTokensSwapProvider = [
       {
         address: NATIVE_ADDRESS,
-        decimals: pool?.chain?.nativeTokenDecimals,
+        decimals: pool?.chain?.token_decimals,
         logoURI: pool?.chain?.logo ?? '',
-        name: pool?.chain?.nativeTokenName,
-        symbol: pool?.chain?.nativeTokenSymbol
+        name: pool?.chain?.token_name,
+        symbol: pool?.chain?.token_symbol
       }
     ]
 
@@ -400,11 +398,11 @@ const Pool = () => {
               <ScrollUpButton />
               <Change />
               <FeeBreakdown
-                feeJoinBroker={data?.fee_join_broker || 0}
-                feeJoinManager={data?.fee_join_manager || 0}
-                feeAum={data?.fee_aum || 0}
-                feeAumKassandra={data?.fee_aum_kassandra || 0}
-                withdrawFee={data?.fee_exit || 0}
+                feeJoinBroker={data?.fee_join_broker || '0'}
+                feeJoinManager={data?.fee_join_manager || '0'}
+                feeAum={data?.fee_aum || '0'}
+                feeAumKassandra={data?.fee_aum_kassandra || '0'}
+                withdrawFee={data?.fee_exit || '0'}
               />
               {pool && (
                 <MyAsset
@@ -412,12 +410,12 @@ const Pool = () => {
                   poolToken={pool?.address || ''}
                   symbol={pool?.symbol || ''}
                   price={infoPool.price}
-                  pid={pool.poolId || 0}
+                  pid={pool.pool_id || 0}
                   decimals={infoPool.decimals}
                 />
               )}
               <Summary />
-              {pool?.partners && <PoweredBy />}
+              {/* {pool?.partners && <PoweredBy />} */}
               <Distribution />
               <ActivityTable />
               <TokenDescription />

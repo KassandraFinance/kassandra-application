@@ -76,7 +76,7 @@ const TokenSelection = () => {
     tokenAddresses
   })
   const { priceToken } = useGetToken({
-    nativeTokenAddress: pool?.chain?.addressWrapped || '',
+    nativeTokenAddress: pool?.chain?.address_wrapped || '',
     tokens: data || {}
   })
 
@@ -90,7 +90,7 @@ const TokenSelection = () => {
         : 0
       const checkToken =
         token.address === NATIVE_ADDRESS
-          ? pool?.chain?.addressWrapped?.toLocaleLowerCase() || ''
+          ? pool?.chain?.address_wrapped?.toLocaleLowerCase() || ''
           : token.address
 
       const tokenBalance = balanceToken[token.address.toLowerCase()] || 0

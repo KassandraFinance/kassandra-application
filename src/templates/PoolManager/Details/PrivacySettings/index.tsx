@@ -111,7 +111,7 @@ const PrivacySettings = () => {
 
                 {poolInfo && (
                   <S.Link
-                    href={`${poolInfo[0]?.chain?.blockExplorerUrl}address/${investor}`}
+                    href={`${poolInfo[0]?.chain?.block_explorer_url}address/${investor}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
