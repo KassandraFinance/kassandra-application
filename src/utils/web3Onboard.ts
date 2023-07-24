@@ -3,10 +3,16 @@ import injectedModule from '@web3-onboard/injected-wallets'
 import gnosisModule from '@web3-onboard/gnosis'
 import walletConnectModule from '@web3-onboard/walletconnect'
 
+const wcV2InitOptions = {
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT ?? '',
+  requiredChains: [137, 43114],
+  dappUrl: 'https://app.kassandra.finance'
+}
+
 const injected = injectedModule({
   displayUnavailable: true
 })
-const walletConnect = walletConnectModule()
+const walletConnect = walletConnectModule(wcV2InitOptions)
 const gnosis = gnosisModule()
 
 const wallets = [injected, walletConnect, gnosis]
