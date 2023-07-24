@@ -22,6 +22,7 @@ interface IModalRequestUnstakeProps {
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   votingMultiplier: string
   yourStake: Big
+  getUserInfoAboutPool: () => Promise<void>
 }
 
 const ModalRequestUnstake = ({
@@ -29,7 +30,8 @@ const ModalRequestUnstake = ({
   modalOpen,
   setModalOpen,
   votingMultiplier,
-  yourStake
+  yourStake,
+  getUserInfoAboutPool
 }: IModalRequestUnstakeProps) => {
   const [dateWithdraw, setDateWithdraw] = React.useState<number>(0)
   const [{ wallet }] = useConnectWallet()
@@ -51,6 +53,15 @@ const ModalRequestUnstake = ({
     }
   }
 
+  function handleSuccess() {
+    trackEventFunction(
+      'click-on-request-unstaking',
+      `${pool.symbol}`,
+      'modal-staking'
+    )
+    getUserInfoAboutPool()
+  }
+
   function handleUnstake() {
     staking.unstake(
       pool.pid,
@@ -59,12 +70,7 @@ const ModalRequestUnstake = ({
         sucess: `Request for unstaking of ${pool.symbol} confirmed`
       },
       {
-        onSuccess: () =>
-          trackEventFunction(
-            'click-on-request-unstaking',
-            `${pool.symbol}`,
-            'modal-staking'
-          )
+        onSuccess: () => handleSuccess()
       }
     )
 
