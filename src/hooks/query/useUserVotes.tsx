@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { subgraphClient } from '@/graphQLClients'
+import { kassandraClient } from '@/graphQLClients'
 
 type UseUserVotesProps = {
   id: string
 }
 
 export const fetchUserVotes = async ({ id }: UseUserVotesProps) => {
-  return subgraphClient
+  return kassandraClient
     .UserVotes({
       id
     })

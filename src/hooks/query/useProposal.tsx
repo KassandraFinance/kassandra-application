@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { subgraphClient } from '@/graphQLClients'
+import { kassandraClient } from '@/graphQLClients'
 
 type UseProposalProps = {
   number: number
@@ -8,7 +8,7 @@ type UseProposalProps = {
 }
 
 export const fetchProposal = async ({ number, voter }: UseProposalProps) => {
-  return subgraphClient
+  return kassandraClient
     .Proposal({
       number,
       voter

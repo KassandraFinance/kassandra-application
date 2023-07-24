@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { getAddress } from 'ethers'
 
-import { subgraphClient } from '@/graphQLClients'
+import { kassandraClient } from '@/graphQLClients'
 
 type UseVotingPowerProps = {
   id: string
 }
 
 export const fetchVotingPower = async ({ id }: UseVotingPowerProps) => {
-  return subgraphClient
+  return kassandraClient
     .VotingPower({
       id
     })

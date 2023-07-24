@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { subgraphClient } from '@/graphQLClients'
+import { kassandraClient } from '@/graphQLClients'
 
 type UseProposalsProps = {
   skip: number
@@ -8,7 +8,7 @@ type UseProposalsProps = {
 }
 
 export const fetchProposals = async ({ skip, take }: UseProposalsProps) => {
-  return subgraphClient
+  return kassandraClient
     .Proposals({
       skip,
       take
