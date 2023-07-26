@@ -1,7 +1,7 @@
 import React from 'react'
 import Big from 'big.js'
 
-import { BrowserProvider, JsonRpcProvider, Contract } from 'ethers'
+import { BrowserProvider, JsonRpcProvider, Contract, ZeroAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { networks } from '@/constants/tokenAddresses'
@@ -142,7 +142,12 @@ const useStaking = (address: string, chainId = 43114) => {
       callbacks?: CallbacksType
     ) => {
       try {
-        const tx = await contract.send.stake(pid, amount, delegatee, delegatee)
+        const tx = await contract.send.stake(
+          pid,
+          amount,
+          ZeroAddress,
+          delegatee
+        )
         await txNotification(tx, message, callbacks)
       } catch (error) {
         transactionErrors(error, callbacks?.onFail)
