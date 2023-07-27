@@ -66,7 +66,7 @@ export default function Explore() {
   React.useEffect(() => {
     if (!data?.pools.length) return
 
-    setTotalPoolsTable(data?.kassandras[1].pool_count - 1)
+    setTotalPoolsTable(data?.kassandras[0].pool_count - 3)
   }, [data])
 
   return (

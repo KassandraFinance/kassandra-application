@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { subgraphClient } from '@/graphQLClients'
+import { kassandraClient } from '@/graphQLClients'
 
 type UseVotesProps = {
   support: boolean
@@ -8,7 +8,7 @@ type UseVotesProps = {
 }
 
 export const fetchVotes = async ({ support, number }: UseVotesProps) => {
-  return subgraphClient
+  return kassandraClient
     .Votes({
       support,
       number

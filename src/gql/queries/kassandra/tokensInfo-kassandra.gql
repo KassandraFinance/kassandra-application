@@ -1,5 +1,5 @@
 query TokensInfo($whitelist: [ID!]!, $id: ID!) {
-    tokensByIds(ids: $whitelist) {
+    tokens(where: { id_in: $whitelist }) {
       id
       name
       logo

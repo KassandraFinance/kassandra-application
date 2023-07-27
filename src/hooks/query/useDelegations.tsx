@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { subgraphClient } from '@/graphQLClients'
+import { kassandraClient } from '@/graphQLClients'
 
 type UseDelegationsProps = {
   id: string
 }
 
 export const fetchDelegations = async ({ id }: UseDelegationsProps) => {
-  return subgraphClient.Delegations({ id }).then(res => res)
+  return kassandraClient.Delegations({ id }).then(res => res)
 }
 
 export const useDelegations = ({ id }: UseDelegationsProps) => {

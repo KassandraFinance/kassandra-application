@@ -26,26 +26,24 @@ export const fetchPoolData = async ({ id }: UsePoolDataProps) => {
     }
     let underlying_assets: {
       __typename?: 'Asset' | undefined
-      balance: any
-      weight_normalized: any
-      weight_goal_normalized: any
+      balance: string
+      weight_normalized: string
+      weight_goal_normalized: string
       token: {
         __typename?: 'Token' | undefined
         id: string
-        name?: string | null | undefined
+        name: string
         logo?: string | null | undefined
-        symbol?: string | null | undefined
-        decimals?: number | null | undefined
-        price_usd: any
+        symbol: string
+        decimals: number
         is_wrap_token: number
         wraps?:
           | {
               __typename?: 'Token' | undefined
               id: string
-              decimals?: number | null | undefined
-              price_usd: any
-              symbol?: string | null | undefined
-              name?: string | null | undefined
+              decimals: number
+              symbol: string
+              name: string
               logo?: string | null | undefined
             }
           | null
@@ -83,6 +81,6 @@ export const usePoolData = ({ id }: UsePoolDataProps) => {
     queryFn: async () => fetchPoolData({ id }),
     staleTime: 1000 * 60,
     refetchInterval: 1000 * 60,
-    enabled: id.length > 0
+    enabled: id?.length > 0
   })
 }

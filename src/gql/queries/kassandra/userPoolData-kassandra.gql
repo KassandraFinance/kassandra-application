@@ -47,7 +47,7 @@ query userPoolData($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
         amount
       }
       chain {
-        logo
+        logo: icon
       }
       now: price_candles(
         where: { base: "usd", period: 3600 }

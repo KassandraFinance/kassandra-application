@@ -63,7 +63,7 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   })
 
   const { priceToken } = useGetToken({
-    nativeTokenAddress: pool?.chain?.addressWrapped?.toLowerCase() || '',
+    nativeTokenAddress: pool?.chain?.address_wrapped?.toLowerCase() || '',
     tokens: data || {}
   })
 
@@ -73,7 +73,7 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
     address: pool?.address || '',
     controller: pool?.controller || '',
     vault: pool?.vault || '',
-    tokens: pool?.underlying_assets || '',
+    tokens: pool?.underlying_assets || [],
     tokensAddresses: pool?.underlying_assets_addresses || [],
     chainId: pool?.chain_id?.toString() || ''
   }

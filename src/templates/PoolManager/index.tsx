@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import Tippy from '@tippyjs/react'
-import { BNtoDecimal } from '../../utils/numerals'
+import { BNtoDecimal, calcChange } from '../../utils/numerals'
 import Big from 'big.js'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 
@@ -139,11 +139,6 @@ const PoolManager = () => {
     feeRewards: <FeeRewards />,
     brokers: <Brokers />,
     details: <Details />
-  }
-
-  function calcChange(newPrice: number, oldPrice: number) {
-    const calc = ((newPrice - oldPrice) / oldPrice) * 100
-    return calc ? calc.toFixed(2) : '0'
   }
 
   function handleDashBoardButton() {
@@ -306,7 +301,7 @@ const PoolManager = () => {
                           </button>
                         </Link>
                         <a
-                          href={`${poolInfo[0]?.chain?.blockExplorerUrl}/address/${poolInfo[0]?.address}`}
+                          href={`${poolInfo[0]?.chain?.block_explorer_url}/address/${poolInfo[0]?.address}`}
                           className="circle"
                           target="_blank"
                           rel="noopener noreferrer"

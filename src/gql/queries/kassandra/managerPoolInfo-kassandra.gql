@@ -10,19 +10,19 @@ query ManagerPoolInfo($manager: String, $id: ID) {
         decimals
         chain {
           id
-          logo
-          chainName
-          nativeTokenName
-          nativeTokenSymbol
-          nativeTokenDecimals
-          rpcUrls
-          blockExplorerUrl
-          secondsPerBlock
-          addressWrapped
+          logo: icon
+          name
+          token_name
+          token_symbol
+          token_decimals
+          rpc_urls
+          block_explorer_url
+          seconds_per_block
+          address_wrapped
         }
         name
         symbol
-        poolId
+        pool_id
         total_value_locked_usd
         underlying_assets_addresses
         controller

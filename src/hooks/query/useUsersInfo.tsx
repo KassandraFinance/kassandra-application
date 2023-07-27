@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { subgraphClient } from '@/graphQLClients'
+import { kassandraClient } from '@/graphQLClients'
 
 type UseUsersInfoProps = {
   skip: number
@@ -8,7 +8,7 @@ type UseUsersInfoProps = {
 }
 
 export const fetchUsersInfo = async ({ skip, take }: UseUsersInfoProps) => {
-  return subgraphClient
+  return kassandraClient
     .UsersInfo({
       skip,
       take

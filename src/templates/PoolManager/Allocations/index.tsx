@@ -30,21 +30,19 @@ type IWeightGoalsProps = {
   token?:
     | {
         __typename?: 'Token' | undefined
-        symbol?: string | null | undefined
+        symbol: string
         logo?: string | null | undefined
-        price_usd: any
       }
     | null
     | undefined
   weights: {
     __typename?: 'WeightGoal' | undefined
-    weight_normalized: any
+    weight_normalized: string
     asset: {
       __typename?: 'Asset' | undefined
-      balance: any
+      balance: string
       token: {
-        __typename?: 'Token' | undefined
-        symbol?: string | null | undefined
+        symbol: string
         logo?: string | null | undefined
       }
     }
@@ -81,7 +79,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     name: data?.name ?? '',
     symbol: data?.symbol ?? '',
     logo: data?.logo ?? '',
-    blockExplorerUrl: data?.chain?.blockExplorerUrl ?? ''
+    blockExplorerUrl: data?.chain?.block_explorer_url ?? ''
   }
   const isRebalancing =
     (data?.weight_goals[0]?.end_timestamp ?? 0) * 1000 > new Date().getTime()

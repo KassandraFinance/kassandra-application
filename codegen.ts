@@ -6,7 +6,7 @@ const config: CodegenConfig = {
   hooks: { afterAllFileWrite: ['eslint --fix'] },
   generates: {
     './src/gql/generated/kassandraApi.ts': {
-      schema: 'https://backend.kassandra.finance/',
+      schema: SUBGRAPH_URL,
       documents: ['./src/gql/queries/kassandra/**/*-kassandra.gql'],
       plugins: [
         'typescript',
@@ -14,19 +14,29 @@ const config: CodegenConfig = {
         'typescript-graphql-request'
       ],
       config: {
-        enumsAsTypes: true
+        enumsAsTypes: true,
+        scalars: {
+          BigDecimal: 'string',
+          BigInt: 'string',
+          Bytes: 'string'
+        }
       }
     },
-    './src/gql/generated/subgraphApi.ts': {
-      schema: SUBGRAPH_URL,
-      documents: ['./src/gql/queries/subgraph/**/*-subgraph.gql'],
+    './src/gql/generated/backendApi.ts': {
+      schema: 'https://backend.kassandra.finance/',
+      documents: ['./src/gql/queries/backend/**/*-backend.gql'],
       plugins: [
         'typescript',
         'typescript-operations',
         'typescript-graphql-request'
       ],
       config: {
-        enumsAsTypes: true
+        enumsAsTypes: true,
+        scalars: {
+          BigDecimal: 'string',
+          BigInt: 'string',
+          Bytes: 'string'
+        }
       }
     }
   }

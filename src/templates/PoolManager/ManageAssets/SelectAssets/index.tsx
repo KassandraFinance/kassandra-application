@@ -70,7 +70,7 @@ const SelectAssets = () => {
 
     if (chainId === 5) {
       setTokensList(
-        data?.tokensByIds?.filter(
+        data?.tokens?.filter(
           element =>
             element &&
             !data?.pool?.underlying_assets_addresses.includes(
@@ -80,7 +80,7 @@ const SelectAssets = () => {
       )
     } else {
       setTokensList(
-        data?.tokensByIds?.filter(
+        data?.tokens?.filter(
           element =>
             element &&
             !data?.pool?.underlying_assets_addresses.includes(element?.id)

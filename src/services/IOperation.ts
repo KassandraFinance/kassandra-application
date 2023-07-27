@@ -33,36 +33,32 @@ export type IPoolInfoProps = {
   address: string
   controller: string
   vault: string
-  tokens:
-    | string
-    | {
-        __typename?: 'Asset' | undefined
-        balance: any
-        weight_normalized: any
-        weight_goal_normalized: any
-        token: {
-          __typename?: 'Token' | undefined
-          id: string
-          name?: string | null | undefined
-          logo?: string | null | undefined
-          symbol?: string | null | undefined
-          decimals?: number | null | undefined
-          price_usd: any
-          is_wrap_token: number
-          wraps?:
-            | {
-                __typename?: 'Token' | undefined
-                id: string
-                decimals?: number | null | undefined
-                price_usd: any
-                symbol?: string | null | undefined
-                name?: string | null | undefined
-                logo?: string | null | undefined
-              }
-            | null
-            | undefined
-        }
-      }[]
+  tokens: {
+    __typename?: 'Asset' | undefined
+    balance: string
+    weight_normalized: string
+    weight_goal_normalized: string
+    token: {
+      __typename?: 'Token' | undefined
+      id: string
+      name: string
+      logo?: string | null | undefined
+      symbol: string
+      decimals: number
+      is_wrap_token: number
+      wraps?:
+        | {
+            __typename?: 'Token' | undefined
+            id: string
+            decimals: number
+            symbol: string
+            name: string
+            logo?: string | null | undefined
+          }
+        | null
+        | undefined
+    }
+  }[]
   tokensAddresses: string[]
   chainId: string
 }

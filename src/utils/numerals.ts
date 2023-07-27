@@ -67,7 +67,10 @@ export function BNtoDecimal(
 
 export const wei = Big('10').pow(18)
 
-export function calcChange(newPrice: number, oldPrice: number) {
-  const calc = ((newPrice - oldPrice) / oldPrice) * 100
+export function calcChange(
+  newPrice: number | string,
+  oldPrice: number | string
+) {
+  const calc = ((Number(newPrice) - Number(oldPrice)) / Number(oldPrice)) * 100
   return calc ? calc.toFixed(2) : '0'
 }

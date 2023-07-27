@@ -48,7 +48,7 @@ const Details = () => {
                 height={17}
               />
 
-              <S.ChainName>{poolInfo[0]?.chain?.chainName}</S.ChainName>
+              <S.ChainName>{poolInfo[0]?.chain?.name}</S.ChainName>
 
               <CopyToClipboard text={poolInfo[0]?.address}>
                 <S.Address>

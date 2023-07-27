@@ -19,26 +19,24 @@ type WeightsV2 = {
 
 export type UnderlyingAssetsInfoType = {
   __typename?: 'Asset' | undefined
-  balance: any
-  weight_normalized: any
-  weight_goal_normalized: any
+  balance: string
+  weight_normalized: string
+  weight_goal_normalized: string
   token: {
     __typename?: 'Token' | undefined
     id: string
-    name?: string | null | undefined
+    name: string
     logo?: string | null | undefined
-    symbol?: string | null | undefined
-    decimals?: number | null | undefined
-    price_usd: any
+    symbol: string
+    decimals: number
     is_wrap_token: number
     wraps?:
       | {
           __typename?: 'Token' | undefined
           id: string
-          decimals?: number | null | undefined
-          price_usd: any
-          symbol?: string | null | undefined
-          name?: string | null | undefined
+          decimals: number
+          symbol: string
+          name: string
           logo?: string | null | undefined
         }
       | null

@@ -171,7 +171,7 @@ const Withdraw = ({
         wallet.accounts[0].address,
         chainId,
         pool?.pool_version === 1
-          ? pool?.chain?.addressWrapped || undefined
+          ? pool?.chain?.address_wrapped || undefined
           : undefined
       )
 
@@ -214,8 +214,8 @@ const Withdraw = ({
       trackBuying(
         pool?.id || '0',
         pool?.symbol || '',
-        -1 * data?.price_usd,
-        pool?.chain?.chainName || ''
+        -1 * Number(data?.price_usd),
+        pool?.chain?.name || ''
       )
 
       if (approvals[typeAction][0] === 0) {
@@ -556,7 +556,7 @@ const Withdraw = ({
           !wallet
             ? 'Please connect your wallet by clicking the button below'
             : chainId !== pool?.chain_id
-            ? `Please change to the ${pool?.chain?.chainName} by clicking the button below`
+            ? `Please change to the ${pool?.chain?.name} by clicking the button below`
             : ''
         }
       />
@@ -703,7 +703,7 @@ const Withdraw = ({
           onClick={() =>
             setChain({ chainId: `0x${pool?.chain_id?.toString(16)}` })
           }
-          text={`Change to ${pool?.chain?.chainName}`}
+          text={`Change to ${pool?.chain?.name}`}
         />
       )}
     </S.Withdraw>

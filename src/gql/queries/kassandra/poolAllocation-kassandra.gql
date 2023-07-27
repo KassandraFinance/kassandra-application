@@ -33,7 +33,6 @@ query PoolAllocation($id: ID!, $skip: Int) {
         token {
           symbol
           logo
-          price_usd
         }
         weights {
           weight_normalized
