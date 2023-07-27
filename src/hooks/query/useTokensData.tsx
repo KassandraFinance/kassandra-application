@@ -64,6 +64,6 @@ export const useTokensData = ({
       }),
     staleTime: 1000 * 60,
     refetchInterval: 1000 * 60,
-    enabled: tokenAddresses.length > 0 && chainId !== 0
+    enabled: chainId !== 0
   })
 }
