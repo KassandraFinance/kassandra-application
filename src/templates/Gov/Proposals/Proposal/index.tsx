@@ -185,8 +185,8 @@ const Proposal = () => {
         secondsPerBlock
 
       const proposalInfo: IProposalProps = {
-        againstVotes: data.proposal[0].againstVotes,
-        forVotes: data.proposal[0].forVotes,
+        againstVotes: Big(data.proposal[0].againstVotes),
+        forVotes: Big(data.proposal[0].forVotes),
         description: data.proposal[0].description,
         number: data.proposal[0].number,
         quorum: data.proposal[0].quorum,
@@ -201,10 +201,10 @@ const Proposal = () => {
         created: createdProposal.toLocaleString(),
         eta: data.proposal[0].eta
           ? new Date(Number(data.proposal[0].eta) * 1000).toLocaleString()
-          : data.proposal[0].eta,
+          : data.proposal[0].eta ?? '0',
         executed: data.proposal[0].executed
           ? new Date(Number(data.proposal[0].executed) * 1000).toLocaleString()
-          : data.proposal[0].executed,
+          : data.proposal[0].executed ?? '0',
         votingOpen: new Date(
           Number(createdProposal) + secondsPerBlock * 1000
         ).toLocaleString(),

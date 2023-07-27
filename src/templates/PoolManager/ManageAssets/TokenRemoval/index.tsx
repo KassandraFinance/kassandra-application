@@ -54,7 +54,7 @@ const TokenRemoval = () => {
   })
 
   const { priceToken } = useGetToken({
-    nativeTokenAddress: (poolInfo && poolInfo[0]?.chain?.addressWrapped) ?? '',
+    nativeTokenAddress: (poolInfo && poolInfo[0]?.chain?.address_wrapped) ?? '',
     tokens: data || {}
   })
 

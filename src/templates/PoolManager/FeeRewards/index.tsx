@@ -19,26 +19,26 @@ type Fees = {
   __typename?: 'Fee' | undefined
   type: string
   period: number
-  volume_usd: any
-  volume_broker_usd?: any
+  volume_usd: string
+  volume_broker_usd?: string | null
   timestamp: number
 }
 
 export type Pool = {
   __typename?: 'Pool' | undefined
   chain_id: number
-  price_usd: any
+  price_usd: string
   symbol: string
   controller: string
-  fee_join_manager: any
-  fee_join_broker: any
-  total_fees_join_manager_usd: any
-  total_fees_join_broker_usd: any
-  total_fees_aum_manager_usd: any
-  total_fees_aum_kassandra_usd: any
-  fee_aum: any
-  fee_aum_kassandra: any
-  last_harvest?: any
+  fee_join_manager: string
+  fee_join_broker: string
+  total_fees_join_manager_usd: string
+  total_fees_join_broker_usd: string
+  total_fees_aum_manager_usd: string
+  total_fees_aum_kassandra_usd: string
+  fee_aum: string
+  fee_aum_kassandra: string
+  last_harvest?: string | null
   manager: {
     __typename?: 'Manager' | undefined
     id: string
@@ -47,8 +47,8 @@ export type Pool = {
     __typename?: 'Fee' | undefined
     type: string
     period: number
-    volume_usd: any
-    volume_broker_usd?: any
+    volume_usd: string
+    volume_broker_usd?: string | null
     timestamp: number
   }[]
   lasCollectedAum: {

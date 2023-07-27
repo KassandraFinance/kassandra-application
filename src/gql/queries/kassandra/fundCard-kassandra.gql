@@ -11,7 +11,7 @@ query FundCard(
       name
       logo
       address
-      foundedBy
+      founded_by
       price_usd # pool asset price
       pool_version
       # price candlestick
@@ -20,7 +20,7 @@ query FundCard(
       # period is in seconds, 5m, 15m, 1h, 4h, 1d, 7d
       # timestamp_gt it's since when to catch
       chain {
-        logo
+        logo: icon
       }
       price_candles(
         where: {
@@ -61,22 +61,20 @@ query FundCard(
         weight_goal_normalized # expected allocation in the pool between 0 and 1
         # token information
          token {
-        id
-        name
-        logo
-        symbol
-        decimals
-        price_usd
-        is_wrap_token
-        wraps {
           id
-          decimals
-          price_usd
-          symbol
           name
           logo
+          symbol
+          decimals
+          is_wrap_token
+          wraps {
+            id
+            decimals
+            symbol
+            name
+            logo
+          }
         }
-      }
       }
       now: price_candles(
         where: { base: "usd", period: 3600 }

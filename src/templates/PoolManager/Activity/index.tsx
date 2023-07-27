@@ -60,11 +60,11 @@ type Activity = {
   id: string
   type: string
   timestamp: number
-  price_usd: any[]
+  price_usd: string[]
   txHash: string
   address: string
   symbol: string[]
-  amount: any[]
+  amount: string[]
 }
 
 export type Result = {
@@ -98,7 +98,6 @@ export type Result = {
       token: {
         symbol: string
         logo: string
-        price_usd: string
       }
       weights: {
         weight_normalized: string
@@ -234,7 +233,7 @@ const Activity = () => {
                   key={activity.key}
                   actionType={activity.actionType}
                   date={activity.date}
-                  scan={data.pages[0]?.chain?.blockExplorerUrl || ''}
+                  scan={data.pages[0]?.chain?.block_explorer_url || ''}
                   wallet={activity.wallet}
                   txHash={activity.txHash}
                   activityInfo={activity.activityInfo}

@@ -26,7 +26,7 @@ const AvailableRewards = ({ pool }: Props) => {
     : { string: 'days', value: 0 }
 
   const lastHarvest = pool?.last_harvest
-    ? getDateDiff(pool.last_harvest * 1000)
+    ? getDateDiff(Number(pool.last_harvest) * 1000)
     : { string: 'days', value: 0 }
 
   const [{ wallet }] = useConnectWallet()

@@ -9,8 +9,8 @@
       num_token_remove
       num_weight_goals
       chain {
-        blockExplorerUrl
-        addressWrapped
+        block_explorer_url
+        address_wrapped
       }
       weight_goals(orderBy: end_timestamp, orderDirection: desc) {
         id
@@ -20,7 +20,6 @@
         token {
           symbol
           logo
-          price_usd
         }
         weights {
           weight_normalized

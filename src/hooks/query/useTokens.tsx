@@ -7,7 +7,7 @@ type UseTokensProps = {
 }
 
 export const fetchTokens = async ({ tokensList }: UseTokensProps) => {
-  return kassandraClient.Tokens({ tokensList }).then(res => res.tokensByIds)
+  return kassandraClient.Tokens({ tokensList }).then(res => res.tokens)
 }
 
 export const useTokens = ({ tokensList }: UseTokensProps) => {

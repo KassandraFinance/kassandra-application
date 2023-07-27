@@ -119,8 +119,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     const { fromAddress, fromDecimals } =
       tokenSelect.address === NATIVE_ADDRESS && pool?.chain_id === 137
         ? {
-            fromAddress: pool.chain?.addressWrapped,
-            fromDecimals: pool.chain?.nativeTokenDecimals
+            fromAddress: pool.chain?.address_wrapped,
+            fromDecimals: pool.chain?.token_decimals
           }
         : {
             fromAddress: tokenSelect.address,
@@ -129,26 +129,24 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
     let sortAddresses: {
       __typename?: 'Asset' | undefined
-      balance: any
-      weight_normalized: any
-      weight_goal_normalized: any
+      balance: string
+      weight_normalized: string
+      weight_goal_normalized: string
       token: {
         __typename?: 'Token' | undefined
         id: string
-        name?: string | null | undefined
+        name: string
         logo?: string | null | undefined
-        symbol?: string | null | undefined
-        decimals?: number | null | undefined
-        price_usd: any
+        symbol: string
+        decimals: number
         is_wrap_token: number
         wraps?:
           | {
               __typename?: 'Token' | undefined
               id: string
-              decimals?: number | null | undefined
-              price_usd: any
-              symbol?: string | null | undefined
-              name?: string | null | undefined
+              decimals: number
+              symbol: string
+              name: string
               logo?: string | null | undefined
             }
           | null
@@ -349,7 +347,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       wallet.accounts[0].address,
       chainId,
       pool?.pool_version === 1
-        ? pool?.chain?.addressWrapped || undefined
+        ? pool?.chain?.address_wrapped || undefined
         : undefined
     )
 
@@ -432,8 +430,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       trackBuying(
         pool?.id || '',
         pool?.symbol || '',
-        data?.price_usd,
-        pool?.chain?.chainName || ''
+        Number(data?.price_usd),
+        pool?.chain?.name || ''
       )
 
       try {
@@ -638,7 +636,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
       const poolPrice = getPoolPrice({
         assets: pool?.underlying_assets || [],
-        poolSupply: pool?.supply,
+        poolSupply: pool?.supply ?? '',
         priceToken
       })
 
@@ -818,7 +816,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           onClick={() =>
             setChain({ chainId: `0x${pool?.chain_id?.toString(16)}` })
           }
-          text={`Change to ${pool?.chain?.chainName}`}
+          text={`Change to ${pool?.chain?.name}`}
         />
       )}
     </S.Invest>

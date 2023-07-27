@@ -18,7 +18,7 @@ query ManagerPoolActivities($id: ID!, $first: Int!, $skip: Int!, $options: [Stri
         }
       }
       chain {
-        blockExplorerUrl
+        block_explorer_url
       }
       activities(
         where: {
@@ -62,7 +62,6 @@ query ManagerPoolActivities($id: ID!, $first: Int!, $skip: Int!, $options: [Stri
         }
         token {
           symbol
-          price_usd
           logo
         }
         weights {

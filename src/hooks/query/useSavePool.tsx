@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { getAddress } from 'ethers'
 
-import { kassandraClient } from '@/graphQLClients'
+import { backendClient } from '@/graphQLClients'
 import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
@@ -20,7 +20,7 @@ export const sendSavePool = async ({
   logo,
   summary
 }: UseSavePoolProps) => {
-  return kassandraClient
+  return backendClient
     .SavePool({ chainId, controller, signature, logo, summary })
     .then(res => res)
 }

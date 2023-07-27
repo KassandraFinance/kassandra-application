@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { subgraphClient } from '@/graphQLClients'
+import { kassandraClient } from '@/graphQLClients'
 
 type UseUsersVoteWeightsProps = {
   id_in: string | string[]
@@ -9,7 +9,7 @@ type UseUsersVoteWeightsProps = {
 export const fetchUsersVoteWeights = async ({
   id_in
 }: UseUsersVoteWeightsProps) => {
-  return subgraphClient.UsersVoteWeights({ id_in }).then(res => res)
+  return kassandraClient.UsersVoteWeights({ id_in }).then(res => res)
 }
 
 export const useUsersVoteWeights = ({ id_in }: UseUsersVoteWeightsProps) => {

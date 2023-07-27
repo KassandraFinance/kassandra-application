@@ -31,12 +31,12 @@ interface IProposalsTableProps {
   id: string
   number: number
   targets: string[]
-  values: any[]
+  values: string[]
   signatures: string[]
-  startBlock: any
+  startBlock: string
   description: string
-  endBlock: any
-  created: any
+  endBlock: string
+  created: string
 }
 
 interface IUserTableProps {
@@ -69,12 +69,12 @@ export const UserTableVotingHistory = ({
         id: string
         number: number
         targets: string[]
-        values: any[]
+        values: string[]
         signatures: string[]
-        startBlock: any
+        startBlock: string
         description: string
-        endBlock: any
-        created: any
+        endBlock: string
+        created: string
       }
     }[]
   ) {

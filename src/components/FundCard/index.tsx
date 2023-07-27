@@ -168,7 +168,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
               <S.CardBody>
                 <S.FundName>
                   <h3>{data?.name}</h3>
-                  <span>by {data?.foundedBy ?? 'Community'}</span>
+                  <span>by {data?.founded_by ?? 'Community'}</span>
                 </S.FundName>
 
                 <S.FundStatusContainer>
