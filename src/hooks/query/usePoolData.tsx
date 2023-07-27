@@ -83,6 +83,6 @@ export const usePoolData = ({ id }: UsePoolDataProps) => {
     queryFn: async () => fetchPoolData({ id }),
     staleTime: 1000 * 60,
     refetchInterval: 1000 * 60,
-    enabled: id.length > 0
+    enabled: id?.length > 0
   })
 }
