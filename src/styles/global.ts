@@ -66,7 +66,7 @@ const GlobalStyles: GlobalStyleComponent<
         --onboard-connect-sidebar-progress-background: #333437;
         --onboard-font-family-normal: rubik, sans-serif;
         --onboard-font-size-5: 1.6rem;
-        --onboard-font-size-6: 1.2rem;
+        --onboard-font-size-6: 1.3rem;
         --onboard-modal-z-index: 1050;
 
         //classname to wallect connect modal
