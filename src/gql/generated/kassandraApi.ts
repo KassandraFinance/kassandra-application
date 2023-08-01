@@ -7355,13 +7355,30 @@ export type PoolChartsQuery = {
       close: string
       timestamp: number
     }>
-    weights: Array<{
-      __typename?: 'WeightPoint'
-      timestamp: number
+    weight_goal_last: Array<{
+      __typename?: 'WeightGoalPoint'
+      start_timestamp: number
+      end_timestamp: number
       weights: Array<{
-        __typename?: 'Weight'
+        __typename?: 'WeightGoal'
         weight_normalized: string
-        token: { __typename?: 'Token'; id: string; symbol: string }
+        asset: {
+          __typename?: 'Asset'
+          token: { __typename?: 'Token'; id: string; symbol: string }
+        }
+      }>
+    }>
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      start_timestamp: number
+      end_timestamp: number
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        weight_normalized: string
+        asset: {
+          __typename?: 'Asset'
+          token: { __typename?: 'Token'; id: string; symbol: string }
+        }
       }>
     }>
   } | null
@@ -8771,16 +8788,37 @@ export const PoolChartsDocument = gql`
         close
         timestamp
       }
-      weights(
-        where: { timestamp_gt: $period_selected }
-        orderBy: timestamp
-        first: 365
+      weight_goal_last: weight_goals(
+        orderBy: start_timestamp
+        orderDirection: desc
+        first: 1
       ) {
-        timestamp
+        start_timestamp
+        end_timestamp
         weights {
-          token {
-            id
-            symbol
+          asset {
+            token {
+              id
+              symbol
+            }
+          }
+          weight_normalized
+        }
+      }
+      weight_goals(
+        where: { start_timestamp_gt: $period_selected }
+        orderBy: start_timestamp
+        orderDirection: desc
+        first: 1000
+      ) {
+        start_timestamp
+        end_timestamp
+        weights {
+          asset {
+            token {
+              id
+              symbol
+            }
           }
           weight_normalized
         }

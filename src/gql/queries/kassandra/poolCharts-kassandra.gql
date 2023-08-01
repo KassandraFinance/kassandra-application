@@ -28,16 +28,37 @@ query PoolCharts($id: ID!, $price_period: Int!, $period_selected: Int!) {
         timestamp
       }
       # hourly allocation chart
-      weights(
-        where: { timestamp_gt: $period_selected }
-        orderBy: timestamp
-        first: 365
+      weight_goal_last: weight_goals(
+        orderBy: start_timestamp
+        orderDirection: desc
+        first: 1
       ) {
-        timestamp
+        start_timestamp
+        end_timestamp
         weights {
-          token {
-            id
-            symbol
+          asset {
+            token {
+              id
+              symbol
+            }
+          }
+          weight_normalized
+        }
+      }
+      weight_goals(
+        where: { start_timestamp_gt: $period_selected }
+        orderBy: start_timestamp
+        orderDirection: desc
+        first: 1000
+      ) {
+        start_timestamp
+        end_timestamp
+        weights {
+          asset {
+            token {
+              id
+              symbol
+            }
           }
           weight_normalized
         }
