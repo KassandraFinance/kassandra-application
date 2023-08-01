@@ -1,21 +1,43 @@
 import { init } from '@web3-onboard/react'
-import injectedModule from '@web3-onboard/injected-wallets'
+import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets'
 import gnosisModule from '@web3-onboard/gnosis'
 import walletConnectModule from '@web3-onboard/walletconnect'
 
 const wcV2InitOptions = {
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT ?? '',
   requiredChains: [137, 43114],
-  dappUrl: 'https://app.kassandra.finance'
+  dappUrl: 'https://app.kassandra.finance',
+  version: 2 as const
 }
 
 const injected = injectedModule({
-  displayUnavailable: true
+  displayUnavailable: true,
+  sort: wallets => {
+    const metaMask = wallets.find(
+      ({ label }) => label === ProviderLabel.MetaMask
+    )
+    const coinbase = wallets.find(
+      ({ label }) => label === ProviderLabel.Coinbase
+    )
+
+    return (
+      [
+        metaMask,
+        coinbase,
+        ...wallets.filter(
+          ({ label }) =>
+            label !== ProviderLabel.MetaMask && label !== ProviderLabel.Coinbase
+        )
+      ]
+        // remove undefined values
+        .flatMap(wallet => (wallet ? wallet : []))
+    )
+  }
 })
 const walletConnect = walletConnectModule(wcV2InitOptions)
 const gnosis = gnosisModule()
 
-const wallets = [injected, walletConnect, gnosis]
+const wallets = [walletConnect, gnosis, injected]
 
 const chains = [
   {
@@ -185,7 +207,7 @@ const web3Onboard = init({
     '--w3o-border-radius': '8px',
     '--w3o-font-family': 'Rubik'
   },
-  // disableFontDownload: true,
+  disableFontDownload: true,
   wallets,
   chains,
   appMetadata,
