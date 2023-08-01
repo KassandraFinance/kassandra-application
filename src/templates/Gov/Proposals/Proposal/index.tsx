@@ -175,6 +175,11 @@ const Proposal = () => {
 
   React.useEffect(() => {
     if (data) {
+      if (data?.proposal.length === 0) {
+        router.push('/404')
+        return
+      }
+
       const secondsPerBlock = 2
 
       const createdProposal = new Date(Number(data.proposal[0].created) * 1000)
@@ -250,6 +255,10 @@ const Proposal = () => {
 
   React.useEffect(() => {
     if (data) {
+      if (data.proposal.length === 0) {
+        return
+      }
+
       const { endBlock, startBlock, created, canceled, executed, queued, eta } =
         data.proposal[0]
       const defeated =
