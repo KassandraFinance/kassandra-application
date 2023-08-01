@@ -13,7 +13,15 @@ export const TooltipAllocation = styled.div`
     font-weight: 500;
     padding: 2px;
     display: grid;
-    grid-template-columns: 54px 20px 48px;
+    grid-template-columns: auto 20px 48px;
+
+    span:nth-child(2) {
+      text-align: center;
+    }
+
+    span:last-child {
+      text-align: right;
+    }
   }
 `
 
