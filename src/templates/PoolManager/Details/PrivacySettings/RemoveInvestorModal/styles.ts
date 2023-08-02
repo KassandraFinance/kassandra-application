@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { Image } from '@/components/Governance/ImageProfile/styles'
+import { Image } from '@/components/Governance/ImageProfileWithQuery/styles'
 
 export const RemoveInvestorModal = styled.div`
   ${() => css``}

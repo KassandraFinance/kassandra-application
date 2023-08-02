@@ -7142,6 +7142,9 @@ export type ManagersPoolsQuery = {
   managers: Array<{
     __typename?: 'Manager'
     id: string
+    nickname?: string | null
+    is_nft?: boolean | null
+    image?: string | null
     pool_count: number
     unique_investors: number
     total_value_locked_usd: string
@@ -7666,7 +7669,13 @@ export type ProposalQuery = {
     queued?: string | null
     executed?: string | null
     eta?: string | null
-    proposer: { __typename?: 'User'; id: string }
+    proposer: {
+      __typename?: 'User'
+      id: string
+      nickname?: string | null
+      is_nft?: boolean | null
+      image?: string | null
+    }
     votes: Array<{
       __typename?: 'Vote'
       support: boolean
@@ -7855,6 +7864,9 @@ export type UsersInfoQuery = {
     __typename?: 'User'
     id: string
     votingPower: string
+    image?: string | null
+    is_nft?: boolean | null
+    nickname?: string | null
     votes: Array<{
       __typename?: 'Vote'
       proposal: { __typename?: 'Proposal'; number: number }
@@ -7890,7 +7902,13 @@ export type VotesQuery = {
       __typename?: 'Vote'
       support: boolean
       votingPower: string
-      voter: { __typename?: 'User'; id: string }
+      voter: {
+        __typename?: 'User'
+        id: string
+        nickname?: string | null
+        is_nft?: boolean | null
+        image?: string | null
+      }
     }>
   }>
 }
@@ -8549,6 +8567,9 @@ export const ManagersPoolsDocument = gql`
       first: $first
     ) {
       id
+      nickname
+      is_nft
+      image
       pool_count
       unique_investors
       total_value_locked_usd
@@ -9111,6 +9132,9 @@ export const ProposalDocument = gql`
       eta
       proposer {
         id
+        nickname
+        is_nft
+        image
       }
       votes(where: { voter: $voter }) {
         support
@@ -9312,6 +9336,9 @@ export const UsersInfoDocument = gql`
     ) {
       id
       votingPower
+      image
+      is_nft
+      nickname
       votes {
         proposal {
           number
@@ -9347,6 +9374,9 @@ export const VotesDocument = gql`
         votingPower
         voter {
           id
+          nickname
+          is_nft
+          image
         }
       }
     }

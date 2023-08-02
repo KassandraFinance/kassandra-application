@@ -5,6 +5,9 @@
         votingPower
         voter {
           id
+          nickname
+          is_nft
+          image
         }
       }
     }

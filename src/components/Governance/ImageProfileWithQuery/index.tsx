@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
+import { useUserProfile } from '@/hooks/query/useUserProfile'
 import substr from '@/utils/substr'
 
 import NftImage from '../../NftImage'
@@ -13,46 +14,42 @@ interface IImageProfileProps {
   diameter: number
   hasAddress: boolean
   isLink: boolean
-  isNFT: boolean
-  nickname?: string | null
-  image?: string | null
   fontSize?: number
   tab?: string
 }
 
-const ImageProfile = ({
+const ImageProfileWithQuery = ({
   address,
   diameter,
   hasAddress,
   isLink,
-  nickname,
-  isNFT,
-  image,
   fontSize,
   tab
 }: IImageProfileProps) => {
   const router = useRouter()
+
+  const { data } = useUserProfile({ address })
 
   return (
     <S.Image
       fontSize={fontSize}
       onClick={() => isLink && router.push(`/profile/${address}${tab}`)}
     >
-      {nickname ? (
-        isNFT ? (
-          image && <NftImage NftUrl={image} imageSize="small" />
+      {data?.nickname ? (
+        data?.isNFT ? (
+          data?.image && <NftImage NftUrl={data.image} imageSize="small" />
         ) : (
-          image && <img className="user-image" src={image} alt="" />
+          data?.image && <img className="user-image" src={data.image} alt="" />
         )
       ) : (
         <Jazzicon diameter={diameter} seed={jsNumberForAddress(address)} />
       )}
       {hasAddress ? (
-        nickname ? (
+        data?.nickname ? (
           isLink ? (
-            <Link href={`/profile/${address}${tab}`}>{nickname}</Link>
+            <Link href={`/profile/${address}${tab}`}>{data.nickname}</Link>
           ) : (
-            <span>{nickname}</span>
+            <span>{data.nickname}</span>
           )
         ) : isLink ? (
           <Link href={`/profile/${address}${tab}`}>{substr(address)}</Link>
@@ -64,4 +61,4 @@ const ImageProfile = ({
   )
 }
 
-export default ImageProfile
+export default ImageProfileWithQuery

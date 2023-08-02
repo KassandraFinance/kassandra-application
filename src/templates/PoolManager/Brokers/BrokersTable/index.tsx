@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { useBrokers } from '@/hooks/query/useBrokers'
 import substr from '@/utils/substr'
 
-import ImageProfile from '@/components/Governance/ImageProfile'
+import ImageProfileWithQuery from '@/components/Governance/ImageProfileWithQuery'
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 import { ToastInfo } from '@/components/Toastify/toast'
 import Pagination from '@/components/Pagination'
@@ -160,7 +160,7 @@ const BrokersTable = () => {
                     <TRLink>
                       <TD>
                         <Value>
-                          <ImageProfile
+                          <ImageProfileWithQuery
                             address={broker.wallet}
                             diameter={24}
                             hasAddress={true}
