@@ -13,7 +13,7 @@ import Button from '@/components/Button'
 import InputSearch from '@/components/Inputs/InputSearch'
 import Modal from '@/components/Modals/Modal'
 import Overlay from '@/components/Overlay'
-import ImageProfile from '@/components/Governance/ImageProfile'
+import ImageProfileWithQuery from '@/components/Governance/ImageProfileWithQuery'
 import Checkbox from '@/components/Inputs/Checkbox'
 
 import * as S from './styles'
@@ -131,7 +131,7 @@ const RemoveInvestorModal = ({
                     onChange={handleCheckbox}
                   />
 
-                  <ImageProfile
+                  <ImageProfileWithQuery
                     address={address}
                     diameter={20}
                     hasAddress

@@ -5,7 +5,7 @@ import {
   TD,
   TH
 } from '@/templates/Explore/CommunityPoolsTable/styles'
-import { Image } from '@ui/Governance/ImageProfile/styles'
+import { Image } from '@/components/Governance/ImageProfileWithQuery/styles'
 import { Value as V } from '@ui/Modals/ModalViewCoin/styles'
 
 export const InvestorsTable = styled.div`

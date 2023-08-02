@@ -7,6 +7,9 @@
     ) {
       id
       votingPower
+      nickname
+      is_nft
+      image
       votes {
         proposal {
           number

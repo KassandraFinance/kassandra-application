@@ -10,8 +10,8 @@ import { checkVoteButton } from '@/utils/checkVoteButton'
 import { IUserVotedProps } from '@/templates/Gov/Proposals/Proposal'
 
 import Button from '../../Button'
-import ImageProfile from '../ImageProfile'
 import Loading from '../../Loading'
+import ImageProfile from '../ImageProfile'
 
 import * as S from './styles'
 
@@ -31,6 +31,9 @@ interface IModalVotesList {
   support: boolean
   voter: {
     id: string
+    nickname?: string | null
+    is_nft?: boolean | null
+    image?: string | null
   }
   votingPower: string
 }
@@ -79,7 +82,10 @@ const ModalVotes = ({
         return {
           support: prop.support,
           voter: {
-            id: prop.voter?.id
+            id: prop.voter?.id,
+            nickname: prop.voter.nickname,
+            is_nft: prop.voter.is_nft,
+            image: prop.voter.image
           },
           votingPower: prop.votingPower
         }
@@ -139,6 +145,9 @@ const ModalVotes = ({
                         <ImageProfile
                           address={user.voter.id}
                           diameter={27}
+                          isNFT={!!user.voter.is_nft}
+                          image={user.voter.image}
+                          nickname={user.voter.nickname}
                           hasAddress={true}
                           isLink={true}
                           tab="?tab=governance-data"

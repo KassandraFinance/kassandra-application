@@ -72,6 +72,9 @@ export interface IProposalProps {
   executed: string
   votingClose: string
   votingOpen: string
+  nickname?: string | null
+  is_nft?: boolean | null
+  image?: string | null
 }
 
 const statslibColor: { [key: string]: string } = {
@@ -196,6 +199,9 @@ const Proposal = () => {
         number: data.proposal[0].number,
         quorum: data.proposal[0].quorum,
         proposer: data.proposal[0].proposer.id,
+        nickname: data.proposal[0].proposer.nickname,
+        is_nft: data.proposal[0].proposer.is_nft,
+        image: data.proposal[0].proposer.image,
         votingPower: Big(data.proposal[0].forVotes).add(
           Big(data.proposal[0].againstVotes)
         ),
@@ -569,6 +575,9 @@ const Proposal = () => {
                     address={proposal.proposer}
                     diameter={32}
                     hasAddress={true}
+                    nickname={proposal.nickname}
+                    isNFT={!!proposal.is_nft}
+                    image={proposal.image}
                     isLink={true}
                     tab="?tab=governance-data"
                   />
@@ -606,6 +615,9 @@ const Proposal = () => {
                     address={proposal.proposer}
                     diameter={24}
                     hasAddress={true}
+                    nickname={proposal.nickname}
+                    isNFT={!!proposal.is_nft}
+                    image={proposal.image}
                     isLink={true}
                     tab="?tab=governance-data"
                   />

@@ -8,7 +8,7 @@ import { BNtoDecimal } from '@/utils/numerals'
 import { useKacyData } from '@/hooks/query/useKacyData'
 
 import AnyCard from '../../AnyCard'
-import ImageProfile from '../ImageProfile'
+import ImageProfileWithQuery from '../ImageProfileWithQuery'
 
 import avax from '@assets/logos/kacy-stake.svg'
 import avaxLogo from '@assets/logos/avax.png'
@@ -147,7 +147,7 @@ export const OwnAndReceivedTable = ({
                           ''
                         ) : (
                           <>
-                            <ImageProfile
+                            <ImageProfileWithQuery
                               address={item.to.id}
                               diameter={24}
                               hasAddress={true}
@@ -159,7 +159,7 @@ export const OwnAndReceivedTable = ({
                         )
                       ) : (
                         <>
-                          <ImageProfile
+                          <ImageProfileWithQuery
                             address={item?.from?.id || ''}
                             diameter={24}
                             hasAddress={true}

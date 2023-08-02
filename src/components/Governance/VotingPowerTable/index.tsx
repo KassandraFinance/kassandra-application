@@ -7,7 +7,7 @@ import { useUsersInfo } from '@/hooks/query/useUsersInfo'
 import { BNtoDecimal } from '@/utils/numerals'
 
 import Loading from '@/components/Loading'
-import ImageProfile from '@/components/Governance/ImageProfile'
+import ImageProfile from '../ImageProfile'
 
 import * as S from './styles'
 
@@ -45,6 +45,9 @@ export const VotingPowerTable = ({ skip = 0, take }: IVotingPowerProps) => {
                     <ImageProfile
                       address={item.id}
                       diameter={24}
+                      image={item.image}
+                      isNFT={!!item.is_nft}
+                      nickname={item.nickname}
                       hasAddress={true}
                       isLink={false}
                     />

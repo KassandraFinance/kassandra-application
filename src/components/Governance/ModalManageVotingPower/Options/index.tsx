@@ -4,7 +4,7 @@ import substr from '@/utils/substr'
 
 import { IDateProps } from '../DelegateVotingPower'
 
-import ImageProfile from '@/components/Governance/ImageProfile'
+import ImageProfileWithQuery from '@/components/Governance/ImageProfileWithQuery'
 
 import logo from '@assets/logos/kacy-64.svg'
 
@@ -62,7 +62,7 @@ const Options = ({
             >
               <S.Name>
                 {undelegate ? (
-                  <ImageProfile
+                  <ImageProfileWithQuery
                     address={item.nameToken}
                     diameter={24}
                     hasAddress={false}
