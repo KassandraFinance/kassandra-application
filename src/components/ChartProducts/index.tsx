@@ -286,7 +286,15 @@ const ChartProducts = () => {
         <ChartTVL data={tvl} color="#26DBDB" />
       )}
       {inputChecked === 'Allocation' && !loading && (
-        <ChartAllocation data={data?.weights ? data?.weights : []} />
+        <ChartAllocation
+          data={
+            data?.weight_goals
+              ? data.weight_goals.length > 0
+                ? data.weight_goals
+                : data.weight_goal_last
+              : []
+          }
+        />
       )}
     </S.ChartProduct>
   )

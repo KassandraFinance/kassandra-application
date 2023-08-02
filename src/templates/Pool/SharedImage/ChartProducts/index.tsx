@@ -250,7 +250,13 @@ const ChartProducts = ({ crpPoolAddress, height }: IChartProductsProps) => {
       {inputChecked === 'Allocation' && !loading && (
         <ChartAllocation
           height={height}
-          data={data?.weights ? data.weights : []}
+          data={
+            data?.weight_goals
+              ? data.weight_goals.length > 0
+                ? data.weight_goals
+                : data.weight_goal_last
+              : []
+          }
         />
       )}
     </S.ChartProduct>
