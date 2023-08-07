@@ -10,7 +10,7 @@ import usePrivateInvestors from '@/hooks/usePrivateInvestors'
 import { networks } from '@/constants/tokenAddresses'
 
 import Button from '@/components/Button'
-import ImageProfile from '@/components/Governance/ImageProfile'
+import ImageProfileWithQuery from '@/components/Governance/ImageProfileWithQuery'
 import AddInvestorModal from './AddInvestorModal'
 import RemoveInvestorModal from './RemoveInvestorModal'
 import PrivacySettingsModal from './PrivacySettingsModal'
@@ -84,7 +84,7 @@ const PrivacySettings = () => {
         {privateInvestors.length > 0 &&
           privateInvestors.map(investor => (
             <S.Address key={investor}>
-              <ImageProfile
+              <ImageProfileWithQuery
                 address={investor}
                 diameter={20}
                 hasAddress

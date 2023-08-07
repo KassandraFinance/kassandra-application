@@ -13,13 +13,14 @@ import useStakingContract from '@/hooks/useStaking'
 import useVotingPower from '@/hooks/useVotings'
 
 import ExternalLink from '@/components/ExternalLink'
-import ImageProfile from '@/components/Governance/ImageProfile'
+import ImageProfileWithQuery from '@/components/Governance/ImageProfileWithQuery'
 import Button from '@/components/Button'
 import Options from '../Options'
 
 import arrowSelect from '@assets/utilities/arrow-select-down.svg'
 
 import * as S from '../styles'
+
 export interface IDateProps {
   pid: number
   nameToken: string
@@ -158,7 +159,7 @@ const UndelegateVotingPower = ({
           <S.Selected onClick={() => setOptionsOpen(!optionsOpen)}>
             <S.Option>
               <S.Name>
-                <ImageProfile
+                <ImageProfileWithQuery
                   address={undelegateSelected.nameToken}
                   diameter={24}
                   hasAddress={false}

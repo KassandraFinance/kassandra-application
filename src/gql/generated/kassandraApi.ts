@@ -7142,6 +7142,9 @@ export type ManagersPoolsQuery = {
   managers: Array<{
     __typename?: 'Manager'
     id: string
+    nickname?: string | null
+    is_nft?: boolean | null
+    image?: string | null
     pool_count: number
     unique_investors: number
     total_value_locked_usd: string
@@ -7355,13 +7358,30 @@ export type PoolChartsQuery = {
       close: string
       timestamp: number
     }>
-    weights: Array<{
-      __typename?: 'WeightPoint'
-      timestamp: number
+    weight_goal_last: Array<{
+      __typename?: 'WeightGoalPoint'
+      start_timestamp: number
+      end_timestamp: number
       weights: Array<{
-        __typename?: 'Weight'
+        __typename?: 'WeightGoal'
         weight_normalized: string
-        token: { __typename?: 'Token'; id: string; symbol: string }
+        asset: {
+          __typename?: 'Asset'
+          token: { __typename?: 'Token'; id: string; symbol: string }
+        }
+      }>
+    }>
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      start_timestamp: number
+      end_timestamp: number
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        weight_normalized: string
+        asset: {
+          __typename?: 'Asset'
+          token: { __typename?: 'Token'; id: string; symbol: string }
+        }
       }>
     }>
   } | null
@@ -7649,7 +7669,13 @@ export type ProposalQuery = {
     queued?: string | null
     executed?: string | null
     eta?: string | null
-    proposer: { __typename?: 'User'; id: string }
+    proposer: {
+      __typename?: 'User'
+      id: string
+      nickname?: string | null
+      is_nft?: boolean | null
+      image?: string | null
+    }
     votes: Array<{
       __typename?: 'Vote'
       support: boolean
@@ -7838,6 +7864,9 @@ export type UsersInfoQuery = {
     __typename?: 'User'
     id: string
     votingPower: string
+    image?: string | null
+    is_nft?: boolean | null
+    nickname?: string | null
     votes: Array<{
       __typename?: 'Vote'
       proposal: { __typename?: 'Proposal'; number: number }
@@ -7873,7 +7902,13 @@ export type VotesQuery = {
       __typename?: 'Vote'
       support: boolean
       votingPower: string
-      voter: { __typename?: 'User'; id: string }
+      voter: {
+        __typename?: 'User'
+        id: string
+        nickname?: string | null
+        is_nft?: boolean | null
+        image?: string | null
+      }
     }>
   }>
 }
@@ -8532,6 +8567,9 @@ export const ManagersPoolsDocument = gql`
       first: $first
     ) {
       id
+      nickname
+      is_nft
+      image
       pool_count
       unique_investors
       total_value_locked_usd
@@ -8771,16 +8809,37 @@ export const PoolChartsDocument = gql`
         close
         timestamp
       }
-      weights(
-        where: { timestamp_gt: $period_selected }
-        orderBy: timestamp
-        first: 365
+      weight_goal_last: weight_goals(
+        orderBy: start_timestamp
+        orderDirection: desc
+        first: 1
       ) {
-        timestamp
+        start_timestamp
+        end_timestamp
         weights {
-          token {
-            id
-            symbol
+          asset {
+            token {
+              id
+              symbol
+            }
+          }
+          weight_normalized
+        }
+      }
+      weight_goals(
+        where: { start_timestamp_gt: $period_selected }
+        orderBy: start_timestamp
+        orderDirection: desc
+        first: 1000
+      ) {
+        start_timestamp
+        end_timestamp
+        weights {
+          asset {
+            token {
+              id
+              symbol
+            }
           }
           weight_normalized
         }
@@ -9073,6 +9132,9 @@ export const ProposalDocument = gql`
       eta
       proposer {
         id
+        nickname
+        is_nft
+        image
       }
       votes(where: { voter: $voter }) {
         support
@@ -9274,6 +9336,9 @@ export const UsersInfoDocument = gql`
     ) {
       id
       votingPower
+      image
+      is_nft
+      nickname
       votes {
         proposal {
           number
@@ -9309,6 +9374,9 @@ export const VotesDocument = gql`
         votingPower
         voter {
           id
+          nickname
+          is_nft
+          image
         }
       }
     }

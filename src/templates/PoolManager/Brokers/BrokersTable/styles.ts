@@ -4,7 +4,7 @@ import {
   TRLink,
   Value
 } from '@/templates/Explore/CommunityPoolsTable/styles'
-import { Image } from '@ui/Governance/ImageProfile/styles'
+import { Image } from '@/components/Governance/ImageProfileWithQuery/styles'
 import { Value as V } from '@ui/Modals/ModalViewCoin/styles'
 
 export const BrokersTable = styled.div`
@@ -22,6 +22,7 @@ export const BrokersTable = styled.div`
 
     ${Image} {
       justify-content: flex-start;
+
       pointer-events: none;
 
       span,
@@ -82,16 +83,17 @@ export const AddressContainer = styled.div`
 export const NoHaveBrokers = styled.p`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+
     height: 100%;
 
     color: ${theme.colors.grayDisabled};
-    font-size: ${theme.font.sizes.font14};
     font-weight: ${theme.font.weight.normal};
+    font-size: ${theme.font.sizes.font14};
     line-height: 2rem;
     letter-spacing: 0.3em;
-    text-transform: uppercase;
     text-align: center;
+    text-transform: uppercase;
   `}
 `

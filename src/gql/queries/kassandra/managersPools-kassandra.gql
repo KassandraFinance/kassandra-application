@@ -15,6 +15,9 @@
       first: $first
     ) {
       id
+      nickname
+      is_nft
+      image
       pool_count
       unique_investors
       total_value_locked_usd

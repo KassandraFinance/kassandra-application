@@ -24,13 +24,19 @@ const TooltipAllocation = ({ payload, label = 0 }: TooltipAllocationProps) => {
     <S.TooltipAllocation>
       <ul>
         {payload &&
-          payload.map((entry, index) => (
-            <li key={`item-${index}`} style={{ color: entry.color }}>
-              <span>{entry.name}</span>
-              <span>-</span>
-              <span>{toPercent(entry.value)}</span>
-            </li>
-          ))}
+          payload
+            .sort((a, b) => a.value - b.value)
+            .flatMap(entry => {
+              if (entry.value > 0)
+                return [
+                  <li key={entry.name} style={{ color: entry.color }}>
+                    <span>{entry.name.substring(42)}</span>
+                    <span>-</span>
+                    <span>{toPercent(entry.value)}</span>
+                  </li>
+                ]
+              return []
+            })}
         <S.DateAllocation>{currentDate}</S.DateAllocation>
       </ul>
     </S.TooltipAllocation>

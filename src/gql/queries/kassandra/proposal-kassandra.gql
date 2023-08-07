@@ -18,6 +18,9 @@
       eta
       proposer {
         id
+        nickname
+        is_nft
+        image
       }
       votes(where: { voter: $voter }) {
         support

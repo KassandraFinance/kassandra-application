@@ -12,7 +12,7 @@ import { usePoolInvestorsTable } from '@/hooks/query/usePoolInvestorsTable'
 import { getDateDiff } from '@/utils/date'
 import { ToastInfo } from '@/components/Toastify/toast'
 
-import ImageProfile from '@/components/Governance/ImageProfile'
+import ImageProfileWithQuery from '@/components/Governance/ImageProfileWithQuery'
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 
 import arrowIcon from '@assets/utilities/arrow-left.svg'
@@ -184,7 +184,7 @@ const InvestorsTable = ({ skip, take, setTotalItems }: IInvestorsTable) => {
                   <TD>
                     <Value>{index + 1}</Value>
                     <Value>
-                      <ImageProfile
+                      <ImageProfileWithQuery
                         address={investor.wallet}
                         diameter={24}
                         hasAddress={true}

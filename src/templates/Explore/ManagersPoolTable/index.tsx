@@ -54,6 +54,9 @@ type IManagerListProps = {
   changeMonthly: string
   changeDay: string
   voteWeight: string
+  nickname?: string | null
+  is_nft?: boolean | null
+  image?: string | null
 }
 
 export enum managersPoolTableSorting {
@@ -116,6 +119,9 @@ const ManagersPoolTable = () => {
 
     const managerList = data.managers.map((manage, index) => {
       return {
+        nickname: manage.nickname,
+        is_nft: manage.is_nft,
+        image: manage.image,
         rank: skip + index + 1,
         address: manage.id,
         poolCount: manage.pool_count,
@@ -270,6 +276,9 @@ const ManagersPoolTable = () => {
                       <ImageProfile
                         address={manager.address}
                         diameter={24}
+                        nickname={manager.nickname}
+                        isNFT={!!manager.is_nft}
+                        image={manager.image}
                         hasAddress={true}
                         isLink={false}
                         tab="?tab=managed-pools"

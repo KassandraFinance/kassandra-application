@@ -8,7 +8,8 @@
     "start": "next start",
     "prepare": "husky install",
     "codegen": "graphql-codegen",
-    "codegen:watch": "graphql-codegen --watch"
+    "codegen:watch": "graphql-codegen --watch",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@datapunt/matomo-tracker-react": "^0.5.1",

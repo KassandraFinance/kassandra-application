@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 import { TRHead, TRLink } from '@/templates/Explore/CommunityPoolsTable/styles'
-import { Image } from '@ui/Governance/ImageProfile/styles'
+import { Image } from '@/components/Governance/ImageProfile/styles'
 
 export const ManagersPoolTable = styled.div`
   ${() => css`
