@@ -12,10 +12,34 @@ import { useTokensData } from '@/hooks/query/useTokensData'
 
 import { YIELDYAK_API } from '../../../constants/tokenAddresses'
 
+import ModalViewCoin from '@/components/Modals/ModalViewCoin'
+
 import none from '../../../../public/assets/icons/coming-soon.svg'
 import iconBar from '../../../../public/assets/iconGradient/product-bar.svg'
+import arrowIcon from '@assets/utilities/arrow-left.svg'
+import eyeShowIcon from '@assets/utilities/eye-show.svg'
 
 import * as S from './styles'
+import {
+  THead,
+  TH,
+  ColumnTitle,
+  TableViewButtonContainer,
+  TableViewButton,
+  TD,
+  ValueWrapper,
+  Value,
+  ViewButton,
+  SecondaryTextValue,
+  TRHead,
+  TBody
+} from '@/templates/Explore/CommunityPoolsTable/styles'
+import {
+  TableLine,
+  TableLineTitle,
+  ValueContainer,
+  Value as V
+} from '@ui/Modals/ModalViewCoin/styles'
 
 const Distribution = () => {
   const [infoDataYY, setinfoDataYY] = React.useState<{
@@ -27,6 +51,13 @@ const Distribution = () => {
   const [yieldYakFarm, setYieldYakFarm] = React.useState<
     { address: string; platform: string }[]
   >([])
+  const [inViewCollum, setInViewCollum] = React.useState(1)
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [tokenData, setTokenData] = React.useState({
+    logo: '',
+    name: '',
+    address: ''
+  })
 
   const { convertBalanceYRTtoWrap } = useYieldYakEthers()
   const { trackEventFunction } = useMatomoEcommerce()
@@ -93,6 +124,28 @@ const Distribution = () => {
     return tokenSorting
   }
 
+  function handleCurrentInView(n: number) {
+    setInViewCollum(prev => {
+      const newPrev = prev + n
+      if (newPrev < 1) {
+        return 4
+      } else if (newPrev > 4) {
+        return 1
+      } else {
+        return newPrev
+      }
+    })
+  }
+
+  function handleView() {
+    setTokenData({
+      logo: '',
+      name: '',
+      address: ''
+    })
+    setIsOpen(true)
+  }
+
   React.useEffect(() => {
     if (!pool) {
       return
@@ -130,163 +183,220 @@ const Distribution = () => {
         <h2>Distribution</h2>
       </S.Title>
       <S.Line />
-      <S.Table>
-        <thead>
-          <S.Tr>
-            <S.Th>Coin</S.Th>
-            <S.Th>Allocation</S.Th>
-            <S.Th>Holding</S.Th>
-            <S.Th>Price 24h</S.Th>
-            <S.Th>Yield</S.Th>
-          </S.Tr>
-        </thead>
-        <tbody>
-          {handleSortingForHighLiquidity().map(coin => {
-            if (coin.token.is_wrap_token === 0) {
+
+      <S.DistributionTable>
+        <THead>
+          <TRHead>
+            <TH>
+              <ColumnTitle>Coin</ColumnTitle>
+            </TH>
+            <TH isView={inViewCollum === 1}>
+              <ColumnTitle align="right">Allocation</ColumnTitle>
+            </TH>
+            <TH isView={inViewCollum === 2}>
+              <ColumnTitle align="right">Holding</ColumnTitle>
+            </TH>
+            <TH isView={inViewCollum === 3}>
+              <ColumnTitle align="right">Price 24h</ColumnTitle>
+            </TH>
+            <TH isView={inViewCollum === 4}>
+              <ColumnTitle align="right">Yield</ColumnTitle>
+            </TH>
+            <TH>
+              <TableViewButtonContainer>
+                <TableViewButton onClick={() => handleCurrentInView(-1)}>
+                  <Image src={arrowIcon} width={7} height={12} />
+                </TableViewButton>
+
+                <TableViewButton onClick={() => handleCurrentInView(1)}>
+                  <Image src={arrowIcon} width={7} height={12} />
+                </TableViewButton>
+              </TableViewButtonContainer>
+            </TH>
+          </TRHead>
+        </THead>
+
+        <TBody>
+          {handleSortingForHighLiquidity().map(token => {
+            if (token.token.is_wrap_token === 0) {
               return (
-                <S.Tr key={`key_${coin.token.name}`}>
-                  <S.Td>
-                    <S.Coin width={110}>
-                      <img src={coin.token.logo || none.src} alt="" />
-                      <span>{coin.token.symbol}</span>
-                    </S.Coin>
-                  </S.Td>
-                  <S.Td>
-                    <S.Coin width={60}>{`${
-                      (Number(coin.weight_normalized) * 100).toFixed(2) || 0
-                    }%`}</S.Coin>
-                  </S.Td>
-                  <S.Td>
-                    {`$ ${BNtoDecimal(
-                      Big(coin.balance || 0).times(
-                        Big(data?.[coin.token.id.toLowerCase()]?.usd || 0)
-                      ),
-                      18,
-                      5,
-                      2
-                    )}`}
-                    <S.BalanceCoin>{`${BNtoDecimal(
-                      Big(coin.balance || '0'),
-                      18,
-                      5
-                    )} ${coin.token.symbol}`}</S.BalanceCoin>
-                  </S.Td>
-                  <S.Td>
-                    <span>
-                      $
-                      {BNtoDecimal(
-                        Big(data?.[coin.token.id.toLowerCase()]?.usd || 0),
-                        18,
-                        5,
-                        2
-                      )}
-                    </span>
-                    <S.Coin
-                      negative={
-                        (data?.[coin.token.id.toLowerCase()]
-                          ?.pricePercentageChangeIn24h || 0) < 0
-                      }
-                      change24h={true}
-                    >
-                      {data?.[coin.token.id.toLowerCase()]
-                        ?.pricePercentageChangeIn24h
-                        ? `${
-                            data?.[coin.token.id.toLowerCase()]
-                              .pricePercentageChangeIn24h < 0
-                              ? ''
-                              : '+'
-                          }${data?.[
-                            coin.token.id.toLowerCase()
-                          ].pricePercentageChangeIn24h.toFixed(2)}%`
-                        : '-'}
-                    </S.Coin>
-                  </S.Td>
-                  <S.Td>
-                    <S.isThereNoYieldyak>no Yield</S.isThereNoYieldyak>
-                  </S.Td>
-                </S.Tr>
+                <TRHead key={token.token.id}>
+                  <TD>
+                    <S.FlexWrapper>
+                      <Image
+                        src={token.token.logo || none.src}
+                        width={24}
+                        height={24}
+                      />
+                      <Value align="left">{token.token.symbol}</Value>
+                    </S.FlexWrapper>
+                  </TD>
+                  <TD isView={inViewCollum === 1}>
+                    <Value>
+                      {(Number(token.weight_normalized) * 100).toFixed(2) || 0}%
+                    </Value>
+                  </TD>
+                  <TD isView={inViewCollum === 2}>
+                    <ValueWrapper>
+                      <Value>
+                        ${' '}
+                        {BNtoDecimal(
+                          Big(token.balance || 0).times(
+                            Big(data?.[token.token.id.toLowerCase()]?.usd || 0)
+                          ),
+                          18,
+                          5,
+                          2
+                        )}
+                      </Value>
+
+                      <SecondaryTextValue align="right">
+                        {BNtoDecimal(Big(token.balance || '0'), 18, 5)}
+                      </SecondaryTextValue>
+                    </ValueWrapper>
+                  </TD>
+                  <TD isView={inViewCollum === 3}>
+                    <ValueWrapper>
+                      <Value>
+                        ${' '}
+                        {BNtoDecimal(
+                          Big(data?.[token.token.id.toLowerCase()]?.usd || 0),
+                          18,
+                          5,
+                          2
+                        )}
+                      </Value>
+
+                      <SecondaryTextValue
+                        align="right"
+                        value={
+                          data?.[token.token.id.toLowerCase()]
+                            ?.pricePercentageChangeIn24h || 0
+                        }
+                      >
+                        {data?.[token.token.id.toLowerCase()]
+                          ?.pricePercentageChangeIn24h
+                          ? `${
+                              data?.[token.token.id.toLowerCase()]
+                                .pricePercentageChangeIn24h < 0
+                                ? ''
+                                : '+'
+                            }${data?.[
+                              token.token.id.toLowerCase()
+                            ].pricePercentageChangeIn24h.toFixed(2)}%`
+                          : '-'}
+                      </SecondaryTextValue>
+                    </ValueWrapper>
+                  </TD>
+                  <TD isView={inViewCollum === 4}>
+                    <Value>no Yield</Value>
+                  </TD>
+                  <TD onClick={() => handleView()}>
+                    <ViewButton type="button">
+                      <Image src={eyeShowIcon} />
+                    </ViewButton>
+                  </TD>
+                </TRHead>
               )
             }
 
             return (
-              <S.Tr key={`key_${coin.token.name}`}>
-                <S.Td>
-                  <S.Coin width={110}>
-                    <img src={coin?.token?.wraps?.logo || none.src} alt="" />
-                    <span>
-                      {coin.token.wraps?.symbol}
-                      <p>
+              <TRHead key={token.token.id}>
+                <TD>
+                  <S.FlexWrapper>
+                    <Image
+                      src={token.token?.wraps?.logo || none.src}
+                      width={24}
+                      height={24}
+                    />
+                    <ValueWrapper>
+                      <Value align="left">{token.token?.wraps?.symbol}</Value>
+
+                      <SecondaryTextValue>
                         {yieldYakFarm.find(item => {
-                          if (item.address === coin.token.id) {
+                          if (item.address === token.token.id) {
                             return item.platform
                           }
                         })?.platform || ''}
-                      </p>
-                    </span>
-                  </S.Coin>
-                </S.Td>
-                <S.Td>
-                  <S.Coin width={60}>{`${
-                    (Number(coin.weight_normalized) * 100).toFixed(2) || 0
-                  }%`}</S.Coin>
-                </S.Td>
-                <S.Td>
-                  {`$ ${BNtoDecimal(
-                    (balanceYY?.[coin.token.id] || Big(0)).times(
-                      Big(
-                        data?.[coin.token.wraps?.id?.toLowerCase() || '']
-                          ?.usd || 0
-                      )
-                    ),
-                    18,
-                    5,
-                    2
-                  )}`}
-                  <S.BalanceCoin>{`${BNtoDecimal(
-                    balanceYY?.[coin.token.id] || Big(0),
-                    18,
-                    5
-                  )} ${coin.token.wraps?.symbol}`}</S.BalanceCoin>
-                </S.Td>
-                <S.Td>
-                  <span>
-                    $
-                    {BNtoDecimal(
-                      Big(
-                        data?.[coin.token.wraps?.id.toLowerCase() || '']?.usd ||
-                          0
-                      ),
-                      18,
-                      5,
-                      2
-                    )}
-                  </span>
-                  <S.Coin
-                    negative={
-                      (data?.[coin.token.wraps?.id.toLowerCase() || '']
-                        ?.pricePercentageChangeIn24h || 0) < 0
-                    }
-                    change24h={true}
-                  >
-                    {data?.[coin.token.wraps?.id.toLowerCase() || '']
-                      ?.pricePercentageChangeIn24h
-                      ? `${
-                          data?.[coin.token.wraps?.id.toLowerCase() || '']
-                            ?.pricePercentageChangeIn24h < 0
-                            ? ''
-                            : '+'
-                        }${data?.[
-                          coin.token.wraps?.id.toLowerCase() || ''
-                        ]?.pricePercentageChangeIn24h.toFixed(2)}%`
-                      : '-'}
-                  </S.Coin>
-                </S.Td>
-                {coin.token.symbol === 'YRT' ? (
-                  <S.Td>
-                    <>
-                      <p>{infoDataYY?.[coin.token.id]?.apy || '0.0'}% APY</p>
+                      </SecondaryTextValue>
+                    </ValueWrapper>
+                  </S.FlexWrapper>
+                </TD>
+                <TD isView={inViewCollum === 1}>
+                  <Value>
+                    {(Number(token.weight_normalized) * 100).toFixed(2) || 0}%
+                  </Value>
+                </TD>
+                <TD isView={inViewCollum === 2}>
+                  <ValueWrapper>
+                    <Value>
+                      ${' '}
+                      {BNtoDecimal(
+                        (balanceYY?.[token.token.id] || Big(0)).times(
+                          Big(
+                            data?.[token.token.wraps?.id?.toLowerCase() || '']
+                              ?.usd || 0
+                          )
+                        ),
+                        18,
+                        5,
+                        2
+                      )}
+                    </Value>
+
+                    <SecondaryTextValue align="right">
+                      {BNtoDecimal(
+                        balanceYY?.[token.token.id] || Big(0),
+                        18,
+                        5
+                      )}
+                    </SecondaryTextValue>
+                  </ValueWrapper>
+                </TD>
+                <TD isView={inViewCollum === 3}>
+                  <ValueWrapper>
+                    <Value>
+                      ${' '}
+                      {BNtoDecimal(
+                        Big(
+                          data?.[token.token.wraps?.id.toLowerCase() || '']
+                            ?.usd || 0
+                        ),
+                        18,
+                        5,
+                        2
+                      )}
+                    </Value>
+
+                    <SecondaryTextValue
+                      align="right"
+                      value={
+                        data?.[token.token.wraps?.id.toLowerCase() || '']
+                          ?.pricePercentageChangeIn24h || 0
+                      }
+                    >
+                      {data?.[token.token.wraps?.id.toLowerCase() || '']
+                        ?.pricePercentageChangeIn24h
+                        ? `${
+                            data?.[token.token.wraps?.id.toLowerCase() || '']
+                              ?.pricePercentageChangeIn24h < 0
+                              ? ''
+                              : '+'
+                          }${data?.[
+                            token.token.wraps?.id.toLowerCase() || ''
+                          ]?.pricePercentageChangeIn24h.toFixed(2)}%`
+                        : '-'}
+                    </SecondaryTextValue>
+                  </ValueWrapper>
+                </TD>
+                <TD isView={inViewCollum === 4}>
+                  {token.token.symbol === 'YRT' ? (
+                    <ValueWrapper>
+                      <Value>
+                        {infoDataYY?.[token.token.id]?.apy || '0.0'}% APY
+                      </Value>
                       <S.YieldYakContent
-                        href={`https://yieldyak.com/farms/detail/${coin.token.id}`}
+                        href={`https://yieldyak.com/farms/detail/${token.token.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() =>
@@ -297,36 +407,49 @@ const Distribution = () => {
                           )
                         }
                       >
-                        Yield Yak{' '}
-                        <span>
-                          <svg
-                            width="12"
-                            height="13"
-                            viewBox="0 0 12 13"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              clipRule="evenodd"
-                              d="M7.15137 1.39096C7.15137 1.09737 7.40876 0.859375 7.72628 0.859375L11.1757 0.859375C11.4933 0.859375 11.7507 1.09737 11.7507 1.39096V4.58049C11.7507 4.87408 11.4933 5.11208 11.1757 5.11208C10.8582 5.11208 10.6008 4.87408 10.6008 4.58049V2.77755L4.67968 8.2525C4.45516 8.4601 4.09115 8.4601 3.86663 8.2525C3.64211 8.0449 3.64211 7.70832 3.86663 7.50072L9.89942 1.92255H7.72628C7.40876 1.92255 7.15137 1.68455 7.15137 1.39096ZM1.97474 3.83564C1.82226 3.83564 1.67603 3.89164 1.56821 3.99133C1.46039 4.09103 1.39982 4.22624 1.39982 4.36722L1.39982 10.2147C1.39982 10.3557 1.46039 10.4909 1.56821 10.5906C1.67603 10.6903 1.82226 10.7463 1.97474 10.7463H8.29877C8.45124 10.7463 8.59748 10.6903 8.70529 10.5906C8.81311 10.4909 8.87368 10.3557 8.87368 10.2147V7.02516C8.87368 6.73158 9.13108 6.49358 9.44859 6.49358C9.76611 6.49358 10.0235 6.73158 10.0235 7.02516V10.2147C10.0235 10.6376 9.84179 11.0433 9.51834 11.3424C9.19489 11.6414 8.7562 11.8095 8.29877 11.8095H1.97474C1.51731 11.8095 1.07861 11.6414 0.755163 11.3424C0.431713 11.0433 0.25 10.6376 0.25 10.2147L0.25 4.36722C0.25 3.94427 0.431713 3.53863 0.755163 3.23956C1.07861 2.94048 1.51731 2.77246 1.97474 2.77246H5.42421C5.74172 2.77246 5.99912 3.01046 5.99912 3.30405C5.99912 3.59764 5.74172 3.83564 5.42421 3.83564H1.97474Z"
-                              fill="#969696"
-                            />
-                          </svg>
-                        </span>
+                        <SecondaryTextValue align="right">
+                          Yield Yak
+                        </SecondaryTextValue>
+                        <svg
+                          width="12"
+                          height="13"
+                          viewBox="0 0 12 13"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M7.15137 1.39096C7.15137 1.09737 7.40876 0.859375 7.72628 0.859375L11.1757 0.859375C11.4933 0.859375 11.7507 1.09737 11.7507 1.39096V4.58049C11.7507 4.87408 11.4933 5.11208 11.1757 5.11208C10.8582 5.11208 10.6008 4.87408 10.6008 4.58049V2.77755L4.67968 8.2525C4.45516 8.4601 4.09115 8.4601 3.86663 8.2525C3.64211 8.0449 3.64211 7.70832 3.86663 7.50072L9.89942 1.92255H7.72628C7.40876 1.92255 7.15137 1.68455 7.15137 1.39096ZM1.97474 3.83564C1.82226 3.83564 1.67603 3.89164 1.56821 3.99133C1.46039 4.09103 1.39982 4.22624 1.39982 4.36722L1.39982 10.2147C1.39982 10.3557 1.46039 10.4909 1.56821 10.5906C1.67603 10.6903 1.82226 10.7463 1.97474 10.7463H8.29877C8.45124 10.7463 8.59748 10.6903 8.70529 10.5906C8.81311 10.4909 8.87368 10.3557 8.87368 10.2147V7.02516C8.87368 6.73158 9.13108 6.49358 9.44859 6.49358C9.76611 6.49358 10.0235 6.73158 10.0235 7.02516V10.2147C10.0235 10.6376 9.84179 11.0433 9.51834 11.3424C9.19489 11.6414 8.7562 11.8095 8.29877 11.8095H1.97474C1.51731 11.8095 1.07861 11.6414 0.755163 11.3424C0.431713 11.0433 0.25 10.6376 0.25 10.2147L0.25 4.36722C0.25 3.94427 0.431713 3.53863 0.755163 3.23956C1.07861 2.94048 1.51731 2.77246 1.97474 2.77246H5.42421C5.74172 2.77246 5.99912 3.01046 5.99912 3.30405C5.99912 3.59764 5.74172 3.83564 5.42421 3.83564H1.97474Z"
+                            fill="#969696"
+                          />
+                        </svg>
                       </S.YieldYakContent>
-                    </>
-                  </S.Td>
-                ) : (
-                  <S.Td>
-                    <S.isThereNoYieldyak>no Yield</S.isThereNoYieldyak>
-                  </S.Td>
-                )}
-              </S.Tr>
+                    </ValueWrapper>
+                  ) : (
+                    <Value>no Yield</Value>
+                  )}
+                </TD>
+                <TD onClick={() => handleView()}>
+                  <ViewButton type="button">
+                    <Image src={eyeShowIcon} />
+                  </ViewButton>
+                </TD>
+              </TRHead>
             )
           })}
-        </tbody>
-      </S.Table>
+        </TBody>
+
+        <ModalViewCoin
+          isOpen={isOpen}
+          title={tokenData}
+          onClick={() => setIsOpen(false)}
+        >
+          <TableLine>
+            <TableLineTitle>teste</TableLineTitle>
+          </TableLine>
+        </ModalViewCoin>
+      </S.DistributionTable>
     </S.Distribution>
   )
 }
