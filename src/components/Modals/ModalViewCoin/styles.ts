@@ -142,7 +142,11 @@ export const Value = styled.span`
   `}
 `
 
-export const SecondaryValue = styled.span`
+interface SecondaryValueProps {
+  value?: number
+}
+
+export const SecondaryValue = styled.span<SecondaryValueProps>`
   ${({ theme }) => css`
     color: #c4c4c4;
     font-weight: ${theme.font.weight.light};
@@ -151,4 +155,16 @@ export const SecondaryValue = styled.span`
     letter-spacing: 0.05em;
     text-align: right;
   `}
+  ${({ theme, value }) =>
+    value &&
+    value > 0 &&
+    css`
+      color: ${theme.colors.green};
+    `}
+  ${({ theme, value }) =>
+    value &&
+    value < 0 &&
+    css`
+      color: ${theme.colors.red};
+    `}
 `

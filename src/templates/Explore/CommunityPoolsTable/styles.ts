@@ -60,7 +60,7 @@ interface ICommunityPoolsTBodyProps {
   tableRowsNumber: number
   lineHeight: number
 }
-// eslint-disable-next-line prettier/prettier
+
 export const TBodyWithHeight = styled(TBody)<ICommunityPoolsTBodyProps>`
   ${({ tableRowsNumber, lineHeight }) => css`
     overflow-y: hidden;
@@ -164,7 +164,6 @@ interface ITHProps {
   isView?: boolean
 }
 
-// prettier-ignore
 export const TH = styled.div<ITHProps>`
   ${() => css`
     display: grid;
@@ -184,20 +183,21 @@ export const TH = styled.div<ITHProps>`
       }
     }
   `}
-  ${({ isView = true }) => !isView && css`
-    display: none;
+  ${({ isView = true }) =>
+    !isView &&
+    css`
+      display: none;
 
-    @media (min-width: 768px) {
-      display: grid;
-    }
-  `}
+      @media (min-width: 768px) {
+        display: grid;
+      }
+    `}
 `
 
 interface ITDProps {
   isView?: boolean
 }
 
-// prettier-ignore
 export const TD = styled.div<ITDProps>`
   ${() => css`
     display: grid;
@@ -217,20 +217,21 @@ export const TD = styled.div<ITDProps>`
       }
     }
   `}
-  ${({ isView = true }) => !isView && css`
-    display: none;
+  ${({ isView = true }) =>
+    !isView &&
+    css`
+      display: none;
 
-    @media (min-width: 768px) {
-      display: grid;
-    }
-  `}
+      @media (min-width: 768px) {
+        display: grid;
+      }
+    `}
 `
 
 interface IColumnTitleProps {
   align?: 'right' | 'left' | 'center'
 }
 
-// prettier-ignore
 export const ColumnTitle = styled.div<IColumnTitleProps>`
   ${({ theme, align = 'left' }) => css`
     color: ${theme.colors.snow};
@@ -255,7 +256,6 @@ interface ITvlButtonSortingProps {
   isRotateArrow: boolean
 }
 
-// eslint-disable-next-line prettier/prettier
 export const THButtonSorting = styled(ColumnTitle)<ITvlButtonSortingProps>`
   ${() => css`
     display: flex;
@@ -292,7 +292,6 @@ interface IValueProps {
   align?: 'right' | 'left' | 'center'
 }
 
-// prettier-ignore
 export const Value = styled.span<IValueProps>`
   ${({ theme, align = 'right' }) => css`
     color: ${theme.colors.white};
@@ -302,12 +301,16 @@ export const Value = styled.span<IValueProps>`
     letter-spacing: 0.05em;
     text-align: ${align};
   `}
-  ${({ theme, value = 0 }) => value > 0 && css`
-    color: ${theme.colors.green};
-  `}
-  ${({ theme, value = 0 }) => value < 0 && css`
-    color: ${theme.colors.red};
-  `}
+  ${({ theme, value = 0 }) =>
+    value > 0 &&
+    css`
+      color: ${theme.colors.green};
+    `}
+  ${({ theme, value = 0 }) =>
+    value < 0 &&
+    css`
+      color: ${theme.colors.red};
+    `}
 `
 
 export const TextValue = styled.span`
@@ -326,6 +329,7 @@ export const TextValue = styled.span`
 
 interface ISecondaryTextValueProps {
   align?: 'right' | 'left' | 'center'
+  value?: number
 }
 
 export const SecondaryTextValue = styled.span<ISecondaryTextValueProps>`
@@ -340,6 +344,18 @@ export const SecondaryTextValue = styled.span<ISecondaryTextValueProps>`
     align &&
     css`
       text-align: ${align};
+    `}
+  ${({ theme, value }) =>
+    value &&
+    value > 0 &&
+    css`
+      color: ${theme.colors.green};
+    `}
+  ${({ theme, value }) =>
+    value &&
+    value < 0 &&
+    css`
+      color: ${theme.colors.red};
     `}
 `
 
@@ -433,7 +449,6 @@ interface ICoinImageWrapperProps {
   position: number
 }
 
-// prettier-ignore
 export const CoinImageWrapper = styled.div<ICoinImageWrapperProps>`
   ${({ position }) => css`
     position: absolute;
@@ -474,7 +489,7 @@ export const TableViewButton = styled.button`
 
     padding: 0.6rem 0.85rem;
     border: none;
-    border: 0.1rem solid transparent;
+    border: 1px solid transparent;
     border-radius: 50%;
 
     background-color: rgba(255 255 255 / 0.05);
@@ -484,7 +499,7 @@ export const TableViewButton = styled.button`
     transition: border 0.3s ease;
 
     &:hover {
-      border: 0.1rem solid rgb(255 255 255 / 0.3);
+      border: 1px solid rgb(255 255 255 / 0.3);
     }
   `}
 `
