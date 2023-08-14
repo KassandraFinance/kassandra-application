@@ -2,6 +2,7 @@ import { init } from '@web3-onboard/react'
 import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets'
 import gnosisModule from '@web3-onboard/gnosis'
 import walletConnectModule from '@web3-onboard/walletconnect'
+import trustModule from '@web3-onboard/trust'
 
 const wcV2InitOptions = {
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT ?? '',
@@ -36,8 +37,9 @@ const injected = injectedModule({
 })
 const walletConnect = walletConnectModule(wcV2InitOptions)
 const gnosis = gnosisModule()
+const trust = trustModule()
 
-const wallets = [walletConnect, gnosis, injected]
+const wallets = [walletConnect, gnosis, trust, injected]
 
 const chains = [
   {
