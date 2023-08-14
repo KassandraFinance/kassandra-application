@@ -31,6 +31,7 @@
     "@web3-onboard/gnosis": "^2.1.10",
     "@web3-onboard/injected-wallets": "^2.10.3",
     "@web3-onboard/react": "^2.8.10",
+    "@web3-onboard/trust": "^2.0.4",
     "@web3-onboard/walletconnect": "2.4.3",
     "big.js": "^6.2.1",
     "ethers": "^6.6.2",
