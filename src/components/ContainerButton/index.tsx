@@ -21,7 +21,7 @@ const ContainerButton = ({
         <Button
           type="button"
           text="Back"
-          backgroundBlack
+          background="black"
           fullWidth
           disabledNoEvent={backButtonDisabled}
           onClick={onBack}
@@ -31,7 +31,7 @@ const ContainerButton = ({
           form={form}
           type="submit"
           text="Next"
-          backgroundPrimary
+          background="primary"
           fullWidth
           onClick={onNext}
         />

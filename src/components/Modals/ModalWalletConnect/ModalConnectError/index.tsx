@@ -55,7 +55,7 @@ const ModalConnectError = ({
       <S.ButtonWrapper>
         <Button
           text="Retry"
-          backgroundSecondary
+          background="secondary"
           fullWidth
           onClick={() => {
             handleConnect()
@@ -64,7 +64,7 @@ const ModalConnectError = ({
         />
         <Button
           text="Cancel"
-          backgroundBlack
+          background="black"
           fullWidth
           onClick={handleCloseModal}
         />

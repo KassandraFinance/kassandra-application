@@ -126,7 +126,7 @@ const ModalTransactions = ({
         {networkId && networkId !== parseInt(connectedChain?.id || '', 16) ? (
           <Button
             text={`Connect to ${networks[networkId].chainName}`}
-            backgroundPrimary
+            background="primary"
             fullWidth
             disabledNoEvent={settingChain}
             type="button"
@@ -137,7 +137,7 @@ const ModalTransactions = ({
             {!isCompleted && (
               <Button
                 text={buttonText[transactionButtonStatus]}
-                backgroundPrimary
+                background="primary"
                 fullWidth
                 type="button"
                 disabledNoEvent={
@@ -152,7 +152,7 @@ const ModalTransactions = ({
         {isCompleted && (
           <Button
             text="Confirm"
-            backgroundPrimary
+            background="primary"
             fullWidth
             type="button"
             onClick={onComfirm}
@@ -163,7 +163,7 @@ const ModalTransactions = ({
           <Button
             text="Cancel"
             type="button"
-            backgroundBlack
+            background="black"
             fullWidth
             onClick={onCancel}
           />

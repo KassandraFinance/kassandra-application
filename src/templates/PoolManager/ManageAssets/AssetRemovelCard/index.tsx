@@ -78,7 +78,7 @@ const AssetRemovelCard = ({
       {/* <Link href={`/manage/${poolInfo.id}`}> */}
       <Button
         text="Done"
-        backgroundPrimary
+        background="primary"
         fullWidth
         as="a"
         onClick={() => setIsOpenManageAssets(false)}

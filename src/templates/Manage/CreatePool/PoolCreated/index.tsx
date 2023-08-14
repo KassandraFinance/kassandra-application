@@ -29,7 +29,7 @@ const PoolCreated = ({ data }: IPoolCreatedProps) => {
           <Button
             target="_blank"
             as="a"
-            backgroundBlack
+            background="black"
             text="View Transaction"
             className="viewTransaction"
           />
@@ -38,7 +38,7 @@ const PoolCreated = ({ data }: IPoolCreatedProps) => {
           <Button
             as="a"
             fullWidth
-            backgroundPrimary
+            background="primary"
             text="Check Your Fund"
             className="checkYourFund"
           />

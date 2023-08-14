@@ -86,7 +86,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       <Button
         className="button-network"
         text={network.network}
-        backgroundBlack
+        background="black"
         icon={network.icon}
         onClick={() => setIsChooseNetwork(true)}
         disabledNoEvent={network.network === 'Disconnected'}
@@ -159,7 +159,6 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
               </svg>
             }
             image={data?.image || ''}
-            isNFT={data?.isNFT !== null}
             as="a"
             size="medium"
             onClick={() => {
@@ -190,7 +189,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
             </svg>
           }
           as="button"
-          backgroundBlack
+          background="black"
           size="medium"
           disabled={connecting}
           onClick={() => {

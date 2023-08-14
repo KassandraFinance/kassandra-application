@@ -284,13 +284,13 @@ const ModalStakeAndWithdraw = ({
                   type="button"
                   text="Approve Contract"
                   disabledNoEvent={amountStake.gt(balance)}
-                  backgroundSecondary
+                  background="secondary"
                   fullWidth
                   onClick={handleApprove}
                 />
               ) : (
                 <Button
-                  backgroundSecondary
+                  background="secondary"
                   type="button"
                   disabledNoEvent={
                     amountStake.eq(Big(0)) || amountStake.gt(balance)
@@ -309,7 +309,7 @@ const ModalStakeAndWithdraw = ({
 
             {pool.type === PoolType.STAKE ? (
               <Button
-                backgroundBlack
+                background="black"
                 fullWidth
                 text={`Buy ${pool.symbol}`}
                 rel="noopener noreferrer"
@@ -321,7 +321,7 @@ const ModalStakeAndWithdraw = ({
               <Link href={pool.properties?.link ?? ''} passHref>
                 <Button
                   as="a"
-                  backgroundBlack
+                  background="black"
                   fullWidth
                   text={`Get ${pool.symbol}`}
                   target="_blank"

@@ -182,7 +182,7 @@ const KacyCard = ({ kacyMarketData }: IKacyCardProps) => {
           <S.CardFooter>
             <Button
               size="large"
-              backgroundPrimary
+              background="primary"
               as="a"
               text="Buy $KACY"
               onClick={() => setIsOpenModal(true)}

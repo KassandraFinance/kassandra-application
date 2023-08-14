@@ -29,7 +29,7 @@ const Web3Disabled = ({
             <p>{bodyText}</p>
             {!!textButton && (
               <Button
-                backgroundBlack
+                background="black"
                 size="huge"
                 text={textButton}
                 onClick={() => getFunction && getFunction()}

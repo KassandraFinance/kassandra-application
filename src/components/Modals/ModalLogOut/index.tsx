@@ -102,7 +102,7 @@ const ModalLogOut = ({
             </S.ButtonContainer>
             {connectionToWalletConnect && (
               <Button
-                backgroundSecondary
+                background="secondary"
                 text="Disconnect"
                 onClick={() => {
                   // handleDisconnected()

@@ -55,8 +55,8 @@ const PoolImage = () => {
     img.length > 0
       ? img
       : poolInfo && poolInfo[0]?.logo
-        ? poolInfo[0].logo
-        : defaultImage
+      ? poolInfo[0].logo
+      : defaultImage
 
   async function sendPoolData(
     controller: string,
@@ -155,7 +155,7 @@ const PoolImage = () => {
           {poolInfo && poolInfo[0]?.controller && data && (
             <Button
               text="Upload image"
-              backgroundSecondary
+              background="secondary"
               onClick={() =>
                 sendPoolData(
                   poolInfo[0]?.controller,
@@ -169,7 +169,7 @@ const PoolImage = () => {
 
           <Button
             text="Cancel"
-            backgroundBlack
+            background="black"
             onClick={() =>
               setPoolImage({
                 icon: {

@@ -142,7 +142,7 @@ const IntroGovernance = ({
               <Button
                 size="large"
                 text="Manage Delegation"
-                backgroundSecondary
+                background="secondary"
                 disabledNoEvent={
                   !wallet || getAddress(wallet.accounts[0].address) !== address
                 }

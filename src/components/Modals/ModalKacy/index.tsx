@@ -150,7 +150,7 @@ const ModalKacy = () => {
               : 'Buy KACY'
           }
           icon={<Image src={kacyIcon} width={18} height={18} />}
-          backgroundBlack
+          background="black"
           onClick={() => setIsModalKacy(true)}
         />
       </S.KacyAmount>

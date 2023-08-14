@@ -22,7 +22,7 @@ const BannerCTA = () => {
           </span>
           <S.BannerFooter>
             <Link href="/products" passHref>
-              <Button backgroundSecondary size="medium" text="Buy $HEIM" />
+              <Button background="secondary" size="medium" text="Buy $HEIM" />
             </Link>
             <a href="#">
               Learn More
