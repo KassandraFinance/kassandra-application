@@ -17,7 +17,7 @@ const NotFound = ({ text, contact }: INotFoundProps) => (
           <Button
             as="a"
             href="https://t.me/KassandraDAO"
-            backgroundPrimary
+            background="primary"
             text="Join our Telegram"
           />
         </>
@@ -30,7 +30,7 @@ const NotFound = ({ text, contact }: INotFoundProps) => (
           <Button
             as="a"
             href="https://kassandrafoundation.medium.com/"
-            backgroundPrimary
+            background="primary"
             text="About"
           />
         </>

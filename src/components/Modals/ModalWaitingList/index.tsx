@@ -35,7 +35,7 @@ const ModalWaitingList = ({
           <Button
             as="a"
             text="Join the waiting list"
-            backgroundPrimary
+            background="primary"
             fullWidth
             target="_blank"
             rel="noopener noreferrer"

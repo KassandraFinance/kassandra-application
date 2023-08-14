@@ -195,14 +195,14 @@ const UndelegateVotingPower = ({
           <Button
             size="large"
             fullWidth
-            backgroundBlack
+            background="black"
             text="Back"
             onClick={() => setCurrentModal('manage')}
           />
           <Button
             size="large"
             fullWidth
-            backgroundSecondary
+            background="secondary"
             disabledNoEvent={undelegateSelected.nameToken === ''}
             text="Undelegate Votes"
             onClick={handleUndelegateVotes}

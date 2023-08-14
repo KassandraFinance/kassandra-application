@@ -121,7 +121,7 @@ const Strategy = () => {
             {poolInfo && poolInfo[0]?.controller && (
               <Button
                 text="Update"
-                backgroundSecondary
+                background="secondary"
                 fullWidth
                 onClick={() =>
                   sendPoolData(
@@ -136,7 +136,7 @@ const Strategy = () => {
 
             <Button
               text="Cancel"
-              backgroundBlack
+              background="black"
               fullWidth
               onClick={handleCancelClick}
             />

@@ -398,7 +398,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                           type="button"
                           text="Claim"
                           size="claim"
-                          backgroundSecondary
+                          background="secondary"
                           disabledNoEvent={
                             userAboutPool.kacyEarned?.lte(Big(0)) ||
                             networkChain.chainId !==
@@ -416,7 +416,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                             type="button"
                             text="Cancel withdraw"
                             size="huge"
-                            backgroundSecondary
+                            background="secondary"
                             fullWidth
                             onClick={() => setIsModalCancelUnstake(true)}
                           />
@@ -435,7 +435,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               className="chnageChainButton"
                               text={`Connect to ${networkChain.chainName}`}
                               size="huge"
-                              backgroundSecondary
+                              background="secondary"
                               fullWidth
                               image="/assets/icons/rebalance.svg"
                               disabledNoEvent={settingChain}
@@ -453,7 +453,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               type="button"
                               text={`Stake ${symbol}`}
                               size="huge"
-                              backgroundSecondary
+                              background="secondary"
                               fullWidth
                               onClick={() => setIsModalCancelUnstake(true)}
                             />
@@ -462,7 +462,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               type="button"
                               text={`Stake ${symbol}`}
                               size="huge"
-                              backgroundSecondary
+                              background="secondary"
                               fullWidth
                               onClick={() =>
                                 openStakeAndWithdraw(typeTransaction.STAKING)
@@ -474,7 +474,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               type="button"
                               text="Withdraw"
                               size="huge"
-                              backgroundBlack
+                              background="black"
                               disabledNoEvent={
                                 userAboutPool.yourStake.lte(0) ||
                                 (stakeWithLockPeriod &&
@@ -494,7 +494,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               type="button"
                               text="Request withdraw"
                               size="huge"
-                              backgroundBlack
+                              background="black"
                               disabledNoEvent={
                                 userAboutPool.yourStake.lte(0) ||
                                 networkChain.chainId !==
@@ -513,7 +513,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                     type="button"
                     text="Connect Wallet"
                     size="huge"
-                    backgroundSecondary
+                    background="secondary"
                     fullWidth
                     disabledNoEvent={connecting}
                     onClick={() => connect()}

@@ -46,14 +46,10 @@ const Filters = ({
       </S.OptionsUl>
       <S.Hr />
       <S.ButtonsContainer>
-        <Button
-          backgroundTransparent={true}
-          text={'Clear'}
-          onClick={handleClear}
-        />
+        <Button background="transparent" text={'Clear'} onClick={handleClear} />
         {handleSelectAll && (
           <Button
-            backgroundTransparent={true}
+            background="transparent"
             text={'Select All'}
             onClick={() => handleSelectAll(options)}
           />

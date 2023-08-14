@@ -609,7 +609,7 @@ const Withdraw = ({
       {!wallet ? (
         <Button
           className="btn-submit"
-          backgroundPrimary
+          background="primary"
           fullWidth
           type="button"
           disabled={connecting}
@@ -633,7 +633,7 @@ const Withdraw = ({
             <span style={{ width: '100%' }}>
               <Button
                 className="btn-submit"
-                backgroundPrimary
+                background="primary"
                 fullWidth
                 type="button"
                 text="Private Pool"
@@ -645,7 +645,7 @@ const Withdraw = ({
         ) : (
           <Button
             className="btn-submit"
-            backgroundPrimary
+            background="primary"
             disabledNoEvent={
               approvals[typeAction].length === 0 ||
               approvals[typeAction][0] > Approval.Approved ||
@@ -697,7 +697,7 @@ const Withdraw = ({
       ) : (
         <Button
           className="btn-submit"
-          backgroundPrimary
+          background="primary"
           fullWidth
           type="button"
           onClick={() =>

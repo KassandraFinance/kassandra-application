@@ -95,7 +95,7 @@ const ModalAlert = () => {
 
           <Button
             text="Okay"
-            backgroundSecondary
+            background="secondary"
             fullWidth
             onClick={handleCloseModal}
           />

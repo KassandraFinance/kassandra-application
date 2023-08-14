@@ -28,7 +28,7 @@ const TransactionFinalized = ({
 
       {children}
 
-      <Button text="Done" backgroundPrimary fullWidth onClick={onCLick} />
+      <Button text="Done" background="primary" fullWidth onClick={onCLick} />
     </S.TransactionFinalized>
   )
 }

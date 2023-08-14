@@ -280,7 +280,7 @@ const MyAsset = ({
         pid && (
           <S.ButtonWrapper>
             <Button
-              backgroundSecondary
+              background="secondary"
               text={`Stake ${symbol} to earn ${BNtoDecimal(apr, 0)}% APR`}
               fullWidth
               size="huge"
@@ -294,7 +294,7 @@ const MyAsset = ({
       ) : (
         <S.ButtonWrapper>
           <Button
-            backgroundSecondary
+            background="secondary"
             text="Connect Wallet"
             fullWidth
             size="huge"

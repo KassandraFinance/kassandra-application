@@ -372,7 +372,7 @@ const ModalUserEditInfo = ({
               type="submit"
               text="Save Changes"
               size="claim"
-              backgroundSecondary
+              background="secondary"
               fullWidth
               onClick={() =>
                 trackEventFunction(
@@ -386,7 +386,7 @@ const ModalUserEditInfo = ({
               type="button"
               text="Cancel"
               size="claim"
-              backgroundBlack
+              background="black"
               fullWidth
               onClick={() => setModalOpen(false)}
             />
