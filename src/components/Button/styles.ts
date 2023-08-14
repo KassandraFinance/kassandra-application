@@ -1,91 +1,10 @@
+import { IBackgroudProps, IbackgroundVoteProps, ISizeProps } from './index'
+
 import styled, { css, DefaultTheme } from 'styled-components'
 
-import { ButtonProps } from './index'
-
-export type WrapperProps = {
-  hasIcon: boolean
-} & Pick<
-  ButtonProps,
-  | 'size'
-  | 'fullWidth'
-  | 'backgroundPrimary'
-  | 'backgroundSecondary'
-  | 'backgroundBlack'
-  | 'disabledNoEvent'
-  | 'backgroundVote'
-  | 'backgroundTransparent'
->
-
-const wrapperModifiers = {
-  small: (theme: DefaultTheme) => css`
-    height: 3rem;
-
-    font-size: ${theme.font.sizes.font14};
-  `,
-  claim: (theme: DefaultTheme) => css`
-    height: 5.4rem;
-    padding: 1.9rem 2.8rem;
-
-    font-size: ${theme.font.sizes.font16};
-  `,
-  medium: (theme: DefaultTheme) => css`
-    height: 4.4rem;
-    padding: 1.4rem ${theme.spacings.space24};
-
-    font-size: ${theme.font.sizes.font16};
-  `,
-  large: (theme: DefaultTheme) => css`
-    height: 4.4rem;
-    padding: 1.4rem ${theme.spacings.space24};
-
-    font-size: ${theme.font.sizes.font16};
-  `,
-  huge: (theme: DefaultTheme) => css`
-    height: 5rem;
-    padding: ${theme.spacings.space24} ${theme.spacings.space48};
-
-    font-size: ${theme.font.sizes.font16};
-  `,
-  fullWidth: () => css`
-    width: 100%;
-  `,
-  withIcon: (theme: DefaultTheme) => css`
-    img {
-      order: 1;
-
-      width: 1.6rem;
-      //margin-left: ${theme.spacings.space8};
-
-      & + span {
-        margin-right: ${theme.spacings.space16};
-      }
-    }
-
-    svg {
-      order: 0;
-
-      width: 1.6rem;
-      //margin-right: ${theme.spacings.space8};
-
-      & + span {
-        margin-left: ${theme.spacings.space16};
-      }
-    }
-  `,
-
-  disabledNoEvent: (theme: DefaultTheme) => css`
-    border: 0.1rem solid ${theme.colors.darkGray};
-
-    color: #8b8b8b;
-
-    background: ${theme.colors.darkGray};
-    outline: none;
-
-    filter: grayscale(150%);
-    cursor: not-allowed;
-  `,
-
-  backgroundPrimary: (theme: DefaultTheme) => css`
+const backgroundVariants = {
+  default: () => css``,
+  primary: (theme: DefaultTheme) => css`
     background: ${`linear-gradient(93.84deg, ${theme.colors.blue} 0%, ${theme.colors.magenta} 50.12%, ${theme.colors.blue} 100%)`};
     background-position-x: 100%;
     background-size: 200%;
@@ -102,8 +21,7 @@ const wrapperModifiers = {
       outline-offset: 0.2rem;
     }
   `,
-
-  backgroundSecondary: (theme: DefaultTheme) => css`
+  secondary: (theme: DefaultTheme) => css`
     background: ${theme.colors.blue};
 
     transition: all 300ms;
@@ -118,8 +36,7 @@ const wrapperModifiers = {
       outline-offset: 0.2rem;
     }
   `,
-
-  backgroundBlack: (theme: DefaultTheme) => css`
+  black: (theme: DefaultTheme) => css`
     padding: 1.25rem;
     border: ${`0.1rem solid ${theme.colors.cyan}`};
 
@@ -153,7 +70,23 @@ const wrapperModifiers = {
       outline-offset: 0.2rem;
     }
   `,
+  transparent: () => css`
+    width: 100%;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
 
+    background: rgb(255 255 255 / 0.05);
+
+    transition: border 300ms ease-in-out;
+
+    &:hover,
+    &:focus {
+      border: 1px solid rgb(255 255 255 / 0.3);
+    }
+  `
+}
+const backgroundVoteVariants = {
   backgroundVote: (
     theme: DefaultTheme,
     { voteState, type }: { voteState: string; type: string }
@@ -212,38 +145,99 @@ const wrapperModifiers = {
           cursor: not-allowed;
         `
     }
-  },
+  }
+}
 
-  backgroundTransparent: () => css`
-    width: 100%;
-    padding: 0;
-    border: 1px solid transparent;
-    border-radius: 4px;
+const buttonSizes = {
+  small: (theme: DefaultTheme) => css`
+    height: 3rem;
 
-    background: rgb(255 255 255 / 0.05);
+    font-size: ${theme.font.sizes.font14};
+  `,
+  claim: (theme: DefaultTheme) => css`
+    height: 5.4rem;
+    padding: 1.9rem 2.8rem;
 
-    transition: border 300ms ease-in-out;
+    font-size: ${theme.font.sizes.font16};
+  `,
+  medium: (theme: DefaultTheme) => css`
+    height: 4.4rem;
+    padding: 1.4rem ${theme.spacings.space24};
 
-    &:hover,
-    &:focus {
-      border: 1px solid rgb(255 255 255 / 0.3);
-    }
+    font-size: ${theme.font.sizes.font16};
+  `,
+  large: (theme: DefaultTheme) => css`
+    height: 4.4rem;
+    padding: 1.4rem ${theme.spacings.space24};
+
+    font-size: ${theme.font.sizes.font16};
+  `,
+  huge: (theme: DefaultTheme) => css`
+    height: 5rem;
+    padding: ${theme.spacings.space24} ${theme.spacings.space48};
+
+    font-size: ${theme.font.sizes.font16};
   `
 }
 
-// prettier-ignore
-export const Wrapper = styled.button<WrapperProps>`
+const buttonModifiers = {
+  fullWidth: () => css`
+    width: 100%;
+  `,
+  withIcon: (theme: DefaultTheme) => css`
+    img {
+      order: 1;
+
+      width: 1.6rem;
+      //margin-left: ${theme.spacings.space8};
+
+      & + span {
+        margin-right: ${theme.spacings.space16};
+      }
+    }
+
+    svg {
+      order: 0;
+
+      width: 1.6rem;
+      //margin-right: ${theme.spacings.space8};
+
+      & + span {
+        margin-left: ${theme.spacings.space16};
+      }
+    }
+  `,
+  disabledNoEvent: (theme: DefaultTheme) => css`
+    border: 0.1rem solid ${theme.colors.darkGray};
+
+    color: #8b8b8b;
+
+    background: ${theme.colors.darkGray};
+    outline: none;
+
+    filter: grayscale(150%);
+    cursor: not-allowed;
+  `
+}
+
+export type IWrapperProps = {
+  size: ISizeProps
+  fullWidth: boolean
+  hasIcon: boolean
+  disabledNoEvent: boolean
+  background: IBackgroudProps
+  backgroundVote: IbackgroundVoteProps
+}
+
+export const Wrapper = styled.button<IWrapperProps>`
   ${({
     theme,
     size,
     fullWidth,
     hasIcon,
     disabledNoEvent,
-    backgroundPrimary,
-    backgroundSecondary,
-    backgroundBlack,
-    backgroundVote,
-    backgroundTransparent
+    background,
+    backgroundVote
   }) => css`
     border: none;
     border-radius: ${theme.border.radius};
@@ -270,16 +264,14 @@ export const Wrapper = styled.button<WrapperProps>`
 
     z-index: 1;
 
-    ${!!size && wrapperModifiers[size](theme)};
-    ${!!fullWidth && wrapperModifiers.fullWidth()};
-    ${!!hasIcon && wrapperModifiers.withIcon(theme)};
-    ${!!backgroundPrimary && wrapperModifiers.backgroundPrimary(theme)};
-    ${!!backgroundSecondary && wrapperModifiers.backgroundSecondary(theme)};
-    ${!!backgroundBlack && wrapperModifiers.backgroundBlack(theme)};
-    ${disabledNoEvent && wrapperModifiers.disabledNoEvent(theme)};
+    ${backgroundVariants[background](theme)};
+    ${buttonSizes[size](theme)};
     ${backgroundVote?.type !== undefined &&
-    wrapperModifiers.backgroundVote(theme, backgroundVote)};
-    ${!!backgroundTransparent && wrapperModifiers.backgroundTransparent()};
+    backgroundVoteVariants.backgroundVote(theme, backgroundVote)};
+
+    ${fullWidth && buttonModifiers.fullWidth()};
+    ${hasIcon && buttonModifiers.withIcon(theme)};
+    ${disabledNoEvent && buttonModifiers.disabledNoEvent(theme)};
   `}
 `
 
