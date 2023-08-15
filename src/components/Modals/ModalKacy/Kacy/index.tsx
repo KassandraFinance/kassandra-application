@@ -245,7 +245,7 @@ const Kacy = ({
             <S.ButtonContainer>
               <Button
                 text="Buy KACY"
-                backgroundPrimary
+                background="primary"
                 fullWidth
                 onClick={() => {
                   setIsOpenModal(true)
@@ -254,7 +254,7 @@ const Kacy = ({
               />
               <Button
                 text="Bridge KACY"
-                backgroundSecondary
+                background="secondary"
                 fullWidth
                 onClick={() => {
                   setIsModalBridge(true)
@@ -265,7 +265,7 @@ const Kacy = ({
           ) : (
             <Button
               text="Connect Wallet"
-              backgroundPrimary
+              background="primary"
               fullWidth
               disabledNoEvent={connecting}
               onClick={() => {

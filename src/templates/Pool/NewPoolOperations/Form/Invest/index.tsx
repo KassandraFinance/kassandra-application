@@ -731,7 +731,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       {!wallet ? (
         <Button
           className="btn-submit"
-          backgroundPrimary
+          background="primary"
           fullWidth
           type="button"
           disabled={connecting}
@@ -755,7 +755,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
             <span style={{ width: '100%' }}>
               <Button
                 className="btn-submit"
-                backgroundPrimary
+                background="primary"
                 fullWidth
                 type="button"
                 text="Private Pool"
@@ -767,7 +767,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         ) : (
           <Button
             className="btn-submit"
-            backgroundPrimary
+            background="primary"
             disabledNoEvent={
               approvals[typeAction].length === 0 ||
               approvals[typeAction][0] > Approval.Approved ||
@@ -810,7 +810,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       ) : (
         <Button
           className="btn-submit"
-          backgroundPrimary
+          background="primary"
           fullWidth
           type="button"
           onClick={() =>

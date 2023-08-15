@@ -143,7 +143,7 @@ const AddInvestorModal = ({
                 <Button
                   text="Add Investor"
                   type="button"
-                  backgroundSecondary
+                  background="secondary"
                   fullWidth
                   disabledNoEvent={investorsList.length < 1}
                   onClick={() => handlePrivateInvestors(investorsList)}
@@ -152,7 +152,7 @@ const AddInvestorModal = ({
                 <Button
                   text="Waiting transaction"
                   type="button"
-                  backgroundPrimary
+                  background="primary"
                   disabled
                   fullWidth
                 />
@@ -166,7 +166,7 @@ const AddInvestorModal = ({
                     networks[poolInfo[0].chain_id].chainName
                   }`}
                   type="button"
-                  backgroundPrimary
+                  background="primary"
                   fullWidth
                   onClick={() =>
                     setChain({

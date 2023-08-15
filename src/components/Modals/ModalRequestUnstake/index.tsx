@@ -129,7 +129,7 @@ const ModalRequestUnstake = ({
             <Button
               as="button"
               text="No"
-              backgroundSecondary
+              background="secondary"
               onClick={() => {
                 setModalOpen(false)
               }}
@@ -137,7 +137,7 @@ const ModalRequestUnstake = ({
             <Button
               as="button"
               text="Yes"
-              backgroundSecondary
+              background="secondary"
               onClick={() => handleUnstake()}
             />
           </S.ButtonContainer>

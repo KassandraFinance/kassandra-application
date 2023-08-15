@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ButtonHTMLAttributes, AnchorHTMLAttributes, forwardRef } from 'react'
 import * as S from './styles'
 
@@ -6,71 +5,66 @@ type ButtonTypes =
   | AnchorHTMLAttributes<HTMLAnchorElement>
   | ButtonHTMLAttributes<HTMLButtonElement>
 
+export type ISizeProps = 'small' | 'claim' | 'medium' | 'large' | 'huge'
+export type IBackgroudProps = 'primary' | 'secondary' | 'black' | 'transparent'
+export type IbackgroundVoteProps = {
+  voteState: 'against' | 'favor' | 'vote-open' | 'disable'
+  type: string
+}
+
 export type ButtonProps = {
-  size?: 'small' | 'claim' | 'medium' | 'large' | 'huge'
-  fullWidth?: boolean
-  backgroundPrimary?: boolean
-  backgroundSecondary?: boolean
-  backgroundBlack?: boolean
-  image?: string
-  isNFT?: boolean
-  backgroundVote?: {
-    voteState: 'against' | 'favor' | 'vote-open' | 'disable'
-    type: string
-  }
-  backgroundTransparent?: boolean
-  disabledNoEvent?: boolean
-  icon?: JSX.Element
-  as?: React.ElementType
   text?: string
+  as?: React.ElementType
+  size?: ISizeProps
+  background?: IBackgroudProps
+  backgroundVote?: IbackgroundVoteProps
+  fullWidth?: boolean
+  disabledNoEvent?: boolean
+  image?: string
+  icon?: JSX.Element
 } & ButtonTypes
 
 const ButtonBase: React.ForwardRefRenderFunction<
-  S.WrapperProps,
+  S.IWrapperProps,
   ButtonProps
 > = (
   {
-    children,
+    // children,
     icon,
     size = 'medium',
-    fullWidth = false,
-    backgroundPrimary = false,
-    backgroundSecondary = false,
+    background = 'default',
     backgroundVote = { voteState: undefined, type: undefined },
-    backgroundBlack = false,
-    backgroundTransparent = false,
+    fullWidth = false,
     disabledNoEvent = false,
     text,
     image = '',
-    isNFT = false,
-
     ...props
   },
   ref
-) => (
-  <S.Wrapper
-    size={size}
-    fullWidth={fullWidth}
-    hasIcon={!!icon}
-    backgroundPrimary={backgroundPrimary}
-    backgroundSecondary={backgroundSecondary}
-    backgroundBlack={backgroundBlack}
-    disabledNoEvent={disabledNoEvent}
-    disabled={disabledNoEvent}
-    backgroundVote={backgroundVote}
-    backgroundTransparent={backgroundTransparent}
-    {...props}
-  >
-    {image.length > 0 ? (
-      <S.ImgWrapper>
-        <img src={image} alt="User image" width={18} height={18} />
-      </S.ImgWrapper>
-    ) : (
-      icon
-    )}
-    {text}
-  </S.Wrapper>
-)
+) => {
+  return (
+    <S.Wrapper
+      size={size}
+      fullWidth={fullWidth}
+      hasIcon={!!icon}
+      disabledNoEvent={disabledNoEvent}
+      disabled={disabledNoEvent}
+      backgroundVote={backgroundVote}
+      background={background}
+      ref={ref}
+      {...props}
+    >
+      {image.length > 0 ? (
+        <S.ImgWrapper>
+          <img src={image} alt="User image" width={18} height={18} />
+        </S.ImgWrapper>
+      ) : (
+        icon
+      )}
+      {text}
+    </S.Wrapper>
+  )
+}
 
 const Button = forwardRef(ButtonBase)
 

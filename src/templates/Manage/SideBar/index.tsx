@@ -420,7 +420,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             {wallet?.provider && managerPools && managerPools.length > 0 && (
               <Button
                 text="Create New Pool"
-                backgroundSecondary
+                background="secondary"
                 fullWidth
                 type="button"
                 icon={

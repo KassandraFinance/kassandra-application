@@ -234,14 +234,14 @@ const DelegateVotingPower = ({
           <Button
             size="large"
             fullWidth
-            backgroundBlack
+            background="black"
             text="Back"
             onClick={() => setCurrentModal('manage')}
           />
           <Button
             size="large"
             fullWidth
-            backgroundSecondary
+            background="secondary"
             disabledNoEvent={walletRegex === null}
             text="Delegate Votes"
             onClick={handleDelegateVotes}

@@ -337,7 +337,7 @@ const PoolManager = () => {
                     <Button
                       text={`Connect to ${networks[poolInfo[0]?.chain_id]
                         ?.chainName}`}
-                      backgroundSecondary
+                      background="secondary"
                       size="large"
                       className="btn-manage-assets"
                       disabledNoEvent={settingChain}
@@ -363,7 +363,7 @@ const PoolManager = () => {
                       <span>
                         <Button
                           className="btn-manage-assets"
-                          backgroundSecondary
+                          background="secondary"
                           size="large"
                           text="Manage Assets"
                           fullWidth

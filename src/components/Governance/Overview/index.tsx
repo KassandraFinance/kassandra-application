@@ -46,7 +46,7 @@ export const Overview = () => {
                 onClick={() => conect()}
                 size="large"
                 text="Connect Wallet"
-                backgroundSecondary
+                background="secondary"
                 disabled={connecting}
               />
             )}

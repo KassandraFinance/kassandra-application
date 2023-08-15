@@ -40,6 +40,7 @@ type INftDetailsProps = {
 
 interface INftDetailsDataProps extends INftDetailsProps {
   metadata: string
+  token_uri: string
 }
 
 export interface INftDetailsListProps extends INftDetailsProps {
@@ -51,6 +52,7 @@ export interface INftDetailsListProps extends INftDetailsProps {
   }
 }
 
+const blackList = ['ethercbase', 'ethercb', 'etherbycb']
 const chains = ['eth', 'avalanche', 'bsc', 'matic', 'fantom', 'cronos']
 const chainsName = ['ETH', 'AVAX', 'BSC', 'MATIC', 'FTM', 'CRO']
 const ChainLogo: {
@@ -84,8 +86,7 @@ const UserNFTs = ({
         `https://deep-index.moralis.io/api/v2/${address}/nft?chain=${chains[i]}&format=decimal`,
         {
           headers: {
-            'X-API-Key':
-              'TJPvpUWJKfdL2wEwhMPj6I1npWBg2w1RoeOhuVDIY1rwNH68ZGqDQBLlTEoBUF9N'
+            'X-API-Key': process.env.NEXT_PUBLIC_MORALIS_KEY ?? ''
           }
         }
       )
@@ -102,10 +103,14 @@ const UserNFTs = ({
         chainNfts.forEach((nftObjet: INftDetailsDataProps) => {
           const parsedMetadata = JSON.parse(nftObjet.metadata)
 
+          const isBlackList = nftObjet?.token_uri?.match(
+            blackList.toString().replaceAll(',', '|')
+          )
           if (
             !parsedMetadata ||
             !parsedMetadata.name ||
-            parsedMetadata.name.length == 0
+            parsedMetadata.name.length == 0 ||
+            isBlackList
           ) {
             return
           }

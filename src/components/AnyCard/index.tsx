@@ -27,13 +27,13 @@ const AnyCard = ({
       {button && (
         <Link href={link} passHref>
           <a>
-            <Button backgroundSecondary size="large" text={buttonText} />
+            <Button background="secondary" size="large" text={buttonText} />
           </a>
         </Link>
       )}
       {button2 && (
         <Button
-          backgroundSecondary
+          background="secondary"
           size="large"
           text={buttonText}
           onClick={onClick}

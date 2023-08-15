@@ -95,7 +95,7 @@ const WalletConnecting = ({
           <S.ButtonWrapper>
             <Button
               text="Done"
-              backgroundSecondary
+              background="secondary"
               fullWidth
               onClick={handleCloseModal}
             />

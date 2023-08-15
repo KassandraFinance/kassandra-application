@@ -149,7 +149,7 @@ const RemoveInvestorModal = ({
               {!isTransaction ? (
                 <Button
                   text="Remove Investors"
-                  backgroundSecondary
+                  background="secondary"
                   fullWidth
                   disabledNoEvent={investorsList.length < 1}
                   onClick={() => handleRemoveInvestors(investorsList)}
@@ -158,7 +158,7 @@ const RemoveInvestorModal = ({
                 <Button
                   text="Waiting transaction"
                   type="button"
-                  backgroundPrimary
+                  background="primary"
                   disabled
                   fullWidth
                 />
@@ -171,7 +171,7 @@ const RemoveInvestorModal = ({
                   text={`Connect to ${
                     networks[poolInfo[0].chain_id].chainName
                   }`}
-                  backgroundPrimary
+                  background="primary"
                   fullWidth
                   type="button"
                   onClick={() =>

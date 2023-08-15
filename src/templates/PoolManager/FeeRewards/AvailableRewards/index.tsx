@@ -100,7 +100,7 @@ const AvailableRewards = ({ pool }: Props) => {
         </S.Harvest>
         <Button
           disabledNoEvent={Big(feesAum.manager).lte(0)}
-          backgroundSecondary
+          background="secondary"
           size="large"
           text="Claim Rewards"
           onClick={() => {

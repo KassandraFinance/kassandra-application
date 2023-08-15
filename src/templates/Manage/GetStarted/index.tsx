@@ -63,7 +63,7 @@ const GetStarted = () => {
           {wallet?.provider ? (
             <Button
               text="Create New Pool"
-              backgroundSecondary
+              background="secondary"
               fullWidth
               type="button"
               onClick={handleCreatePool}
@@ -71,7 +71,7 @@ const GetStarted = () => {
           ) : (
             <Button
               text="Connect Wallet"
-              backgroundSecondary
+              background="secondary"
               fullWidth
               disabledNoEvent={connecting}
               onClick={() => connect()}

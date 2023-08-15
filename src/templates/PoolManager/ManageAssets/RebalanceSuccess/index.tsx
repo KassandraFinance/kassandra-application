@@ -31,7 +31,7 @@ const RebalanceSuccess = ({
         <S.TimeParagraph>{time} hours</S.TimeParagraph>
         <Button
           fullWidth
-          backgroundPrimary
+          background="primary"
           text="Done"
           className="doneButton"
           onClick={() => setIsOpenManageAssets(false)}

@@ -82,7 +82,7 @@ const ModalBuyKacyOnPangolin = ({
               type="button"
               text="Connect to Avalanche Mainnet"
               size="huge"
-              backgroundSecondary
+              background="secondary"
               fullWidth
               disabledNoEvent={settingChain}
               onClick={() =>

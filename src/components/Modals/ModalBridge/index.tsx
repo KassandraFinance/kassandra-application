@@ -195,7 +195,7 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
               <Button
                 type="button"
                 text={`Connect to ${inputFrom?.name}`}
-                backgroundPrimary
+                background="primary"
                 disabledNoEvent={settingChain}
                 onClick={() =>
                   setChain({
@@ -211,14 +211,14 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
                   <Button
                     type="button"
                     text="Approve Kacy"
-                    backgroundPrimary
+                    background="primary"
                     onClick={handleApproveKacy}
                   />
                 ) : (
                   <Button
                     type="button"
                     text="Bridge"
-                    backgroundPrimary
+                    background="primary"
                     onClick={() => inputTo && handleBridge(inputTo.id)}
                     disabledNoEvent={!inputFrom || !inputTo}
                   />

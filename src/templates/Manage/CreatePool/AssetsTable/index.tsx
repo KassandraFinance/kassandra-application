@@ -199,7 +199,7 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                   <Button
                     as="a"
                     target="_black"
-                    backgroundSecondary
+                    background="secondary"
                     text="Go To The Forum"
                   />
                 </Link>

@@ -80,7 +80,7 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
                 {!isTransaction ? (
                   <Button
                     text="Make it Public"
-                    backgroundSecondary
+                    background="secondary"
                     fullWidth
                     onClick={() => handleMakePublic()}
                   />
@@ -88,7 +88,7 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
                   <Button
                     text="Waiting transaction"
                     type="button"
-                    backgroundPrimary
+                    background="primary"
                     disabled
                     fullWidth
                   />
@@ -101,7 +101,7 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
                     text={`Connect to ${
                       networks[poolInfo[0].chain_id].chainName
                     }`}
-                    backgroundPrimary
+                    background="primary"
                     fullWidth
                     type="button"
                     onClick={() =>
@@ -117,7 +117,7 @@ const PrivacySettingsModal = ({ onClose }: IPrivacySettingsModal) => {
             {!isTransaction && (
               <Button
                 text="Keep it Private"
-                backgroundBlack
+                background="black"
                 fullWidth
                 onClick={onClose}
               />
