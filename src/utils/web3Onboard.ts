@@ -109,8 +109,8 @@ const chains = [
   },
   {
     id: '0xa4b1',
-    token: 'WETH',
-    label: 'Arbitrum',
+    token: 'ETH',
+    label: 'Arbitrum One',
     rpcUrl: 'https://arbitrum-one.publicnode.com',
     blockExplorerUrl: 'https://arbiscan.io/',
     color: '#96BEDC',
