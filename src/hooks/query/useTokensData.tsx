@@ -29,16 +29,16 @@ export const fetchTokensData = async ({
     `/api/tokens?chainId=` +
       `${chainId}` +
       '&addressesSeparatedByComma=' +
-      `${tokenAddresses.slice(0, 130).toString()}`
+      `${tokenAddresses.slice(0, 249).toString()}`
   ).then(res => res.json())
 
   const dataTwo =
-    tokenAddresses.length > 130
+    tokenAddresses.length > 249
       ? await fetch(
           `/api/tokens?chainId=` +
             `${chainId}` +
             '&addressesSeparatedByComma=' +
-            `${tokenAddresses.slice(130, tokenAddresses.length).toString()}`
+            `${tokenAddresses.slice(249, tokenAddresses.length).toString()}`
         ).then(res => res.json())
       : null
 
