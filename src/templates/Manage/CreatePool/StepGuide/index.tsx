@@ -2,7 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { setPoolData } from '@/store/reducers/poolCreationSlice'
+import { setPoolData, setClear } from '@/store/reducers/poolCreationSlice'
 
 import StepCard from './StepCard'
 import ExternalLink from '@/components/ExternalLink'
@@ -58,10 +58,16 @@ const StepGuide = () => {
   const network = useAppSelector(
     state => state.poolCreation.createPoolData.network
   )
+  const id = useAppSelector(
+    state => state.poolCreation.createPoolData.networkId
+  )
 
   const [isAvailableAssets, setIsAvailableAssets] = React.useState(false)
 
   function handleSelectNetwork(network: string, networkId: number) {
+    if (networkId !== id) {
+      dispatch(setClear())
+    }
     dispatch(setPoolData({ network: network, networkId: networkId }))
   }
 
