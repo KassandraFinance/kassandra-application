@@ -2,7 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { setPoolData } from '@/store/reducers/poolCreationSlice'
+import { setPoolData, setClear } from '@/store/reducers/poolCreationSlice'
 
 import StepCard from './StepCard'
 import ExternalLink from '@/components/ExternalLink'
@@ -17,6 +17,7 @@ import feeConfigurationIcon from '@assets/iconGradient/info-solid-gradient.svg'
 import reviewIcon from '@assets/iconGradient/review.svg'
 import avalancheIcon from '@assets/logos/avalanche.svg'
 import polygonIcon from '@assets/logos/polygon.svg'
+import arbitrumIcon from '@assets/logos/arbitrum.svg'
 
 import * as S from './styles'
 
@@ -57,10 +58,16 @@ const StepGuide = () => {
   const network = useAppSelector(
     state => state.poolCreation.createPoolData.network
   )
+  const id = useAppSelector(
+    state => state.poolCreation.createPoolData.networkId
+  )
 
   const [isAvailableAssets, setIsAvailableAssets] = React.useState(false)
 
   function handleSelectNetwork(network: string, networkId: number) {
+    if (networkId !== id) {
+      dispatch(setClear())
+    }
     dispatch(setPoolData({ network: network, networkId: networkId }))
   }
 
@@ -139,6 +146,31 @@ const StepGuide = () => {
                 required
               />
             </S.ButtonWrapper>
+
+            <S.ButtonWrapper>
+              <S.ButtonNetwork
+                type="button"
+                borderColor="arbitrum"
+                selected={network === 'arbitrum'}
+                onClick={() => handleSelectNetwork('arbitrum', 42161)}
+              >
+                <Image src={arbitrumIcon} width={24} height={24} /> Arbitrum
+              </S.ButtonNetwork>
+
+              <InputRadio
+                form="poolCreationForm"
+                inputId="arbitrum"
+                name="network"
+                value="arbitrum"
+                text=""
+                inputChecked={network === 'arbitrum'}
+                handleClickInput={() => {
+                  return
+                }}
+                required
+              />
+            </S.ButtonWrapper>
+
             {/* <S.ButtonWrapper>
               <S.ButtonNetwork
                 type="button"
