@@ -55,7 +55,7 @@ async function getTokens(params: { tokensId?: string[]; chainId?: number }) {
 async function getInfoTokens(coingeckoIds: string[]) {
   const resInfoTokens = await fetch(
     `${COINGECKO_API}coins/markets?vs_currency=usd&ids=${coingeckoIds.toString()}&order=market_cap_desc&per_page=250&page=1&sparkline=true&price_change_percentage=24h%2C7d&locale=en&x_cg_pro_api_key=${
-      process.env.NEXT_PUBLIC_COINGECKO_API_KEY
+      process.env.NEXT_PUBLIC_COINGECKO
     }`
   )
 
