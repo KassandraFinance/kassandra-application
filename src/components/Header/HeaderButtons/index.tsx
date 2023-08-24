@@ -77,7 +77,6 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   React.useEffect(() => {
     if (wallet?.provider) {
       const chainId = wallet.chains[0].id
-      console.log(wallet.chains[0].id)
       setNetwork(chainStyle[chainId] ?? chainStyle.notSuported)
 
       return
