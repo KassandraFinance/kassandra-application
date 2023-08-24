@@ -12,6 +12,7 @@ import Button from '@/components/Button'
 
 import { disconnectedIcon, avalancheIcon } from './SvgButtons'
 import polygon from '@assets/logos/polygon.svg'
+import arbitrumIcon from '@assets/logos/arbitrum.svg'
 
 import * as S from './styles'
 
@@ -50,6 +51,12 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       color: '#7B3FE4',
       fillColor: 'white'
     },
+    '0xa4b1': {
+      icon: <img src={arbitrumIcon.src} />,
+      network: 'Arbitrum',
+      color: '#96BEDC',
+      fillColor: 'black'
+    },
     notSuported: {
       icon: disconnectedIcon,
       network: 'Not Supported',
@@ -70,6 +77,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   React.useEffect(() => {
     if (wallet?.provider) {
       const chainId = wallet.chains[0].id
+      console.log(wallet.chains[0].id)
       setNetwork(chainStyle[chainId] ?? chainStyle.notSuported)
 
       return
