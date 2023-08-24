@@ -17,6 +17,7 @@ import feeConfigurationIcon from '@assets/iconGradient/info-solid-gradient.svg'
 import reviewIcon from '@assets/iconGradient/review.svg'
 import avalancheIcon from '@assets/logos/avalanche.svg'
 import polygonIcon from '@assets/logos/polygon.svg'
+import arbitrumIcon from '@assets/logos/arbitrum.svg'
 
 import * as S from './styles'
 
@@ -139,6 +140,31 @@ const StepGuide = () => {
                 required
               />
             </S.ButtonWrapper>
+
+            <S.ButtonWrapper>
+              <S.ButtonNetwork
+                type="button"
+                borderColor="arbitrum"
+                selected={network === 'arbitrum'}
+                onClick={() => handleSelectNetwork('arbitrum', 42161)}
+              >
+                <Image src={arbitrumIcon} width={24} height={24} /> Arbitrum
+              </S.ButtonNetwork>
+
+              <InputRadio
+                form="poolCreationForm"
+                inputId="arbitrum"
+                name="network"
+                value="arbitrum"
+                text=""
+                inputChecked={network === 'arbitrum'}
+                handleClickInput={() => {
+                  return
+                }}
+                required
+              />
+            </S.ButtonWrapper>
+
             {/* <S.ButtonWrapper>
               <S.ButtonNetwork
                 type="button"
