@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { COINGECKO_API } from '@/constants/tokenAddresses'
 
 type CoinsMetadataType = Record<
   string,
@@ -51,46 +52,15 @@ async function getTokens(params: { tokensId?: string[]; chainId?: number }) {
   return (await resKassandra.json()).data?.tokensByIds
 }
 
-async function getInfoTokens(coingeckoIds: string[], page: number) {
-  const resInfoTokens = await fetch(process.env.HEIMDALL_API ?? '', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `BearerInternal ${process.env.HEIMDALL_API_KEY}`
-    },
-    body: JSON.stringify({
-      query: `
-        query MarketCoins ($ids: [String!]! $page: Float) {
-          marketCoins (
-            filters: {
-              coinsID: $ids
-            }
-            pagination: {
-              page: $page
-            }
-          ) {
-            items {
-              id
-              name
-              symbol
-              image
-              price
-              marketCap
-              volume
-              pricePercentageChangeIn24h
-              pricePercentageChangeIn7d
-              sparklineFrom7d
-            }
-          }
-        }
-      `,
-      variables: {
-        ids: coingeckoIds,
-        page
-      }
-    })
-  })
-  return (await resInfoTokens.json()).data?.marketCoins?.items
+async function getInfoTokens(coingeckoIds: string[]) {
+  const resInfoTokens = await fetch(
+    `${COINGECKO_API}coins/markets?vs_currency=usd&ids=${coingeckoIds.toString()}&order=market_cap_desc&per_page=250&page=1&sparkline=true&price_change_percentage=24h%2C7d&locale=en&x_cg_pro_api_key=${
+      process.env.NEXT_PUBLIC_COINGECKO
+    }`
+  )
+
+  const res = await resInfoTokens.json()
+  return res
 }
 
 export default async (
@@ -139,7 +109,7 @@ export default async (
     let page = 1
     const totalsPage = Math.ceil(coingeckoIds.length / 100)
     while (page <= totalsPage) {
-      const response = await getInfoTokens(coingeckoIds, page)
+      const response = await getInfoTokens(coingeckoIds)
       if (response.length > 0) infoTokens.push(...response)
       page++
     }
@@ -152,12 +122,14 @@ export default async (
           name: infoToken.name,
           symbol: infoToken.symbol.toUpperCase(),
           logo: infoToken.image,
-          usd: infoToken.price,
-          marketCap: infoToken.marketCap,
-          volume: infoToken.volume,
-          pricePercentageChangeIn24h: infoToken.pricePercentageChangeIn24h,
-          pricePercentageChangeIn7d: infoToken.pricePercentageChangeIn7d,
-          sparklineFrom7d: infoToken.sparklineFrom7d,
+          usd: infoToken.current_price,
+          marketCap: infoToken.market_cap,
+          volume: infoToken.total_volume,
+          pricePercentageChangeIn24h:
+            infoToken.price_change_percentage_24h_in_currency,
+          pricePercentageChangeIn7d:
+            infoToken.price_change_percentage_7d_in_currency,
+          sparklineFrom7d: infoToken.sparkline_in_7d,
           decimals: coingeckoIdToAddress[infoToken.id]?.decimals
         }
       })
