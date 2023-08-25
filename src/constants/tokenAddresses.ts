@@ -40,7 +40,7 @@ export const ProxyContract =
     ? '0xa356Dc5260Ca76b4113CD7251906ffb57629b985' // '0xCf734790E7D25f4E366b7d2F9710D3Eb1DB62036'
     : '0x97e33051B09092C1301A90b964a74cA51C0b068B'
 
-export const VERSION_POOL_CREATE = '1.0'
+export const VERSION_POOL_CREATE = '1.1'
 
 export const MIN_DOLLAR_TO_CREATE_POOL = 100
 
@@ -172,6 +172,25 @@ export const networks: NetworkType = {
       address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Avalanche',
       symbol: 'AVAX',
+      decimals: 18
+    }
+  },
+  '42161': {
+    chainName: 'Arbitrum',
+    chainId: 42161,
+    rpc: 'https://arbitrum-one.publicnode.com',
+    kacyAddress: '',
+    blockExplorer: 'https://arbiscan.io/',
+    coingecko: 'arbitrum-one',
+    whiteList: '0xfe7AeA0E15F34aCa30285E64C529b1B2a074F531',
+    factory: '0xF9c9073590F502F12B5497ae49DA1446D224A9EA', // factory with swap provider
+    privateInvestor: '0xa356Dc5260Ca76b4113CD7251906ffb57629b985',
+    kacyOFT: '',
+    stakingContract: '',
+    nativeCurrency: {
+      address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+      name: 'Wrapped Ether',
+      symbol: 'WETH',
       decimals: 18
     }
   }
