@@ -129,7 +129,7 @@ export default async (
             infoToken.price_change_percentage_24h_in_currency,
           pricePercentageChangeIn7d:
             infoToken.price_change_percentage_7d_in_currency,
-          sparklineFrom7d: infoToken.sparkline_in_7d,
+          sparklineFrom7d: infoToken.sparkline_in_7d.price,
           decimals: coingeckoIdToAddress[infoToken.id]?.decimals
         }
       })
