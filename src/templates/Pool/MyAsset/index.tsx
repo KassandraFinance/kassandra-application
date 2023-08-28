@@ -110,12 +110,16 @@ const MyAsset = ({
   async function getApr() {
     if (!pid) return
     const poolInfoResponse = await stakingContract.poolInfo(pid)
-
     const kacyRewards = Big(poolInfoResponse.rewardRate).mul(Big(86400))
     const fundPrice = Big(price ?? 0)
     const priceKacy = Big(kacyPrice ?? 0)
 
-    if (fundPrice.gt('0')) {
+    const now = new Date().getTime()
+    const periodFinish = new Date(
+      Number(poolInfoResponse.periodFinish) * 1000
+    ).getTime()
+
+    if (periodFinish > now && fundPrice.gt('0')) {
       const aprResponse =
         poolInfoResponse.depositedAmount.toString() !== '0' &&
         priceKacy.gt('-1') &&
@@ -135,6 +139,8 @@ const MyAsset = ({
           : Big(-1)
 
       setApr(aprResponse)
+    } else {
+      setApr(Big(0))
     }
   }
 
