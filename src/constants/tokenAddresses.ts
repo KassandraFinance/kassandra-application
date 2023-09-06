@@ -186,7 +186,7 @@ export const networks: NetworkType = {
     factory: '0xF9c9073590F502F12B5497ae49DA1446D224A9EA', // factory with swap provider
     privateInvestor: '0xa356Dc5260Ca76b4113CD7251906ffb57629b985',
     kacyOFT: '',
-    stakingContract: '',
+    stakingContract: undefined,
     nativeCurrency: {
       address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
       name: 'Wrapped Ether',
