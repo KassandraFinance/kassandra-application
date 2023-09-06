@@ -55,6 +55,30 @@ enum Approval {
 
 type Approvals = { [key in Titles]: Approval[] }
 
+type Asset = {
+  balance: string
+  weight_normalized: string
+  weight_goal_normalized: string
+  token: {
+    id: string
+    name: string
+    logo?: string | null | undefined
+    symbol: string
+    decimals: number
+    is_wrap_token: number
+    wraps?:
+      | {
+          id: string
+          decimals: number
+          symbol: string
+          name: string
+          logo?: string | null | undefined
+        }
+      | null
+      | undefined
+  }
+}
+
 interface IInvestProps {
   typeAction: Titles
   privateInvestors: string[]
@@ -117,7 +141,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     transactionsDataTx: string[]
   }> {
     const { fromAddress, fromDecimals } =
-      tokenSelect.address === NATIVE_ADDRESS && pool?.chain_id === 137
+      tokenSelect.address === NATIVE_ADDRESS && pool
         ? {
             fromAddress: pool.chain?.address_wrapped,
             fromDecimals: pool.chain?.token_decimals
@@ -127,35 +151,16 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
             fromDecimals: tokenSelect.decimals
           }
 
-    let sortAddresses: {
-      __typename?: 'Asset' | undefined
-      balance: string
-      weight_normalized: string
-      weight_goal_normalized: string
-      token: {
-        __typename?: 'Token' | undefined
-        id: string
-        name: string
-        logo?: string | null | undefined
-        symbol: string
-        decimals: number
-        is_wrap_token: number
-        wraps?:
-          | {
-              __typename?: 'Token' | undefined
-              id: string
-              decimals: number
-              symbol: string
-              name: string
-              logo?: string | null | undefined
-            }
-          | null
-          | undefined
-      }
-    }[] = []
+    let sortAddresses: Asset[] = []
     if (pool) {
-      sortAddresses = [...pool.underlying_assets].sort((a, b) =>
-        a.token.id.toLowerCase() > b.token.id.toLowerCase() ? 1 : -1
+      const underlying_assets: Record<string, Asset> = {}
+      for (const asset of pool.underlying_assets) {
+        Object.assign(underlying_assets, {
+          [asset.token.id]: asset
+        })
+      }
+      sortAddresses = pool.underlying_assets_addresses.map(
+        address => underlying_assets[address]
       )
     }
     const { amountsTokenIn, transactionsDataTx } =
@@ -478,7 +483,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       )
     }
   }
-  // get contract approval of tokens
 
   // verificar se o token está aprovado
   React.useEffect(() => {

@@ -198,7 +198,7 @@ export default class operationV2 implements IOperations {
 
     const tokenIn =
       tokenInAddress === NATIVE_ADDRESS
-        ? '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
+        ? networks[Number(this.poolInfo.chainId)].nativeCurrency.address
         : tokenInAddress
 
     const datas = await this.getDatasTx(slippage, data)

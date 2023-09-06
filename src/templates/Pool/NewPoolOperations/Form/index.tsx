@@ -128,11 +128,7 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
           <Invest typeAction="Invest" privateInvestors={privateInvestors} />
         )}
         {typeAction === 'Withdraw' && (
-          <Withdraw
-            typeWithdraw={typeWithdraw}
-            typeAction="Withdraw"
-            privateInvestors={privateInvestors}
-          />
+          <Withdraw typeWithdraw={typeWithdraw} typeAction="Withdraw" />
         )}
       </S.Form>
     </OperationProvider>

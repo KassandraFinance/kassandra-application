@@ -5,6 +5,7 @@ import Big from 'big.js'
 import Blockies from 'react-blockies'
 import Tippy from '@tippyjs/react'
 import { useConnectWallet } from '@web3-onboard/react'
+import { ethers } from 'ethers'
 
 import { networks, KacyPoligon } from '../../../constants/tokenAddresses'
 
@@ -70,7 +71,7 @@ const MyAsset = ({
 
   const [{ wallet, connecting }, connect] = useConnectWallet()
   const stakingContract = useStaking(
-    chainInfo.stakingContract ?? '',
+    chainInfo.stakingContract ?? ethers.ZeroAddress,
     chainInfo.chainId
   )
   const ERC20 = useERC20(poolToken, networks[chainInfo.chainId].rpc)
