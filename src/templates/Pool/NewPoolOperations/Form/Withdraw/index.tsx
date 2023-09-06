@@ -1,7 +1,6 @@
 import Big from 'big.js'
 import { useRouter } from 'next/router'
 import React from 'react'
-import Tippy from '@tippyjs/react'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import useBatchRequests from '@/hooks/useBatchRequests'
 
@@ -38,7 +37,6 @@ export type Titles = keyof typeof messages
 interface IWithdrawProps {
   typeWithdraw: string
   typeAction: Titles
-  privateInvestors: string[]
 }
 
 enum Approval {
@@ -50,11 +48,7 @@ enum Approval {
 
 type Approvals = { [key in Titles]: Approval[] }
 
-const Withdraw = ({
-  typeWithdraw,
-  typeAction,
-  privateInvestors
-}: IWithdrawProps) => {
+const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   const [amountTokenIn, setamountTokenIn] = React.useState<Big | string>(Big(0))
   const [amountTokenOut, setAmountTokenOut] = React.useState<Big | string>(
     Big(0)
@@ -617,83 +611,54 @@ const Withdraw = ({
           text="Connect Wallet"
         />
       ) : chainId === pool?.chain_id ? (
-        pool.is_private_pool &&
-        !privateInvestors.some(
-          address => address === wallet?.accounts[0].address
-        ) ? (
-          <Tippy
-            allowHTML={true}
-            content={[
-              <S.PrivatePoolTooltip key="poolPrivate">
-                This is a <strong key="privatePool">Private Pool</strong>, the
-                manager decided to limit the addresses that can invest in it
-              </S.PrivatePoolTooltip>
-            ]}
-          >
-            <span style={{ width: '100%' }}>
-              <Button
-                className="btn-submit"
-                background="primary"
-                fullWidth
-                type="button"
-                text="Private Pool"
-                disabledNoEvent
-                image="/assets/utilities/lock.svg"
-              />
-            </span>
-          </Tippy>
-        ) : (
-          <Button
-            className="btn-submit"
-            background="primary"
-            disabledNoEvent={
-              approvals[typeAction].length === 0 ||
-              approvals[typeAction][0] > Approval.Approved ||
-              (approvals[typeAction][0] === Approval.Approved &&
-                (amountTokenIn.toString() === '0' ||
-                  (typeWithdraw === 'Single_asset' &&
-                    amountTokenOut.toString() === '0') ||
-                  (typeWithdraw === 'Best_value' &&
-                    Object.values(amountAllTokenOut).length === 0) ||
-                  errorMsg.length > 0))
-            }
-            fullWidth
-            type="submit"
-            text={
-              approvals[typeAction][0] === Approval.Approved
-                ? amountTokenIn.toString() !== '0' ||
-                  inputAmountInTokenRef?.current?.value !== null
-                  ? typeWithdraw === 'Best_value'
-                    ? `${typeAction} ${'$' + priceInDollarOnWithdraw}`
-                    : `${typeAction} ${
-                        '$' +
-                        BNtoDecimal(
-                          Big(amountTokenOut.toString())
-                            .mul(
-                              Big(
-                                priceToken(
-                                  tokenSelect.address.toLocaleLowerCase()
-                                ) || 0
-                              )
+        <Button
+          className="btn-submit"
+          background="primary"
+          disabledNoEvent={
+            approvals[typeAction].length === 0 ||
+            approvals[typeAction][0] > Approval.Approved ||
+            (approvals[typeAction][0] === Approval.Approved &&
+              (amountTokenIn.toString() === '0' ||
+                (typeWithdraw === 'Single_asset' &&
+                  amountTokenOut.toString() === '0') ||
+                (typeWithdraw === 'Best_value' &&
+                  Object.values(amountAllTokenOut).length === 0) ||
+                errorMsg.length > 0))
+          }
+          fullWidth
+          type="submit"
+          text={
+            approvals[typeAction][0] === Approval.Approved
+              ? amountTokenIn.toString() !== '0' ||
+                inputAmountInTokenRef?.current?.value !== null
+                ? typeWithdraw === 'Best_value'
+                  ? `${typeAction} ${'$' + priceInDollarOnWithdraw}`
+                  : `${typeAction} ${
+                      '$' +
+                      BNtoDecimal(
+                        Big(amountTokenOut.toString())
+                          .mul(
+                            Big(
+                              priceToken(
+                                tokenSelect.address.toLocaleLowerCase()
+                              ) || 0
                             )
-                            .div(
-                              Big(10).pow(Number(tokenSelect.decimals || 18))
-                            ),
-                          18,
-                          2,
-                          2
-                        )
-                      }`
-                  : `${typeAction}`
-                : approvals[typeAction][0] === Approval.WaitingTransaction
-                ? 'Approving...'
-                : approvals[typeAction][0] === undefined ||
-                  approvals[typeAction][0] === Approval.Syncing
-                ? 'Syncing with Blockchain...'
-                : 'Approve'
-            }
-          />
-        )
+                          )
+                          .div(Big(10).pow(Number(tokenSelect.decimals || 18))),
+                        18,
+                        2,
+                        2
+                      )
+                    }`
+                : `${typeAction}`
+              : approvals[typeAction][0] === Approval.WaitingTransaction
+              ? 'Approving...'
+              : approvals[typeAction][0] === undefined ||
+                approvals[typeAction][0] === Approval.Syncing
+              ? 'Syncing with Blockchain...'
+              : 'Approve'
+          }
+        />
       ) : (
         <Button
           className="btn-submit"
