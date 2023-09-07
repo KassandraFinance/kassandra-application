@@ -4,17 +4,12 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { BrowserProvider, JsonRpcSigner } from 'ethers'
 
 import { OperationProvider } from './PoolOperationContext'
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector } from '@/store/hooks'
 import usePrivateInvestors from '@/hooks/usePrivateInvestors'
 import { usePoolData } from '@/hooks/query/usePoolData'
 import useGetToken from '@/hooks/useGetToken'
 
-import {
-  BalancerHelpers,
-  networks,
-  ProxyContract,
-  ProxyInvestV2
-} from '../../../../constants/tokenAddresses'
+import { networks, ProxyContract } from '@/constants/tokenAddresses'
 
 import operationV1 from '@/services/operationV1'
 import operationV2 from '@/services/operationV2'
@@ -49,10 +44,13 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   const [{ wallet }] = useConnectWallet()
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
+
+  const network = networks[pool?.chain_id || 0]
+
   const { tokenListSwapProvider } = useAppSelector(state => state)
-  const ERC20 = useERC20(pool?.address || '', networks[pool?.chain_id || 0].rpc)
+  const ERC20 = useERC20(pool?.address || '', network.rpc)
   const { privateAddresses } = usePrivateInvestors(
-    networks[pool?.chain_id || 0].privateInvestor,
+    network.privateInvestor,
     pool?.chain_id
   )
 
@@ -100,8 +98,8 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
           signerProvider
         )
       : new operationV2(
-          ProxyInvestV2,
-          BalancerHelpers,
+          network.proxyInvest,
+          network.balancerHelper,
           poolInfo,
           new ParaSwap(),
           signerProvider

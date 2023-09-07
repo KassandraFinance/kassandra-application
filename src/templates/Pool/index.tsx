@@ -17,10 +17,7 @@ import { setTokensSwapProvider } from '../../store/reducers/tokenListSwapProvide
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 
-import {
-  BACKEND_KASSANDRA,
-  NATIVE_ADDRESS
-} from '../../constants/tokenAddresses'
+import { NATIVE_ADDRESS, SUBGRAPH_URL } from '../../constants/tokenAddresses'
 
 import Breadcrumb from '../../components/Breadcrumb'
 import Loading from '../../components/Loading'
@@ -28,7 +25,6 @@ import ChartProducts from '../../components/ChartProducts'
 import ScrollUpButton from '../../components/ScrollUpButton'
 import BreadcrumbItem from '../../components/Breadcrumb/BreadcrumbItem'
 import TokenWithNetworkImage from '../../components/TokenWithNetworkImage'
-import PoweredBy from './PoweredBy'
 import FeeBreakdown from './FeeBreakdown'
 import ActivityTable from './ActivityTable'
 
@@ -101,7 +97,7 @@ const Pool = () => {
   const { data: userProfile } = useUserProfile({ address: pool?.manager?.id })
 
   async function getTokensForOperations() {
-    const resJson = await fetch(`${BACKEND_KASSANDRA}`, {
+    const resJson = await fetch(`${SUBGRAPH_URL}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -109,7 +105,7 @@ const Pool = () => {
       body: JSON.stringify({
         query: `
           query($chainId: Int) {
-            tokensByIds(chainId: $chainId) {
+            tokens(where: {chain_ids_contains: [$chainId] } first: 1000) {
               id
               decimals
               logo
@@ -123,7 +119,7 @@ const Pool = () => {
     })
     const response = await resJson.json()
 
-    const tokensSwapProvider = response.data.tokensByIds as ListTokensRes[]
+    const tokensSwapProvider = response.data.tokens as ListTokensRes[]
     const tokenAddressesSwapProvider = tokensSwapProvider.map(token => token.id)
     let poolAssets: {
       __typename?: 'Asset' | undefined
