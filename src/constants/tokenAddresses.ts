@@ -145,9 +145,9 @@ export const networks: NetworkType = {
     kacyAddress: Kacy,
     blockExplorer: 'https://snowtrace.io',
     coingecko: 'avalanche',
-    whiteList: '',
-    factory: '',
-    privateInvestor: '0x',
+    whiteList: '0x89a57ebb16B42Dd1CbdCBC3889eEbC107B75eC51',
+    factory: '0xbBa46B512a158aF0e41111109617c660Ff903819',
+    privateInvestor: '0x762CD3909E46179777E441c7d1431C73E680C83F',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
     nativeCurrency: {

@@ -53,7 +53,7 @@ const SelectAssets = () => {
 
   const tokensList = tokensSummary ? tokensSummary : []
 
-  const tokensListGoerli =
+  const whitelistTokenAddresses =
     networkId === 5
       ? whitelist?.map((token: string) => getAddress(mockTokens[token]))
       : whitelist
@@ -63,7 +63,7 @@ const SelectAssets = () => {
     totalAllocation = totalAllocation.plus(token.allocation)
   }
 
-  const { data: data } = useTokens({ tokensList: tokensListGoerli || [] })
+  const { data } = useTokens({ tokensList: whitelistTokenAddresses || [] })
 
   const tokensListFiltered = data
     ? data?.filter((element): element is Exclude<typeof element, null> => {
@@ -73,7 +73,7 @@ const SelectAssets = () => {
 
   const { data: priceData } = useTokensData({
     chainId: networkId || 137,
-    tokenAddresses: tokensListGoerli || []
+    tokenAddresses: whitelistTokenAddresses || []
   })
 
   function handleInput(
