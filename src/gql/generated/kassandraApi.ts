@@ -4942,6 +4942,7 @@ export type SubscriptionWeightsArgs = {
  */
 export type Token = {
   __typename?: 'Token'
+  chain_ids: Array<Scalars['Int']['output']>
   coingecko_id?: Maybe<Scalars['String']['output']>
   decimals: Scalars['Int']['output']
   /**
@@ -4972,6 +4973,12 @@ export type TokenPoolsArgs = {
 export type Token_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  chain_ids?: InputMaybe<Array<Scalars['Int']['input']>>
+  chain_ids_contains?: InputMaybe<Array<Scalars['Int']['input']>>
+  chain_ids_contains_nocase?: InputMaybe<Array<Scalars['Int']['input']>>
+  chain_ids_not?: InputMaybe<Array<Scalars['Int']['input']>>
+  chain_ids_not_contains?: InputMaybe<Array<Scalars['Int']['input']>>
+  chain_ids_not_contains_nocase?: InputMaybe<Array<Scalars['Int']['input']>>
   coingecko_id?: InputMaybe<Scalars['String']['input']>
   coingecko_id_contains?: InputMaybe<Scalars['String']['input']>
   coingecko_id_contains_nocase?: InputMaybe<Scalars['String']['input']>
@@ -5101,6 +5108,7 @@ export type Token_Filter = {
 }
 
 export type Token_OrderBy =
+  | 'chain_ids'
   | 'coingecko_id'
   | 'decimals'
   | 'id'
@@ -6715,7 +6723,7 @@ export type FeaturedPoolsQueryVariables = Exact<{ [key: string]: never }>
 
 export type FeaturedPoolsQuery = {
   __typename?: 'Query'
-  pools: Array<{ __typename?: 'Pool'; id: string; featured?: boolean | null }>
+  poolsKassandra: Array<{ __typename?: 'Pool'; id: string }>
 }
 
 export type FeesQueryVariables = Exact<{
@@ -7864,9 +7872,9 @@ export type UsersInfoQuery = {
     __typename?: 'User'
     id: string
     votingPower: string
-    image?: string | null
-    is_nft?: boolean | null
     nickname?: string | null
+    is_nft?: boolean | null
+    image?: string | null
     votes: Array<{
       __typename?: 'Vote'
       proposal: { __typename?: 'Proposal'; number: number }
@@ -8104,9 +8112,8 @@ export const DelegationsDocument = gql`
 `
 export const FeaturedPoolsDocument = gql`
   query FeaturedPools {
-    pools {
+    poolsKassandra: pools(where: { featured: true }) {
       id
-      featured
     }
   }
 `
@@ -9336,9 +9343,9 @@ export const UsersInfoDocument = gql`
     ) {
       id
       votingPower
-      image
-      is_nft
       nickname
+      is_nft
+      image
       votes {
         proposal {
           number

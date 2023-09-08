@@ -1,6 +1,5 @@
 query FeaturedPools {
-  pools {
+  poolsKassandra: pools (where: { featured: true }) {
     id
-    featured
   }
 }
