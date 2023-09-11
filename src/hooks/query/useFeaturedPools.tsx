@@ -4,23 +4,11 @@ import { kassandraClient } from '@/graphQLClients'
 
 export const fetchFeaturedPools = async () => {
   return kassandraClient.FeaturedPools().then(res => {
-    if (!res) {
+    if (!res?.poolsKassandra) {
       return null
     }
 
-    const poolsId = res.pools.reduce(
-      (acc, { featured, id }) => {
-        if (featured) {
-          acc.poolsKassandra.push({ id })
-        }
-        return acc
-      },
-      {
-        poolsKassandra: [] as Array<{ id: string }>
-      }
-    )
-
-    return poolsId
+    return res
   })
 }
 
