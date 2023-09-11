@@ -44,12 +44,7 @@ export const VERSION_POOL_CREATE = '1.1'
 
 export const MIN_DOLLAR_TO_CREATE_POOL = 100
 
-export const ProxyInvestV2 = '0x77F18A3963796Dd252EbEF15C9eadfE229c7c89a' // Polygon
-export const BalancerHelpers = '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5' // Polygon
-
 export const NATIVE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-
-export const VAULT_POLYGON = '0xBA12222222228d8Ba445958a75a0704d566BF2C8'
 
 export const WETH_POLYGON = '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
 
@@ -98,6 +93,9 @@ type NetworkType = Record<
     nativeCurrency: CurrencyDetails
     blockExplorer: string
     kacyOFT: string
+    vault: string
+    balancerHelper: string
+    proxyInvest: string
   }
 >
 
@@ -112,6 +110,9 @@ export const networks: NetworkType = {
     factory: '0x9E3feC2E3AEc12572242dd1376BEd5E1F5bb8200',
     privateInvestor: '0xC8d8AeDBeDd1973b383D6f330C66D653F7DF11D6',
     kacyOFT: '',
+    vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
+    balancerHelper: '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5',
+    proxyInvest: '0x2CA2CF9624c4b0c5d87a3204780408cDA9EB9BfD',
     nativeCurrency: {
       address: '0xffb99f4a02712c909d8f7cc44e67c87ea1e71e83',
       name: 'Goerli Test Token', //Ether
@@ -131,6 +132,9 @@ export const networks: NetworkType = {
     privateInvestor: '0xa356Dc5260Ca76b4113CD7251906ffb57629b985',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     stakingContract: '0xd530f3ce79c9eb03e59dce89a7504dd41d4899bb',
+    vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
+    balancerHelper: '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5',
+    proxyInvest: '0x77F18A3963796Dd252EbEF15C9eadfE229c7c89a',
     nativeCurrency: {
       address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
       name: 'Matic Token',
@@ -145,11 +149,14 @@ export const networks: NetworkType = {
     kacyAddress: Kacy,
     blockExplorer: 'https://snowtrace.io',
     coingecko: 'avalanche',
-    whiteList: '',
-    factory: '',
-    privateInvestor: '0x',
+    whiteList: '0x89a57ebb16B42Dd1CbdCBC3889eEbC107B75eC51',
+    factory: '0xbBa46B512a158aF0e41111109617c660Ff903819',
+    privateInvestor: '0x762CD3909E46179777E441c7d1431C73E680C83F',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
+    vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
+    balancerHelper: '0xC128468b7Ce63eA702C1f104D55A2566b13D3ABD',
+    proxyInvest: '0xaE107b47f1565b8EF0c537E4322866d42095051a',
     nativeCurrency: {
       address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Avalanche',
@@ -168,6 +175,9 @@ export const networks: NetworkType = {
     factory: '',
     privateInvestor: '',
     kacyOFT: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
+    vault: '',
+    balancerHelper: '',
+    proxyInvest: '',
     nativeCurrency: {
       address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Avalanche',
@@ -186,7 +196,9 @@ export const networks: NetworkType = {
     factory: '0xF9c9073590F502F12B5497ae49DA1446D224A9EA', // factory with swap provider
     privateInvestor: '0xa356Dc5260Ca76b4113CD7251906ffb57629b985',
     kacyOFT: '',
-    stakingContract: undefined,
+    vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
+    balancerHelper: '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5',
+    proxyInvest: '0x77F18A3963796Dd252EbEF15C9eadfE229c7c89a',
     nativeCurrency: {
       address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
       name: 'Wrapped Ether',

@@ -18,9 +18,11 @@ const PriceFee = () => {
   )
   const { gasFee } = useGasFee(networkId || 137)
 
+  const network = networks[networkId ?? 137]
+
   const { data } = useTokensData({
-    chainId: 137,
-    tokenAddresses: ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270']
+    chainId: network.chainId,
+    tokenAddresses: [network.nativeCurrency.address]
   })
 
   React.useEffect(() => {
@@ -53,9 +55,9 @@ const PriceFee = () => {
                 <p>
                   $
                   {(
-                    data['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'].usd *
-                    Number(estimateGas.gas)
-                  ).toFixed(6)}{' '}
+                    data[network.nativeCurrency.address.toLocaleLowerCase()]
+                      .usd * Number(estimateGas.gas)
+                  ).toFixed(2)}{' '}
                   USD
                 </p>
               )}

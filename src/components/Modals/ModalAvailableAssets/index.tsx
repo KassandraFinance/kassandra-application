@@ -12,6 +12,7 @@ import SelectTabs from '@/components/SelectTabs'
 
 import polygonIcon from '@assets/logos/polygon.svg'
 import arbitrumIcon from '@assets/logos/arbitrum.svg'
+import avalancheIcon from '@assets/logos/avalanche.svg'
 // import ethIcon from '@assets/logos/eth-logo.svg'
 
 import * as S from './styles'
@@ -32,6 +33,11 @@ const tabs = [
     asPathText: '42161',
     text: 'Arbitrum',
     icon: arbitrumIcon
+  },
+  {
+    asPathText: '43114',
+    text: 'Avalanche',
+    icon: avalancheIcon
   }
 ]
 
