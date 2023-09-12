@@ -69,7 +69,7 @@ const GlobalStyles: GlobalStyleComponent<
         --onboard-font-size-6: 1.3rem;
         --onboard-modal-z-index: 1050;
 
-        //classname to wallect connect modal
+        /* classname to wallect connect modal */
         --wcm-z-index: 1060 !important;
       }
     }
@@ -79,6 +79,15 @@ const GlobalStyles: GlobalStyleComponent<
       font-family: Rubik, sans-serif;
 
       background-color: #151117;
+      background-image: url('/assets/images/background-768.png');
+      background-image: image-set(
+        url('/assets/images/background-768.avif') type('image/avif'),
+        url('/assets/images/background-768.webp') type('image/webp'),
+        url('/assets/images/background-768.png') type('image/png')
+      );
+      background-position-x: center;
+      background-size: cover;
+      background-repeat: repeat-y;
 
       /* Chrome, Safari, Edge, Opera */
       input::-webkit-outer-spin-button,
@@ -92,22 +101,23 @@ const GlobalStyles: GlobalStyleComponent<
         appearance: textfield;
       }
 
-      ${selectBackground
-        ? `background-image: url('/assets/images/background-768.png');
-           background-repeat: repeat-y;
-           background-size: cover;
-           background-position-x: center;
+      @media (min-width: 768px) {
+        background-image: url('/assets/images/background-992.png');
+        background-image: image-set(
+          url('/assets/images/background-992.avif') type('image/avif'),
+          url('/assets/images/background-992.webp') type('image/webp'),
+          url('/assets/images/background-992.png') type('image/png')
+        );
+      }
 
-
-           @media (min-width: 768px) {
-             background-image: url('/assets/images/background-992.png');
-           }
-
-           @media (min-width: 992px) {
-             background-image: url('/assets/images/background-1440.png');
-           }
-        `
-        : ''}
+      @media (min-width: 992px) {
+        background-image: url('/assets/images/background-1440.png');
+        background-image: image-set(
+          url('/assets/images/background-1440.avif') type('image/avif'),
+          url('/assets/images/background-1440.webp') type('image/webp'),
+          url('/assets/images/background-1440.png') type('image/png')
+        );
+      }
     }
   `}
   ul, ol {
