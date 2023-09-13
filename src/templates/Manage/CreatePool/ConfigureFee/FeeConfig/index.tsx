@@ -56,7 +56,7 @@ const FeeConfig = () => {
     dispatch(
       setRefferalFee({
         inputName: name,
-        inputValue: value
+        inputValue: parseFloat(value.toFixed(2))
       })
     )
   }

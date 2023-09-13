@@ -359,7 +359,7 @@ export default class operationV2 implements IOperations {
     const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
     const userData = new ethers.AbiCoder().encode(
       ['uint256', 'uint256'],
-      [1, poolAmountIn.toString()]
+      [1, poolAmountIn.toFixed(0)]
     )
 
     const request = {

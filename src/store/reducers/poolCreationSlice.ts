@@ -432,7 +432,9 @@ export const poolCreationSlice = createSlice({
           refferalFee: {
             ...fessList.refferalFee,
             [action.payload.inputName]: action.payload.inputValue,
-            managerShare: Number(depositFee) - action.payload.inputValue
+            managerShare: parseFloat(
+              (parseFloat(depositFee) - action.payload.inputValue).toFixed(2)
+            )
           }
         }
       } else {
@@ -441,7 +443,9 @@ export const poolCreationSlice = createSlice({
           refferalFee: {
             ...fessList.refferalFee,
             [action.payload.inputName]: action.payload.inputValue,
-            brokerCommision: Number(depositFee) - action.payload.inputValue
+            brokerCommision: parseFloat(
+              (parseFloat(depositFee) - action.payload.inputValue).toFixed(2)
+            )
           }
         }
       }
