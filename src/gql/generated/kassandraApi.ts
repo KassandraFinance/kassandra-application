@@ -6779,6 +6779,7 @@ export type FundCardQuery = {
     founded_by?: string | null
     price_usd: string
     pool_version: number
+    featured?: boolean | null
     total_value_locked_usd: string
     strategy: string
     chain: { __typename?: 'Chain'; logo?: string | null }
@@ -8023,10 +8024,7 @@ export const CommunityPoolsDocument = gql`
       pool_count
     }
     pools(
-      where: {
-        manager_not: "0xFF56b00bDaEEf52C3EBb81B0efA6e28497305175"
-        id_not: "1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52"
-      }
+      where: { featured: false }
       orderBy: total_value_locked_usd
       orderDirection: $orderDirection
       first: $first
@@ -8176,6 +8174,7 @@ export const FundCardDocument = gql`
       founded_by
       price_usd
       pool_version
+      featured
       chain {
         logo: icon
       }

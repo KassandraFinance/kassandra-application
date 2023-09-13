@@ -14,6 +14,7 @@ query FundCard(
       founded_by
       price_usd # pool asset price
       pool_version
+      featured
       # price candlestick
       # just taking the close value can make a line graph
       # base can be usd or btc
