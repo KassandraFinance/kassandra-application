@@ -164,6 +164,17 @@ const ActivityTable = () => {
     })
   }
 
+  function getInvestPrice(amountsList: string[], pricesList: string[]) {
+    let sumPriceIn = Big(0)
+    for (const [i, amount] of amountsList.entries()) {
+      if (i < amountsList.length - 1) {
+        sumPriceIn = sumPriceIn.add(Big(amount).times(Big(pricesList[i])))
+      }
+    }
+
+    return BNtoDecimal(sumPriceIn, 6, 2, 2)
+  }
+
   return (
     <>
       <S.Title>
@@ -204,7 +215,6 @@ const ActivityTable = () => {
         <TBodyWithHeight tableRowsNumber={6} lineHeight={6}>
           {data
             ? data.activities.map(activity => {
-                let sumPriceIn = Big(0)
                 return (
                   <TRHead key={activity.id}>
                     <TD>
@@ -308,26 +318,19 @@ const ActivityTable = () => {
 
                         <SecondaryTextValue align="right">
                           $
-                          {activity.type === 'join' &&
-                            activity.amount.flatMap((amount, i) => {
-                              if (i < activity.amount.length - 1) {
-                                sumPriceIn = sumPriceIn.add(
-                                  Big(amount).times(Big(activity.price_usd[i]))
-                                )
-                                return []
-                              } else {
-                                return BNtoDecimal(sumPriceIn, 6, 2, 2)
-                              }
-                            })}
-                          {activity.type !== 'join' &&
-                            BNtoDecimal(
-                              Big(activity.amount[0] || 0).times(
-                                Big(activity?.price_usd[0] || 0)
-                              ),
-                              6,
-                              2,
-                              2
-                            )}
+                          {activity.type !== 'join'
+                            ? BNtoDecimal(
+                                Big(activity.amount[0] || 0).times(
+                                  Big(activity?.price_usd[0] || 0)
+                                ),
+                                6,
+                                2,
+                                2
+                              )
+                            : getInvestPrice(
+                                activity.amount,
+                                activity.price_usd
+                              )}
                         </SecondaryTextValue>
                       </ValueWrapper>
                     </TD>
@@ -414,20 +417,19 @@ const ActivityTable = () => {
                                 )
                             })}
 
-                          <Value>
-                            {activity.type !== 'exit'
-                              ? BNtoDecimal(
-                                  Big(
-                                    activity.amount[
-                                      activity.amount.length - 1
-                                    ] || '0'
-                                  ),
-                                  6,
-                                  4,
-                                  2
-                                )
-                              : null}
-                          </Value>
+                          {activity.type !== 'exit' ? (
+                            <Value>
+                              {BNtoDecimal(
+                                Big(
+                                  activity.amount[activity.amount.length - 1] ||
+                                    '0'
+                                ),
+                                6,
+                                4,
+                                2
+                              )}
+                            </Value>
+                          ) : null}
                         </S.DataWrapper>
 
                         <SecondaryTextValue align="right">
@@ -540,6 +542,15 @@ const ActivityTable = () => {
 
               <ValueContainer>
                 <S.DataWrapper>
+                  {pool?.underlying_assets && historyMobile.type === 'join' && (
+                    <S.TokensSymbols>
+                      <TokenIcons />
+                      {pool.underlying_assets.length > 3 && (
+                        <span>+{pool.underlying_assets.length - 3} MORE</span>
+                      )}
+                    </S.TokensSymbols>
+                  )}
+
                   {historyMobile.type === 'exit' && (
                     <S.ImageWrapper key={pool?.id}>
                       {pool?.logo ? (
@@ -555,95 +566,53 @@ const ActivityTable = () => {
                     </S.ImageWrapper>
                   )}
 
-                  {pool.underlying_assets?.map(element => {
-                    if (
-                      (historyMobile.type === 'join' &&
-                        element.token.symbol === historyMobile.symbol[0]) ||
-                      (historyMobile.type === 'join' &&
-                        element.token.symbol ===
-                          invertSymbol[historyMobile.symbol[0]])
-                    ) {
-                      return (
-                        <S.ImageWrapper key={element.token.id}>
-                          <Image
-                            src={
-                              element.token?.logo ||
-                              element.token.wraps?.logo ||
-                              ''
-                            }
-                            alt=""
-                            layout="fill"
-                          />
-                        </S.ImageWrapper>
-                      )
-                    } else if (
-                      (historyMobile.type === 'swap' &&
-                        element.token.symbol === historyMobile.symbol[0]) ||
-                      (historyMobile.type === 'swap' &&
-                        element.token.symbol ===
-                          invertSymbol[historyMobile.symbol[0]])
-                    ) {
-                      return (
-                        <S.ImageWrapper key={element.token.id}>
-                          <Image
-                            src={
-                              element.token?.logo ||
-                              element.token?.wraps?.logo ||
-                              ''
-                            }
-                            alt=""
-                            layout="fill"
-                          />
-                        </S.ImageWrapper>
-                      )
-                    } else {
-                      return null
-                    }
-                  })}
+                  {historyMobile.type === 'swap'
+                    ? pool.underlying_assets?.flatMap(element => {
+                        if (
+                          element.token.symbol.toUpperCase() ===
+                          historyMobile.symbol[0].toUpperCase()
+                        ) {
+                          return (
+                            <S.ImageWrapper key={element.token.id}>
+                              <Image
+                                src={
+                                  element.token?.logo ||
+                                  element.token?.wraps?.logo ||
+                                  ''
+                                }
+                                alt=""
+                                layout="fill"
+                              />
+                            </S.ImageWrapper>
+                          )
+                        } else {
+                          return []
+                        }
+                      })
+                    : null}
 
-                  <V>
-                    {BNtoDecimal(
-                      Big(
-                        historyMobile.amount[
-                          historyMobile.type === 'exit'
-                            ? historyMobile.symbol.length > 2
-                              ? 0
-                              : 1
-                            : 0
-                        ] || '0'
-                      ),
-                      18,
-                      3
-                    )}
-                  </V>
+                  {historyMobile.type !== 'join' ? (
+                    <V>
+                      {BNtoDecimal(Big(historyMobile.amount[0] || '0'), 18, 3)}
+                    </V>
+                  ) : null}
                 </S.DataWrapper>
 
                 <SecondaryValue>
                   $
-                  {BNtoDecimal(
-                    Big(
-                      historyMobile.amount[
-                        historyMobile.type === 'exit'
-                          ? historyMobile.symbol.length > 2
-                            ? 0
-                            : 1
-                          : 0
-                      ] || 0
-                    ).times(
-                      Big(
-                        historyMobile?.price_usd[
-                          historyMobile.type === 'exit'
-                            ? historyMobile.symbol.length > 2
-                              ? 0
-                              : 1
-                            : 0
-                        ] || 0
+                  {historyMobile.type !== 'join'
+                    ? BNtoDecimal(
+                        Big(historyMobile.amount[0] || 0).times(
+                          Big(historyMobile?.price_usd[0] || 0)
+                        ),
+                        6,
+                        2,
+                        2
                       )
-                    ),
-                    18,
-                    5,
-                    2
-                  )}
+                    : getInvestPrice(
+                        historyMobile.amount,
+                        historyMobile.price_usd
+                      )}
                 </SecondaryValue>
               </ValueContainer>
             </TableLine>
@@ -653,7 +622,7 @@ const ActivityTable = () => {
 
               <ValueContainer>
                 <S.DataWrapper>
-                  {historyMobile.type === 'join' && (
+                  {historyMobile.type === 'join' ? (
                     <S.ImageWrapper>
                       {pool?.logo ? (
                         <Image src={pool.logo} alt="" layout="fill" />
@@ -666,29 +635,17 @@ const ActivityTable = () => {
                         />
                       )}
                     </S.ImageWrapper>
-                  )}
-
-                  {historyMobile.type === 'exit' &&
-                    historyMobile.symbol.length > 3 && (
-                      <>
-                        <TokenIcons />
-                        {pool.underlying_assets.length > 3 && (
-                          <V>+{pool.underlying_assets.length - 3} MORE</V>
-                        )}
-                      </>
-                    )}
+                  ) : null}
 
                   {historyMobile.type !== 'join' &&
-                    historyMobile.symbol.length < 3 &&
-                    pool.underlying_assets.map(element => {
+                    pool?.underlying_assets?.map((element, i) => {
                       if (historyMobile.type === 'exit') {
                         if (
-                          element.token.symbol === historyMobile.symbol[0] ||
-                          element.token.symbol ===
-                            invertSymbol[historyMobile.symbol[0]]
+                          historyMobile.symbol.length < 3 &&
+                          element.token.symbol === historyMobile.symbol[1]
                         ) {
                           return (
-                            <S.ImageWrapper key={element.token.id}>
+                            <S.ImageWrapper key={`exit-${element.token.id}`}>
                               <Image
                                 src={
                                   element.token?.logo ||
@@ -700,14 +657,28 @@ const ActivityTable = () => {
                             </S.ImageWrapper>
                           )
                         }
-                      } else if (
-                        (historyMobile.type === 'swap' &&
-                          element.token.symbol === historyMobile.symbol[1]) ||
-                        element.token.symbol ===
-                          invertSymbol[historyMobile.symbol[1]]
-                      ) {
+
+                        if (i === 0 && historyMobile.symbol.length > 2) {
+                          return (
+                            <S.TokensSymbols key={`exit-${element.token.id}`}>
+                              <TokenIcons />
+                              {pool.underlying_assets.length > 3 && (
+                                <span>
+                                  +{pool.underlying_assets.length - 3} MORE
+                                </span>
+                              )}
+                            </S.TokensSymbols>
+                          )
+                        }
+                      }
+
+                      if (
+                        historyMobile.type === 'swap' &&
+                        element.token.symbol.toUpperCase() ===
+                          historyMobile.symbol[1].toUpperCase()
+                      )
                         return (
-                          <S.ImageWrapper key={element.token.id}>
+                          <S.ImageWrapper key={`swap-${element.token.id}`}>
                             <Image
                               src={
                                 element.token?.logo ||
@@ -717,27 +688,24 @@ const ActivityTable = () => {
                               alt=""
                               layout="fill"
                             />
+                            5
                           </S.ImageWrapper>
                         )
-                      } else {
-                        return null
-                      }
                     })}
 
-                  <V>
-                    {historyMobile.symbol.length > 2 &&
-                    historyMobile.type !== 'join'
-                      ? null
-                      : BNtoDecimal(
-                          Big(
-                            historyMobile.amount[
-                              historyMobile.type === 'exit' ? 0 : 1
-                            ] || '0'
-                          ),
-                          18,
-                          3
-                        )}
-                  </V>
+                  {historyMobile.type !== 'exit' ? (
+                    <V>
+                      {BNtoDecimal(
+                        Big(
+                          historyMobile.amount[
+                            historyMobile.amount.length - 1
+                          ] || '0'
+                        ),
+                        18,
+                        3
+                      )}
+                    </V>
+                  ) : null}
                 </S.DataWrapper>
 
                 <SecondaryValue>
@@ -749,11 +717,19 @@ const ActivityTable = () => {
                         historyMobile.price_usd
                       )
                     : BNtoDecimal(
-                        Big(historyMobile.amount[1] || 0).times(
-                          Big(historyMobile?.price_usd[1] || 0)
+                        Big(
+                          historyMobile.amount[
+                            historyMobile.amount.length - 1
+                          ] || 0
+                        ).times(
+                          Big(
+                            historyMobile?.price_usd[
+                              historyMobile.price_usd.length - 1
+                            ] || 0
+                          )
                         ),
-                        18,
-                        5,
+                        6,
+                        2,
                         2
                       )}
                 </SecondaryValue>
