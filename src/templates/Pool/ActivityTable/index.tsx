@@ -61,7 +61,8 @@ const typeActivity: Record<ActivityType, string> = {
 
 const explorer: Record<number, string> = {
   137: 'https://polygonscan.com/tx/',
-  43114: 'https://snowtrace.io/tx/'
+  43114: 'https://snowtrace.io/tx/',
+  42161: 'https://arbiscan.io/tx/'
 }
 
 type HistoryMobileType = {
@@ -203,6 +204,7 @@ const ActivityTable = () => {
         <TBodyWithHeight tableRowsNumber={6} lineHeight={6}>
           {data
             ? data.activities.map(activity => {
+                let sumPriceIn = Big(0)
                 return (
                   <TRHead key={activity.id}>
                     <TD>
@@ -240,34 +242,43 @@ const ActivityTable = () => {
                     </TD>
 
                     {/* in */}
-                    <TD isView={inViewCollum === 2}>
+                    <TD isView={inViewCollum === 1}>
                       <ValueWrapper>
                         <S.DataWrapper>
-                          {pool?.underlying_assets?.map(element => {
-                            if (
-                              activity.type === 'join' &&
-                              element.token.symbol === activity.symbol[0]
-                            )
-                              return (
-                                <S.ImageWrapper>
-                                  <Image
-                                    src={
-                                      element.token?.logo ||
-                                      element.token.wraps?.logo ||
-                                      ''
-                                    }
-                                    alt=""
-                                    layout="fill"
-                                  />
-                                </S.ImageWrapper>
-                              )
-                            if (
-                              activity.type === 'join' &&
-                              element.token.symbol ===
-                                invertSymbol[activity.symbol[0]]
-                            )
-                              return (
-                                <S.ImageWrapper>
+                          {pool?.underlying_assets &&
+                            activity.type === 'join' && (
+                              <S.TokensSymbols key={activity.timestamp}>
+                                <TokenIcons />
+                                {pool.underlying_assets.length > 3 && (
+                                  <span>
+                                    +{pool.underlying_assets.length - 3} MORE
+                                  </span>
+                                )}
+                              </S.TokensSymbols>
+                            )}
+
+                          {pool && activity.type === 'exit' && (
+                            <S.ImageWrapper key={pool.id}>
+                              {pool.logo ? (
+                                <Image src={pool.logo} alt="" layout="fill" />
+                              ) : (
+                                <Blockies
+                                  seed={pool?.name || ''}
+                                  className="poolIcon"
+                                  size={4}
+                                  scale={4}
+                                />
+                              )}
+                            </S.ImageWrapper>
+                          )}
+
+                          {activity.type === 'swap' &&
+                            pool?.underlying_assets?.flatMap(element =>
+                              element.token.symbol.toUpperCase() ===
+                              activity.symbol[0].toUpperCase() ? (
+                                <S.ImageWrapper
+                                  key={`swap-${element.token.id}`}
+                                >
                                   <Image
                                     src={
                                       element.token?.logo ||
@@ -278,151 +289,116 @@ const ActivityTable = () => {
                                     layout="fill"
                                   />
                                 </S.ImageWrapper>
+                              ) : (
+                                []
                               )
+                            )}
 
-                            if (activity.type === 'exit') {
-                              if (element.token.symbol === 'KACY') {
-                                return (
-                                  <S.ImageWrapper key={pool.id}>
-                                    {pool.logo ? (
-                                      <Image
-                                        src={pool.logo}
-                                        alt=""
-                                        layout="fill"
-                                      />
-                                    ) : (
-                                      <Blockies
-                                        seed={pool?.name || ''}
-                                        className="poolIcon"
-                                        size={4}
-                                        scale={4}
-                                      />
-                                    )}
-                                  </S.ImageWrapper>
+                          {activity.type !== 'join' ? (
+                            <Value>
+                              {BNtoDecimal(
+                                Big(activity.amount[0] || '0'),
+                                6,
+                                2,
+                                2
+                              )}
+                            </Value>
+                          ) : null}
+                        </S.DataWrapper>
+
+                        <SecondaryTextValue align="right">
+                          $
+                          {activity.type === 'join' &&
+                            activity.amount.flatMap((amount, i) => {
+                              if (i < activity.amount.length - 1) {
+                                sumPriceIn = sumPriceIn.add(
+                                  Big(amount).times(Big(activity.price_usd[i]))
                                 )
+                                return []
                               } else {
-                                null
+                                return BNtoDecimal(sumPriceIn, 6, 2, 2)
                               }
-                            }
-
-                            if (
-                              activity.type === 'swap' &&
-                              element.token.symbol === activity.symbol[0]
-                            )
-                              return (
-                                <S.ImageWrapper>
-                                  <Image
-                                    src={
-                                      element.token?.logo ||
-                                      element.token?.wraps?.logo ||
-                                      ''
-                                    }
-                                    alt=""
-                                    layout="fill"
-                                  />
-                                </S.ImageWrapper>
-                              )
-                            if (
-                              activity.type === 'swap' &&
-                              element.token.symbol ===
-                                invertSymbol[activity.symbol[0]]
-                            )
-                              return (
-                                <S.ImageWrapper>
-                                  <Image
-                                    src={
-                                      element.token?.logo ||
-                                      element.token?.wraps?.logo ||
-                                      ''
-                                    }
-                                    alt=""
-                                    layout="fill"
-                                  />
-                                </S.ImageWrapper>
-                              )
-                          })}
-
-                          <Value>
-                            {BNtoDecimal(
-                              Big(
-                                activity.amount[
-                                  activity.type === 'exit'
-                                    ? activity.symbol.length > 2
-                                      ? 0
-                                      : 1
-                                    : 0
-                                ] || '0'
+                            })}
+                          {activity.type !== 'join' &&
+                            BNtoDecimal(
+                              Big(activity.amount[0] || 0).times(
+                                Big(activity?.price_usd[0] || 0)
                               ),
                               6,
                               2,
                               2
                             )}
-                          </Value>
-                        </S.DataWrapper>
-
-                        <SecondaryTextValue align="right">
-                          $
-                          {BNtoDecimal(
-                            Big(
-                              activity.amount[
-                                activity.type === 'exit'
-                                  ? activity.symbol.length > 2
-                                    ? 0
-                                    : 1
-                                  : 0
-                              ] || 0
-                            ).times(
-                              Big(
-                                activity?.price_usd[
-                                  activity.type === 'exit'
-                                    ? activity.symbol.length > 2
-                                      ? 0
-                                      : 1
-                                    : 0
-                                ] || 0
-                              )
-                            ),
-                            6,
-                            2,
-                            2
-                          )}
                         </SecondaryTextValue>
                       </ValueWrapper>
                     </TD>
 
                     {/* out */}
-                    <TD isView={inViewCollum === 1}>
+                    <TD isView={inViewCollum === 2}>
                       <ValueWrapper>
                         <S.DataWrapper>
-                          {pool?.underlying_assets?.map(element => {
-                            if (
-                              activity.type === 'join' &&
-                              element.token.symbol === 'KACY'
-                            )
-                              return (
-                                <S.ImageWrapper>
-                                  {pool.logo ? (
-                                    <Image
-                                      src={pool.logo}
-                                      alt=""
-                                      layout="fill"
-                                    />
-                                  ) : (
-                                    <Blockies
-                                      seed={pool?.name || ''}
-                                      className="poolIcon"
-                                      size={4}
-                                      scale={4}
-                                    />
-                                  )}
-                                </S.ImageWrapper>
-                              )
+                          {pool && activity.type === 'join' && (
+                            <S.ImageWrapper>
+                              {pool.logo ? (
+                                <Image src={pool.logo} alt="" layout="fill" />
+                              ) : (
+                                <Blockies
+                                  seed={pool?.name || ''}
+                                  className="poolIcon"
+                                  size={4}
+                                  scale={4}
+                                />
+                              )}
+                            </S.ImageWrapper>
+                          )}
 
-                            if (activity.type === 'exit') {
-                              if (element.token.symbol === activity.symbol[0]) {
+                          {activity.type !== 'join' &&
+                            pool?.underlying_assets?.map((element, i) => {
+                              if (activity.type === 'exit') {
+                                if (
+                                  activity.symbol.length < 3 &&
+                                  element.token.symbol === activity.symbol[1]
+                                ) {
+                                  return (
+                                    <S.ImageWrapper
+                                      key={`exit-${element.token.id}`}
+                                    >
+                                      <Image
+                                        src={
+                                          element.token?.logo ||
+                                          element.token?.wraps?.logo ||
+                                          ''
+                                        }
+                                        layout="fill"
+                                      />
+                                    </S.ImageWrapper>
+                                  )
+                                }
+
+                                if (i === 0 && activity.symbol.length > 2) {
+                                  return (
+                                    <S.TokensSymbols
+                                      key={`exit-${element.token.id}`}
+                                    >
+                                      <TokenIcons />
+                                      {pool.underlying_assets.length > 3 && (
+                                        <span>
+                                          +{pool.underlying_assets.length - 3}{' '}
+                                          MORE
+                                        </span>
+                                      )}
+                                    </S.TokensSymbols>
+                                  )
+                                }
+                              }
+
+                              if (
+                                activity.type === 'swap' &&
+                                element.token.symbol.toUpperCase() ===
+                                  activity.symbol[1].toUpperCase()
+                              )
                                 return (
                                   <S.ImageWrapper
-                                    key={element.token.id + activity.timestamp}
+                                    key={`swap-${element.token.id}`}
                                   >
                                     <Image
                                       src={
@@ -430,107 +406,27 @@ const ActivityTable = () => {
                                         element.token?.wraps?.logo ||
                                         ''
                                       }
-                                      layout="fill"
-                                    />
-                                  </S.ImageWrapper>
-                                )
-                              }
-                              if (
-                                activity.symbol.length < 3 &&
-                                element.token.symbol ===
-                                  invertSymbol[activity.symbol[0]]
-                              ) {
-                                return (
-                                  <S.ImageWrapper
-                                    key={element.token.id + activity.timestamp}
-                                  >
-                                    <Image
-                                      src={
-                                        element.token?.logo ||
-                                        element.token?.wraps?.logo ||
-                                        ''
-                                      }
                                       alt=""
                                       layout="fill"
                                     />
+                                    5
                                   </S.ImageWrapper>
                                 )
-                              }
-                              if (
-                                activity.symbol.length > 3 &&
-                                element.token.symbol === 'KACY'
-                              ) {
-                                return (
-                                  <S.TokensSymbols
-                                    key={element.token.id + activity.timestamp}
-                                  >
-                                    <TokenIcons />
-                                    {pool.underlying_assets.length > 3 && (
-                                      <span>
-                                        +{pool.underlying_assets.length - 3}{' '}
-                                        MORE
-                                      </span>
-                                    )}
-                                  </S.TokensSymbols>
-                                )
-                              }
-                            }
-
-                            if (
-                              activity.type === 'swap' &&
-                              element.token.symbol === activity.symbol[1]
-                            )
-                              return (
-                                <S.ImageWrapper
-                                  key={element.token.id + activity.timestamp}
-                                >
-                                  <Image
-                                    src={
-                                      element.token?.logo ||
-                                      element.token?.wraps?.logo ||
-                                      ''
-                                    }
-                                    alt=""
-                                    layout="fill"
-                                  />
-                                </S.ImageWrapper>
-                              )
-                            if (
-                              activity.type === 'swap' &&
-                              element.token.symbol ===
-                                invertSymbol[activity.symbol[1]]
-                            )
-                              return (
-                                <S.ImageWrapper
-                                  key={element.token.id + activity.timestamp}
-                                >
-                                  <Image
-                                    src={
-                                      element.token?.logo ||
-                                      element.token?.wraps?.logo ||
-                                      ''
-                                    }
-                                    alt=""
-                                    layout="fill"
-                                  />
-                                </S.ImageWrapper>
-                              )
-                          })}
+                            })}
 
                           <Value>
-                            {activity.symbol.length > 2 &&
-                            activity.type !== 'join'
-                              ? null
-                              : BNtoDecimal(
+                            {activity.type !== 'exit'
+                              ? BNtoDecimal(
                                   Big(
                                     activity.amount[
-                                      activity.type === 'exit' ? 0 : 1
+                                      activity.amount.length - 1
                                     ] || '0'
                                   ),
                                   6,
                                   4,
                                   2
-                                )}
+                                )
+                              : null}
                           </Value>
                         </S.DataWrapper>
 
@@ -543,8 +439,15 @@ const ActivityTable = () => {
                                 activity.price_usd
                               )
                             : BNtoDecimal(
-                                Big(activity.amount[1] || 0).times(
-                                  Big(activity?.price_usd[1] || 0)
+                                Big(
+                                  activity.amount[activity.amount.length - 1] ||
+                                    0
+                                ).times(
+                                  Big(
+                                    activity?.price_usd[
+                                      activity.price_usd.length - 1
+                                    ] || 0
+                                  )
                                 ),
                                 6,
                                 2,

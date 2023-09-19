@@ -64,12 +64,11 @@ export const ImageWrapper = styled.div`
   ${() => css`
     position: relative;
 
+    overflow: hidden;
+
     width: 1.6rem;
     height: 1.6rem;
-
-    .poolIcon {
-      border-radius: 50%;
-    }
+    border-radius: 50%;
   `}
 `
 
@@ -275,11 +274,11 @@ export const TokensSymbols = styled.div`
 
   display: flex;
   align-items: center;
+  gap: 0.6rem;
 
   span {
     min-width: 1.8rem;
     min-height: 1.8rem;
-    margin-left: 0.6rem;
 
     font-weight: ${theme.font.weight.light};
     font-size: 1.1rem;
