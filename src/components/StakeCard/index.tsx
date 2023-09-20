@@ -301,7 +301,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                 {poolInfo.apr.lte(Big(0)) ? (
                   <S.LoadingAnimation width={5} height={2.4} />
                 ) : (
-                  <S.Percentage>
+                  <S.Percentage data-testid="apr">
                     {BNtoDecimal(
                       poolInfo.hasExpired ? Big(0) : poolInfo.apr,
                       0

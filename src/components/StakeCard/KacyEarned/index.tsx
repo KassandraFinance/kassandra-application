@@ -13,7 +13,7 @@ interface IKacyEarnedProps {
 
 const KacyEarned = ({ kacyEarned, kacyPrice }: IKacyEarnedProps) => {
   return (
-    <S.KacyEarned>
+    <S.KacyEarned data-testid="apr">
       <p>
         KACY <span>Earned</span>
       </p>
