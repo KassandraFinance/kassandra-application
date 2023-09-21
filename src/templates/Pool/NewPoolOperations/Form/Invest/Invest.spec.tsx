@@ -7,6 +7,13 @@ import { ReduxProvider } from '@/store/reduxContext'
 import theme from '@/styles/theme'
 import { ThemeProvider } from 'styled-components'
 
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: () => {
+    return 'Next image stub' // whatever
+  }
+}))
+
 jest.mock('next/router', () => ({
   useRouter: jest.fn()
 }))

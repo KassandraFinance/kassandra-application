@@ -695,11 +695,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         errorMsg={errorMsg}
         gasFee={gasFee}
       />
-      {/* <img
+      <img
         src="/assets/icons/arrow-down.svg"
         alt=""
         style={{ margin: '12px 0' }}
-      /> */}
+      />
       <TokenAssetOut
         typeAction={typeAction}
         amountTokenOut={amountTokenOut}
