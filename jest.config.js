@@ -1,3 +1,9 @@
+// const nextJest = require('next/jest')
+// const createJestConfig = nextJest({
+//   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
+//   dir: './'
+// })
+
 module.exports = {
   collectCoverage: true,
   // on node 14.x coverage provider v8 offers good speed and more or less good report
@@ -9,13 +15,14 @@ module.exports = {
     '!<rootDir>/out/**',
     '!<rootDir>/.next/**',
     '!<rootDir>/*.config.js',
-    '!<rootDir>/coverage/**',
+    '!<rootDir>/coverage/**'
   ],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
     // https://jestjs.io/docs/webpack#mocking-css-modules
-    "\\.(css|sass|scss)$": "identity-obj-proxy",
-    ".+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2|svg)$": "identity-obj-proxy",
+    '\\.(css|sass|scss)$': 'identity-obj-proxy',
+    '.+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2|svg)$':
+      'identity-obj-proxy',
 
     // Handle CSS imports (without CSS modules)
     '^.+\\.(css|sass|scss)$': '<rootDir>/__mocks__/styleMock.js',
@@ -24,11 +31,11 @@ module.exports = {
     // https://jestjs.io/docs/webpack#handling-static-assets
     '^.+\\.(png|jpg|jpeg|gif|webp|avif|ico|bmp|svg)$/i': `<rootDir>/__mocks__/fileMock.js`,
 
-
     // Handle module aliases
     '^@/components/(.*)$': '<rootDir>/src/components/$1',
     '@/(.*)$': '<rootDir>/src/$1',
-    '^@web3-onboard/react$': '<rootDir>/node_modules/@web3-onboard/react/dist/index'
+    '^@web3-onboard/react$':
+      '<rootDir>/node_modules/@web3-onboard/react/dist/index'
   },
   // Add more setup options before each test is run
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
@@ -41,11 +48,8 @@ module.exports = {
     // '^.+\\.tsx?$': 'babel-jest'
     // '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
     // '^.+\\.(t|j)sx?$': 'babel-jest',
-    '^.+\\.(t|j)sx?$': ['babel-jest', { presets: ['next/babel'] }],
+    '^.+\\.(t|j)sx?$': ['babel-jest', { presets: ['next/babel'] }]
   },
   // preset: 'ts-jest/presets/default-esm',
-  transformIgnorePatterns: [
-    "!node_modules/",
-    '^.+\\.module\\.(css|sass|scss)$',
-  ],
+  transformIgnorePatterns: ['!node_modules/', '^.+\\.module\\.(css|sass|scss)$']
 }

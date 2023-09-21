@@ -119,7 +119,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const [{ connectedChain }, setChain] = useSetChain()
   const { txNotification, transactionErrors } = useTransaction()
   const router = useRouter()
-  const { data: pool } = usePoolData({ id: router.query.address as string })
+  const { data: pool } = usePoolData({ id: router?.query.address as string })
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 
@@ -695,11 +695,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         errorMsg={errorMsg}
         gasFee={gasFee}
       />
-      <img
+      {/* <img
         src="/assets/icons/arrow-down.svg"
         alt=""
         style={{ margin: '12px 0' }}
-      />
+      /> */}
       <TokenAssetOut
         typeAction={typeAction}
         amountTokenOut={amountTokenOut}
