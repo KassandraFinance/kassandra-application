@@ -299,7 +299,11 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                   <h4>APR</h4>
                 </S.APR>
                 {poolInfo.apr.lte(Big(0)) ? (
-                  <S.LoadingAnimation width={5} height={2.4} />
+                  <S.LoadingAnimation
+                    width={5}
+                    height={2.4}
+                    data-testid="loading"
+                  />
                 ) : (
                   <S.Percentage data-testid="apr">
                     {BNtoDecimal(
@@ -399,6 +403,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                           text="Claim"
                           size="claim"
                           background="secondary"
+                          data-testid="connected"
                           disabledNoEvent={
                             userAboutPool.kacyEarned?.lte(Big(0)) ||
                             networkChain.chainId !==
@@ -512,6 +517,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                   <Button
                     type="button"
                     text="Connect Wallet"
+                    data-testid="not-connected"
                     size="huge"
                     background="secondary"
                     fullWidth
