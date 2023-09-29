@@ -13,7 +13,13 @@ export function handleCalcAPR({
   rewardRate,
   totalDeposit
 }: ICalcAPR) {
-  if (kacyPrice.lte(Big(0)) || poolPrice.lte(Big(0))) {
+  if (!kacyPrice || !poolPrice || !rewardRate || !totalDeposit) return Big(0)
+  if (
+    kacyPrice.lte(Big(0)) ||
+    poolPrice.lte(Big(0)) ||
+    rewardRate.lt(Big(0)) ||
+    totalDeposit.lt(Big(0))
+  ) {
     return Big(0)
   }
 
