@@ -1,9 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import 'jest-styled-components'
-import '@testing-library/jest-dom'
-import { ReduxProvider } from '@/store/reduxContext'
-import theme from '@/styles/theme'
-import { ThemeProvider } from 'styled-components'
+import { render, screen, fireEvent } from '@/utils/test-utils'
 import InputTokenValue from '.'
 import Big from 'big.js'
 
@@ -22,16 +17,12 @@ describe('InputTokenValue component', () => {
 
   const setup = (setMaxActive?: () => void) => {
     const utils = render(
-      <ThemeProvider theme={theme}>
-        <ReduxProvider>
-          <InputTokenValue
-            decimals={Big(decimals)}
-            setInputValue={setAmountStakeMock}
-            inputRef={inputRef as unknown as React.RefObject<HTMLInputElement>}
-            setMaxActive={setMaxActive}
-          />
-        </ReduxProvider>
-      </ThemeProvider>
+      <InputTokenValue
+        decimals={Big(decimals)}
+        setInputValue={setAmountStakeMock}
+        inputRef={inputRef as unknown as React.RefObject<HTMLInputElement>}
+        setMaxActive={setMaxActive}
+      />
     )
 
     const input = screen.getByPlaceholderText('0')

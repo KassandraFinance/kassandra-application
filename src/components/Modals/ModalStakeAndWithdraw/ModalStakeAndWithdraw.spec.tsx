@@ -1,10 +1,5 @@
 import React, { useState as useStateMock } from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
-import 'jest-styled-components'
-import '@testing-library/jest-dom'
-import { ReduxProvider } from '@/store/reduxContext'
-import theme from '@/styles/theme'
-import { ThemeProvider } from 'styled-components'
+import { render, screen, fireEvent } from '@/utils/test-utils'
 import ModalStakeAndWithdraw from '.'
 
 import { PoolDetails, PoolType } from '@/constants/pools'
@@ -14,16 +9,6 @@ jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useState: jest.fn()
 }))
-
-jest.mock('@web3-onboard/react', () => {
-  return {
-    useConnectWallet: () => [
-      {
-        wallet: null
-      }
-    ]
-  }
-})
 
 import { BNtoDecimal } from '@/utils/numerals'
 jest.mock('@/utils/numerals', () => {
@@ -120,23 +105,19 @@ describe('ModalStakeAndWithdraw', () => {
     pool?: PoolDetails
   }) => {
     const utils = render(
-      <ThemeProvider theme={theme}>
-        <ReduxProvider>
-          <ModalStakeAndWithdraw
-            pool={pool}
-            setModalOpen={setModalOpenMock}
-            decimals={tokenDecimals}
-            stakingToken={stakingToken}
-            productCategories={productCategories}
-            stakeTransaction={transactionType}
-            setStakeTransaction={setStakeTransactionMock}
-            amountApproved={amountAppoved}
-            handleApprove={handleApproveMock}
-            updateAllowance={updateAllowance}
-            getUserInfoAboutPool={getUserInfoAboutPool}
-          />
-        </ReduxProvider>
-      </ThemeProvider>
+      <ModalStakeAndWithdraw
+        pool={pool}
+        setModalOpen={setModalOpenMock}
+        decimals={tokenDecimals}
+        stakingToken={stakingToken}
+        productCategories={productCategories}
+        stakeTransaction={transactionType}
+        setStakeTransaction={setStakeTransactionMock}
+        amountApproved={amountAppoved}
+        handleApprove={handleApproveMock}
+        updateAllowance={updateAllowance}
+        getUserInfoAboutPool={getUserInfoAboutPool}
+      />
     )
 
     const title = screen.getByTestId('title')

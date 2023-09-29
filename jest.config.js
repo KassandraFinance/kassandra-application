@@ -1,5 +1,5 @@
 module.exports = {
-  collectCoverage: false,
+  collectCoverage: true,
   // on node 14.x coverage provider v8 offers good speed and more or less good report
   coverageProvider: 'v8',
   collectCoverageFrom: [
@@ -26,7 +26,7 @@ module.exports = {
 
     // Handle module aliases
     '^@/components/(.*)$': '<rootDir>/src/components/$1',
-    '@/(.*)$': '<rootDir>/src/$1',
+    '@/(.*)$': '<rootDir>/src/$1'
   },
   // Add more setup options before each test is run
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],

@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react'
 import { render, RenderOptions } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import 'jest-styled-components'
 
 import { ThemeProvider } from 'styled-components'
 import theme from '@/styles/theme'
