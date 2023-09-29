@@ -4,11 +4,11 @@ import { dehydrate, QueryClient } from '@tanstack/react-query'
 
 import { isAddress, getAddress } from 'ethers'
 
-import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
+import { BACKEND_KASSANDRA } from '@/constants/tokenAddresses'
 
 import { fetchPoolData } from '@/hooks/query/usePoolData'
 
-import Pool from '../../templates/PoolV2'
+import Pool from '@/templates/Pool'
 
 interface IParams extends ParsedUrlQuery {
   address: string
