@@ -42,35 +42,35 @@ describe('InputTokenValue component', () => {
     }
   }
 
-  it('should not allow letters to be inputted on change', () => {
+  it('should not allow letters to be inputted onChange', () => {
     const { input } = setup()
     expect(input.value).toBe('') // empty before
     fireEvent.change(input, { target: { value: 'Good Day' } })
     expect(input.value).toBe('') //empty after
   })
 
-  it('should display correct value when changed on change', () => {
+  it('should display correct value when changed onChange', () => {
     const { input } = setup()
     expect(input.value).toBe('')
     fireEvent.change(input, { target: { value: value } })
     expect(input.value).toBe(value)
   })
 
-  it('should not allow letters to be inputted on keyDown', () => {
+  it('should not allow letters to be inputted onKeyDown', () => {
     const { input } = setup()
     expect(input.value).toBe('')
     fireEvent.keyDown(input, { target: { value: 'Good Day' } })
     expect(input.value).toBe('')
   })
 
-  it('should display correct value when changed on keyDown', () => {
+  it('should display correct value when changed onKeyDown', () => {
     const { input } = setup()
     expect(input.value).toBe('')
     fireEvent.keyDown(input, { target: { value: value } })
     expect(input.value).toBe(value)
   })
 
-  it('should pass the correct value to setAmountStake on change', () => {
+  it('should pass the correct value to setAmountStake onChange', () => {
     const { input } = setup()
     fireEvent.change(input, { target: { value: value } })
     expect(setAmountStakeMock).toBeCalledWith(Big(Number(value) * 10 ** 18))

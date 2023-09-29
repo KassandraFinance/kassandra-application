@@ -143,14 +143,12 @@ describe('ModalStakeAndWithdraw', () => {
     const closeButton = screen.getByLabelText('close')
     const tokenInput = screen.getByTestId('token-input')
     const balance = screen.getByRole('heading')
-    // const getButton = screen.getByText(`Get ${pool.symbol}`)
 
     return {
       title,
       closeButton,
       tokenInput,
       balance,
-      // aproveButton,
       ...utils
     }
   }
