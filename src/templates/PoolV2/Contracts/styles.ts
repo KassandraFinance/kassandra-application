@@ -144,8 +144,8 @@ export const CopyContract = styled.div`
       border: none;
 
       color: ${theme.colors.snow};
-      font-weight: ${theme.font.weight.light};
-      font-size: ${theme.font.sizes.font14};
+      font-weight: ${theme.font.weight.normal};
+      font-size: ${theme.font.sizes.font12};
       font-family: ${theme.font.family};
       text-decoration: none;
 
@@ -169,6 +169,10 @@ export const CopyContract = styled.div`
           }
         }
       }
+    }
+
+    @media (max-width: 410px) {
+      display: none;
     }
   `}
 `

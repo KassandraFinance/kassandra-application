@@ -34,7 +34,7 @@ const Contracts = () => {
           <S.ContractInfo>
             <S.Blockchain>
               <S.PoolImageContainer>
-                <Image
+                <img
                   src={pool.chain.logo || comingSoon}
                   width={24}
                   height={24}
@@ -81,27 +81,12 @@ const Contracts = () => {
         <S.ContractInfo>
           <S.Blockchain>
             <S.PoolImageContainer>
-              <Image
+              <img
                 src={pool.chain.logo || comingSoon}
                 width={24}
                 height={24}
                 alt=""
               />
-              {/* {pool.logo ? (
-                <img
-                  src={pool.logo || comingSoon}
-                  width={24}
-                  height={24}
-                  alt=""
-                />
-              ) : (
-                <Blockies
-                  seed={pool.name || ''}
-                  className="poolIcon"
-                  size={6}
-                  scale={4}
-                />
-              )} */}
             </S.PoolImageContainer>
             <a
               href={`${pool.chain?.block_explorer_url}/address/${pool.address}`}
@@ -179,27 +164,12 @@ const Contracts = () => {
         <S.ContractInfo>
           <S.Blockchain>
             <S.PoolImageContainer>
-              <Image
+              <img
                 src={pool.chain.logo || comingSoon}
                 width={24}
                 height={24}
                 alt=""
               />
-              {/* {pool.logo ? (
-                <img
-                  src={pool.logo || comingSoon}
-                  width={24}
-                  height={24}
-                  alt=""
-                />
-              ) : (
-                <Blockies
-                  seed={pool.name || ''}
-                  className="poolIcon"
-                  size={6}
-                  scale={4}
-                />
-              )} */}
             </S.PoolImageContainer>
             <a
               href={`${pool.chain?.block_explorer_url}/address/${pool.vault}`}
@@ -257,27 +227,12 @@ const Contracts = () => {
         <S.ContractInfo>
           <S.Blockchain>
             <S.PoolImageContainer>
-              <Image
+              <img
                 src={pool.chain.logo || comingSoon}
                 width={24}
                 height={24}
                 alt=""
               />
-              {/* {pool.logo ? (
-                <img
-                  src={pool.logo || comingSoon}
-                  width={24}
-                  height={24}
-                  alt=""
-                />
-              ) : (
-                <Blockies
-                  seed={pool.name || ''}
-                  className="poolIcon"
-                  size={6}
-                  scale={4}
-                />
-              )} */}
             </S.PoolImageContainer>
             <a
               href={`${pool.chain?.block_explorer_url}/address/${pool.strategy}`}
