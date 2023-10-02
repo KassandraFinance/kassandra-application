@@ -7,9 +7,9 @@ import { setTokenSelectionActive } from '../../../store/reducers/tokenSelectionA
 import Overlay from '../../../components/Overlay'
 import SelectOperation from './SelectOperation'
 import TokenSelection from './Form/TokenSelection'
-import SelectOperationOnMobile, {
-  TitlesMobile
-} from './SelectOperationOnMobile'
+// import SelectOperationOnMobile, {
+//   TitlesMobile
+// } from './SelectOperationOnMobile'
 
 import * as S from './styles'
 
@@ -20,14 +20,22 @@ const messages = {
   Withdraw: 'Send'
 }
 
-const NewPoolOperations = () => {
+interface INewPoolOperationsProps {
+  isOpenPoolOperation: boolean
+  setIsOpenPoolOperation: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const NewPoolOperations = ({
+  isOpenPoolOperation,
+  setIsOpenPoolOperation
+}: INewPoolOperationsProps) => {
   const [inputChecked, setInputChecked] = React.useState<Titles>('Invest')
   const [typeWithdrawChecked, setTypeWithdrawChecked] =
     React.useState<string>('Single_asset')
-  const [isOpenPoolOperationMobile, setisOpenPoolOperationMobile] =
-    React.useState(false)
-  const [inputCheckedBarMobile, setInputCheckedBarMobile] =
-    React.useState<TitlesMobile>('Disable')
+  // const [isOpenPoolOperationMobile, setIsOpenPoolOperationMobile] =
+  //   React.useState(false)
+  // const [inputCheckedBarMobile, setInputCheckedBarMobile] =
+  //   React.useState<TitlesMobile>('Disable')
 
   const dispatch = useAppDispatch()
   const { tokenSelectionActive } = useAppSelector(state => state)
@@ -50,24 +58,24 @@ const NewPoolOperations = () => {
 
   return (
     <S.NewPoolOperations>
-      {isOpenPoolOperationMobile && (
+      {isOpenPoolOperation && (
         <Overlay
           onClick={() => {
             dispatch(setTokenSelectionActive(false))
-            setisOpenPoolOperationMobile(false)
-            setInputCheckedBarMobile('Disable')
+            setIsOpenPoolOperation(false)
+            // setInputCheckedBarMobile('Disable')
           }}
-          isOpen={isOpenPoolOperationMobile}
+          isOpen={isOpenPoolOperation}
         />
       )}
 
       <S.PoolOperationsContainer>
         {tokenSelectionActive ? (
-          <S.TokenSelectionContainer isOpen={isOpenPoolOperationMobile}>
+          <S.TokenSelectionContainer isOpen={isOpenPoolOperation}>
             <TokenSelection />
           </S.TokenSelectionContainer>
         ) : (
-          <S.SelectOperationContianer isOpen={isOpenPoolOperationMobile}>
+          <S.SelectOperationContianer isOpen={isOpenPoolOperation}>
             <SelectOperation
               inputChecked={inputChecked}
               setInputChecked={setInputChecked}
@@ -78,12 +86,12 @@ const NewPoolOperations = () => {
         )}
       </S.PoolOperationsContainer>
 
-      <SelectOperationOnMobile
+      {/* <SelectOperationOnMobile
         setInputChecked={setInputChecked}
         inputCheckedBarMobile={inputCheckedBarMobile}
         setInputCheckedBarMobile={setInputCheckedBarMobile}
         setisOpenPoolOperationMobile={setisOpenPoolOperationMobile}
-      />
+      /> */}
     </S.NewPoolOperations>
   )
 }
