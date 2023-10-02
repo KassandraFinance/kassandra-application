@@ -119,7 +119,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const [{ connectedChain }, setChain] = useSetChain()
   const { txNotification, transactionErrors } = useTransaction()
   const router = useRouter()
-  const { data: pool } = usePoolData({ id: router.query.address as string })
+  const { data: pool } = usePoolData({ id: router?.query.address as string })
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 

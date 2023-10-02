@@ -24,7 +24,7 @@ import Toastify from '@/components/Toastify'
 
 const matomoUrl = 'https://stats.kassandra.finance'
 
-const instance = createInstance({
+export const instance = createInstance({
   disabled:
     process.env.NODE_ENV === 'development' ||
     process.env.NEXT_PUBLIC_MASTER !== '1',
