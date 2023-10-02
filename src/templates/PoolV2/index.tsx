@@ -3,7 +3,7 @@ import React, { ReactElement } from 'react'
 import SelectTabs from '@/components/SelectTabs'
 import Contracts from './Contracts'
 
-import { ContractsIcon } from './icons'
+import { ContractsIcon, Activity } from './icons'
 
 import * as S from './styles'
 
@@ -12,6 +12,11 @@ const tabs = [
     asPathText: 'contracts',
     text: 'Contracts',
     svg: ContractsIcon
+  },
+  {
+    asPathText: 'activity',
+    text: 'Activity',
+    svg: Activity
   }
 ]
 
