@@ -6,12 +6,21 @@ export const Pool = styled.div`
   `}
 `
 
-export const Container = styled.div`
+export const Hero = styled.div`
+  ${() => css`
+    background: rgba(252, 252, 252, 0.05);
+    padding-block: 4rem;
+  `}
+`
+
+export const SelectTabsContainer = styled.div`
   ${() => css`
     min-height: 100vh;
 
-    @media (min-width: 992px) {
-      padding-inline: 15rem;
-    }
+    max-width: 114rem;
+
+    margin-inline: auto;
+
+    list-style-type: none;
   `}
 `
