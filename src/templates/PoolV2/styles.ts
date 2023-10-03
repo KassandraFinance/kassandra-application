@@ -8,17 +8,16 @@ export const Pool = styled.div`
 
 export const Hero = styled.div`
   ${() => css`
-    background: rgba(252, 252, 252, 0.05);
     padding-block: 4rem;
+
+    background: rgb(252 252 252 / 0.05);
   `}
 `
 
 export const SelectTabsContainer = styled.div`
   ${() => css`
-    min-height: 100vh;
-
     max-width: 114rem;
-
+    min-height: 100vh;
     margin-inline: auto;
 
     list-style-type: none;
