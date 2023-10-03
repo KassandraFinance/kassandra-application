@@ -2,6 +2,9 @@ query PoolData($id: ID!) {
   pool(id: $id) {
     id
     address
+    price_usd
+    decimals
+    total_value_locked_usd
     vault
     vault_id
     controller
@@ -13,6 +16,8 @@ query PoolData($id: ID!) {
     supply
     manager {
       id
+      nickname
+      image
     }
     chain {
       id
