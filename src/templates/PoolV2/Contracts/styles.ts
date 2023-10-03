@@ -8,9 +8,12 @@ export const Contracts = styled.div`
     flex-direction: column;
     gap: 2.4rem;
 
+    @media (max-width: 1200px) {
+      padding-inline: 2.4rem;
+    }
+
     @media (max-width: 992px) {
       width: 100%;
-      padding-inline: 2.4rem;
     }
 
     @media (max-width: 576px) {
