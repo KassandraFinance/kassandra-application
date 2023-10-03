@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const Card = styled.div`
+export const Staking = styled.div`
   ${() => css`
     display: grid;
     grid-template-columns: 1fr 1fr;

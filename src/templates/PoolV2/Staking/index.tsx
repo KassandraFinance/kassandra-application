@@ -5,9 +5,9 @@ import QuestionsAndAnswers from '@/components/QuestionsAndAnswers'
 
 import * as S from './styles'
 
-const Card = () => {
+const Staking = () => {
   return (
-    <S.Card>
+    <S.Staking>
       <S.PoolStakingCardContainer>
         <PoolStakingCard />
       </S.PoolStakingCardContainer>
@@ -15,11 +15,11 @@ const Card = () => {
       <S.QuestionsAndAnswersWrapper>
         <QuestionsAndAnswers questionsAndAnswers={questionsAndAnswersList} />
       </S.QuestionsAndAnswersWrapper>
-    </S.Card>
+    </S.Staking>
   )
 }
 
-export default Card
+export default Staking
 
 const questionsAndAnswersList = [
   {
