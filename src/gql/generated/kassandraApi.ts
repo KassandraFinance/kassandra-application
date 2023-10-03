@@ -7406,6 +7406,9 @@ export type PoolDataQuery = {
     __typename?: 'Pool'
     id: string
     address: string
+    price_usd: string
+    decimals: number
+    total_value_locked_usd: string
     vault: string
     vault_id: string
     controller: string
@@ -7422,7 +7425,12 @@ export type PoolDataQuery = {
     url?: string | null
     summary?: string | null
     underlying_assets_addresses: Array<string>
-    manager: { __typename?: 'Manager'; id: string }
+    manager: {
+      __typename?: 'Manager'
+      id: string
+      nickname?: string | null
+      image?: string | null
+    }
     chain: {
       __typename?: 'Chain'
       id: string
@@ -8858,6 +8866,9 @@ export const PoolDataDocument = gql`
     pool(id: $id) {
       id
       address
+      price_usd
+      decimals
+      total_value_locked_usd
       vault
       vault_id
       controller
@@ -8869,6 +8880,8 @@ export const PoolDataDocument = gql`
       supply
       manager {
         id
+        nickname
+        image
       }
       chain {
         id
