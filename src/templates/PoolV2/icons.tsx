@@ -31,7 +31,7 @@ export const ContractsIcon = (
   </svg>
 )
 
-export const Activity = (
+export const ActivityIcon = (
   <svg
     width="16"
     height="16"
