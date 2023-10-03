@@ -12,6 +12,7 @@ import TokenSelection from './Form/TokenSelection'
 // } from './SelectOperationOnMobile'
 
 import * as S from './styles'
+import { NATIVE_ADDRESS } from '@/constants/tokenAddresses'
 
 export type Titles = keyof typeof messages
 
@@ -23,13 +24,16 @@ const messages = {
 interface INewPoolOperationsProps {
   isOpenPoolOperation: boolean
   setIsOpenPoolOperation: React.Dispatch<React.SetStateAction<boolean>>
+  operation: Titles
+  setOperation: React.Dispatch<React.SetStateAction<Titles>>
 }
 
 const NewPoolOperations = ({
   isOpenPoolOperation,
-  setIsOpenPoolOperation
+  setIsOpenPoolOperation,
+  operation,
+  setOperation
 }: INewPoolOperationsProps) => {
-  const [inputChecked, setInputChecked] = React.useState<Titles>('Invest')
   const [typeWithdrawChecked, setTypeWithdrawChecked] =
     React.useState<string>('Single_asset')
   // const [isOpenPoolOperationMobile, setIsOpenPoolOperationMobile] =
@@ -42,13 +46,13 @@ const NewPoolOperations = ({
   const { tokenListSwapProvider } = useAppSelector(state => state)
 
   React.useEffect(() => {
-    if (inputChecked === 'Withdraw') return
+    if (operation === 'Withdraw') return
 
     const nativeToken = tokenListSwapProvider.find(
-      token => token?.tags && token.tags[0] === 'native'
+      token => token.address === NATIVE_ADDRESS
     )
     dispatch(setTokenSelect(nativeToken ?? tokenListSwapProvider[0]))
-  }, [inputChecked])
+  }, [operation, tokenListSwapProvider])
 
   React.useEffect(() => {
     if (!tokenSelectionActive) return
@@ -77,8 +81,8 @@ const NewPoolOperations = ({
         ) : (
           <S.SelectOperationContianer isOpen={isOpenPoolOperation}>
             <SelectOperation
-              inputChecked={inputChecked}
-              setInputChecked={setInputChecked}
+              inputChecked={operation}
+              setInputChecked={setOperation}
               typeWithdrawChecked={typeWithdrawChecked}
               setTypeWithdrawChecked={setTypeWithdrawChecked}
             />

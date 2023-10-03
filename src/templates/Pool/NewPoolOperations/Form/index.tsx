@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
-import { BrowserProvider, JsonRpcSigner } from 'ethers'
+import { BrowserProvider, ethers, JsonRpcSigner } from 'ethers'
 
 import { OperationProvider } from './PoolOperationContext'
 import { useAppSelector } from '@/store/hooks'
@@ -45,10 +45,10 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
 
-  const network = networks[pool?.chain_id || 0]
+  const network = networks[pool?.chain_id || 137]
 
   const { tokenListSwapProvider } = useAppSelector(state => state)
-  const ERC20 = useERC20(pool?.address || '', network.rpc)
+  const ERC20 = useERC20(pool?.address || ethers.ZeroAddress, network.rpc)
   const { privateAddresses } = usePrivateInvestors(
     network.privateInvestor,
     pool?.chain_id
@@ -85,6 +85,22 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
     setsignerProvider(signer)
   }
 
+  const setAddressesOfPrivateInvestors = async () => {
+    const addresses = await privateAddresses(pool?.address || '')
+    setPrivateInvestors(addresses)
+  }
+
+  React.useEffect(() => {
+    if (!pool?.is_private_pool) return
+    setAddressesOfPrivateInvestors()
+  }, [wallet, pool])
+
+  React.useEffect(() => {
+    handleGetSigner()
+  }, [wallet])
+
+  if (!pool) return <></>
+
   const operationVersion =
     pool?.pool_version === 1
       ? new operationV1(
@@ -104,20 +120,6 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
           new ParaSwap(),
           signerProvider
         )
-
-  const setAddressesOfPrivateInvestors = async () => {
-    const addresses = await privateAddresses(pool?.address || '')
-    setPrivateInvestors(addresses)
-  }
-
-  React.useEffect(() => {
-    if (!pool?.is_private_pool) return
-    setAddressesOfPrivateInvestors()
-  }, [wallet, pool])
-
-  React.useEffect(() => {
-    handleGetSigner()
-  }, [wallet])
 
   return (
     <OperationProvider operation={{ operation: operationVersion, priceToken }}>
