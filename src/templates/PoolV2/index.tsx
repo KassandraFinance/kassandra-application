@@ -4,7 +4,7 @@ import SelectTabs from '@/components/SelectTabs'
 import Contracts from './Contracts'
 import Staking from './Staking'
 
-import { ContractsIcon } from './icons'
+import { ContractsIcon, StakingIcon } from './icons'
 
 import * as S from './styles'
 
@@ -17,7 +17,7 @@ const tabs = [
   {
     asPathText: 'staking',
     text: 'Staking',
-    svg: ContractsIcon
+    svg: StakingIcon
   }
 ]
 
