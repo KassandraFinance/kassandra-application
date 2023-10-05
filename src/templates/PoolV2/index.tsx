@@ -13,8 +13,9 @@ import { usePoolData } from '@/hooks/query/usePoolData'
 import { useAppDispatch } from '@/store/hooks'
 
 import { NATIVE_ADDRESS, SUBGRAPH_URL } from '@/constants/tokenAddresses'
+import Activity from './Activity'
 
-import { ContractsIcon } from './icons'
+import { ContractsIcon, ActivityIcon } from './icons'
 
 import * as S from './styles'
 
@@ -55,6 +56,11 @@ const tabs = [
     asPathText: 'contracts',
     text: 'Contracts',
     svg: ContractsIcon
+  },
+  {
+    asPathText: 'activity',
+    text: 'Activity',
+    svg: ActivityIcon
   }
 ]
 
@@ -71,7 +77,8 @@ const Pool = () => {
   const dispatch = useAppDispatch()
 
   const PoolComponents: { [key: string]: ReactElement } = {
-    contracts: <Contracts />
+    contracts: <Contracts />,
+    activity: <Activity />
   }
 
   async function getTokensForOperations() {
