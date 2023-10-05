@@ -1,4 +1,12 @@
+import Big from 'big.js'
 import React from 'react'
+import { useRouter } from 'next/router'
+
+import { KacyPoligon, networks } from '@/constants/tokenAddresses'
+
+import { usePoolData } from '@/hooks/query/usePoolData'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import useGetToken from '@/hooks/useGetToken'
 
 import PoolStakingCard from './PoolStakingCard'
 import QuestionsAndAnswers from '@/components/QuestionsAndAnswers'
@@ -6,10 +14,40 @@ import QuestionsAndAnswers from '@/components/QuestionsAndAnswers'
 import * as S from './styles'
 
 const Staking = () => {
+  const router = useRouter()
+  const { data: poolInfo } = usePoolData({ id: router.query.address as string })
+  const networkChain = networks[poolInfo?.chain_id ?? 137]
+
+  const { data } = useTokensData({
+    chainId: networkChain.chainId,
+    tokenAddresses: [KacyPoligon]
+  })
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: networkChain.nativeCurrency.address,
+    tokens: data || {}
+  })
+
+  const kacyPrice = priceToken(KacyPoligon.toLowerCase())
+
+  const poolData = {
+    id: poolInfo?.id,
+    chainId: poolInfo?.chain_id ?? 0,
+    poolId: poolInfo?.pool_id ?? undefined,
+    symbol: poolInfo?.symbol,
+    address: poolInfo?.address,
+    logo: poolInfo?.logo ?? '',
+    chainLogo: poolInfo?.chain.logo ?? '',
+    decimals: poolInfo?.decimals
+  }
+
   return (
     <S.Staking>
       <S.PoolStakingCardContainer>
-        <PoolStakingCard />
+        <PoolStakingCard
+          pool={poolData}
+          kacyPrice={Big(kacyPrice)}
+          poolPrice={Big(poolInfo?.price_usd ?? 0)}
+        />
       </S.PoolStakingCardContainer>
 
       <S.QuestionsAndAnswersWrapper>
