@@ -66,7 +66,9 @@ export const Summary = styled.summary`
 `
 
 export const IconWrapper = styled.div`
-  ${() => css``}
+  ${() => css`
+    margin-left: 0.8rem;
+  `}
 `
 
 export const PlusIcon = styled.span`
