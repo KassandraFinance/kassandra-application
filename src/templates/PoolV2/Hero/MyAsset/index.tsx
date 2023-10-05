@@ -82,7 +82,7 @@ const MyAsset = ({
               2
             )}
           </S.Value>
-          <Tippy content={'test e'}>
+          <Tippy content={'The current value of pool in your account.'}>
             <S.Tooltip>
               <Image src={tooltip} alt="Explanation" layout="responsive" />
             </S.Tooltip>
@@ -102,7 +102,9 @@ const MyAsset = ({
               2
             )}
           </S.Value>
-          <Tippy content={'test e'}>
+          <Tippy
+            content={'Pooling of locked cryptocurrencies to maximize rewards.'}
+          >
             <S.Tooltip>
               <Image src={tooltip} alt="Explanation" layout="responsive" />
             </S.Tooltip>

@@ -124,11 +124,7 @@ const Hero = () => {
               )}
             </S.SymbolAndMade>
           </S.SubTitleConteiner>
-          <S.Summary>
-            The Social Index $HEIM reflects performance of a portfolio selected
-            from the most socially active cryptocurrencies in the past 30 days,
-            using Heimdall Social Score data.
-          </S.Summary>
+          <S.Summary>{pool.short_summary}</S.Summary>
           <MyAsset
             chainId={pool.chain_id}
             poolAddress={pool.address}
