@@ -1,10 +1,11 @@
 import React, { ReactElement } from 'react'
 
-import SelectTabs from '@/components/SelectTabs'
-import Contracts from './Contracts'
+import Faqs from './Faqs'
 import Staking from './Staking'
+import Contracts from './Contracts'
+import SelectTabs from '@/components/SelectTabs'
 
-import { ContractsIcon, StakingIcon } from './icons'
+import { ContractsIcon, StakingIcon, FaqIcon } from './icons'
 
 import * as S from './styles'
 
@@ -18,6 +19,11 @@ const tabs = [
     asPathText: 'staking',
     text: 'Staking',
     svg: StakingIcon
+  },
+  {
+    asPathText: 'faqs',
+    text: 'FAQs',
+    svg: FaqIcon
   }
 ]
 
@@ -28,7 +34,8 @@ const Pool = () => {
 
   const PoolComponents: { [key: string]: ReactElement } = {
     contracts: <Contracts />,
-    staking: <Staking />
+    staking: <Staking />,
+    faqs: <Faqs />
   }
 
   return (

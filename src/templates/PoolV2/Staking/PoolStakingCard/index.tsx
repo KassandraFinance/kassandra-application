@@ -77,7 +77,7 @@ const PoolStakingCard = ({
   const { handleClain, handleApprove, getPoolInfo, getUserInfoAboutPool } =
     useStakingInfo(pool.chainId, pool.poolId)
 
-  const productCategories = ['Stake', networkChain.chainName, 'OtherStake']
+  const productCategories = ['Stake', networkChain?.chainName, 'OtherStake']
 
   function openStakeAndWithdraw(transaction: typeTransaction) {
     setIsOpenModalStake(true)
