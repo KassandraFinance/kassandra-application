@@ -453,7 +453,9 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               }
                             />
                           ) : stakeWithLockPeriod ? null : poolInfo.withdrawDelay !==
-                              0 && userAboutPool.withdrawable ? (
+                              0 &&
+                            userAboutPool.withdrawable &&
+                            userAboutPool.yourStake.gt(0) ? (
                             <Button
                               type="button"
                               text={`Stake ${symbol}`}
