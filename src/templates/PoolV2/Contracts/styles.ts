@@ -2,15 +2,19 @@ import styled, { css } from 'styled-components'
 
 export const Contracts = styled.div`
   ${() => css`
-    margin-top: 6.8rem;
-    width: 55.4rem;
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
 
+    width: 55.4rem;
+    margin-top: 6.8rem;
+
+    @media (max-width: 1200px) {
+      padding-inline: 2.4rem;
+    }
+
     @media (max-width: 992px) {
       width: 100%;
-      padding-inline: 2.4rem;
     }
 
     @media (max-width: 576px) {
@@ -29,10 +33,10 @@ export const ContractsContainer = styled.div`
 
 export const Title = styled.h2`
   ${({ theme }) => css`
-    font-size: ${theme.font.sizes.font16};
-    font-weight: ${theme.font.weight.light};
-    line-height: ${theme.font.sizes.font18};
     color: #c4c4c4;
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font16};
+    line-height: ${theme.font.sizes.font18};
     text-transform: uppercase;
   `}
 `
@@ -42,10 +46,11 @@ export const ContractInfo = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.6rem 3.2rem;
 
+    padding: 1.6rem 3.2rem;
     border-radius: 6px;
-    background-color: rgba(252, 252, 252, 0.08);
+
+    background-color: rgb(252 252 252 / 0.08);
 
     @media (max-width: 768px) {
       padding-inline: 1.6rem;
@@ -56,18 +61,17 @@ export const ContractInfo = styled.div`
 export const Blockchain = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
     gap: 0.8rem;
+    align-items: center;
 
     a {
-      background-color: inherit;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
 
       max-width: 100%;
       border: none;
-      border-radius: 0.75rem;
+      border-radius: 7.5px;
 
       color: ${theme.colors.snow};
       font-weight: ${theme.font.weight.light};
@@ -75,6 +79,7 @@ export const Blockchain = styled.div`
       font-family: ${theme.font.family};
       text-decoration: none;
 
+      background-color: inherit;
       outline: none;
 
       transition: 0.15s;
@@ -122,9 +127,10 @@ export const ContractName = styled.span`
 export const CopyContract = styled.div`
   ${({ theme }) => css`
     display: flex;
-    align-items: center;
-    justify-content: center;
     gap: ${theme.spacings.space8};
+    justify-content: center;
+    align-items: center;
+
     border: none;
 
     font-size: ${theme.font.sizes.font14};

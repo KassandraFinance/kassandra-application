@@ -258,9 +258,10 @@ const ModalStakeAndWithdraw = ({
       <S.BorderGradient>
         <S.BackgroundBlack>
           <S.InterBackground>
-            <span>{title}</span>
+            <span data-testid="title">{title}</span>
             <button
               type="button"
+              aria-label="close"
               onClick={() => {
                 setModalOpen(false)
                 setStakeTransaction(typeTransaction.NONE)
@@ -272,7 +273,7 @@ const ModalStakeAndWithdraw = ({
 
           <S.Main>
             <S.Amount>
-              <span>${pool.symbol} Total</span>
+              <span data-testid="token-input">${pool.symbol} Total</span>
               <InputTokenValue
                 inputRef={inputRef}
                 decimals={Big(decimals)}

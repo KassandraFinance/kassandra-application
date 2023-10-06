@@ -427,6 +427,10 @@ const Pool = () => {
             <NewPoolOperations
               isOpenPoolOperation={isOpenPoolOperation}
               setIsOpenPoolOperation={setIsOpenPoolOperation}
+              operation="Invest"
+              setOperation={() => {
+                return
+              }}
             />
           </S.Product>
         </S.Container>

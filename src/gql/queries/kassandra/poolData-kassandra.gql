@@ -37,6 +37,7 @@ query PoolData($id: ID!) {
     pool_id
     url
     summary
+    short_summary
     # partners {
     #   logo
     #   url
