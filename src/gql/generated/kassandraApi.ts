@@ -1635,6 +1635,7 @@ export type Kassandra = {
   num_managers: Scalars['Int']['output']
   num_tx: Scalars['BigInt']['output']
   pool_count: Scalars['Int']['output']
+  pool_featured_count: Scalars['Int']['output']
   total_fees_aum_kassandra_btc: Scalars['BigDecimal']['output']
   total_fees_aum_kassandra_usd: Scalars['BigDecimal']['output']
   total_fees_aum_manager_btc: Scalars['BigDecimal']['output']
@@ -1746,6 +1747,14 @@ export type Kassandra_Filter = {
   pool_count_lte?: InputMaybe<Scalars['Int']['input']>
   pool_count_not?: InputMaybe<Scalars['Int']['input']>
   pool_count_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  pool_featured_count?: InputMaybe<Scalars['Int']['input']>
+  pool_featured_count_gt?: InputMaybe<Scalars['Int']['input']>
+  pool_featured_count_gte?: InputMaybe<Scalars['Int']['input']>
+  pool_featured_count_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  pool_featured_count_lt?: InputMaybe<Scalars['Int']['input']>
+  pool_featured_count_lte?: InputMaybe<Scalars['Int']['input']>
+  pool_featured_count_not?: InputMaybe<Scalars['Int']['input']>
+  pool_featured_count_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
   total_fees_aum_kassandra_btc?: InputMaybe<Scalars['BigDecimal']['input']>
   total_fees_aum_kassandra_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
   total_fees_aum_kassandra_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
@@ -1923,6 +1932,7 @@ export type Kassandra_OrderBy =
   | 'num_managers'
   | 'num_tx'
   | 'pool_count'
+  | 'pool_featured_count'
   | 'total_fees_aum_kassandra_btc'
   | 'total_fees_aum_kassandra_usd'
   | 'total_fees_aum_manager_btc'
@@ -2555,6 +2565,7 @@ export type Pool = {
   price_btc: Scalars['BigDecimal']['output']
   price_candles: Array<Candle>
   price_usd: Scalars['BigDecimal']['output']
+  short_summary?: Maybe<Scalars['String']['output']>
   /**
    * Address that can manage the assets in the pool
    *
@@ -3270,6 +3281,26 @@ export type Pool_Filter = {
   price_usd_lte?: InputMaybe<Scalars['BigDecimal']['input']>
   price_usd_not?: InputMaybe<Scalars['BigDecimal']['input']>
   price_usd_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  short_summary?: InputMaybe<Scalars['String']['input']>
+  short_summary_contains?: InputMaybe<Scalars['String']['input']>
+  short_summary_contains_nocase?: InputMaybe<Scalars['String']['input']>
+  short_summary_ends_with?: InputMaybe<Scalars['String']['input']>
+  short_summary_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
+  short_summary_gt?: InputMaybe<Scalars['String']['input']>
+  short_summary_gte?: InputMaybe<Scalars['String']['input']>
+  short_summary_in?: InputMaybe<Array<Scalars['String']['input']>>
+  short_summary_lt?: InputMaybe<Scalars['String']['input']>
+  short_summary_lte?: InputMaybe<Scalars['String']['input']>
+  short_summary_not?: InputMaybe<Scalars['String']['input']>
+  short_summary_not_contains?: InputMaybe<Scalars['String']['input']>
+  short_summary_not_contains_nocase?: InputMaybe<Scalars['String']['input']>
+  short_summary_not_ends_with?: InputMaybe<Scalars['String']['input']>
+  short_summary_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>
+  short_summary_not_in?: InputMaybe<Array<Scalars['String']['input']>>
+  short_summary_not_starts_with?: InputMaybe<Scalars['String']['input']>
+  short_summary_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  short_summary_starts_with?: InputMaybe<Scalars['String']['input']>
+  short_summary_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   strategy?: InputMaybe<Scalars['String']['input']>
   strategy_contains?: InputMaybe<Scalars['String']['input']>
   strategy_contains_nocase?: InputMaybe<Scalars['String']['input']>
@@ -3719,6 +3750,7 @@ export type Pool_OrderBy =
   | 'price_btc'
   | 'price_candles'
   | 'price_usd'
+  | 'short_summary'
   | 'strategy'
   | 'summary'
   | 'supply'
@@ -4950,6 +4982,7 @@ export type Token = {
    *
    */
   id: Scalars['ID']['output']
+  in_pool: Scalars['Boolean']['output']
   is_wrap_token: Scalars['Int']['output']
   logo?: Maybe<Scalars['String']['output']>
   name: Scalars['String']['output']
@@ -5015,6 +5048,10 @@ export type Token_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  in_pool?: InputMaybe<Scalars['Boolean']['input']>
+  in_pool_in?: InputMaybe<Array<Scalars['Boolean']['input']>>
+  in_pool_not?: InputMaybe<Scalars['Boolean']['input']>
+  in_pool_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>
   is_wrap_token?: InputMaybe<Scalars['Int']['input']>
   is_wrap_token_gt?: InputMaybe<Scalars['Int']['input']>
   is_wrap_token_gte?: InputMaybe<Scalars['Int']['input']>
@@ -5112,6 +5149,7 @@ export type Token_OrderBy =
   | 'coingecko_id'
   | 'decimals'
   | 'id'
+  | 'in_pool'
   | 'is_wrap_token'
   | 'logo'
   | 'name'
@@ -7406,6 +7444,9 @@ export type PoolDataQuery = {
     __typename?: 'Pool'
     id: string
     address: string
+    price_usd: string
+    decimals: number
+    total_value_locked_usd: string
     vault: string
     vault_id: string
     controller: string
@@ -7421,8 +7462,14 @@ export type PoolDataQuery = {
     pool_id?: number | null
     url?: string | null
     summary?: string | null
+    short_summary?: string | null
     underlying_assets_addresses: Array<string>
-    manager: { __typename?: 'Manager'; id: string }
+    manager: {
+      __typename?: 'Manager'
+      id: string
+      nickname?: string | null
+      image?: string | null
+    }
     chain: {
       __typename?: 'Chain'
       id: string
@@ -8858,6 +8905,9 @@ export const PoolDataDocument = gql`
     pool(id: $id) {
       id
       address
+      price_usd
+      decimals
+      total_value_locked_usd
       vault
       vault_id
       controller
@@ -8869,6 +8919,8 @@ export const PoolDataDocument = gql`
       supply
       manager {
         id
+        nickname
+        image
       }
       chain {
         id
@@ -8888,6 +8940,7 @@ export const PoolDataDocument = gql`
       pool_id
       url
       summary
+      short_summary
       underlying_assets_addresses
       underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
         balance

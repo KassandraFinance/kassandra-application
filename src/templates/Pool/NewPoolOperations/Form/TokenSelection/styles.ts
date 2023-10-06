@@ -61,6 +61,10 @@ export const BodyToken = styled.div`
     @media (max-width: 960px) {
       background: transparent;
     }
+
+    @media (max-width: 550px) {
+      padding: 2.3rem 1.6rem;
+    }
   `}
 `
 export const InputContent = styled.div`

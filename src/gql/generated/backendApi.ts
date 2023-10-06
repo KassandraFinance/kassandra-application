@@ -1701,7 +1701,7 @@ export type Pool = {
   brokers: Array<Broker>
   chain?: Maybe<Chain>
   chainId?: Maybe<Scalars['Int']['output']>
-  chain_id?: Maybe<Scalars['Int']['output']>
+  chain_id: Scalars['Int']['output']
   /**
    * Controller contract that controls the vault
    *
