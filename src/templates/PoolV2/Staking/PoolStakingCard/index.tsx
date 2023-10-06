@@ -1,6 +1,6 @@
 import Big from 'big.js'
 import React from 'react'
-import { useConnectWallet } from '@web3-onboard/react'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import { ethers } from 'ethers'
 
 import { PoolType } from '@/constants/pools'
@@ -73,9 +73,9 @@ const PoolStakingCard = ({
   })
 
   const [{ wallet }] = useConnectWallet()
+  const [{ settingChain }, setChain] = useSetChain()
   const networkChain = networks[pool.chainId]
-  const { handleClain, handleApprove, getPoolInfo, getUserInfoAboutPool } =
-    useStakingInfo(pool.chainId, pool.poolId)
+  const stakingInfo = useStakingInfo(pool.chainId, pool.poolId)
 
   const productCategories = ['Stake', networkChain?.chainName, 'OtherStake']
 
@@ -96,7 +96,7 @@ const PoolStakingCard = ({
   }
 
   async function handleApproveStaking() {
-    const allowance = await handleApprove(
+    const allowance = await stakingInfo.handleApprove(
       poolInfo.stakingToken,
       pool?.symbol ?? ''
     )
@@ -108,7 +108,11 @@ const PoolStakingCard = ({
     if (!pool?.poolId) return
     if (poolPrice.lte(0) && Big(kacyPrice).lte(0)) return
 
-    const poolInfo = await getPoolInfo(pool?.poolId, Big(kacyPrice), poolPrice)
+    const poolInfo = await stakingInfo.getPoolInfo(
+      pool?.poolId,
+      Big(kacyPrice),
+      poolPrice
+    )
 
     setpoolInfo(poolInfo)
   }, [wallet, pool, kacyPrice])
@@ -117,7 +121,7 @@ const PoolStakingCard = ({
     if (!pool?.poolId) return
     if (!wallet) return
 
-    const userInfo = await getUserInfoAboutPool(
+    const userInfo = await stakingInfo.getUserInfoAboutPool(
       pool?.poolId,
       wallet.accounts[0].address
     )
@@ -234,15 +238,34 @@ const PoolStakingCard = ({
           </S.StakingUserData>
         </S.StakingUserDataListCard>
 
-        <Button
-          background="secondary"
-          text="Claim"
-          onClick={() => handleClain(pool?.symbol ?? '')}
-          disabledNoEvent={
-            userAboutPool.kacyEarned?.lte(Big(0)) ||
-            networkChain.chainId !== Number(wallet?.chains[0].id)
-          }
-        />
+        {networkChain.chainId !== Number(wallet?.chains[0].id) ? (
+          <Button
+            type="button"
+            text={`Connect to ${networkChain.chainName}`}
+            size="huge"
+            background="secondary"
+            fullWidth
+            image="/assets/icons/rebalance.svg"
+            disabledNoEvent={settingChain}
+            onClick={() =>
+              setChain({
+                chainId: `0x${networkChain.chainId.toString(16)}`
+              })
+            }
+          />
+        ) : (
+          <Button
+            background="secondary"
+            size="huge"
+            fullWidth
+            text="Claim"
+            onClick={() => stakingInfo.handleClain(pool?.symbol ?? '')}
+            disabledNoEvent={
+              userAboutPool.kacyEarned?.lte(Big(0)) ||
+              networkChain.chainId !== Number(wallet?.chains[0].id)
+            }
+          />
+        )}
 
         <S.Line />
 
