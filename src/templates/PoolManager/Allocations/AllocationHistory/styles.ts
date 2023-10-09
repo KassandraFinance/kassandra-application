@@ -6,16 +6,11 @@ export const AllocationHistory = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
-    margin-top: 5rem;
-    margin-bottom: 6rem;
 
+    margin-bottom: 6rem;
     ${Title} {
       padding-bottom: 1rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    @media (max-width: 576px) {
-      margin-top: 0;
     }
   `}
 `
