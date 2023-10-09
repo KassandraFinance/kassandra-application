@@ -31,7 +31,7 @@ const MyAsset = ({
   decimals
 }: MyAssetProps) => {
   const [stakedToken, setStakedToken] = React.useState<Big>(Big(0))
-  const [balance, setBalance] = React.useState<Big>(Big(10e18))
+  const [amountInUsd, setAmountInUsd] = React.useState<Big>(Big(0))
 
   const chainInfo = networks[chainId]
 
@@ -55,16 +55,22 @@ const MyAsset = ({
     setStakedToken(Big(staked.amount))
   }
 
-  async function getBalance() {
+  async function getBalance(decimals: number): Promise<void> {
     if (!wallet) return
 
-    const balanceToken = await ERC20.balance(wallet.accounts[0].address)
+    const balanceToken = Big(await ERC20.balance(wallet.accounts[0].address))
 
-    setBalance(Big(balanceToken))
+    if (balanceToken.gt(0)) {
+      const amountInUsd = balanceToken
+        .div(Big(balanceToken).pow(decimals))
+        .mul(price)
+
+      setAmountInUsd(amountInUsd)
+    }
   }
 
   React.useEffect(() => {
-    getBalance()
+    getBalance(decimals)
     getStakedToken()
   }, [wallet, pid])
 
@@ -73,15 +79,7 @@ const MyAsset = ({
       <S.CardInfo>
         <S.Text>MY BALANCE</S.Text>
         <S.ValueInfo>
-          <S.Value>
-            ${' '}
-            {BNtoDecimal(
-              balance.div(Big(balance).pow(decimals)).mul(price),
-              2,
-              undefined,
-              2
-            )}
-          </S.Value>
+          <S.Value>$ {BNtoDecimal(amountInUsd, 2, undefined, 2)}</S.Value>
           <Tippy content={'The current value of pool in your account.'}>
             <S.Tooltip>
               <Image src={tooltip} alt="Explanation" layout="responsive" />
