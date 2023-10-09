@@ -6,6 +6,8 @@ import SelectTabs from '@/components/SelectTabs'
 import Breadcrumb from '@/components/Breadcrumb'
 import Contracts from './Contracts'
 import Hero from './Hero'
+import Faqs from './Faqs'
+import Staking from './Staking'
 
 import { setTokensSwapProvider } from '@/store/reducers/tokenListSwapProvider'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
@@ -15,7 +17,7 @@ import { useAppDispatch } from '@/store/hooks'
 import { NATIVE_ADDRESS, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 import Activity from './Activity'
 
-import { ContractsIcon, ActivityIcon } from './icons'
+import { ContractsIcon, ActivityIcon, FaqIcon, StakingIcon } from './icons'
 
 import * as S from './styles'
 
@@ -61,6 +63,16 @@ const tabs = [
     asPathText: 'activity',
     text: 'Activity',
     svg: ActivityIcon
+  },
+  {
+    asPathText: 'staking',
+    text: 'Staking',
+    svg: StakingIcon
+  },
+  {
+    asPathText: 'faqs',
+    text: 'FAQs',
+    svg: FaqIcon
   }
 ]
 
@@ -78,6 +90,8 @@ const Pool = () => {
 
   const PoolComponents: { [key: string]: ReactElement } = {
     contracts: <Contracts />,
+    staking: <Staking />,
+    faqs: <Faqs />,
     activity: <Activity />
   }
 
