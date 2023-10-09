@@ -6,10 +6,9 @@ import { useFeaturedPools } from '@/hooks/query/useFeaturedPools'
 import TitleSection from '../../components/TitleSection'
 import FundCard from '../../components/FundCard'
 import Loading from '../../components/Loading'
-import CommunityPoolsTable, {
-  communityPoolSorting
-} from './CommunityPoolsTable'
+import CommunityPoolsTable from './CommunityPoolsTable'
 import ManagersPoolTable from './ManagersPoolTable'
+import { SortingDirection } from '@/components/SectionTable'
 import SelectTabs from '@/components/SelectTabs'
 import Pagination from '@/components/Pagination'
 
@@ -42,7 +41,7 @@ export default function Explore() {
     string | string[] | undefined
   >('pools')
   const [communityPoolSorted, setCommunityPoolSorted] =
-    React.useState<communityPoolSorting>(communityPoolSorting.DESC)
+    React.useState<SortingDirection>(SortingDirection.DESC)
 
   const take = 8
 

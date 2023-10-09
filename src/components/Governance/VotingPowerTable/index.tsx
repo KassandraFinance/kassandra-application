@@ -1,15 +1,16 @@
 import React from 'react'
-import Link from 'next/link'
 import Big from 'big.js'
 
 import { useUsersInfo } from '@/hooks/query/useUsersInfo'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
-import Loading from '@/components/Loading'
 import ImageProfile from '../ImageProfile'
-
-import * as S from './styles'
+import SectionTable, {
+    IModalIconStyle,
+  LeftAlignCell,
+  RightAlignCell
+} from '@/components/SectionTable'
 
 interface IVotingPowerProps {
   skip?: number
@@ -19,68 +20,69 @@ interface IVotingPowerProps {
 export const VotingPowerTable = ({ skip = 0, take }: IVotingPowerProps) => {
   const { data } = useUsersInfo({ skip, take })
 
+  const dataMemo = React.useMemo(() => {
+    return (
+      data?.users.map((user, index) => ({
+        key: user.id,
+        href: `/profile/${user.id}?tab=governance-data`,
+        modal: {
+          title: {
+            logo: '',
+            name: user.id,
+            address: user.id,
+          },
+          iconStyle: IModalIconStyle.Jazzicon
+        },
+        cells: [
+          index + 1 + skip,
+
+          <LeftAlignCell>
+            <ImageProfile
+              address={user.id}
+              diameter={24}
+              image={item.image}
+              isNFT={!!item.is_nft}
+              nickname={item.nickname}
+              hasAddress={true}
+              isLink={false}
+            />
+          </LeftAlignCell>,
+
+          <RightAlignCell>
+            {BNtoDecimal(Big(user.votingPower), 0, 0)}
+          </RightAlignCell>,
+
+          BNtoDecimal(
+            Big(user.votingPower)
+              .mul(100)
+              .div(Big(data.governances[0].totalVotingPower)),
+            18,
+            2
+          ) + '%',
+
+          user.proposals.length,
+          user.votes.length
+        ]
+      })) || []
+    )
+  }, [data?.users.map(user => user.id).toString()])
+
   return (
-    <S.VotingPowerTable>
-      <S.Table>
-        <thead>
-          <S.Tr>
-            <S.Th className="rank">Rank</S.Th>
-            <S.Th className="user">User</S.Th>
-            <S.Th className="vote-power">Vote Power</S.Th>
-            <S.Th className="vote-weight">Vote Weight</S.Th>
-            <S.Th className="proposals-created">Proposals Created</S.Th>
-            <S.Th className="proposals-voted">Proposals Voted</S.Th>
-          </S.Tr>
-        </thead>
-        <tbody>
-          {data ? (
-            data?.users?.map((item, index) => (
-              <Link
-                key={item.id}
-                href={`/profile/${item.id}?tab=governance-data`}
-              >
-                <S.Tr>
-                  <S.Td className="rank">{index + 1 + skip}</S.Td>
-                  <S.Td className="user">
-                    <ImageProfile
-                      address={item.id}
-                      diameter={24}
-                      image={item.image}
-                      isNFT={!!item.is_nft}
-                      nickname={item.nickname}
-                      hasAddress={true}
-                      isLink={false}
-                    />
-                  </S.Td>
-                  <S.Td className="vote-power">
-                    {BNtoDecimal(Big(item.votingPower), 0, 2)}
-                  </S.Td>
-                  <S.Td className="vote-weight">
-                    {BNtoDecimal(
-                      Big(item.votingPower)
-                        .mul(100)
-                        .div(Big(data.governances[0].totalVotingPower)),
-                      18,
-                      2
-                    ) + '%'}
-                  </S.Td>
-                  <S.Td className="proposals-created">
-                    {item.proposals.length}
-                  </S.Td>
-                  <S.Td className="proposals-voted">{item.votes.length}</S.Td>
-                </S.Tr>
-              </Link>
-            ))
-          ) : (
-            <S.LoadingContainer>
-              <td>
-                <Loading marginTop={0} />
-              </td>
-            </S.LoadingContainer>
-          )}
-        </tbody>
-      </S.Table>
-    </S.VotingPowerTable>
+    <SectionTable
+      gridTemplate="100px 1fr repeat(4, 120px)"
+      headers={[
+        { key: 'rank', content: 'Rank' },
+        { key: 'user', content: <LeftAlignCell>User</LeftAlignCell> },
+        {
+          key: 'vote-power',
+          content: <RightAlignCell>Vote Power</RightAlignCell>
+        },
+        { key: 'vote-weight', content: 'Vote Weight' },
+        { key: 'proposals-created', content: 'Proposals Created' },
+        { key: 'proposals-voted', content: 'Proposals Voted' }
+      ]}
+      rows={dataMemo}
+    />
   )
 }
 

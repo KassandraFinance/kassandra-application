@@ -137,13 +137,14 @@ export const UserTableVotingHistory = ({
             </S.Th>
             <tbody>
               {proposalsList.map(proposal => (
-                <Link
-                  key={proposal.id}
-                  href={`/gov/proposals/${proposal.number}`}
-                >
-                  <tr>
-                    <S.Td colSpan={2}>
-                      <div className="td-container">
+                <tr>
+                  <S.Td colSpan={2}>
+                    <Link
+                      key={proposal.id}
+                      href={`/gov/proposals/${proposal.number}`}
+                      passHref
+                    >
+                      <a className="td-container">
                         <S.TextProposal>
                           {proposal.number.toString().padStart(2, '0')}{' '}
                           {getTitleProposal(
@@ -194,10 +195,10 @@ export const UserTableVotingHistory = ({
                             </div>
                           )}
                         </S.StateMutability>
-                      </div>
-                    </S.Td>
-                  </tr>
-                </Link>
+                      </a>
+                    </Link>
+                  </S.Td>
+                </tr>
               ))}
             </tbody>
           </table>

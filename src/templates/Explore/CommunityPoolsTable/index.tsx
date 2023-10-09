@@ -5,15 +5,18 @@ import Big from 'big.js'
 import Blockies from 'react-blockies'
 import Tippy from '@tippyjs/react'
 
-import { calcChange } from '@/utils/numerals'
+import { BNtoDecimal, calcChange } from '@/utils/numerals'
 
+import Loading from '@/components/Loading'
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
+import SectionTable, { IModalIconStyle, SortableHeader, SortingDirection } from '@/components/SectionTable'
+
+import { CommunityPoolsQuery } from '@/gql/generated/kassandraApi'
 
 import notFoundIcon from '@assets/icons/coming-soon.svg'
 import arrowIcon from '@assets/utilities/arrow-left.svg'
 import eyeShowIcon from '@assets/utilities/eye-show.svg'
 import comingSoonIcon from '@assets/icons/coming-soon.svg'
-import Loading from '@/components/Loading'
 
 import * as S from './styles'
 import {
@@ -23,72 +26,16 @@ import {
   Value as V
 } from '@ui/Modals/ModalViewCoin/styles'
 
-type IPoolsInfosProps = {
-  __typename?: 'Pool' | undefined
-  id: string
-  name: string
-  symbol: string
-  logo?: string | null | undefined
-  address: string
-  price_usd: any
-  total_value_locked_usd: any
-  is_private_pool: boolean
-  chain?:
-    | {
-        __typename?: 'Chain' | undefined
-        logo?: string | null | undefined
-      }
-    | null
-    | undefined
-  volumes: {
-    __typename?: 'Volume' | undefined
-    volume_usd: any
-  }[]
-  now: {
-    __typename?: 'Candle' | undefined
-    timestamp: number
-    close: any
-  }[]
-  day: {
-    __typename?: 'Candle' | undefined
-    timestamp: number
-    close: any
-  }[]
-  month: {
-    __typename?: 'Candle' | undefined
-    timestamp: number
-    close: any
-  }[]
-  weight_goals: {
-    __typename?: 'WeightGoalPoint' | undefined
-    weights: {
-      __typename?: 'WeightGoal' | undefined
-      asset: {
-        __typename?: 'Asset' | undefined
-        token: {
-          __typename?: 'Token' | undefined
-          logo?: string | null | undefined
-        }
-      }
-    }[]
-  }[]
-}
-
-export enum communityPoolSorting {
-  DESC = 'desc',
-  ASC = 'asc'
-}
-
 interface ICommunityPoolsTableProps {
-  pools?: IPoolsInfosProps[]
-  communityPoolSorted: communityPoolSorting
+  pools?: CommunityPoolsQuery["pools"]
+  communityPoolSorted: SortingDirection
   setCommunityPoolSorted: React.Dispatch<
-    React.SetStateAction<communityPoolSorting>
+    React.SetStateAction<SortingDirection>
   >
 }
 
 const CommunityPoolsTable = ({
-  pools,
+  pools = [],
   communityPoolSorted,
   setCommunityPoolSorted
 }: ICommunityPoolsTableProps) => {
@@ -178,22 +125,132 @@ const CommunityPoolsTable = ({
     setIsOpen(true)
   }
 
-  function handleClickChangeTvlSorting(currentValue: string) {
-    switch (currentValue) {
-      case communityPoolSorting.DESC:
-        setCommunityPoolSorted(communityPoolSorting.ASC)
-        break
-
-      case communityPoolSorting.ASC:
-        setCommunityPoolSorted(communityPoolSorting.DESC)
-        break
-
-      default:
-        break
+  function handleClickChangeTvlSorting(currentValue: SortingDirection) {
+    if (currentValue === SortingDirection.DESC) {
+      setCommunityPoolSorted(SortingDirection.ASC)
+      return;
     }
+
+    setCommunityPoolSorted(SortingDirection.DESC)
   }
 
+  const poolsMemo = React.useMemo(() => {
+    return pools.map(pool => ({
+      key: pool.id,
+      href: `/pool/${pool.id}`,
+      modal: {
+        title: {
+          logo: pool.logo ?? '',
+          name: pool.name,
+        },
+        iconStyle: IModalIconStyle.Blockies
+      },
+      cells: [
+        <S.ValueContainer>
+          <S.Imagecontainer>
+            <S.ImageWrapper>
+              {pool.logo ? (
+                <Image src={pool.logo} layout="fill" />
+              ) : (
+                <Blockies seed={pool.name} size={8} scale={3} />
+              )}
+            </S.ImageWrapper>
+
+            <S.ChainLogoWrapper>
+              <Image
+                src={pool.chain?.logo || comingSoonIcon}
+                layout="fill"
+              />
+            </S.ChainLogoWrapper>
+          </S.Imagecontainer>
+
+          <S.ValueWrapper>
+            <S.TextValue id="privatePool">
+              {pool.is_private_pool && (
+                <Tippy
+                  content={[
+                    <S.PrivatePoolTooltip key="PrivatePool">
+                      Private Pool
+                    </S.PrivatePoolTooltip>
+                  ]}
+                >
+                  <img
+                    src="/assets/utilities/lock.svg"
+                    width={14}
+                    height={13}
+                  />
+                </Tippy>
+              )}
+              {pool.name}
+            </S.TextValue>
+
+            <S.SecondaryTextValue>
+              {pool.symbol}
+            </S.SecondaryTextValue>
+          </S.ValueWrapper>
+        </S.ValueContainer>,
+
+        `$${BNtoDecimal(Big(pool.price_usd), 18, 1, 2)}`,
+        `$${BNtoDecimal(Big(pool.total_value_locked_usd), 18, 1, 2)}`,
+
+        <S.Container>
+          <S.CoinImageContainer>
+            {pool.weight_goals[0].weights.map((coin, index) => {
+              return (
+                <S.CoinImageWrapper
+                  key={coin.asset?.token?.logo}
+                  position={index}
+                >
+                  <Image
+                    src={coin.asset?.token?.logo || notFoundIcon}
+                    layout="fill"
+                  />
+                </S.CoinImageWrapper>
+              )
+            })}
+          </S.CoinImageContainer>
+        </S.Container>,
+
+        `$${BNtoDecimal(Big(pool.volumes[0].volume_usd), 18, 1, 2)}`,
+
+      (() => {
+                const value = pool.month[0]?.close ? Number(calcChange(pool.now[0].close, pool.month[0]?.close)) : 0
+                return <S.Value value={value}>{value}%</S.Value>
+              })(),
+
+      (() => {
+                const value = pool.day[0]?.close ? Number(calcChange(pool.now[0].close, pool.day[0]?.close)) : 0
+                return <S.Value value={value}>{value}%</S.Value>
+              })(),
+      ]
+    }))
+  }, [pools.map(proposal => proposal.id).toString()])
+
   return (
+    <SectionTable
+      headers={[
+        {key: 'pool-name', content: 'Pool Name'},
+        {key: 'pool-price', content: 'Price'},
+        {
+          key: 'pool-tvl',
+          content:
+          <SortableHeader
+            onClick={() => handleClickChangeTvlSorting(communityPoolSorted)}
+            sortDirection={communityPoolSorted}
+          >
+            TVL
+          </SortableHeader>
+        },
+        {key: 'pool-assets', content: 'Asset'},
+        {key: 'pool-24vol', content: 'Volume (24h)'},
+        {key: 'pool-change-month', content: 'Monthly'},
+        {key: 'pool-change-day', content: '24h'}
+      ]}
+      rows={poolsMemo}
+    />
+  )
+
+const a = (
     <S.CommunityPoolsTable>
       <S.THead>
         <S.TRHead>
@@ -207,7 +264,7 @@ const CommunityPoolsTable = ({
           <S.TH isView={inViewCollum === 2}>
             <S.THButtonSorting
               onClick={() => handleClickChangeTvlSorting(communityPoolSorted)}
-              isRotateArrow={communityPoolSorted === communityPoolSorting.ASC}
+              isRotateArrow={communityPoolSorted === SortingDirection.ASC}
             >
               TVL{' '}
               <img

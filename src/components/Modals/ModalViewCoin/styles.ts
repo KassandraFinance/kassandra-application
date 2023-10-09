@@ -124,11 +124,9 @@ export const TableLineTitle = styled.p`
 `
 
 export const ValueContainer = styled.div`
-  ${() => css`
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-  `}
 `
 
 export const Value = styled.span`
@@ -139,6 +137,12 @@ export const Value = styled.span`
     line-height: 135%;
     letter-spacing: 0.05em;
     text-align: right;
+    display: flex;
+    justify-content: right;
+
+    & > * {
+      justify-content: right !important;
+    }
   `}
 `
 

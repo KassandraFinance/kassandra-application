@@ -47,6 +47,7 @@ export const Image = styled.div<IImageProps>`
     line-height: 135%;
     text-decoration: none;
     text-align: start;
+    white-space: nowrap;
 
     transition: 300ms;
 

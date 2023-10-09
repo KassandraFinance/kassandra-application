@@ -58,9 +58,9 @@ export function BNtoDecimal(
 
   integer = integer.replace(/(\d)(?=(\d{3})+\b)/g, '$1\u00a0')
   decimal = decimal
-    .substring(0, precision ? firstNonZero + precision : 0)
+    .substring(0, precision ? firstNonZero + precision : minPrecision)
     .replace(/0+$/, '')
-    .padEnd(precision ? minPrecision : 0, '0')
+    .padEnd(minPrecision, '0')
 
   return `${integer}${decimal.length > 0 ? '.' : ''}${decimal}`
 }

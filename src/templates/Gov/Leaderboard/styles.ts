@@ -4,7 +4,7 @@ export const VoteContent = styled.div`
   max-width: 114rem;
   margin: 0 auto;
 
-  a {
+  & > a {
     display: flex;
     justify-content: center;
     margin-top: 3.2rem;

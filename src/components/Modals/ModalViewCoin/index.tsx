@@ -9,7 +9,7 @@ import substr from '@/utils/substr'
 
 import * as S from './styles'
 
-interface IModalViewCoinProps {
+export interface IModalViewCoinProps {
   title: {
     logo: string
     name: string

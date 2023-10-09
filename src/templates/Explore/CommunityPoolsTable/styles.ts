@@ -120,12 +120,7 @@ export const TRLink = styled.a`
     cursor: pointer;
 
     @media (min-width: 768px) {
-      grid-template-columns:
-        minmax(13.9rem, 1.5fr) repeat(3, 1fr) minmax(9rem, 1fr) minmax(
-          6.3rem,
-          1fr
-        )
-        minmax(6.3rem, 1fr);
+      grid-template-columns: minmax(13.9rem, 1.5fr) repeat(3, 1fr) minmax(9rem, 1fr) minmax(6.3rem, 1fr) minmax(6.3rem, 1fr);
     }
   `}
 `
