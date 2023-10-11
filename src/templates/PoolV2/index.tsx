@@ -7,6 +7,8 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Contracts from './Contracts'
 import Hero from './Hero'
 import Allocations from './Allocations'
+import Faqs from './Faqs'
+import Staking from './Staking'
 
 import { setTokensSwapProvider } from '@/store/reducers/tokenListSwapProvider'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
@@ -16,7 +18,13 @@ import { useAppDispatch } from '@/store/hooks'
 import { NATIVE_ADDRESS, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 import Activity from './Activity'
 
-import { ContractsIcon, ActivityIcon, allocationsIcon } from './icons'
+import {
+  ContractsIcon,
+  ActivityIcon,
+  allocationsIcon,
+  FaqIcon,
+  StakingIcon
+} from './icons'
 
 import * as S from './styles'
 
@@ -67,6 +75,16 @@ const tabs = [
     asPathText: 'contracts',
     text: 'Contracts',
     svg: ContractsIcon
+  },
+  {
+    asPathText: 'staking',
+    text: 'Staking',
+    svg: StakingIcon
+  },
+  {
+    asPathText: 'faqs',
+    text: 'FAQs',
+    svg: FaqIcon
   }
 ]
 
@@ -83,9 +101,11 @@ const Pool = () => {
   const dispatch = useAppDispatch()
 
   const PoolComponents: { [key: string]: ReactElement } = {
-    contracts: <Contracts />,
+    allocations: <Allocations />,
     activity: <Activity />,
-    allocations: <Allocations />
+    staking: <Staking />,
+    contracts: <Contracts />,
+    faqs: <Faqs />
   }
 
   async function getTokensForOperations() {

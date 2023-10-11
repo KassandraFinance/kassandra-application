@@ -165,7 +165,12 @@ export const WrapperButton = styled.div`
 
     width: 100%;
     height: 4.6rem;
-    margin-bottom: 1.6rem;
+  `}
+`
+
+export const WrapperGetButton = styled.div`
+  ${() => css`
+    margin-top: 1.6rem;
   `}
 `
 
