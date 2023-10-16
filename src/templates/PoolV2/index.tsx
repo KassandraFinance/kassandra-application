@@ -8,6 +8,7 @@ import Contracts from './Contracts'
 import Hero from './Hero'
 import Faqs from './Faqs'
 import Staking from './Staking'
+import Overview from './Overview'
 
 import { setTokensSwapProvider } from '@/store/reducers/tokenListSwapProvider'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
@@ -55,6 +56,11 @@ type Asset = {
 
 const tabs = [
   {
+    asPathText: 'overview',
+    text: 'Overview',
+    svg: FaqIcon
+  },
+  {
     asPathText: 'contracts',
     text: 'Contracts',
     svg: ContractsIcon
@@ -79,7 +85,7 @@ const tabs = [
 const Pool = () => {
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
-  >('contracts')
+  >('overview')
 
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
@@ -88,7 +94,9 @@ const Pool = () => {
 
   const dispatch = useAppDispatch()
 
-  const PoolComponents: { [key: string]: ReactElement } = {
+
+  const PoolComponents: Record<string, ReactElement> = {
+    overview: <Overview pool={pool} />,
     contracts: <Contracts />,
     staking: <Staking />,
     faqs: <Faqs />,
