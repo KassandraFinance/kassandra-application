@@ -193,5 +193,5 @@ export const Wrapper = styled.div`
   border-radius: 2.5rem;
   margin: 25px 0;
   width: 100%;
-  height: 360px;
+  height: 500px;
 `

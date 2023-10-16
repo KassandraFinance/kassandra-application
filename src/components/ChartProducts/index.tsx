@@ -1,9 +1,7 @@
 import React from 'react'
-import { useRouter } from 'next/router'
 
 import useMatomoEcommerce from '../../hooks/useMatomoEcommerce'
 import { usePoolCharts } from '@/hooks/query/usePoolCharts'
-import { usePoolData } from '@/hooks/query/usePoolData'
 
 import { useAppDispatch } from '../../store/hooks'
 import { setChartSelected } from '../../store/reducers/chartSelected'
@@ -20,7 +18,11 @@ import * as S from './styles'
 
 const arrPeriod: string[] = ['1W', '1M', '3M', '1Y']
 
-const ChartProducts = () => {
+interface IChartProductsProps {
+  poolId: string
+}
+
+const ChartProducts = ({ poolId }: IChartProductsProps) => {
   const dispatch = useAppDispatch()
 
   const [inputChecked, setInputChecked] = React.useState<string>('Price')
@@ -41,11 +43,8 @@ const ChartProducts = () => {
   const [periodSelected, setPeriodSelected] = React.useState<string>('1W')
   const dateNow = new Date()
 
-  const router = useRouter()
-  const { data: pool } = usePoolData({ id: router.query.address as string })
-
   const [params, setParams] = React.useState({
-    id: pool?.id || '',
+    id: poolId,
     price_period: 3600,
     period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 7)
   })
@@ -132,6 +131,18 @@ const ChartProducts = () => {
   React.useEffect(() => {
     dispatch(setChartSelected('Price'))
   }, [])
+
+  React.useEffect(() => {
+    setParams({
+      id: poolId,
+      price_period: 3600,
+      period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 7)
+    })
+  }, [poolId])
+
+  React.useEffect(() => {
+    dispatch(setChartSelected('Price'))
+  }, [poolId])
 
   React.useEffect(() => {
     returnDate('1W')
