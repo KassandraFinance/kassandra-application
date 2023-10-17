@@ -392,7 +392,7 @@ const Pool = () => {
                   <p>${infoPool.withdrawFees}</p>
                 </S.IndexData>
               </S.IntroCharts>
-              <ChartProducts />
+              <ChartProducts poolId="" />
               <ScrollUpButton />
               <Change />
               <FeeBreakdown
