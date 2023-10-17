@@ -1,10 +1,14 @@
 import React from 'react'
 
+import { useFeaturedPools } from '@/hooks/query/useFeaturedPools'
+
 import FundCard from '@/components/FundCard'
 
 import * as S from './styles'
 
 const MorePool = () => {
+  const { data: poolsKassandra } = useFeaturedPools()
+
   return (
     <S.MorePool>
       <S.MorePoolHeader>
@@ -14,25 +18,15 @@ const MorePool = () => {
       </S.MorePoolHeader>
 
       <S.FundCardContainer>
-        <FundCard
-          key={'0x38918142779e2CD1189cBd9e932723C968363D1E'}
-          poolAddress={'0x38918142779e2CD1189cBd9e932723C968363D1E'}
-          link={`/pool/"0x38918142779e2CD1189cBd9e932723C968363D1E`}
-        />
-        <FundCard
-          key={'0xA6CAB4b1019ee22309dcA5ba62C3372a791dcB2E'}
-          poolAddress={'0xA6CAB4b1019ee22309dcA5ba62C3372a791dcB2E'}
-          link={`/pool/"0xA6CAB4b1019ee22309dcA5ba62C3372a791dcB2E`}
-        />
-        <FundCard
-          key={
-            '1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52'
-          }
-          poolAddress={
-            '1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52'
-          }
-          link={`/pool/"1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52`}
-        />
+        {poolsKassandra?.poolsKassandra.slice(0, 3).map(pool => {
+          return (
+            <FundCard
+              key={pool.id}
+              poolAddress={pool.id}
+              link={`/pool/${pool.id}`}
+            />
+          )
+        })}
       </S.FundCardContainer>
     </S.MorePool>
   )

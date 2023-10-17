@@ -45,7 +45,16 @@ export const FundCardContainer = styled.div`
     width: 100%;
     gap: 3.2rem;
 
+    @media (max-width: 1200px) {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
     ${CardContainer} {
+      max-width: 35rem;
+    }
+
+    > div {
       width: 100%;
     }
   `}
