@@ -2,8 +2,6 @@ import theme from '@/styles/theme'
 import styled from 'styled-components'
 
 export const Change = styled.div`
-  margin: ${theme.spacings.space48} 0;
-
   table {
     border: 1px solid rgba(255, 255, 255, 0.04);
     border-radius: 8px;

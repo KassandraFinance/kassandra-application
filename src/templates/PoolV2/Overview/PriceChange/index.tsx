@@ -1,70 +1,12 @@
 import React from 'react'
 
-import { usePoolPrice } from '@/hooks/query/usePoolPrice'
-
-import { useAppDispatch } from '@/store/hooks'
-import { setPerformanceValues } from '@/store/reducers/performanceValues'
-
-import { calcChange } from '@/utils/numerals'
-
 import * as S from './styles'
 
 interface IPriceChangeProps {
-  poolId: string
+  changePriceList: string[]
 }
 
-const PriceChange = ({ poolId }: IPriceChangeProps) => {
-  const [arrChangePrice, setArrChangePrice] = React.useState<string[]>(
-    Array(5).fill('0')
-  )
-
-  const dispatch = useAppDispatch()
-
-  const { data } = usePoolPrice({
-    id: poolId,
-    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-    week: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 7),
-    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-    quarterly: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 90),
-    year: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 365)
-  })
-
-  React.useEffect(() => {
-    const arrChangePrice = []
-
-    if (data) {
-      const changeDay = calcChange(data.now[0].close, data.day[0]?.close)
-      const changeWeek = calcChange(data.now[0].close, data.week[0]?.close)
-      const changeMonth = calcChange(data.now[0].close, data.month[0]?.close)
-      const changeQuarterly = calcChange(
-        data.now[0].close,
-        data.quarterly[0]?.close
-      )
-      const changeYear = calcChange(data.now[0].close, data.year[0]?.close)
-
-      arrChangePrice[0] = changeDay
-      arrChangePrice[1] = changeWeek
-      arrChangePrice[2] = changeMonth
-      arrChangePrice[3] = changeQuarterly
-      arrChangePrice[4] = changeYear
-
-      setArrChangePrice(arrChangePrice)
-
-      dispatch(
-        setPerformanceValues({
-          title: 'Weekly Performance',
-          allPerformancePeriod: {
-            'Daily Performance': changeDay,
-            'Weekly Performance': changeWeek,
-            'Monthly Performance': changeMonth,
-            '3 Months Performance': changeQuarterly,
-            'Yearly Performance': changeYear
-          }
-        })
-      )
-    }
-  }, [data])
-
+const PriceChange = ({ changePriceList }: IPriceChangeProps) => {
   return (
     <S.Change>
       <table>
@@ -79,12 +21,11 @@ const PriceChange = ({ poolId }: IPriceChangeProps) => {
         </thead>
         <tbody>
           <tr>
-            {arrChangePrice.length > 0 &&
-              arrChangePrice.map((item: string, index: number) => (
-                <S.Td key={index} value={parseFloat(item)}>
-                  {item.length === 0 ? '...' : `${item}%`}
-                </S.Td>
-              ))}
+            {changePriceList.map((item: string, index: number) => (
+              <S.Td key={index} value={parseFloat(item)}>
+                {item.length === 0 ? '...' : `${item}%`}
+              </S.Td>
+            ))}
           </tr>
         </tbody>
       </table>

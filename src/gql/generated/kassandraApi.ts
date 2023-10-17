@@ -7665,6 +7665,19 @@ export type PoolTvmChartQuery = {
   } | null
 }
 
+export type PoolVolumeDataQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  timestamp: Scalars['Int']['input']
+}>
+
+export type PoolVolumeDataQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    volumes: Array<{ __typename?: 'Volume'; volume_usd: string }>
+  } | null
+}
+
 export type PoolWithdrawsQueryVariables = Exact<{
   id: Scalars['ID']['input']
   timestamp: Scalars['Int']['input']
@@ -9143,6 +9156,15 @@ export const PoolTvmChartDocument = gql`
     }
   }
 `
+export const PoolVolumeDataDocument = gql`
+  query PoolVolumeData($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      volumes(where: { period: 3600, timestamp_gt: $timestamp }) {
+        volume_usd
+      }
+    }
+  }
+`
 export const PoolWithdrawsDocument = gql`
   query PoolWithdraws($id: ID!, $timestamp: Int!) {
     pool(id: $id) {
@@ -9973,6 +9995,21 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'PoolTvmChart',
+        'query'
+      )
+    },
+    PoolVolumeData(
+      variables: PoolVolumeDataQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolVolumeDataQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolVolumeDataQuery>(
+            PoolVolumeDataDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'PoolVolumeData',
         'query'
       )
     },

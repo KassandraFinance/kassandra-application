@@ -94,9 +94,23 @@ const Pool = () => {
 
   const dispatch = useAppDispatch()
 
+  function handleClickStakeButton() {
+    router.push(
+      {
+        pathname: `${router.pathname}`,
+        query: { ...router.query, tab: 'staking' }
+      },
+      undefined,
+      { scroll: false }
+    )
+
+    setIsSelectTab('staking')
+  }
 
   const PoolComponents: Record<string, ReactElement> = {
-    overview: <Overview pool={pool} />,
+    overview: (
+      <Overview pool={pool} handleClickStakeButton={handleClickStakeButton} />
+    ),
     contracts: <Contracts />,
     staking: <Staking />,
     faqs: <Faqs />,
