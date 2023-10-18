@@ -58,7 +58,7 @@ const tabs = [
   {
     asPathText: 'overview',
     text: 'Overview',
-    svg: FaqIcon
+    svg: OverviewIcon
   },
   {
     asPathText: 'contracts',

@@ -39,20 +39,22 @@ const TokenDescription = ({ summary }: ITokenDescriptionProps) => {
         </ReactMarkdown>
       </S.Text>
 
-      <S.ButtonSeeMore
-        isSeeMore={isStateSeeMore}
-        onClick={() => setIsStateSeeMore(!isStateSeeMore)}
-      >
-        View more
-        <span>
-          <Image
-            src="/assets/utilities/arrow-select-down.svg"
-            alt="arrow select button"
-            width={14}
-            height={14}
-          />
-        </span>
-      </S.ButtonSeeMore>
+      {descriptionRef?.offsetHeight > 180 && (
+        <S.ButtonSeeMore
+          isSeeMore={isStateSeeMore}
+          onClick={() => setIsStateSeeMore(!isStateSeeMore)}
+        >
+          View more
+          <span>
+            <Image
+              src="/assets/utilities/arrow-select-down.svg"
+              alt="arrow select button"
+              width={14}
+              height={14}
+            />
+          </span>
+        </S.ButtonSeeMore>
+      )}
     </S.TokenDescription>
   )
 }

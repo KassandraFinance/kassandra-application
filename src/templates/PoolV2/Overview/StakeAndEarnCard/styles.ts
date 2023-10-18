@@ -84,5 +84,12 @@ export const AprTextWrapper = styled.div`
 export const ButtonWrapper = styled.div`
   ${() => css`
     width: 12rem;
+
+    .stake-button {
+      > span {
+        border-radius: 50%;
+        overflow: hidden;
+      }
+    }
   `}
 `
