@@ -9,6 +9,7 @@ import Hero from './Hero'
 import Faqs from './Faqs'
 import Staking from './Staking'
 import Overview from './Overview'
+import ShareAndEarn from './ShareAndEarn'
 
 import { setTokensSwapProvider } from '@/store/reducers/tokenListSwapProvider'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
@@ -18,7 +19,14 @@ import { useAppDispatch } from '@/store/hooks'
 import { NATIVE_ADDRESS, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 import Activity from './Activity'
 
-import { ContractsIcon, ActivityIcon, FaqIcon, StakingIcon } from './icons'
+import {
+  ContractsIcon,
+  ActivityIcon,
+  FaqIcon,
+  StakingIcon,
+  OverviewIcon,
+  ShareAndEarnIcon
+} from './icons'
 
 import * as S from './styles'
 
@@ -76,6 +84,11 @@ const tabs = [
     svg: StakingIcon
   },
   {
+    asPathText: 'shareAndEarn',
+    text: 'Share and earn',
+    svg: ShareAndEarnIcon
+  },
+  {
     asPathText: 'faqs',
     text: 'FAQs',
     svg: FaqIcon
@@ -114,7 +127,8 @@ const Pool = () => {
     contracts: <Contracts />,
     staking: <Staking />,
     faqs: <Faqs />,
-    activity: <Activity />
+    activity: <Activity />,
+    shareAndEarn: <ShareAndEarn />
   }
 
   async function getTokensForOperations() {
