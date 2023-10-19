@@ -21,5 +21,12 @@ export const SelectTabsContainer = styled.div`
     margin-inline: auto;
 
     list-style-type: none;
+
+    @media (max-width: 1200px) {
+      padding-inline: 2.4rem;
+    }
+    @media (max-width: 576px) {
+      padding-inline: 1.6rem;
+    }
   `}
 `

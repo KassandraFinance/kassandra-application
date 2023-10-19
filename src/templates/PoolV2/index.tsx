@@ -9,6 +9,7 @@ import Hero from './Hero'
 import Allocations from './Allocations'
 import Faqs from './Faqs'
 import Staking from './Staking'
+import Overview from './Overview'
 
 import { setTokensSwapProvider } from '@/store/reducers/tokenListSwapProvider'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
@@ -67,14 +68,19 @@ const tabs = [
     svg: allocationsIcon
   },
   {
-    asPathText: 'activity',
-    text: 'Activity',
-    svg: ActivityIcon
+    asPathText: 'overview',
+    text: 'Overview',
+    svg: FaqIcon
   },
   {
     asPathText: 'contracts',
     text: 'Contracts',
     svg: ContractsIcon
+  },
+  {
+    asPathText: 'activity',
+    text: 'Activity',
+    svg: ActivityIcon
   },
   {
     asPathText: 'staking',
@@ -91,7 +97,7 @@ const tabs = [
 const Pool = () => {
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
-  >('contracts')
+  >('overview')
 
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
@@ -100,7 +106,23 @@ const Pool = () => {
 
   const dispatch = useAppDispatch()
 
-  const PoolComponents: { [key: string]: ReactElement } = {
+  function handleClickStakeButton() {
+    router.push(
+      {
+        pathname: `${router.pathname}`,
+        query: { ...router.query, tab: 'staking' }
+      },
+      undefined,
+      { scroll: false }
+    )
+
+    setIsSelectTab('staking')
+  }
+
+  const PoolComponents: Record<string, ReactElement> = {
+    overview: (
+      <Overview pool={pool} handleClickStakeButton={handleClickStakeButton} />
+    ),
     allocations: <Allocations />,
     activity: <Activity />,
     staking: <Staking />,
