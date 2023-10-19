@@ -10,21 +10,19 @@ import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 import { useTokensPool } from '@/hooks/query/useTokensPool'
 import useAllocationInfo from '@/hooks/useAllocationInfo'
 
-import AllocationTable from './AllocationTable'
-import AllocationHistory from './AllocationHistory'
+import AllocationTable from '@/templates/PoolManager/Allocations/AllocationTable'
+import AllocationHistory from '@/templates/PoolManager/Allocations/AllocationHistory'
 import IntroReview, {
   IlistTokenWeightsProps,
   IRebalanceWeightsProps,
   IRebancingProgressProps
-} from './IntroReview'
+} from '@/templates/PoolManager/Allocations/IntroReview'
 
 import * as S from './styles'
+import { useCountdown } from '@/hooks/useCountDown'
+import { usePoolRebalanceTime } from '@/hooks/query/usePoolRebalanceTime'
 
-interface IAllocationsProps {
-  countDownDate: string
-}
-
-const Allocations = ({ countDownDate }: IAllocationsProps) => {
+const Allocations = () => {
   const [RebalancingProgress, setRebalancingProgress] =
     React.useState<IRebancingProgressProps | null>(null)
   const [listTokenWeights, setlistTokenWeights] = React.useState<
@@ -34,10 +32,13 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     React.useState<IRebalanceWeightsProps>(null)
 
   const router = useRouter()
+  const poolId = Array.isArray(router.query.address)
+    ? router.query.address[0]
+    : router.query.address ?? ''
 
-  const poolId = Array.isArray(router.query.pool)
-    ? router.query.pool[0]
-    : router.query.pool ?? ''
+  const { data: endRebalanceData } = usePoolRebalanceTime({ id: poolId })
+  const endRebalanceTime = endRebalanceData ? endRebalanceData * 1000 : 0
+  const { dateFormated: countDownDate } = useCountdown(endRebalanceTime)
 
   const { data: poolAssets } = usePoolAssets({ id: poolId })
   const { data } = useTokensPool({ id: poolId })
@@ -67,6 +68,8 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     }
   }
 
+  console.log(data, poolAssets)
+
   React.useEffect(() => {
     if (!data || !poolAssets) return
 
@@ -77,7 +80,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     }
 
     setlistTokenWeights(tokenList)
-  }, [data])
+  }, [data, poolAssets])
 
   React.useEffect(() => {
     if (!data) return
@@ -104,7 +107,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     }
 
     setRebalanceWeights(rebalanceWeights)
-  }, [data])
+  }, [data, poolAssets])
 
   return (
     <S.Allocations>

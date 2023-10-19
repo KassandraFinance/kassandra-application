@@ -6,6 +6,7 @@ import SelectTabs from '@/components/SelectTabs'
 import Breadcrumb from '@/components/Breadcrumb'
 import Contracts from './Contracts'
 import Hero from './Hero'
+import Allocations from './Allocations'
 import Faqs from './Faqs'
 import Staking from './Staking'
 import Overview from './Overview'
@@ -18,7 +19,13 @@ import { useAppDispatch } from '@/store/hooks'
 import { NATIVE_ADDRESS, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 import Activity from './Activity'
 
-import { ContractsIcon, ActivityIcon, FaqIcon, StakingIcon } from './icons'
+import {
+  ContractsIcon,
+  ActivityIcon,
+  allocationsIcon,
+  FaqIcon,
+  StakingIcon
+} from './icons'
 
 import * as S from './styles'
 
@@ -55,6 +62,11 @@ type Asset = {
 }
 
 const tabs = [
+  {
+    asPathText: 'allocations',
+    text: 'Allocations',
+    svg: allocationsIcon
+  },
   {
     asPathText: 'overview',
     text: 'Overview',
@@ -111,10 +123,11 @@ const Pool = () => {
     overview: (
       <Overview pool={pool} handleClickStakeButton={handleClickStakeButton} />
     ),
-    contracts: <Contracts />,
+    allocations: <Allocations />,
+    activity: <Activity />,
     staking: <Staking />,
-    faqs: <Faqs />,
-    activity: <Activity />
+    contracts: <Contracts />,
+    faqs: <Faqs />
   }
 
   async function getTokensForOperations() {
