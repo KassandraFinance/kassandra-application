@@ -12,7 +12,13 @@ import {
 
 import * as S from './styles'
 
-const ShareAndEarnCard = () => {
+interface IShareAndEarnProps {
+  feeJoinBroker: string
+  poolId: string
+}
+
+const ShareAndEarnCard = ({ feeJoinBroker, poolId }: IShareAndEarnProps) => {
+
   return (
     <S.ShareAndEarnCard>
       <S.ShareAndEarnContainer>
@@ -26,7 +32,9 @@ const ShareAndEarnCard = () => {
           <S.CardTitle>Share and earn</S.CardTitle>
         </S.CardHeader>
 
-        <S.ReferralParagraph>Referral Commission 0,20%</S.ReferralParagraph>
+        <S.ReferralParagraph>
+          Referral Commission {(parseFloat(feeJoinBroker) * 100).toFixed(2)}%
+        </S.ReferralParagraph>
 
         <S.CardDescription>
           Share your referral link with friends, family, and colleagues, and

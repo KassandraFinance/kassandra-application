@@ -4,10 +4,15 @@ import ShareAndEarnCard from './ShareAndEarnCard'
 
 import * as S from './styles'
 
-const ShareAndEarn = () => {
+interface IShareAndEarnProps {
+  feeJoinBroker: string
+  poolId: string
+}
+
+const ShareAndEarn = ({ feeJoinBroker, poolId }: IShareAndEarnProps) => {
   return (
     <S.ShareAndEarn>
-      <ShareAndEarnCard />
+      <ShareAndEarnCard feeJoinBroker={feeJoinBroker} poolId={poolId} />
     </S.ShareAndEarn>
   )
 }

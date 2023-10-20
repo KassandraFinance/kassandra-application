@@ -128,7 +128,12 @@ const Pool = () => {
     staking: <Staking />,
     faqs: <Faqs />,
     activity: <Activity />,
-    shareAndEarn: <ShareAndEarn />
+    shareAndEarn: (
+      <ShareAndEarn
+        feeJoinBroker={pool?.fee_join_broker ?? '0'}
+        poolId={pool?.id ?? ''}
+      />
+    )
   }
 
   async function getTokensForOperations() {

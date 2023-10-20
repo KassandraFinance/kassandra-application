@@ -14,6 +14,7 @@ query PoolData($id: ID!) {
     strategy
     is_private_pool
     supply
+    fee_join_broker
     manager {
       id
       nickname
