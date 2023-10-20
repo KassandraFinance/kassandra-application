@@ -8,6 +8,9 @@ import {
 } from 'react-share'
 import html2canvas from 'html2canvas'
 import { v4 } from 'uuid'
+import { useConnectWallet } from '@web3-onboard/react'
+
+import { useReferralCommission } from '@/hooks/query/useReferralCommission'
 
 import * as S from './styles'
 
@@ -31,6 +34,10 @@ const ShareImageModal = ({
   const [url, setUrl] = React.useState(
     `https://app.kassandra.finance/shared/${v4()}-${poolId}`
   )
+
+  const [{ wallet }] = useConnectWallet()
+
+  const { data } = useReferralCommission(wallet?.accounts[0].address)
 
   async function handleDownloadImage() {
     const element = printRef.current
@@ -56,10 +63,19 @@ const ShareImageModal = ({
     }
   }
 
-  function handleShareClick() {
-    setUrl(`https://app.kassandra.finance/shared/${v4()}-${poolId}`)
+  async function handleShareClick() {
     setOpenModal(false)
   }
+
+  React.useEffect(() => {
+    if (!data) return
+
+    setUrl(
+      `https://app.kassandra.finance/shared/${v4()}-${poolId}?referral=${encodeURIComponent(
+        data.hash
+      )}`
+    )
+  }, [data])
 
   React.useEffect(() => {
     if (!openModal) return
@@ -77,13 +93,15 @@ const ShareImageModal = ({
 
           const file = canvas.toDataURL('image/png')
           const id = url.split('/').pop()
+          const _id = id?.split('?')[0]
+
           fetch(`/api/funds/shared?id=${poolId}-${productName.toLowerCase()}`, {
             method: 'POST',
             headers: {
               Accept: 'application/json',
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ image: file, id })
+            body: JSON.stringify({ image: file, id: _id })
           }).then(response => response.json())
         }
       })()

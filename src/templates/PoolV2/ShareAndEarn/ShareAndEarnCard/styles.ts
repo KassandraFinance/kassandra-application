@@ -108,8 +108,11 @@ export const ShareLinkTitle = styled.p`
 export const ShareLinkContent = styled.div`
   ${() => css``}
 `
+interface IShareLinkProps {
+  showCommissionUrl: boolean
+}
 
-export const ShareLink = styled.div`
+export const ShareLink = styled.div<IShareLinkProps>`
   ${({ theme }) => css`
     position: relative;
     padding: 1.8rem;
@@ -118,7 +121,7 @@ export const ShareLink = styled.div`
     align-items: center;
     justify-content: space-between; */
     display: grid;
-    grid-template-columns: 1fr 8.6rem;
+    grid-template-columns: 1fr 16rem;
     align-items: center;
 
     border-radius: 4px;
@@ -126,7 +129,7 @@ export const ShareLink = styled.div`
     background: rgba(252, 252, 252, 0.05);
 
     .small-button {
-      max-width: 8.6rem;
+      /* max-width: 16rem; */
       max-height: 3.8rem;
     }
 
@@ -139,15 +142,44 @@ export const ShareLink = styled.div`
     }
 
     span {
+      position: relative;
+
       font-size: ${theme.font.sizes.font16};
       font-weight: ${theme.font.weight.light};
       line-height: 1.8rem;
 
+      filter: blur(0.3rem);
+
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
+      z-index: -1;
+
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
   `}
+
+  ${({ showCommissionUrl }) =>
+    showCommissionUrl &&
+    css`
+      grid-template-columns: 1fr 8.6rem;
+
+      span {
+        filter: blur(0);
+
+        -webkit-touch-callout: all;
+        -webkit-user-select: all;
+        -khtml-user-select: all;
+        -moz-user-select: all;
+        -ms-user-select: all;
+        user-select: all;
+      }
+    `}
 `
 
 export const ButtonWrapper = styled.div`
