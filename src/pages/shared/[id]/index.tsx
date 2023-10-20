@@ -5,9 +5,10 @@ import { ParsedUrlQuery } from 'querystring'
 
 type Props = {
   id: string
+  referralQuery: string
 }
 
-const Page = ({ id }: Props) => {
+const Page = ({ id, referralQuery }: Props) => {
   const fund = id.split('-').pop()
 
   return (
@@ -25,7 +26,7 @@ const Page = ({ id }: Props) => {
         <meta property="og:type" content="website" />
         <meta
           property="og:url"
-          content={`https://app.kassandra.finance/pool/${id}`}
+          content={`https://app.kassandra.finance/pool/${id}${referralQuery}`}
         />
         <meta property="og:title" content="Kassandra - Decentralized Funds" />
         <meta
@@ -34,7 +35,7 @@ const Page = ({ id }: Props) => {
         />
         <meta
           property="og:image"
-          content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
+          content={`https://app.kassandra.finance/api/funds/shared?id=${id}`} //
         />
         <meta property="og:site_name" content="Kassandra" />
         <meta property="og:image:width" content="1000" />
@@ -44,7 +45,7 @@ const Page = ({ id }: Props) => {
         <meta property="twitter:card" content="summary_large_image" />
         <meta
           property="twitter:url"
-          content={`https://app.kassandra.finance/pool/${id}`}
+          content={`https://app.kassandra.finance/pool/${id}${referralQuery}`}
         />
         <meta
           property="twitter:title"
@@ -63,7 +64,7 @@ const Page = ({ id }: Props) => {
         {/* Tag for redirecting of the page */}
         <meta
           httpEquiv="refresh"
-          content={`1; url = https://app.kassandra.finance/pool/${fund}`}
+          content={`1;url=https://app.kassandra.finance/pool/${fund}${referralQuery}`}
         />
       </Head>
       <div>
@@ -78,15 +79,20 @@ const Page = ({ id }: Props) => {
 
 interface Fund extends ParsedUrlQuery {
   id: string
+  referralQuery: string
 }
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext<Fund>
 ): Promise<GetServerSidePropsResult<Props>> => {
+  const resolvedUrl = context.resolvedUrl as string | undefined
+  const referralQuery = '?' + resolvedUrl?.split('?')[1] ?? ''
+
   if (typeof context.params?.id === 'string') {
     return {
       props: {
-        id: context.params.id
+        id: context.params.id,
+        referralQuery
       }
     }
   } else {
