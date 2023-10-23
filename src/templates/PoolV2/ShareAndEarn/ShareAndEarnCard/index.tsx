@@ -6,7 +6,7 @@ import { useConnectWallet } from '@web3-onboard/react'
 import Button from '@/components/Button'
 import { ToastInfo } from '@/components/Toastify/toast'
 
-import { useReferralCommission } from '@/hooks/query/useReferralCommission'
+import { useReferralEncrypt } from '@/hooks/query/useReferralEncrypt'
 
 import {
   FacebookShareButton,
@@ -18,36 +18,26 @@ import {
 import * as S from './styles'
 
 interface IShareAndEarnProps {
-  feeJoinBroker: string
   poolId: string
+  feeJoinBroker: string
 }
 
-const ShareAndEarnCard = ({ feeJoinBroker, poolId }: IShareAndEarnProps) => {
+const ShareAndEarnCard = ({ poolId, feeJoinBroker }: IShareAndEarnProps) => {
   const poolLink = `https://app.kassandra.finance/pool/${poolId}`
+  const refferralQuery = 'referral='
 
   const [referralLink, setReferralLink] = React.useState(poolLink)
 
   const [{ wallet, connecting }, conect] = useConnectWallet()
-  const { data } = useReferralCommission(wallet?.accounts[0].address)
-
-  // const handleDecryptFunction = async (code: string) => {
-  //   try {
-  //     const tt = encodeURIComponent(code)
-  //     const response = await fetch(`/api/referral/decrypt/${tt}`)
-
-  //     const data = await response.json()
-  //     console.log('decrypt', data)
-  //   } catch (error) {
-  //     console.log('erro decrypt', error)
-  //   }
-  // }
+  const { data } = useReferralEncrypt(wallet?.accounts[0].address)
 
   React.useEffect(() => {
-    if (!data) return
+    if (!data?.hash || parseFloat(feeJoinBroker) <= 0) return
 
-    // handleDecryptFunction(data.hash)
     setReferralLink(
-      `${poolLink}?tab=overview&referral=${encodeURIComponent(data.hash)}`
+      `${poolLink}?tab=overview&${refferralQuery}${encodeURIComponent(
+        data.hash
+      )}`
     )
   }, [data])
 
@@ -81,9 +71,10 @@ const ShareAndEarnCard = ({ feeJoinBroker, poolId }: IShareAndEarnProps) => {
           <S.ShareLinkTitle>Share your referral link</S.ShareLinkTitle>
 
           <S.ShareLinkWrapper>
-            {/* <Input /> */}
             <S.ShareLink
-              showCommissionUrl={!!wallet && referralLink.includes('referral=')}
+              showCommissionUrl={
+                !!wallet && referralLink.includes(refferralQuery)
+              }
             >
               <span>{referralLink}</span>
               {wallet ? (
@@ -93,9 +84,7 @@ const ShareAndEarnCard = ({ feeJoinBroker, poolId }: IShareAndEarnProps) => {
                     size="medium"
                     text="Copy"
                     background="secondary"
-                    onClick={() => {
-                      ToastInfo('link copied')
-                    }}
+                    onClick={() => ToastInfo('link copied')}
                   />
                 </CopyToClipboard>
               ) : (
@@ -116,9 +105,7 @@ const ShareAndEarnCard = ({ feeJoinBroker, poolId }: IShareAndEarnProps) => {
                     className="medium-button"
                     size="medium"
                     text="Copy"
-                    onClick={() => {
-                      ToastInfo('link copied')
-                    }}
+                    onClick={() => ToastInfo('link copied')}
                     background="secondary"
                     fullWidth
                   />
@@ -139,8 +126,7 @@ const ShareAndEarnCard = ({ feeJoinBroker, poolId }: IShareAndEarnProps) => {
 
         <S.SocialMediaContainer>
           <TwitterShareButton
-            disabled={!wallet && !referralLink.includes('referral=')}
-            onClick={() => console.log('')}
+            disabled={!wallet && !referralLink.includes(refferralQuery)}
             title="Image of your stats on Kassandra Foundation"
             url={referralLink}
           >
@@ -153,8 +139,7 @@ const ShareAndEarnCard = ({ feeJoinBroker, poolId }: IShareAndEarnProps) => {
             </S.SocialMedia>
           </TwitterShareButton>
           <LinkedinShareButton
-            disabled={!wallet && !referralLink.includes('referral=')}
-            onClick={() => console.log('')}
+            disabled={!wallet && !referralLink.includes(refferralQuery)}
             url={referralLink}
           >
             <S.SocialMedia>
@@ -166,8 +151,7 @@ const ShareAndEarnCard = ({ feeJoinBroker, poolId }: IShareAndEarnProps) => {
             </S.SocialMedia>
           </LinkedinShareButton>
           <RedditShareButton
-            disabled={!wallet && !referralLink.includes('referral=')}
-            onClick={() => console.log('')}
+            disabled={!wallet && !referralLink.includes(refferralQuery)}
             url={referralLink}
           >
             <S.SocialMedia>
@@ -179,8 +163,7 @@ const ShareAndEarnCard = ({ feeJoinBroker, poolId }: IShareAndEarnProps) => {
             </S.SocialMedia>
           </RedditShareButton>
           <FacebookShareButton
-            disabled={!wallet && !referralLink.includes('referral=')}
-            onClick={() => console.log('')}
+            disabled={!wallet && !referralLink.includes(refferralQuery)}
             url={referralLink}
           >
             <S.SocialMedia>

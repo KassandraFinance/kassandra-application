@@ -10,7 +10,7 @@ import html2canvas from 'html2canvas'
 import { v4 } from 'uuid'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { useReferralCommission } from '@/hooks/query/useReferralCommission'
+import { useReferralEncrypt } from '@/hooks/query/useReferralEncrypt'
 
 import * as S from './styles'
 
@@ -37,7 +37,7 @@ const ShareImageModal = ({
 
   const [{ wallet }] = useConnectWallet()
 
-  const { data } = useReferralCommission(wallet?.accounts[0].address)
+  const { data } = useReferralEncrypt(wallet?.accounts[0].address)
 
   async function handleDownloadImage() {
     const element = printRef.current
@@ -68,7 +68,7 @@ const ShareImageModal = ({
   }
 
   React.useEffect(() => {
-    if (!data) return
+    if (!data?.hash) return
 
     setUrl(
       `https://app.kassandra.finance/shared/${v4()}-${poolId}?referral=${encodeURIComponent(

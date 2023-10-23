@@ -85,6 +85,10 @@ export const CardDescription = styled.p`
     font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.light};
     line-height: 1.8rem;
+
+    @media (max-width: 992px) {
+      max-width: 100%;
+    }
   `}
 `
 
@@ -117,9 +121,6 @@ export const ShareLink = styled.div<IShareLinkProps>`
     position: relative;
     padding: 1.8rem;
 
-    /* display: flex;
-    align-items: center;
-    justify-content: space-between; */
     display: grid;
     grid-template-columns: 1fr 16rem;
     align-items: center;
@@ -129,7 +130,6 @@ export const ShareLink = styled.div<IShareLinkProps>`
     background: rgba(252, 252, 252, 0.05);
 
     .small-button {
-      /* max-width: 16rem; */
       max-height: 3.8rem;
     }
 
@@ -220,24 +220,5 @@ export const SocialMedia = styled.div`
     min-width: 4rem;
 
     cursor: pointer;
-
-    &.last {
-      @media (max-width: 900px) {
-        display: none;
-      }
-    }
-
-    @media (max-width: 550px) {
-      min-width: 0;
-      max-width: 4.2rem;
-    }
-
-    @media (max-width: 500px) {
-      min-width: 0;
-      max-width: 5.6rem;
-    }
   `}
 `
-// export const ShareAndEarnContainer = styled.`
-//   ${() => css``}
-// `

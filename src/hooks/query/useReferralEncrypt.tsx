@@ -1,13 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 
 type IReferralProps = {
-  hash: string
+  hash: string | undefined
 }
 
-export const referralCommission = async (
+export const referralEncrypt = async (
   walletAddress: string | undefined
-): Promise<IReferralProps | undefined> => {
-  if (!walletAddress) return
+): Promise<IReferralProps> => {
+  if (!walletAddress) {
+    return Promise.resolve({
+      hash: undefined
+    })
+  }
 
   const res = await fetch(`/api/referral/encrypt/${walletAddress}`).then(res =>
     res.json()
@@ -16,10 +20,10 @@ export const referralCommission = async (
   return res
 }
 
-export const useReferralCommission = (walletAddress: string | undefined) => {
+export const useReferralEncrypt = (walletAddress: string | undefined) => {
   return useQuery({
     queryKey: ['referral-commission', walletAddress],
-    queryFn: async () => referralCommission(walletAddress),
+    queryFn: async () => referralEncrypt(walletAddress),
     staleTime: 1000 * 60 * 5,
     refetchInterval: 1000 * 60 * 5
   })
