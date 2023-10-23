@@ -84,16 +84,17 @@ const tabs = [
     svg: StakingIcon
   },
   {
-    asPathText: 'shareAndEarn',
-    text: 'Share and earn',
-    svg: ShareAndEarnIcon
-  },
-  {
     asPathText: 'faqs',
     text: 'FAQs',
     svg: FaqIcon
   }
 ]
+
+const shareAndEarnTab = {
+  asPathText: 'shareAndEarn',
+  text: 'Share and earn',
+  svg: ShareAndEarnIcon
+}
 
 const Pool = () => {
   const [isSelectTab, setIsSelectTab] = React.useState<
@@ -102,10 +103,21 @@ const Pool = () => {
 
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
-
   const { trackProductPageView } = useMatomoEcommerce()
-
   const dispatch = useAppDispatch()
+
+  const updatedTabs = handleCheckTabs(tabs)
+
+  function handleCheckTabs(tabsList: typeof tabs) {
+    if (parseFloat(pool?.fee_join_broker ?? '0') > 0 && tabs.length !== 6) {
+      const newTabsList = tabsList.slice()
+      newTabsList.splice(4, 0, shareAndEarnTab)
+
+      return newTabsList
+    } else {
+      return tabsList
+    }
+  }
 
   function handleClickStakeButton() {
     router.push(
@@ -232,9 +244,10 @@ const Pool = () => {
       <S.SelectTabsContainer>
         <SelectTabs
           isSelect={isSelectTab}
-          tabs={tabs}
+          tabs={updatedTabs}
           setIsSelect={setIsSelectTab}
         />
+
         {PoolComponents[isSelectTab?.toString() ?? '']}
       </S.SelectTabsContainer>
     </S.Pool>
