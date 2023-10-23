@@ -10,7 +10,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse) => {
 
   try {
     if (method === 'GET') {
-      const decodeHash = decodeURIComponent(_hash).toString()
+      const decodeHash = decodeURIComponent(_hash)
       const address = handleDecrypt(decodeHash, privateHash ?? '')
       return response.status(200).json({
         address

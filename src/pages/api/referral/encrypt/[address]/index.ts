@@ -17,7 +17,6 @@ const handler = async (request: NextApiRequest, response: NextApiResponse) => {
     }
 
     response.setHeader('Allow', ['GET', 'POST', 'PUT'])
-
     return response.status(405).end(`Method ${method} Not Allowed`)
   } catch (error) {
     return response.status(500).json(error)
