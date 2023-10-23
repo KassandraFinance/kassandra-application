@@ -6,6 +6,7 @@ import SelectTabs from '@/components/SelectTabs'
 import Breadcrumb from '@/components/Breadcrumb'
 import Contracts from './Contracts'
 import Hero from './Hero'
+import Allocations from './Allocations'
 import Faqs from './Faqs'
 import Staking from './Staking'
 import Overview from './Overview'
@@ -22,10 +23,11 @@ import Activity from './Activity'
 import {
   ContractsIcon,
   ActivityIcon,
-  FaqIcon,
-  StakingIcon,
   OverviewIcon,
-  ShareAndEarnIcon
+  ShareAndEarnIcon,
+  allocationsIcon,
+  FaqIcon,
+  StakingIcon
 } from './icons'
 
 import * as S from './styles'
@@ -69,9 +71,9 @@ const tabs = [
     svg: OverviewIcon
   },
   {
-    asPathText: 'contracts',
-    text: 'Contracts',
-    svg: ContractsIcon
+    asPathText: 'allocations',
+    text: 'Allocations',
+    svg: allocationsIcon
   },
   {
     asPathText: 'activity',
@@ -82,6 +84,11 @@ const tabs = [
     asPathText: 'staking',
     text: 'Staking',
     svg: StakingIcon
+  },
+  {
+    asPathText: 'contracts',
+    text: 'Contracts',
+    svg: ContractsIcon
   },
   {
     asPathText: 'faqs',
@@ -111,7 +118,7 @@ const Pool = () => {
   function handleCheckTabs(tabsList: typeof tabs) {
     if (parseFloat(pool?.fee_join_broker ?? '0') > 0 && tabs.length !== 6) {
       const newTabsList = tabsList.slice()
-      newTabsList.splice(4, 0, shareAndEarnTab)
+      newTabsList.splice(5, 0, shareAndEarnTab)
 
       return newTabsList
     } else {
@@ -136,16 +143,17 @@ const Pool = () => {
     overview: (
       <Overview pool={pool} handleClickStakeButton={handleClickStakeButton} />
     ),
-    contracts: <Contracts />,
-    staking: <Staking />,
-    faqs: <Faqs />,
+    allocations: <Allocations />,
     activity: <Activity />,
+    staking: <Staking />,
+    contracts: <Contracts />,
     shareAndEarn: (
       <ShareAndEarn
         feeJoinBroker={pool?.fee_join_broker ?? '0'}
         poolId={pool?.id ?? ''}
       />
-    )
+    ),
+    faqs: <Faqs />
   }
 
   async function getTokensForOperations() {
