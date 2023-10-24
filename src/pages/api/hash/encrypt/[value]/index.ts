@@ -2,23 +2,24 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { handleEncrypt } from '@/utils/hashOperation'
 
 const handler = async (request: NextApiRequest, response: NextApiResponse) => {
-  const { method } = request
-  const { value } = request.query
+  if (request.method !== 'GET') {
+    response.setHeader('Allow', ['GET'])
+    return response.status(405).end(`Method ${request.method} Not Allowed`)
+  }
 
-  const _value = Array.isArray(value) ? value[0] : value
   const privateSalt = process.env.REFERRAL_COMMISSION_PRIVATE_SALT ?? ''
+  const value = request.query.value
+
+  if (typeof value !== 'string') {
+    return response.status(400).json({ message: 'value must be a string' })
+  }
 
   try {
-    if (method === 'GET') {
-      const hash = handleEncrypt(_value, privateSalt)
+    const hash = handleEncrypt(value, privateSalt)
 
-      return response.status(200).json({
-        hash
-      })
-    }
-
-    response.setHeader('Allow', ['GET'])
-    return response.status(405).end(`Method ${method} Not Allowed`)
+    return response.status(200).json({
+      hash
+    })
   } catch (error) {
     return response.status(500).json(error)
   }
