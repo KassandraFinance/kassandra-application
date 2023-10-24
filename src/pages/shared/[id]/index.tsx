@@ -1,14 +1,12 @@
 import React from 'react'
 import Head from 'next/head'
-import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
-import { ParsedUrlQuery } from 'querystring'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
-type Props = {
-  id: string
-}
-
-const Page = ({ id }: Props) => {
-  const fund = id.split('-').pop()
+const Page = ({
+  id,
+  referralQuery
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const pool = id.split('-').pop()
 
   return (
     <>
@@ -25,7 +23,7 @@ const Page = ({ id }: Props) => {
         <meta property="og:type" content="website" />
         <meta
           property="og:url"
-          content={`https://app.kassandra.finance/pool/${id}`}
+          content={`https://app.kassandra.finance/pool/${id}${referralQuery}`}
         />
         <meta property="og:title" content="Kassandra - Decentralized Funds" />
         <meta
@@ -44,7 +42,7 @@ const Page = ({ id }: Props) => {
         <meta property="twitter:card" content="summary_large_image" />
         <meta
           property="twitter:url"
-          content={`https://app.kassandra.finance/pool/${id}`}
+          content={`https://app.kassandra.finance/pool/${id}${referralQuery}`}
         />
         <meta
           property="twitter:title"
@@ -63,7 +61,7 @@ const Page = ({ id }: Props) => {
         {/* Tag for redirecting of the page */}
         <meta
           httpEquiv="refresh"
-          content={`1; url = https://app.kassandra.finance/pool/${fund}`}
+          content={`1;url=https://app.kassandra.finance/pool/${pool}${referralQuery}`}
         />
       </Head>
       <div>
@@ -76,17 +74,22 @@ const Page = ({ id }: Props) => {
   )
 }
 
-interface Fund extends ParsedUrlQuery {
+type Props = {
   id: string
+  referralQuery: string
 }
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext<Fund>
-): Promise<GetServerSidePropsResult<Props>> => {
+export const getServerSideProps: GetServerSideProps<Props> = async context => {
+  let referralQuery = ''
+  if (typeof context.query.referral === 'string') {
+    referralQuery = '?referral=' + context.query.referral
+  }
+
   if (typeof context.params?.id === 'string') {
     return {
       props: {
-        id: context.params.id
+        id: context.params.id,
+        referralQuery
       }
     }
   } else {

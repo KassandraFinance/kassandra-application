@@ -159,6 +159,8 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
           {pool?.chain_id && (
             <StakeAndEarnCard
               handleClickStakeButton={handleClickStakeButton}
+              poolName={pool.name}
+              poolIcon={pool.logo ?? ''}
               poolId={pool?.pool_id ?? undefined}
               chainId={pool?.chain_id ?? 0}
               poolPrice={pool?.price_usd ?? '0'}

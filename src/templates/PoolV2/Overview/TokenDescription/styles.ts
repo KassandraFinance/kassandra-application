@@ -51,7 +51,7 @@ export const Text = styled.section<ITextProps>`
 
     p {
       display: inline-block;
-      margin-bottom: ${theme.spacings.space48};
+      margin-bottom: ${theme.spacings.space32};
 
       line-height: ${theme.font.sizes.font24};
       font-size: ${theme.font.sizes.font14};

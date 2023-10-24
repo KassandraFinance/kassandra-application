@@ -10,6 +10,7 @@ import Allocations from './Allocations'
 import Faqs from './Faqs'
 import Staking from './Staking'
 import Overview from './Overview'
+import ShareAndEarn from './ShareAndEarn'
 
 import { setTokensSwapProvider } from '@/store/reducers/tokenListSwapProvider'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
@@ -22,6 +23,8 @@ import Activity from './Activity'
 import {
   ContractsIcon,
   ActivityIcon,
+  OverviewIcon,
+  ShareAndEarnIcon,
   allocationsIcon,
   FaqIcon,
   StakingIcon
@@ -63,19 +66,14 @@ type Asset = {
 
 const tabs = [
   {
+    asPathText: 'overview',
+    text: 'Overview',
+    svg: OverviewIcon
+  },
+  {
     asPathText: 'allocations',
     text: 'Allocations',
     svg: allocationsIcon
-  },
-  {
-    asPathText: 'overview',
-    text: 'Overview',
-    svg: FaqIcon
-  },
-  {
-    asPathText: 'contracts',
-    text: 'Contracts',
-    svg: ContractsIcon
   },
   {
     asPathText: 'activity',
@@ -88,11 +86,22 @@ const tabs = [
     svg: StakingIcon
   },
   {
+    asPathText: 'contracts',
+    text: 'Contracts',
+    svg: ContractsIcon
+  },
+  {
     asPathText: 'faqs',
     text: 'FAQs',
     svg: FaqIcon
   }
 ]
+
+const shareAndEarnTab = {
+  asPathText: 'shareAndEarn',
+  text: 'Share and earn',
+  svg: ShareAndEarnIcon
+}
 
 const Pool = () => {
   const [isSelectTab, setIsSelectTab] = React.useState<
@@ -101,10 +110,21 @@ const Pool = () => {
 
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
-
   const { trackProductPageView } = useMatomoEcommerce()
-
   const dispatch = useAppDispatch()
+
+  const updatedTabs = handleCheckTabs(tabs)
+
+  function handleCheckTabs(tabsList: typeof tabs) {
+    if (parseFloat(pool?.fee_join_broker ?? '0') > 0 && tabs.length !== 6) {
+      const newTabsList = tabsList.slice()
+      newTabsList.splice(5, 0, shareAndEarnTab)
+
+      return newTabsList
+    } else {
+      return tabsList
+    }
+  }
 
   function handleClickStakeButton() {
     router.push(
@@ -127,6 +147,12 @@ const Pool = () => {
     activity: <Activity />,
     staking: <Staking />,
     contracts: <Contracts />,
+    shareAndEarn: (
+      <ShareAndEarn
+        feeJoinBroker={pool?.fee_join_broker ?? '0'}
+        poolId={pool?.id ?? ''}
+      />
+    ),
     faqs: <Faqs />
   }
 
@@ -226,9 +252,10 @@ const Pool = () => {
       <S.SelectTabsContainer>
         <SelectTabs
           isSelect={isSelectTab}
-          tabs={tabs}
+          tabs={updatedTabs}
           setIsSelect={setIsSelectTab}
         />
+
         {PoolComponents[isSelectTab?.toString() ?? '']}
       </S.SelectTabsContainer>
     </S.Pool>

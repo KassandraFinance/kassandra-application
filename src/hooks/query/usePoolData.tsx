@@ -31,6 +31,7 @@ export type IPoolDataProps =
       summary?: string | null
       short_summary?: string | null
       underlying_assets_addresses: Array<string>
+      fee_join_broker: string
       manager: {
         id: string
         nickname?: string | null

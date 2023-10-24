@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import Tippy from '@tippyjs/react'
 import Big from 'big.js'
+import Blockies from 'react-blockies'
 
 import { KacyPoligon, networks } from '@/constants/tokenAddresses'
 
@@ -19,6 +20,8 @@ interface IStakeAndEarnCardProps {
   poolPrice: string
   poolId?: number
   chainId: number
+  poolIcon: string
+  poolName: string
   handleClickStakeButton: () => void
 }
 
@@ -26,6 +29,8 @@ const StakeAndEarnCard = ({
   poolPrice,
   chainId,
   poolId,
+  poolIcon,
+  poolName,
   handleClickStakeButton
 }: IStakeAndEarnCardProps) => {
   const [aprValue, setAprValue] = React.useState<Big>(Big(0))
@@ -86,17 +91,29 @@ const StakeAndEarnCard = ({
 
         <S.ButtonWrapper>
           <Button
+            className="stake-button"
             size="medium"
             text="Stake"
             background="transparent"
             as="a"
             icon={
-              <img
-                src="/assets/logos/ahype.svg"
-                alt=""
-                width={16}
-                height={16}
-              />
+              poolIcon ? (
+                <Image
+                  src={poolIcon}
+                  alt="Explanation"
+                  width={16}
+                  height={16}
+                />
+              ) : (
+                <span>
+                  <Blockies
+                    className="poolIcon"
+                    seed={poolName}
+                    size={4}
+                    scale={4}
+                  />
+                </span>
+              )
             }
             onClick={handleClickStakeButton}
           />
