@@ -16,6 +16,7 @@ const Page = ({
   id,
   referralQuery
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const pool = id.split('-').pop()
 
   return (
     <>
@@ -70,7 +71,7 @@ const Page = ({
         {/* Tag for redirecting of the page */}
         <meta
           httpEquiv="refresh"
-          content={`1;url=https://app.kassandra.finance/pool/${fund}${referralQuery}`}
+          content={`1;url=https://app.kassandra.finance/pool/${pool}${referralQuery}`}
         />
       </Head>
       <div>
