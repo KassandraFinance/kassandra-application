@@ -92,8 +92,7 @@ const ShareImageModal = ({
           })
 
           const file = canvas.toDataURL('image/png')
-          const id = url.split('/').pop()
-          const _id = id?.split('?')[0]
+          const id = new URL(url).pathname.split('/').at(-1)
 
           fetch(`/api/funds/shared?id=${poolId}-${productName.toLowerCase()}`, {
             method: 'POST',
@@ -101,7 +100,7 @@ const ShareImageModal = ({
               Accept: 'application/json',
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ image: file, id: _id })
+            body: JSON.stringify({ image: file, id })
           }).then(response => response.json())
         }
       })()
