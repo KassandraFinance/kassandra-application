@@ -35,7 +35,7 @@ const Page = ({ id, referralQuery }: Props) => {
         />
         <meta
           property="og:image"
-          content={`https://app.kassandra.finance/api/funds/shared?id=${id}`} //
+          content={`https://app.kassandra.finance/api/funds/shared?id=${id}`}
         />
         <meta property="og:site_name" content="Kassandra" />
         <meta property="og:image:width" content="1000" />
