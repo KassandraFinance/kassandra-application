@@ -11,13 +11,14 @@ const handler = async (request: NextApiRequest, response: NextApiResponse) => {
   try {
     if (method === 'GET') {
       const decodeHash = decodeURIComponent(_hash)
-      const address = handleDecrypt(decodeHash, privateHash ?? '')
+      const value = handleDecrypt(decodeHash, privateSalt)
+
       return response.status(200).json({
-        address
+        value
       })
     }
 
-    response.setHeader('Allow', ['GET', 'POST', 'PUT'])
+    response.setHeader('Allow', ['GET'])
     return response.status(405).end(`Method ${method} Not Allowed`)
   } catch (error) {
     return response.status(500).json(error)

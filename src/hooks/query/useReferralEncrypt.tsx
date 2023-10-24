@@ -7,7 +7,7 @@ type IReferralProps = {
 export const referralEncrypt = async (
   walletAddress: string | undefined
 ): Promise<IReferralProps> => {
-  const res = await fetch(`/api/referral/encrypt/${walletAddress}`).then(res =>
+  const res = await fetch(`/api/hash/encrypt/${walletAddress}`).then(res =>
     res.json()
   )
 
