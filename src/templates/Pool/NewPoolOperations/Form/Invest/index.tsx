@@ -127,8 +127,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
   })
   const { data: referralData } = useReferralDecrypt({
-    hash: router.query.referral as string | undefined,
-    enabled: !!wallet && !!router.query.referral
+    enabled: !!wallet && !!router.query.referral,
+    hash:
+      typeof router.query.referral === 'string'
+        ? router.query.referral
+        : undefined
   })
 
   const chainId = Number(connectedChain?.id ?? '0x89')
@@ -406,8 +409,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
     let referrerAddress = ZeroAddress
     if (referralData) {
-      const checkWalletAddress = isAddress(referralData.value)
-      referrerAddress = checkWalletAddress ? referralData.value : ZeroAddress
+      referrerAddress = isAddress(referralData.value)
+        ? referralData.value
+        : ZeroAddress
     }
 
     try {
