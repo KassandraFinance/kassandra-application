@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react'
 import { useRouter } from 'next/router'
+import { animateScroll } from 'react-scroll'
 
 import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
 import SelectTabs from '@/components/SelectTabs'
@@ -116,7 +117,12 @@ const Pool = () => {
   const updatedTabs = handleCheckTabs(tabs)
 
   function handleCheckTabs(tabsList: typeof tabs) {
-    if (parseFloat(pool?.fee_join_broker ?? '0') > 0 && tabs.length !== 6) {
+    const totalTabs = 7
+
+    if (
+      parseFloat(pool?.fee_join_broker ?? '0') > 0 &&
+      tabsList.length !== totalTabs
+    ) {
       const newTabsList = tabsList.slice()
       newTabsList.splice(5, 0, shareAndEarnTab)
 
@@ -136,6 +142,7 @@ const Pool = () => {
       { scroll: false }
     )
 
+    animateScroll.scrollTo(320)
     setIsSelectTab('staking')
   }
 
