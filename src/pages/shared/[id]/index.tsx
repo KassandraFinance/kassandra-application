@@ -1,16 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
-import {
-  GetServerSidePropsContext,
-  GetServerSidePropsResult,
-  InferGetServerSidePropsType
-} from 'next'
-import { ParsedUrlQuery } from 'querystring'
-
-type Props = {
-  id: string
-  referralQuery: string
-}
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 const Page = ({
   id,
@@ -84,16 +74,16 @@ const Page = ({
   )
 }
 
-interface Pool extends ParsedUrlQuery {
+type Props = {
   id: string
   referralQuery: string
 }
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext<Pool>
-): Promise<GetServerSidePropsResult<Props>> => {
-  const resolvedUrl = context.resolvedUrl as string | undefined
-  const referralQuery = '?' + resolvedUrl?.split('?')[1] ?? ''
+export const getServerSideProps: GetServerSideProps<Props> = async context => {
+  let referralQuery = ''
+  if (typeof context.query.referral === 'string') {
+    referralQuery = '?referral=' + context.query.referral
+  }
 
   if (typeof context.params?.id === 'string') {
     return {
