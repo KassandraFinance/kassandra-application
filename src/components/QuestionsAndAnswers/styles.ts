@@ -4,24 +4,10 @@ export const QuestionsAndAnswers = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
+    gap: 1.6rem;
 
-    background-color: rgba(252, 252, 252, 0.03);
+    background-color: transparent;
     border-radius: 8px;
-
-    ${Questions} {
-      :first-child {
-        ${Summary} {
-          border-top-right-radius: 8px;
-          border-top-left-radius: 8px;
-        }
-      }
-      :last-child {
-        ${Summary} {
-          border-bottom-right-radius: 8px;
-          border-bottom-left-radius: 8px;
-        }
-      }
-    }
 
     details[open] {
       ${PlusIcon} {
@@ -39,6 +25,9 @@ export const QuestionsAndAnswers = styled.div`
 export const Questions = styled.details`
   ${() => css`
     display: flex;
+
+    border-radius: 8px;
+    background-color: rgba(252, 252, 252, 0.03);
   `}
 `
 
@@ -52,6 +41,7 @@ export const Summary = styled.summary`
     padding: 2rem 3.2rem;
 
     background-color: rgba(252, 252, 252, 0.05);
+    border-radius: 8px;
 
     font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.medium};
