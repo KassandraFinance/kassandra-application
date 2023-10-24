@@ -6,7 +6,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse) => {
   const { hash } = request.query
 
   const _hash = Array.isArray(hash) ? hash[0] : hash
-  const privateHash = process.env.REFERRAL_COMMISSION_PRIVATE_HASH
+  const privateSalt = process.env.REFERRAL_COMMISSION_PRIVATE_SALT ?? ''
 
   try {
     if (method === 'GET') {
