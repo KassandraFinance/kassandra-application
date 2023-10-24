@@ -4,9 +4,6 @@ export const ShareAndEarnCard = styled.div`
   ${() => css`
     position: relative;
 
-    /* display: flex;
-    align-items: center;
-    justify-content: space-between; */
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 3.2rem;
@@ -44,7 +41,7 @@ export const ShareAndEarnCard = styled.div`
   `}
 `
 
-export const ShareAndEarnContainer = styled.div`
+export const ShareAndEarnCardContainer = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;

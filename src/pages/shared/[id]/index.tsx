@@ -1,6 +1,10 @@
 import React from 'react'
 import Head from 'next/head'
-import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
+import {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+  InferGetServerSidePropsType
+} from 'next'
 import { ParsedUrlQuery } from 'querystring'
 
 type Props = {
@@ -8,8 +12,10 @@ type Props = {
   referralQuery: string
 }
 
-const Page = ({ id, referralQuery }: Props) => {
-  const fund = id.split('-').pop()
+const Page = ({
+  id,
+  referralQuery
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
   return (
     <>
@@ -77,13 +83,13 @@ const Page = ({ id, referralQuery }: Props) => {
   )
 }
 
-interface Fund extends ParsedUrlQuery {
+interface Pool extends ParsedUrlQuery {
   id: string
   referralQuery: string
 }
 
 export const getServerSideProps = async (
-  context: GetServerSidePropsContext<Fund>
+  context: GetServerSidePropsContext<Pool>
 ): Promise<GetServerSidePropsResult<Props>> => {
   const resolvedUrl = context.resolvedUrl as string | undefined
   const referralQuery = '?' + resolvedUrl?.split('?')[1] ?? ''

@@ -17,12 +17,15 @@ import {
 
 import * as S from './styles'
 
-interface IShareAndEarnProps {
+interface IShareAndEarnCardProps {
   poolId: string
   feeJoinBroker: string
 }
 
-const ShareAndEarnCard = ({ poolId, feeJoinBroker }: IShareAndEarnProps) => {
+const ShareAndEarnCard = ({
+  poolId,
+  feeJoinBroker
+}: IShareAndEarnCardProps) => {
   const poolLink = `https://app.kassandra.finance/pool/${poolId}`
   const refferralQuery = 'referral='
 
@@ -43,7 +46,7 @@ const ShareAndEarnCard = ({ poolId, feeJoinBroker }: IShareAndEarnProps) => {
 
   return (
     <S.ShareAndEarnCard>
-      <S.ShareAndEarnContainer>
+      <S.ShareAndEarnCardContainer>
         <S.CardHeader>
           <img
             src="/assets/iconGradient/products-gift.svg"
@@ -64,7 +67,7 @@ const ShareAndEarnCard = ({ poolId, feeJoinBroker }: IShareAndEarnProps) => {
           link. It&apos;s a simple and lucrative opportunity to boost your
           income. Start earning extra money today!
         </S.CardDescription>
-      </S.ShareAndEarnContainer>
+      </S.ShareAndEarnCardContainer>
 
       <S.ShareLinkContainer>
         <S.ShareLinkContent>
