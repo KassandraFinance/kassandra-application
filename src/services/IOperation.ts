@@ -83,6 +83,7 @@ export type JoinSwapAmountInParams = {
   tokenAmountIn: string
   minPoolAmountOut: string
   userWalletAddress: string
+  referrerAddress: string
   data: any
   hasTokenInPool: boolean
   slippage: string

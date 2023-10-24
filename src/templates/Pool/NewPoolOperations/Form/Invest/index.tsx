@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Big from 'big.js'
 import Tippy from '@tippyjs/react'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
+import { ZeroAddress, isAddress } from 'ethers'
 
 import { usePoolInfo } from '@/hooks/query/usePoolInfo'
 import {
@@ -10,6 +11,7 @@ import {
   networks
 } from '../../../../../constants/tokenAddresses'
 import { usePoolData } from '@/hooks/query/usePoolData'
+import { useReferralDecrypt } from '@/hooks/query/useReferralDecrypt'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -120,6 +122,14 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const { txNotification, transactionErrors } = useTransaction()
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router?.query.address as string })
+  const { data } = usePoolInfo({
+    id: pool?.id || '',
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
+  })
+  const { data: referralData } = useReferralDecrypt({
+    hash: router.query.referral as string | undefined,
+    enabled: !!wallet && !!router.query.referral
+  })
 
   const chainId = Number(connectedChain?.id ?? '0x89')
 
@@ -128,11 +138,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const dispatch = useAppDispatch()
 
   const { trackBuying, trackBought, trackCancelBuying } = useMatomoEcommerce()
-
-  const { data } = usePoolInfo({
-    id: pool?.id || '',
-    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
-  })
 
   const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
 
@@ -399,6 +404,12 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       Big(slippageVal.replace('.', ''))
     )
 
+    let referrerAddress = ZeroAddress
+    if (referralData) {
+      const checkWalletAddress = isAddress(referralData.value)
+      referrerAddress = checkWalletAddress ? referralData.value : ZeroAddress
+    }
+
     try {
       if (
         approvals[typeAction][0] === 0 &&
@@ -448,6 +459,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
             .div(slippageExpInBig)
             .toFixed(0),
           userWalletAddress: wallet.accounts[0].address,
+          referrerAddress,
           data: trasactionData,
           hasTokenInPool: !!checkTokenInThePool(
             pool?.underlying_assets || [],
