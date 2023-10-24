@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-type IReferraldecryptReturn = {
+type IReferralDecryptReturn = {
   value: string
 }
 
@@ -11,7 +11,7 @@ type IReferralDecryptProps = {
 
 export const referralDecrypt = async (
   hash: string | undefined
-): Promise<IReferraldecryptReturn> => {
+): Promise<IReferralDecryptReturn> => {
   const res = await fetch(`/api/hash/decrypt/${hash}`).then(res => res.json())
 
   return res
