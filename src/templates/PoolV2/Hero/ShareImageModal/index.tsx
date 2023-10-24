@@ -63,7 +63,7 @@ const ShareImageModal = ({
     }
   }
 
-  async function handleShareClick() {
+  function handleShareClick() {
     setOpenModal(false)
   }
 
