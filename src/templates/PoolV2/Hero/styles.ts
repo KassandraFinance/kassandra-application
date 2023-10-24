@@ -21,7 +21,6 @@ export const TitleConteiner = styled.div`
   ${() => css`
     display: flex;
     gap: 3.2rem;
-    justify-content: space-between;
     align-items: center;
 
     @media (max-width: 576px) {
