@@ -100,7 +100,7 @@ const Hero = () => {
               }}
               className="circle"
             >
-              <Image src="/assets/icons/share.svg" width={32} height={32} />
+              <Image src="/assets/icons/share.svg" width={36} height={36} />
             </S.SharedButton>
           </S.TitleConteiner>
           <S.SubTitleConteiner>

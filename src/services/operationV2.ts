@@ -188,6 +188,7 @@ export default class operationV2 implements IOperations {
     tokenAmountIn,
     minPoolAmountOut,
     userWalletAddress,
+    referrerAddress,
     data,
     slippage
   }: JoinSwapAmountInParams) {
@@ -210,7 +211,7 @@ export default class operationV2 implements IOperations {
     const res = await this.contract.joinPoolExactTokenInWithSwap(
       {
         recipient: userWalletAddress,
-        referrer: this.referral,
+        referrer: referrerAddress,
         controller: this.poolInfo.controller,
         tokenIn,
         tokenAmountIn: tokenAmountIn,
