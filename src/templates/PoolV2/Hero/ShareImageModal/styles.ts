@@ -1,3 +1,4 @@
+import { WarningCard } from '@/components/WarningCard/styles'
 import styled from 'styled-components'
 
 export const Backdrop = styled.div`
@@ -116,6 +117,16 @@ export const SocialMedia = styled.div`
 `
 
 export const ImageContainer = styled.div`
+  ${WarningCard} {
+    min-height: auto;
+    max-width: 100%;
+    margin-bottom: 3.2rem;
+
+    border-radius: 8px;
+    border: 1px solid rgba(252, 252, 252, 0.15);
+    background: rgba(252, 252, 252, 0.05);
+  }
+
   ::-webkit-scrollbar {
     width: 0.8rem;
   }
