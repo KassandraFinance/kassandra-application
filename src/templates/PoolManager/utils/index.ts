@@ -139,21 +139,21 @@ export function getManagerActivity(
   }
 ): Array<ActivityCardProps> {
   const activityInfo: ActivityCardProps[] = []
+
   for (const [i, activity] of weightGoals.entries()) {
     if (activity.type === 'rebalance' && filters[activity.type]) {
       activityInfo.push({
         key: activity.id,
         actionType: activityProps[activity.type],
-        activityInfo: [],
         date: new Date(activity.end_timestamp * 1000),
         txHash: activity.txHash,
         wallet: userWalletAddress
       })
 
       const indexOfActivityInfo = activityInfo.length - 1
+      const rebalanceData = []
       for (const [_i, operation] of activity.weights.entries()) {
-        activityInfo[indexOfActivityInfo].activityInfo.push({
-          amount: '0',
+        rebalanceData.push({
           logo: operation.asset.token.logo ?? '',
           newWeight: Big(operation.weight_normalized).mul(100).toFixed(2),
           symbol: operation.asset.token?.symbol || '',
@@ -161,21 +161,23 @@ export function getManagerActivity(
             weightGoals[i].previous?.weights[_i].weight_normalized || 0
           )
             .mul(100)
-            .toFixed(2),
-          value: '0'
+            .toFixed(2)
         })
+      }
+
+      activityInfo[indexOfActivityInfo].rebalancePoolData = {
+        rebalanceData
       }
     } else {
       if (filters[activity.type] && weightGoals[i]) {
         activityInfo.push({
           key: activity.id,
           actionType: activityProps[activity.type],
-          activityInfo: [],
-          newBalancePool: [],
           date: new Date(activity.end_timestamp * 1000),
           txHash: activity.txHash,
           wallet: userWalletAddress
         })
+
         const indexOfActivityInfo = activityInfo.length - 1
         const symbol = activity.token?.symbol || ''
         let weightNormalized = '0'
@@ -194,10 +196,10 @@ export function getManagerActivity(
           }
         }
 
+        const rebalanceData = []
         for (const operation of activity.weights) {
           if (operation.asset.token.symbol !== symbol) {
-            activityInfo[indexOfActivityInfo].newBalancePool?.push({
-              amount: '0',
+            rebalanceData.push({
               logo: operation.asset.token.logo ?? '',
               newWeight: Big(operation.weight_normalized).mul(100).toFixed(2),
               symbol: operation.asset.token?.symbol || '',
@@ -208,20 +210,22 @@ export function getManagerActivity(
                 )?.weight_normalized ?? 0
               )
                 .mul(100)
-                .toFixed(2),
-              value: '0'
+                .toFixed(2)
             })
           }
         }
 
-        activityInfo[indexOfActivityInfo].activityInfo.push({
-          amount: '0',
+        const assetChange = {
           logo: activity.token?.logo ?? '',
           symbol,
-          value: '0',
-          newWeight: Big(newWeight).mul(100).toFixed(2),
-          weight: Big(weightNormalized).mul(100).toFixed(2)
-        })
+          weight: Big(weightNormalized).mul(100).toFixed(2),
+          newWeight: Big(newWeight).mul(100).toFixed(2)
+        }
+
+        activityInfo[indexOfActivityInfo].rebalancePoolData = {
+          assetChange,
+          rebalanceData
+        }
       }
     }
   }
