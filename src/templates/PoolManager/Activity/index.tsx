@@ -1,14 +1,13 @@
 import React from 'react'
 import router from 'next/router'
 import Image from 'next/image'
-import { useConnectWallet } from '@web3-onboard/react'
 import Big from 'big.js'
 
 import { getActivityInfo, getManagerActivity } from '../utils'
 import { useManagerPoolActivities } from '@/hooks/query/useManagerPoolActivities'
 
 import Loading from '@/components/Loading'
-import ActivityCard, { actionsType, ActivityInfo } from '../ActivityCard'
+import ActivityCard, { actionsType } from '../ActivityCard'
 import Filters, { OptionsFilter } from './Filters'
 
 import * as S from './styles'
@@ -18,7 +17,8 @@ export const activityProps: Record<string, actionsType> = {
   exit: actionsType.WITHDRAWAL,
   add: actionsType.ADDITION,
   removed: actionsType.REMOVAL,
-  rebalance: actionsType.REBALANCE
+  rebalance: actionsType.REBALANCE,
+  swap: actionsType.SWAP
 }
 
 const options: OptionsFilter[] = [
@@ -113,18 +113,32 @@ export type Result = {
   }
 }
 
-export type ActivityCardProps = {
+export type ITransactionDataProps = {
+  amount: string
+  sharesPrice: string
+  sharesValue: string
+}
+
+export type IRebalanceDataProps = {
+  logo: string
+  symbol: string
+  weight: string
+  newWeight: string
+}
+
+export type IRebalancePoolDataProps = {
+  assetChange?: IRebalanceDataProps
+  rebalanceData: IRebalanceDataProps[]
+}
+
+export interface ActivityCardProps {
   key: string
   actionType: actionsType
   date: Date
   wallet: string
   txHash: string
-  activityInfo: ActivityInfo[]
-  newBalancePool?: ActivityInfo[]
-  sharesRedeemed?: {
-    amount: string
-    value: string
-  }
+  transactionData?: ITransactionDataProps
+  rebalancePoolData?: IRebalancePoolDataProps
 }
 
 Big.RM = 2
@@ -133,8 +147,6 @@ const Activity = () => {
   const [optionsSelected, setOptionsSelected] = React.useState<Array<string>>(
     []
   )
-
-  const [{ wallet }] = useConnectWallet()
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -169,7 +181,8 @@ const Activity = () => {
   }
 
   const activityHistory = React.useMemo((): ActivityCardProps[] => {
-    if (!data?.pages.length || !wallet) return []
+    if (!data?.pages.length) return []
+
     let filters: Record<string, boolean> = {
       join: false,
       exit: false,
@@ -177,10 +190,7 @@ const Activity = () => {
       add: false,
       removed: false
     }
-    if (
-      optionsSelected.length === options.length ||
-      optionsSelected.length === 0
-    ) {
+    if (optionsSelected.length === 0) {
       filters = {
         join: true,
         exit: true,
@@ -213,7 +223,7 @@ const Activity = () => {
     )
     const managerActivities = getManagerActivity(
       weights,
-      wallet.accounts[0].address,
+      data.pages[0]?.manager.id || '',
       filters
     )
     const activities = [...activitiesInvestors, ...managerActivities]
@@ -231,20 +241,19 @@ const Activity = () => {
               .map(activity => (
                 <ActivityCard
                   key={activity.key}
-                  actionType={activity.actionType}
                   date={activity.date}
-                  scan={data.pages[0]?.chain?.block_explorer_url || ''}
                   wallet={activity.wallet}
                   txHash={activity.txHash}
-                  activityInfo={activity.activityInfo}
+                  actionType={activity.actionType}
+                  transactionData={activity.transactionData}
+                  rebalancePoolData={activity.rebalancePoolData}
+                  managerAddress={data.pages[0]?.manager.id ?? ''}
+                  scan={data.pages[0]?.chain?.block_explorer_url || ''}
                   pool={{
                     name: data.pages[0]?.name || '',
                     symbol: data.pages[0]?.symbol || '',
                     logo: data.pages[0]?.logo || ''
                   }}
-                  sharesRedeemed={activity.sharesRedeemed}
-                  newBalancePool={activity.newBalancePool}
-                  managerAddress={data.pages[0]?.manager.id ?? ''}
                 />
               ))}
             {isFetchingNextPage && <Loading marginTop={0} />}
