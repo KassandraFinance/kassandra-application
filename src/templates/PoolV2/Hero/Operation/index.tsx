@@ -45,7 +45,7 @@ const Operation = ({ handleClickStakeButton }: IOperationProps) => {
         <p>Stake</p>
         <img
           src="/assets/iconGradient/lightning.svg"
-          alt=""
+          alt="Lightning Icon"
           width={16}
           height={16}
         />
