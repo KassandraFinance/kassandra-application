@@ -375,7 +375,7 @@ const Profile = () => {
       <Breadcrumb>
         <BreadcrumbItem href="/">Invest</BreadcrumbItem>
         <BreadcrumbItem
-          href={`/profile/${wallet?.accounts[0].address}`}
+          href={wallet ? `/profile/${wallet?.accounts[0].address}` : '/'}
           isLastPage={
             wallet?.accounts[0].address === walletUserString.toLowerCase()
           }

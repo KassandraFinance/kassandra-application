@@ -34,7 +34,11 @@ const chainStyle: Record<string, { network: string; color: string }> = {
   }
 }
 
-const Hero = () => {
+interface IHeroProps {
+  handleClickStakeButton: (scrollToValue: number) => void
+}
+
+const Hero = ({ handleClickStakeButton }: IHeroProps) => {
   const [openModal, setOpenModal] = React.useState(false)
 
   const router = useRouter()
@@ -132,7 +136,7 @@ const Hero = () => {
             decimals={pool.decimals}
             pid={pool.pool_id ?? undefined}
           />
-          <Operation />
+          <Operation handleClickStakeButton={handleClickStakeButton} />
         </>
       ) : (
         <Loading marginTop={0} />
