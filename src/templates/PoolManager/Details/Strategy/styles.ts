@@ -176,3 +176,9 @@ export const ButtonContainer = styled.div`
     gap: 1.6rem;
   `}
 `
+
+export const InputCountWrapper = styled.div`
+  ${() => css`
+    margin-bottom: 2.4rem;
+  `}
+`
