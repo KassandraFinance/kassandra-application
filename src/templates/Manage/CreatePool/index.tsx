@@ -507,6 +507,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   async function sendPoolData(
     controller: string,
     logo: string,
+    shortSummary: string,
     summary: string,
     chainId: number
   ) {
@@ -522,6 +523,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       const body = {
         controller,
         logo: logo ? logo : undefined,
+        shortSummary,
         summary,
         chainId,
         signature
@@ -794,6 +796,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         await sendPoolData(
           response.poolController,
           poolData.icon?.image_preview || '',
+          poolData.shortSummary || '',
           poolData.strategy || '',
           poolData.networkId || 137
         )
