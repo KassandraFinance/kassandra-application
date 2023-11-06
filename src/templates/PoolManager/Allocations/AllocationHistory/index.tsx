@@ -30,9 +30,17 @@ export type IPoolInfo = {
 }
 
 type ITransactionDataProps = {
-  amount: string
   sharesPrice: string
-  sharesValue: string
+  tokenIn: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
+  tokenOut: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
 }
 
 type IRebalanceDataProps = {
@@ -99,7 +107,6 @@ const AllocationHistory = ({ poolInfo }: IAllocationHistoryProps) => {
               txHash={allocation.txHash}
               scan={poolInfo.blockExplorerUrl}
               actionType={allocation.actionType}
-              managerAddress={data?.manager?.id ?? ''}
               transactionData={allocation.transactionData}
               rebalancePoolData={allocation.rebalancePoolData}
             />
