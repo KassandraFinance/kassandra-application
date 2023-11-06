@@ -61,7 +61,7 @@ const ManagedFunds = () => {
     <S.ManagedFunds>
       {managerPools && managerPools.length > 0 ? (
         <S.ManagedPoolsContainer>
-          {managerPools?.map(pool => (
+          {managerPools.map(pool => (
             <FundCard
               key={pool.id}
               poolAddress={pool.id}
