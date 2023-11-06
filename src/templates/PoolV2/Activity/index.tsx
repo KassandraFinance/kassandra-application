@@ -16,25 +16,7 @@ import { ActivityCardProps } from '@/templates/PoolManager/Activity'
 
 import * as S from './styles'
 
-// type ITypesProps = {
-//   key: string
-//   date: Date
-//   txHash: string
-//   wallet: string
-//   transactionData: {
-//     tokenIn: {
-//       logo: string
-//       amount: string
-//       value: string
-//     }
-//     tokenOut: {
-//       logo: string
-//       amount: string
-//       value: string
-//     }
-//   }
-// }
-
+const initialFilterOptions = ['join', 'exit', 'rebalance', 'add', 'removed']
 const options = [
   {
     name: 'Deposits',
@@ -76,7 +58,8 @@ type Activity = {
 
 const first = 10
 const Activity = () => {
-  const [optionsSelected, setOptionsSelected] = React.useState<string[]>([])
+  const [optionsSelected, setOptionsSelected] =
+    React.useState<string[]>(initialFilterOptions)
 
   const [isOpenFilter, setIsOpenFilter] = React.useState(false)
 
@@ -87,10 +70,7 @@ const Activity = () => {
   const { data, fetchNextPage, isFetchingNextPage } = useManagerPoolActivities({
     id: poolId,
     first,
-    options:
-      optionsSelected.length > 0
-        ? optionsSelected
-        : options.map(option => option.key)
+    options: optionsSelected.length > 0 ? optionsSelected : initialFilterOptions
   })
 
   const isEnd =
@@ -202,7 +182,6 @@ const Activity = () => {
                 actionType={activity.actionType}
                 transactionData={activity.transactionData}
                 rebalancePoolData={activity.rebalancePoolData}
-                managerAddress={data.pages[0]?.manager.id ?? ''}
                 scan={data.pages[0]?.chain?.block_explorer_url || ''}
                 pool={{
                   name: data.pages[0]?.name || '',
