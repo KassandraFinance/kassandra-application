@@ -3,24 +3,24 @@ import UserInfo from '../UserInfo'
 import * as S from './styles'
 
 type ISwapInfoProps = {
-  in: {
-    logo: string
-    amount: string
-    value: string
+  tokenIn: {
+    logo?: string
+    amount?: string
+    value?: string
   }
-  out: {
-    logo: string
-    amount: string
-    value: string
+  tokenOut: {
+    logo?: string
+    amount?: string
+    value?: string
   }
 }
 
 interface ISwapProps {
   walletAddress: string
-  swapInfo: ISwapInfoProps
+  transactionData?: ISwapInfoProps
 }
 
-const Swap = ({ walletAddress, swapInfo }: ISwapProps) => {
+const Swap = ({ walletAddress, transactionData }: ISwapProps) => {
   return (
     <S.Swap>
       <S.SwapContent>
@@ -30,20 +30,12 @@ const Swap = ({ walletAddress, swapInfo }: ISwapProps) => {
 
       <S.SwapContent>
         <p>in</p>
-        <TokenInfo
-          logo={swapInfo.in.logo}
-          value={swapInfo.in.value}
-          amount={swapInfo.in.amount}
-        />
+        <TokenInfo tokenData={transactionData?.tokenIn} />
       </S.SwapContent>
 
       <S.SwapContent>
         <p>out</p>
-        <TokenInfo
-          logo={swapInfo.in.logo}
-          value={swapInfo.in.value}
-          amount={swapInfo.in.amount}
-        />
+        <TokenInfo tokenData={transactionData?.tokenOut} />
       </S.SwapContent>
     </S.Swap>
   )

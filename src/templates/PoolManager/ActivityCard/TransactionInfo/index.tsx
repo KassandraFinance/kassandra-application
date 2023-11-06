@@ -6,9 +6,17 @@ import TokenInfo from '../TokenInfo'
 import * as S from './styles'
 
 type ITransactionDetailsProps = {
-  amount: string
-  sharesPrice?: string
-  sharesValue?: string
+  sharesPrice: string
+  tokenIn: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
+  tokenOut: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
 }
 
 interface ITransactionInfoProps {
@@ -37,16 +45,12 @@ const TransactionInfo = ({
         <>
           <S.TransactionInfoContent>
             <S.text>AMOUNT</S.text>
-            <TokenInfo
-              value="1.2"
-              amount="3.0001"
-              logo="https://tokens.1inch.io/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png"
-            />
+            <TokenInfo tokenData={transactionDetails?.tokenIn} />
           </S.TransactionInfoContent>
           <S.TransactionInfoContent>
             <S.text>received value</S.text>
             <S.text2>
-              {transactionDetails?.sharesValue ?? '0'} {poolSymbol}
+              {transactionDetails?.tokenOut.amount} {poolSymbol}
             </S.text2>
           </S.TransactionInfoContent>
         </>
@@ -55,23 +59,19 @@ const TransactionInfo = ({
           <S.TransactionInfoContent>
             <S.text>sended value</S.text>
             <S.text2>
-              {transactionDetails?.sharesValue ?? '0'} {poolSymbol}
+              {transactionDetails?.tokenIn.amount} {poolSymbol}
             </S.text2>
           </S.TransactionInfoContent>
           <S.TransactionInfoContent>
             <S.text>AMOUNT</S.text>
-            <TokenInfo
-              value="1.2"
-              amount="3.0001"
-              logo="https://tokens.1inch.io/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png"
-            />
+            <TokenInfo tokenData={transactionDetails?.tokenOut} />
           </S.TransactionInfoContent>
         </>
       )}
 
       <S.TransactionInfoContent>
-        <S.text>sHARES Price</S.text>
-        <S.text2>${transactionDetails?.sharesPrice ?? '0'}</S.text2>
+        <S.text>SHARES Price</S.text>
+        <S.text2>${transactionDetails?.sharesPrice ?? 0}</S.text2>
       </S.TransactionInfoContent>
     </S.TransactionInfo>
   )
