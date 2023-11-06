@@ -114,9 +114,17 @@ export type Result = {
 }
 
 export type ITransactionDataProps = {
-  amount: string
   sharesPrice: string
-  sharesValue: string
+  tokenIn: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
+  tokenOut: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
 }
 
 export type IRebalanceDataProps = {
@@ -247,7 +255,6 @@ const Activity = () => {
                   actionType={activity.actionType}
                   transactionData={activity.transactionData}
                   rebalancePoolData={activity.rebalancePoolData}
-                  managerAddress={data.pages[0]?.manager.id ?? ''}
                   scan={data.pages[0]?.chain?.block_explorer_url || ''}
                   pool={{
                     name: data.pages[0]?.name || '',

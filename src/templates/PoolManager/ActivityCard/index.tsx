@@ -19,9 +19,17 @@ export type ActivityInfo = {
 }
 
 type ITransactionDataProps = {
-  amount: string
   sharesPrice: string
-  sharesValue: string
+  tokenIn: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
+  tokenOut: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
 }
 
 type IRebalanceDataProps = {
@@ -42,7 +50,6 @@ export interface IActivityCardProps {
   scan: string
   wallet: string
   txHash: string
-  managerAddress: string
   transactionData?: ITransactionDataProps
   rebalancePoolData?: IRebalancePoolDataProps
   pool: {
@@ -109,7 +116,6 @@ const ActivityCard = ({
   wallet,
   pool,
   txHash,
-  managerAddress,
   rebalancePoolData,
   transactionData
 }: IActivityCardProps) => {
@@ -150,21 +156,7 @@ const ActivityCard = ({
       />
     ),
     [actionsType.SWAP]: (
-      <Swap
-        swapInfo={{
-          in: {
-            amount: '21.20',
-            logo: 'https://tokens.1inch.io/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png',
-            value: '53.24'
-          },
-          out: {
-            amount: '11.23',
-            logo: 'https://tokens.1inch.io/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png',
-            value: '71.20'
-          }
-        }}
-        walletAddress={wallet}
-      />
+      <Swap transactionData={transactionData} walletAddress={wallet} />
     )
   }
 
@@ -173,7 +165,7 @@ const ActivityCard = ({
       <S.ActivityBodyContainer>
         <S.PoolAndUserWrapper>
           <S.ActivityActionTitle>
-            <Link href={`${scan}tx/${txHash}`} passHref>
+            <Link href={`${scan}/tx/${txHash}`} passHref>
               <S.ActionTimeContent target="_blank">
                 <p>
                   {date.toLocaleTimeString('pt-BR', {
