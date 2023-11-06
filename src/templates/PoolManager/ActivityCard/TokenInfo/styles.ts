@@ -21,7 +21,7 @@ export const token = styled.div`
       line-height: 1.6rem;
     }
 
-    span {
+    p + p {
       color: ${theme.colors.grayDisabled};
       font-weight: ${theme.font.weight.light};
       font-size: ${theme.font.sizes.font14};
