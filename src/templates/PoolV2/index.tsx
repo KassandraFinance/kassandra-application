@@ -132,7 +132,7 @@ const Pool = () => {
     }
   }
 
-  function handleClickStakeButton() {
+  function handleClickStakeButton(scrollToValue = 320) {
     router.push(
       {
         pathname: `${router.pathname}`,
@@ -142,7 +142,7 @@ const Pool = () => {
       { scroll: false }
     )
 
-    animateScroll.scrollTo(320)
+    animateScroll.scrollTo(scrollToValue)
     setIsSelectTab('staking')
   }
 
@@ -254,7 +254,7 @@ const Pool = () => {
             ${pool?.symbol}
           </BreadcrumbItem>
         </Breadcrumb>
-        <Hero />
+        <Hero handleClickStakeButton={handleClickStakeButton} />
       </S.Hero>
       <S.SelectTabsContainer>
         <SelectTabs

@@ -9,6 +9,7 @@ import {
 import html2canvas from 'html2canvas'
 import { v4 } from 'uuid'
 import { useConnectWallet } from '@web3-onboard/react'
+import WarningCard from '@/components/WarningCard'
 
 import { useReferralEncrypt } from '@/hooks/query/useReferralEncrypt'
 
@@ -134,6 +135,14 @@ const ShareImageModal = ({
             </S.ModalHeader>
             <S.ModalBody>
               <S.ImageContainer className="image-container" ref={printRef}>
+                {!wallet && (
+                  <WarningCard>
+                    <p>
+                      Lorem Ipsum is simply dummy text of the printing and
+                      typesetting industry.
+                    </p>
+                  </WarningCard>
+                )}
                 <div className="scroll">{children}</div>
               </S.ImageContainer>
 
