@@ -4,6 +4,12 @@ import { BNtoDecimal } from '@/utils/numerals'
 
 import { ActivityCardProps, activityProps } from '../Activity'
 
+type ITokenProps = {
+  logo?: string
+  amount?: string
+  value?: string
+}
+
 type IActivityProps = {
   __typename?: 'Activity' | undefined
   id: string
@@ -85,45 +91,94 @@ export function getActivityInfo(
   filters: Record<string, boolean> = { join: true, exit: true }
 ): Array<ActivityCardProps> {
   const activityInfo: ActivityCardProps[] = []
-  const assets = underlyingAssets
+  const assets: Record<string, string> = {}
+  let tokenIn: ITokenProps = {}
+  let tokenOut: ITokenProps = {}
+
+  underlyingAssets.forEach(item => {
+    const symbol = item.token.symbol
+    assets[symbol] = item?.token?.wraps?.logo ?? item?.token?.logo ?? ''
+  })
 
   for (const activity of activityData) {
     if (filters[activity.type]) {
+      if (activity.symbol.length === 2) {
+        tokenIn = {
+          logo: assets[activity.symbol[0]],
+          amount: Big(activity.amount[0]).toFixed(2),
+          value: Big(activity.amount[0]).mul(activity.price_usd[0]).toFixed(2)
+        }
+        tokenOut = {
+          logo: assets[activity.symbol[1]],
+          amount: Big(activity.amount[1]).toFixed(2),
+          value: Big(activity.amount[1]).mul(activity.price_usd[1]).toFixed(2)
+        }
+      }
+
+      if (activity.type === 'join' && activity.symbol.length > 2) {
+        const indexOfTokenOut = activity.amount.length - 1
+        const totalAmount = activity.amount
+          .slice(0, indexOfTokenOut)
+          .reduce(
+            (total, current, i) =>
+              (total = total.add(
+                Big(current).mul(
+                  activity.price_usd.slice(0, indexOfTokenOut)[i]
+                )
+              )),
+            Big(0)
+          )
+
+        tokenIn = {
+          value: BNtoDecimal(Big(totalAmount ?? '0'), 2)
+        }
+        tokenOut = {
+          logo: assets[activity.symbol[indexOfTokenOut]],
+          amount: Big(activity.amount[indexOfTokenOut] ?? '0').toFixed(2),
+          value: Big(activity.amount[indexOfTokenOut])
+            .mul(activity.price_usd[indexOfTokenOut])
+            .toFixed(2)
+        }
+      }
+
+      if (activity.type === 'exit' && activity.symbol.length > 2) {
+        const totalAmount = activity.amount
+          .slice(1)
+          .reduce(
+            (total, current, i) =>
+              (total = total.add(
+                Big(current).mul(activity.price_usd.slice(1)[i])
+              )),
+            Big(0)
+          )
+
+        tokenIn = {
+          logo: assets[activity.symbol[0]],
+          amount: Big(activity.amount[0] ?? '0').toFixed(2),
+          value: Big(activity.amount[0]).mul(activity.price_usd[0]).toFixed(2)
+        }
+        tokenOut = {
+          value: totalAmount.toFixed(2)
+        }
+      }
+
+      const sharesPrice =
+        activity.type === 'join'
+          ? Big(tokenIn.value ?? 0).div(tokenOut.amount ?? 0)
+          : Big(tokenOut.value ?? 0).div(tokenIn.amount ?? 0)
+
       activityInfo.push({
         key: activity.id + activity.type,
         actionType: activityProps[activity.type],
-        activityInfo: [],
         date: new Date(activity.timestamp * 1000),
         txHash: activity.txHash,
         wallet: activity.address,
-        sharesRedeemed: {
-          amount: activity.amount.at(-1) ?? '0',
-          value: BNtoDecimal(
-            Big(activity.amount.at(-1) ?? '0').mul(
-              activity.price_usd.at(-1) ?? '0'
-            ),
-            5
-          )
+        transactionData: {
+          sharesPrice: sharesPrice.toFixed(2),
+          tokenIn,
+          tokenOut
         }
       })
-
-      const indexOfActivityInfo = activityInfo.length - 1
-      const size = activity.symbol.length - 1
-      for (let index = 0; index < size; index++) {
-        const asset = assets.find(
-          asset =>
-            activity.symbol[index] ===
-            (asset.token.wraps?.symbol ?? asset.token.symbol)
-        )
-        activityInfo[indexOfActivityInfo].activityInfo.push({
-          amount: activity.amount[index],
-          logo: asset?.token.wraps?.logo ?? asset?.token.logo ?? '',
-          symbol: activity.symbol[index],
-          value: Big(activity.amount[index])
-            .mul(activity.price_usd[index])
-            .toFixed(2)
-        })
-      }
     }
   }
   return activityInfo
