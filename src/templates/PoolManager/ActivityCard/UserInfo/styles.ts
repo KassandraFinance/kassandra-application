@@ -16,3 +16,8 @@ export const UserInfo = styled.div`
     }
   `}
 `
+export const IconWrapper = styled.span`
+  ${() => css`
+    cursor: pointer;
+  `}
+`
