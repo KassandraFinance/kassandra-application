@@ -124,7 +124,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
 
   return (
     <>
-      {data && infoPool.price > '0.1' ? (
+      {data && parseFloat(infoPool.price) > 0 ? (
         <S.CardContainer isLink={!!link}>
           <Link href={link ?? ''} passHref>
             <S.CardLinkContent
