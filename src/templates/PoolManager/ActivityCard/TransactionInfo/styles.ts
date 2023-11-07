@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { TokenInfo } from '../TokenInfo/styles'
 
 export const TransactionInfo = styled.ul`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
@@ -10,7 +10,7 @@ export const TransactionInfo = styled.ul`
 `
 
 export const TransactionInfoContent = styled.li`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -21,7 +21,7 @@ export const TransactionInfoContent = styled.li`
   `}
 `
 
-export const text = styled.p`
+export const Text = styled.p`
   ${({ theme }) => css`
     color: ${theme.colors.grayDisabled};
     font-weight: ${theme.font.weight.medium};
@@ -31,7 +31,7 @@ export const text = styled.p`
   `}
 `
 
-export const text2 = styled.span`
+export const Value = styled.span`
   ${({ theme }) => css`
     display: flex;
     align-items: center;
