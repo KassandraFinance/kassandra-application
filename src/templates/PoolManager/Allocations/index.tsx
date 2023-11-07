@@ -49,6 +49,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
   const useAllocation = useAllocationInfo()
 
   const poolInfo = {
+    id: poolId,
     name: data?.name ?? '',
     symbol: data?.symbol ?? '',
     logo: data?.logo ?? '',

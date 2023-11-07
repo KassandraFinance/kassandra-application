@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const ItemInformation = styled.div`
+export const PoolInfo = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
@@ -15,39 +15,27 @@ export const ItemInformation = styled.div`
       text-transform: uppercase;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 992px) {
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
 
       padding-left: 0;
+
+      > p {
+        display: none;
+      }
+    }
+
+    @media (max-width: 576px) {
+      > p {
+        display: flex;
+      }
     }
   `}
 `
 
-export const TitleInfoContainer = styled.div`
-  ${({ theme }) => css`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    p {
-      font-weight: ${theme.font.weight.medium};
-      font-size: ${theme.font.sizes.font16};
-      line-height: 1.6rem;
-      letter-spacing: 0.05em;
-    }
-  `}
-`
-
-export const WeightsWrapper = styled.div`
-  display: flex;
-  gap: 0.6rem;
-  justify-content: center;
-  align-items: center;
-`
-
-export const TitleInfoContent = styled.div`
+export const PoolInfoContainer = styled.div`
   ${() => css`
     display: flex;
     gap: 1.2rem;
@@ -58,7 +46,7 @@ export const TitleInfoContent = styled.div`
       border-radius: 50%;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 992px) {
       flex-direction: row-reverse;
       align-items: center;
 
@@ -67,7 +55,7 @@ export const TitleInfoContent = styled.div`
   `}
 `
 
-export const TitleInfo = styled.div`
+export const PoolInfoContent = styled.div`
   ${({ theme }) => css`
     span {
       color: ${theme.colors.grayDisabled};
@@ -76,19 +64,14 @@ export const TitleInfo = styled.div`
       line-height: 135%;
     }
 
-    a {
-      text-decoration: none;
-
-      &:hover {
-        span {
-          color: ${theme.colors.white};
-
-          transition: color 300ms ease-in-out;
-        }
-      }
+    p {
+      font-weight: ${theme.font.weight.medium};
+      font-size: ${theme.font.sizes.font16};
+      line-height: 1.6rem;
+      letter-spacing: 0.05em;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 992px) {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
