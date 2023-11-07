@@ -113,7 +113,7 @@ export type Result = {
   }
 }
 
-export type ITransactionDataProps = {
+export type TransactionData = {
   sharesPrice: string
   tokenIn: {
     logo?: string
@@ -127,16 +127,16 @@ export type ITransactionDataProps = {
   }
 }
 
-export type IRebalanceDataProps = {
+export type RebalanceData = {
   logo: string
   symbol: string
   weight: string
   newWeight: string
 }
 
-export type IRebalancePoolDataProps = {
-  assetChange?: IRebalanceDataProps
-  rebalanceData: IRebalanceDataProps[]
+export type RebalancePoolData = {
+  assetChange?: RebalanceData
+  rebalanceData: RebalanceData[]
 }
 
 export interface ActivityCardProps {
@@ -145,8 +145,8 @@ export interface ActivityCardProps {
   date: Date
   wallet: string
   txHash: string
-  transactionData?: ITransactionDataProps
-  rebalancePoolData?: IRebalancePoolDataProps
+  transactionData?: TransactionData
+  rebalancePoolData?: RebalancePoolData
 }
 
 Big.RM = 2

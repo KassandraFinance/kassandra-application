@@ -5,7 +5,7 @@ import TokenInfo from '../TokenInfo'
 
 import * as S from './styles'
 
-type ITransactionDetailsProps = {
+type TransactionDetails = {
   sharesPrice: string
   tokenIn: {
     logo?: string
@@ -23,7 +23,7 @@ interface ITransactionInfoProps {
   poolSymbol: string
   typeAction: actionsType
   walletAddress: string
-  transactionDetails?: ITransactionDetailsProps
+  transactionDetails?: TransactionDetails
 }
 
 const TransactionInfo = ({

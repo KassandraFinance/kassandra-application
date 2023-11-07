@@ -1,8 +1,9 @@
 import TokenInfo from '../TokenInfo'
 import UserInfo from '../UserInfo'
+
 import * as S from './styles'
 
-type ISwapInfoProps = {
+type SwapInfo = {
   tokenIn: {
     logo?: string
     amount?: string
@@ -15,12 +16,12 @@ type ISwapInfoProps = {
   }
 }
 
-interface ISwapProps {
+interface SwapProps {
   walletAddress: string
-  transactionData?: ISwapInfoProps
+  transactionData?: SwapInfo
 }
 
-const Swap = ({ walletAddress, transactionData }: ISwapProps) => {
+const Swap = ({ walletAddress, transactionData }: SwapProps) => {
   return (
     <S.Swap>
       <S.SwapContent>

@@ -29,7 +29,7 @@ export type IPoolInfo = {
   blockExplorerUrl: string
 }
 
-type ITransactionDataProps = {
+type TransactionData = {
   sharesPrice: string
   tokenIn: {
     logo?: string
@@ -43,16 +43,16 @@ type ITransactionDataProps = {
   }
 }
 
-type IRebalanceDataProps = {
+type RebalanceData = {
   logo: string
   symbol: string
   weight: string
   newWeight: string
 }
 
-type IRebalancePoolDataProps = {
-  assetChange?: IRebalanceDataProps
-  rebalanceData: IRebalanceDataProps[]
+type RebalancePoolData = {
+  assetChange?: RebalanceData
+  rebalanceData: RebalanceData[]
 }
 interface ActivityCardProps {
   key: string
@@ -60,8 +60,8 @@ interface ActivityCardProps {
   date: Date
   wallet: string
   txHash: string
-  transactionData?: ITransactionDataProps
-  rebalancePoolData?: IRebalancePoolDataProps
+  transactionData?: TransactionData
+  rebalancePoolData?: RebalancePoolData
 }
 
 interface IAllocationHistoryProps {

@@ -18,7 +18,7 @@ export type ActivityInfo = {
   newWeight?: string
 }
 
-type ITransactionDataProps = {
+type TransactionData = {
   sharesPrice: string
   tokenIn: {
     logo?: string
@@ -32,16 +32,16 @@ type ITransactionDataProps = {
   }
 }
 
-type IRebalanceDataProps = {
+type RebalanceData = {
   logo: string
   symbol: string
   weight: string
   newWeight: string
 }
 
-type IRebalancePoolDataProps = {
-  assetChange?: IRebalanceDataProps
-  rebalanceData: IRebalanceDataProps[]
+type RebalancePoolData = {
+  assetChange?: RebalanceData
+  rebalanceData: RebalanceData[]
 }
 
 export interface IActivityCardProps {
@@ -50,8 +50,8 @@ export interface IActivityCardProps {
   scan: string
   wallet: string
   txHash: string
-  transactionData?: ITransactionDataProps
-  rebalancePoolData?: IRebalancePoolDataProps
+  transactionData?: TransactionData
+  rebalancePoolData?: RebalancePoolData
   pool: {
     name: string
     symbol: string
@@ -59,7 +59,7 @@ export interface IActivityCardProps {
   }
 }
 
-type IActivityReturn = {
+type ActivityReturn = {
   title: string
   icon: string
   subTitle?: string
@@ -75,7 +75,7 @@ export enum actionsType {
   SWAP
 }
 
-const activityProps: Record<actionsType, IActivityReturn> = {
+const activityProps: Record<actionsType, ActivityReturn> = {
   [actionsType.DEPOSIT]: {
     title: 'Deposit',
     icon: '/assets/icons/deposit.svg',

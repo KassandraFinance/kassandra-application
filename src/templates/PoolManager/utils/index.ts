@@ -4,7 +4,7 @@ import { BNtoDecimal } from '@/utils/numerals'
 
 import { ActivityCardProps, activityProps } from '../Activity'
 
-type ITokenProps = {
+type Token = {
   logo?: string
   amount?: string
   value?: string
@@ -92,8 +92,8 @@ export function getActivityInfo(
 ): Array<ActivityCardProps> {
   const activityInfo: ActivityCardProps[] = []
   const assets: Record<string, string> = {}
-  let tokenIn: ITokenProps = {}
-  let tokenOut: ITokenProps = {}
+  let tokenIn: Token = {}
+  let tokenOut: Token = {}
 
   underlyingAssets.forEach(item => {
     const symbol = item.token.symbol
