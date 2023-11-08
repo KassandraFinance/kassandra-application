@@ -277,6 +277,7 @@ export default class operationV2 implements IOperations {
     }
   }
 
+  // exit
   async calcSingleOutGivenPoolIn({
     tokenInAddress,
     tokenSelectAddress,
@@ -289,20 +290,25 @@ export default class operationV2 implements IOperations {
     let transactionError
 
     const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
-    let indexToken = -1
-    const _length = assets.length
-    for (let index = 0; index < _length; index++) {
-      if (assets[index] === tokenSelectAddress) {
-        indexToken = index
-        break
-      }
-    }
 
-    if (indexToken === -1) throw new Error('Token not found')
+    // const assetsTest = this.poolInfo.tokens.map(
+    //   item => item.token.wraps?.id ?? item.token.id
+    // )
+
+    // let indexToken = -1
+    // const _length = assets.length
+    // for (let index = 0; index < _length; index++) {
+    //   if (assets[index] === tokenSelectAddress) {
+    //     indexToken = index
+    //     break
+    //   }
+    // }
+
+    // if (indexToken === -1) throw new Error('Token not found')
 
     const userData = new ethers.AbiCoder().encode(
-      ['uint256', 'uint256', 'uint256'],
-      [0, poolAmountIn, indexToken - 1]
+      ['uint256', 'uint256'],
+      [1, poolAmountIn]
     )
 
     const request = {
@@ -313,7 +319,7 @@ export default class operationV2 implements IOperations {
     }
 
     try {
-      let response = await this.balancerHelpersContract.queryExit.staticCall(
+      const response = await this.balancerHelpersContract.queryExit.staticCall(
         this.poolInfo.id,
         userWalletAddress,
         userWalletAddress,
@@ -323,17 +329,50 @@ export default class operationV2 implements IOperations {
         }
       )
 
-      withdrawAmoutOut = response.amountsOut[indexToken]
+      // response = await this.vaultBalancer.exitPool.staticCall(
+      //   this.poolInfo.id,
+      //   userWalletAddress,
+      //   userWalletAddress,
+      //   request,
+      //   { from: userWalletAddress }
+      // )
 
-      response = await this.vaultBalancer.exitPool.staticCall(
-        this.poolInfo.id,
-        userWalletAddress,
-        userWalletAddress,
-        request,
-        { from: userWalletAddress }
+      const amountOutList = response.amountsOut.slice(1)
+      const poolTokenList = this.poolInfo.tokens.sort((a, b) =>
+        a.token.id.toLowerCase() > b.token.id.toLowerCase() ? 1 : -1
       )
 
+      const assets = poolTokenList.map((token, index) => {
+        return {
+          id: token.token.wraps?.id ?? token.token.id,
+          decimals: token.token.decimals,
+          value: Big(amountOutList[index].toString())
+            .div(Big(10).pow(18))
+            .toFixed()
+            .replaceAll('.', '')
+        }
+      })
+
+      const amountList = await this.getAmountsOut({
+        srcToken: tokenSelectAddress,
+        srcDecimals: '18',
+        assets,
+        amount: '',
+        chainId: this.poolInfo.chainId
+      })
+
+      const amountValueSum = amountList.amountsTokenIn.reduce(
+        (total, current) => (total = total.add(Big(current))),
+        Big(0)
+      )
+
+      const transactionsDataTx = this.getDatasTx(
+        '0.5',
+        amountList.transactionsDataTx
+      )
+      withdrawAmoutOut = amountValueSum
       return {
+        transactionsDataTx,
         withdrawAmoutOut,
         transactionError
       }
@@ -381,6 +420,7 @@ export default class operationV2 implements IOperations {
         request,
         { from: userWalletAddress }
       )
+      console.log(response)
 
       allAmountsOut = response.amountsOut.slice(1, response.amountsOut.length)
 
@@ -390,6 +430,7 @@ export default class operationV2 implements IOperations {
           [this.poolInfo.tokensAddresses[i]]: Big(allAmountsOut[i].toString())
         })
       }
+      console.log('withdrawAllAmoutOut', withdrawAllAmoutOut)
 
       await this.vaultBalancer.exitPool.staticCall(
         this.poolInfo.id,

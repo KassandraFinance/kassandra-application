@@ -1,44 +1,28 @@
-type Asset =
-  | {
-      token: {
-        id: string
-        decimals: number | null | undefined
-      }
-      weight_normalized: any
-    }
-  | {
-      __typename?: 'Asset' | undefined
-      balance: any
-      weight_normalized: any
-      weight_goal_normalized: any
-      token: {
-        __typename?: 'Token' | undefined
-        id: string
-        name?: string | null | undefined
-        logo?: string | null | undefined
-        symbol?: string | null | undefined
-        decimals?: number | null | undefined
-        price_usd: any
-        is_wrap_token: number
-        wraps?:
-          | {
-              __typename?: 'Token' | undefined
-              id: string
-              decimals?: number | null | undefined
-              price_usd: any
-              symbol?: string | null | undefined
-              name?: string | null | undefined
-              logo?: string | null | undefined
-            }
-          | null
-          | undefined
-      }
-    }
+type Asset = {
+  id: string
+  decimals: number
+  value: string
+}
+
+// type SrcToken = {
+//   id: string
+//   decimals: number
+// }
+// type DestToken = {
+//   id: string
+//   decimals: number
+// }
+// export type GetAmountsParams = {
+//   amount: string
+//   chainId: string
+//   srcToken: SrcToken
+//   destToken: DestToken
+// }
 
 export type GetAmountsParams = {
   srcToken: string
   srcDecimals: string
-  destTokens: Asset[]
+  assets: Asset[]
   amount: string
   chainId: string
 }

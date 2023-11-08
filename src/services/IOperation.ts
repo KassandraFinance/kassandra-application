@@ -112,7 +112,8 @@ export type CalcSingleOutGivenPoolInParams = {
 }
 
 export type CalcSingleOutGivenPoolInResult = {
-  withdrawAmoutOut: Big
+  transactionsDataTx?: Promise<string[]>
+  withdrawAmoutOut?: Big
   transactionError: string | undefined
 }
 

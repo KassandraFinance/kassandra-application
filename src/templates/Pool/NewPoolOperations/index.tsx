@@ -36,18 +36,12 @@ const NewPoolOperations = ({
 }: INewPoolOperationsProps) => {
   const [typeWithdrawChecked, setTypeWithdrawChecked] =
     React.useState<string>('Single_asset')
-  // const [isOpenPoolOperationMobile, setIsOpenPoolOperationMobile] =
-  //   React.useState(false)
-  // const [inputCheckedBarMobile, setInputCheckedBarMobile] =
-  //   React.useState<TitlesMobile>('Disable')
 
   const dispatch = useAppDispatch()
   const { tokenSelectionActive } = useAppSelector(state => state)
   const { tokenListSwapProvider } = useAppSelector(state => state)
 
   React.useEffect(() => {
-    if (operation === 'Withdraw') return
-
     const nativeToken = tokenListSwapProvider.find(
       token => token.address === NATIVE_ADDRESS
     )

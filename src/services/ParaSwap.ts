@@ -57,23 +57,64 @@ export class ParaSwap implements ISwapProvider {
   }
 
   async getAmountsOut(params: GetAmountsParams) {
-    const { srcToken, destTokens, amount, srcDecimals, chainId } = params
+    const { srcToken, assets, amount, srcDecimals, chainId } = params
     const txs = []
 
     const amountsIn: Array<string> = []
 
-    const requests = destTokens.map(async asset => {
-      if (srcToken.toLowerCase() === asset.token.id.toLowerCase()) {
-        return Promise.resolve(
-          Big(amount).mul(asset.weight_normalized).toFixed(0)
-        )
-      }
+    const requests = assets.map(async asset => {
+      // if (srcToken.toLowerCase() === asset.token.id.toLowerCase()) {
+      //   return Promise.resolve(
+      //     Big(amount).mul(asset.weight_normalized).toFixed(0)
+      //   )
+      // }
       const query = this.formatParams({
-        srcToken,
-        srcDecimals,
-        destToken: asset.token.id,
-        destDecimals: asset.token.decimals?.toString() || '18',
-        amount: Big(amount).mul(asset.weight_normalized).toFixed(0),
+        srcToken: asset.id,
+        srcDecimals: '18',
+        destToken: srcToken,
+        destDecimals: asset.decimals?.toString() || '18',
+        amount: asset.value,
+        // amount: Big(amount).mul(asset.weight_normalized).toFixed(0),
+        side: 'SELL',
+        network: chainId
+      })
+      const resJson = await fetch(`${this.baseUrl}/prices?${query}`)
+      const response = resJson.json()
+      return response
+    })
+
+    const amounts = await Promise.all(requests)
+
+    const _size = amounts.length
+    for (let index = 0; index < _size; index++) {
+      const data = amounts[index]
+      if (data?.priceRoute) {
+        txs.push(data.priceRoute)
+        amountsIn.push(data.priceRoute.destAmount)
+      } else {
+        amountsIn.push(data)
+      }
+    }
+
+    return {
+      amountsTokenIn: amountsIn,
+      transactionsDataTx: txs
+    }
+  }
+
+  async getAmounts(params: GetAmountsParams) {
+    const { srcToken, assets, amount, srcDecimals, chainId } = params
+    const txs = []
+
+    const amountsIn: Array<string> = []
+
+    const requests = assets.map(async asset => {
+      const query = this.formatParams({
+        srcToken: asset.id,
+        srcDecimals: asset.decimals?.toString() || '18',
+        destToken: srcToken,
+        destDecimals: srcDecimals,
+        amount: asset.value,
         side: 'SELL',
         network: chainId
       })

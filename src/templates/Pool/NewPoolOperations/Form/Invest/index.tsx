@@ -171,6 +171,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         address => underlying_assets[address]
       )
     }
+
+    console.log(amountTokenIn.toString())
     const { amountsTokenIn, transactionsDataTx } =
       await operation.getAmountsOut({
         destTokens: sortAddresses,
@@ -574,6 +576,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
         const tokenSelected = await handleTokenSelected()
 
+        console.log('tokenSelected', tokenSelected)
         const {
           investAmountOut,
           investAmountOutWithoutFees,

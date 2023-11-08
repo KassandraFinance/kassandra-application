@@ -374,11 +374,11 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         return
       }
 
-      const tokenAddress = pool.underlying_assets.find(
-        item =>
-          (item.token.wraps ? item.token.wraps.id : item.token.id) ===
-          tokenSelect.address
-      )
+      // const tokenAddress = pool.underlying_assets.find(
+      //   item =>
+      //     (item.token.wraps ? item.token.wraps.id : item.token.id) ===
+      //     tokenSelect.address
+      // )
 
       if (typeWithdraw === 'Best_value') {
         if (wallet && Big(amountTokenIn).gt(Big('0'))) {
@@ -404,14 +404,16 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       }
 
       try {
-        if (!tokenAddress || !wallet) return
+        if (!wallet) return
+        // if (!tokenAddress || !wallet) return
 
         const { withdrawAmoutOut, transactionError } =
           await operation.calcSingleOutGivenPoolIn({
-            tokenInAddress: tokenAddress.token.id,
+            tokenInAddress: tokenSelect.address,
             tokenSelectAddress: tokenSelect.address,
             poolAmountIn: Big(amountTokenIn).toFixed(0),
-            isWrap: tokenAddress.token.wraps ? true : false,
+            isWrap: false,
+            // isWrap: tokenAddress.token.wraps ? true : false,
             userWalletAddress: wallet.accounts[0].address,
             selectedTokenInBalance
           })
@@ -420,7 +422,9 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
         if (Big(amountTokenIn).cmp(Big(valueFormatted)) !== 0) return
 
-        setAmountTokenOut(withdrawAmoutOut.toString())
+        if (withdrawAmoutOut) {
+          setAmountTokenOut(withdrawAmoutOut.toString())
+        }
         transactionError && setErrorMsg(transactionError)
       } catch (error) {
         return error
