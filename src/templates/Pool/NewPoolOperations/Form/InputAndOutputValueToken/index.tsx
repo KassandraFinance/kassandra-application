@@ -15,7 +15,7 @@ import PoolOperationContext from '../PoolOperationContext'
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
 import { useDebounce } from '@/hooks/useDebounce'
 
-import TokenSelect from '../TokenSelect'
+// import TokenSelect from '../TokenSelect'
 import TokenSelected from '../TokenSelected'
 
 import * as S from './styles'
@@ -166,11 +166,7 @@ const InputAndOutputValueToken = ({
         <S.Top>
           <S.Info>
             <S.Title>{isInvestType ? 'Pay with' : 'Swap to'}</S.Title>
-            {isInvestType ? (
-              <TokenSelected tokenSelect={tokenSelect} />
-            ) : (
-              <TokenSelect />
-            )}
+            <TokenSelected tokenSelect={tokenSelect} />
             <S.Span spanlight={true} onClick={debounceMax}>
               Balance:{' '}
               {selectedTokenInBalance > new Big(-1)
