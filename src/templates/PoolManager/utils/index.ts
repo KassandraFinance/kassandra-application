@@ -29,13 +29,13 @@ type IUnderlyingAssetsProps = {
     logo?: string | null | undefined
     symbol: string
     wraps?:
-      | {
-          __typename?: 'Token' | undefined
-          symbol: string
-          logo?: string | null | undefined
-        }
-      | null
-      | undefined
+    | {
+      __typename?: 'Token' | undefined
+      symbol: string
+      logo?: string | null | undefined
+    }
+    | null
+    | undefined
   }
 }
 
@@ -46,30 +46,30 @@ type IWeightGoalsProps = {
   txHash: string
   end_timestamp: number
   previous?:
-    | {
-        __typename?: 'WeightGoalPoint' | undefined
-        weights: {
-          __typename?: 'WeightGoal' | undefined
-          weight_normalized: string
-          asset: {
-            __typename?: 'Asset' | undefined
-            token: {
-              __typename?: 'Token' | undefined
-              symbol: string
-            }
-          }
-        }[]
+  | {
+    __typename?: 'WeightGoalPoint' | undefined
+    weights: {
+      __typename?: 'WeightGoal' | undefined
+      weight_normalized: string
+      asset: {
+        __typename?: 'Asset' | undefined
+        token: {
+          __typename?: 'Token' | undefined
+          symbol: string
+        }
       }
-    | null
-    | undefined
+    }[]
+  }
+  | null
+  | undefined
   token?:
-    | {
-        __typename?: 'Token' | undefined
-        symbol: string
-        logo?: string | null | undefined
-      }
-    | null
-    | undefined
+  | {
+    __typename?: 'Token' | undefined
+    symbol: string
+    logo?: string | null | undefined
+  }
+  | null
+  | undefined
   weights: {
     __typename?: 'WeightGoal' | undefined
     weight_normalized: string
@@ -121,16 +121,16 @@ export function getActivityInfo(
           .slice(0, indexOfTokenOut)
           .reduce(
             (total, current, i) =>
-              (total = total.add(
-                Big(current).mul(
-                  activity.price_usd.slice(0, indexOfTokenOut)[i]
-                )
-              )),
+            (total = total.add(
+              Big(current).mul(
+                activity.price_usd.slice(0, indexOfTokenOut)[i]
+              )
+            )),
             Big(0)
           )
 
         tokenIn = {
-          value: BNtoDecimal(Big(totalAmount ?? '0'), 2)
+          value: Big(totalAmount ?? '0').toFixed()
         }
         tokenOut = {
           logo: assets[activity.symbol[indexOfTokenOut]],
@@ -146,9 +146,9 @@ export function getActivityInfo(
           .slice(1)
           .reduce(
             (total, current, i) =>
-              (total = total.add(
-                Big(current).mul(activity.price_usd.slice(1)[i])
-              )),
+            (total = total.add(
+              Big(current).mul(activity.price_usd.slice(1)[i])
+            )),
             Big(0)
           )
 
@@ -164,8 +164,8 @@ export function getActivityInfo(
 
       const sharesPrice =
         activity.type === 'join'
-          ? Big(tokenIn.value ?? 0).div(tokenOut.amount ?? 0)
-          : Big(tokenOut.value ?? 0).div(tokenIn.amount ?? 0)
+          ? Big(tokenIn.value ?? 0).div(tokenOut.amount ?? 1)
+          : Big(tokenOut.value ?? 0).div(tokenIn.amount ?? 1)
 
       activityInfo.push({
         key: activity.id + activity.type,
@@ -175,7 +175,11 @@ export function getActivityInfo(
         wallet: activity.address,
         transactionData: {
           sharesPrice: sharesPrice.toFixed(2),
-          tokenIn,
+          tokenIn: {
+            logo: tokenIn.logo,
+            amount: Big(tokenIn.amount ?? 0).toFixed(2),
+            value: tokenIn.value ? Big(tokenIn.value).toFixed(2) : undefined
+          },
           tokenOut
         }
       })
