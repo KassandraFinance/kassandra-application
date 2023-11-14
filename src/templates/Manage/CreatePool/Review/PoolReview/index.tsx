@@ -118,25 +118,43 @@ const PoolReview = () => {
   async function getTokensAmountOut() {
     const swapProvider = new ParaSwap()
     const amount = poolData.tokenInAmount
+
     const amounts = await swapProvider.getAmountsOut({
-      amount,
       chainId: poolData.networkId?.toString() ?? '137',
-      destTokens: tokensList.map(token => ({
-        token: {
+      srcToken: [
+        {
+          id: poolData.tokenIn.address,
+          decimals: poolData.tokenIn.decimals || 18
+        }
+      ],
+      destToken: tokensList.map(token => {
+        return {
           id: token.address,
-          decimals: token.decimals
-        },
-        weight_normalized: Big(token.allocation).div(100).toString()
-      })),
-      srcDecimals: poolData.tokenIn.decimals?.toString() || '18',
-      srcToken: poolData.tokenIn.address
+          decimals: token.decimals,
+          amount: Big(amount).mul(token.allocation).toFixed(0)
+        }
+      })
     })
 
-    for (let i = 0; i < amounts.amountsTokenIn.length; i++) {
+    // const amounts = await swapProvider.getAmountsOut({
+    //   amount,
+    //   chainId: poolData.networkId?.toString() ?? '137',
+    //   destTokens: tokensList.map(token => ({
+    //     token: {
+    //       id: token.address,
+    //       decimals: token.decimals
+    //     },
+    //     weight_normalized: Big(token.allocation).div(100).toString()
+    //   })),
+    //   srcDecimals: poolData.tokenIn.decimals?.toString() || '18',
+    //   srcToken: poolData.tokenIn.address
+    // })
+
+    for (let i = 0; i < amounts.amountsToken.length; i++) {
       dispatch(
         setLiquidity({
           token: tokensList[i].symbol,
-          liquidity: Big(amounts.amountsTokenIn[i])
+          liquidity: Big(amounts.amountsToken[i])
             .div(Big(10).pow(tokensList[i].decimals))
             .toFixed(),
           tokenPriceList: data ?? {}

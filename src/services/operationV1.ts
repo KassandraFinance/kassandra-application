@@ -28,7 +28,7 @@ import {
   getTokenWrapped
 } from '../utils/poolUtils'
 
-import { GetAmountsParams, ISwapProvider } from './ISwapProvider'
+import { GetAmountsOutParams, ISwapProvider } from './ISwapProvider'
 
 export interface ItokenSelectedProps {
   tokenInAddress: string
@@ -85,7 +85,7 @@ export default class operationV1 implements IOperations {
     )
   }
 
-  async getAmountsOut(params: GetAmountsParams) {
+  async getAmountsOut(params: GetAmountsOutParams) {
     return await this.swapProvider.getAmountsOut(params)
   }
 
@@ -323,7 +323,7 @@ export default class operationV1 implements IOperations {
 
   async calcSingleOutGivenPoolIn({
     tokenInAddress,
-    tokenSelectAddress,
+    tokenSelect,
     poolAmountIn,
     isWrap,
     userWalletAddress,
@@ -335,7 +335,7 @@ export default class operationV1 implements IOperations {
       const withdrawAmoutOut =
         await this.contract.exitswapPoolAmountIn.staticCall(
           this.crpPool,
-          tokenSelectAddress,
+          tokenSelect.address,
           poolAmountIn,
           '0',
           { from: userWalletAddress }

@@ -714,22 +714,41 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       const slippageInPercentage = '1'
       const chainId = poolData.networkId?.toString() ?? '137'
       const swapProvider = new ParaSwap()
-      const { transactionsDataTx } = await swapProvider.getAmountsOut({
-        amount: poolData.tokenInAmount,
+
+      const amounts = await swapProvider.getAmountsOut({
         chainId,
-        destTokens:
-          poolData.tokens?.map(token => ({
-            token: { decimals: token.decimals, id: token.address },
-            weight_normalized: Big(token.allocation).div(100).toString()
-          })) ?? [],
-        srcDecimals: poolData.tokenIn?.decimals?.toString() || '',
-        srcToken: poolData.tokenIn.address
+        srcToken: [
+          {
+            id: poolData.tokenIn.address,
+            decimals: poolData.tokenIn.decimals || 18
+          }
+        ],
+        destToken: tokensList.map(token => {
+          return {
+            id: token.address,
+            decimals: token.decimals,
+            amount: Big(poolData.tokenInAmount).mul(token.allocation).toFixed(0)
+          }
+        })
       })
+
+      // const { transactionsDataTx } = await swapProvider.getAmountsOut({
+      //   amount: poolData.tokenInAmount,
+      //   chainId,
+      //   destTokens:
+      //     poolData.tokens?.map(token => ({
+      //       token: { decimals: token.decimals, id: token.address },
+      //       weight_normalized: Big(token.allocation).div(100).toString()
+      //     })) ?? [],
+      //   srcDecimals: poolData.tokenIn?.decimals?.toString() || '',
+      //   srcToken: poolData.tokenIn.address
+      // })
+
       datas = await swapProvider.getDatasTx(
         chainId,
         networks[Number(chainId)].factory,
         slippageInPercentage,
-        transactionsDataTx
+        amounts.transactionsDataTx
       )
     }
     const pool = {

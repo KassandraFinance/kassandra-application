@@ -171,21 +171,30 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         address => underlying_assets[address]
       )
     }
+    const destTokens = sortAddresses.map(token => {
+      return {
+        id: token.token.wraps?.id ?? token.token.id,
+        decimals: token.token.decimals,
+        amount: Big(amountTokenIn).mul(token.weight_normalized).toFixed(0)
+      }
+    })
+    console.log(destTokens)
 
-    console.log(amountTokenIn.toString())
-    const { amountsTokenIn, transactionsDataTx } =
-      await operation.getAmountsOut({
-        destTokens: sortAddresses,
-        srcToken: fromAddress || '',
-        srcDecimals: fromDecimals?.toString() || '18',
-        amount: amountTokenIn.toString(),
-        chainId: pool?.chain_id?.toString() || ''
-      })
+    const { amountsToken, transactionsDataTx } = await operation.getAmountsOut({
+      chainId: pool?.chain_id?.toString() || '',
+      destToken: destTokens,
+      srcToken: [
+        {
+          id: fromAddress || '',
+          decimals: fromDecimals || 18
+        }
+      ]
+    })
 
     setTrasactionData(transactionsDataTx)
 
     return {
-      amountsTokenIn,
+      amountsTokenIn: amountsToken,
       transactionsDataTx
     }
   }
@@ -209,19 +218,28 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       }
     }
 
-    const { amountsTokenIn, transactionsDataTx } =
-      await operation.getAmountsOut({
-        destTokens: [{ ...tokenWrappedAddress, weight_normalized: '1' }],
-        srcToken: tokenSelect.address,
-        srcDecimals: tokenSelect.decimals?.toString() || '18',
-        amount: amountTokenIn.toString(),
-        chainId: pool?.chain_id?.toString() || ''
-      })
+    const srcToken = [
+      {
+        id: tokenSelect.address,
+        decimals: tokenSelect.decimals || 18,
+        amount: amountTokenIn.toString()
+      }
+    ]
+    const { amountsToken, transactionsDataTx } = await operation.getAmountsOut({
+      chainId: pool?.chain_id?.toString() || '',
+      destToken: [
+        {
+          id: tokenWrappedAddress.token.id,
+          decimals: tokenWrappedAddress.token.decimals
+        }
+      ],
+      srcToken
+    })
 
     const datas = await operation.getDatasTx(slippage.value, transactionsDataTx)
     setTrasactionData(datas[0])
     return {
-      amountsTokenIn,
+      amountsTokenIn: amountsToken,
       transactionsDataTx: datas
     }
   }
