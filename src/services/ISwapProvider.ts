@@ -1,34 +1,17 @@
-type Asset = {
+type Token = {
   id: string
+  amount?: string
   decimals: number
-  value: string
 }
 
-// type SrcToken = {
-//   id: string
-//   decimals: number
-// }
-// type DestToken = {
-//   id: string
-//   decimals: number
-// }
-// export type GetAmountsParams = {
-//   amount: string
-//   chainId: string
-//   srcToken: SrcToken
-//   destToken: DestToken
-// }
-
-export type GetAmountsParams = {
-  srcToken: string
-  srcDecimals: string
-  assets: Asset[]
-  amount: string
+export type GetAmountsOutParams = {
   chainId: string
+  srcToken: Token[]
+  destToken: Token[]
 }
 
 export type GetAmountsResult = {
-  amountsTokenIn: string[]
+  amountsToken: string[]
   transactionsDataTx: string[]
 }
 
@@ -39,5 +22,5 @@ export interface ISwapProvider {
     slippage: string,
     txs: Array<any>
   ) => Promise<Array<string>>
-  getAmountsOut: (params: GetAmountsParams) => Promise<GetAmountsResult>
+  getAmountsOut: (params: GetAmountsOutParams) => Promise<GetAmountsResult>
 }

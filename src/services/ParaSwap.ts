@@ -1,5 +1,5 @@
 import { URL_PARASWAP } from '@/constants/tokenAddresses'
-import { ISwapProvider, GetAmountsParams } from './ISwapProvider'
+import { ISwapProvider, GetAmountsOutParams } from './ISwapProvider'
 import Big from 'big.js'
 
 export class ParaSwap implements ISwapProvider {
@@ -49,96 +49,61 @@ export class ParaSwap implements ISwapProvider {
         throw { code: 'KASS#01', message: response.error }
       }
 
-      return response.data
+      return response
     })
     const datas = await Promise.all(requests)
 
+    console.log('datas', datas)
     return datas
   }
 
-  async getAmountsOut(params: GetAmountsParams) {
-    const { srcToken, assets, amount, srcDecimals, chainId } = params
-    const txs = []
+  async getAmountsOut(params: GetAmountsOutParams) {
+    const { srcToken, destToken, chainId } = params
+    const transactionsDataTx = []
+    const amountsToken: Array<string> = []
 
-    const amountsIn: Array<string> = []
+    const requests = srcToken.flatMap(srcAsset => {
+      return destToken.map(async destAsset => {
+        // if (srcAsset.id.toLowerCase() === destAsset.id.toLowerCase()) {
+        //   return Promise.resolve(srcAsset.amount ?? destAsset.amount ?? '0')
+        // }
+        const query = this.formatParams({
+          srcToken: srcAsset.id,
+          srcDecimals: srcAsset.decimals?.toString() || '18',
+          destToken: destAsset.id,
+          destDecimals: destAsset.decimals?.toString() || '18',
+          amount: srcAsset.amount ?? destAsset.amount ?? '0',
+          side: 'SELL',
+          network: chainId
+        })
 
-    const requests = assets.map(async asset => {
-      // if (srcToken.toLowerCase() === asset.token.id.toLowerCase()) {
-      //   return Promise.resolve(
-      //     Big(amount).mul(asset.weight_normalized).toFixed(0)
-      //   )
-      // }
-      const query = this.formatParams({
-        srcToken: asset.id,
-        srcDecimals: '18',
-        destToken: srcToken,
-        destDecimals: asset.decimals?.toString() || '18',
-        amount: asset.value,
-        // amount: Big(amount).mul(asset.weight_normalized).toFixed(0),
-        side: 'SELL',
-        network: chainId
+        const resJson = await fetch(`${this.baseUrl}/prices?${query}`)
+        const response = resJson.json()
+        return response
       })
-      const resJson = await fetch(`${this.baseUrl}/prices?${query}`)
-      const response = resJson.json()
-      return response
     })
 
+    console.log(
+      'srcTokens',
+      srcToken.map(item => item.id)
+    )
     const amounts = await Promise.all(requests)
 
+    console.log('AMOUNTS', amounts)
     const _size = amounts.length
     for (let index = 0; index < _size; index++) {
       const data = amounts[index]
       if (data?.priceRoute) {
-        txs.push(data.priceRoute)
-        amountsIn.push(data.priceRoute.destAmount)
+        transactionsDataTx.push(data.priceRoute)
+        amountsToken.push(data.priceRoute.destAmount)
       } else {
-        amountsIn.push(data)
+        amountsToken.push(data)
       }
     }
 
     return {
-      amountsTokenIn: amountsIn,
-      transactionsDataTx: txs
-    }
-  }
-
-  async getAmounts(params: GetAmountsParams) {
-    const { srcToken, assets, amount, srcDecimals, chainId } = params
-    const txs = []
-
-    const amountsIn: Array<string> = []
-
-    const requests = assets.map(async asset => {
-      const query = this.formatParams({
-        srcToken: asset.id,
-        srcDecimals: asset.decimals?.toString() || '18',
-        destToken: srcToken,
-        destDecimals: srcDecimals,
-        amount: asset.value,
-        side: 'SELL',
-        network: chainId
-      })
-      const resJson = await fetch(`${this.baseUrl}/prices?${query}`)
-      const response = resJson.json()
-      return response
-    })
-
-    const amounts = await Promise.all(requests)
-
-    const _size = amounts.length
-    for (let index = 0; index < _size; index++) {
-      const data = amounts[index]
-      if (data?.priceRoute) {
-        txs.push(data.priceRoute)
-        amountsIn.push(data.priceRoute.destAmount)
-      } else {
-        amountsIn.push(data)
-      }
-    }
-
-    return {
-      amountsTokenIn: amountsIn,
-      transactionsDataTx: txs
+      amountsToken,
+      transactionsDataTx
     }
   }
 }
