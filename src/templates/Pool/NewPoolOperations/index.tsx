@@ -46,7 +46,7 @@ const NewPoolOperations = ({
       token => token.address === NATIVE_ADDRESS
     )
     dispatch(setTokenSelect(nativeToken ?? tokenListSwapProvider[0]))
-  }, [operation, tokenListSwapProvider])
+  }, [operation])
 
   React.useEffect(() => {
     if (!tokenSelectionActive) return

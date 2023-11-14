@@ -21,7 +21,7 @@ import {
   IPoolInfoProps,
   JoinSwapAmountInParams
 } from './IOperation'
-import { GetAmountsParams, ISwapProvider } from './ISwapProvider'
+import { GetAmountsOutParams, ISwapProvider } from './ISwapProvider'
 
 export interface ItokenSelectedProps {
   tokenInAddress: string
@@ -80,7 +80,7 @@ export default class operationV2 implements IOperations {
     )
   }
 
-  async getAmountsOut(params: GetAmountsParams) {
+  async getAmountsOut(params: GetAmountsOutParams) {
     return await this.swapProvider.getAmountsOut(params)
   }
 
@@ -280,7 +280,7 @@ export default class operationV2 implements IOperations {
   // exit
   async calcSingleOutGivenPoolIn({
     tokenInAddress,
-    tokenSelectAddress,
+    tokenSelect,
     poolAmountIn,
     isWrap,
     userWalletAddress,
@@ -291,6 +291,7 @@ export default class operationV2 implements IOperations {
 
     const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
 
+    console.log('ASSETS', assets.slice(1))
     // const assetsTest = this.poolInfo.tokens.map(
     //   item => item.token.wraps?.id ?? item.token.id
     // )
@@ -337,41 +338,46 @@ export default class operationV2 implements IOperations {
       //   { from: userWalletAddress }
       // )
 
-      const amountOutList = response.amountsOut.slice(1)
+      const amountsOutList = response.amountsOut.slice(1)
       const poolTokenList = this.poolInfo.tokens.sort((a, b) =>
         a.token.id.toLowerCase() > b.token.id.toLowerCase() ? 1 : -1
       )
 
+      const amountsOutListFormatted: Big[] = []
       const assets = poolTokenList.map((token, index) => {
+        amountsOutListFormatted.push(Big(amountsOutList[index].toString()))
+        const amount = Big(amountsOutList[index].toString())
+          .div(Big(10).pow(18))
+          .toFixed()
+          .replaceAll('.', '')
+
         return {
           id: token.token.wraps?.id ?? token.token.id,
           decimals: token.token.decimals,
-          value: Big(amountOutList[index].toString())
-            .div(Big(10).pow(18))
-            .toFixed()
-            .replaceAll('.', '')
+          amount
         }
       })
 
       const amountList = await this.getAmountsOut({
-        srcToken: tokenSelectAddress,
-        srcDecimals: '18',
-        assets,
-        amount: '',
-        chainId: this.poolInfo.chainId
+        chainId: this.poolInfo.chainId,
+        srcToken: assets,
+        destToken: [{ id: tokenSelect.address, decimals: tokenSelect.decimals }]
       })
+      console.log('amountsOutList', amountsOutList)
+      console.log('amountList', amountList)
 
-      const amountValueSum = amountList.amountsTokenIn.reduce(
+      const transactionsDataTx = await this.getDatasTx(
+        '0.5',
+        amountList.transactionsDataTx
+      )
+
+      withdrawAmoutOut = amountList.amountsToken.reduce(
         (total, current) => (total = total.add(Big(current))),
         Big(0)
       )
 
-      const transactionsDataTx = this.getDatasTx(
-        '0.5',
-        amountList.transactionsDataTx
-      )
-      withdrawAmoutOut = amountValueSum
       return {
+        amountOutList: amountsOutListFormatted,
         transactionsDataTx,
         withdrawAmoutOut,
         transactionError
@@ -384,7 +390,9 @@ export default class operationV2 implements IOperations {
 
       return {
         withdrawAmoutOut,
-        transactionError
+        transactionError,
+        amountOutList: undefined,
+        transactionsDataTx: undefined
       }
     }
   }
@@ -420,7 +428,6 @@ export default class operationV2 implements IOperations {
         request,
         { from: userWalletAddress }
       )
-      console.log(response)
 
       allAmountsOut = response.amountsOut.slice(1, response.amountsOut.length)
 
@@ -470,43 +477,44 @@ export default class operationV2 implements IOperations {
     tokenOutAddress,
     tokenAmountIn,
     minPoolAmountOut,
-    userWalletAddress
+    userWalletAddress,
+    trasactionData,
+    minPoolAmountsOut
   }: ExitSwapPoolAmountInParams) {
     const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
-    let indexToken = -1
-    const _length = assets.length
-    for (let index = 0; index < _length; index++) {
-      if (assets[index].toLowerCase() === tokenOutAddress.toLowerCase()) {
-        indexToken = index
-        break
-      }
-    }
 
-    if (indexToken === -1) throw new Error('Token not found')
+    if (!trasactionData) throw new Error('NAO ESQUECER')
 
     const userData = new ethers.AbiCoder().encode(
-      ['uint256', 'uint256', 'uint256'],
-      [0, tokenAmountIn.toString(), indexToken - 1]
+      ['uint256', 'uint256'],
+      [1, tokenAmountIn.toString()]
     )
-
-    const minAmountsOut = new Array(_length).fill(0)
-
-    minAmountsOut[indexToken] = minPoolAmountOut.toString()
 
     const request = {
       assets,
-      minAmountsOut,
+      minAmountsOut: [0, ...minPoolAmountsOut],
       userData,
       toInternalBalance: false
     }
 
-    const res = await this.vaultBalancer.exitPool(
-      this.poolInfo.id,
+    const res = await this.contract.exitPoolExactTokenInWithSwap(
       userWalletAddress,
-      userWalletAddress,
+      this.poolInfo.controller,
+      tokenAmountIn,
+      tokenOutAddress,
+      minPoolAmountOut,
       request,
-      { from: userWalletAddress }
+      trasactionData
     )
+    console.log(`RESPONSE`, res)
+
+    // const res = await this.vaultBalancer.exitPool(
+    //   this.poolInfo.id,
+    //   userWalletAddress,
+    //   userWalletAddress,
+    //   request,
+    //   { from: userWalletAddress }
+    // )
 
     return res
   }

@@ -80,6 +80,8 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     custom: '2.0',
     isCustom: false
   })
+  const [trasactionData, setTrasactionData] = React.useState<any>()
+  const [amountOutList, setAmountOutList] = React.useState<Big[]>([])
 
   const inputAmountInTokenRef = React.useRef<HTMLInputElement>(null)
   const inputAmountOutTokenRef = React.useRef<HTMLInputElement>(null)
@@ -125,7 +127,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         networks[chainId].rpc
       )
       const allowanceValue = await allowance(
-        operation.withdrawContract,
+        networks[chainId].proxyInvest,
         wallet.accounts[0].address
       )
 
@@ -214,7 +216,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
       if (approvals[typeAction][0] === 0) {
         const { approve } = await ERC20(
-          pool?.address || '',
+          pool?.address ?? '',
           networks[chainId].rpc,
           {
             wallet: wallet,
@@ -224,7 +226,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         )
 
         approve(
-          operation.withdrawContract,
+          networks[chainId].proxyInvest,
           {
             error: `Failed to approve ${pool?.symbol}`,
             pending: `Waiting approval of ${pool?.symbol}...`,
@@ -243,15 +245,21 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         return
       }
       if (typeWithdraw === 'Single_asset') {
+        const minPoolAmountsOut = amountOutList.map(item =>
+          item.mul(slippageBaseInBig).div(slippageExpInBig).toFixed(0)
+        )
+
         try {
           const response = await operation.exitswapPoolAmountIn({
             tokenOutAddress: tokenSelect.address,
             tokenAmountIn: Big(amountTokenIn).toFixed(0),
+            minPoolAmountsOut,
             minPoolAmountOut: Big(amountTokenOut)
               .mul(slippageBaseInBig)
               .div(slippageExpInBig)
               .toFixed(0),
-            userWalletAddress: wallet.accounts[0].address
+            userWalletAddress: wallet.accounts[0].address,
+            trasactionData
           })
 
           trackBought(
@@ -338,7 +346,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       networks[pool?.chain_id || '0'].rpc
     )
     const allowanceValue = await allowance(
-      operation.withdrawContract,
+      networks[chainId].proxyInvest,
       wallet.accounts[0].address
     )
 
@@ -407,16 +415,23 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         if (!wallet) return
         // if (!tokenAddress || !wallet) return
 
-        const { withdrawAmoutOut, transactionError } =
-          await operation.calcSingleOutGivenPoolIn({
-            tokenInAddress: tokenSelect.address,
-            tokenSelectAddress: tokenSelect.address,
-            poolAmountIn: Big(amountTokenIn).toFixed(0),
-            isWrap: false,
-            // isWrap: tokenAddress.token.wraps ? true : false,
-            userWalletAddress: wallet.accounts[0].address,
-            selectedTokenInBalance
-          })
+        const {
+          withdrawAmoutOut,
+          transactionError,
+          transactionsDataTx,
+          amountOutList
+        } = await operation.calcSingleOutGivenPoolIn({
+          tokenInAddress: tokenSelect.address,
+          tokenSelect: {
+            address: tokenSelect.address,
+            decimals: tokenSelect.decimals ?? 18
+          },
+          poolAmountIn: Big(amountTokenIn).toFixed(0),
+          isWrap: false,
+          // isWrap: tokenAddress.token.wraps ? true : false,
+          userWalletAddress: wallet.accounts[0].address,
+          selectedTokenInBalance
+        })
 
         const valueFormatted = decimalToBN(inputAmountInTokenRef.current.value)
 
@@ -424,6 +439,12 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
         if (withdrawAmoutOut) {
           setAmountTokenOut(withdrawAmoutOut.toString())
+        }
+        if (transactionsDataTx) {
+          setTrasactionData(transactionsDataTx)
+        }
+        if (amountOutList) {
+          setAmountOutList(amountOutList)
         }
         transactionError && setErrorMsg(transactionError)
       } catch (error) {
