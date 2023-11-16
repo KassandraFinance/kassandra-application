@@ -173,9 +173,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     }
     const destTokens = sortAddresses.map(token => {
       return {
-        id: token.token.wraps?.id ?? token.token.id,
+        id: token.token.id,
         decimals: token.token.decimals,
-        amount: Big(amountTokenIn).mul(token.weight_normalized).toFixed(0)
+        amount: Big(amountTokenIn.toString())
+          .mul(token.weight_normalized)
+          .toFixed(0)
       }
     })
     console.log(destTokens)

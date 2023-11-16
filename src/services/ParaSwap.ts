@@ -24,9 +24,9 @@ export class ParaSwap implements ISwapProvider {
       const txConfig = {
         priceRoute: tx,
         srcToken: tx.srcToken,
-        srcDecimals: tx.srcDecimals,
+        srcDecimals: tx.srcDecimals.toString(),
         destToken: tx.destToken,
-        destDecimals: tx.destDecimals,
+        destDecimals: tx.destDecimals.toString(),
         srcAmount: tx.srcAmount,
         destAmount: Big(tx.destAmount)
           .mul(totalPercentage - slippageFomatted)
@@ -49,11 +49,11 @@ export class ParaSwap implements ISwapProvider {
         throw { code: 'KASS#01', message: response.error }
       }
 
-      return response
+      return response.data
     })
     const datas = await Promise.all(requests)
 
-    console.log('datas', datas)
+    console.log(datas)
     return datas
   }
 
@@ -64,9 +64,10 @@ export class ParaSwap implements ISwapProvider {
 
     const requests = srcToken.flatMap(srcAsset => {
       return destToken.map(async destAsset => {
-        // if (srcAsset.id.toLowerCase() === destAsset.id.toLowerCase()) {
-        //   return Promise.resolve(srcAsset.amount ?? destAsset.amount ?? '0')
-        // }
+        if (srcAsset.id.toLowerCase() === destAsset.id.toLowerCase()) {
+          return Promise.resolve(srcAsset.amount ?? destAsset.amount ?? '0')
+        }
+
         const query = this.formatParams({
           srcToken: srcAsset.id,
           srcDecimals: srcAsset.decimals?.toString() || '18',
@@ -83,10 +84,6 @@ export class ParaSwap implements ISwapProvider {
       })
     })
 
-    console.log(
-      'srcTokens',
-      srcToken.map(item => item.id)
-    )
     const amounts = await Promise.all(requests)
 
     console.log('AMOUNTS', amounts)
@@ -101,6 +98,7 @@ export class ParaSwap implements ISwapProvider {
       }
     }
 
+    console.log(transactionsDataTx)
     return {
       amountsToken,
       transactionsDataTx
