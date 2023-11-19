@@ -59,12 +59,11 @@ query CommunityPools(
         timestamp
         close
       }
-      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 1) {
-        weights(orderBy: weight_normalized, orderDirection: desc) {
-          asset {
-            token {
-              logo
-            }
+      underlying_assets {
+        token {
+          logo
+          wraps {
+            logo
           }
         }
       }
