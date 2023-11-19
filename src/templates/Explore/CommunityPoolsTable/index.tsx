@@ -59,18 +59,16 @@ type IPoolsInfosProps = {
     timestamp: number
     close: any
   }[]
-  weight_goals: {
-    __typename?: 'WeightGoalPoint' | undefined
-    weights: {
-      __typename?: 'WeightGoal' | undefined
-      asset: {
-        __typename?: 'Asset' | undefined
-        token: {
-          __typename?: 'Token' | undefined
-          logo?: string | null | undefined
-        }
-      }
-    }[]
+  underlying_assets: {
+    token: {
+      logo?: string | null | undefined
+      wraps?:
+        | {
+            logo?: string | null | undefined
+          }
+        | null
+        | undefined
+    }
   }[]
 }
 
@@ -101,14 +99,15 @@ const CommunityPoolsTable = ({
   const [viewPool, setViewPool] = React.useState<{
     price: string
     tvl: string
-    assets: {
-      __typename?: 'WeightGoal' | undefined
-      asset: {
-        __typename?: 'Asset' | undefined
-        token: {
-          __typename?: 'Token' | undefined
-          logo?: string | null | undefined
-        }
+    underlying_assets: {
+      token: {
+        logo?: string | null | undefined
+        wraps?:
+          | {
+              logo?: string | null | undefined
+            }
+          | null
+          | undefined
       }
     }[]
     volume: string
@@ -117,11 +116,12 @@ const CommunityPoolsTable = ({
   }>({
     price: '',
     tvl: '',
-    assets: [
+    underlying_assets: [
       {
-        asset: {
-          token: {
-            logo: ''
+        token: {
+          logo: undefined,
+          wraps: {
+            logo: undefined
           }
         }
       }
@@ -149,14 +149,15 @@ const CommunityPoolsTable = ({
     logo: string | null,
     price: string,
     tvl: string,
-    assets: {
-      __typename?: 'WeightGoal' | undefined
-      asset: {
-        __typename?: 'Asset' | undefined
-        token: {
-          __typename?: 'Token' | undefined
-          logo?: string | null | undefined
-        }
+    underlying_assets: {
+      token: {
+        logo?: string | null | undefined
+        wraps?:
+          | {
+              logo?: string | null | undefined
+            }
+          | null
+          | undefined
       }
     }[],
     volume: string,
@@ -168,11 +169,11 @@ const CommunityPoolsTable = ({
       name: token
     })
     setViewPool({
-      price: price,
-      tvl: tvl,
-      assets: assets,
-      volume: volume,
-      monthly: monthly,
+      price,
+      tvl,
+      underlying_assets,
+      volume,
+      monthly,
       ['24h']: day
     })
     setIsOpen(true)
@@ -308,14 +309,20 @@ const CommunityPoolsTable = ({
                     <S.TD isView={inViewCollum === 3}>
                       <S.Container>
                         <S.CoinImageContainer>
-                          {pool.weight_goals[0].weights.map((coin, index) => {
+                          {pool.underlying_assets.map((coin, index) => {
                             return (
                               <S.CoinImageWrapper
-                                key={coin.asset?.token?.logo}
+                                key={
+                                  coin?.token?.wraps?.logo ?? coin?.token?.logo
+                                }
                                 position={index}
                               >
                                 <Image
-                                  src={coin.asset?.token?.logo || notFoundIcon}
+                                  src={
+                                    coin?.token?.logo ??
+                                    coin?.token?.wraps?.logo ??
+                                    notFoundIcon
+                                  }
                                   layout="fill"
                                 />
                               </S.CoinImageWrapper>
@@ -382,7 +389,7 @@ const CommunityPoolsTable = ({
                           pool?.logo || '',
                           pool.price_usd,
                           pool.total_value_locked_usd,
-                          pool.weight_goals[0].weights,
+                          pool.underlying_assets,
                           pool.volumes[0].volume_usd,
                           pool.month[0].close
                             ? calcChange(
@@ -439,14 +446,20 @@ const CommunityPoolsTable = ({
           <ValueContainerMobile>
             <S.CoinModalContainer>
               <S.CoinImageContainer>
-                {viewPool.assets.map((coin, index) => {
+                {viewPool.underlying_assets.map((coin, index) => {
                   return (
                     <S.CoinImageWrapper
-                      key={coin.asset?.token?.logo || index}
+                      key={
+                        coin?.token?.wraps?.logo ?? coin?.token?.logo ?? index
+                      }
                       position={index}
                     >
                       <Image
-                        src={coin.asset?.token?.logo || notFoundIcon}
+                        src={
+                          coin?.token?.logo ??
+                          coin?.token?.wraps?.logo ??
+                          notFoundIcon
+                        }
                         width={18}
                         height={18}
                       />
