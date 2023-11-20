@@ -27,13 +27,13 @@ const ChartProducts = () => {
   const [price, setPrice] = React.useState<
     {
       timestamp: number
-      close: number
+      close: string
     }[]
   >([])
   const [tvl, setTvl] = React.useState<
     {
       timestamp: number
-      value: number
+      value: string
     }[]
   >([])
   const [loading, setLoading] = React.useState<boolean>(true)
@@ -152,14 +152,14 @@ const ChartProducts = () => {
       const newTVL = data?.total_value_locked.map(item => {
         return {
           timestamp: item.timestamp,
-          value: Number(item.close)
+          value: parseFloat(item.close).toFixed(2)
         }
       })
 
       const newPrice = data?.price_candles.map(item => {
         return {
           timestamp: item.timestamp,
-          close: Number(item.close)
+          close: parseFloat(item.close).toFixed(2)
         }
       })
 
