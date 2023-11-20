@@ -23,53 +23,43 @@ import {
   Value as V
 } from '@ui/Modals/ModalViewCoin/styles'
 
-type IPoolsInfosProps = {
-  __typename?: 'Pool' | undefined
+type UnderlyingAssets = {
+  token: {
+    logo?: string | null
+    wraps?: {
+      logo?: string | null
+    } | null
+  }
+}
+
+interface IPoolsInfosProps {
   id: string
   name: string
   symbol: string
-  logo?: string | null | undefined
+  logo?: string | null
   address: string
-  price_usd: any
-  total_value_locked_usd: any
+  price_usd: string
+  total_value_locked_usd: string
   is_private_pool: boolean
-  chain?:
-    | {
-        __typename?: 'Chain' | undefined
-        logo?: string | null | undefined
-      }
-    | null
-    | undefined
+  chain?: {
+    logo?: string | null
+  } | null
   volumes: {
-    __typename?: 'Volume' | undefined
-    volume_usd: any
+    volume_usd: string
   }[]
   now: {
-    __typename?: 'Candle' | undefined
     timestamp: number
-    close: any
+    close: string
   }[]
   day: {
-    __typename?: 'Candle' | undefined
     timestamp: number
-    close: any
+    close: string
   }[]
   month: {
-    __typename?: 'Candle' | undefined
     timestamp: number
-    close: any
+    close: string
   }[]
-  underlying_assets: {
-    token: {
-      logo?: string | null | undefined
-      wraps?:
-        | {
-            logo?: string | null | undefined
-          }
-        | null
-        | undefined
-    }
-  }[]
+  underlying_assets: UnderlyingAssets[]
 }
 
 export enum communityPoolSorting {
@@ -99,33 +89,14 @@ const CommunityPoolsTable = ({
   const [viewPool, setViewPool] = React.useState<{
     price: string
     tvl: string
-    underlying_assets: {
-      token: {
-        logo?: string | null | undefined
-        wraps?:
-          | {
-              logo?: string | null | undefined
-            }
-          | null
-          | undefined
-      }
-    }[]
+    underlying_assets: UnderlyingAssets[]
     volume: string
     monthly: string
     '24h': string
   }>({
     price: '',
     tvl: '',
-    underlying_assets: [
-      {
-        token: {
-          logo: undefined,
-          wraps: {
-            logo: undefined
-          }
-        }
-      }
-    ],
+    underlying_assets: [],
     volume: '',
     monthly: '',
     '24h': ''
@@ -149,17 +120,7 @@ const CommunityPoolsTable = ({
     logo: string | null,
     price: string,
     tvl: string,
-    underlying_assets: {
-      token: {
-        logo?: string | null | undefined
-        wraps?:
-          | {
-              logo?: string | null | undefined
-            }
-          | null
-          | undefined
-      }
-    }[],
+    underlying_assets: UnderlyingAssets[],
     volume: string,
     monthly: string,
     day: string
@@ -390,14 +351,14 @@ const CommunityPoolsTable = ({
                           pool.price_usd,
                           pool.total_value_locked_usd,
                           pool.underlying_assets,
-                          pool.volumes[0].volume_usd,
-                          pool.month[0].close
+                          pool.volumes[0]?.volume_usd,
+                          pool.month[0]?.close
                             ? calcChange(
                                 Number(pool.now[0].close || 0),
                                 Number(pool.month[0].close)
                               )
                             : '0',
-                          pool.day[0].close
+                          pool.day[0]?.close
                             ? calcChange(
                                 Number(pool.now[0].close || 0),
                                 Number(pool.day[0].close)
