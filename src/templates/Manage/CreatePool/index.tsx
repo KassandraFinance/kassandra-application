@@ -517,7 +517,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }
 
       const logoToSign = logo ? keccak256(toUtf8Bytes(logo)) : ''
-      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
+      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nshortSummary: ${shortSummary}\nsummary: ${summary}`
       const signature = await signMessage(message)
 
       const body = {

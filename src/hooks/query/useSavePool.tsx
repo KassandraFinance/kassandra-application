@@ -37,7 +37,8 @@ export const useSavePool = ({ id, user }: { id: string; user?: string }) => {
       controller,
       signature,
       logo,
-      summary
+      summary,
+      shortSummary
     }: UseSavePoolProps) => {
       return sendSavePool({
         chainId,

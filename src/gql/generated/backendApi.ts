@@ -1676,6 +1676,7 @@ export type MutationSavePoolArgs = {
   chainId: Scalars['Int']['input']
   controller: Scalars['String']['input']
   logo?: InputMaybe<Scalars['String']['input']>
+  shortSummary?: InputMaybe<Scalars['String']['input']>
   signature: Scalars['String']['input']
   summary?: InputMaybe<Scalars['String']['input']>
 }
@@ -3213,6 +3214,7 @@ export type SavePoolParams = {
   chainId: Scalars['Int']['input']
   controller: Scalars['String']['input']
   logo?: InputMaybe<Scalars['String']['input']>
+  shortSummary?: InputMaybe<Scalars['String']['input']>
   signature: Scalars['String']['input']
   summary?: InputMaybe<Scalars['String']['input']>
 }
@@ -4606,6 +4608,7 @@ export type SavePoolMutationVariables = Exact<{
   chainId: Scalars['Int']['input']
   signature: Scalars['String']['input']
   logo?: InputMaybe<Scalars['String']['input']>
+  shortSummary?: InputMaybe<Scalars['String']['input']>
   summary?: InputMaybe<Scalars['String']['input']>
 }>
 
@@ -4624,6 +4627,7 @@ export const SavePoolDocument = gql`
     $chainId: Int!
     $signature: String!
     $logo: String
+    $shortSummary: String
     $summary: String
   ) {
     savePool(
@@ -4631,6 +4635,7 @@ export const SavePoolDocument = gql`
       chainId: $chainId
       signature: $signature
       logo: $logo
+      shortSummary: $shortSummary
       summary: $summary
     ) {
       message

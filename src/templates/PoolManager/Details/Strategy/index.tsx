@@ -68,7 +68,7 @@ const Strategy = () => {
 
     try {
       const logoToSign = ''
-      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
+      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nshortSummary: ${shortSummary}\nsummary: ${summary}`
       const signature = await signMessage(message)
 
       mutate({
