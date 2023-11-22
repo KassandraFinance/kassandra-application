@@ -42,11 +42,13 @@ const NewPoolOperations = ({
   const { tokenListSwapProvider } = useAppSelector(state => state)
 
   React.useEffect(() => {
+    if (operation === 'Withdraw') return
+
     const nativeToken = tokenListSwapProvider.find(
       token => token.address === NATIVE_ADDRESS
     )
     dispatch(setTokenSelect(nativeToken ?? tokenListSwapProvider[0]))
-  }, [operation])
+  }, [operation, tokenListSwapProvider])
 
   React.useEffect(() => {
     if (!tokenSelectionActive) return

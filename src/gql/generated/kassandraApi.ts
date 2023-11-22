@@ -7857,6 +7857,22 @@ export type TokensPoolQuery = {
   } | null
 }
 
+export type TokensSwapQueryVariables = Exact<{
+  chainId: Scalars['Int']['input']
+}>
+
+export type TokensSwapQuery = {
+  __typename?: 'Query'
+  tokens: Array<{
+    __typename?: 'Token'
+    id: string
+    decimals: number
+    logo?: string | null
+    name: string
+    symbol: string
+  }>
+}
+
 export type UserPoolDataQueryVariables = Exact<{
   id: Array<Scalars['ID']['input']> | Scalars['ID']['input']
   day: Scalars['Int']['input']
@@ -9311,6 +9327,20 @@ export const TokensPoolDocument = gql`
     }
   }
 `
+export const TokensSwapDocument = gql`
+  query tokensSwap($chainId: Int!) {
+    tokens(
+      where: { chain_ids_contains: [$chainId], coingecko_id_not: null }
+      first: 1000
+    ) {
+      id
+      decimals
+      logo
+      name
+      symbol
+    }
+  }
+`
 export const UserPoolDataDocument = gql`
   query userPoolData($id: [ID!]!, $day: Int!, $month: Int!, $wallet: String!) {
     pools(where: { id_in: $id }) {
@@ -10125,6 +10155,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'TokensPool',
+        'query'
+      )
+    },
+    tokensSwap(
+      variables: TokensSwapQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<TokensSwapQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<TokensSwapQuery>(TokensSwapDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'tokensSwap',
         'query'
       )
     },

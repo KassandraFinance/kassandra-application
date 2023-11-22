@@ -17,8 +17,9 @@ import { setTokensSwapProvider } from '@/store/reducers/tokenListSwapProvider'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import { usePoolData } from '@/hooks/query/usePoolData'
 import { useAppDispatch } from '@/store/hooks'
+import { useTokenSwap } from '@/hooks/query/useTokensSwap'
 
-import { NATIVE_ADDRESS, SUBGRAPH_URL } from '@/constants/tokenAddresses'
+import { NATIVE_ADDRESS } from '@/constants/tokenAddresses'
 import Activity from './Activity'
 
 import {
@@ -33,11 +34,11 @@ import {
 
 import * as S from './styles'
 
-type ListTokensRes = {
+type TokenSwapList = {
   id: string
   decimals: number
-  logo: string
-  network: number
+  logo?: string | null
+  name: string
   symbol: string
 }
 
@@ -48,20 +49,17 @@ type Asset = {
   token: {
     id: string
     name: string
-    logo?: string | null | undefined
+    logo?: string | null
     symbol: string
     decimals: number
     is_wrap_token: number
-    wraps?:
-      | {
-          id: string
-          decimals: number
-          symbol: string
-          name: string
-          logo?: string | null | undefined
-        }
-      | null
-      | undefined
+    wraps?: {
+      id: string
+      decimals: number
+      symbol: string
+      name: string
+      logo?: string | null
+    } | null
   }
 }
 
@@ -111,6 +109,7 @@ const Pool = () => {
 
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
+  const { data: tokenSwap } = useTokenSwap({ chainId: pool?.chain_id ?? 137 })
   const { trackProductPageView } = useMatomoEcommerce()
   const dispatch = useAppDispatch()
 
@@ -163,31 +162,9 @@ const Pool = () => {
     faqs: <Faqs />
   }
 
-  async function getTokensForOperations() {
-    const resJson = await fetch(`${SUBGRAPH_URL}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        query: `
-          query($chainId: Int) {
-            tokens(where: {chain_ids_contains: [$chainId] coingecko_id_not: null} first: 1000) {
-              id
-              decimals
-              logo
-              name
-              symbol
-            }
-        }
-        `,
-        variables: { chainId: pool?.chain_id }
-      })
-    })
-    const response = await resJson.json()
-
-    const tokensSwapProvider = response.data.tokens as ListTokensRes[]
+  async function getTokensForOperations(tokensSwapProvider: TokenSwapList[]) {
     const tokenAddressesSwapProvider = tokensSwapProvider.map(token => token.id)
+
     let poolAssets: Asset[] = []
     if (pool?.underlying_assets) {
       poolAssets = [...pool.underlying_assets].sort(
@@ -208,7 +185,7 @@ const Pool = () => {
       formatTokensSwapProvider.push({
         address: token.id,
         decimals: token.decimals,
-        logoURI: token.logo,
+        logoURI: token?.logo ?? '',
         name: token.symbol,
         symbol: token.symbol
       })
@@ -234,13 +211,18 @@ const Pool = () => {
   React.useEffect(() => {
     if (pool) {
       try {
-        getTokensForOperations()
         trackProductPageView(pool.id, pool.symbol, pool.name)
       } catch (error) {
         console.error(error)
       }
     }
   }, [pool])
+
+  React.useEffect(() => {
+    if (tokenSwap) {
+      getTokensForOperations(tokenSwap)
+    }
+  }, [tokenSwap])
 
   return (
     <S.Pool>
