@@ -81,7 +81,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     isCustom: false
   })
   const [trasactionData, setTrasactionData] = React.useState<any>()
-  const [amountOutList, setAmountOutList] = React.useState<Big[]>([])
+  const [amountOutList, setAmountOutList] = React.useState<string[]>([])
 
   const inputAmountInTokenRef = React.useRef<HTMLInputElement>(null)
   const inputAmountOutTokenRef = React.useRef<HTMLInputElement>(null)
@@ -245,21 +245,18 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         return
       }
       if (typeWithdraw === 'Single_asset') {
-        const minPoolAmountsOut = amountOutList.map(item =>
-          item.mul(slippageBaseInBig).div(slippageExpInBig).toFixed(0)
-        )
-
         try {
           const response = await operation.exitswapPoolAmountIn({
             tokenOutAddress: tokenSelect.address,
             tokenAmountIn: Big(amountTokenIn).toFixed(0),
-            minPoolAmountsOut,
+            minPoolAmountsOut: amountOutList,
             minPoolAmountOut: Big(amountTokenOut)
               .mul(slippageBaseInBig)
               .div(slippageExpInBig)
               .toFixed(0),
             userWalletAddress: wallet.accounts[0].address,
-            trasactionData
+            trasactionData,
+            slippageValue: slippageVal
           })
 
           trackBought(

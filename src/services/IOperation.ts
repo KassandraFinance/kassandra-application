@@ -115,7 +115,7 @@ export type CalcSingleOutGivenPoolInParams = {
 }
 
 export type CalcSingleOutGivenPoolInResult = {
-  amountOutList?: Big[]
+  amountOutList?: string[]
   transactionsDataTx?: string[]
   withdrawAmoutOut?: Big
   transactionError: string | undefined
@@ -139,6 +139,7 @@ export type ExitSwapPoolAmountInParams = {
   minPoolAmountsOut: string[]
   userWalletAddress: string
   trasactionData?: string[]
+  slippageValue?: string
 }
 
 export type ExitSwapPoolAllTokenAmountInParams = {

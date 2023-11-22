@@ -291,22 +291,6 @@ export default class operationV2 implements IOperations {
 
     const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
 
-    console.log('ASSETS', assets.slice(1))
-    // const assetsTest = this.poolInfo.tokens.map(
-    //   item => item.token.wraps?.id ?? item.token.id
-    // )
-
-    // let indexToken = -1
-    // const _length = assets.length
-    // for (let index = 0; index < _length; index++) {
-    //   if (assets[index] === tokenSelectAddress) {
-    //     indexToken = index
-    //     break
-    //   }
-    // }
-
-    // if (indexToken === -1) throw new Error('Token not found')
-
     const userData = new ethers.AbiCoder().encode(
       ['uint256', 'uint256'],
       [1, poolAmountIn]
@@ -343,13 +327,13 @@ export default class operationV2 implements IOperations {
         a.token.id.toLowerCase() > b.token.id.toLowerCase() ? 1 : -1
       )
 
-      const amountsOutListFormatted: Big[] = []
+      const amountsOutListFormatted: string[] = []
       const assets = poolTokenList.map((token, index) => {
-        amountsOutListFormatted.push(Big(amountsOutList[index].toString()))
         const amount = Big(amountsOutList[index].toString())
-          .div(Big(10).pow(18))
-          .toFixed()
-          .replaceAll('.', '')
+          .mul(10000 - 1)
+          .div(10000)
+          .toFixed(0)
+        amountsOutListFormatted.push(amount)
 
         return {
           id: token.token.wraps?.id ?? token.token.id,
@@ -361,15 +345,11 @@ export default class operationV2 implements IOperations {
       const amountList = await this.getAmountsOut({
         chainId: this.poolInfo.chainId,
         srcToken: assets,
-        destToken: [{ id: tokenSelect.address, decimals: tokenSelect.decimals }]
+        destToken: [
+          { id: tokenSelect.address, decimals: tokenSelect.decimals }
+        ],
+        transactionType: 'withdraw'
       })
-      console.log('amountsOutList', amountsOutList)
-      console.log('amountList', amountList)
-
-      const transactionsDataTx = await this.getDatasTx(
-        '0.5',
-        amountList.transactionsDataTx
-      )
 
       withdrawAmoutOut = amountList.amountsToken.reduce(
         (total, current) => (total = total.add(Big(current))),
@@ -378,7 +358,7 @@ export default class operationV2 implements IOperations {
 
       return {
         amountOutList: amountsOutListFormatted,
-        transactionsDataTx,
+        transactionsDataTx: amountList.transactionsDataTx,
         withdrawAmoutOut,
         transactionError
       }
@@ -479,7 +459,8 @@ export default class operationV2 implements IOperations {
     minPoolAmountOut,
     userWalletAddress,
     trasactionData,
-    minPoolAmountsOut
+    minPoolAmountsOut,
+    slippageValue
   }: ExitSwapPoolAmountInParams) {
     const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
 
@@ -497,6 +478,11 @@ export default class operationV2 implements IOperations {
       toInternalBalance: false
     }
 
+    const transactionsDataTx = await this.getDatasTx(
+      slippageValue,
+      trasactionData
+    )
+
     const res = await this.contract.exitPoolExactTokenInWithSwap(
       userWalletAddress,
       this.poolInfo.controller,
@@ -504,9 +490,8 @@ export default class operationV2 implements IOperations {
       tokenOutAddress,
       minPoolAmountOut,
       request,
-      trasactionData
+      transactionsDataTx
     )
-    console.log(`RESPONSE`, res)
 
     // const res = await this.vaultBalancer.exitPool(
     //   this.poolInfo.id,
