@@ -8,6 +8,7 @@ export type GetAmountsOutParams = {
   chainId: string
   srcToken: Token[]
   destToken: Token[]
+  transactionType?: 'invest' | 'withdraw'
 }
 
 export type GetAmountsResult = {

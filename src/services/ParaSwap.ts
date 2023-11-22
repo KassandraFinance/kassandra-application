@@ -1,5 +1,6 @@
 import { URL_PARASWAP } from '@/constants/tokenAddresses'
 import { ISwapProvider, GetAmountsOutParams } from './ISwapProvider'
+import { ZeroHash } from 'ethers'
 import Big from 'big.js'
 
 export class ParaSwap implements ISwapProvider {
@@ -21,18 +22,22 @@ export class ParaSwap implements ISwapProvider {
 
     const txURL = `${this.baseUrl}/transactions/${chainId}?gasPrice=50000000000&ignoreChecks=true&ignoreGasEstimate=false&onlyParams=false`
     const requests = txs.map(async tx => {
+      if (!tx?.priceRoute) {
+        return Promise.resolve(ZeroHash)
+      }
+
       const txConfig = {
-        priceRoute: tx,
-        srcToken: tx.srcToken,
-        srcDecimals: tx.srcDecimals.toString(),
-        destToken: tx.destToken,
-        destDecimals: tx.destDecimals.toString(),
-        srcAmount: tx.srcAmount,
-        destAmount: Big(tx.destAmount)
+        priceRoute: tx.priceRoute,
+        srcToken: tx.priceRoute.srcToken,
+        srcDecimals: tx.priceRoute.srcDecimals.toString(),
+        destToken: tx.priceRoute.destToken,
+        destDecimals: tx.priceRoute.destDecimals.toString(),
+        srcAmount: tx.priceRoute.srcAmount,
+        destAmount: Big(tx.priceRoute.destAmount)
           .mul(totalPercentage - slippageFomatted)
           .toFixed(0),
         userAddress: proxy,
-        partner: tx.partner,
+        partner: tx.priceRoute.partner,
         receiver: proxy
       }
       const resJson = await fetch(txURL, {
@@ -58,7 +63,7 @@ export class ParaSwap implements ISwapProvider {
   }
 
   async getAmountsOut(params: GetAmountsOutParams) {
-    const { srcToken, destToken, chainId } = params
+    const { srcToken, destToken, chainId, transactionType = 'invest' } = params
     const transactionsDataTx = []
     const amountsToken: Array<string> = []
 
@@ -86,19 +91,20 @@ export class ParaSwap implements ISwapProvider {
 
     const amounts = await Promise.all(requests)
 
-    console.log('AMOUNTS', amounts)
     const _size = amounts.length
     for (let index = 0; index < _size; index++) {
       const data = amounts[index]
-      if (data?.priceRoute) {
-        transactionsDataTx.push(data.priceRoute)
-        amountsToken.push(data.priceRoute.destAmount)
-      } else {
-        amountsToken.push(data)
+
+      amountsToken.push(data?.priceRoute?.destAmount ?? data)
+
+      if (transactionType === 'withdraw') {
+        transactionsDataTx.push(data)
+      }
+      if (transactionType === 'invest' && data?.priceRoute) {
+        transactionsDataTx.push(data)
       }
     }
 
-    console.log(transactionsDataTx)
     return {
       amountsToken,
       transactionsDataTx
