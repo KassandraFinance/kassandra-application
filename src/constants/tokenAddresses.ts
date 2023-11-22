@@ -78,26 +78,25 @@ type CurrencyDetails = {
   address: string
 }
 
-type NetworkType = Record<
-  number,
-  {
-    chainName: string
-    chainId: number
-    kacyAddress?: string
-    rpc: string
-    coingecko: string
-    whiteList: string
-    factory: string
-    stakingContract?: string
-    privateInvestor: string
-    nativeCurrency: CurrencyDetails
-    blockExplorer: string
-    kacyOFT: string
-    vault: string
-    balancerHelper: string
-    proxyInvest: string
-  }
->
+type NetworkInfo = {
+  chainName: string
+  chainId: number
+  kacyAddress?: string
+  rpc: string
+  coingecko: string
+  whiteList: string
+  factory: string
+  stakingContract?: string
+  privateInvestor: string
+  nativeCurrency: CurrencyDetails
+  blockExplorer: string
+  kacyOFT: string
+  vault: string
+  balancerHelper: string
+  proxyInvest: string
+  chosenTokenList: string[]
+}
+type NetworkType = Record<number, NetworkInfo>
 
 export const networks: NetworkType = {
   '5': {
@@ -118,7 +117,8 @@ export const networks: NetworkType = {
       name: 'Goerli Test Token', //Ether
       symbol: 'ETH',
       decimals: 18
-    }
+    },
+    chosenTokenList: []
   },
   '137': {
     chainName: 'Polygon',
@@ -140,7 +140,14 @@ export const networks: NetworkType = {
       name: 'Matic Token',
       symbol: 'MATIC',
       decimals: 18
-    }
+    },
+    chosenTokenList: [
+      '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359', // USDC
+      '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', // USDT
+      '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063', // DAI
+      '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6', // WBTC
+      '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619' // WETH
+    ]
   },
   '43114': {
     chainId: 43114,
@@ -162,7 +169,15 @@ export const networks: NetworkType = {
       name: 'Avalanche',
       symbol: 'AVAX',
       decimals: 18
-    }
+    },
+    chosenTokenList: [
+      '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7', // WAVAX
+      '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', // USDC
+      '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7', // USDT
+      '0xd586E7F844cEa2F87f50152665BCbc2C279D8d70', // DAI
+      '0x50b7545627a5162F82A992c33b87aDc75187B218', // WBTC
+      '0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB' // WETH
+    ]
   },
   '43113': {
     chainId: 43113,
@@ -183,7 +198,8 @@ export const networks: NetworkType = {
       name: 'Avalanche',
       symbol: 'AVAX',
       decimals: 18
-    }
+    },
+    chosenTokenList: []
   },
   '42161': {
     chainName: 'Arbitrum',
@@ -204,7 +220,14 @@ export const networks: NetworkType = {
       name: 'Wrapped Ether',
       symbol: 'WETH',
       decimals: 18
-    }
+    },
+    chosenTokenList: [
+      '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', // DAI
+      '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', // USDC
+      '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9', // USDT
+      '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f', // WBTC
+      '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1' // WETH
+    ]
   }
 }
 
