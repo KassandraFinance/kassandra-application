@@ -4,7 +4,7 @@ import { dehydrate, QueryClient } from '@tanstack/react-query'
 
 import { isAddress, getAddress } from 'ethers'
 
-import { BACKEND_KASSANDRA } from '../../constants/tokenAddresses'
+import { SUBGRAPH_URL } from '../../constants/tokenAddresses'
 
 import { fetchPoolData } from '@/hooks/query/usePoolData'
 
@@ -19,7 +19,7 @@ const Index = () => {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch(BACKEND_KASSANDRA, {
+  const res = await fetch(SUBGRAPH_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
