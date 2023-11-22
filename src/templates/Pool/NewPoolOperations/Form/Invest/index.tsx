@@ -180,8 +180,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           .toFixed(0)
       }
     })
-    console.log(destTokens)
-
     const { amountsToken, transactionsDataTx } = await operation.getAmountsOut({
       chainId: pool?.chain_id?.toString() || '',
       destToken: destTokens,
