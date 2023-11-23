@@ -20,6 +20,8 @@ import { useTokens } from '@/hooks/query/useTokens'
 import TokenSelect from '../TokenSelect'
 import TokenSelected from '../TokenSelected'
 
+import logoNone from '../../../../../../public/assets/icons/coming-soon.svg'
+
 import * as S from './styles'
 
 interface IGasFeeProps {
@@ -59,7 +61,7 @@ const InputAndOutputValueToken = ({
 
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
-  const { data: tokenList } = useTokens({
+  const { data: tokenListV2 } = useTokens({
     tokensList: networks[pool?.chain_id ?? 137].chosenTokenList
   })
 
@@ -139,6 +141,23 @@ const InputAndOutputValueToken = ({
   function wei2String(input: Big) {
     return input.div(Big(10).pow(Number(tokenSelect.decimals)))
   }
+
+  const tokenList = React.useMemo(() => {
+    if (pool?.pool_version === 1) {
+      return pool?.underlying_assets.map(item => {
+        const token = item.token.wraps ? item.token.wraps : item.token
+        return {
+          id: token.id,
+          decimals: token.decimals,
+          logo: token.logo ?? logoNone.src,
+          name: token.name,
+          symbol: token.symbol
+        }
+      })
+    }
+
+    return tokenListV2
+  }, [pool, tokenListV2])
 
   // get balance of swap in token
   React.useEffect(() => {
@@ -262,7 +281,7 @@ const InputAndOutputValueToken = ({
                             0
                         )
                       )
-                      .div(Big(10).pow(Number(tokenSelect.decimals))),
+                      .div(Big(10)?.pow(Number(tokenSelect?.decimals ?? 18))),
                     18,
                     2,
                     2
