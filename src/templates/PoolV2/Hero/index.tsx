@@ -136,7 +136,10 @@ const Hero = ({ handleClickStakeButton }: IHeroProps) => {
             decimals={pool.decimals}
             pid={pool.pool_id ?? undefined}
           />
-          <Operation handleClickStakeButton={handleClickStakeButton} />
+          <Operation
+            handleClickStakeButton={handleClickStakeButton}
+            hasStake={!!pool.pool_id}
+          />
         </>
       ) : (
         <Loading marginTop={0} />

@@ -20,9 +20,8 @@ export const StatsContainer = styled.div`
 
 export const ChangeAndStakeContainer = styled.div`
   ${() => css`
-    display: grid;
+    display: flex;
     align-items: center;
-    grid-template-columns: 1fr 1fr;
     gap: 3.2rem;
     width: 100%;
 
