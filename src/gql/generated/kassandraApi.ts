@@ -6722,15 +6722,13 @@ export type CommunityPoolsQuery = {
     now: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
     day: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
     month: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
-    weight_goals: Array<{
-      __typename?: 'WeightGoalPoint'
-      weights: Array<{
-        __typename?: 'WeightGoal'
-        asset: {
-          __typename?: 'Asset'
-          token: { __typename?: 'Token'; logo?: string | null }
-        }
-      }>
+    underlying_assets: Array<{
+      __typename?: 'Asset'
+      token: {
+        __typename?: 'Token'
+        logo?: string | null
+        wraps?: { __typename?: 'Token'; logo?: string | null } | null
+      }
     }>
   }>
 }
@@ -8149,12 +8147,11 @@ export const CommunityPoolsDocument = gql`
         timestamp
         close
       }
-      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 1) {
-        weights(orderBy: weight_normalized, orderDirection: desc) {
-          asset {
-            token {
-              logo
-            }
+      underlying_assets {
+        token {
+          logo
+          wraps {
+            logo
           }
         }
       }
