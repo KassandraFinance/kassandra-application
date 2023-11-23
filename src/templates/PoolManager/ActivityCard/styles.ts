@@ -4,7 +4,7 @@ export const ActivityCard = styled.div`
   ${() => css`
     width: 100%;
     padding: 2.4rem 3.2rem;
-    border-radius: 8px;
+    border-radius: 16px;
 
     background: rgb(255 255 255 / 0.04);
   `}
@@ -13,7 +13,8 @@ export const ActivityCard = styled.div`
 export const ActivityActionTitle = styled.div`
   ${() => css`
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 1.6rem;
 
     margin-bottom: 2.4rem;
   `}
@@ -23,7 +24,6 @@ export const ActionTitle = styled.div`
   ${({ theme }) => css`
     display: flex;
     gap: 0.8rem;
-    justify-content: center;
     align-items: center;
 
     p {
@@ -90,7 +90,7 @@ export const TitleInfoContainer = styled.div`
       text-transform: uppercase;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 992px) {
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
@@ -108,7 +108,7 @@ export const TitleInfoContent = styled.div`
     gap: 1.2rem;
     align-items: center;
 
-    @media (max-width: 576px) {
+    @media (max-width: 992px) {
       flex-direction: row-reverse;
       align-items: center;
     }
@@ -120,7 +120,7 @@ export const ActivityBodyContainer = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
 
-    @media (max-width: 576px) {
+    @media (max-width: 992px) {
       display: block;
     }
   `}
@@ -129,29 +129,35 @@ export const PoolAndUserWrapper = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 2rem;
 
-    padding-left: 3.4rem;
-    border-right: 1.2px solid rgb(255 255 255 / 0.15);
+    @media (max-width: 992px) {
+      flex-direction: row;
+    }
 
     @media (max-width: 576px) {
-      padding-left: 0;
-      border-right: none;
+      flex-direction: column;
     }
   `}
 `
 
-export const TokenWrapper = styled.div`
+export const ActivityCardBody = styled.div`
   ${() => css`
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    min-width: 46rem;
 
-    padding-left: 2.4rem;
+    padding: 2.4rem 1.6rem;
 
-    @media (max-width: 576px) {
+    border-radius: 12px;
+    border: 1px solid rgba(252, 252, 252, 0.15);
+
+    @media (max-width: 992px) {
       margin-top: 3.2rem;
-      padding-left: 0;
+      min-width: 100%;
+      /* padding-left: 0; */
     }
   `}
 `

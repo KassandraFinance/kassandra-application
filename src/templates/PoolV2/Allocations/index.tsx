@@ -50,6 +50,7 @@ const Allocations = () => {
   const useAllocation = useAllocationInfo()
 
   const poolInfo = {
+    id: poolId,
     name: data?.name ?? '',
     symbol: data?.symbol ?? '',
     logo: data?.logo ?? '',

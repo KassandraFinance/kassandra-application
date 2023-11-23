@@ -1,11 +1,10 @@
+import { ReactElement } from 'react'
 import Link from 'next/link'
-import Big from 'big.js'
 
-import { useUserProfile } from '@/hooks/query/useUserProfile'
-import { BNtoDecimal } from '@/utils/numerals'
-import substr from '@/utils/substr'
-
-import ItemInformation from './ItemInformation'
+import Swap from './Swap'
+import PoolInfo from './PoolInfo'
+import TransactionInfo from './TransactionInfo'
+import TokenChangeUpdate from './TokenChangeUpdate'
 import WeightChangeAssetList from './WeightChangeAssetList'
 
 import * as S from './styles'
@@ -19,26 +18,52 @@ export type ActivityInfo = {
   newWeight?: string
 }
 
+type TransactionData = {
+  sharesPrice: string
+  tokenIn: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
+  tokenOut: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
+}
+
+type RebalanceData = {
+  logo: string
+  symbol: string
+  weight: string
+  newWeight: string
+}
+
+type RebalancePoolData = {
+  assetChange?: RebalanceData
+  rebalanceData: RebalanceData[]
+}
+
 export interface IActivityCardProps {
   actionType: actionsType
   date: Date
   scan: string
   wallet: string
-  activityInfo: ActivityInfo[]
   txHash: string
-  managerAddress: string
+  transactionData?: TransactionData
+  rebalancePoolData?: RebalancePoolData
   pool: {
     name: string
     symbol: string
     logo: string
   }
+}
 
-  sharesRedeemed?: {
-    amount: string
-    value: string
-  }
-
-  newBalancePool?: ActivityInfo[]
+type ActivityReturn = {
+  title: string
+  icon: string
+  subTitle?: string
+  titleShares?: string
 }
 
 export enum actionsType {
@@ -46,13 +71,11 @@ export enum actionsType {
   WITHDRAWAL,
   REBALANCE,
   ADDITION,
-  REMOVAL
+  REMOVAL,
+  SWAP
 }
 
-const activityProps: Record<
-  actionsType,
-  { title: string; icon: string; subTitle?: string; titleShares?: string }
-> = {
+const activityProps: Record<actionsType, ActivityReturn> = {
   [actionsType.DEPOSIT]: {
     title: 'Deposit',
     icon: '/assets/icons/deposit.svg',
@@ -78,6 +101,11 @@ const activityProps: Record<
     title: 'Asset Removal',
     icon: '/assets/icons/removal.svg',
     subTitle: 'Asset removed'
+  },
+  [actionsType.SWAP]: {
+    title: 'Swap',
+    icon: '/assets/icons/deposit.svg',
+    subTitle: 'Swap'
   }
 }
 
@@ -85,108 +113,97 @@ const ActivityCard = ({
   actionType,
   date,
   scan,
-  activityInfo,
   wallet,
   pool,
   txHash,
-  newBalancePool,
-  sharesRedeemed,
-  managerAddress
+  rebalancePoolData,
+  transactionData
 }: IActivityCardProps) => {
-  const { data } = useUserProfile({ address: wallet })
-
-  const userImage = data?.image || ''
-  const nickname = data?.nickname || ''
+  const ActivityComponents: Record<actionsType, ReactElement> = {
+    [actionsType.DEPOSIT]: (
+      <TransactionInfo
+        typeAction={actionType}
+        walletAddress={wallet}
+        poolSymbol={pool.symbol}
+        transactionDetails={transactionData}
+      />
+    ),
+    [actionsType.WITHDRAWAL]: (
+      <TransactionInfo
+        typeAction={actionType}
+        walletAddress={wallet}
+        poolSymbol={pool.symbol}
+        transactionDetails={transactionData}
+      />
+    ),
+    [actionsType.REBALANCE]: (
+      <WeightChangeAssetList
+        assetInfoList={rebalancePoolData?.rebalanceData ?? []}
+      />
+    ),
+    [actionsType.ADDITION]: (
+      <TokenChangeUpdate
+        title={activityProps[actionType]?.subTitle ?? ''}
+        assetChange={rebalancePoolData?.assetChange}
+        assetInfoList={rebalancePoolData?.rebalanceData ?? []}
+      />
+    ),
+    [actionsType.REMOVAL]: (
+      <TokenChangeUpdate
+        title={activityProps[actionType]?.subTitle ?? ''}
+        assetChange={rebalancePoolData?.assetChange}
+        assetInfoList={rebalancePoolData?.rebalanceData ?? []}
+      />
+    ),
+    [actionsType.SWAP]: (
+      <Swap transactionData={transactionData} walletAddress={wallet} />
+    )
+  }
 
   return (
     <S.ActivityCard>
-      <S.ActivityActionTitle>
-        <S.ActionTitle>
-          <img
-            src={activityProps[actionType].icon}
-            alt=""
-            width={24}
-            height={24}
-          />
-          <p>{activityProps[actionType].title}</p>
-        </S.ActionTitle>
-        <Link href={`${scan}tx/${txHash}`} passHref>
-          <S.ActionTimeContent target="_blank">
-            <p>
-              {date.toLocaleTimeString('pt-BR', {
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </p>
-            <span>{date.toLocaleDateString('pt-BR')}</span>
-            <img
-              src="/assets/utilities/external-link.svg"
-              alt="external-link"
-              width={16}
-              height={16}
-            />
-          </S.ActionTimeContent>
-        </Link>
-      </S.ActivityActionTitle>
-
       <S.ActivityBodyContainer>
         <S.PoolAndUserWrapper>
-          <ItemInformation
-            title={managerAddress === wallet ? 'Manager' : 'Investor'}
-            name={nickname}
-            description={substr(wallet)}
-            userWalletAddress={wallet}
-            ImageUrl={userImage}
-          />
+          <S.ActivityActionTitle>
+            <Link href={`${scan}/tx/${txHash}`} passHref>
+              <S.ActionTimeContent target="_blank">
+                <p>
+                  {date.toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+                <span>{date.toLocaleDateString('pt-BR')}</span>
+                <img
+                  src="/assets/utilities/external-link.svg"
+                  alt="external-link"
+                  width={16}
+                  height={16}
+                />
+              </S.ActionTimeContent>
+            </Link>
+            <S.ActionTitle>
+              <img
+                src={activityProps[actionType].icon}
+                alt=""
+                width={24}
+                height={24}
+              />
+              <p>{activityProps[actionType].title}</p>
+            </S.ActionTitle>
+          </S.ActivityActionTitle>
 
-          <ItemInformation
+          <PoolInfo
             title="Pool"
             name={pool.name}
             description={pool.symbol}
-            ImageUrl={pool.logo}
+            logo={pool.logo}
           />
         </S.PoolAndUserWrapper>
 
-        <S.TokenWrapper>
-          {actionType !== actionsType.REBALANCE ? (
-            <>
-              {activityInfo.map((activity, i) => (
-                <ItemInformation
-                  key={activity.value + activity.newWeight}
-                  title={
-                    i === 0 ? activityProps[actionType].subTitle : undefined
-                  }
-                  name={`${BNtoDecimal(Big(activity.amount), 4)} ${
-                    activity.symbol
-                  }`}
-                  description={`$${activity.value}`}
-                  ImageUrl={activity.logo}
-                  newWeight={activity.newWeight}
-                  weight={activity.weight}
-                />
-              ))}
-              {newBalancePool && (
-                <WeightChangeAssetList
-                  assetInfoList={newBalancePool}
-                  take={4}
-                />
-              )}
-              {sharesRedeemed && (
-                <ItemInformation
-                  title={activityProps[actionType].titleShares ?? 'Shares'}
-                  name={`${BNtoDecimal(Big(sharesRedeemed.amount), 4)} ${
-                    pool.symbol
-                  }`}
-                  tokenName={pool.name}
-                  description={`$${sharesRedeemed.value}`}
-                  ImageUrl={pool.logo}
-                />
-              )}
-            </>
-          ) : (
-            <WeightChangeAssetList assetInfoList={activityInfo} />
-          )}
-        </S.TokenWrapper>
+        <S.ActivityCardBody>
+          {ActivityComponents[actionType]}
+        </S.ActivityCardBody>
       </S.ActivityBodyContainer>
     </S.ActivityCard>
   )
