@@ -1,7 +1,4 @@
 import Big from 'big.js'
-
-import { BNtoDecimal } from '@/utils/numerals'
-
 import { ActivityCardProps, activityProps } from '../Activity'
 
 type Token = {
@@ -11,7 +8,6 @@ type Token = {
 }
 
 type IActivityProps = {
-  __typename?: 'Activity' | undefined
   id: string
   type: string
   timestamp: number
@@ -23,19 +19,13 @@ type IActivityProps = {
 }
 
 type IUnderlyingAssetsProps = {
-  __typename?: 'Asset' | undefined
   token: {
-    __typename?: 'Token' | undefined
-    logo?: string | null | undefined
+    logo?: string | null
     symbol: string
-    wraps?:
-    | {
-      __typename?: 'Token' | undefined
+    wraps?: {
       symbol: string
-      logo?: string | null | undefined
-    }
-    | null
-    | undefined
+      logo?: string | null
+    } | null
   }
 }
 
@@ -46,30 +36,30 @@ type IWeightGoalsProps = {
   txHash: string
   end_timestamp: number
   previous?:
-  | {
-    __typename?: 'WeightGoalPoint' | undefined
-    weights: {
-      __typename?: 'WeightGoal' | undefined
-      weight_normalized: string
-      asset: {
-        __typename?: 'Asset' | undefined
-        token: {
-          __typename?: 'Token' | undefined
-          symbol: string
-        }
+    | {
+        __typename?: 'WeightGoalPoint' | undefined
+        weights: {
+          __typename?: 'WeightGoal' | undefined
+          weight_normalized: string
+          asset: {
+            __typename?: 'Asset' | undefined
+            token: {
+              __typename?: 'Token' | undefined
+              symbol: string
+            }
+          }
+        }[]
       }
-    }[]
-  }
-  | null
-  | undefined
+    | null
+    | undefined
   token?:
-  | {
-    __typename?: 'Token' | undefined
-    symbol: string
-    logo?: string | null | undefined
-  }
-  | null
-  | undefined
+    | {
+        __typename?: 'Token' | undefined
+        symbol: string
+        logo?: string | null | undefined
+      }
+    | null
+    | undefined
   weights: {
     __typename?: 'WeightGoal' | undefined
     weight_normalized: string
@@ -121,16 +111,16 @@ export function getActivityInfo(
           .slice(0, indexOfTokenOut)
           .reduce(
             (total, current, i) =>
-            (total = total.add(
-              Big(current).mul(
-                activity.price_usd.slice(0, indexOfTokenOut)[i]
-              )
-            )),
+              (total = total.add(
+                Big(current).mul(
+                  activity.price_usd.slice(0, indexOfTokenOut)[i]
+                )
+              )),
             Big(0)
           )
 
         tokenIn = {
-          value: Big(totalAmount ?? '0').toFixed()
+          value: totalAmount.toFixed()
         }
         tokenOut = {
           logo: assets[activity.symbol[indexOfTokenOut]],
@@ -146,9 +136,9 @@ export function getActivityInfo(
           .slice(1)
           .reduce(
             (total, current, i) =>
-            (total = total.add(
-              Big(current).mul(activity.price_usd.slice(1)[i])
-            )),
+              (total = total.add(
+                Big(current).mul(activity.price_usd.slice(1)[i])
+              )),
             Big(0)
           )
 
@@ -177,7 +167,7 @@ export function getActivityInfo(
           sharesPrice: sharesPrice.toFixed(2),
           tokenIn: {
             logo: tokenIn.logo,
-            amount: Big(tokenIn.amount ?? 0).toFixed(2),
+            amount: tokenIn.amount ? Big(tokenIn.amount).toFixed(2) : undefined,
             value: tokenIn.value ? Big(tokenIn.value).toFixed(2) : undefined
           },
           tokenOut
