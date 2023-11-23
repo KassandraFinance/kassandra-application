@@ -7,6 +7,7 @@ export const SAVE_POOL = gql`
     $signature: String!
     $logo: String
     $summary: String
+    $shortSummary: String
   ) {
     savePool(
       controller: $controller
@@ -14,6 +15,7 @@ export const SAVE_POOL = gql`
       signature: $signature
       logo: $logo
       summary: $summary
+      shortSummary: $shortSummary
     ) {
       message
       ok

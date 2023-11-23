@@ -7644,7 +7644,11 @@ export type PoolStrategyQueryVariables = Exact<{
 
 export type PoolStrategyQuery = {
   __typename?: 'Query'
-  pool?: { __typename?: 'Pool'; summary?: string | null } | null
+  pool?: {
+    __typename?: 'Pool'
+    summary?: string | null
+    short_summary?: string | null
+  } | null
 }
 
 export type PoolTvmChartQueryVariables = Exact<{
@@ -9153,6 +9157,7 @@ export const PoolStrategyDocument = gql`
   query PoolStrategy($id: ID!) {
     pool(id: $id) {
       summary
+      short_summary
     }
   }
 `

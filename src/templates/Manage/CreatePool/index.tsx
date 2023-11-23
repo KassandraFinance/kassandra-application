@@ -507,6 +507,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   async function sendPoolData(
     controller: string,
     logo: string,
+    shortSummary: string,
     summary: string,
     chainId: number
   ) {
@@ -516,12 +517,13 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }
 
       const logoToSign = logo ? keccak256(toUtf8Bytes(logo)) : ''
-      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
+      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nshortSummary: ${shortSummary}\nsummary: ${summary}`
       const signature = await signMessage(message)
 
       const body = {
         controller,
         logo: logo ? logo : undefined,
+        shortSummary,
         summary,
         chainId,
         signature
@@ -813,6 +815,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         await sendPoolData(
           response.poolController,
           poolData.icon?.image_preview || '',
+          poolData.shortSummary || '',
           poolData.strategy || '',
           poolData.networkId || 137
         )

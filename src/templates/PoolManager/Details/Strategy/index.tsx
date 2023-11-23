@@ -11,8 +11,9 @@ import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 import { usePoolStrategy } from '@/hooks/query/usePoolStrategy'
 import { useSavePool } from '@/hooks/query/useSavePool'
 
-import TitleSection from '@/components/TitleSection'
 import Button from '@/components/Button'
+import TitleSection from '@/components/TitleSection'
+import TextareaWithValueCounter from '@/components/TextareaWithValueCounter'
 
 import investmentIcon from '@assets/iconGradient/featured.svg'
 import editIcon from '@assets/utilities/edit-icon.svg'
@@ -25,6 +26,7 @@ import * as S from './styles'
 
 const Strategy = () => {
   const [value, setValue] = React.useState('')
+  const [shortSummary, setShortSummary] = React.useState('')
   const [isEdit, setIsEdit] = React.useState(true)
 
   const { signMessage } = useSignMessage()
@@ -36,6 +38,10 @@ const Strategy = () => {
 
   function handleEditorChange({ text }: { text: string }) {
     setValue(text)
+  }
+
+  function handleSummaryOnChange(text: string) {
+    setShortSummary(text)
   }
 
   function handleEditClick() {
@@ -62,10 +68,16 @@ const Strategy = () => {
 
     try {
       const logoToSign = ''
-      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
+      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nshortSummary: ${shortSummary}\nsummary: ${summary}`
       const signature = await signMessage(message)
 
-      mutate({ chainId, controller, signature: signature || '', summary })
+      mutate({
+        chainId,
+        controller,
+        signature: signature || '',
+        shortSummary,
+        summary
+      })
     } catch (error) {
       console.error(error)
     }
@@ -79,6 +91,7 @@ const Strategy = () => {
   React.useEffect(() => {
     if (!data?.summary) return
     setValue(data.summary)
+    setShortSummary(data?.short_summary ?? '')
   }, [data])
 
   React.useEffect(() => {
@@ -96,6 +109,20 @@ const Strategy = () => {
           <Image src={editIcon} />
         </S.ButtonEdit>
       </S.TitleWrapper>
+
+      <S.InputCountWrapper>
+        <TextareaWithValueCounter
+          name="shortSummary"
+          type="text"
+          placeholder="Enter a Brief Description"
+          required
+          value={shortSummary}
+          minLength={0}
+          maxLength={150}
+          label="DESCRIPTION"
+          onChange={e => handleSummaryOnChange(e.target.value)}
+        />
+      </S.InputCountWrapper>
 
       {!isEdit ? (
         <S.Text>

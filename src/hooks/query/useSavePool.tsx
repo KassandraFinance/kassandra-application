@@ -10,6 +10,7 @@ type UseSavePoolProps = {
   controller: string
   signature: string
   logo?: string
+  shortSummary?: string
   summary?: string
 }
 
@@ -18,10 +19,11 @@ export const sendSavePool = async ({
   controller,
   signature,
   logo,
+  shortSummary,
   summary
 }: UseSavePoolProps) => {
   return backendClient
-    .SavePool({ chainId, controller, signature, logo, summary })
+    .SavePool({ chainId, controller, signature, logo, shortSummary, summary })
     .then(res => res)
 }
 
@@ -35,9 +37,17 @@ export const useSavePool = ({ id, user }: { id: string; user?: string }) => {
       controller,
       signature,
       logo,
-      summary
+      summary,
+      shortSummary
     }: UseSavePoolProps) => {
-      return sendSavePool({ chainId, controller, signature, logo, summary })
+      return sendSavePool({
+        chainId,
+        controller,
+        signature,
+        logo,
+        shortSummary,
+        summary
+      })
     },
     onError: () => {
       dispatch(

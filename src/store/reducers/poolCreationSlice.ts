@@ -40,6 +40,7 @@ export type PoolData = {
     image_file: unknown
   }
   strategy?: string
+  shortSummary?: string
   privacy?: string
   tokens?: TokenType[]
   privateAddressList?: {
@@ -189,6 +190,7 @@ const initialState: IPoolCreationDataState = {
       image_file: null
     },
     strategy: '',
+    shortSummary: '',
     privacy: 'public',
     tokens: [],
     privateAddressList: [],
