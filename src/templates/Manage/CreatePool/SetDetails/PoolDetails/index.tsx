@@ -75,7 +75,7 @@ const PoolDetails = () => {
           value={details.shortSummary ?? ''}
           minLength={0}
           maxLength={150}
-          lable="DESCRIPTION"
+          label="DESCRIPTION"
           onChange={e => handleShortSummaryChange(e.target.value)}
         />
       </S.Details>

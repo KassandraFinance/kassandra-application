@@ -9,7 +9,7 @@ interface ITextareaWithValueCounterProps {
   placeholder: string
   minLength: number
   maxLength: number
-  lable: string
+  label: string
   readonly?: boolean
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
 }
@@ -22,13 +22,13 @@ const TextareaWithValueCounter = ({
   placeholder,
   minLength,
   maxLength,
-  lable,
+  label,
   readonly = false,
   onChange
 }: ITextareaWithValueCounterProps) => {
   return (
     <S.TextareaWithValueCounter>
-      <S.Label htmlFor={name}>{lable}</S.Label>
+      <S.Label htmlFor={name}>{label}</S.Label>
 
       <S.TextareaContainer>
         <S.Textarea

@@ -119,7 +119,7 @@ const Strategy = () => {
           value={shortSummary}
           minLength={0}
           maxLength={150}
-          lable="DESCRIPTION"
+          label="DESCRIPTION"
           onChange={e => handleSummaryOnChange(e.target.value)}
         />
       </S.InputCountWrapper>
