@@ -61,18 +61,38 @@ export default Staking
 
 const questionsAndAnswersList = [
   {
-    question: 'What is the Kassandra’s Manager Incentive Program?',
+    question: 'How do rewards work in a Feature Pool?',
     answers:
-      'The Managers Incentive Program is a new initiative designed to empower our pool managers and enhance the Kassandra platform experience. We offer a range of benefits, including featured placement for your pool, active marketing support, and staking rewards in our native KACY token for pool investors. Shaped not just as a reward program but as a partnership, the Managers Incentive Program provides benefits for all members of our community, adding value for investors who will have access to advantageous fund strategies, and for managers who can attract more investors to their featured pools and earn fees for their work.'
+      'Rewards are distributed to pool participants based on the amount they deposit and the length of time they hold their deposits. The longer you hold your investments in the pool, the larger your share of the distributed rewards will be. Rewards are given in Kacy.'
   },
   {
-    question: 'What is the Kassandra Manager Incentive Program?',
+    question: 'Is it possible to do compound investing in Feature Pools?',
     answers:
-      'Shaped not just as a reward program but as a partnership, the Managers Incentive Program provides benefits for all members of our community, adding value for investors who will have access to advantageous fund strategies, and for managers who can attract more investors to their featured pools and earn fees for their work.'
+      'Yes! You can take your rewards, which are given in Kacy, and make a new investment using Kacy directly, thereby allowing you to stake it and earn a larger share in the Feature Pools. This leads to higher rewards since you have a greater stake in the pool.'
   },
   {
-    question: 'What is Kassandra’s Manager Incentive Program?',
+    question: 'What are Feature Pools and how can I participate?',
     answers:
-      'The Managers Incentive Program is a new initiative designed to empower our pool managers and enhance the Kassandra platform experience.'
+      'Feature Pools are investment pools that earn rewards for gaining recognition from the Kassandra Foundation and community. All Feature Pools go through a vote by the DAO https://app.kassandra.finance/gov to receive rewards in Kacy. If you are interested in including your investment pool in the reward program, we have a program that can assist you, called the Managers Incentive Program https://www.kassandra.finance/incentives-program. Alternatively, you can make a proposal on our forum https://gov.kassandra.finance/ or within the DAO https://app.kassandra.finance/gov.'
+  },
+  {
+    question: "How do I earn Kacy by investing in Kassandra's pools?",
+    answers:
+      "To stake, follow these steps: \n\n a. Connect your wallet to the platform. \nb. Choose a feature pool on the platform's investment page. \nc. Select the amount you wish to invest; you can invest with any token. \nd. Confirm the transaction and receive the token representing the pool, for example: pECO or aECO. \ne. Go to the stake section and select the pool you invested in, and stake all the tokens. \nf. You're all set, and now you're earning Kacy as a reward."
+  },
+  {
+    question: 'How can I check my accumulated rewards?',
+    answers:
+      "ou can check your accumulated rewards in the platform's interface, where you made the deposit; it displays the balance of earned rewards. Make sure to be connected to your wallet to access this information."
+  },
+  {
+    question: 'How often are rewards distributed?',
+    answers:
+      'It is done with every block on the network where you are receiving the reward'
+  },
+  {
+    question: 'Is there any risk associated with investments in Feature Pools?',
+    answers:
+      'Yes, the primary risk is linked to the volatility of the prices of assets involved in Feature Pools. Currently, our stake contracts have been audited by Certik, and the investment pool contracts are derived from Balancer Labs.'
   }
 ]

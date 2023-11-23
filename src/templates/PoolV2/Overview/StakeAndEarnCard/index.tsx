@@ -76,7 +76,11 @@ const StakeAndEarnCard = ({
 
           <span>
             {BNtoDecimal(aprValue, 0)}%
-            <Tippy content={'asd'}>
+            <Tippy
+              content={
+                'This is a feature pool managed by the Kassandra Foundation, where we provide incentives for people to deposit and use these pools with Kacy incentives.'
+              }
+            >
               <span>
                 <Image
                   src="/assets/utilities/tooltip.svg"

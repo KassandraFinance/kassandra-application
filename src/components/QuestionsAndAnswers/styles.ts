@@ -79,5 +79,6 @@ export const text = styled.p`
     font-size: ${theme.font.sizes.font16};
     font-weight: ${theme.font.weight.normal};
     line-height: 2.4rem;
+    white-space: pre-line;
   `}
 `
