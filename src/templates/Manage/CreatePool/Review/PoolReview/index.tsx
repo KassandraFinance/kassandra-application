@@ -136,25 +136,11 @@ const PoolReview = () => {
       })
     })
 
-    // const amounts = await swapProvider.getAmountsOut({
-    //   amount,
-    //   chainId: poolData.networkId?.toString() ?? '137',
-    //   destTokens: tokensList.map(token => ({
-    //     token: {
-    //       id: token.address,
-    //       decimals: token.decimals
-    //     },
-    //     weight_normalized: Big(token.allocation).div(100).toString()
-    //   })),
-    //   srcDecimals: poolData.tokenIn.decimals?.toString() || '18',
-    //   srcToken: poolData.tokenIn.address
-    // })
-
-    for (let i = 0; i < amounts.amountsToken.length; i++) {
+    for (let i = 0; i < amounts.tokenAmounts.length; i++) {
       dispatch(
         setLiquidity({
           token: tokensList[i].symbol,
-          liquidity: Big(amounts.amountsToken[i])
+          liquidity: Big(amounts.tokenAmounts[i])
             .div(Big(10).pow(tokensList[i].decimals))
             .toFixed(),
           tokenPriceList: data ?? {}

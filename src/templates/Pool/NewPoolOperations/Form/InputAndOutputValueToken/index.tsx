@@ -20,7 +20,7 @@ import { useTokens } from '@/hooks/query/useTokens'
 import TokenSelect from '../TokenSelect'
 import TokenSelected from '../TokenSelected'
 
-import logoNone from '../../../../../../public/assets/icons/coming-soon.svg'
+import logoNone from '@assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 

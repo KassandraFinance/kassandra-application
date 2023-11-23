@@ -40,7 +40,7 @@ export class ParaSwap implements ISwapProvider {
         partner: tx.priceRoute.partner,
         receiver: proxy
       }
-      const resJson = await fetch(txURL, {
+      const response = await fetch(txURL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -48,24 +48,23 @@ export class ParaSwap implements ISwapProvider {
         },
         body: JSON.stringify(txConfig)
       })
-      const response = await resJson.json()
+      const resJSON = await response.json()
 
-      if (response?.error) {
-        throw { code: 'KASS#01', message: response.error }
+      if (resJSON?.error) {
+        throw { code: 'KASS#01', message: resJSON.error }
       }
 
-      return response.data
+      return resJSON.data
     })
     const datas = await Promise.all(requests)
 
-    console.log(datas)
     return datas
   }
 
   async getAmountsOut(params: GetAmountsOutParams) {
     const { srcToken, destToken, chainId, transactionType = 'invest' } = params
     const transactionsDataTx = []
-    const amountsToken: Array<string> = []
+    const tokenAmounts: Array<string> = []
 
     const requests = srcToken.flatMap(srcAsset => {
       return destToken.map(async destAsset => {
@@ -95,7 +94,7 @@ export class ParaSwap implements ISwapProvider {
     for (let index = 0; index < _size; index++) {
       const data = amounts[index]
 
-      amountsToken.push(data?.priceRoute?.destAmount ?? data)
+      tokenAmounts.push(data?.priceRoute?.destAmount ?? data)
 
       if (transactionType === 'withdraw') {
         transactionsDataTx.push(data)
@@ -106,7 +105,7 @@ export class ParaSwap implements ISwapProvider {
     }
 
     return {
-      amountsToken,
+      tokenAmounts,
       transactionsDataTx
     }
   }

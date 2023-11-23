@@ -351,7 +351,7 @@ export default class operationV2 implements IOperations {
         transactionType: 'withdraw'
       })
 
-      withdrawAmoutOut = amountList.amountsToken.reduce(
+      withdrawAmoutOut = amountList.tokenAmounts.reduce(
         (total, current) => (total = total.add(Big(current))),
         Big(0)
       )
@@ -417,7 +417,6 @@ export default class operationV2 implements IOperations {
           [this.poolInfo.tokensAddresses[i]]: Big(allAmountsOut[i].toString())
         })
       }
-      console.log('withdrawAllAmoutOut', withdrawAllAmoutOut)
 
       await this.vaultBalancer.exitPool.staticCall(
         this.poolInfo.id,

@@ -34,7 +34,7 @@ import {
 
 import * as S from './styles'
 
-type TokenSwapList = {
+type TokenSwapItem = {
   id: string
   decimals: number
   logo?: string | null
@@ -162,7 +162,7 @@ const Pool = () => {
     faqs: <Faqs />
   }
 
-  async function getTokensForOperations(tokensSwapProvider: TokenSwapList[]) {
+  async function getTokensForOperations(tokensSwapProvider: TokenSwapItem[]) {
     const tokenAddressesSwapProvider = tokensSwapProvider.map(token => token.id)
 
     let poolAssets: Asset[] = []

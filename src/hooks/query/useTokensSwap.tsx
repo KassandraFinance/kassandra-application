@@ -2,18 +2,18 @@ import { useQuery } from '@tanstack/react-query'
 
 import { kassandraClient } from '@/graphQLClients'
 
-type TokensSwap = {
+type TokensSwapOptions = {
   chainId: number
 }
 
-export const tokenSwap = async ({ chainId }: TokensSwap) => {
+export const tokenSwap = async ({ chainId }: TokensSwapOptions) => {
   return kassandraClient.tokensSwap({ chainId }).then(res => res.tokens)
 }
 
-export const useTokenSwap = ({ chainId }: TokensSwap) => {
+export const useTokenSwap = ({ chainId }: TokensSwapOptions) => {
   return useQuery({
     queryKey: ['tokens-swap', chainId],
-    queryFn: async () =>
+    queryFn: () =>
       tokenSwap({
         chainId
       }),

@@ -180,7 +180,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           .toFixed(0)
       }
     })
-    const { amountsToken, transactionsDataTx } = await operation.getAmountsOut({
+    const { tokenAmounts, transactionsDataTx } = await operation.getAmountsOut({
       chainId: pool?.chain_id?.toString() || '',
       destToken: destTokens,
       srcToken: [
@@ -194,7 +194,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     setTrasactionData(transactionsDataTx)
 
     return {
-      amountsTokenIn: amountsToken,
+      amountsTokenIn: tokenAmounts,
       transactionsDataTx
     }
   }
@@ -225,7 +225,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         amount: amountTokenIn.toString()
       }
     ]
-    const { amountsToken, transactionsDataTx } = await operation.getAmountsOut({
+    const { tokenAmounts, transactionsDataTx } = await operation.getAmountsOut({
       chainId: pool?.chain_id?.toString() || '',
       destToken: [
         {
@@ -239,7 +239,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     const datas = await operation.getDatasTx(slippage.value, transactionsDataTx)
     setTrasactionData(datas[0])
     return {
-      amountsTokenIn: amountsToken,
+      amountsTokenIn: tokenAmounts,
       transactionsDataTx: datas
     }
   }

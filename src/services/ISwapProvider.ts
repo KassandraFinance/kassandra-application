@@ -12,7 +12,7 @@ export type GetAmountsOutParams = {
 }
 
 export type GetAmountsResult = {
-  amountsToken: string[]
+  tokenAmounts: string[]
   transactionsDataTx: string[]
 }
 
