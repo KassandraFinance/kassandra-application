@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 export const MyAsset = styled.div`
   ${() => css`
     display: flex;
-    gap: 3.2rem;
+    gap: 1.6rem;
     justify-content: start;
     align-items: center;
 

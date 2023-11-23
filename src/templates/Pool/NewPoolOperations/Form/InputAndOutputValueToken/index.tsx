@@ -7,16 +7,20 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import { getBalanceToken, decimalToBN } from '../../../../../utils/poolUtils'
 
-import { useAppSelector } from '../../../../../store/hooks'
-import { usePoolData } from '@/hooks/query/usePoolData'
+import { networks } from '@/constants/tokenAddresses'
 
 import PoolOperationContext from '../PoolOperationContext'
 
+import { useAppSelector } from '../../../../../store/hooks'
+import { usePoolData } from '@/hooks/query/usePoolData'
 import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useTokens } from '@/hooks/query/useTokens'
 
 import TokenSelect from '../TokenSelect'
 import TokenSelected from '../TokenSelected'
+
+import logoNone from '@assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 
@@ -57,6 +61,9 @@ const InputAndOutputValueToken = ({
 
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
+  const { data: tokenListV2 } = useTokens({
+    tokensList: networks[pool?.chain_id ?? 137].chosenTokenList
+  })
 
   const chainId = Number(wallet?.chains[0].id ?? '0x89')
 
@@ -135,6 +142,23 @@ const InputAndOutputValueToken = ({
     return input.div(Big(10).pow(Number(tokenSelect.decimals)))
   }
 
+  const tokenList = React.useMemo(() => {
+    if (pool?.pool_version === 1) {
+      return pool?.underlying_assets.map(item => {
+        const token = item.token.wraps ? item.token.wraps : item.token
+        return {
+          id: token.id,
+          decimals: token.decimals,
+          logo: token.logo ?? logoNone.src,
+          name: token.name,
+          symbol: token.symbol
+        }
+      })
+    }
+
+    return tokenListV2
+  }, [pool, tokenListV2])
+
   // get balance of swap in token
   React.useEffect(() => {
     if (
@@ -166,11 +190,13 @@ const InputAndOutputValueToken = ({
         <S.Top>
           <S.Info>
             <S.Title>{isInvestType ? 'Pay with' : 'Swap to'}</S.Title>
+
             {isInvestType ? (
               <TokenSelected tokenSelect={tokenSelect} />
             ) : (
-              <TokenSelect />
+              <TokenSelect tokenList={tokenList} />
             )}
+
             <S.Span spanlight={true} onClick={debounceMax}>
               Balance:{' '}
               {selectedTokenInBalance > new Big(-1)
@@ -255,7 +281,7 @@ const InputAndOutputValueToken = ({
                             0
                         )
                       )
-                      .div(Big(10).pow(Number(tokenSelect.decimals))),
+                      .div(Big(10)?.pow(Number(tokenSelect?.decimals ?? 18))),
                     18,
                     2,
                     2

@@ -8,10 +8,11 @@ import * as S from './styles'
 type Operations = 'Invest' | 'Withdraw'
 
 interface IOperationProps {
+  hasStake: boolean
   handleClickStakeButton: (scrollToValue: number) => void
 }
 
-const Operation = ({ handleClickStakeButton }: IOperationProps) => {
+const Operation = ({ hasStake, handleClickStakeButton }: IOperationProps) => {
   const [isOpenPoolOperation, setIsOpenPoolOperation] = React.useState(false)
   const [operation, setOperation] = React.useState<Operations>('Invest')
 
@@ -41,15 +42,17 @@ const Operation = ({ handleClickStakeButton }: IOperationProps) => {
         />
       </S.ButtonWarap>
 
-      <S.StakeButton onClick={() => handleClickStakeButton(0)}>
-        <p>Stake</p>
-        <img
-          src="/assets/iconGradient/lightning.svg"
-          alt="Lightning Icon"
-          width={16}
-          height={16}
-        />
-      </S.StakeButton>
+      {hasStake && (
+        <S.StakeButton onClick={() => handleClickStakeButton(0)}>
+          <p>Stake</p>
+          <img
+            src="/assets/iconGradient/lightning.svg"
+            alt="Lightning Icon"
+            width={16}
+            height={16}
+          />
+        </S.StakeButton>
+      )}
 
       <NewPoolOperations
         isOpenPoolOperation={isOpenPoolOperation}

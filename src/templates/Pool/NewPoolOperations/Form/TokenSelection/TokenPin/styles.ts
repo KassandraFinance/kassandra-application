@@ -6,6 +6,8 @@ export const TokenPinContainer = styled.div`
     align-items: center;
     gap: 0.8rem;
     flex-wrap: wrap;
+
+    min-height: 8rem;
   `}
 `
 

@@ -155,18 +155,16 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
       <S.ChangeAndStakeContainer>
         <PriceChange changePriceList={Object.values(changePriceList)} />
 
-        <div>
-          {pool?.chain_id && (
-            <StakeAndEarnCard
-              handleClickStakeButton={handleClickStakeButton}
-              poolName={pool.name}
-              poolIcon={pool.logo ?? ''}
-              poolId={pool?.pool_id ?? undefined}
-              chainId={pool?.chain_id ?? 0}
-              poolPrice={pool?.price_usd ?? '0'}
-            />
-          )}
-        </div>
+        {pool?.chain_id && pool?.pool_id && (
+          <StakeAndEarnCard
+            handleClickStakeButton={handleClickStakeButton}
+            poolName={pool.name}
+            poolIcon={pool.logo ?? ''}
+            poolId={pool?.pool_id ?? undefined}
+            chainId={pool?.chain_id ?? 0}
+            poolPrice={pool?.price_usd ?? '0'}
+          />
+        )}
       </S.ChangeAndStakeContainer>
 
       {pool?.summary && <TokenDescription summary={pool.summary} />}

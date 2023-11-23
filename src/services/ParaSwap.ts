@@ -1,5 +1,6 @@
 import { URL_PARASWAP } from '@/constants/tokenAddresses'
-import { ISwapProvider, GetAmountsParams } from './ISwapProvider'
+import { ISwapProvider, GetAmountsOutParams } from './ISwapProvider'
+import { ZeroHash } from 'ethers'
 import Big from 'big.js'
 
 export class ParaSwap implements ISwapProvider {
@@ -21,21 +22,25 @@ export class ParaSwap implements ISwapProvider {
 
     const txURL = `${this.baseUrl}/transactions/${chainId}?gasPrice=50000000000&ignoreChecks=true&ignoreGasEstimate=false&onlyParams=false`
     const requests = txs.map(async tx => {
+      if (!tx?.priceRoute) {
+        return Promise.resolve(ZeroHash)
+      }
+
       const txConfig = {
-        priceRoute: tx,
-        srcToken: tx.srcToken,
-        srcDecimals: tx.srcDecimals,
-        destToken: tx.destToken,
-        destDecimals: tx.destDecimals,
-        srcAmount: tx.srcAmount,
-        destAmount: Big(tx.destAmount)
+        priceRoute: tx.priceRoute,
+        srcToken: tx.priceRoute.srcToken,
+        srcDecimals: tx.priceRoute.srcDecimals.toString(),
+        destToken: tx.priceRoute.destToken,
+        destDecimals: tx.priceRoute.destDecimals.toString(),
+        srcAmount: tx.priceRoute.srcAmount,
+        destAmount: Big(tx.priceRoute.destAmount)
           .mul(totalPercentage - slippageFomatted)
           .toFixed(0),
         userAddress: proxy,
-        partner: tx.partner,
+        partner: tx.priceRoute.partner,
         receiver: proxy
       }
-      const resJson = await fetch(txURL, {
+      const response = await fetch(txURL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,43 +48,44 @@ export class ParaSwap implements ISwapProvider {
         },
         body: JSON.stringify(txConfig)
       })
-      const response = await resJson.json()
+      const resJSON = await response.json()
 
-      if (response?.error) {
-        throw { code: 'KASS#01', message: response.error }
+      if (resJSON?.error) {
+        throw { code: 'KASS#01', message: resJSON.error }
       }
 
-      return response.data
+      return resJSON.data
     })
     const datas = await Promise.all(requests)
 
     return datas
   }
 
-  async getAmountsOut(params: GetAmountsParams) {
-    const { srcToken, destTokens, amount, srcDecimals, chainId } = params
-    const txs = []
+  async getAmountsOut(params: GetAmountsOutParams) {
+    const { srcToken, destToken, chainId, transactionType = 'invest' } = params
+    const transactionsDataTx = []
+    const tokenAmounts: Array<string> = []
 
-    const amountsIn: Array<string> = []
+    const requests = srcToken.flatMap(srcAsset => {
+      return destToken.map(async destAsset => {
+        if (srcAsset.id.toLowerCase() === destAsset.id.toLowerCase()) {
+          return Promise.resolve(srcAsset.amount ?? destAsset.amount ?? '0')
+        }
 
-    const requests = destTokens.map(async asset => {
-      if (srcToken.toLowerCase() === asset.token.id.toLowerCase()) {
-        return Promise.resolve(
-          Big(amount).mul(asset.weight_normalized).toFixed(0)
-        )
-      }
-      const query = this.formatParams({
-        srcToken,
-        srcDecimals,
-        destToken: asset.token.id,
-        destDecimals: asset.token.decimals?.toString() || '18',
-        amount: Big(amount).mul(asset.weight_normalized).toFixed(0),
-        side: 'SELL',
-        network: chainId
+        const query = this.formatParams({
+          srcToken: srcAsset.id,
+          srcDecimals: srcAsset.decimals?.toString() || '18',
+          destToken: destAsset.id,
+          destDecimals: destAsset.decimals?.toString() || '18',
+          amount: srcAsset.amount ?? destAsset.amount ?? '0',
+          side: 'SELL',
+          network: chainId
+        })
+
+        const resJson = await fetch(`${this.baseUrl}/prices?${query}`)
+        const response = resJson.json()
+        return response
       })
-      const resJson = await fetch(`${this.baseUrl}/prices?${query}`)
-      const response = resJson.json()
-      return response
     })
 
     const amounts = await Promise.all(requests)
@@ -87,17 +93,20 @@ export class ParaSwap implements ISwapProvider {
     const _size = amounts.length
     for (let index = 0; index < _size; index++) {
       const data = amounts[index]
-      if (data?.priceRoute) {
-        txs.push(data.priceRoute)
-        amountsIn.push(data.priceRoute.destAmount)
-      } else {
-        amountsIn.push(data)
+
+      tokenAmounts.push(data?.priceRoute?.destAmount ?? data)
+
+      if (transactionType === 'withdraw') {
+        transactionsDataTx.push(data)
+      }
+      if (transactionType === 'invest' && data?.priceRoute) {
+        transactionsDataTx.push(data)
       }
     }
 
     return {
-      amountsTokenIn: amountsIn,
-      transactionsDataTx: txs
+      tokenAmounts,
+      transactionsDataTx
     }
   }
 }

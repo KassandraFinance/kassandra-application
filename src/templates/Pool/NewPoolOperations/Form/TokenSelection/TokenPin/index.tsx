@@ -1,6 +1,8 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
+import { networks } from '@/constants/tokenAddresses'
+
 import { usePoolData } from '@/hooks/query/usePoolData'
 import { useAppDispatch } from '../../../../../../store/hooks'
 import { setTokenSelect } from '../../../../../../store/reducers/tokenSelect'
@@ -51,12 +53,16 @@ const TokenPin = ({
     if (hasStorages?.length >= 0) {
       setTokenPinList(hasStorages)
     } else {
-      const tokenSearch = tokenListSwapProvider.slice(0, 6)
+      const chosenTokenList = networks[pool?.chain_id ?? 137].chosenTokenList
+      const tokenList = tokenListSwapProvider.filter(token =>
+        chosenTokenList.includes(token.address)
+      )
+
       localStorage.setItem(
         `tokenSelection-${pool?.chain_id}`,
-        JSON.stringify(tokenSearch)
+        JSON.stringify(tokenList)
       )
-      setTokenPinList(tokenSearch)
+      setTokenPinList(tokenList)
     }
   }, [])
 

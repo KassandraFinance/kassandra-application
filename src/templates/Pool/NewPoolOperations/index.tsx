@@ -36,10 +36,6 @@ const NewPoolOperations = ({
 }: INewPoolOperationsProps) => {
   const [typeWithdrawChecked, setTypeWithdrawChecked] =
     React.useState<string>('Single_asset')
-  // const [isOpenPoolOperationMobile, setIsOpenPoolOperationMobile] =
-  //   React.useState(false)
-  // const [inputCheckedBarMobile, setInputCheckedBarMobile] =
-  //   React.useState<TitlesMobile>('Disable')
 
   const dispatch = useAppDispatch()
   const { tokenSelectionActive } = useAppSelector(state => state)

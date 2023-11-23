@@ -1,8 +1,8 @@
 import Big from 'big.js'
 
 import { ItokenSelectedProps } from './operationV1'
-import { GetAmountsParams, GetAmountsResult } from './ISwapProvider'
 import { ContractTransactionResponse } from 'ethers'
+import { GetAmountsOutParams, GetAmountsResult } from './ISwapProvider'
 
 export interface IOperations {
   contractAddress: string
@@ -25,7 +25,7 @@ export interface IOperations {
     params: ExitSwapPoolAllTokenAmountInParams
   ) => Promise<ContractTransactionResponse>
   getDatasTx: (slippage: string, txs: Array<any>) => Promise<Array<string>>
-  getAmountsOut: (params: GetAmountsParams) => Promise<GetAmountsResult>
+  getAmountsOut: (params: GetAmountsOutParams) => Promise<GetAmountsResult>
 }
 
 export type IPoolInfoProps = {
@@ -103,8 +103,11 @@ export type EstimatedGasResult = {
 }
 
 export type CalcSingleOutGivenPoolInParams = {
+  tokenSelect: {
+    address: string
+    decimals: number
+  }
   tokenInAddress: string
-  tokenSelectAddress: string
   poolAmountIn: string
   isWrap: boolean
   userWalletAddress: string
@@ -112,7 +115,9 @@ export type CalcSingleOutGivenPoolInParams = {
 }
 
 export type CalcSingleOutGivenPoolInResult = {
-  withdrawAmoutOut: Big
+  amountOutList?: string[]
+  transactionsDataTx?: string[]
+  withdrawAmoutOut?: Big
   transactionError: string | undefined
 }
 
@@ -131,7 +136,10 @@ export type ExitSwapPoolAmountInParams = {
   tokenOutAddress: string
   tokenAmountIn: string
   minPoolAmountOut: string
+  minPoolAmountsOut: string[]
   userWalletAddress: string
+  trasactionData?: string[]
+  slippageValue?: string
 }
 
 export type ExitSwapPoolAllTokenAmountInParams = {

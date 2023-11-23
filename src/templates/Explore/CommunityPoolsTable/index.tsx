@@ -23,55 +23,43 @@ import {
   Value as V
 } from '@ui/Modals/ModalViewCoin/styles'
 
-type IPoolsInfosProps = {
-  __typename?: 'Pool' | undefined
+type UnderlyingAssets = {
+  token: {
+    logo?: string | null
+    wraps?: {
+      logo?: string | null
+    } | null
+  }
+}
+
+interface IPoolsInfosProps {
   id: string
   name: string
   symbol: string
-  logo?: string | null | undefined
+  logo?: string | null
   address: string
-  price_usd: any
-  total_value_locked_usd: any
+  price_usd: string
+  total_value_locked_usd: string
   is_private_pool: boolean
-  chain?:
-    | {
-        __typename?: 'Chain' | undefined
-        logo?: string | null | undefined
-      }
-    | null
-    | undefined
+  chain?: {
+    logo?: string | null
+  } | null
   volumes: {
-    __typename?: 'Volume' | undefined
-    volume_usd: any
+    volume_usd: string
   }[]
   now: {
-    __typename?: 'Candle' | undefined
     timestamp: number
-    close: any
+    close: string
   }[]
   day: {
-    __typename?: 'Candle' | undefined
     timestamp: number
-    close: any
+    close: string
   }[]
   month: {
-    __typename?: 'Candle' | undefined
     timestamp: number
-    close: any
+    close: string
   }[]
-  weight_goals: {
-    __typename?: 'WeightGoalPoint' | undefined
-    weights: {
-      __typename?: 'WeightGoal' | undefined
-      asset: {
-        __typename?: 'Asset' | undefined
-        token: {
-          __typename?: 'Token' | undefined
-          logo?: string | null | undefined
-        }
-      }
-    }[]
-  }[]
+  underlying_assets: UnderlyingAssets[]
 }
 
 export enum communityPoolSorting {
@@ -101,31 +89,14 @@ const CommunityPoolsTable = ({
   const [viewPool, setViewPool] = React.useState<{
     price: string
     tvl: string
-    assets: {
-      __typename?: 'WeightGoal' | undefined
-      asset: {
-        __typename?: 'Asset' | undefined
-        token: {
-          __typename?: 'Token' | undefined
-          logo?: string | null | undefined
-        }
-      }
-    }[]
+    underlying_assets: UnderlyingAssets[]
     volume: string
     monthly: string
     '24h': string
   }>({
     price: '',
     tvl: '',
-    assets: [
-      {
-        asset: {
-          token: {
-            logo: ''
-          }
-        }
-      }
-    ],
+    underlying_assets: [],
     volume: '',
     monthly: '',
     '24h': ''
@@ -149,16 +120,7 @@ const CommunityPoolsTable = ({
     logo: string | null,
     price: string,
     tvl: string,
-    assets: {
-      __typename?: 'WeightGoal' | undefined
-      asset: {
-        __typename?: 'Asset' | undefined
-        token: {
-          __typename?: 'Token' | undefined
-          logo?: string | null | undefined
-        }
-      }
-    }[],
+    underlying_assets: UnderlyingAssets[],
     volume: string,
     monthly: string,
     day: string
@@ -168,11 +130,11 @@ const CommunityPoolsTable = ({
       name: token
     })
     setViewPool({
-      price: price,
-      tvl: tvl,
-      assets: assets,
-      volume: volume,
-      monthly: monthly,
+      price,
+      tvl,
+      underlying_assets,
+      volume,
+      monthly,
       ['24h']: day
     })
     setIsOpen(true)
@@ -308,14 +270,20 @@ const CommunityPoolsTable = ({
                     <S.TD isView={inViewCollum === 3}>
                       <S.Container>
                         <S.CoinImageContainer>
-                          {pool.weight_goals[0].weights.map((coin, index) => {
+                          {pool.underlying_assets.map((coin, index) => {
                             return (
                               <S.CoinImageWrapper
-                                key={coin.asset?.token?.logo}
+                                key={
+                                  coin?.token?.wraps?.logo ?? coin?.token?.logo
+                                }
                                 position={index}
                               >
                                 <Image
-                                  src={coin.asset?.token?.logo || notFoundIcon}
+                                  src={
+                                    coin?.token?.logo ??
+                                    coin?.token?.wraps?.logo ??
+                                    notFoundIcon
+                                  }
                                   layout="fill"
                                 />
                               </S.CoinImageWrapper>
@@ -382,15 +350,15 @@ const CommunityPoolsTable = ({
                           pool?.logo || '',
                           pool.price_usd,
                           pool.total_value_locked_usd,
-                          pool.weight_goals[0].weights,
-                          pool.volumes[0].volume_usd,
-                          pool.month[0].close
+                          pool.underlying_assets,
+                          pool.volumes[0]?.volume_usd,
+                          pool.month[0]?.close
                             ? calcChange(
                                 Number(pool.now[0].close || 0),
                                 Number(pool.month[0].close)
                               )
                             : '0',
-                          pool.day[0].close
+                          pool.day[0]?.close
                             ? calcChange(
                                 Number(pool.now[0].close || 0),
                                 Number(pool.day[0].close)
@@ -439,14 +407,20 @@ const CommunityPoolsTable = ({
           <ValueContainerMobile>
             <S.CoinModalContainer>
               <S.CoinImageContainer>
-                {viewPool.assets.map((coin, index) => {
+                {viewPool.underlying_assets.map((coin, index) => {
                   return (
                     <S.CoinImageWrapper
-                      key={coin.asset?.token?.logo || index}
+                      key={
+                        coin?.token?.wraps?.logo ?? coin?.token?.logo ?? index
+                      }
                       position={index}
                     >
                       <Image
-                        src={coin.asset?.token?.logo || notFoundIcon}
+                        src={
+                          coin?.token?.logo ??
+                          coin?.token?.wraps?.logo ??
+                          notFoundIcon
+                        }
                         width={18}
                         height={18}
                       />

@@ -7,7 +7,8 @@ export const StakeAndEarnCard = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 3.2rem 1.6rem;
+    padding: 2.6rem 1.6rem;
+    width: 100%;
 
     border-radius: 8px;
     border: 1px solid rgba(252, 252, 252, 0.05);
