@@ -463,7 +463,7 @@ export default class operationV2 implements IOperations {
   }: ExitSwapPoolAmountInParams) {
     const assets = [this.poolInfo.address, ...this.poolInfo.tokensAddresses]
 
-    if (!trasactionData) throw new Error('NAO ESQUECER')
+    if (!trasactionData) throw new Error('please recalculate')
 
     const userData = new ethers.AbiCoder().encode(
       ['uint256', 'uint256'],
