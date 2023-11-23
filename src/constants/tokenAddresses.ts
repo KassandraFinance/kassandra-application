@@ -123,7 +123,7 @@ export const networks: NetworkType = {
   '137': {
     chainName: 'Polygon',
     chainId: 137,
-    rpc: 'https://rpc.ankr.com/polygon',
+    rpc: 'https://polygon-rpc.com',
     kacyAddress: KacyPoligon,
     blockExplorer: 'https://polygonscan.com',
     coingecko: 'polygon-pos',
