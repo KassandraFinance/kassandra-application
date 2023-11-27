@@ -156,7 +156,17 @@ const InputAndOutputValueToken = ({
       })
     }
 
-    return tokenListV2
+    const chosenTokenList = networks[pool?.chain_id ?? 137].chosenTokenList
+
+    const tokenListV2Sorted = []
+    for (const address of chosenTokenList) {
+      const token = tokenListV2?.find(
+        token => token?.id.toLowerCase() === address.toLowerCase()
+      )
+      token && tokenListV2Sorted.push(token)
+    }
+
+    return tokenListV2Sorted
   }, [pool, tokenListV2])
 
   // get balance of swap in token

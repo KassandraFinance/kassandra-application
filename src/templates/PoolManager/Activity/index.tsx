@@ -5,6 +5,7 @@ import Big from 'big.js'
 
 import { getActivityInfo, getManagerActivity } from '../utils'
 import { useManagerPoolActivities } from '@/hooks/query/useManagerPoolActivities'
+import { useAppSelector } from '@/store/hooks'
 
 import Loading from '@/components/Loading'
 import ActivityCard, { actionsType } from '../ActivityCard'
@@ -160,6 +161,7 @@ const Activity = () => {
     ? router.query.pool[0]
     : router.query.pool ?? ''
 
+  const { tokenListSwapProvider } = useAppSelector(state => state)
   const { data, fetchNextPage, isFetchingNextPage } = useManagerPoolActivities({
     id: poolId,
     first,
@@ -224,11 +226,14 @@ const Activity = () => {
       }
     }
 
-    const activitiesInvestors = getActivityInfo(
-      _activities,
-      data.pages[0]?.underlying_assets || [],
-      filters
-    )
+    const assets: Record<string, string> = {}
+    for (const token of tokenListSwapProvider) {
+      if (token.symbol && token.logoURI) {
+        assets[token.symbol] = token.logoURI
+      }
+    }
+
+    const activitiesInvestors = getActivityInfo(_activities, assets, filters)
     const managerActivities = getManagerActivity(
       weights,
       data.pages[0]?.manager.id || '',

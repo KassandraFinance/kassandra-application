@@ -30,7 +30,7 @@ const chainStyle: Record<string, { network: string; color: string }> = {
   },
   '42161': {
     network: 'Arbitrum',
-    color: '#96BEDC'
+    color: '#2A638D'
   }
 }
 

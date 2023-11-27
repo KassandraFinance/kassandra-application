@@ -61,9 +61,7 @@ const MyAsset = ({
     const balanceToken = Big(await ERC20.balance(wallet.accounts[0].address))
 
     if (balanceToken.gt(0)) {
-      const amountInUsd = balanceToken
-        .div(Big(balanceToken).pow(decimals))
-        .mul(price)
+      const amountInUsd = balanceToken.div(Big(10).pow(decimals)).mul(price)
 
       setAmountInUsd(amountInUsd)
     }
@@ -89,7 +87,7 @@ const MyAsset = ({
       </S.CardInfo>
 
       <S.CardInfo>
-        <S.Text>STACKED</S.Text>
+        <S.Text>STAKED</S.Text>
         <S.ValueInfo>
           <S.Value>
             ${' '}

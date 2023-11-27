@@ -18,58 +18,32 @@ type IActivityProps = {
   amount: string[]
 }
 
-type IUnderlyingAssetsProps = {
-  token: {
-    logo?: string | null
-    symbol: string
-    wraps?: {
-      symbol: string
-      logo?: string | null
-    } | null
-  }
-}
-
 type IWeightGoalsProps = {
-  __typename?: 'WeightGoalPoint' | undefined
   id: string
   type: string
   txHash: string
   end_timestamp: number
-  previous?:
-    | {
-        __typename?: 'WeightGoalPoint' | undefined
-        weights: {
-          __typename?: 'WeightGoal' | undefined
-          weight_normalized: string
-          asset: {
-            __typename?: 'Asset' | undefined
-            token: {
-              __typename?: 'Token' | undefined
-              symbol: string
-            }
-          }
-        }[]
+  previous?: {
+    weights: {
+      weight_normalized: string
+      asset: {
+        token: {
+          symbol: string
+        }
       }
-    | null
-    | undefined
-  token?:
-    | {
-        __typename?: 'Token' | undefined
-        symbol: string
-        logo?: string | null | undefined
-      }
-    | null
-    | undefined
+    }[]
+  } | null
+  token?: {
+    symbol: string
+    logo?: string | null
+  } | null
   weights: {
-    __typename?: 'WeightGoal' | undefined
     weight_normalized: string
     asset: {
-      __typename?: 'Asset' | undefined
       balance: string
       token: {
-        __typename?: 'Token' | undefined
         symbol: string
-        logo?: string | null | undefined
+        logo?: string | null
       }
     }
   }[]
@@ -77,18 +51,12 @@ type IWeightGoalsProps = {
 
 export function getActivityInfo(
   activityData: IActivityProps[],
-  underlyingAssets: IUnderlyingAssetsProps[],
+  assets: Record<string, string>,
   filters: Record<string, boolean> = { join: true, exit: true }
 ): Array<ActivityCardProps> {
   const activityInfo: ActivityCardProps[] = []
-  const assets: Record<string, string> = {}
   let tokenIn: Token = {}
   let tokenOut: Token = {}
-
-  underlyingAssets.forEach(item => {
-    const symbol = item.token.symbol
-    assets[symbol] = item?.token?.wraps?.logo ?? item?.token?.logo ?? ''
-  })
 
   for (const activity of activityData) {
     if (filters[activity.type]) {
