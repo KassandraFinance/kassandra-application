@@ -133,11 +133,11 @@ const Activity = () => {
     }
 
     const assets: Record<string, string> = {}
-    tokenListSwapProvider.forEach(token => {
+    for (const token of tokenListSwapProvider) {
       if (token.symbol && token.logoURI) {
-        assets[token?.symbol] = token.logoURI
+        assets[token.symbol] = token.logoURI
       }
-    })
+    }
 
     const activitiesInvestors = getActivityInfo(_activities, assets, filters)
     const managerActivities = getManagerActivity(
