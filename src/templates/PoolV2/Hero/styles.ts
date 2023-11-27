@@ -110,7 +110,7 @@ export const Chain = styled.span<ChainProps>`
     border-radius: 4px;
 
     color: ${theme.colors.white};
-    font-weight: ${theme.font.weight.light};
+    font-weight: ${theme.font.weight.normal};
     font-size: ${theme.font.sizes.font12};
     line-height: 100%;
 

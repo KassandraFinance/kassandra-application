@@ -80,11 +80,6 @@ const tabs = [
     svg: ActivityIcon
   },
   {
-    asPathText: 'staking',
-    text: 'Staking',
-    svg: StakingIcon
-  },
-  {
     asPathText: 'contracts',
     text: 'Contracts',
     svg: ContractsIcon
@@ -100,6 +95,12 @@ const shareAndEarnTab = {
   asPathText: 'shareAndEarn',
   text: 'Share and earn',
   svg: ShareAndEarnIcon
+}
+
+const stakingTab = {
+  asPathText: 'staking',
+  text: 'Staking',
+  svg: StakingIcon
 }
 
 const Pool = () => {
@@ -118,17 +119,19 @@ const Pool = () => {
   function handleCheckTabs(tabsList: typeof tabs) {
     const totalTabs = 7
 
+    const newTabsList = tabsList.slice()
     if (
       parseFloat(pool?.fee_join_broker ?? '0') > 0 &&
       tabsList.length !== totalTabs
     ) {
-      const newTabsList = tabsList.slice()
-      newTabsList.splice(5, 0, shareAndEarnTab)
-
-      return newTabsList
-    } else {
-      return tabsList
+      newTabsList.splice(4, 0, shareAndEarnTab)
     }
+
+    if (pool?.pool_id) {
+      newTabsList.splice(4, 0, stakingTab)
+    }
+
+    return newTabsList
   }
 
   function handleClickStakeButton(scrollToValue = 320) {
@@ -209,20 +212,15 @@ const Pool = () => {
   }
 
   React.useEffect(() => {
-    if (pool) {
+    if (pool && tokenSwap) {
       try {
+        getTokensForOperations(tokenSwap)
         trackProductPageView(pool.id, pool.symbol, pool.name)
       } catch (error) {
         console.error(error)
       }
     }
-  }, [pool])
-
-  React.useEffect(() => {
-    if (tokenSwap) {
-      getTokensForOperations(tokenSwap)
-    }
-  }, [tokenSwap])
+  }, [tokenSwap, pool])
 
   return (
     <S.Pool>
