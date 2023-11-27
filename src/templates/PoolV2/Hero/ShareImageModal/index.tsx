@@ -138,8 +138,8 @@ const ShareImageModal = ({
                 {!wallet && (
                   <WarningCard>
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry.
+                      To earn commissions, connect your wallet before sharing
+                      the referral link!
                     </p>
                   </WarningCard>
                 )}
