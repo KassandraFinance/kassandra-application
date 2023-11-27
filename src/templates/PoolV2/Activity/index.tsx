@@ -3,6 +3,8 @@ import Image from 'next/image'
 import router from 'next/router'
 
 import { useManagerPoolActivities } from '@/hooks/query/useManagerPoolActivities'
+import { useAppSelector } from '@/store/hooks'
+
 import {
   getActivityInfo,
   getManagerActivity
@@ -60,13 +62,13 @@ const first = 10
 const Activity = () => {
   const [optionsSelected, setOptionsSelected] =
     React.useState<string[]>(initialFilterOptions)
-
   const [isOpenFilter, setIsOpenFilter] = React.useState(false)
 
   const poolId = Array.isArray(router.query.address)
     ? router.query.address[0]
     : router.query.address ?? ''
 
+  const { tokenListSwapProvider } = useAppSelector(state => state)
   const { data, fetchNextPage, isFetchingNextPage } = useManagerPoolActivities({
     id: poolId,
     first,
@@ -130,11 +132,14 @@ const Activity = () => {
       }
     }
 
-    const activitiesInvestors = getActivityInfo(
-      _activities,
-      data.pages[0]?.underlying_assets || [],
-      filters
-    )
+    const assets: Record<string, string> = {}
+    tokenListSwapProvider.forEach(token => {
+      if (token.symbol && token.logoURI) {
+        assets[token?.symbol] = token.logoURI
+      }
+    })
+
+    const activitiesInvestors = getActivityInfo(_activities, assets, filters)
     const managerActivities = getManagerActivity(
       weights,
       data.pages[0]?.manager.id || '',
