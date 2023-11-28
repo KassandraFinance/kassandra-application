@@ -19,7 +19,7 @@ export const TitleSection = ({
   return (
     <S.Title marginTop={marginTop}>
       <S.TitleContent>
-        <Image src={image} alt="" />
+        <Image src={image} alt="" width={24} height={24} />
         <h1>{title}</h1>
       </S.TitleContent>
       <h2>{text}</h2>
