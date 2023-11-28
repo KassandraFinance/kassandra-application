@@ -17,19 +17,25 @@ interface IUserInfoProps {
 const UserInfo = ({ walletAddress }: IUserInfoProps) => {
   const { data } = useUserProfile({ address: walletAddress })
 
-  const userImage = data?.image || ''
-
   return (
     <S.UserInfo>
-      {userImage ? (
-        <img src={userImage} alt="" width={24} height={24} />
+      {data?.image ? (
+        <img src={data.image} alt="" width={24} height={24} />
       ) : (
         <Jazzicon
           seed={jsNumberForAddress(String(walletAddress))}
           diameter={22}
         />
       )}
-      {substr(walletAddress)}
+
+      {data?.nickname ? (
+        <S.UserContent>
+          <S.UserName>{data.nickname}</S.UserName>
+          <S.UserWallet>{substr(walletAddress)}</S.UserWallet>
+        </S.UserContent>
+      ) : (
+        <p>{substr(walletAddress)}</p>
+      )}
 
       <CopyToClipboard text={walletAddress}>
         <S.IconWrapper
