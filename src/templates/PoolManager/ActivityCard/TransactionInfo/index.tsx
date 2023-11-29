@@ -44,11 +44,11 @@ const TransactionInfo = ({
       {typeAction === actionsType.DEPOSIT ? (
         <>
           <S.TransactionInfoContent>
-            <S.Text>AMOUNT</S.Text>
+            <S.Text>sent</S.Text>
             <TokenInfo tokenData={transactionDetails?.tokenIn} />
           </S.TransactionInfoContent>
           <S.TransactionInfoContent>
-            <S.Text>received value</S.Text>
+            <S.Text>received</S.Text>
             <S.Value>
               {transactionDetails?.tokenOut.amount} {poolSymbol}
             </S.Value>
@@ -57,20 +57,22 @@ const TransactionInfo = ({
       ) : (
         <>
           <S.TransactionInfoContent>
-            <S.Text>sended value</S.Text>
+            <S.Text>sent</S.Text>
             <S.Value>
               {transactionDetails?.tokenIn.amount} {poolSymbol}
             </S.Value>
           </S.TransactionInfoContent>
           <S.TransactionInfoContent>
-            <S.Text>AMOUNT</S.Text>
+            <S.Text>received</S.Text>
             <TokenInfo tokenData={transactionDetails?.tokenOut} />
           </S.TransactionInfoContent>
         </>
       )}
 
       <S.TransactionInfoContent>
-        <S.Text>SHARES Price</S.Text>
+        <S.Text>
+          {typeAction === actionsType.DEPOSIT ? 'BUY' : 'SELL'} Price
+        </S.Text>
         <S.Value>${transactionDetails?.sharesPrice ?? 0}</S.Value>
       </S.TransactionInfoContent>
     </S.TransactionInfo>

@@ -2,6 +2,18 @@ import styled, { css } from 'styled-components'
 import { Title } from '@/components/TitleSection/styles'
 
 export const Strategy = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+  `}
+`
+
+export const ShortDescription = styled.div`
+  ${() => css``}
+`
+
+export const InvestmentStrategy = styled.div`
   ${() => css``}
 `
 
@@ -180,5 +192,18 @@ export const ButtonContainer = styled.div`
 export const InputCountWrapper = styled.div`
   ${() => css`
     margin-bottom: 2.4rem;
+  `}
+`
+
+export const ShortDescriptionParagraph = styled.p`
+  ${({ theme }) => css`
+    color: ${theme.colors.grayDisabled};
+    font-weight: ${theme.font.weight.normal};
+    font-size: ${theme.font.sizes.font16};
+    line-height: 135%;
+
+    @media (max-width: 360px) {
+      font-size: ${theme.font.sizes.font14};
+    }
   `}
 `

@@ -16,6 +16,7 @@ import TitleSection from '@/components/TitleSection'
 import TextareaWithValueCounter from '@/components/TextareaWithValueCounter'
 
 import investmentIcon from '@assets/iconGradient/featured.svg'
+import detailsIcon from '@assets/iconGradient/details.svg'
 import editIcon from '@assets/utilities/edit-icon.svg'
 
 const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
@@ -102,74 +103,91 @@ const Strategy = () => {
 
   return (
     <S.Strategy>
-      <S.TitleWrapper>
-        <TitleSection title="Investment Strategy" image={investmentIcon} />
+      <S.ShortDescription>
+        <S.TitleWrapper>
+          <TitleSection title="Short Description" image={detailsIcon} />
 
-        <S.ButtonEdit onClick={handleEditClick}>
-          <Image src={editIcon} />
-        </S.ButtonEdit>
-      </S.TitleWrapper>
-
-      <S.InputCountWrapper>
-        <TextareaWithValueCounter
-          name="shortSummary"
-          type="text"
-          placeholder="Enter a Brief Description"
-          required
-          value={shortSummary}
-          minLength={0}
-          maxLength={150}
-          label="DESCRIPTION"
-          onChange={e => handleSummaryOnChange(e.target.value)}
-        />
-      </S.InputCountWrapper>
-
-      {!isEdit ? (
-        <S.Text>
-          <ReactMarkdown skipHtml={true} linkTarget={'_blank'}>
-            {data?.summary || ''}
-          </ReactMarkdown>
-        </S.Text>
-      ) : (
-        <S.MarkdownEditor>
-          <MdEditor
-            value={value}
-            renderHTML={text => (
-              <S.Text>
-                <ReactMarkdown skipHtml={true} linkTarget={'_blank'}>
-                  {text}
-                </ReactMarkdown>
-              </S.Text>
-            )}
-            onChange={handleEditorChange}
-          />
-
-          <S.ButtonContainer>
-            {poolInfo && poolInfo[0]?.controller && (
-              <Button
-                text="Update"
-                background="secondary"
-                fullWidth
-                onClick={() =>
-                  sendPoolData(
-                    poolInfo[0]?.controller,
-                    poolInfo[0]?.logo || '',
-                    value,
-                    poolInfo[0].chain_id
-                  )
-                }
-              />
-            )}
-
-            <Button
-              text="Cancel"
-              background="black"
-              fullWidth
-              onClick={handleCancelClick}
+          <S.ButtonEdit onClick={handleEditClick}>
+            <Image src={editIcon} />
+          </S.ButtonEdit>
+        </S.TitleWrapper>
+        {!isEdit ? (
+          <S.ShortDescriptionParagraph>
+            {data?.short_summary || ''}
+          </S.ShortDescriptionParagraph>
+        ) : (
+          <S.InputCountWrapper>
+            <TextareaWithValueCounter
+              name="shortSummary"
+              type="text"
+              placeholder="Enter a Brief Description"
+              required
+              value={shortSummary}
+              minLength={0}
+              maxLength={150}
+              label=""
+              onChange={e => handleSummaryOnChange(e.target.value)}
             />
-          </S.ButtonContainer>
-        </S.MarkdownEditor>
-      )}
+          </S.InputCountWrapper>
+        )}
+      </S.ShortDescription>
+
+      <S.InvestmentStrategy>
+        <S.TitleWrapper>
+          <TitleSection title="Investment Strategy" image={investmentIcon} />
+
+          <S.ButtonEdit onClick={handleEditClick}>
+            <Image src={editIcon} />
+          </S.ButtonEdit>
+        </S.TitleWrapper>
+
+        {!isEdit ? (
+          <S.Text>
+            <ReactMarkdown skipHtml={true} linkTarget={'_blank'}>
+              {data?.summary || ''}
+            </ReactMarkdown>
+          </S.Text>
+        ) : (
+          <S.MarkdownEditor>
+            <MdEditor
+              value={value}
+              renderHTML={text => (
+                <S.Text>
+                  <ReactMarkdown skipHtml={true} linkTarget={'_blank'}>
+                    {text}
+                  </ReactMarkdown>
+                </S.Text>
+              )}
+              onChange={handleEditorChange}
+            />
+
+            <S.ButtonContainer>
+              {poolInfo && poolInfo[0]?.controller && (
+                <Button
+                  text="Update"
+                  background="secondary"
+                  fullWidth
+                  onClick={() =>
+                    sendPoolData(
+                      poolInfo[0]?.controller,
+                      poolInfo[0]?.logo || '',
+                      value,
+                      poolInfo[0].chain_id
+                    )
+                  }
+                />
+              )}
+
+              <Button
+                text="Cancel"
+                background="black"
+                fullWidth
+                onClick={handleCancelClick}
+              />
+            </S.ButtonContainer>
+          </S.MarkdownEditor>
+        )}
+      </S.InvestmentStrategy>
     </S.Strategy>
   )
 }
