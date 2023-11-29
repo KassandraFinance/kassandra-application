@@ -11,8 +11,8 @@ import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import { useRouter } from 'next/router'
 
 import TokenWithNetworkImage from '@/components/TokenWithNetworkImage'
+import SkeletonLoading from '@/components/SkeletonLoading'
 import ShareImageModal from './ShareImageModal'
-import Loading from '@/components/Loading'
 import SharedImage from './SharedImage'
 import Operation from './Operation'
 import MyAsset from './MyAsset'
@@ -48,102 +48,115 @@ const Hero = ({ handleClickStakeButton }: IHeroProps) => {
 
   return (
     <S.Hero>
-      {pool ? (
-        <>
-          <ShareImageModal
+      {pool && (
+        <ShareImageModal
+          poolId={pool.id}
+          setOpenModal={setOpenModal}
+          openModal={openModal}
+          productName={pool.symbol}
+        >
+          <SharedImage
             poolId={pool.id}
-            setOpenModal={setOpenModal}
-            openModal={openModal}
-            productName={pool.symbol}
-          >
-            <SharedImage
-              poolId={pool.id}
-              crpPoolAddress={pool.id}
-              totalValueLocked={BNtoDecimal(
-                Big(pool.total_value_locked_usd),
-                2,
-                2,
-                2
-              )}
-              socialIndex={pool.symbol}
-              productName={pool.name}
-              poolLogo={pool.logo || ''}
-              tokens={pool.underlying_assets}
-            />
-          </ShareImageModal>
-          <S.TitleConteiner>
-            <S.LogoAndPoolName>
-              <TokenWithNetworkImage
-                tokenImage={{
-                  url: pool?.logo || '',
-                  height: 56,
-                  width: 56,
-                  withoutBorder: true
-                }}
-                networkImage={{
-                  url: pool?.chain?.logo || '',
-                  height: 16,
-                  width: 16
-                }}
-                blockies={{
-                  size: 8,
-                  scale: 9,
-                  seedName: pool?.name || ''
-                }}
-              />
-              <S.PoolName>{pool?.name}</S.PoolName>
-            </S.LogoAndPoolName>
-            <S.SharedButton
-              onClick={() => {
-                setOpenModal(true)
-                trackEventFunction(
-                  'click',
-                  `social-share-${pool?.name}`,
-                  'pool'
-                )
+            crpPoolAddress={pool.id}
+            totalValueLocked={BNtoDecimal(
+              Big(pool?.total_value_locked_usd),
+              2,
+              2,
+              2
+            )}
+            socialIndex={pool.symbol}
+            productName={pool.name}
+            poolLogo={pool?.logo || ''}
+            tokens={pool?.underlying_assets}
+          />
+        </ShareImageModal>
+      )}
+
+      <S.TitleConteiner>
+        <S.LogoAndPoolName>
+          {pool ? (
+            <TokenWithNetworkImage
+              tokenImage={{
+                url: pool?.logo || '',
+                height: 56,
+                width: 56,
+                withoutBorder: true
               }}
-              className="circle"
-            >
-              <Image src="/assets/icons/share.svg" width={36} height={36} />
-            </S.SharedButton>
-          </S.TitleConteiner>
-          <S.SubTitleConteiner>
+              networkImage={{
+                url: pool.chain?.logo || '',
+                height: 16,
+                width: 16
+              }}
+              blockies={{
+                size: 8,
+                scale: 9,
+                seedName: pool.name
+              }}
+            />
+          ) : (
+            <SkeletonLoading height={5.6} width={5.6} />
+          )}
+
+          {pool?.name ? (
+            <S.PoolName>{pool.name}</S.PoolName>
+          ) : (
+            <SkeletonLoading width={40} height={3} />
+          )}
+        </S.LogoAndPoolName>
+        <S.SharedButton
+          onClick={() => {
+            setOpenModal(true)
+            trackEventFunction('click', `social-share-${pool?.name}`, 'pool')
+          }}
+          className="circle"
+        >
+          <Image src="/assets/icons/share.svg" width={36} height={36} />
+        </S.SharedButton>
+      </S.TitleConteiner>
+
+      <S.SubTitleConteiner>
+        {pool ? (
+          <>
             <S.Symbol>${pool?.symbol}</S.Symbol>
             <S.Chain chainColor={chainStyle[pool?.chain_id ?? 137].color}>
               Live on {chainStyle[pool?.chain_id ?? 137].network}
             </S.Chain>
             <S.SymbolAndMade>
-              {pool?.manager?.id && (
-                <Link
-                  href={`/profile/${pool?.manager.id}?tab=managed-pools`}
-                  passHref
-                >
-                  <a>
-                    managed by{' '}
-                    {pool.manager.nickname
-                      ? pool.manager.nickname
-                      : substr(pool?.manager?.id)}
-                  </a>
-                </Link>
-              )}
+              <Link
+                href={`/profile/${pool?.manager.id}?tab=managed-pools`}
+                passHref
+              >
+                <a>
+                  managed by{' '}
+                  {pool?.manager?.nickname
+                    ? pool.manager.nickname
+                    : substr(pool?.manager?.id ?? '')}
+                </a>
+              </Link>
             </S.SymbolAndMade>
-          </S.SubTitleConteiner>
-          <S.Summary>{pool.short_summary}</S.Summary>
-          <MyAsset
-            chainId={pool.chain_id}
-            poolAddress={pool.address}
-            price={pool.price_usd}
-            decimals={pool.decimals}
-            pid={pool.pool_id ?? undefined}
-          />
-          <Operation
-            handleClickStakeButton={handleClickStakeButton}
-            hasStake={!!pool.pool_id}
-          />
-        </>
+          </>
+        ) : (
+          <SkeletonLoading height={2.6} line={1} width={30} />
+        )}
+      </S.SubTitleConteiner>
+
+      {pool ? (
+        <S.Summary>{pool?.short_summary}</S.Summary>
       ) : (
-        <Loading marginTop={0} />
+        <SkeletonLoading height={2.2} line={2} spacings={0.8} />
       )}
+
+      <MyAsset
+        chainId={pool?.chain_id ?? 137}
+        poolAddress={pool?.address ?? '0x'}
+        price={pool?.price_usd ?? '0'}
+        decimals={pool?.decimals ?? 18}
+        pid={pool?.pool_id ?? undefined}
+      />
+      <Operation
+        handleClickStakeButton={handleClickStakeButton}
+        hasStake={!!pool?.pool_id}
+      />
     </S.Hero>
   )
 }

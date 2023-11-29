@@ -88,6 +88,7 @@ export const SubTitleConteiner = styled.div`
 
 export const Symbol = styled.span`
   ${({ theme }) => css`
+    display: flex;
     width: max-content;
     padding: 0.8rem 1.1rem;
     border-radius: 4px;
