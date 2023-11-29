@@ -22,7 +22,7 @@ const UserInfo = ({ walletAddress }: IUserInfoProps) => {
       {data?.image ? (
         <img
           src={data.image}
-          alt="User Profile Picture"
+          alt={`${data.nickname} Profile Picture`}
           width={24}
           height={24}
         />
