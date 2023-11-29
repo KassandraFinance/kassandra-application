@@ -34,7 +34,7 @@ import Summary from './Summary'
 import Distribution from './Distribution'
 import TokenDescription from './TokenDescription'
 import ShareImageModal from './ShareImageModal'
-import NewPoolOperations from './NewPoolOperations'
+// import NewPoolOperations from './NewPoolOperations'
 import SharedImage from './SharedImage'
 import Button from '@/components/Button'
 
@@ -424,14 +424,14 @@ const Pool = () => {
               background="primary"
               onClick={() => setIsOpenPoolOperation(true)}
             />
-            <NewPoolOperations
+            {/* <NewPoolOperations
               isOpenPoolOperation={isOpenPoolOperation}
               setIsOpenPoolOperation={setIsOpenPoolOperation}
               operation="Invest"
               setOperation={() => {
                 return
               }}
-            />
+            /> */}
           </S.Product>
         </S.Container>
       )}

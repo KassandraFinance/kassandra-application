@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Button from '@/components/Button'
-import NewPoolOperations from '@/templates/Pool/NewPoolOperations'
+import NewPoolOperations from '../../NewPoolOperations'
 
 import * as S from './styles'
 
