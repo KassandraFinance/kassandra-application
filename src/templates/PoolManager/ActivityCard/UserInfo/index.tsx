@@ -20,7 +20,12 @@ const UserInfo = ({ walletAddress }: IUserInfoProps) => {
   return (
     <S.UserInfo>
       {data?.image ? (
-        <img src={data.image} alt="" width={24} height={24} />
+        <img
+          src={data.image}
+          alt="User Profile Picture"
+          width={24}
+          height={24}
+        />
       ) : (
         <Jazzicon
           seed={jsNumberForAddress(String(walletAddress))}
