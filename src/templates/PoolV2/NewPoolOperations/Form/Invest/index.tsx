@@ -594,7 +594,6 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
         const tokenSelected = await handleTokenSelected()
 
-        console.log('tokenSelected', tokenSelected)
         const {
           investAmountOut,
           investAmountOutWithoutFees,
