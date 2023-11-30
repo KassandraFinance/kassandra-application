@@ -229,6 +229,9 @@ const web3Onboard = init({
   wallets,
   chains,
   appMetadata,
+  connect: {
+    autoConnectLastWallet: true
+  },
   accountCenter: {
     desktop: {
       enabled: false
