@@ -1,0 +1,9 @@
+query tokensSwap($chainId: Int!) {
+  tokens(where: {chain_ids_contains: [$chainId] coingecko_id_not: null} first: 1000) {
+    id
+    decimals
+    logo
+    name
+    symbol
+  }
+}

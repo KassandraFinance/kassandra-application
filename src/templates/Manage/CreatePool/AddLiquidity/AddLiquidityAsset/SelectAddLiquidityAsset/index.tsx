@@ -8,13 +8,13 @@ import { NATIVE_ADDRESS, networks } from '@/constants/tokenAddresses'
 import { BNtoDecimal } from '@/utils/numerals'
 
 import InputSearch from '@/components/Inputs/InputSearch'
-import TokensSwapProviderList from '@/templates/Pool/NewPoolOperations/Form/TokenSelection/TokensSwapProviderList'
+import { IUserTokenProps } from '@/templates/PoolV2/NewPoolOperations/Form/TokenSelection'
+import TokensSwapProviderList from '@/templates/PoolV2/NewPoolOperations/Form/TokenSelection/TokensSwapProviderList'
 import { BalancesType } from '../../'
 
 import { setTokenIn } from '@/store/reducers/poolCreationSlice'
 import { ITokenListSwapProviderProps } from '@/store/reducers/tokenListSwapProvider'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
-import { IUserTokenProps } from '@/templates/Pool/NewPoolOperations/Form/TokenSelection'
 
 import * as S from './styles'
 

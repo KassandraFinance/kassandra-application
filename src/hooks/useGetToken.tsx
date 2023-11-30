@@ -16,7 +16,7 @@ const useGetToken = ({
       _address = nativeAddress
     }
 
-    return tokens[_address]?.usd.toString() ?? '0'
+    return tokens[_address]?.usd?.toString() ?? '0'
   }
 
   return { priceToken }

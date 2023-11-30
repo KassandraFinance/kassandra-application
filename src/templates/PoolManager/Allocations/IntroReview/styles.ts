@@ -3,12 +3,11 @@ import styled, { css } from 'styled-components'
 export const IntroReview = styled.div`
   ${() => css`
     display: flex;
-    align-items: center;
+    gap: 3.2rem;
     justify-content: space-between;
     align-items: center;
+
     width: 100%;
-    gap: 3.2rem;
-    padding: 3.2rem;
 
     @media (max-width: 1400px) {
       flex-direction: column;
@@ -17,7 +16,6 @@ export const IntroReview = styled.div`
 
     @media (max-width: 576px) {
       align-items: center;
-      padding: 1.6rem;
     }
   `}
 `
@@ -114,8 +112,8 @@ export const TitleHoldingAndPrice = styled.p`
 
 export const ValueHoldingAndPrice = styled.span`
   ${({ theme }) => css`
-    font-size: ${theme.font.sizes.font32};
     font-weight: ${theme.font.weight.medium};
+    font-size: ${theme.font.sizes.font32};
     line-height: 3.2rem;
     letter-spacing: 0.05em;
 
@@ -132,8 +130,8 @@ export const PriceDayWrapper = styled.div`
 export const PriceDayValue = styled.div`
   ${() => css`
     display: flex;
-    align-items: flex-end;
     gap: 0.4rem;
+    align-items: flex-end;
 
     img {
       margin-bottom: 0.2rem;

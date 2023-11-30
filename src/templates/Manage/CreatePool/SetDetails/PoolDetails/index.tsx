@@ -3,12 +3,12 @@ import React from 'react'
 import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
 import { setPoolData } from '../../../../../store/reducers/poolCreationSlice'
 
-import InputText from '../../../../../components/Inputs/InputText'
 import PoolText from './PoolText'
 import MarkdownEditor from './MarkdownEditor'
+import InputText from '@/components/Inputs/InputText'
+import TextareaWithValueCounter from '@/components/TextareaWithValueCounter'
 
 import * as S from './styles'
-import { ethers } from 'ethers'
 
 const PoolDetails = () => {
   const dispatch = useAppDispatch()
@@ -25,6 +25,10 @@ const PoolDetails = () => {
 
   function handleEditorChange({ text }: { text: string }) {
     dispatch(setPoolData({ strategy: text }))
+  }
+
+  function handleShortSummaryChange(text: string) {
+    dispatch(setPoolData({ shortSummary: text }))
   }
 
   return (
@@ -61,6 +65,18 @@ const PoolDetails = () => {
           lable="managed pool symbol"
           error="Invalid symbol. Symbols should have 3 to 5 characters."
           onChange={handleInput}
+        />
+
+        <TextareaWithValueCounter
+          form="poolCreationForm"
+          name="poolShortSummary"
+          type="text"
+          placeholder="Enter a Brief Description"
+          value={details.shortSummary ?? ''}
+          minLength={0}
+          maxLength={150}
+          label="DESCRIPTION"
+          onChange={e => handleShortSummaryChange(e.target.value)}
         />
       </S.Details>
 

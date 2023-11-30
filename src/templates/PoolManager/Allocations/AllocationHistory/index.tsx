@@ -1,6 +1,4 @@
 import React from 'react'
-import { useRouter } from 'next/router'
-import { useConnectWallet } from '@web3-onboard/react'
 
 import { usePoolAllocation } from '@/hooks/query/usePoolAllocation'
 
@@ -24,25 +22,48 @@ export type ActivityInfo = {
 }
 
 export type IPoolInfo = {
+  id: string
   name: string
-  symbol: string
   logo: string
+  symbol: string
   blockExplorerUrl: string
 }
 
-export type ActivityCardProps = {
+type TransactionData = {
+  sharesPrice: string
+  tokenIn: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
+  tokenOut: {
+    logo?: string
+    amount?: string
+    value?: string
+  }
+}
+
+type RebalanceData = {
+  logo: string
+  symbol: string
+  weight: string
+  newWeight: string
+}
+
+type RebalancePoolData = {
+  assetChange?: RebalanceData
+  rebalanceData: RebalanceData[]
+}
+interface ActivityCardProps {
   key: string
   actionType: actionsType
   date: Date
   wallet: string
   txHash: string
-  activityInfo: ActivityInfo[]
-  newBalancePool?: ActivityInfo[]
-  sharesRedeemed?: {
-    amount: string
-    value: string
-  }
+  transactionData?: TransactionData
+  rebalancePoolData?: RebalancePoolData
 }
+
 interface IAllocationHistoryProps {
   poolInfo: IPoolInfo
 }
@@ -54,21 +75,14 @@ const AllocationHistory = ({ poolInfo }: IAllocationHistoryProps) => {
     ActivityCardProps[]
   >([])
 
-  const router = useRouter()
-  const [{ wallet }] = useConnectWallet()
-
-  const poolId = Array.isArray(router.query.pool)
-    ? router.query.pool[0]
-    : router.query.pool ?? ''
-
-  const { data } = usePoolAllocation({ id: poolId, skip })
+  const { data } = usePoolAllocation({ id: poolInfo.id, skip })
 
   React.useEffect(() => {
-    if (!data || !wallet) return
+    if (!data) return
 
     const managerActivities = getManagerActivity(
       data.weight_goals,
-      wallet.accounts[0].address
+      data.manager.id
     )
 
     setAllocationHistory(
@@ -86,17 +100,15 @@ const AllocationHistory = ({ poolInfo }: IAllocationHistoryProps) => {
         {allocationHistory.length > 0 ? (
           allocationHistory.map(allocation => (
             <ActivityCard
+              pool={poolInfo}
               key={allocation.key}
-              actionType={allocation.actionType}
               date={allocation.date}
-              scan={poolInfo.blockExplorerUrl}
               wallet={allocation.wallet}
               txHash={allocation.txHash}
-              activityInfo={allocation.activityInfo}
-              pool={poolInfo}
-              sharesRedeemed={allocation.sharesRedeemed}
-              newBalancePool={allocation.newBalancePool}
-              managerAddress={data?.manager?.id ?? ''}
+              scan={poolInfo.blockExplorerUrl}
+              actionType={allocation.actionType}
+              transactionData={allocation.transactionData}
+              rebalancePoolData={allocation.rebalancePoolData}
             />
           ))
         ) : (

@@ -2,6 +2,9 @@ query PoolData($id: ID!) {
   pool(id: $id) {
     id
     address
+    price_usd
+    decimals
+    total_value_locked_usd
     vault
     vault_id
     controller
@@ -11,8 +14,13 @@ query PoolData($id: ID!) {
     strategy
     is_private_pool
     supply
+    fee_join_broker
+    fee_join_manager
+    fee_aum
     manager {
       id
+      nickname
+      image
     }
     chain {
       id
@@ -32,6 +40,7 @@ query PoolData($id: ID!) {
     pool_id
     url
     summary
+    short_summary
     # partners {
     #   logo
     #   url

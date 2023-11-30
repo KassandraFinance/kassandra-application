@@ -507,6 +507,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   async function sendPoolData(
     controller: string,
     logo: string,
+    shortSummary: string,
     summary: string,
     chainId: number
   ) {
@@ -516,12 +517,13 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       }
 
       const logoToSign = logo ? keccak256(toUtf8Bytes(logo)) : ''
-      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
+      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nshortSummary: ${shortSummary}\nsummary: ${summary}`
       const signature = await signMessage(message)
 
       const body = {
         controller,
         logo: logo ? logo : undefined,
+        shortSummary,
         summary,
         chainId,
         signature
@@ -714,22 +716,41 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
       const slippageInPercentage = '1'
       const chainId = poolData.networkId?.toString() ?? '137'
       const swapProvider = new ParaSwap()
-      const { transactionsDataTx } = await swapProvider.getAmountsOut({
-        amount: poolData.tokenInAmount,
+
+      const amounts = await swapProvider.getAmountsOut({
         chainId,
-        destTokens:
-          poolData.tokens?.map(token => ({
-            token: { decimals: token.decimals, id: token.address },
-            weight_normalized: Big(token.allocation).div(100).toString()
-          })) ?? [],
-        srcDecimals: poolData.tokenIn?.decimals?.toString() || '',
-        srcToken: poolData.tokenIn.address
+        srcToken: [
+          {
+            id: poolData.tokenIn.address,
+            decimals: poolData.tokenIn.decimals || 18
+          }
+        ],
+        destToken: tokensList.map(token => {
+          return {
+            id: token.address,
+            decimals: token.decimals,
+            amount: Big(poolData.tokenInAmount).mul(token.allocation).toFixed(0)
+          }
+        })
       })
+
+      // const { transactionsDataTx } = await swapProvider.getAmountsOut({
+      //   amount: poolData.tokenInAmount,
+      //   chainId,
+      //   destTokens:
+      //     poolData.tokens?.map(token => ({
+      //       token: { decimals: token.decimals, id: token.address },
+      //       weight_normalized: Big(token.allocation).div(100).toString()
+      //     })) ?? [],
+      //   srcDecimals: poolData.tokenIn?.decimals?.toString() || '',
+      //   srcToken: poolData.tokenIn.address
+      // })
+
       datas = await swapProvider.getDatasTx(
         chainId,
         networks[Number(chainId)].factory,
         slippageInPercentage,
-        transactionsDataTx
+        amounts.transactionsDataTx
       )
     }
     const pool = {
@@ -794,6 +815,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         await sendPoolData(
           response.poolController,
           poolData.icon?.image_preview || '',
+          poolData.shortSummary || '',
           poolData.strategy || '',
           poolData.networkId || 137
         )

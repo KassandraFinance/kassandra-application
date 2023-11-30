@@ -34,8 +34,9 @@ import Summary from './Summary'
 import Distribution from './Distribution'
 import TokenDescription from './TokenDescription'
 import ShareImageModal from './ShareImageModal'
-import NewPoolOperations from './NewPoolOperations'
+// import NewPoolOperations from './NewPoolOperations'
 import SharedImage from './SharedImage'
+import Button from '@/components/Button'
 
 import tooltip from '../../../public/assets/utilities/tooltip.svg'
 
@@ -74,6 +75,7 @@ type ListTokensRes = {
 const Pool = () => {
   const [openModal, setOpenModal] = React.useState(false)
   const [loading, setLoading] = React.useState<boolean>(true)
+  const [isOpenPoolOperation, setIsOpenPoolOperation] = React.useState(false)
   const [infoPool, setInfoPool] = React.useState<InfoPool>({
     tvl: '...',
     swapFees: '...',
@@ -390,7 +392,7 @@ const Pool = () => {
                   <p>${infoPool.withdrawFees}</p>
                 </S.IndexData>
               </S.IntroCharts>
-              <ChartProducts />
+              <ChartProducts poolId="" />
               <ScrollUpButton />
               <Change />
               <FeeBreakdown
@@ -416,7 +418,20 @@ const Pool = () => {
               <ActivityTable />
               <TokenDescription />
             </S.ProductDetails>
-            <NewPoolOperations />
+
+            <Button
+              text="Buy"
+              background="primary"
+              onClick={() => setIsOpenPoolOperation(true)}
+            />
+            {/* <NewPoolOperations
+              isOpenPoolOperation={isOpenPoolOperation}
+              setIsOpenPoolOperation={setIsOpenPoolOperation}
+              operation="Invest"
+              setOperation={() => {
+                return
+              }}
+            /> */}
           </S.Product>
         </S.Container>
       )}

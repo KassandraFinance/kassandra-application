@@ -56,7 +56,7 @@ const WeightChangeAssetList = ({
 
       <S.AssetList>{WeightsList(assetInfoList.slice(0, take))}</S.AssetList>
 
-      {assetInfoList.length >= take && (
+      {assetInfoList.length > take && (
         <S.WrapperCheckAllWeights>
           <ExternalLink
             text="Check all Weight Changes"

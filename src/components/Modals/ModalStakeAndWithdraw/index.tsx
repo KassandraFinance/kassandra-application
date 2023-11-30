@@ -1,7 +1,7 @@
 import React from 'react'
 import Big from 'big.js'
 import Link from 'next/link'
-import { PoolDetails, PoolType } from '@/constants/pools'
+import { PoolType } from '@/constants/pools'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { BNtoDecimal } from '@/utils/numerals'
@@ -19,8 +19,26 @@ import ModalBuyKacyOnPangolin from '../ModalBuyKacyOnPangolin'
 
 import * as S from './styles'
 
+type IPoolProps = {
+  pid: number
+  type: PoolType
+  symbol: string
+  stakingContract: string
+  chainId: number
+  properties?: {
+    logo: {
+      src: string
+      style: {
+        width: string
+      }
+    }
+    title?: string
+    link?: string
+  }
+}
+
 interface IModalStakeProps {
-  pool: PoolDetails
+  pool: IPoolProps
   decimals: string
   amountApproved: Big
   stakingToken: string
@@ -72,7 +90,7 @@ const ModalStakeAndWithdraw = ({
     trackCancelBuying
   } = useMatomoEcommerce()
 
-  const networkChain = networks[pool.chain.id]
+  const networkChain = networks[pool.chainId]
   const productSKU = `${Staking}_${pool.pid}`
 
   const staking = useStaking(pool.stakingContract, networkChain.chainId)
@@ -240,20 +258,22 @@ const ModalStakeAndWithdraw = ({
       <S.BorderGradient>
         <S.BackgroundBlack>
           <S.InterBackground>
-            <span>{title}</span>
+            <span data-testid="title">{title}</span>
             <button
               type="button"
+              aria-label="close"
               onClick={() => {
                 setModalOpen(false)
                 setStakeTransaction(typeTransaction.NONE)
               }}
             >
-              <img src="assets/utilities/close-icon.svg" alt="Close" />
+              <img src="/assets/utilities/close-icon.svg" alt="Close" />
             </button>
           </S.InterBackground>
+
           <S.Main>
             <S.Amount>
-              <span>${pool.symbol} Total</span>
+              <span data-testid="token-input">${pool.symbol} Total</span>
               <InputTokenValue
                 inputRef={inputRef}
                 decimals={Big(decimals)}
@@ -307,31 +327,35 @@ const ModalStakeAndWithdraw = ({
               )}
             </S.WrapperButton>
 
-            {pool.type === PoolType.STAKE ? (
-              <Button
-                background="black"
-                fullWidth
-                text={`Buy ${pool.symbol}`}
-                rel="noopener noreferrer"
-                onClick={() => {
-                  setIsOpenModalPangolin(true)
-                }}
-              />
-            ) : (
-              <Link href={pool.properties?.link ?? ''} passHref>
-                <Button
-                  as="a"
-                  background="black"
-                  fullWidth
-                  text={`Get ${pool.symbol}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => {
-                    setStakeTransaction(typeTransaction.NONE)
-                    setModalOpen(false)
-                  }}
-                />
-              </Link>
+            {pool.properties && (
+              <S.WrapperGetButton>
+                {pool.type === PoolType.STAKE ? (
+                  <Button
+                    background="black"
+                    fullWidth
+                    text={`Buy ${pool.symbol}`}
+                    rel="noopener noreferrer"
+                    onClick={() => {
+                      setIsOpenModalPangolin(true)
+                    }}
+                  />
+                ) : (
+                  <Link href={pool.properties?.link ?? ''} passHref>
+                    <Button
+                      as="a"
+                      background="black"
+                      fullWidth
+                      text={`Get ${pool.symbol}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => {
+                        setStakeTransaction(typeTransaction.NONE)
+                        setModalOpen(false)
+                      }}
+                    />
+                  </Link>
+                )}
+              </S.WrapperGetButton>
             )}
           </S.Main>
         </S.BackgroundBlack>

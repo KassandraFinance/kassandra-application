@@ -7442,6 +7442,9 @@ export type PoolDataQuery = {
     __typename?: 'Pool'
     id: string
     address: string
+    price_usd: string
+    decimals: number
+    total_value_locked_usd: string
     vault: string
     vault_id: string
     controller: string
@@ -7451,14 +7454,23 @@ export type PoolDataQuery = {
     strategy: string
     is_private_pool: boolean
     supply: string
+    fee_join_broker: string
+    fee_join_manager: string
+    fee_aum: string
     name: string
     founded_by?: string | null
     symbol: string
     pool_id?: number | null
     url?: string | null
     summary?: string | null
+    short_summary?: string | null
     underlying_assets_addresses: Array<string>
-    manager: { __typename?: 'Manager'; id: string }
+    manager: {
+      __typename?: 'Manager'
+      id: string
+      nickname?: string | null
+      image?: string | null
+    }
     chain: {
       __typename?: 'Chain'
       id: string
@@ -7634,7 +7646,11 @@ export type PoolStrategyQueryVariables = Exact<{
 
 export type PoolStrategyQuery = {
   __typename?: 'Query'
-  pool?: { __typename?: 'Pool'; summary?: string | null } | null
+  pool?: {
+    __typename?: 'Pool'
+    summary?: string | null
+    short_summary?: string | null
+  } | null
 }
 
 export type PoolTvmChartQueryVariables = Exact<{
@@ -7651,6 +7667,19 @@ export type PoolTvmChartQuery = {
       close: string
       timestamp: number
     }>
+  } | null
+}
+
+export type PoolVolumeDataQueryVariables = Exact<{
+  id: Scalars['ID']['input']
+  timestamp: Scalars['Int']['input']
+}>
+
+export type PoolVolumeDataQuery = {
+  __typename?: 'Query'
+  pool?: {
+    __typename?: 'Pool'
+    volumes: Array<{ __typename?: 'Volume'; volume_usd: string }>
   } | null
 }
 
@@ -7830,6 +7859,22 @@ export type TokensPoolQuery = {
       }>
     }>
   } | null
+}
+
+export type TokensSwapQueryVariables = Exact<{
+  chainId: Scalars['Int']['input']
+}>
+
+export type TokensSwapQuery = {
+  __typename?: 'Query'
+  tokens: Array<{
+    __typename?: 'Token'
+    id: string
+    decimals: number
+    logo?: string | null
+    name: string
+    symbol: string
+  }>
 }
 
 export type UserPoolDataQueryVariables = Exact<{
@@ -8893,6 +8938,9 @@ export const PoolDataDocument = gql`
     pool(id: $id) {
       id
       address
+      price_usd
+      decimals
+      total_value_locked_usd
       vault
       vault_id
       controller
@@ -8902,8 +8950,13 @@ export const PoolDataDocument = gql`
       strategy
       is_private_pool
       supply
+      fee_join_broker
+      fee_join_manager
+      fee_aum
       manager {
         id
+        nickname
+        image
       }
       chain {
         id
@@ -8923,6 +8976,7 @@ export const PoolDataDocument = gql`
       pool_id
       url
       summary
+      short_summary
       underlying_assets_addresses
       underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
         balance
@@ -9107,6 +9161,7 @@ export const PoolStrategyDocument = gql`
   query PoolStrategy($id: ID!) {
     pool(id: $id) {
       summary
+      short_summary
     }
   }
 `
@@ -9121,6 +9176,15 @@ export const PoolTvmChartDocument = gql`
       ) {
         close
         timestamp
+      }
+    }
+  }
+`
+export const PoolVolumeDataDocument = gql`
+  query PoolVolumeData($id: ID!, $timestamp: Int!) {
+    pool(id: $id) {
+      volumes(where: { period: 3600, timestamp_gt: $timestamp }) {
+        volume_usd
       }
     }
   }
@@ -9266,6 +9330,20 @@ export const TokensPoolDocument = gql`
           }
         }
       }
+    }
+  }
+`
+export const TokensSwapDocument = gql`
+  query tokensSwap($chainId: Int!) {
+    tokens(
+      where: { chain_ids_contains: [$chainId], coingecko_id_not: null }
+      first: 1000
+    ) {
+      id
+      decimals
+      logo
+      name
+      symbol
     }
   }
 `
@@ -9958,6 +10036,21 @@ export function getSdk(
         'query'
       )
     },
+    PoolVolumeData(
+      variables: PoolVolumeDataQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolVolumeDataQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolVolumeDataQuery>(
+            PoolVolumeDataDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'PoolVolumeData',
+        'query'
+      )
+    },
     PoolWithdraws(
       variables: PoolWithdrawsQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
@@ -10068,6 +10161,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'TokensPool',
+        'query'
+      )
+    },
+    tokensSwap(
+      variables: TokensSwapQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<TokensSwapQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<TokensSwapQuery>(TokensSwapDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'tokensSwap',
         'query'
       )
     },

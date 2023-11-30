@@ -10,7 +10,7 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { TokenSelectProps } from '@/store/reducers/poolCreationSlice'
 import { useAppSelector } from '@/store/hooks'
 
-import TokenSelected from '@/templates/Pool/NewPoolOperations/Form/TokenSelected'
+import TokenSelected from '@/templates/PoolV2/NewPoolOperations/Form/TokenSelected'
 
 import * as S from './styles'
 

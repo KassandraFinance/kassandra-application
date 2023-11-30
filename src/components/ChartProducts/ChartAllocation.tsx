@@ -139,7 +139,7 @@ const ChartAllocation = ({ data }: IChartAllocationProps) => {
   }, [data])
 
   return (
-    <ResponsiveContainer width="100%" height={360}>
+    <ResponsiveContainer width="100%" height={500}>
       <AreaChart
         data={allocation}
         style={{

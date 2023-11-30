@@ -8,8 +8,7 @@ import { UnderlyingAssetsInfoType } from '@/utils/updateAssetsToV2'
 import { useTokensData } from '@/hooks/query/useTokensData'
 import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 import { useTokensPool } from '@/hooks/query/useTokensPool'
-
-import { getDateDiff } from '@/utils/date'
+import useAllocationInfo from '@/hooks/useAllocationInfo'
 
 import AllocationTable from './AllocationTable'
 import AllocationHistory from './AllocationHistory'
@@ -21,37 +20,10 @@ import IntroReview, {
 
 import * as S from './styles'
 
-type IWeightGoalsProps = {
-  __typename?: 'WeightGoalPoint' | undefined
-  id: string
-  type: string
-  end_timestamp: number
-  start_timestamp: number
-  token?:
-    | {
-        __typename?: 'Token' | undefined
-        symbol: string
-        logo?: string | null | undefined
-      }
-    | null
-    | undefined
-  weights: {
-    __typename?: 'WeightGoal' | undefined
-    weight_normalized: string
-    asset: {
-      __typename?: 'Asset' | undefined
-      balance: string
-      token: {
-        symbol: string
-        logo?: string | null | undefined
-      }
-    }
-  }[]
-}
-
 interface IAllocationsProps {
   countDownDate: string
 }
+
 const Allocations = ({ countDownDate }: IAllocationsProps) => {
   const [RebalancingProgress, setRebalancingProgress] =
     React.useState<IRebancingProgressProps | null>(null)
@@ -74,8 +46,10 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
     chainId: data?.chain_id || 137,
     tokenAddresses: handleMockToken(poolAssets ?? [])
   })
+  const useAllocation = useAllocationInfo()
 
   const poolInfo = {
+    id: poolId,
     name: data?.name ?? '',
     symbol: data?.symbol ?? '',
     logo: data?.logo ?? '',
@@ -84,116 +58,22 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
   const isRebalancing =
     (data?.weight_goals[0]?.end_timestamp ?? 0) * 1000 > new Date().getTime()
 
-  function handleMockToken(tokenList: any) {
+  function handleMockToken(tokenList: UnderlyingAssetsInfoType[]) {
     if (data?.chain_id === 5) {
-      return tokenList?.map((item: any) => {
+      return tokenList?.map(item => {
         return mockTokens[item.token.id]
       })
     } else {
-      return tokenList?.map((asset: any) => asset.token.id)
-    }
-  }
-
-  function tokenWeightFormatted(value: string) {
-    return Big(value).mul(100).toFixed(2, 2)
-  }
-
-  function handleCurrentAllocationInfo(poolAssets: UnderlyingAssetsInfoType[]) {
-    const tokenList = poolAssets.map(item => {
-      return {
-        token: {
-          address: item.token.id,
-          logo: item.token.logo ?? '',
-          name: item.token.name,
-          symbol: item.token.symbol,
-          decimals: item.token.decimals
-        },
-        allocation: tokenWeightFormatted(item.weight_normalized),
-        holding: {
-          value: Big(item.balance)
-        }
-      }
-    })
-
-    return tokenList
-  }
-
-  function handleRebalancingTimeProgress(weightGoals: IWeightGoalsProps[]) {
-    const currentTime = new Date().getTime()
-    const endTime = (weightGoals[0]?.end_timestamp || 0) * 1000
-
-    if (currentTime < endTime) {
-      const oneHourInTimestamp = 3600000
-      const startTime: number = weightGoals[0].start_timestamp * 1000
-      const timeSelected = (endTime - startTime) / oneHourInTimestamp
-
-      const started = getDateDiff(startTime)
-      const remaining = getDateDiff(currentTime, endTime)
-      const hoursLeft = (endTime - currentTime) / oneHourInTimestamp
-      const datePorcentage = ((timeSelected - hoursLeft) * 100) / timeSelected
-
-      return {
-        started: started ? String(started.value) + ' ' + started.string : '0',
-        remaning: remaining
-          ? String(remaining.value) + ' ' + remaining.string
-          : '0',
-        progress: datePorcentage > 0 ? datePorcentage : 0
-      }
-    } else {
-      return null
-    }
-  }
-
-  function handleRebalanceWeights(
-    name: string,
-    price: string,
-    weightGoals: IWeightGoalsProps[],
-    poolAssets: UnderlyingAssetsInfoType[]
-  ) {
-    const targetWeights = weightGoals[0]
-    const previousWeights = weightGoals[1]
-    const currentTime = new Date().getTime()
-    const endTime = (targetWeights?.end_timestamp || 0) * 1000
-
-    if (currentTime < endTime) {
-      const listTokenWeightsSorted = poolAssets.sort((a, b) =>
-        a.token.id.toLowerCase() > b.token.id.toLowerCase() ? 1 : -1
-      )
-
-      const listTokenWeights = listTokenWeightsSorted.map((item, index) => {
-        return {
-          token: {
-            address: item.token.id,
-            logo: item.token.logo ?? '',
-            name: item.token.name,
-            symbol: item.token.symbol
-          },
-          previous: tokenWeightFormatted(
-            previousWeights.weights[index].weight_normalized
-          ),
-          current: tokenWeightFormatted(item.weight_normalized),
-          final: tokenWeightFormatted(
-            targetWeights.weights[index].weight_normalized
-          )
-        }
-      })
-
-      return {
-        poolName: name,
-        poolPrice: Big(price).toFixed(2, 2),
-        listTokenWeights
-      }
-    } else {
-      return null
+      return tokenList?.map(asset => asset.token.id)
     }
   }
 
   React.useEffect(() => {
-    if (!data) return
+    if (!data || !poolAssets) return
 
-    const tokenList = poolAssets && handleCurrentAllocationInfo(poolAssets)
+    const tokenList = useAllocation.handleCurrentAllocationInfo(poolAssets)
 
-    if (!tokenList) {
+    if (tokenList.length <= 0) {
       return
     }
 
@@ -203,7 +83,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
   React.useEffect(() => {
     if (!data) return
 
-    const rebalancingTimeProgress = handleRebalancingTimeProgress(
+    const rebalancingTimeProgress = useAllocation.handleRebalancingTimeProgress(
       data?.weight_goals
     )
 
@@ -213,7 +93,7 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
   React.useEffect(() => {
     if (!data || !poolAssets) return
 
-    const rebalanceWeights = handleRebalanceWeights(
+    const rebalanceWeights = useAllocation.handleRebalanceWeights(
       data.name,
       Big(data.price_usd).toFixed(2, 2),
       data.weight_goals,
@@ -229,21 +109,27 @@ const Allocations = ({ countDownDate }: IAllocationsProps) => {
 
   return (
     <S.Allocations>
-      <IntroReview
-        RebalancingProgress={RebalancingProgress}
-        listTokenWeights={listTokenWeights}
-        rebalanceWeights={rebalanceWeights}
-        countDownDate={countDownDate}
-        coingeckoData={tokensInfo ?? {}}
-        chainId={data?.chain_id ?? 137}
-      />
-      <AllocationTable
-        allocationData={listTokenWeights}
-        isRebalance={isRebalancing}
-        coingeckoData={tokensInfo ?? {}}
-        chainId={data?.chain_id ?? 137}
-      />
-      <AllocationHistory poolInfo={poolInfo} />
+      <S.IntroReview>
+        <IntroReview
+          RebalancingProgress={RebalancingProgress}
+          listTokenWeights={listTokenWeights}
+          rebalanceWeights={rebalanceWeights}
+          countDownDate={countDownDate}
+          coingeckoData={tokensInfo ?? {}}
+          chainId={data?.chain_id ?? 137}
+        />
+      </S.IntroReview>
+      <S.AllocationTable>
+        <AllocationTable
+          allocationData={listTokenWeights}
+          isRebalance={isRebalancing}
+          coingeckoData={tokensInfo ?? {}}
+          chainId={data?.chain_id ?? 137}
+        />
+      </S.AllocationTable>
+      <S.AllocationHistory>
+        <AllocationHistory poolInfo={poolInfo} />
+      </S.AllocationHistory>
     </S.Allocations>
   )
 }

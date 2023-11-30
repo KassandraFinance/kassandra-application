@@ -7,6 +7,83 @@ type UsePoolDataProps = {
   id: string
 }
 
+export type IPoolDataProps =
+  | {
+      id: string
+      address: string
+      price_usd: string
+      decimals: number
+      total_value_locked_usd: string
+      vault: string
+      vault_id: string
+      controller: string
+      chain_id: number
+      logo?: string | null
+      pool_version: number
+      strategy: string
+      is_private_pool: boolean
+      supply: string
+      name: string
+      founded_by?: string | null
+      symbol: string
+      pool_id?: number | null
+      url?: string | null
+      summary?: string | null
+      short_summary?: string | null
+      underlying_assets_addresses: Array<string>
+      fee_join_broker: string
+      manager: {
+        id: string
+        nickname?: string | null
+        image?: string | null
+      }
+      chain: {
+        id: string
+        name: string
+        token_name: string
+        token_symbol: string
+        token_decimals: number
+        rpc_urls: Array<string>
+        block_explorer_url: string
+        seconds_per_block: number
+        address_wrapped?: string | null
+        logo?: string | null
+      }
+      underlying_assets: Array<{
+        balance: string
+        weight_normalized: string
+        weight_goal_normalized: string
+        token: {
+          id: string
+          name: string
+          logo?: string | null
+          symbol: string
+          decimals: number
+          is_wrap_token: number
+          wraps?: {
+            id: string
+            decimals: number
+            symbol: string
+            name: string
+            logo?: string | null
+          } | null
+        }
+      }>
+      weight_goals: Array<{
+        start_timestamp: number
+        end_timestamp: number
+        weights: Array<{
+          weight_normalized: string
+          asset: {
+            __typename?: 'Asset'
+            token: { __typename?: 'Token'; id: string }
+          }
+        }>
+      }>
+    }
+  | null
+  | undefined
+
 export const fetchPoolData = async ({ id }: UsePoolDataProps) => {
   return kassandraClient.PoolData({ id }).then(res => {
     const pool = res.pool
