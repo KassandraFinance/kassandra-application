@@ -1,5 +1,5 @@
 import React from 'react'
-import { ethers } from 'ethers'
+import { ZeroAddress, ethers } from 'ethers'
 import Big from 'big.js'
 
 import { BNtoDecimal } from '@/utils/numerals'
@@ -58,12 +58,7 @@ const MyAsset = ({
   async function getBalance(decimals: number): Promise<void> {
     if (!wallet) return
 
-    let balanceToken: Big
-    try {
-      balanceToken = Big(await ERC20.balance(wallet.accounts[0].address))
-    } catch (error) {
-      balanceToken = Big(0)
-    }
+    const balanceToken = Big(await ERC20.balance(wallet.accounts[0].address))
 
     if (balanceToken.gt(0)) {
       const amountInUsd = balanceToken.div(Big(10).pow(decimals)).mul(price)
@@ -73,6 +68,8 @@ const MyAsset = ({
   }
 
   React.useEffect(() => {
+    if (poolAddress === ZeroAddress) return
+
     getBalance(decimals)
     getStakedToken()
   }, [wallet, pid])
