@@ -58,7 +58,12 @@ const MyAsset = ({
   async function getBalance(decimals: number): Promise<void> {
     if (!wallet) return
 
-    const balanceToken = Big(await ERC20.balance(wallet.accounts[0].address))
+    let balanceToken: Big
+    try {
+      balanceToken = Big(await ERC20.balance(wallet.accounts[0].address))
+    } catch (error) {
+      balanceToken = Big(0)
+    }
 
     if (balanceToken.gt(0)) {
       const amountInUsd = balanceToken.div(Big(10).pow(decimals)).mul(price)

@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Big from 'big.js'
+import { ZeroAddress } from 'ethers'
 
 import { BNtoDecimal } from '@/utils/numerals'
 import substr from '@/utils/substr'
@@ -148,7 +149,7 @@ const Hero = ({ handleClickStakeButton }: IHeroProps) => {
 
       <MyAsset
         chainId={pool?.chain_id ?? 137}
-        poolAddress={pool?.address ?? '0x'}
+        poolAddress={pool?.address ?? ZeroAddress}
         price={pool?.price_usd ?? '0'}
         decimals={pool?.decimals ?? 18}
         pid={pool?.pool_id ?? undefined}
