@@ -8,6 +8,10 @@ export const Operation = styled.div`
     align-items: flex-start;
 
     margin-top: 3.2rem;
+
+    @media (max-width: 576px) {
+      flex-direction: column;
+    }
   `}
 `
 
@@ -30,6 +34,10 @@ export const ButtonWarap = styled.div`
       &:focus {
         background-color: ${theme.colors.snow};
       }
+    }
+
+    @media (max-width: 576px) {
+      width: 100%;
     }
   `}
 `
@@ -71,6 +79,10 @@ export const StakeButton = styled.button`
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    @media (max-width: 576px) {
+      width: 100%;
     }
   `}
 `

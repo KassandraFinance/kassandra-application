@@ -28,7 +28,7 @@ export const ChangeAndStakeContainer = styled.div`
     margin-block: 5.6rem;
 
     @media (max-width: 992px) {
-      grid-template-columns: 1fr;
+      flex-direction: column;
     }
   `}
 `
