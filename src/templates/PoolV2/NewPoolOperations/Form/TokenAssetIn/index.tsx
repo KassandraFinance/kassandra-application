@@ -47,6 +47,18 @@ const TokenAssetIn = ({
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
   })
 
+  const priceUSD = BNtoDecimal(
+    Big(amountTokenIn.toString() ?? 0)
+      .mul(data?.price_usd ?? 0)
+      .div(Big(10).pow(Number(data?.decimals ?? 18))),
+    18,
+    2,
+    2
+  )
+
+  const priceUSDPartial = priceUSD?.split('.')
+  const priceUSDLength = priceUSDPartial[1]?.length ?? 0
+
   function wei2String(input: Big) {
     return input.div(Big(10).pow(Number(18)))
   }
@@ -70,8 +82,9 @@ const TokenAssetIn = ({
         setMaxActive(false)
         return
       }
+
       const tokenInBalance = wei2String(selectedTokenInBalance)
-      inputAmountTokenRef.current.value = tokenInBalance.toString()
+      inputAmountTokenRef.current.value = tokenInBalance.toFixed()
       setamountTokenIn(selectedTokenInBalance)
       setMaxActive(true)
     }
@@ -171,17 +184,7 @@ const TokenAssetIn = ({
             />
           </Tippy>
           <p className="price-dolar">
-            {pool?.id &&
-              amountTokenIn &&
-              'USD: ' +
-                BNtoDecimal(
-                  Big(amountTokenIn.toString())
-                    .mul(data?.price_usd || 0)
-                    .div(Big(10).pow(Number(data?.decimals || 18))),
-                  18,
-                  2,
-                  2
-                )}
+            USD: {pool?.id && priceUSDLength > 6 ? '0.00' : priceUSD}
           </p>
         </S.AmountContainer>
       </S.Body>

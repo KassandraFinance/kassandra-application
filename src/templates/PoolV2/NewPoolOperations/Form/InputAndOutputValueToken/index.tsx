@@ -130,6 +130,17 @@ const InputAndOutputValueToken = ({
     : ''
 
   const isInvestType = typeAction === 'Invest' ? true : false
+  const priceUSD = BNtoDecimal(
+    Big(amountTokenIn)
+      .mul(Big(priceToken(tokenSelect.address.toLowerCase()) || 0))
+      .div(Big(10)?.pow(Number(tokenSelect?.decimals ?? 18))),
+    18,
+    2,
+    2
+  )
+
+  const priceUSDPartial = priceUSD?.split('.')
+  const priceUSDLength = priceUSDPartial[1]?.length ?? 0
 
   function handleOnWheel() {
     if (document.activeElement?.classList.contains('noscroll')) {
@@ -280,22 +291,10 @@ const InputAndOutputValueToken = ({
               )}
             </Tippy>
             <p className="price-dolar">
-              {tokenSelect.address &&
-                amountTokenIn &&
-                'USD: ' +
-                  BNtoDecimal(
-                    Big(amountTokenIn)
-                      .mul(
-                        Big(
-                          priceToken(tokenSelect.address.toLocaleLowerCase()) ||
-                            0
-                        )
-                      )
-                      .div(Big(10)?.pow(Number(tokenSelect?.decimals ?? 18))),
-                    18,
-                    2,
-                    2
-                  )}
+              USD:{' '}
+              {tokenSelect.address && amountTokenIn && priceUSDLength > 6
+                ? '0.00'
+                : priceUSD}
             </p>
           </S.Amount>
         </S.Top>

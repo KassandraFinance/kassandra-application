@@ -39,6 +39,24 @@ const TokenAssetOut = ({
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24)
   })
 
+  const priceUSD = BNtoDecimal(
+    Big(amountTokenOut?.toString() ?? '0')
+      .mul(
+        getPoolPrice({
+          assets: pool?.underlying_assets || [],
+          priceToken,
+          poolSupply: pool?.supply ?? ''
+        })
+      )
+      .div(Big(10).pow(data?.decimals ?? 18)),
+    18,
+    2,
+    2
+  )
+
+  const priceUSDPartial = priceUSD?.split('.')
+  const priceUSDLength = priceUSDPartial[1]?.length ?? 0
+
   React.useEffect(() => {
     if (pool?.id?.length === 0 || !wallet || pool?.chain_id !== chainId) {
       return setOutAssetBalance(Big(0))
@@ -98,23 +116,7 @@ const TokenAssetOut = ({
           />
           {/* </Tippy> */}
           <S.PriceDolar>
-            {amountTokenOut &&
-              data &&
-              'USD: ' +
-                BNtoDecimal(
-                  Big(amountTokenOut.toString())
-                    .mul(
-                      getPoolPrice({
-                        assets: pool?.underlying_assets || [],
-                        priceToken,
-                        poolSupply: pool?.supply ?? ''
-                      })
-                    )
-                    .div(Big(10).pow(data?.decimals)),
-                  18,
-                  2,
-                  2
-                )}
+            USD: {priceUSDLength > 6 ? '0.00' : priceUSD}
           </S.PriceDolar>
         </S.InputContainer>
       </S.FlexContainer>
