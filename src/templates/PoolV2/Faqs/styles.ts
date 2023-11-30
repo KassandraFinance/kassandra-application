@@ -8,5 +8,9 @@ export const Faqs = styled.div`
     gap: 3.2rem;
     width: 100%;
     margin-top: 5.6rem;
+
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+    }
   `}
 `

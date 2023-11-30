@@ -1,5 +1,5 @@
 import React from 'react'
-import { ethers } from 'ethers'
+import { ZeroAddress, ethers } from 'ethers'
 import Big from 'big.js'
 
 import { BNtoDecimal } from '@/utils/numerals'
@@ -68,6 +68,8 @@ const MyAsset = ({
   }
 
   React.useEffect(() => {
+    if (poolAddress === ZeroAddress) return
+
     getBalance(decimals)
     getStakedToken()
   }, [wallet, pid])

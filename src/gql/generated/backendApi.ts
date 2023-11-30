@@ -46,6 +46,11 @@ export type Activity = {
   address: Scalars['String']['output']
   amount: Array<Scalars['BigDecimal']['output']>
   /**
+   * Total join fee (manager + broker)
+   *
+   */
+  fee: Scalars['BigDecimal']['output']
+  /**
    * Pool ID + pool.num_tx
    *
    */
@@ -57,7 +62,7 @@ export type Activity = {
   timestamp: Scalars['Int']['output']
   txHash: Scalars['String']['output']
   /**
-   * One of 'join', 'exit', 'swap', 'token-add', 'token-remove' or 'public'
+   * One of 'join', 'join_swap', 'exit', 'exit_swap', 'swap', 'token-add', 'token-remove' or 'public'
    *
    */
   type: Scalars['String']['output']
@@ -92,6 +97,14 @@ export type Activity_Filter = {
   amount_not?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
   amount_not_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
   amount_not_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  fee?: InputMaybe<Scalars['BigDecimal']['input']>
+  fee_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  fee_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  fee_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  fee_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  fee_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  fee_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  fee_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -196,6 +209,7 @@ export type Activity_Filter = {
 export type Activity_OrderBy =
   | 'address'
   | 'amount'
+  | 'fee'
   | 'id'
   | 'pool'
   | 'price_btc'

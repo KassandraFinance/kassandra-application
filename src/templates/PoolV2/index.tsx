@@ -1,6 +1,9 @@
 import React, { ReactElement } from 'react'
 import { useRouter } from 'next/router'
 import { animateScroll } from 'react-scroll'
+import Big from 'big.js'
+
+import substr from '@/utils/substr'
 
 import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
 import SelectTabs from '@/components/SelectTabs'
@@ -110,7 +113,7 @@ const Pool = () => {
 
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
-  const { data: tokenSwap } = useTokenSwap({ chainId: pool?.chain_id ?? 137 })
+  const { data: tokenSwap } = useTokenSwap({ chainId: pool?.chain_id ?? 0 })
   const { trackProductPageView } = useMatomoEcommerce()
   const dispatch = useAppDispatch()
 
@@ -162,7 +165,30 @@ const Pool = () => {
         poolId={pool?.id ?? ''}
       />
     ),
-    faqs: <Faqs />
+    faqs: (
+      <Faqs
+        fee={{
+          managementFee: Big(pool?.fee_aum ?? '0')
+            .mul(100)
+            .toFixed(2),
+          depositFee: Big(pool?.fee_join_manager ?? '0')
+            .add(pool?.fee_join_broker ?? '0')
+            .mul(100)
+            .toFixed(2),
+          managerShare: Big(pool?.fee_join_broker ?? '0')
+            .mul(100)
+            .toFixed(2)
+        }}
+        manager={pool?.manager.nickname ?? substr(pool?.manager?.id ?? '')}
+        poolName={pool?.name ?? ''}
+        isPrivatePool={pool?.is_private_pool ?? false}
+        tokenSymbolList={
+          pool?.underlying_assets.map(
+            item => item.token.wraps?.symbol ?? item.token.symbol
+          ) ?? []
+        }
+      />
+    )
   }
 
   async function getTokensForOperations(tokensSwapProvider: TokenSwapItem[]) {
@@ -220,7 +246,7 @@ const Pool = () => {
         console.error(error)
       }
     }
-  }, [tokenSwap, pool])
+  }, [tokenSwap])
 
   return (
     <S.Pool>

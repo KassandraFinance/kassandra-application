@@ -15,6 +15,8 @@ query PoolData($id: ID!) {
     is_private_pool
     supply
     fee_join_broker
+    fee_join_manager
+    fee_aum
     manager {
       id
       nickname

@@ -7455,6 +7455,8 @@ export type PoolDataQuery = {
     is_private_pool: boolean
     supply: string
     fee_join_broker: string
+    fee_join_manager: string
+    fee_aum: string
     name: string
     founded_by?: string | null
     symbol: string
@@ -8949,6 +8951,8 @@ export const PoolDataDocument = gql`
       is_private_pool
       supply
       fee_join_broker
+      fee_join_manager
+      fee_aum
       manager {
         id
         nickname
