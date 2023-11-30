@@ -9,18 +9,18 @@ import { usePoolInfo } from '@/hooks/query/usePoolInfo'
 import {
   NATIVE_ADDRESS,
   networks
-} from '../../../../../constants/tokenAddresses'
+} from '@/constants/tokenAddresses'
 import { usePoolData } from '@/hooks/query/usePoolData'
 import { useReferralDecrypt } from '@/hooks/query/useReferralDecrypt'
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
-import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
-import { ERC20 } from '../../../../../hooks/useERC20'
-import useMatomoEcommerce from '../../../../../hooks/useMatomoEcommerce'
+import { ERC20 } from '@/hooks/useERC20'
+import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import useTransaction from '@/hooks/useTransaction'
 
-import { BNtoDecimal } from '../../../../../utils/numerals'
+import { BNtoDecimal } from '@/utils/numerals'
 import {
   checkTokenInThePool,
   checkTokenWithHigherLiquidityPool,
@@ -30,8 +30,8 @@ import {
   getPoolPrice
 } from '@/utils/poolUtils'
 
-import { ToastWarning } from '../../../../../components/Toastify/toast'
-import Button from '../../../../../components/Button'
+import { ToastWarning } from '@/components/Toastify/toast'
+import Button from '@/components/Button'
 
 import PoolOperationContext from '../PoolOperationContext'
 
@@ -781,7 +781,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       ) : chainId === pool?.chain_id ? (
         pool.is_private_pool &&
         !privateInvestors.some(
-          address => address === wallet?.accounts[0].address
+          address => address.toLowerCase() === wallet?.accounts[0].address
         ) ? (
           <Tippy
             allowHTML={true}
