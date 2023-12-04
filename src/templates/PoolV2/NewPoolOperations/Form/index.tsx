@@ -9,7 +9,7 @@ import usePrivateInvestors from '@/hooks/usePrivateInvestors'
 import { usePoolData } from '@/hooks/query/usePoolData'
 import useGetToken from '@/hooks/useGetToken'
 
-import { networks, ProxyContract } from '@/constants/tokenAddresses'
+import { networks, PROXY_CONTRACT_V1 } from '@/constants/tokenAddresses'
 
 import operationV1 from '@/services/operationV1'
 import operationV2 from '@/services/operationV2'
@@ -104,7 +104,7 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   const operationVersion =
     pool?.pool_version === 1
       ? new operationV1(
-          ProxyContract,
+          PROXY_CONTRACT_V1,
           pool?.address || '',
           poolInfo,
           corePoolContract(pool?.vault || ''),
