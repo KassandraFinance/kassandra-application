@@ -729,7 +729,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           return {
             id: token.address,
             decimals: token.decimals,
-            amount: Big(poolData.tokenInAmount).mul(token.allocation).toFixed(0)
+            amount: Big(poolData.tokenInAmount).mul(Number(token.allocation) / 100).toFixed(0)
           }
         })
       })
