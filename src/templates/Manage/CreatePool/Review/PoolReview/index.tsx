@@ -131,7 +131,7 @@ const PoolReview = () => {
         return {
           id: token.address,
           decimals: token.decimals,
-          amount: Big(amount).mul(token.allocation).toFixed(0)
+          amount: Big(amount).mul(Number(token.allocation) / 100).toFixed(0)
         }
       })
     })
