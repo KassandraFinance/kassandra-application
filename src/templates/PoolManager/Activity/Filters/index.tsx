@@ -40,7 +40,13 @@ const Filters = ({
               onChange={() => handleCheckbox(option.key)}
               showLabel={false}
             />
-            <S.OptionName>{option.name}</S.OptionName>
+
+            <S.OptionName
+              htmlFor={option.name}
+              onChange={() => handleCheckbox(option.key)}
+            >
+              {option.name}
+            </S.OptionName>
           </S.OptionLi>
         ))}
       </S.OptionsUl>
