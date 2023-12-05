@@ -103,7 +103,9 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
   const chainId = Number(connectedChain?.id ?? '0x89')
   const proxyInvest =
-    pool?.pool_version === 1 ? PROXY_CONTRACT_V1 : networks[chainId].proxyInvest
+    pool?.pool_version === 1
+      ? PROXY_CONTRACT_V1
+      : networks[pool?.chain_id ?? 137].proxyInvest
 
   const { operation, priceToken } = React.useContext(PoolOperationContext)
 
@@ -384,11 +386,17 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         return
       }
 
-      // const tokenAddress = pool.underlying_assets.find(
-      //   item =>
-      //     (item.token.wraps ? item.token.wraps.id : item.token.id) ===
-      //     tokenSelect.address
-      // )
+      let tokenAddress = tokenSelect.address
+      let isWrap = false
+      if (pool.pool_version === 1) {
+        const assetIn = pool.underlying_assets.find(
+          asset =>
+            (asset.token.wraps?.id ?? asset.token.id) === tokenSelect.address
+        )
+        if (!assetIn) return
+        tokenAddress = assetIn.token.id
+        isWrap = !!assetIn.token.wraps
+      }
 
       if (typeWithdraw === 'Best_value') {
         if (wallet && Big(amountTokenIn).gt(Big('0'))) {
@@ -414,8 +422,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       }
 
       try {
-        if (!wallet) return
-        // if (!tokenAddress || !wallet) return
+        if (!tokenAddress || !wallet) return
 
         const {
           withdrawAmoutOut,
@@ -423,14 +430,13 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           transactionsDataTx,
           amountOutList
         } = await operation.calcSingleOutGivenPoolIn({
-          tokenInAddress: tokenSelect.address,
+          tokenInAddress: tokenAddress,
           tokenSelect: {
             address: tokenSelect.address,
             decimals: tokenSelect.decimals ?? 18
           },
           poolAmountIn: Big(amountTokenIn).toFixed(0),
-          isWrap: false,
-          // isWrap: tokenAddress.token.wraps ? true : false,
+          isWrap,
           userWalletAddress: wallet.accounts[0].address,
           selectedTokenInBalance
         })
