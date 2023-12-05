@@ -6,10 +6,7 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import { ZeroAddress, isAddress } from 'ethers'
 
 import { usePoolInfo } from '@/hooks/query/usePoolInfo'
-import {
-  NATIVE_ADDRESS,
-  networks
-} from '@/constants/tokenAddresses'
+import { NATIVE_ADDRESS, networks } from '@/constants/tokenAddresses'
 import { usePoolData } from '@/hooks/query/usePoolData'
 import { useReferralDecrypt } from '@/hooks/query/useReferralDecrypt'
 

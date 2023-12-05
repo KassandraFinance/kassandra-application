@@ -5,7 +5,7 @@ import Big from 'big.js'
 import { BNtoDecimal } from '@/utils/numerals'
 import { networks } from '@/constants/tokenAddresses'
 
-import useERC20 from '@/hooks/useERC20'
+import { ERC20 } from '@/hooks/useERC20'
 import useStaking from '@/hooks/useStaking'
 import { useConnectWallet } from '@web3-onboard/react'
 
@@ -42,8 +42,6 @@ const MyAsset = ({
     chainInfo.chainId
   )
 
-  const ERC20 = useERC20(poolAddress, networks[chainInfo.chainId].rpc)
-
   async function getStakedToken() {
     if (!pid || !wallet) return
 
@@ -58,7 +56,12 @@ const MyAsset = ({
   async function getBalance(decimals: number): Promise<void> {
     if (!wallet) return
 
-    const balanceToken = Big(await ERC20.balance(wallet.accounts[0].address))
+    const { balance } = await ERC20(
+      poolAddress,
+      networks[chainInfo.chainId].rpc
+    )
+
+    const balanceToken = Big(await balance(wallet.accounts[0].address))
 
     if (balanceToken.gt(0)) {
       const amountInUsd = balanceToken.div(Big(10).pow(decimals)).mul(price)

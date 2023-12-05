@@ -6,7 +6,10 @@ import useBatchRequests from '@/hooks/useBatchRequests'
 
 import { usePoolData } from '@/hooks/query/usePoolData'
 import { usePoolInfo } from '@/hooks/query/usePoolInfo'
-import { networks } from '../../../../../constants/tokenAddresses'
+import {
+  PROXY_CONTRACT_V1,
+  networks
+} from '../../../../../constants/tokenAddresses'
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks'
 import { setModalAlertText } from '../../../../../store/reducers/modalAlertText'
@@ -99,6 +102,8 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   const { balances } = useBatchRequests(pool?.chain_id || 0)
 
   const chainId = Number(connectedChain?.id ?? '0x89')
+  const proxyInvest =
+    pool?.pool_version === 1 ? PROXY_CONTRACT_V1 : networks[chainId].proxyInvest
 
   const { operation, priceToken } = React.useContext(PoolOperationContext)
 
@@ -127,7 +132,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         networks[chainId].rpc
       )
       const allowanceValue = await allowance(
-        networks[chainId].proxyInvest,
+        proxyInvest,
         wallet.accounts[0].address
       )
 
@@ -226,7 +231,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         )
 
         approve(
-          networks[chainId].proxyInvest,
+          proxyInvest,
           {
             error: `Failed to approve ${pool?.symbol}`,
             pending: `Waiting approval of ${pool?.symbol}...`,
@@ -343,7 +348,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       networks[pool?.chain_id || '0'].rpc
     )
     const allowanceValue = await allowance(
-      networks[chainId].proxyInvest,
+      proxyInvest,
       wallet.accounts[0].address
     )
 

@@ -2,13 +2,14 @@ import styled, { css } from 'styled-components'
 
 export const Filters = styled.div`
   ${() => css`
-    overflow: hidden;
-
+    position: relative;
     min-width: 26.4rem;
     height: 100%;
     border-radius: 8px;
-
     background: rgb(255 255 255 / 0.04);
+
+    overflow: hidden;
+    z-index: 1041;
   `}
 `
 
@@ -62,7 +63,7 @@ export const OptionLi = styled.li`
   `}
 `
 
-export const OptionName = styled.span`
+export const OptionName = styled.label`
   ${({ theme }) => css`
     font-weight: ${theme.font.weight.normal};
     font-size: ${theme.font.sizes.font14};
