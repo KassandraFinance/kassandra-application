@@ -2,14 +2,34 @@ import styled, { css } from 'styled-components'
 
 export const QuestionsAndAnswers = styled.div`
   ${() => css`
+    position: relative;
+
     display: flex;
     flex-direction: column;
     gap: 1.6rem;
 
     background-color: transparent;
     border-radius: 8px;
+  `}
+`
 
-    details[open] {
+export const Questions = styled.details`
+  ${() => css`
+    display: flex;
+    max-height: 9rem;
+
+    border-radius: 8px;
+    background-color: rgba(252, 252, 252, 0.03);
+
+    transition-timing-function: linear;
+    transition-duration: 800ms;
+    transition-property: max-height;
+
+    overflow-y: hidden;
+
+    &[open] {
+      max-height: 99rem;
+
       ${PlusIcon} {
         display: none;
       }
@@ -19,15 +39,6 @@ export const QuestionsAndAnswers = styled.div`
         justify-content: center;
       }
     }
-  `}
-`
-
-export const Questions = styled.details`
-  ${() => css`
-    display: flex;
-
-    border-radius: 8px;
-    background-color: rgba(252, 252, 252, 0.03);
   `}
 `
 
@@ -50,7 +61,7 @@ export const Summary = styled.summary`
     cursor: pointer;
 
     &:focus-visible {
-      outline: 2px solid #bdbdbd;
+      border: 2px solid #bdbdbd;
     }
   `}
 `
