@@ -1,15 +1,24 @@
+import Tippy from '@tippyjs/react'
 import WeightChangeAssetList from '../WeightChangeAssetList'
 
 import * as S from './styles'
+
+export type AssetInfoList = {
+  symbol: string
+  logo: string
+  weight?: string
+  newWeight?: string
+}
 
 interface ITokenChangeUpdateProps {
   title: string
   assetChange?: {
     logo: string
+    symbol: string
     newWeight: string
     weight: string
   }
-  assetInfoList: any
+  assetInfoList: AssetInfoList[]
 }
 
 const TokenChangeUpdate = ({
@@ -22,7 +31,14 @@ const TokenChangeUpdate = ({
       <S.TokenChangeUpdateContent>
         <p>{title}</p>
         <S.TokenInfoContainer>
-          <img src={assetChange?.logo ?? ''} alt="" width={32} height={32} />
+          <Tippy content={assetChange?.symbol ?? ''}>
+            <img
+              src={assetChange?.logo ?? ''}
+              alt={`${assetChange?.symbol} logo`}
+              width={32}
+              height={32}
+            />
+          </Tippy>
 
           <S.WeightsWrapper>
             <p>{assetChange?.weight ?? ''}%</p>
