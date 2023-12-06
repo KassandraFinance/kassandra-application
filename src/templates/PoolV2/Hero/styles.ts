@@ -1,3 +1,4 @@
+import { WarningCard } from '@/components/WarningCard/styles'
 import styled, { css } from 'styled-components'
 
 export const Hero = styled.div`
@@ -161,5 +162,15 @@ export const Summary = styled.span`
     font-weight: ${theme.font.weight.light};
     font-size: ${theme.font.sizes.font16};
     line-height: ${theme.font.sizes.font32};
+  `}
+`
+
+export const WarningCardContainer = styled.div`
+  ${() => css`
+    margin-bottom: 2.4rem;
+
+    ${WarningCard} {
+      min-height: auto;
+    }
   `}
 `
