@@ -101,7 +101,9 @@ const Hero = ({ handleClickStakeButton }: IHeroProps) => {
           {pool?.name ? (
             <S.PoolName>{pool.name}</S.PoolName>
           ) : (
+            <S.SkeletonLoadingPoolName>
             <SkeletonLoading width={40} height={3} />
+            </S.SkeletonLoadingPoolName>
           )}
         </S.LogoAndPoolName>
         <S.SharedButton
