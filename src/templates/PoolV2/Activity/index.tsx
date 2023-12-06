@@ -46,8 +46,12 @@ const options = [
   }
 ]
 
+type AssetsInfo = {
+  logo: string
+  decimals: number
+}
+
 type Activity = {
-  __typename?: 'Activity' | undefined
   id: string
   type: string
   timestamp: number
@@ -132,10 +136,13 @@ const Activity = () => {
       }
     }
 
-    const assets: Record<string, string> = {}
+    const assets: Record<string, AssetsInfo> = {}
     for (const token of tokenListSwapProvider) {
       if (token.symbol && token.logoURI) {
-        assets[token.symbol] = token.logoURI
+        assets[token.symbol] = {
+          logo: token.logoURI,
+          decimals: token.decimals ?? 18
+        }
       }
     }
 

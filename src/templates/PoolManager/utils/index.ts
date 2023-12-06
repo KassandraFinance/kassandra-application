@@ -1,10 +1,17 @@
 import Big from 'big.js'
 import { ActivityCardProps, activityProps } from '../Activity'
+import { BNtoDecimal } from '@/utils/numerals'
 
 type Token = {
   logo?: string
+  symbol?: string
   amount?: string
   value?: string
+}
+
+type AssetsInfo = {
+  logo: string
+  decimals: number
 }
 
 type IActivityProps = {
@@ -51,26 +58,47 @@ type IWeightGoalsProps = {
 
 export function getActivityInfo(
   activityData: IActivityProps[],
-  assets: Record<string, string>,
+  assets: Record<string, AssetsInfo>,
   filters: Record<string, boolean> = { join: true, exit: true }
 ): Array<ActivityCardProps> {
   const activityInfo: ActivityCardProps[] = []
   let tokenIn: Token = {}
   let tokenOut: Token = {}
+  let sharesPrice
 
   for (const activity of activityData) {
     if (filters[activity.type]) {
       if (activity.symbol.length === 2) {
+        const tokenInValue = Big(activity.amount[0]).mul(activity.price_usd[0])
+        const tokenOutValue = Big(activity.amount[1]).mul(activity.price_usd[1])
+
         tokenIn = {
-          logo: assets[activity.symbol[0]],
-          amount: Big(activity.amount[0]).toFixed(2),
-          value: Big(activity.amount[0]).mul(activity.price_usd[0]).toFixed(2)
+          logo: assets[activity.symbol[0]]?.logo,
+          symbol: activity.symbol[0],
+          amount: BNtoDecimal(
+            Big(activity.amount[0]),
+            assets[activity.symbol[0]]?.decimals ?? 18,
+            2,
+            2
+          ),
+          value: tokenInValue.toFixed(2)
         }
         tokenOut = {
-          logo: assets[activity.symbol[1]],
-          amount: Big(activity.amount[1]).toFixed(2),
-          value: Big(activity.amount[1]).mul(activity.price_usd[1]).toFixed(2)
+          logo: assets[activity.symbol[1]]?.logo,
+          symbol: activity.symbol[1],
+          amount: BNtoDecimal(
+            Big(activity.amount[1]),
+            assets[activity.symbol[1]]?.decimals ?? 18,
+            2,
+            2
+          ),
+          value: tokenOutValue.toFixed(2)
         }
+
+        sharesPrice =
+          activity.type === 'join'
+            ? Big(tokenInValue).div(activity.amount[1] ?? 1)
+            : Big(tokenOutValue).div(Big(activity.amount[0]) ?? 1)
       }
 
       if (activity.type === 'join' && activity.symbol.length > 2) {
@@ -87,12 +115,19 @@ export function getActivityInfo(
             Big(0)
           )
 
+        sharesPrice = totalAmount.div(activity.amount[indexOfTokenOut] ?? '1')
         tokenIn = {
-          value: totalAmount.toFixed()
+          value: totalAmount.toFixed(2)
         }
         tokenOut = {
-          logo: assets[activity.symbol[indexOfTokenOut]],
-          amount: Big(activity.amount[indexOfTokenOut] ?? '0').toFixed(2),
+          logo: assets[activity.symbol[indexOfTokenOut]]?.logo,
+          symbol: activity.symbol[indexOfTokenOut],
+          amount: BNtoDecimal(
+            Big(activity.amount[indexOfTokenOut] ?? '0'),
+            assets[activity.symbol[indexOfTokenOut]]?.decimals ?? 18,
+            2,
+            2
+          ),
           value: Big(activity.amount[indexOfTokenOut])
             .mul(activity.price_usd[indexOfTokenOut])
             .toFixed(2)
@@ -110,20 +145,22 @@ export function getActivityInfo(
             Big(0)
           )
 
+        sharesPrice = totalAmount.div(activity.amount[0] ?? 1)
         tokenIn = {
-          logo: assets[activity.symbol[0]],
-          amount: Big(activity.amount[0] ?? '0').toFixed(2),
+          logo: assets[activity.symbol[0]]?.logo,
+          symbol: activity.symbol[0],
+          amount: BNtoDecimal(
+            Big(activity.amount[0] ?? '0'),
+            assets[activity.symbol[0]]?.decimals ?? 18,
+            2,
+            2
+          ),
           value: Big(activity.amount[0]).mul(activity.price_usd[0]).toFixed(2)
         }
         tokenOut = {
           value: totalAmount.toFixed(2)
         }
       }
-
-      const sharesPrice =
-        activity.type === 'join'
-          ? Big(tokenIn.value ?? 0).div(tokenOut.amount ?? 1)
-          : Big(tokenOut.value ?? 0).div(tokenIn.amount ?? 1)
 
       activityInfo.push({
         key: activity.id + activity.type,
@@ -132,12 +169,8 @@ export function getActivityInfo(
         txHash: activity.txHash,
         wallet: activity.address,
         transactionData: {
-          sharesPrice: sharesPrice.toFixed(2),
-          tokenIn: {
-            logo: tokenIn.logo,
-            amount: tokenIn.amount ? Big(tokenIn.amount).toFixed(2) : undefined,
-            value: tokenIn.value ? Big(tokenIn.value).toFixed(2) : undefined
-          },
+          sharesPrice: sharesPrice?.toFixed(2) ?? '0',
+          tokenIn,
           tokenOut
         }
       })
