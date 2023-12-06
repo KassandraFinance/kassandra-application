@@ -1,6 +1,8 @@
 import Jazzicon from 'react-jazzicon/dist/Jazzicon'
 import { jsNumberForAddress } from 'react-jazzicon'
 import CopyToClipboard from 'react-copy-to-clipboard'
+import { ZeroAddress } from 'ethers'
+import Link from 'next/link'
 
 import { useUserProfile } from '@/hooks/query/useUserProfile'
 
@@ -34,10 +36,12 @@ const UserInfo = ({ walletAddress }: IUserInfoProps) => {
       )}
 
       {data?.nickname ? (
-        <S.UserContent>
-          <S.UserName>{data.nickname}</S.UserName>
-          <S.UserWallet>{substr(walletAddress)}</S.UserWallet>
-        </S.UserContent>
+        <Link href={`/profile/${walletAddress ?? ZeroAddress}`} passHref>
+          <S.UserContent>
+            <S.UserName>{data.nickname}</S.UserName>
+            <S.UserWallet>{substr(walletAddress)}</S.UserWallet>
+          </S.UserContent>
+        </Link>
       ) : (
         <p>{substr(walletAddress)}</p>
       )}
