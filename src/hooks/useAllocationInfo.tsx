@@ -52,11 +52,11 @@ const useAllocationInfo = () => {
       const tokenList = poolAssets.map(item => {
         return {
           token: {
-            address: item.token.id,
-            logo: item.token.logo ?? '',
-            name: item.token.name,
-            symbol: item.token.symbol,
-            decimals: item.token.decimals
+            address: item.token.wraps?.id ?? item.token.id,
+            logo: item.token.wraps?.logo ?? item.token.logo ?? '',
+            name: item.token.wraps?.name ?? item.token.name,
+            symbol: item.token.wraps?.symbol ?? item.token.symbol,
+            decimals: item.token.wraps?.decimals ?? item.token.decimals
           },
           allocation: tokenWeightFormatted(item.weight_normalized),
           holding: {
