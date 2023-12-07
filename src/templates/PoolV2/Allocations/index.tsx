@@ -69,8 +69,6 @@ const Allocations = () => {
     }
   }
 
-  console.log(data, poolAssets)
-
   React.useEffect(() => {
     if (!data || !poolAssets) return
 

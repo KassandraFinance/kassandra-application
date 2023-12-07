@@ -1,7 +1,8 @@
 import React from 'react'
 import Blockies from 'react-blockies'
 
-import avax from '../../../public/assets/logos/avax.png'
+import avax from '@assets/logos/avax.png'
+import anyToken from '@assets/icons/coming-soon.svg'
 
 import * as S from './styles'
 
@@ -34,12 +35,21 @@ const TokenWithNetworkImage = ({
     width: 20
   }
 }: ITokenWithNetworkImage) => {
+  const [tokenImageUrl, setTokenImageUrl] = React.useState(tokenImage.url)
+
+  function handleImageError(
+    event: React.SyntheticEvent<HTMLImageElement, Event>
+  ) {
+    const eventType = event.target as HTMLImageElement
+    eventType.src = anyToken.src
+  }
+
   return (
     <S.TokenWithNetworkImage
       withoutBorder={tokenImage.withoutBorder}
       isRound={tokenImage.width === tokenImage.height}
     >
-      {!tokenImage.url && blockies ? (
+      {!tokenImageUrl && blockies ? (
         <Blockies
           className="poolIcon"
           seed={blockies.seedName}
@@ -48,10 +58,11 @@ const TokenWithNetworkImage = ({
         />
       ) : (
         <img
-          src={tokenImage.url}
+          src={tokenImageUrl}
           alt="token image"
           width={tokenImage.width}
           height={tokenImage.height}
+          onError={() => setTokenImageUrl('')}
         />
       )}
       <S.networkImageContainer withoutBorder={networkImage.withoutBorder}>
@@ -60,6 +71,7 @@ const TokenWithNetworkImage = ({
           alt="network image"
           width={networkImage?.width}
           height={networkImage?.height}
+          onError={handleImageError}
         />
       </S.networkImageContainer>
     </S.TokenWithNetworkImage>

@@ -71,11 +71,14 @@ const MyAsset = ({
   }
 
   React.useEffect(() => {
+    getStakedToken()
+  }, [wallet, pid])
+
+  React.useEffect(() => {
     if (poolAddress === ZeroAddress) return
 
     getBalance(decimals)
-    getStakedToken()
-  }, [wallet, pid])
+  }, [wallet, poolAddress])
 
   return (
     <S.MyAsset>

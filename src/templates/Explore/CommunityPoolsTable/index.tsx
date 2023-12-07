@@ -270,26 +270,33 @@ const CommunityPoolsTable = ({
                     <S.TD isView={inViewCollum === 3}>
                       <S.Container>
                         <S.CoinImageContainer>
-                          {pool.underlying_assets.map((coin, index) => {
-                            return (
-                              <S.CoinImageWrapper
-                                key={
-                                  coin?.token?.wraps?.logo ?? coin?.token?.logo
-                                }
-                                position={index}
-                              >
-                                <Image
-                                  src={
-                                    coin?.token?.logo ??
+                          {pool.underlying_assets
+                            .slice(0, 8)
+                            .map((coin, index) => {
+                              return (
+                                <S.CoinImageWrapper
+                                  key={
                                     coin?.token?.wraps?.logo ??
-                                    notFoundIcon
+                                    coin?.token?.logo
                                   }
-                                  layout="fill"
-                                />
-                              </S.CoinImageWrapper>
-                            )
-                          })}
+                                  position={index}
+                                >
+                                  <Image
+                                    src={
+                                      coin?.token?.logo ??
+                                      coin?.token?.wraps?.logo ??
+                                      notFoundIcon
+                                    }
+                                    layout="fill"
+                                  />
+                                </S.CoinImageWrapper>
+                              )
+                            })}
                         </S.CoinImageContainer>
+                        <S.MoreTokenText>
+                          {pool.underlying_assets.length > 7 &&
+                            '+' + (pool.underlying_assets.length - 7)}
+                        </S.MoreTokenText>
                       </S.Container>
                     </S.TD>
                     <S.TD isView={inViewCollum === 4}>

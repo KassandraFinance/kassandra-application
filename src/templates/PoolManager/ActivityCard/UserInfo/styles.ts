@@ -22,16 +22,20 @@ export const IconWrapper = styled.span`
   `}
 `
 
-export const UserContent = styled.div`
+export const UserContent = styled.a`
   ${() => css`
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+
+    text-decoration: none;
   `}
 `
 
 export const UserName = styled.p`
-  ${() => css``}
+  ${({ theme }) => css`
+    color: ${theme.colors.snow};
+  `}
 `
 
 export const UserWallet = styled.p`
