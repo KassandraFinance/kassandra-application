@@ -23,7 +23,7 @@ const useStakingInfo = (chaindId: number, pid?: number) => {
   )
 
   function handleClain(poolSymbol: string) {
-    if (!pid) return
+    if (pid !== 0 && !pid) return
 
     staking.getReward(
       pid,
