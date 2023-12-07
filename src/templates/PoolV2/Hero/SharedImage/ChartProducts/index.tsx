@@ -131,7 +131,6 @@ const ChartProducts = ({ crpPoolAddress, height }: IChartProductsProps) => {
       })
 
       setTvl(newTVL)
-      console.log('total value ', newTVL)
       setPrice(newPrice)
     }
   }, [data])

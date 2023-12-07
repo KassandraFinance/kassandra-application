@@ -9,11 +9,13 @@ type TransactionDetails = {
   sharesPrice: string
   tokenIn: {
     logo?: string
+    symbol?: string
     amount?: string
     value?: string
   }
   tokenOut: {
     logo?: string
+    symbol?: string
     amount?: string
     value?: string
   }

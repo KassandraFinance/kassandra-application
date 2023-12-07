@@ -56,8 +56,12 @@ type Asset = {
   }
 }
 
+type AssetsInfo = {
+  logo: string
+  decimals: number
+}
+
 type Activity = {
-  __typename?: 'Activity' | undefined
   id: string
   type: string
   timestamp: number
@@ -118,11 +122,13 @@ export type TransactionData = {
   sharesPrice: string
   tokenIn: {
     logo?: string
+    symbol?: string
     amount?: string
     value?: string
   }
   tokenOut: {
     logo?: string
+    symbol?: string
     amount?: string
     value?: string
   }
@@ -226,10 +232,13 @@ const Activity = () => {
       }
     }
 
-    const assets: Record<string, string> = {}
+    const assets: Record<string, AssetsInfo> = {}
     for (const token of tokenListSwapProvider) {
       if (token.symbol && token.logoURI) {
-        assets[token.symbol] = token.logoURI
+        assets[token.symbol] = {
+          logo: token.logoURI,
+          decimals: token?.decimals ?? 18
+        }
       }
     }
 

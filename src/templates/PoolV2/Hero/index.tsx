@@ -17,6 +17,7 @@ import ShareImageModal from './ShareImageModal'
 import SharedImage from './SharedImage'
 import Operation from './Operation'
 import MyAsset from './MyAsset'
+import WarningCard from '@/components/WarningCard'
 
 import * as S from './styles'
 
@@ -101,7 +102,9 @@ const Hero = ({ handleClickStakeButton }: IHeroProps) => {
           {pool?.name ? (
             <S.PoolName>{pool.name}</S.PoolName>
           ) : (
-            <SkeletonLoading width={40} height={3} />
+            <S.SkeletonLoadingPoolName>
+              <SkeletonLoading width={40} height={3} />
+            </S.SkeletonLoadingPoolName>
           )}
         </S.LogoAndPoolName>
         <S.SharedButton
@@ -140,6 +143,14 @@ const Hero = ({ handleClickStakeButton }: IHeroProps) => {
           <SkeletonLoading height={2.6} line={1} width={30} />
         )}
       </S.SubTitleConteiner>
+
+      {/* {pool?.pool_version === 1 && (
+        <S.WarningCardContainer>
+          <WarningCard>
+            <p>This pool has been deprecated.</p>
+          </WarningCard>
+        </S.WarningCardContainer>
+      )} */}
 
       {pool ? (
         <S.Summary>{pool?.short_summary}</S.Summary>

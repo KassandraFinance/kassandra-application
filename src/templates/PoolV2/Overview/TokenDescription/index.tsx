@@ -27,7 +27,7 @@ const TokenDescription = ({ summary }: ITokenDescriptionProps) => {
       <S.Line />
       <S.Text
         ref={sectionRef}
-        isOpen={isStateSeeMore}
+        isOpen={descriptionRef?.offsetHeight >= 180 ? isStateSeeMore : true}
         height={descriptionRef?.offsetHeight ?? 0}
       >
         <ReactMarkdown

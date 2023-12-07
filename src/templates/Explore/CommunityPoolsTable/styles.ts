@@ -415,12 +415,9 @@ export const ChainLogoWrapper = styled.div`
 
 export const Container = styled.div`
   ${() => css`
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
     align-items: center;
-    justify-items: end;
-
-    margin-right: 1.8rem;
+    justify-content: flex-end;
 
     @media (max-width: 768px) {
       margin-right: 0.9rem;
@@ -442,6 +439,19 @@ export const CoinImageContainer = styled.div`
 
       width: auto;
     }
+  `}
+`
+
+export const MoreTokenText = styled.p`
+  ${({ theme }) => css`
+    margin-left: 2rem;
+
+    color: ${theme.colors.grayDisabled};
+    font-weight: ${theme.font.weight.light};
+    font-size: ${theme.font.sizes.font12};
+    line-height: 110%;
+    letter-spacing: 0.05em;
+    text-decoration: none;
   `}
 `
 

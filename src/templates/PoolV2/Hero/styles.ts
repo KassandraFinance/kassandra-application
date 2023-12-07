@@ -1,3 +1,4 @@
+import { WarningCard } from '@/components/WarningCard/styles'
 import styled, { css } from 'styled-components'
 
 export const Hero = styled.div`
@@ -26,6 +27,7 @@ export const TitleConteiner = styled.div`
     @media (max-width: 576px) {
       gap: 0;
       justify-content: space-between;
+      width: 100%;
     }
   `}
 `
@@ -36,6 +38,12 @@ export const LogoAndPoolName = styled.div`
     gap: 3.2rem;
     justify-content: center;
     align-items: center;
+
+    @media (max-width: 576px) {
+      justify-content: flex-start;
+      width: calc(100% - 3.2rem);
+      gap: 2.4rem;
+    }
   `}
 `
 
@@ -47,8 +55,27 @@ export const PoolName = styled.h1`
     text-transform: capitalize;
 
     @media (max-width: 576px) {
+      width: 100%;
       font-size: ${theme.font.sizes.font32};
       line-height: 3.6rem;
+    }
+  `}
+`
+
+export const SkeletonLoadingPoolName = styled.div`
+  ${() => css`
+    display: flex;
+    max-width: 40rem;
+
+    @media (max-width: 992px) {
+      max-width: 38rem;
+    }
+
+    @media (max-width: 576px) {
+      max-width: 100%;
+      border-radius: 8px;
+      overflow-x: hidden;
+      margin-right: 0.8rem;
     }
   `}
 `
@@ -139,5 +166,15 @@ export const Summary = styled.span`
     font-weight: ${theme.font.weight.light};
     font-size: ${theme.font.sizes.font16};
     line-height: ${theme.font.sizes.font32};
+  `}
+`
+
+export const WarningCardContainer = styled.div`
+  ${() => css`
+    margin-bottom: 2.4rem;
+
+    ${WarningCard} {
+      min-height: auto;
+    }
   `}
 `

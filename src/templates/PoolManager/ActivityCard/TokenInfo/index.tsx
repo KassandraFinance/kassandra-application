@@ -1,8 +1,11 @@
+import Tippy from '@tippyjs/react'
+
 import * as S from './styles'
 
 interface ITokenInfoProps {
   tokenData?: {
     logo?: string
+    symbol?: string
     amount?: string
     value?: string
   }
@@ -12,7 +15,14 @@ const TokenInfo = ({ tokenData }: ITokenInfoProps) => {
   return (
     <S.TokenInfo>
       {tokenData?.logo && (
-        <img src={tokenData?.logo} alt="" width={24} height={24} />
+        <Tippy content={tokenData?.symbol ?? ''}>
+          <img
+            src={tokenData?.logo}
+            alt={`${tokenData?.symbol} token`}
+            width={24}
+            height={24}
+          />
+        </Tippy>
       )}
 
       <S.token>

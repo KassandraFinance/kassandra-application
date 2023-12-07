@@ -12,6 +12,9 @@ export const TokenInfo = styled.div`
 
 export const token = styled.div`
   ${({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     p {
       margin-bottom: 0.4rem;
 
