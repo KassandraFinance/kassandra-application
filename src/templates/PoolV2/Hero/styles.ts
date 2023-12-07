@@ -39,7 +39,7 @@ export const LogoAndPoolName = styled.div`
     justify-content: center;
     align-items: center;
 
-    @media (max-width: 600px) {
+    @media (max-width: 576px) {
       justify-content: flex-start;
       width: calc(100% - 3.2rem);
       gap: 2.4rem;
@@ -67,7 +67,11 @@ export const SkeletonLoadingPoolName = styled.div`
     display: flex;
     max-width: 40rem;
 
-    @media (max-width: 600px) {
+    @media (max-width: 992px) {
+      max-width: 38rem;
+    }
+
+    @media (max-width: 576px) {
       max-width: 100%;
       border-radius: 8px;
       overflow-x: hidden;
