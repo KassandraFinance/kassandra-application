@@ -62,13 +62,14 @@ const PoolImage = () => {
     controller: string,
     logo: string,
     summary: string,
+    shortSummary: string,
     chainId: number
   ) {
     if (!wallet) return
 
     try {
       const logoToSign = logo ? keccak256(toUtf8Bytes(logo)) : ''
-      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nsummary: ${summary}`
+      const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nshortSummary: ${shortSummary}\nsummary: ${summary}`
       const signature = await signMessage(message)
 
       mutate({ chainId, controller, signature: signature || '', summary, logo })
@@ -161,6 +162,7 @@ const PoolImage = () => {
                   poolInfo[0]?.controller,
                   poolImage.icon.image_preview,
                   data?.summary || '',
+                  data.short_summary ?? '',
                   poolInfo[0]?.chain_id
                 )
               }
