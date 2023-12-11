@@ -30,6 +30,7 @@ export type UnderlyingAssetsInfoType = {
     symbol: string
     decimals: number
     is_wrap_token: number
+    coingecko_id?: string | null
     wraps?:
       | {
           __typename?: 'Token' | undefined

@@ -61,3 +61,12 @@ export const AllocationsAndExecutionPeriod = styled.div`
     }
   `}
 `
+export const ExecutionPeriodContainer = styled.div`
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    max-width: 36.1rem;
+    margin-bottom: 2.4rem;
+    gap: 2.4rem;
+  `}
+`

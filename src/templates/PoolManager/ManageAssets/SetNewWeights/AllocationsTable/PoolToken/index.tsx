@@ -2,6 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import Big from 'big.js'
 import Image from 'next/image'
+
+import { MAX_RECOMMENDED_DIFF } from '../..'
 import { URL_COINGECKO_CURRENCIES } from '@/constants/tokenAddresses'
 
 import { lockToken } from '@/store/reducers/rebalanceAssetsSlice'
@@ -109,7 +111,12 @@ const PoolToken = ({
       <S.Arrow>
         <Image src="/assets/utilities/arrow-right.svg" alt="" layout="fill" />
       </S.Arrow>
-      <S.NewAllocation>
+      <S.NewAllocation
+        checkValueDiff={
+          newWeight.minus(currentWeight).abs().gte(MAX_RECOMMENDED_DIFF) &&
+          newWeight.gt(Big(0))
+        }
+      >
         <InputNumber
           InputNumberValue={Number(newWeight.toFixed())}
           name="tokenValue"

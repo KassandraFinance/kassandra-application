@@ -3,8 +3,6 @@ import { Label } from '../../../../../components/Inputs/InputRadio/styles'
 
 export const ExecutionPeriod = styled.div`
   ${() => css`
-    max-width: 36.1rem;
-    margin-bottom: 10rem;
     padding: 2.4rem;
     border-radius: 8px;
 
