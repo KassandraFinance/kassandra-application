@@ -74,7 +74,8 @@ const SetNewWeights = () => {
           address: item.token.id,
           logo: item.token?.logo || '',
           name: item.token?.name || '',
-          symbol: item.token?.symbol || ''
+          symbol: item.token?.symbol || '',
+          coingeckoId: item.token.coingecko_id ?? ''
         }
       }
     })

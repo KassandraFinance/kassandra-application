@@ -23,6 +23,7 @@ export type AssetType = {
     logo: string | undefined
     name: string
     symbol: string
+    coingeckoId: string
   }
 }
 

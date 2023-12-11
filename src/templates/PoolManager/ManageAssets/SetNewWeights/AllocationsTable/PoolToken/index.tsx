@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import Big from 'big.js'
 import Image from 'next/image'
+import { URL_COINGECKO_CURRENCIES } from '@/constants/tokenAddresses'
 
 import { lockToken } from '@/store/reducers/rebalanceAssetsSlice'
 
@@ -20,6 +21,7 @@ export type AssetType = {
     logo: string | undefined
     name: string
     symbol: string
+    coingeckoId: string
   }
 }
 
@@ -62,11 +64,11 @@ const PoolToken = ({
         <img src={token.logo} alt="" width={24} height={24} />
         <S.TokenNameContainer>
           <Link
-            href={`https://heimdall-frontend.vercel.app/pt/coins/${token.symbol}`}
+            href={`${URL_COINGECKO_CURRENCIES}${token.coingeckoId}`}
             passHref
           >
-            <S.TokenName id="mobile">
-              {token.symbol}
+            <S.TokenName target="_blank" id="mobile">
+              {token.coingeckoId}
               <img
                 src="/assets/utilities/external-link.svg"
                 alt=""
@@ -77,10 +79,10 @@ const PoolToken = ({
           </Link>
           <S.Line />
           <Link
-            href={`https://heimdall-frontend.vercel.app/pt/coins/${token.symbol}`}
+            href={`${URL_COINGECKO_CURRENCIES}${token.coingeckoId}`}
             passHref
           >
-            <S.TokenName id="desktop">
+            <S.TokenName target="_blank" id="desktop">
               {token.name}
               <img
                 src="/assets/utilities/external-link.svg"

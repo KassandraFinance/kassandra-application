@@ -12,6 +12,7 @@ query PoolAssets($id: ID!) {
             symbol
             decimals
             is_wrap_token
+            coingecko_id
             wraps {
               id
               decimals
