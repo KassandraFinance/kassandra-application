@@ -1,3 +1,4 @@
+import { WrapperInputNumber } from '@/components/Inputs/InputNumber/styles'
 import styled, { css } from 'styled-components'
 
 export const TokenInfo = styled.td`
@@ -211,7 +212,11 @@ export const Arrow = styled.td`
   `}
 `
 
-export const NewAllocation = styled.td`
+interface INewAllocation {
+  checkValueDiff: boolean
+}
+
+export const NewAllocation = styled.td<INewAllocation>`
   ${() => css`
     display: flex;
     align-items: center;
@@ -223,6 +228,14 @@ export const NewAllocation = styled.td`
       justify-content: flex-end;
     }
   `}
+
+  ${({ checkValueDiff, theme }) =>
+    checkValueDiff &&
+    css`
+      ${WrapperInputNumber} {
+        border: 1px solid ${theme.colors.amber};
+      }
+    `}
 `
 
 export const ImageContent = styled.span`

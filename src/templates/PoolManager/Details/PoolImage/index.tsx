@@ -72,7 +72,14 @@ const PoolImage = () => {
       const message = `controller: ${controller}\nchainId: ${chainId}\nlogo: ${logoToSign}\nshortSummary: ${shortSummary}\nsummary: ${summary}`
       const signature = await signMessage(message)
 
-      mutate({ chainId, controller, signature: signature || '', summary, logo })
+      mutate({
+        chainId,
+        controller,
+        shortSummary,
+        signature: signature || '',
+        summary,
+        logo
+      })
     } catch (error) {
       console.error(error)
     }
