@@ -778,7 +778,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       ) : chainId === pool?.chain_id ? (
         pool.is_private_pool &&
         !privateInvestors.some(
-          address => address.toLowerCase() === wallet?.accounts[0].address
+          address =>
+            address.toLowerCase() === wallet?.accounts[0].address.toLowerCase()
         ) ? (
           <Tippy
             allowHTML={true}
