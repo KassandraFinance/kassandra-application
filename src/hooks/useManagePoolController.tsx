@@ -20,6 +20,11 @@ type ContractType = {
   send: Contract
 }
 
+type FeesPercentages = {
+  feesToManager: string
+  feesToReferral: string
+}
+
 function managePoolFunctions(
   controller: ContractType,
   txNotification: (
@@ -53,6 +58,21 @@ function managePoolFunctions(
     } catch (error) {
       // check error and send error modal
       transactionErrors(error)
+    }
+  }
+
+  const setJoinFees = async (
+    feesPercentages: FeesPercentages,
+    transactionText: MessageType,
+    onSuccess?: () => void,
+    onFail?: () => void
+  ) => {
+    try {
+      const tx = await controller.send.setJoinFees(feesPercentages)
+
+      await txNotification(tx, transactionText, { onSuccess, onFail })
+    } catch (error) {
+      transactionErrors(error, onFail)
     }
   }
 
@@ -191,7 +211,8 @@ function managePoolFunctions(
     setPublicPool,
     rebalancePool,
     removeToken,
-    addToken
+    addToken,
+    setJoinFees
   }
 }
 
