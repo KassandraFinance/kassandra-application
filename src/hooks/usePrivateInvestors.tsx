@@ -15,7 +15,7 @@ const usePrivateInvestors = (contractAddress: string, chainId = 137) => {
 
   React.useEffect(() => {
     setContract(new Contract(contractAddress, PrivateInvestors, readProvider))
-  }, [contractAddress])
+  }, [contractAddress, chainId])
 
   return React.useMemo(() => {
     // Read functions
