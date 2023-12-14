@@ -3,13 +3,12 @@ import Tippy from '@tippyjs/react'
 import { isAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import InputRange from '../Inputs/InputRange'
+import Button from '../Button'
 import InputText from '../Inputs/InputText'
+import InputRange from '../Inputs/InputRange'
 import InputToggle from '../Inputs/InputToggle'
 
 import * as S from './styles'
-import Button from '../Button'
-import { overflow } from 'html2canvas/dist/types/css/property-descriptors/overflow'
 
 type FeesData = {
   isChecked: boolean
@@ -21,10 +20,10 @@ type FeesData = {
 interface IDepositFeeProps {
   feesData?: Record<string, FeesData>
   disabledNoEvent?: boolean
-  handleClickToggle: (event: any) => void
-  handleRefferalCommission: (event: any) => void
-  handleFeeChange: (event: any) => void
-  handleClickUpdateFee: () => void
+  handleClickToggle: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleRefferalCommission: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleFeeChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleClickUpdateFee?: () => void
 }
 
 const DepositFee = ({
@@ -193,15 +192,17 @@ const DepositFee = ({
             </S.TotalDepositFeeContainer>
           </S.FeeContainer>
 
-          <S.ButtonWrapper showButtons={feesData?.depositFee?.isChecked}>
-            <Button
-              text="Change Fee"
-              background="secondary"
-              fullWidth
-              onClick={handleClickUpdateFee}
-              disabledNoEvent={disabledNoEvent}
-            />
-          </S.ButtonWrapper>
+          {handleClickUpdateFee && (
+            <S.ButtonWrapper showButtons={feesData?.depositFee?.isChecked}>
+              <Button
+                text="Change Fee"
+                background="secondary"
+                fullWidth
+                onClick={handleClickUpdateFee}
+                disabledNoEvent={disabledNoEvent}
+              />
+            </S.ButtonWrapper>
+          )}
         </>
       )}
     </S.DepositFee>
