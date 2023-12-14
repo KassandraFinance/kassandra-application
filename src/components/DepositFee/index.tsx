@@ -19,19 +19,19 @@ type FeesData = {
 
 interface IDepositFeeProps {
   feesData?: Record<string, FeesData>
-  disabledNoEvent?: boolean
-  handleClickToggle: (event: React.ChangeEvent<HTMLInputElement>) => void
-  handleRefferalCommission: (event: React.ChangeEvent<HTMLInputElement>) => void
+  changeFeeButtonDisabled?: boolean
+  handleToggleClick: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleReferralCommission: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleFeeChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleClickUpdateFee?: () => void
 }
 
 const DepositFee = ({
   feesData,
-  disabledNoEvent,
+  changeFeeButtonDisabled,
   handleFeeChange,
-  handleClickToggle,
-  handleRefferalCommission,
+  handleToggleClick,
+  handleReferralCommission,
   handleClickUpdateFee
 }: IDepositFeeProps) => {
   const [{ wallet }] = useConnectWallet()
@@ -43,7 +43,7 @@ const DepositFee = ({
         <InputToggle
           toggleName="depositFee"
           isChecked={feesData?.depositFee?.isChecked ?? false}
-          handleToggleChange={handleClickToggle}
+          handleToggleChange={handleToggleClick}
         />
       </S.DepositFeeHeader>
       <S.CardWrapperParagraph>
@@ -52,7 +52,7 @@ const DepositFee = ({
       </S.CardWrapperParagraph>
       {feesData?.depositFee && (
         <S.FeeContainer isFeeChecked={feesData.depositFee.isChecked}>
-          <S.WrapperInputFee
+          <S.InputFeeWrapper
             className="depositFee"
             isAddress={isAddress(wallet?.accounts[0].address)}
             value={
@@ -101,16 +101,16 @@ const DepositFee = ({
                 }}
               />
             ) : null}
-          </S.WrapperInputFee>
+          </S.InputFeeWrapper>
           <hr />
-          <S.RefferalCommissionWrapper>
+          <S.ReferralCommissionWrapper>
             <S.CardWrapperTitle>Refferal commission</S.CardWrapperTitle>
             <InputToggle
               toggleName="refferalFee"
               isChecked={feesData?.refferalFee?.isChecked}
-              handleToggleChange={handleClickToggle}
+              handleToggleChange={handleToggleClick}
             />
-          </S.RefferalCommissionWrapper>
+          </S.ReferralCommissionWrapper>
           <S.CardWrapperParagraph>
             Allow brokers to receive a share of the deposit fee when they
             complete a sale. If a deposit is made without a refferal, the
@@ -133,7 +133,7 @@ const DepositFee = ({
                         ? feesData.refferalFee.brokerCommision
                         : 0
                     }
-                    handleInputRate={handleRefferalCommission}
+                    handleInputRate={handleReferralCommission}
                     min={0}
                     max={feesData ? Number(feesData.depositFee.feeRate) : 0}
                     step={0.01}
@@ -149,7 +149,7 @@ const DepositFee = ({
                         ? feesData.refferalFee.managerShare
                         : 0
                     }
-                    handleInputRate={handleRefferalCommission}
+                    handleInputRate={handleReferralCommission}
                     min={0}
                     max={feesData ? Number(feesData.depositFee.feeRate) : 0}
                     step={0.01}
@@ -199,7 +199,7 @@ const DepositFee = ({
                 background="secondary"
                 fullWidth
                 onClick={handleClickUpdateFee}
-                disabledNoEvent={disabledNoEvent}
+                disabledNoEvent={changeFeeButtonDisabled}
               />
             </S.ButtonWrapper>
           )}

@@ -186,62 +186,70 @@ const FeeRewards = () => {
     return aggFees
   }
 
-  function handleClickToggle(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleToggleClick(event: React.ChangeEvent<HTMLInputElement>) {
     const inputName = event.target.name
+    const isChecked = feesData[inputName].isChecked
 
     let feeData
-    if (inputName === 'depositFee' && feesData[inputName].isChecked) {
-      feeData = {
-        depositFee: {
-          isChecked: false,
-          feeRate: '0'
-        },
-        refferalFee: {
-          isChecked: false,
-          brokerCommision: 0,
-          managerShare: 0
+    switch (inputName) {
+      case 'depositFee':
+        if (isChecked) {
+          feeData = {
+            depositFee: {
+              isChecked: false,
+              feeRate: '0'
+            },
+            refferalFee: {
+              isChecked: false,
+              brokerCommision: 0,
+              managerShare: 0
+            }
+          }
+        } else {
+          feeData = {
+            depositFee: {
+              isChecked: true,
+              feeRate: currentDepositFee.toFixed()
+            },
+            refferalFee: {
+              isChecked: true,
+              brokerCommision: parseFloat(currentBrokerCommision.toFixed()),
+              managerShare: parseFloat(currentManagerShare.toFixed())
+            }
+          }
         }
-      }
-    } else if (inputName === 'depositFee' && !feesData[inputName].isChecked) {
-      feeData = {
-        depositFee: {
-          isChecked: true,
-          feeRate: currentDepositFee.toFixed()
-        },
-        refferalFee: {
-          isChecked: true,
-          brokerCommision: parseFloat(currentBrokerCommision.toFixed()),
-          managerShare: parseFloat(currentManagerShare.toFixed())
-        }
-      }
-    } else if (inputName === 'refferalFee' && !feesData[inputName].isChecked) {
-      feeData = {
-        ...feesData,
-        refferalFee: {
-          isChecked: true,
-          brokerCommision: parseFloat(currentBrokerCommision.toFixed()),
-          managerShare: parseFloat(currentManagerShare.toFixed())
-        }
-      }
-    } else if (inputName === 'refferalFee' && feesData[inputName].isChecked) {
-      feeData = {
-        ...feesData,
-        refferalFee: {
-          isChecked: false,
-          brokerCommision: 0,
-          managerShare: 0
-        }
-      }
-    } else {
-      feeData = {
-        ...feesData,
-        [inputName]: {
-          ...feesData[inputName],
-          isChecked: !feesData[inputName].isChecked
-        }
-      }
-    }
+        break
 
+      case 'refferalFee':
+        if (isChecked) {
+          feeData = {
+            ...feesData,
+            refferalFee: {
+              isChecked: false,
+              brokerCommision: 0,
+              managerShare: 0
+            }
+          }
+        } else {
+          feeData = {
+            ...feesData,
+            refferalFee: {
+              isChecked: true,
+              brokerCommision: parseFloat(currentBrokerCommision.toFixed()),
+              managerShare: parseFloat(currentManagerShare.toFixed())
+            }
+          }
+        }
+        break
+      default:
+        feeData = {
+          ...feesData,
+          [inputName]: {
+            ...feesData[inputName],
+            isChecked: !feesData[inputName].isChecked
+          }
+        }
+    }
     setFeesData(feeData)
   }
 
@@ -286,7 +294,7 @@ const FeeRewards = () => {
     setFeesData(feeData)
   }
 
-  function handleRefferalCommission(
+  function handleReferralCommission(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
     const name = event.target.name
@@ -347,10 +355,10 @@ const FeeRewards = () => {
       <DepositFee
         feesData={feesData}
         handleFeeChange={handleFeeChange}
-        handleClickToggle={handleClickToggle}
+        handleToggleClick={handleToggleClick}
         handleClickUpdateFee={handleClickUpdateFee}
-        handleRefferalCommission={handleRefferalCommission}
-        disabledNoEvent={
+        handleReferralCommission={handleReferralCommission}
+        changeFeeButtonDisabled={
           (Big(
             feesData?.depositFee?.feeRate ? feesData?.depositFee?.feeRate : '0'
           ).eq(currentDepositFee) &&

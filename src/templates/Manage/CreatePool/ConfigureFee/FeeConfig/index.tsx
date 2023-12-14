@@ -79,7 +79,7 @@ const FeeConfig = () => {
     dispatch(setFee({ inputName: inputName, inputValue: inputValue }))
   }
 
-  function handleClickToggle(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleToggleClick(event: React.ChangeEvent<HTMLInputElement>) {
     const inputName = event.target.name
 
     dispatch(setToggle(inputName))
@@ -90,8 +90,8 @@ const FeeConfig = () => {
       <DepositFee
         feesData={feesData}
         handleFeeChange={handleFeeChange}
-        handleClickToggle={handleClickToggle}
-        handleRefferalCommission={handleRefferalCommission}
+        handleToggleClick={handleToggleClick}
+        handleReferralCommission={handleRefferalCommission}
       />
 
       <S.CardWrapper>
@@ -101,7 +101,7 @@ const FeeConfig = () => {
             // <InputToggle
             //   toggleName="managementFee"
             //   isChecked={feesData?.managementFee?.isChecked ?? false}
-            //   handleToggleChange={handleClickToggle}
+            //   handleToggleChange={handleToggleClick}
             // />
           }
         </S.ManagementHeader>

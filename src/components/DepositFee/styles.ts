@@ -113,7 +113,7 @@ interface IWrapperInputFeeProps {
   value: number
 }
 
-export const WrapperInputFee = styled.span<IWrapperInputFeeProps>`
+export const InputFeeWrapper = styled.span<IWrapperInputFeeProps>`
   ${({ theme, isAddress }) => css`
     display: flex;
     flex-direction: column;
@@ -153,7 +153,7 @@ export const WrapperInputFee = styled.span<IWrapperInputFeeProps>`
     `}
 `
 
-export const RefferalCommissionWrapper = styled.div`
+export const ReferralCommissionWrapper = styled.div`
   ${() => css`
     display: flex;
     justify-content: space-between;
