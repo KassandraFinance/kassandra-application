@@ -144,8 +144,9 @@ const FeeBreakdown = () => {
           height={24}
         />
         <p>
-          You <strong>can&apos;t</strong> change these fees after publishing the
-          pool to the network.
+          You <strong>can&apos;t</strong> change the{' '}
+          <strong>management fee</strong> after publishing the pool to the
+          network.
         </p>
       </S.WarningContainer>
     </S.FeeBreakdown>
