@@ -33,24 +33,6 @@ export const CardWrapper = styled.div`
   `}
 `
 
-export const DepositFeeHeader = styled.span`
-  ${({ theme }) => css`
-    display: flex;
-    justify-content: space-between;
-
-    width: 100%;
-
-    > h3 {
-      color: ${theme.colors.white};
-      font-weight: ${theme.font.weight.normal};
-      font-size: ${theme.font.sizes.font14};
-      line-height: 1.6rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-    }
-  `}
-`
-
 export const ManagementHeader = styled.span`
   ${() => css`
     display: flex;
@@ -127,70 +109,6 @@ export const CardWrapperTitle = styled.h3`
   `}
 `
 
-interface IWrapperInputFeeProps {
-  isAddress: boolean
-  value: number
-}
-
-// eslint-disable-next-line prettier/prettier
-export const WrapperInputFee = styled.span<IWrapperInputFeeProps>`
-  ${({ theme, isAddress }) => css`
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-
-    margin-top: 1.6rem;
-
-    ${Input}[type="number"]:invalid:not([value=""]) {
-      border: 1px solid ${theme.colors.error};
-    }
-    ${Input}[type="number"]:invalid:not([value='']) ~ ${Error} {
-      color: ${theme.colors.error};
-    }
-
-    ${Input}[type="text"]:valid {
-      border: ${isAddress
-        ? `1px solid ${theme.colors.success};`
-        : `1px solid ${theme.colors.error};`};
-    }
-
-    ${Input}[type="text"]:valid ~ ${Error} {
-      display: ${!isAddress && 'block'};
-    }
-  `}
-  ${({ theme, value }) =>
-    value > 50 &&
-    value <= 95 &&
-    css`
-      ${Input}[type="number"]:valid {
-        border: 1px solid ${theme.colors.amber};
-      }
-      ${Input}[type="number"]:not([value='']) ~ ${Error} {
-        display: block;
-
-        color: ${theme.colors.amber};
-      }
-    `}
-`
-
-export const RefferalCommissionContainer = styled.div`
-  ${() => css`
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  `}
-`
-
-export const RefferalCommissionWrapper = styled.div`
-  ${() => css`
-    display: flex;
-    justify-content: space-between;
-
-    width: 100%;
-    margin-bottom: 1.6rem;
-  `}
-`
-
 export const TotalDepositFeeContainer = styled.div`
   ${() => css`
     display: grid;
@@ -244,69 +162,6 @@ export const BrokerAndManagerPercentage = styled.p`
     line-height: 1.6rem;
     letter-spacing: 0.3em;
     text-align: right;
-    text-transform: uppercase;
-  `}
-`
-
-export const WrapperInputRange = styled.div`
-  ${() => css`
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-
-    width: 100%;
-  `}
-`
-
-export const InputRangeContent = styled.span`
-  ${({ theme }) => css`
-    display: flex;
-    align-items: center;
-
-    width: 100%;
-
-    p {
-      width: 16rem;
-
-      color: #c4c4c4;
-      font-weight: ${theme.font.weight.normal};
-      font-size: ${theme.font.sizes.font12};
-      line-height: 1.4rem;
-      text-transform: uppercase;
-    }
-  `}
-`
-
-export const WithdrawFeeTitle = styled.h3`
-  ${({ theme }) => css`
-    margin-bottom: 1.8rem;
-
-    color: ${theme.colors.white};
-    font-weight: ${theme.font.weight.normal};
-    font-size: ${theme.font.sizes.font14};
-    line-height: 1.6rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-
-    strong {
-      color: ${theme.colors.white};
-      font-weight: ${theme.font.weight.normal};
-      font-size: ${theme.font.sizes.font14};
-      line-height: 1.6rem;
-      letter-spacing: 0.05em;
-      text-transform: lowercase;
-    }
-  `}
-`
-
-export const WithdrawFeeParagraph = styled.h3`
-  ${({ theme }) => css`
-    color: ${theme.colors.white};
-    font-weight: ${theme.font.weight.normal};
-    font-size: ${theme.font.sizes.font14};
-    line-height: 1.6rem;
-    letter-spacing: 0.22em;
     text-transform: uppercase;
   `}
 `
