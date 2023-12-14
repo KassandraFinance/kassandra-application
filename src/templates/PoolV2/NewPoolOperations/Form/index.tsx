@@ -93,7 +93,7 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   React.useEffect(() => {
     if (!pool?.is_private_pool) return
     setAddressesOfPrivateInvestors()
-  }, [wallet, pool])
+  }, [wallet, pool, privateAddresses])
 
   React.useEffect(() => {
     handleGetSigner()
