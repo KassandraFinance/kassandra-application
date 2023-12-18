@@ -238,6 +238,14 @@ const Pool = () => {
   }
 
   React.useEffect(() => {
+    if (!router.isReady || !router.query.tab) {
+      return
+    }
+
+    setIsSelectTab(router.query.tab)
+  }, [router])
+
+  React.useEffect(() => {
     if (pool && tokenSwap) {
       try {
         getTokensForOperations(tokenSwap)
