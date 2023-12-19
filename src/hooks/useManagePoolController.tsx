@@ -257,7 +257,6 @@ const useManagePoolController = (
   }, [controllerAddress, rpcURL, wallet])
 
   return React.useMemo(() => {
-    console.log('DENTRO DO MEMO', controllerAddress, rpcURL)
     return managePoolFunctions(contract, txNotification, transactionErrors)
   }, [contract, rpcURL])
 }
