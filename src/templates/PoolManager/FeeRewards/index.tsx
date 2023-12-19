@@ -1,7 +1,7 @@
 import React from 'react'
 import router from 'next/router'
 import Big from 'big.js'
-import { ZeroAddress } from 'ethers'
+import { ZeroAddress, ethers } from 'ethers'
 import { useSetChain } from '@web3-onboard/react'
 
 import { networks } from '@/constants/tokenAddresses'
@@ -66,6 +66,12 @@ type FeesData = {
   managerShare?: number
 }
 
+type CurrentFee = {
+  rate: Big
+  manager: Big
+  referral: Big
+}
+
 const legend: Record<string, string> = {
   feesJoinManager: 'DEPOSIT FEE',
   feesAumManager: 'MANAGED FEE'
@@ -73,6 +79,11 @@ const legend: Record<string, string> = {
 
 const FeeRewards = () => {
   const [feesData, setFeesData] = React.useState<Record<string, FeesData>>({})
+  const [currentFees, setCurrentFees] = React.useState<CurrentFee>({
+    rate: Big(0),
+    manager: Big(0),
+    referral: Big(0)
+  })
 
   const poolId = Array.isArray(router.query.pool)
     ? router.query.pool[0]
@@ -80,18 +91,13 @@ const FeeRewards = () => {
 
   const [{ connectedChain }] = useSetChain()
   const { data } = useFees({ poolId })
-  const { setJoinFees } = useManagePoolController(
-    data?.controller || ZeroAddress,
-    networks[data?.chain_id ?? 137].rpc
-  )
 
   const pool = data ?? undefined
 
-  const currentBrokerCommision = Big(pool?.fee_join_broker ?? '0').mul(100)
-  const currentManagerShare = Big(pool?.fee_join_manager ?? '0').mul(100)
-  const currentDepositFee = Big(pool?.fee_join_broker ?? '0')
-    .add(pool?.fee_join_manager ?? '0')
-    .mul(100)
+  const { setJoinFees, getJoinFees } = useManagePoolController(
+    pool?.controller || ZeroAddress,
+    networks[pool?.chain_id ?? 137].rpc
+  )
 
   function createIntervalTime(months = 12): Array<number> {
     const date = new Date()
@@ -125,6 +131,10 @@ const FeeRewards = () => {
       .mul(Big(10).pow(18))
       .toFixed()
 
+    async function handleSuccess() {
+      await handleGetCurrentFee()
+    }
+
     await setJoinFees(
       {
         feesToManager: feeBrokers.toString(),
@@ -132,7 +142,8 @@ const FeeRewards = () => {
       },
       {
         sucess: 'Updated fee!'
-      }
+      },
+      handleSuccess
     )
   }
 
@@ -209,12 +220,12 @@ const FeeRewards = () => {
           feeData = {
             depositFee: {
               isChecked: true,
-              feeRate: currentDepositFee.toFixed()
+              feeRate: currentFees.rate.toFixed()
             },
             refferalFee: {
               isChecked: true,
-              brokerCommision: parseFloat(currentBrokerCommision.toFixed()),
-              managerShare: parseFloat(currentManagerShare.toFixed())
+              brokerCommision: parseFloat(currentFees.manager.toFixed()),
+              managerShare: parseFloat(currentFees.referral.toFixed())
             }
           }
         }
@@ -235,8 +246,8 @@ const FeeRewards = () => {
             ...feesData,
             refferalFee: {
               isChecked: true,
-              brokerCommision: parseFloat(currentBrokerCommision.toFixed()),
-              managerShare: parseFloat(currentManagerShare.toFixed())
+              brokerCommision: parseFloat(currentFees.manager.toFixed()),
+              managerShare: parseFloat(currentFees.referral.toFixed())
             }
           }
         }
@@ -327,29 +338,61 @@ const FeeRewards = () => {
     setFeesData(feeData)
   }
 
-  React.useEffect(() => {
-    if (!pool || feesData?.depositFee) return
+  async function handleGetCurrentFee() {
+    try {
+      const fees = await getJoinFees()
 
-    const feeData = {
-      depositFee: {
-        isChecked: currentDepositFee.gt(0),
-        feeRate: currentDepositFee.toFixed()
-      },
-      refferalFee: {
-        isChecked: currentBrokerCommision.gt(0) || currentManagerShare.gt(0),
-        brokerCommision: parseFloat(currentBrokerCommision.toFixed()),
-        managerShare: parseFloat(currentManagerShare.toFixed())
+      const feeToManager = Big(ethers.formatEther(fees.feesToManager)).mul(100)
+      const feeToReferral = Big(ethers.formatEther(fees.feesToReferral)).mul(
+        100
+      )
+      const feeToRate = feeToManager.add(feeToReferral)
+
+      setCurrentFees({
+        manager: feeToManager,
+        referral: feeToReferral,
+        rate: feeToRate
+      })
+
+      if (!feesData?.depositFee) {
+        setFeesData({
+          depositFee: {
+            isChecked: feeToRate.gt(0),
+            feeRate: feeToRate.toFixed()
+          },
+          refferalFee: {
+            isChecked: feeToManager.gt(0) || feeToReferral.gt(0),
+            brokerCommision: parseFloat(feeToManager.toFixed()),
+            managerShare: parseFloat(feeToReferral.toFixed())
+          }
+        })
       }
+    } catch (error) {
+      setCurrentFees({
+        rate: Big(0),
+        manager: Big(0),
+        referral: Big(0)
+      })
     }
+  }
 
-    setFeesData(feeData)
-  }, [pool])
+  React.useEffect(() => {
+    if (!pool) return
+
+    handleGetCurrentFee()
+  }, [getJoinFees])
 
   return pool ? (
     <S.FeeRewards>
       <S.FeesContainer>
         <AvailableRewards pool={pool} />
-        <FeeBreakDown pool={pool} />
+        <FeeBreakDown
+          pool={{
+            ...pool,
+            fee_join_broker: currentFees.manager.div(100).toFixed(),
+            fee_join_manager: currentFees.referral.div(100).toFixed()
+          }}
+        />
       </S.FeesContainer>
 
       <DepositFee
@@ -361,12 +404,12 @@ const FeeRewards = () => {
         changeFeeButtonDisabled={
           (Big(
             feesData?.depositFee?.feeRate ? feesData?.depositFee?.feeRate : '0'
-          ).eq(currentDepositFee) &&
+          ).eq(currentFees.rate) &&
             Big(feesData?.refferalFee?.managerShare ?? 0).eq(
-              currentManagerShare
+              currentFees.referral
             ) &&
             Big(feesData?.refferalFee?.brokerCommision ?? 0).eq(
-              currentBrokerCommision
+              currentFees.manager
             )) ||
           Number(connectedChain?.id ?? '0x89') !== pool?.chain_id
         }

@@ -49,6 +49,13 @@ function managePoolFunctions(
     })
   }
 
+  const getJoinFees = async (): Promise<{
+    feesToManager: string
+    feesToReferral: string
+  }> => {
+    return await controller.read.getJoinFees.staticCall()
+  }
+
   // Write functions
   const withdrawAumFees = async (onSuccess: () => void): Promise<void> => {
     try {
@@ -212,7 +219,8 @@ function managePoolFunctions(
     rebalancePool,
     removeToken,
     addToken,
-    setJoinFees
+    setJoinFees,
+    getJoinFees
   }
 }
 
