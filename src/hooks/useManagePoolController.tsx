@@ -258,7 +258,7 @@ const useManagePoolController = (
 
   return React.useMemo(() => {
     return managePoolFunctions(contract, txNotification, transactionErrors)
-  }, [contract, rpcURL])
+  }, [contract])
 }
 
 type ParamsType = {
