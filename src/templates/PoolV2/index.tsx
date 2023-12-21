@@ -15,6 +15,7 @@ import Faqs from './Faqs'
 import Staking from './Staking'
 import Overview from './Overview'
 import ShareAndEarn from './ShareAndEarn'
+import Activity from './Activity'
 
 import { setTokensSwapProvider } from '@/store/reducers/tokenListSwapProvider'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
@@ -23,7 +24,6 @@ import { useAppDispatch } from '@/store/hooks'
 import { useTokenSwap } from '@/hooks/query/useTokensSwap'
 
 import { NATIVE_ADDRESS } from '@/constants/tokenAddresses'
-import Activity from './Activity'
 
 import {
   ContractsIcon,
@@ -172,7 +172,6 @@ const Pool = () => {
             .mul(100)
             .toFixed(2),
           depositFee: Big(pool?.fee_join_manager ?? '0')
-            .add(pool?.fee_join_broker ?? '0')
             .mul(100)
             .toFixed(2),
           managerShare: Big(pool?.fee_join_broker ?? '0')
@@ -236,6 +235,14 @@ const Pool = () => {
 
     dispatch(setTokensSwapProvider(formatTokensSwapProvider))
   }
+
+  React.useEffect(() => {
+    if (!router.isReady || !router.query.tab) {
+      return
+    }
+
+    setIsSelectTab(router.query.tab)
+  }, [router])
 
   React.useEffect(() => {
     if (pool && tokenSwap) {

@@ -6,7 +6,6 @@ interface IValidateInputValueProps {
   min: number
 }
 
-// prettier-ignore
 export const WrapperInputNumber = styled.div<IValidateInputValueProps>`
   ${({ theme }) => css`
     border: 1px solid transparent;
@@ -35,7 +34,6 @@ interface ILabelProps {
   value: string
 }
 
-// prettier-ignore
 export const Label = styled.label<ILabelProps>`
   ${({ theme, value }) => css`
     position: relative;
@@ -55,8 +53,8 @@ export const Label = styled.label<ILabelProps>`
       content: '%';
       position: absolute;
       right: ${value.length === 1
-      ? '1.6rem'
-      : value.length === 2
+        ? '1.6rem'
+        : value.length === 2
         ? '1.2rem'
         : '0.6rem'};
 

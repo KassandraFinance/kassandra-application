@@ -20,9 +20,12 @@ import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 import ExecutionPeriod from './ExecutionPeriod'
 import Steps from '../../../../components/Steps'
 import AllocationsTable from './AllocationsTable'
+import WarningCard from '@/components/WarningCard'
 import CreatePoolHeader from '@/templates/Manage/CreatePool/CreatePoolHeader'
 
 import * as S from './styles'
+
+export const MAX_RECOMMENDED_DIFF = 15
 
 const SetNewWeights = () => {
   const router = useRouter()
@@ -32,6 +35,9 @@ const SetNewWeights = () => {
     : router.query.pool ?? ''
 
   const dispatch = useAppDispatch()
+  const poolTokensList = useAppSelector(
+    state => state.rebalanceAssets.poolTokensList
+  )
   const { newTokensWights } = useAppSelector(state => state.rebalanceAssets)
   const [{ wallet }] = useConnectWallet()
   const { data: poolAssets } = usePoolAssets({ id: poolId })
@@ -62,6 +68,17 @@ const SetNewWeights = () => {
     }
   }
 
+  const checkValueDiff = React.useMemo(() => {
+    return poolTokensList.some(
+      item =>
+        newTokensWights[item.token.address].newWeight.gt(Big(0)) &&
+        item.currentWeight
+          .minus(newTokensWights[item.token.address].newWeight)
+          .abs()
+          .gte(MAX_RECOMMENDED_DIFF)
+    )
+  }, [newTokensWights])
+
   React.useEffect(() => {
     if (!poolAssets || !poolInfo) return
 
@@ -74,7 +91,8 @@ const SetNewWeights = () => {
           address: item.token.id,
           logo: item.token?.logo || '',
           name: item.token?.name || '',
-          symbol: item.token?.symbol || ''
+          symbol: item.token?.symbol || '',
+          coingeckoId: item.token.coingecko_id ?? ''
         }
       }
     })
@@ -136,7 +154,19 @@ const SetNewWeights = () => {
             priceToken={priceToken}
             chainId={(poolInfo && poolInfo[0]?.chain_id) || 0}
           />
-          <ExecutionPeriod />
+
+          <S.ExecutionPeriodContainer>
+            <ExecutionPeriod />
+
+            <WarningCard showCard={checkValueDiff}>
+              <p>
+                Warning: Your aggressive portfolio rebalancing may lead to
+                substantial financial losses. Please review your investment
+                strategy for a more balanced approach aligned with your
+                financial goals.
+              </p>
+            </WarningCard>
+          </S.ExecutionPeriodContainer>
         </S.AllocationsAndExecutionPeriod>
       </S.SetNewWeightsBody>
     </S.SetNewWeights>

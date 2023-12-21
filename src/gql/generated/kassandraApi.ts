@@ -7279,6 +7279,7 @@ export type PoolAssetsQuery = {
         symbol: string
         decimals: number
         is_wrap_token: number
+        coingecko_id?: string | null
         wraps?: {
           __typename?: 'Token'
           id: string
@@ -8742,6 +8743,7 @@ export const PoolAssetsDocument = gql`
           symbol
           decimals
           is_wrap_token
+          coingecko_id
           wraps {
             id
             decimals

@@ -169,7 +169,7 @@ export function getActivityInfo(
         txHash: activity.txHash,
         wallet: activity.address,
         transactionData: {
-          sharesPrice: sharesPrice?.toFixed(2) ?? '0',
+          sharesPrice: sharesPrice?.toFixed(4) ?? '0',
           tokenIn,
           tokenOut
         }
