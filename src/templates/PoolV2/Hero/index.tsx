@@ -144,13 +144,17 @@ const Hero = ({ handleClickStakeButton }: IHeroProps) => {
         )}
       </S.SubTitleConteiner>
 
-      {/* {pool?.pool_version === 1 && (
+      {pool?.pool_version === 1 && (
         <S.WarningCardContainer>
           <WarningCard>
-            <p>This pool has been deprecated.</p>
+            <p>
+              Please do not make deposits in this pool, it is a previous version
+              and is being discontinued. We have experienced issues with YY
+              tokens. Only withdrawals should be made. Avoid making deposits.
+            </p>
           </WarningCard>
         </S.WarningCardContainer>
-      )} */}
+      )}
 
       {pool ? (
         <S.Summary>{pool?.short_summary}</S.Summary>
