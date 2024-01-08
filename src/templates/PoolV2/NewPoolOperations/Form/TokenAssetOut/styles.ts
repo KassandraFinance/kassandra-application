@@ -52,10 +52,15 @@ export const Title = styled.span`
   }
 `
 
+export const InputContent = styled.span`
+  ${() => css`
+    margin: 0.8rem 0;
+  `}
+`
+
 export const Input = styled.input`
   ${({ theme }) => css`
     width: 100%;
-    margin: 0.8rem 0;
     border: none;
 
     color: #fff;

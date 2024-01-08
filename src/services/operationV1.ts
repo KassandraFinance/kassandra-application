@@ -207,12 +207,7 @@ export default class operationV1 implements IOperations {
         transactionError =
           "The amount can't be more than half of what's in the pool!"
       }
-      if (
-        Big(amountTokenIn).gt(selectedTokenInBalance) &&
-        Number(tokenSelected.newAmountsTokenIn[0].toString()) > 0
-      ) {
-        transactionError = 'This amount exceeds your balance!'
-      }
+
       return {
         investAmountOut,
         transactionError
@@ -389,10 +384,6 @@ export default class operationV1 implements IOperations {
         transactionError = 'This amount is below minimum withdraw!'
       }
 
-      if (Big(poolAmountIn).gt(selectedTokenInBalance)) {
-        transactionError = 'This amount exceeds your balance!'
-      }
-
       return {
         withdrawAmoutOut,
         transactionError
@@ -498,10 +489,6 @@ export default class operationV1 implements IOperations {
 
       if (errorStr.search('below minimum') > -1) {
         transactionError = 'This amount is below minimum withdraw!'
-      }
-
-      if (Big(poolAmountIn).gt(selectedTokenInBalance)) {
-        transactionError = 'This amount exceeds your balance!'
       }
     }
     return {

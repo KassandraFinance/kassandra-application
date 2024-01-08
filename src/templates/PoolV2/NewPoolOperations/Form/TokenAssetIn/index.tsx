@@ -22,7 +22,6 @@ interface ITokenAssetInProps {
   setMaxActive: React.Dispatch<React.SetStateAction<boolean>>
   selectedTokenInBalance: Big
   inputAmountTokenRef: React.RefObject<HTMLInputElement>
-  errorMsg: string
   disabled: string
 }
 
@@ -33,7 +32,6 @@ const TokenAssetIn = ({
   setMaxActive,
   selectedTokenInBalance,
   inputAmountTokenRef,
-  errorMsg,
   disabled
 }: ITokenAssetInProps) => {
   const [{ wallet }] = useConnectWallet()
@@ -188,7 +186,9 @@ const TokenAssetIn = ({
           </p>
         </S.AmountContainer>
       </S.Body>
-      {errorMsg && errorMsg !== '' && <S.ErrorMSG>{errorMsg}</S.ErrorMSG>}
+      {Big(amountTokenIn).gt(selectedTokenInBalance) && (
+        <S.ErrorMSG>This amount exceeds your balance!</S.ErrorMSG>
+      )}
     </S.TokenAssetIn>
   )
 }

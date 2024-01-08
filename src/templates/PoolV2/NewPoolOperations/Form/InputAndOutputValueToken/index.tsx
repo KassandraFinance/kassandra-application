@@ -40,7 +40,6 @@ interface IInputAndOutputValueTokenProps {
   maxActive?: boolean
   setMaxActive?: React.Dispatch<React.SetStateAction<boolean>>
   inputAmountTokenRef: React.RefObject<HTMLInputElement>
-  errorMsg: string
   gasFee?: IGasFeeProps
   isLoading?: boolean
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>
@@ -289,11 +288,11 @@ const InputAndOutputValueToken = ({
                     <SkeletonLoading height={2.6} width={10} />
                   ) : (
                     BNtoDecimal(
-                    Big(amountTokenIn)?.div(
-                      Big(10).pow(tokenSelect?.decimals || 18)
-                    ) || Big(0),
-                    tokenSelect?.decimals || 18,
-                    6
+                      Big(amountTokenIn)?.div(
+                        Big(10).pow(tokenSelect?.decimals || 18)
+                      ) || Big(0),
+                      tokenSelect?.decimals || 18,
+                      6
                     ).replace(/\s/g, '')
                   )}
                 </S.amountTokenOutText>
@@ -304,27 +303,25 @@ const InputAndOutputValueToken = ({
                 <SkeletonLoading height={1.8} width={8} />
               ) : (
                 <>
-              USD:{' '}
-              {tokenSelect.address && amountTokenIn && priceUSDLength > 6
-                ? '0.00'
-                : priceUSD}
+                  USD:{' '}
+                  {tokenSelect.address && amountTokenIn && priceUSDLength > 6
+                    ? '0.00'
+                    : priceUSD}
                 </>
               )}
             </p>
           </S.Amount>
         </S.Top>
-        {errorMsg !== '' ? (
-          <S.ErrorMSG>{errorMsg}</S.ErrorMSG>
-        ) : (
-          <>
-            {gasFee && gasFee?.error && (
-              <S.GasFeeError>
-                Don’t forget the gas fee! Leave at least some{' '}
-                {gasFee.feeString.slice(0, 8)} {tokenSelect.symbol} on your
-                wallet to ensure a smooth transaction
-              </S.GasFeeError>
-            )}
-          </>
+        {Big(amountTokenIn).gt(selectedTokenInBalance) &&
+          typeAction === 'Invest' && (
+            <S.ErrorMSG>This amount exceeds your balance!</S.ErrorMSG>
+          )}
+        {gasFee && gasFee?.error && (
+          <S.GasFeeError>
+            Don’t forget the gas fee! Leave at least some{' '}
+            {gasFee.feeString.slice(0, 8)} {tokenSelect.symbol} on your wallet
+            to ensure a smooth transaction
+          </S.GasFeeError>
         )}
       </S.FlexContainer>
     </S.InputAndOutputValueToken>
