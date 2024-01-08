@@ -19,6 +19,7 @@ import { useTokens } from '@/hooks/query/useTokens'
 
 import TokenSelect from '../TokenSelect'
 import TokenSelected from '../TokenSelected'
+import SkeletonLoading from '@/components/SkeletonLoading'
 
 import logoNone from '@assets/icons/coming-soon.svg'
 
@@ -41,6 +42,8 @@ interface IInputAndOutputValueTokenProps {
   inputAmountTokenRef: React.RefObject<HTMLInputElement>
   errorMsg: string
   gasFee?: IGasFeeProps
+  isLoading?: boolean
+  setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const InputAndOutputValueToken = ({
@@ -53,7 +56,8 @@ const InputAndOutputValueToken = ({
   setMaxActive,
   inputAmountTokenRef,
   gasFee,
-  errorMsg = ''
+  isLoading,
+  setIsLoading
 }: IInputAndOutputValueTokenProps) => {
   const [{ wallet }] = useConnectWallet()
   const { tokenSelect } = useAppSelector(state => state)
@@ -68,6 +72,7 @@ const InputAndOutputValueToken = ({
   const chainId = Number(wallet?.chains[0].id ?? '0x89')
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsLoading && setIsLoading(true)
     let { value } = e.target
 
     if (value.length === 0) {
@@ -280,21 +285,31 @@ const InputAndOutputValueToken = ({
                 />
               ) : (
                 <S.amountTokenOutText>
-                  {BNtoDecimal(
+                  {isLoading ? (
+                    <SkeletonLoading height={2.6} width={10} />
+                  ) : (
+                    BNtoDecimal(
                     Big(amountTokenIn)?.div(
                       Big(10).pow(tokenSelect?.decimals || 18)
                     ) || Big(0),
                     tokenSelect?.decimals || 18,
                     6
-                  ).replace(/\s/g, '')}
+                    ).replace(/\s/g, '')
+                  )}
                 </S.amountTokenOutText>
               )}
             </Tippy>
             <p className="price-dolar">
+              {isLoading ? (
+                <SkeletonLoading height={1.8} width={8} />
+              ) : (
+                <>
               USD:{' '}
               {tokenSelect.address && amountTokenIn && priceUSDLength > 6
                 ? '0.00'
                 : priceUSD}
+                </>
+              )}
             </p>
           </S.Amount>
         </S.Top>

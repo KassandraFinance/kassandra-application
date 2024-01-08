@@ -35,6 +35,7 @@ import PoolOperationContext from '../PoolOperationContext'
 import InputAndOutputValueToken from '../InputAndOutputValueToken'
 import TokenAssetOut from '../TokenAssetOut'
 import TransactionSettings from '../TransactionSettings'
+import SkeletonLoading from '@/components/SkeletonLoading'
 
 import * as S from './styles'
 
@@ -112,6 +113,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
     Big(-1)
   )
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const [{ wallet, connecting }, connect] = useConnectWallet()
   const { tokenSelect } = useAppSelector(state => state)
@@ -538,10 +540,12 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       setAmountTokenOut(Big(0))
       setAmountTokenOuttWithoutFees(Big(0))
       setErrorMsg('')
+      setIsLoading(false)
       return
     }
 
     if (!(inputAmountTokenRef && inputAmountTokenRef.current !== null)) return
+    setIsLoading(true)
 
     const valueFormatted = decimalToBN(
       inputAmountTokenRef.current.value,
@@ -619,8 +623,10 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         if (tokenSelect.address === NATIVE_ADDRESS) {
           await generateEstimatedGas(tokenSelected.transactionsDataTx[0])
         }
+        setIsLoading(false)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
+        setIsLoading(false)
         const errorStr = error.toString()
         if (wallet?.provider) {
           if (errorStr.search('ERR_BPOW_BASE_TOO_HIGH') > -1) {
@@ -727,6 +733,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         inputAmountTokenRef={inputAmountTokenRef}
         errorMsg={errorMsg}
         gasFee={gasFee}
+        setIsLoading={setIsLoading}
       />
       <img
         src="/assets/icons/arrow-down.svg"
@@ -738,6 +745,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         amountTokenOut={amountTokenOut}
         outAssetBalance={outAssetBalance}
         setOutAssetBalance={setOutAssetBalance}
+        isLoading={isLoading}
       />
 
       <S.TransactionSettingsContainer>
@@ -746,7 +754,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           <S.PriceImpactWrapper
             price={Number(BNtoDecimal(priceImpact, 18, 2, 2)) ?? 0}
           >
-            {BNtoDecimal(priceImpact, 18, 2, 2)}%
+            {isLoading ? (
+              <SkeletonLoading height={1.8} width={5} />
+            ) : (
+              BNtoDecimal(priceImpact, 18, 2, 2)
+            )}
           </S.PriceImpactWrapper>
         </S.ExchangeRate>
         <S.ExchangeRate>

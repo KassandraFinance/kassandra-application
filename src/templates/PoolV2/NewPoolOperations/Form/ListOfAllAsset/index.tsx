@@ -7,6 +7,7 @@ import { usePoolData } from '@/hooks/query/usePoolData'
 import logoNone from '../../../../../../public/assets/icons/coming-soon.svg'
 
 import PoolOperationContext from '../PoolOperationContext'
+import SkeletonLoading from '@/components/SkeletonLoading'
 
 import { BNtoDecimal } from '../../../../../utils/numerals'
 
@@ -15,10 +16,12 @@ import * as S from './styles'
 interface IListOfAllAssetProps {
   amountAllTokenOut: Record<string, Big>
   balanceAllTokenOut: Record<string, Big>
+  isLoading: boolean
 }
 const ListOfAllAsset = ({
   amountAllTokenOut,
-  balanceAllTokenOut
+  balanceAllTokenOut,
+  isLoading
 }: IListOfAllAssetProps) => {
   const router = useRouter()
   const { data: pool } = usePoolData({ id: router.query.address as string })
@@ -65,8 +68,12 @@ const ListOfAllAsset = ({
                       height={21}
                     />
                   </S.tokenLogo>
-                  {BNtoDecimal(item.amount || Big(0), token?.decimals || 18)}{' '}
-                  {token.symbol}
+                  {isLoading ? (
+                    <SkeletonLoading height={2} width={12} />
+                  ) : (
+                    BNtoDecimal(item.amount || Big(0), token?.decimals || 18) +
+                    token.symbol
+                  )}{' '}
                 </S.SymbolContainer>
                 <S.SpanLight>
                   Balance:{' '}
@@ -74,12 +81,10 @@ const ListOfAllAsset = ({
                 </S.SpanLight>
               </S.BestValueItem>
               <S.BestValueItem style={{ paddingRight: '10px' }}>
-                <S.Input
-                  readOnly
-                  type="text"
-                  placeholder="0"
-                  value={
-                    '$' +
+                <S.value>
+                  {isLoading ? (
+                    <SkeletonLoading height={2} width={8} />
+                  ) : (
                     BNtoDecimal(
                       amount.mul(
                         Big(
@@ -94,8 +99,9 @@ const ListOfAllAsset = ({
                       2,
                       2
                     )
-                  }
-                />
+                  )}
+                </S.value>
+
                 <S.SpanLight style={{ textAlign: 'right', float: 'right' }}>
                   {(Number(item.weight_normalized || 0) * 100).toFixed(2)}%
                 </S.SpanLight>
