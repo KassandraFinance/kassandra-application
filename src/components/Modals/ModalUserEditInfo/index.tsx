@@ -4,6 +4,8 @@ import 'tippy.js/dist/tippy.css'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import { useConnectWallet } from '@web3-onboard/react'
 
+import { DEFAULT_ADDRESS_JAZZICON } from '@/constants/tokenAddresses'
+
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 import { UserProfileType } from '@/hooks/query/useUserProfile'
 import { useSendUserProfile } from '@/hooks/query/useSendUserProfile'
@@ -159,7 +161,7 @@ const ModalUserEditInfo = ({
                     seed={jsNumberForAddress(
                       wallet
                         ? String(wallet.accounts[0].address)
-                        : '0x1111111111111111111111111111111111111111'
+                        : DEFAULT_ADDRESS_JAZZICON
                     )}
                   />
                 )}

@@ -48,6 +48,9 @@ export const NATIVE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export const WETH_POLYGON = '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
 
+export const DEFAULT_ADDRESS_JAZZICON =
+  '0x1111111111111111111111111111111111111111'
+
 export const platform: Record<number, string> = {
   [43114]: 'avalanche',
   [137]: 'polygon-pos'
