@@ -22,7 +22,7 @@ export const SkeletonLoadingContent = styled.div<SkeletonLoadingContent>`
     width: 100%;
     height: ${height}rem;
 
-    border-radius: 8px;
+    border-radius: 4px;
 
     background-color: #ffffff12;
     background: linear-gradient(

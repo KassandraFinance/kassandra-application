@@ -13,6 +13,7 @@ export type GetAmountsOutParams = {
 
 export type GetAmountsResult = {
   tokenAmounts: string[]
+  transactionError?: string
   transactionsDataTx: string[]
 }
 

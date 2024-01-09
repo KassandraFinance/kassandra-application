@@ -119,7 +119,6 @@ export const amountTokenOutText = styled.p`
     max-width: 20rem;
 
     text-align: right;
-    width: 100%;
     margin: 0.8rem 0;
 
     outline: none;

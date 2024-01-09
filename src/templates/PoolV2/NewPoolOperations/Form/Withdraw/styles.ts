@@ -1,11 +1,12 @@
 import styled, { css } from 'styled-components'
+import { WarningCard } from '@/components/WarningCard/styles'
 
 export const Withdraw = styled.form`
-  ${({ theme }) => css`
+  ${() => css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 1.6rem;
 
     padding-top: 2rem;
     padding-right: 3.2rem;
@@ -14,10 +15,6 @@ export const Withdraw = styled.form`
 
     @media (max-width: 500px) {
       padding: 2rem;
-    }
-
-    > img {
-      /* margin-block: 1.2rem; */
     }
 
     .btn-submit:disabled {
@@ -109,6 +106,15 @@ export const SpanLight = styled.span`
 
     @media (max-width: 360px) {
       font-size: 1.07rem;
+    }
+  `}
+`
+
+export const WarningCardContainer = styled.div`
+  ${({ theme }) => css`
+    ${WarningCard} {
+      color: ${theme.colors.gray};
+      font-size: ${theme.font.sizes.font14};
     }
   `}
 `

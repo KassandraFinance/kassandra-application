@@ -19,6 +19,7 @@ import { useTokens } from '@/hooks/query/useTokens'
 
 import TokenSelect from '../TokenSelect'
 import TokenSelected from '../TokenSelected'
+import SkeletonLoading from '@/components/SkeletonLoading'
 
 import logoNone from '@assets/icons/coming-soon.svg'
 
@@ -39,8 +40,9 @@ interface IInputAndOutputValueTokenProps {
   maxActive?: boolean
   setMaxActive?: React.Dispatch<React.SetStateAction<boolean>>
   inputAmountTokenRef: React.RefObject<HTMLInputElement>
-  errorMsg: string
   gasFee?: IGasFeeProps
+  isLoading?: boolean
+  setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const InputAndOutputValueToken = ({
@@ -53,7 +55,8 @@ const InputAndOutputValueToken = ({
   setMaxActive,
   inputAmountTokenRef,
   gasFee,
-  errorMsg = ''
+  isLoading,
+  setIsLoading
 }: IInputAndOutputValueTokenProps) => {
   const [{ wallet }] = useConnectWallet()
   const { tokenSelect } = useAppSelector(state => state)
@@ -68,6 +71,7 @@ const InputAndOutputValueToken = ({
   const chainId = Number(wallet?.chains[0].id ?? '0x89')
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsLoading && setIsLoading(true)
     let { value } = e.target
 
     if (value.length === 0) {
@@ -280,36 +284,44 @@ const InputAndOutputValueToken = ({
                 />
               ) : (
                 <S.amountTokenOutText>
-                  {BNtoDecimal(
-                    Big(amountTokenIn)?.div(
-                      Big(10).pow(tokenSelect?.decimals || 18)
-                    ) || Big(0),
-                    tokenSelect?.decimals || 18,
-                    6
-                  ).replace(/\s/g, '')}
+                  {isLoading ? (
+                    <SkeletonLoading height={2.6} width={10} />
+                  ) : (
+                    BNtoDecimal(
+                      Big(amountTokenIn)?.div(
+                        Big(10).pow(tokenSelect?.decimals || 18)
+                      ) || Big(0),
+                      tokenSelect?.decimals || 18,
+                      6
+                    ).replace(/\s/g, '')
+                  )}
                 </S.amountTokenOutText>
               )}
             </Tippy>
             <p className="price-dolar">
-              USD:{' '}
-              {tokenSelect.address && amountTokenIn && priceUSDLength > 6
-                ? '0.00'
-                : priceUSD}
+              {isLoading ? (
+                <SkeletonLoading height={1.8} width={8} />
+              ) : (
+                <>
+                  USD:{' '}
+                  {tokenSelect.address && amountTokenIn && priceUSDLength > 6
+                    ? '0.00'
+                    : priceUSD}
+                </>
+              )}
             </p>
           </S.Amount>
         </S.Top>
-        {errorMsg !== '' ? (
-          <S.ErrorMSG>{errorMsg}</S.ErrorMSG>
-        ) : (
-          <>
-            {gasFee && gasFee?.error && (
-              <S.GasFeeError>
-                Don’t forget the gas fee! Leave at least some{' '}
-                {gasFee.feeString.slice(0, 8)} {tokenSelect.symbol} on your
-                wallet to ensure a smooth transaction
-              </S.GasFeeError>
-            )}
-          </>
+        {Big(amountTokenIn).gt(selectedTokenInBalance) &&
+          typeAction === 'Invest' && (
+            <S.ErrorMSG>This amount exceeds your balance!</S.ErrorMSG>
+          )}
+        {gasFee && gasFee?.error && (
+          <S.GasFeeError>
+            Don’t forget the gas fee! Leave at least some{' '}
+            {gasFee.feeString.slice(0, 8)} {tokenSelect.symbol} on your wallet
+            to ensure a smooth transaction
+          </S.GasFeeError>
         )}
       </S.FlexContainer>
     </S.InputAndOutputValueToken>

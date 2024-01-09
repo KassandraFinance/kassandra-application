@@ -171,10 +171,6 @@ export default class operationV2 implements IOperations {
         }
       }
 
-      if (Big(amountTokenIn).gt(selectedTokenInBalance)) {
-        transactionError = 'This amount exceeds your balance!'
-      }
-
       return {
         investAmountOut,
         transactionError,
@@ -359,15 +355,10 @@ export default class operationV2 implements IOperations {
       return {
         amountOutList: amountsOutListFormatted,
         transactionsDataTx: amountList.transactionsDataTx,
-        withdrawAmoutOut,
-        transactionError
+        transactionError: amountList?.transactionError,
+        withdrawAmoutOut
       }
     } catch (error: any) {
-      let transactionError: string | undefined = undefined
-      if (Big(poolAmountIn).gt(selectedTokenInBalance)) {
-        transactionError = 'This amount exceeds your balance!'
-      }
-
       return {
         withdrawAmoutOut,
         transactionError,
@@ -439,10 +430,6 @@ export default class operationV2 implements IOperations {
         if (Number(errorCode) < 100) {
           transactionError = 'This amount is below minimum withdraw!'
         }
-      }
-
-      if (Big(poolAmountIn).gt(selectedTokenInBalance)) {
-        transactionError = 'This amount exceeds your balance!'
       }
 
       return {

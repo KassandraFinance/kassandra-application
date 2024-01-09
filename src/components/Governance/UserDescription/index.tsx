@@ -7,7 +7,10 @@ import 'tippy.js/dist/tippy.css'
 import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
 
-import { linkSnowtrace } from '@/constants/tokenAddresses'
+import {
+  DEFAULT_ADDRESS_JAZZICON,
+  linkSnowtrace
+} from '@/constants/tokenAddresses'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
 
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
@@ -114,8 +117,7 @@ const UserDescription = ({ userWalletUrl }: IUserDescriptionProps) => {
               <Jazzicon
                 diameter={73}
                 seed={jsNumberForAddress(
-                  String(userWalletUrl) ||
-                    '0x1111111111111111111111111111111111111111'
+                  String(userWalletUrl) || DEFAULT_ADDRESS_JAZZICON
                 )}
               />
             )}

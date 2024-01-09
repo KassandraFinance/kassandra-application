@@ -13,6 +13,7 @@ import Button from '@/components/Button'
 import { disconnectedIcon, avalancheIcon } from './SvgButtons'
 import polygon from '@assets/logos/polygon.svg'
 import arbitrumIcon from '@assets/logos/arbitrum.svg'
+import ModalProfile from '@/components/Modals/ModalProfile'
 
 import * as S from './styles'
 
@@ -28,6 +29,8 @@ type styles = {
 }
 
 const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
+  const [isOpenModal, setIsOpenModal] = React.useState(false)
+
   const { trackEventFunction } = useMatomoEcommerce()
   const [{ wallet, connecting }, connect] = useConnectWallet()
 
@@ -74,6 +77,12 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   const { data } = useUserProfile({
     address: wallet?.accounts[0].address
   })
+
+  function handleOpenModal() {
+    trackEventFunction('open-modal', 'your-wallet', 'header')
+    setIsOpenModal(true)
+  }
+
   React.useEffect(() => {
     if (wallet?.provider) {
       const chainId = wallet.chains[0].id
@@ -100,84 +109,77 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       />
 
       <ModalKacy />
+
       {wallet?.provider ? (
-        <Link
-          href={`/profile/${getAddress(wallet.accounts[0]?.address)}`}
-          passHref
-        >
-          <Button
-            className="button-wallet"
-            icon={
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M22.0898 12.0977C22.0898 14.0755 21.5033 16.0089 20.4045 17.6534C19.3057 19.2979 17.7439 20.5796 15.9167 21.3364C14.0894 22.0933 12.0787 22.2914 10.1389 21.9055C8.19913 21.5197 6.4173 20.5672 5.01878 19.1687C3.62025 17.7702 2.66785 15.9884 2.282 14.0486C1.89614 12.1088 2.09418 10.0981 2.85105 8.27084C3.60793 6.44358 4.88965 4.8818 6.53414 3.78298C8.17863 2.68417 10.112 2.09768 12.0898 2.09768C13.4039 2.09461 14.7057 2.35117 15.9203 2.85263C17.1349 3.35409 18.2385 4.09056 19.1677 5.01976C20.0969 5.94896 20.8334 7.05257 21.3349 8.26721C21.8363 9.48185 22.0929 10.7836 22.0898 12.0977Z"
-                  fill="url(#paint0_linear_1022_26832)"
-                  stroke="url(#paint1_linear_1022_26832)"
-                />
-                <path
-                  d="M13.7784 15.8451H10.3784C9.25493 15.8325 8.15137 16.142 7.19825 16.7369C6.24512 17.3317 5.4823 18.1871 5 19.2019C6.90342 21.0203 9.44138 22.0241 12.0737 21.9996C14.706 21.975 17.2248 20.9241 19.094 19.0705C18.5977 18.09 17.8367 17.2681 16.8972 16.6981C15.9577 16.128 14.8772 15.8325 13.7784 15.8451ZM12.0784 7C10.0176 7 8.35291 8.58823 8.35291 10.5294C8.35291 12.4706 10.0196 14.0588 12.0784 14.0588C14.1372 14.0588 15.8038 12.4706 15.8038 10.5294C15.8038 8.58823 14.1372 7 12.0784 7Z"
-                  fill="#1E1322"
-                />
-                <path
-                  d="M22.0898 12.0977C22.0898 14.0755 21.5033 16.0089 20.4045 17.6534C19.3057 19.2979 17.7439 20.5796 15.9167 21.3364C14.0894 22.0933 12.0787 22.2914 10.1389 21.9055C8.19913 21.5197 6.4173 20.5672 5.01878 19.1687C3.62025 17.7702 2.66785 15.9884 2.282 14.0486C1.89614 12.1088 2.09418 10.0981 2.85105 8.27084C3.60793 6.44358 4.88965 4.8818 6.53414 3.78298C8.17863 2.68417 10.112 2.09768 12.0898 2.09768C13.4039 2.09461 14.7057 2.35117 15.9203 2.85263C17.1349 3.35409 18.2385 4.09056 19.1677 5.01976C20.0969 5.94896 20.8334 7.05257 21.3349 8.26721C21.8363 9.48185 22.0929 10.7836 22.0898 12.0977V12.0977Z"
-                  stroke="url(#paint2_linear_1022_26832)"
-                />
-                <defs>
-                  <linearGradient
-                    id="paint0_linear_1022_26832"
-                    x1="12.0874"
-                    y1="22.1017"
-                    x2="12.0874"
-                    y2="2.09969"
-                    gradientUnits="userSpaceOnUse"
-                  >
-                    <stop stopColor="#FFBF00" />
-                    <stop offset="1" stopColor="#E843C4" />
-                  </linearGradient>
-                  <linearGradient
-                    id="paint1_linear_1022_26832"
-                    x1="12.0874"
-                    y1="22.1017"
-                    x2="12.0874"
-                    y2="2.09969"
-                    gradientUnits="userSpaceOnUse"
-                  >
-                    <stop stopColor="#FFBF00" />
-                    <stop offset="1" stopColor="#E843C4" />
-                  </linearGradient>
-                  <linearGradient
-                    id="paint2_linear_1022_26832"
-                    x1="12.0874"
-                    y1="22.1017"
-                    x2="12.0874"
-                    y2="2.09969"
-                    gradientUnits="userSpaceOnUse"
-                  >
-                    <stop stopColor="#FFBF00" />
-                    <stop offset="1" stopColor="#E843C4" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            }
-            image={data?.image || ''}
-            as="a"
-            size="medium"
-            onClick={() => {
-              trackEventFunction('open-modal', 'your-wallet', 'header')
-            }}
-            text={
-              data?.nickname
-                ? data.nickname
-                : substr(getAddress(wallet.accounts[0].address))
-            }
-          />
-        </Link>
+        <Button
+          className="button-wallet"
+          icon={
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M22.0898 12.0977C22.0898 14.0755 21.5033 16.0089 20.4045 17.6534C19.3057 19.2979 17.7439 20.5796 15.9167 21.3364C14.0894 22.0933 12.0787 22.2914 10.1389 21.9055C8.19913 21.5197 6.4173 20.5672 5.01878 19.1687C3.62025 17.7702 2.66785 15.9884 2.282 14.0486C1.89614 12.1088 2.09418 10.0981 2.85105 8.27084C3.60793 6.44358 4.88965 4.8818 6.53414 3.78298C8.17863 2.68417 10.112 2.09768 12.0898 2.09768C13.4039 2.09461 14.7057 2.35117 15.9203 2.85263C17.1349 3.35409 18.2385 4.09056 19.1677 5.01976C20.0969 5.94896 20.8334 7.05257 21.3349 8.26721C21.8363 9.48185 22.0929 10.7836 22.0898 12.0977Z"
+                fill="url(#paint0_linear_1022_26832)"
+                stroke="url(#paint1_linear_1022_26832)"
+              />
+              <path
+                d="M13.7784 15.8451H10.3784C9.25493 15.8325 8.15137 16.142 7.19825 16.7369C6.24512 17.3317 5.4823 18.1871 5 19.2019C6.90342 21.0203 9.44138 22.0241 12.0737 21.9996C14.706 21.975 17.2248 20.9241 19.094 19.0705C18.5977 18.09 17.8367 17.2681 16.8972 16.6981C15.9577 16.128 14.8772 15.8325 13.7784 15.8451ZM12.0784 7C10.0176 7 8.35291 8.58823 8.35291 10.5294C8.35291 12.4706 10.0196 14.0588 12.0784 14.0588C14.1372 14.0588 15.8038 12.4706 15.8038 10.5294C15.8038 8.58823 14.1372 7 12.0784 7Z"
+                fill="#1E1322"
+              />
+              <path
+                d="M22.0898 12.0977C22.0898 14.0755 21.5033 16.0089 20.4045 17.6534C19.3057 19.2979 17.7439 20.5796 15.9167 21.3364C14.0894 22.0933 12.0787 22.2914 10.1389 21.9055C8.19913 21.5197 6.4173 20.5672 5.01878 19.1687C3.62025 17.7702 2.66785 15.9884 2.282 14.0486C1.89614 12.1088 2.09418 10.0981 2.85105 8.27084C3.60793 6.44358 4.88965 4.8818 6.53414 3.78298C8.17863 2.68417 10.112 2.09768 12.0898 2.09768C13.4039 2.09461 14.7057 2.35117 15.9203 2.85263C17.1349 3.35409 18.2385 4.09056 19.1677 5.01976C20.0969 5.94896 20.8334 7.05257 21.3349 8.26721C21.8363 9.48185 22.0929 10.7836 22.0898 12.0977V12.0977Z"
+                stroke="url(#paint2_linear_1022_26832)"
+              />
+              <defs>
+                <linearGradient
+                  id="paint0_linear_1022_26832"
+                  x1="12.0874"
+                  y1="22.1017"
+                  x2="12.0874"
+                  y2="2.09969"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#FFBF00" />
+                  <stop offset="1" stopColor="#E843C4" />
+                </linearGradient>
+                <linearGradient
+                  id="paint1_linear_1022_26832"
+                  x1="12.0874"
+                  y1="22.1017"
+                  x2="12.0874"
+                  y2="2.09969"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#FFBF00" />
+                  <stop offset="1" stopColor="#E843C4" />
+                </linearGradient>
+                <linearGradient
+                  id="paint2_linear_1022_26832"
+                  x1="12.0874"
+                  y1="22.1017"
+                  x2="12.0874"
+                  y2="2.09969"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#FFBF00" />
+                  <stop offset="1" stopColor="#E843C4" />
+                </linearGradient>
+              </defs>
+            </svg>
+          }
+          image={data?.image || ''}
+          size="medium"
+          onClick={handleOpenModal}
+          text={
+            data?.nickname
+              ? data.nickname
+              : substr(getAddress(wallet.accounts[0].address))
+          }
+        />
       ) : (
         <Button
           className="button-wallet"
@@ -204,6 +206,17 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
             connect()
           }}
           text="Connect Wallet"
+        />
+      )}
+
+      {isOpenModal && (
+        <ModalProfile
+          handleCloseModal={() => setIsOpenModal(false)}
+          userInfo={{
+            name: data?.nickname,
+            image: data?.image,
+            isNFT: data?.isNFT
+          }}
         />
       )}
     </S.HeaderButtons>
