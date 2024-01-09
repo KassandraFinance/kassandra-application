@@ -91,7 +91,7 @@ export class ParaSwap implements ISwapProvider {
 
     const amounts = await Promise.all(requests)
 
-    let transactionError
+    let transactionError: string | undefined
     const _size = amounts.length
     for (let index = 0; index < _size; index++) {
       const data = amounts[index]

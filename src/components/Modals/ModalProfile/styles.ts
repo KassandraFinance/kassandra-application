@@ -15,7 +15,7 @@ export const ModalProfile = styled.div`
   `}
 `
 
-const OpenModal = keyframes`
+const openModal = keyframes`
   0% { opacity: 0; }
   100% { opacity: 1; }
 `
@@ -31,7 +31,7 @@ export const Backdrop = styled.div`
   background-color: rgba(0, 0, 0, 0.6);
 
   z-index: 1056;
-  animation: ${OpenModal} 500ms ease;
+  animation: ${openModal} 500ms ease;
 `
 
 export const ModalBody = styled.div`

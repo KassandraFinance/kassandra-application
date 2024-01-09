@@ -62,7 +62,7 @@ export const tokenLogo = styled.span`
   }
 `
 
-export const value = styled.p`
+export const Value = styled.p`
   ${({ theme }) => css`
     width: 100%;
     margin: 0.8rem 0;
@@ -140,5 +140,6 @@ export const BestValueItem = styled.div`
   ${() => css`
     width: 100%;
     height: 7.4rem;
+    padding-right: 1rem;
   `}
 `

@@ -80,8 +80,8 @@ const ListOfAllAsset = ({
                   {BNtoDecimal(item.balance || Big(0), token?.decimals || 18)}
                 </S.SpanLight>
               </S.BestValueItem>
-              <S.BestValueItem style={{ paddingRight: '10px' }}>
-                <S.value>
+              <S.BestValueItem>
+                <S.Value>
                   {isLoading ? (
                     <SkeletonLoading height={2} width={8} />
                   ) : (
@@ -100,7 +100,7 @@ const ListOfAllAsset = ({
                       2
                     )
                   )}
-                </S.value>
+                </S.Value>
 
                 <S.SpanLight style={{ textAlign: 'right', float: 'right' }}>
                   {(Number(item.weight_normalized || 0) * 100).toFixed(2)}%
