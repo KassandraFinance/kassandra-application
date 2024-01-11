@@ -2,7 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { CREATED_POOL_LOCALSTORAGE_KEY } from './CreatePool'
+import CreatePool, { CREATED_POOL_LOCALSTORAGE_KEY } from './CreatePool'
 
 import { useManagerPools } from '@/hooks/query/useManagerPools'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
@@ -36,6 +36,7 @@ const Manage = () => {
   const [isOpen, setIsOpen] = React.useState(false)
   const [newPool, setNewPool] = React.useState<NewPoolCreated>()
   const [networkIcon, setNetworkIcon] = React.useState(avalancheIcon)
+  const [isCreatePool, setIsCreatePool] = React.useState(false)
 
   const [{ wallet }] = useConnectWallet()
 
@@ -88,7 +89,7 @@ const Manage = () => {
       return removeLocalStorage(CREATED_POOL_LOCALSTORAGE_KEY)
     }
     setNewPool(newPoolCreated)
-  }, [managerPools])
+  }, [managerPools, isCreatePool])
 
   return (
     <S.Manage>
@@ -132,10 +133,12 @@ const Manage = () => {
           (wallet?.provider && managerPools && managerPools.length > 0) ? (
             <Overview newPoolCreated={newPool} />
           ) : (
-            <GetStarted />
+            <GetStarted setIsCreatePool={setIsCreatePool} />
           )}
         </S.Content>
       </S.DashBoard>
+
+      {isCreatePool && <CreatePool setIsCreatePool={setIsCreatePool} />}
     </S.Manage>
   )
 }
