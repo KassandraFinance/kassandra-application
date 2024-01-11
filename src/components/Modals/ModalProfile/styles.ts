@@ -4,7 +4,7 @@ export const ModalProfile = styled.div`
   ${() => css`
     position: absolute;
     right: 0;
-    top: 4.4rem;
+    top: 6rem;
 
     z-index: 1057;
 
@@ -77,6 +77,10 @@ export const ProfileContainer = styled.div`
     gap: 1.6rem;
     width: 100%;
     margin-top: -2rem;
+
+    > img {
+      border-radius: 50%;
+    }
   `}
 `
 
