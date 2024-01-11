@@ -88,7 +88,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
   const poolData = useAppSelector(state => state.poolCreation.createPoolData)
 
-  const { create } = useCreatePool(networks[poolData.networkId || 137].factory)
+  const { create } = useCreatePool(poolData.networkId || 137)
   const { signMessage } = useSignMessage()
 
   const buttonText = {

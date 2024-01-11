@@ -37,31 +37,58 @@ type PoolCreationType = {
   }
 }
 
-const useCreatePool = (address: string) => {
+const useCreatePool = (chainId: number) => {
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
 
-  const rpcURL = networks[43114].rpc
+  const network = networks[chainId]
+  const rpcURL = network.rpc
+  const factoryAddress = network.factory
   const readProvider = new JsonRpcProvider(rpcURL)
 
   const [contract, setContract] = React.useState({
     send: new Contract(
-      address,
+      factoryAddress,
       KassandraManagedControllerFactoryAbi,
       readProvider
     ),
     read: new Contract(
-      address,
+      factoryAddress,
       KassandraManagedControllerFactoryAbi,
       readProvider
     )
   })
+
+  React.useEffect(() => {
+    if (!wallet) return
+
+    const sendProvider = new BrowserProvider(wallet.provider)
+    async function signContranct() {
+      const signer = await sendProvider.getSigner()
+
+      setContract({
+        send: new Contract(
+          factoryAddress,
+          KassandraManagedControllerFactoryAbi,
+          signer
+        ),
+        read: new Contract(
+          factoryAddress,
+          KassandraManagedControllerFactoryAbi,
+          readProvider
+        )
+      })
+    }
+
+    signContranct()
+  }, [wallet, chainId])
 
   async function create(
     pool: PoolCreationType,
     message?: MessageType,
     callbacks?: CallbacksType
   ) {
+    console.log(wallet?.accounts[0].address)
     try {
       const response = await contract.send.create.staticCall(
         pool.poolParams,
@@ -94,30 +121,6 @@ const useCreatePool = (address: string) => {
       return { res: 0 }
     }
   }
-
-  React.useEffect(() => {
-    if (!wallet) return
-
-    const sendProvider = new BrowserProvider(wallet.provider)
-    async function signContranct() {
-      const signer = await sendProvider.getSigner()
-
-      setContract({
-        send: new Contract(
-          address,
-          KassandraManagedControllerFactoryAbi,
-          signer
-        ),
-        read: new Contract(
-          address,
-          KassandraManagedControllerFactoryAbi,
-          readProvider
-        )
-      })
-    }
-
-    signContranct()
-  }, [wallet])
 
   return {
     create
