@@ -4,6 +4,7 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import { useConnectWallet } from '@web3-onboard/react'
 import Jazzicon from 'react-jazzicon/dist/Jazzicon'
 import { jsNumberForAddress } from 'react-jazzicon'
+import { ZeroAddress, getAddress } from 'ethers'
 
 import { DEFAULT_ADDRESS_JAZZICON } from '@/constants/tokenAddresses'
 
@@ -95,7 +96,12 @@ const ModalProfile = ({ userInfo, handleCloseModal }: IModalProfileProps) => {
         </S.ProfileContainer>
 
         <S.ActionsCardContainer>
-          <Link href={`/profile/${wallet?.accounts[0].address}`} passHref>
+          <Link
+            href={`/profile/${getAddress(
+              wallet?.accounts[0].address ?? ZeroAddress
+            )}`}
+            passHref
+          >
             <S.ActionCard as="a" onClick={handleCloseModal}>
               <img
                 src="/assets/utilities/profile.svg"
