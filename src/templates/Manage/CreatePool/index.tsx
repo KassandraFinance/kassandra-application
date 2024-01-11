@@ -815,8 +815,8 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
       setLocalStorage(CREATED_POOL_LOCALSTORAGE_KEY, {
         id: `${poolData.networkId}${response.pool}`,
-        Hash: receipt,
-        Name: pool.poolParams.name,
+        hash: receipt.hash,
+        name: pool.poolParams.name,
         chainId: poolData.networkId
       })
 
