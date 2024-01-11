@@ -641,9 +641,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
             )
             return
           }
-          ToastWarning(
-            'Could not connect with the blockchain to calculate prices.'
-          )
+          // ToastWarning(
+          //   'Could not connect with the blockchain to calculate prices.'
+          // )
         }
       }
     }
