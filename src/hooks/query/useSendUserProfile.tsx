@@ -74,6 +74,20 @@ export const useSendUserProfile = () => {
   const queryClient = useQueryClient()
   const { signMessage } = useSignMessage()
 
+  const uploadImageMutation = useMutation({
+    mutationFn: (imageInfo: Blob) => {
+      const formData = new FormData()
+      formData.append('image', imageInfo)
+      return fetch(`/api/profile/${id}/upload-img`, {
+        method: 'PUT',
+        body: formData
+      })
+    },
+    onError: error => {
+      console.log(error)
+    }
+  })
+
   const mutation = useMutation({
     mutationFn: ({
       nickname,
@@ -213,6 +227,9 @@ export const useSendUserProfile = () => {
           nft: nftDetails
         })
 
+        if (userImageModal.image_file) {
+          uploadImageMutation.mutate(userImageModal.image_file)
+        }
         return
       }
     } catch (error) {
