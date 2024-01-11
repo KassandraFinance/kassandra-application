@@ -2,8 +2,11 @@ import React from 'react'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
 
+import CreatePool, { CREATED_POOL_LOCALSTORAGE_KEY } from './CreatePool'
+
 import { useManagerPools } from '@/hooks/query/useManagerPools'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
+import useLocalStorage from '@/hooks/useLocalStorage'
 
 import Overlay from '@/components/Overlay'
 import Header from '@/components/Header'
@@ -20,15 +23,28 @@ import closeIcon from '@assets/utilities/close-icon.svg'
 
 import * as S from './styles'
 
+type NewPool = {
+  id: string
+  hash: string
+  name: string
+  chainId: string
+}
+
+type NewPoolCreated = NewPool | undefined
+
 const Manage = () => {
   const [isOpen, setIsOpen] = React.useState(false)
+  const [newPool, setNewPool] = React.useState<NewPoolCreated>()
   const [networkIcon, setNetworkIcon] = React.useState(avalancheIcon)
+  const [isCreatePool, setIsCreatePool] = React.useState(false)
 
   const [{ wallet }] = useConnectWallet()
 
   const { data } = useUserProfile({
     address: wallet?.accounts[0].address
   })
+
+  const { getLocalStorage, removeLocalStorage } = useLocalStorage()
 
   const { data: managerPools } = useManagerPools({
     manager: wallet?.accounts[0]?.address
@@ -57,6 +73,23 @@ const Manage = () => {
       }
     }
   }, [wallet])
+
+  React.useEffect(() => {
+    if (!managerPools) return
+
+    const newPoolCreated = getLocalStorage(
+      CREATED_POOL_LOCALSTORAGE_KEY
+    ) as NewPoolCreated
+
+    if (!newPoolCreated) return
+
+    const checkPool = managerPools.some(pool => pool.id === newPoolCreated.id)
+
+    if (checkPool) {
+      return removeLocalStorage(CREATED_POOL_LOCALSTORAGE_KEY)
+    }
+    setNewPool(newPoolCreated)
+  }, [managerPools, isCreatePool])
 
   return (
     <S.Manage>
@@ -96,13 +129,16 @@ const Manage = () => {
 
         <S.Content>
           <Header />
-          {wallet?.provider && managerPools && managerPools.length > 0 ? (
-            <Overview />
+          {!!newPool ||
+          (wallet?.provider && managerPools && managerPools.length > 0) ? (
+            <Overview newPoolCreated={newPool} />
           ) : (
-            <GetStarted />
+            <GetStarted setIsCreatePool={setIsCreatePool} />
           )}
         </S.Content>
       </S.DashBoard>
+
+      {isCreatePool && <CreatePool setIsCreatePool={setIsCreatePool} />}
     </S.Manage>
   )
 }

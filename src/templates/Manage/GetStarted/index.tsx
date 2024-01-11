@@ -13,15 +13,15 @@ import {
 import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
 
 import Button from '@/components/Button'
-import CreatePool from '../CreatePool'
 
 import kacyLogoShadow from '@assets/images/kacy-logo-shadow.png'
 
 import * as S from './styles'
 
-const GetStarted = () => {
-  const [isCreatePool, setIsCreatePool] = React.useState(false)
-
+interface IGetStartedProps {
+  setIsCreatePool: React.Dispatch<React.SetStateAction<boolean>>
+}
+const GetStarted = ({ setIsCreatePool }: IGetStartedProps) => {
   const [{ wallet, connecting }, connect] = useConnectWallet()
 
   const dispatch = useAppDispatch()
@@ -79,8 +79,6 @@ const GetStarted = () => {
           )}
         </S.ButtonWrapper>
       </S.Content>
-
-      {isCreatePool && <CreatePool setIsCreatePool={setIsCreatePool} />}
     </S.GetStarted>
   )
 }
