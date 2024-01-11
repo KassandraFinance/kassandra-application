@@ -3,6 +3,7 @@ import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 import { keccak256, toUtf8Bytes, ZeroAddress } from 'ethers'
 
+import useLocalStorage from '@/hooks/useLocalStorage'
 import useSignMessage from '@/hooks/useSignMessage'
 import useCreatePool from '@/hooks/useCreatePool'
 import useTransaction from '@/hooks/useTransaction'
@@ -61,6 +62,8 @@ type Token = {
   symbol: string
 }
 
+export const CREATED_POOL_LOCALSTORAGE_KEY = 'new-pool-created'
+
 Big.RM = 0
 
 const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
@@ -79,6 +82,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
+  const { setLocalStorage } = useLocalStorage()
 
   const dispatch = useAppDispatch()
   const stepNumber = useAppSelector(state => state.poolCreation.stepNumber)
@@ -734,18 +738,6 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
         })
       })
 
-      // const { transactionsDataTx } = await swapProvider.getAmountsOut({
-      //   amount: poolData.tokenInAmount,
-      //   chainId,
-      //   destTokens:
-      //     poolData.tokens?.map(token => ({
-      //       token: { decimals: token.decimals, id: token.address },
-      //       weight_normalized: Big(token.allocation).div(100).toString()
-      //     })) ?? [],
-      //   srcDecimals: poolData.tokenIn?.decimals?.toString() || '',
-      //   srcToken: poolData.tokenIn.address
-      // })
-
       datas = await swapProvider.getDatasTx(
         chainId,
         networks[Number(chainId)].factory,
@@ -820,6 +812,13 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
           poolData.networkId || 137
         )
       }
+
+      setLocalStorage(CREATED_POOL_LOCALSTORAGE_KEY, {
+        id: `${poolData.networkId}${response.pool}`,
+        Hash: receipt,
+        Name: pool.poolParams.name,
+        chainId: poolData.networkId
+      })
 
       setTransactionButtonStatus(TransactionStatus.COMPLETED)
 

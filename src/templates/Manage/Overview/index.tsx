@@ -3,6 +3,8 @@ import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 import { getAddress } from 'ethers'
 
+import { networks } from '@/constants/tokenAddresses'
+
 import { useManagerChangeTVL } from '@/hooks/query/useManagerChangeTVL'
 import { useManagerDeposits } from '@/hooks/query/useManagerDeposits'
 import { useManagerTVMChart } from '@/hooks/query/useManagerTVMChart'
@@ -16,6 +18,8 @@ import StatusCard from '@/components/Manage/StatusCard'
 import TVMChart from '@/components/Manage/TVMChart'
 import ManagedPools from './ManagedPools'
 import Loading from '@/components/Loading'
+import WarningCard from '@/components/WarningCard'
+import ExternalLink from '@/components/ExternalLink'
 
 import managerOveriewIcon from '@assets/iconGradient/section-title-eye.svg'
 import managedPoolsIcon from '@assets/iconGradient/assets-distribution.svg'
@@ -68,7 +72,18 @@ const changeList: ChangeListType[] = [
   }
 ]
 
-const Overview = () => {
+type NewPool = {
+  id: string
+  hash: string
+  name: string
+  chainId: string
+}
+
+interface IOverviewProps {
+  newPoolCreated: NewPool | undefined
+}
+
+const Overview = ({ newPoolCreated }: IOverviewProps) => {
   const [depostiPeriod, setDepositPeriod] = React.useState<string>('1D')
   const [withdrawalPeriod, setWithdrawalPeriod] = React.useState<string>('1D')
   const [tvlPeriod, setTvlPeriod] = React.useState<string>('1D')
@@ -192,6 +207,30 @@ const Overview = () => {
         <S.TitleWrapper>
           <TitleSection title="Managed Pools" image={managedPoolsIcon} />
         </S.TitleWrapper>
+
+        {newPoolCreated && (
+          <S.WarningCardContainer>
+            <WarningCard showCard={true}>
+              <div>
+                <S.text>
+                  Hey there! Just wanted to let you know that the pool you
+                  created with the name &quot;{newPoolCreated.name}&quot;
+                  hasn&apos;t been indexed in our subgraph yet. If you want more
+                  details about this pool, check out the creation link.
+                </S.text>
+
+                <S.ExternalLinkContainer>
+                  <ExternalLink
+                    text="View Pool Transaction"
+                    hrefLink={`${networks[
+                      Number(newPoolCreated?.chainId) ?? 137
+                    ]?.blockExplorer}/tx/${newPoolCreated?.hash}`}
+                  />
+                </S.ExternalLinkContainer>
+              </div>
+            </WarningCard>
+          </S.WarningCardContainer>
+        )}
 
         <ManagedPools />
       </S.ManagedPoolsContainer>
