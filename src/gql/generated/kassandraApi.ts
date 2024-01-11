@@ -31,6 +31,7 @@ export type Scalars = {
   BigDecimal: { input: string; output: string }
   BigInt: { input: string; output: string }
   Bytes: { input: string; output: string }
+  Int8: { input: any; output: any }
 }
 
 /**
@@ -92,6 +93,7 @@ export type Activity_Filter = {
   amount_not?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
   amount_not_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
   amount_not_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  and?: InputMaybe<Array<InputMaybe<Activity_Filter>>>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -100,6 +102,7 @@ export type Activity_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Activity_Filter>>>
   pool?: InputMaybe<Scalars['String']['input']>
   pool_?: InputMaybe<Pool_Filter>
   pool_contains?: InputMaybe<Scalars['String']['input']>
@@ -198,6 +201,75 @@ export type Activity_OrderBy =
   | 'amount'
   | 'id'
   | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
   | 'price_btc'
   | 'price_usd'
   | 'symbol'
@@ -241,6 +313,7 @@ export type AssetBalancesArgs = {
 export type Asset_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Asset_Filter>>>
   balance?: InputMaybe<Scalars['BigDecimal']['input']>
   balance_gt?: InputMaybe<Scalars['BigDecimal']['input']>
   balance_gte?: InputMaybe<Scalars['BigDecimal']['input']>
@@ -258,6 +331,7 @@ export type Asset_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Asset_Filter>>>
   pool?: InputMaybe<Scalars['String']['input']>
   pool_?: InputMaybe<Pool_Filter>
   pool_contains?: InputMaybe<Scalars['String']['input']>
@@ -341,7 +415,84 @@ export type Asset_OrderBy =
   | 'balances'
   | 'id'
   | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
   | 'token'
+  | 'token__coingecko_id'
+  | 'token__decimals'
+  | 'token__id'
+  | 'token__in_pool'
+  | 'token__is_wrap_token'
+  | 'token__logo'
+  | 'token__name'
+  | 'token__symbol'
   | 'weight'
   | 'weight_goal'
   | 'weight_goal_normalized'
@@ -366,6 +517,7 @@ export type Balance = {
 export type Balance_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Balance_Filter>>>
   asset?: InputMaybe<Scalars['String']['input']>
   asset_?: InputMaybe<Asset_Filter>
   asset_contains?: InputMaybe<Scalars['String']['input']>
@@ -395,6 +547,7 @@ export type Balance_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Balance_Filter>>>
   timestamp?: InputMaybe<Scalars['Int']['input']>
   timestamp_gt?: InputMaybe<Scalars['Int']['input']>
   timestamp_gte?: InputMaybe<Scalars['Int']['input']>
@@ -413,7 +566,17 @@ export type Balance_Filter = {
   value_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
 }
 
-export type Balance_OrderBy = 'asset' | 'id' | 'timestamp' | 'value'
+export type Balance_OrderBy =
+  | 'asset'
+  | 'asset__balance'
+  | 'asset__id'
+  | 'asset__weight'
+  | 'asset__weight_goal'
+  | 'asset__weight_goal_normalized'
+  | 'asset__weight_normalized'
+  | 'id'
+  | 'timestamp'
+  | 'value'
 
 export type BlockChangedFilter = {
   number_gte: Scalars['Int']['input']
@@ -454,6 +617,7 @@ export type Broker = {
 export type Broker_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Broker_Filter>>>
   deposits_btc?: InputMaybe<Scalars['BigDecimal']['input']>
   deposits_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
   deposits_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
@@ -510,6 +674,7 @@ export type Broker_Filter = {
   num_deposits_lte?: InputMaybe<Scalars['Int']['input']>
   num_deposits_not?: InputMaybe<Scalars['Int']['input']>
   num_deposits_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Broker_Filter>>>
   pool?: InputMaybe<Scalars['String']['input']>
   pool_?: InputMaybe<Pool_Filter>
   pool_contains?: InputMaybe<Scalars['String']['input']>
@@ -570,6 +735,75 @@ export type Broker_OrderBy =
   | 'id'
   | 'num_deposits'
   | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
   | 'unique_investors'
   | 'wallet'
 
@@ -622,6 +856,7 @@ export type Candle = {
 export type Candle_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Candle_Filter>>>
   base?: InputMaybe<Scalars['String']['input']>
   base_contains?: InputMaybe<Scalars['String']['input']>
   base_contains_nocase?: InputMaybe<Scalars['String']['input']>
@@ -690,6 +925,7 @@ export type Candle_Filter = {
   open_lte?: InputMaybe<Scalars['BigDecimal']['input']>
   open_not?: InputMaybe<Scalars['BigDecimal']['input']>
   open_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Candle_Filter>>>
   period?: InputMaybe<Scalars['Int']['input']>
   period_gt?: InputMaybe<Scalars['Int']['input']>
   period_gte?: InputMaybe<Scalars['Int']['input']>
@@ -739,6 +975,75 @@ export type Candle_OrderBy =
   | 'open'
   | 'period'
   | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
   | 'timestamp'
 
 /**
@@ -785,6 +1090,7 @@ export type Chain_Filter = {
   >
   address_wrapped_starts_with?: InputMaybe<Scalars['String']['input']>
   address_wrapped_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  and?: InputMaybe<Array<InputMaybe<Chain_Filter>>>
   block_explorer_url?: InputMaybe<Scalars['String']['input']>
   block_explorer_url_contains?: InputMaybe<Scalars['String']['input']>
   block_explorer_url_contains_nocase?: InputMaybe<Scalars['String']['input']>
@@ -859,6 +1165,7 @@ export type Chain_Filter = {
   name_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   name_starts_with?: InputMaybe<Scalars['String']['input']>
   name_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  or?: InputMaybe<Array<InputMaybe<Chain_Filter>>>
   pool_count?: InputMaybe<Scalars['Int']['input']>
   pool_count_gt?: InputMaybe<Scalars['Int']['input']>
   pool_count_gte?: InputMaybe<Scalars['Int']['input']>
@@ -964,6 +1271,7 @@ export type Delegation = {
 export type Delegation_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Delegation_Filter>>>
   from?: InputMaybe<Scalars['String']['input']>
   from_?: InputMaybe<User_Filter>
   from_contains?: InputMaybe<Scalars['String']['input']>
@@ -993,6 +1301,7 @@ export type Delegation_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Delegation_Filter>>>
   pool?: InputMaybe<Scalars['BigInt']['input']>
   pool_gt?: InputMaybe<Scalars['BigInt']['input']>
   pool_gte?: InputMaybe<Scalars['BigInt']['input']>
@@ -1032,7 +1341,52 @@ export type Delegation_Filter = {
   votingPower_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
 }
 
-export type Delegation_OrderBy = 'from' | 'id' | 'pool' | 'to' | 'votingPower'
+export type Delegation_OrderBy =
+  | 'from'
+  | 'from__created_at'
+  | 'from__description'
+  | 'from__discord'
+  | 'from__id'
+  | 'from__image'
+  | 'from__is_nft'
+  | 'from__nft_chain'
+  | 'from__nft_collection_name'
+  | 'from__nft_contract_type'
+  | 'from__nft_description'
+  | 'from__nft_name'
+  | 'from__nft_symbol'
+  | 'from__nft_token_address'
+  | 'from__nft_token_num'
+  | 'from__nickname'
+  | 'from__telegram'
+  | 'from__twitter'
+  | 'from__updated_at'
+  | 'from__votingPower'
+  | 'from__website'
+  | 'id'
+  | 'pool'
+  | 'to'
+  | 'to__created_at'
+  | 'to__description'
+  | 'to__discord'
+  | 'to__id'
+  | 'to__image'
+  | 'to__is_nft'
+  | 'to__nft_chain'
+  | 'to__nft_collection_name'
+  | 'to__nft_contract_type'
+  | 'to__nft_description'
+  | 'to__nft_name'
+  | 'to__nft_symbol'
+  | 'to__nft_token_address'
+  | 'to__nft_token_num'
+  | 'to__nickname'
+  | 'to__telegram'
+  | 'to__twitter'
+  | 'to__updated_at'
+  | 'to__votingPower'
+  | 'to__website'
+  | 'votingPower'
 
 /**
  * Fee volume per type for 1h, 1d and 7d periods (1d periods are not 24h volume as they are based from 00:00 UTC)
@@ -1075,6 +1429,7 @@ export type Fee = {
 export type Fee_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Fee_Filter>>>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -1104,6 +1459,7 @@ export type Fee_Filter = {
   kassandra_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   kassandra_starts_with?: InputMaybe<Scalars['String']['input']>
   kassandra_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  or?: InputMaybe<Array<InputMaybe<Fee_Filter>>>
   period?: InputMaybe<Scalars['Int']['input']>
   period_gt?: InputMaybe<Scalars['Int']['input']>
   period_gte?: InputMaybe<Scalars['Int']['input']>
@@ -1198,8 +1554,102 @@ export type Fee_Filter = {
 export type Fee_OrderBy =
   | 'id'
   | 'kassandra'
+  | 'kassandra__deposits_btc'
+  | 'kassandra__deposits_usd'
+  | 'kassandra__fee_aum_kassandra'
+  | 'kassandra__id'
+  | 'kassandra__num_deposits'
+  | 'kassandra__num_managers'
+  | 'kassandra__num_tx'
+  | 'kassandra__pool_count'
+  | 'kassandra__pool_featured_count'
+  | 'kassandra__total_fees_aum_kassandra_btc'
+  | 'kassandra__total_fees_aum_kassandra_usd'
+  | 'kassandra__total_fees_aum_manager_btc'
+  | 'kassandra__total_fees_aum_manager_usd'
+  | 'kassandra__total_fees_exit_btc'
+  | 'kassandra__total_fees_exit_usd'
+  | 'kassandra__total_fees_join_broker_btc'
+  | 'kassandra__total_fees_join_broker_usd'
+  | 'kassandra__total_fees_join_manager_btc'
+  | 'kassandra__total_fees_join_manager_usd'
+  | 'kassandra__total_fees_swap_btc'
+  | 'kassandra__total_fees_swap_usd'
+  | 'kassandra__total_value_locked_btc'
+  | 'kassandra__total_value_locked_usd'
+  | 'kassandra__total_volume_btc'
+  | 'kassandra__total_volume_usd'
   | 'period'
   | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
   | 'timestamp'
   | 'type'
   | 'volume_broker_btc'
@@ -1242,6 +1692,7 @@ export type GovernanceProposalsArgs = {
 export type Governance_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Governance_Filter>>>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -1306,12 +1757,17 @@ export type Governance_Filter = {
   >
   internal_delegation_tx_id?: InputMaybe<Scalars['Bytes']['input']>
   internal_delegation_tx_id_contains?: InputMaybe<Scalars['Bytes']['input']>
+  internal_delegation_tx_id_gt?: InputMaybe<Scalars['Bytes']['input']>
+  internal_delegation_tx_id_gte?: InputMaybe<Scalars['Bytes']['input']>
   internal_delegation_tx_id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>
+  internal_delegation_tx_id_lt?: InputMaybe<Scalars['Bytes']['input']>
+  internal_delegation_tx_id_lte?: InputMaybe<Scalars['Bytes']['input']>
   internal_delegation_tx_id_not?: InputMaybe<Scalars['Bytes']['input']>
   internal_delegation_tx_id_not_contains?: InputMaybe<Scalars['Bytes']['input']>
   internal_delegation_tx_id_not_in?: InputMaybe<
     Array<Scalars['Bytes']['input']>
   >
+  or?: InputMaybe<Array<InputMaybe<Governance_Filter>>>
   proposals_?: InputMaybe<Proposal_Filter>
   stakingPools?: InputMaybe<Scalars['Int']['input']>
   stakingPools_gt?: InputMaybe<Scalars['Int']['input']>
@@ -1390,6 +1846,7 @@ export type History_Filter = {
   activity_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   activity_starts_with?: InputMaybe<Scalars['String']['input']>
   activity_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  and?: InputMaybe<Array<InputMaybe<History_Filter>>>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -1398,6 +1855,7 @@ export type History_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  or?: InputMaybe<Array<InputMaybe<History_Filter>>>
   pool?: InputMaybe<Scalars['String']['input']>
   pool_?: InputMaybe<Pool_Filter>
   pool_contains?: InputMaybe<Scalars['String']['input']>
@@ -1452,10 +1910,89 @@ export type History_Filter = {
 
 export type History_OrderBy =
   | 'activity'
+  | 'activity__address'
+  | 'activity__id'
+  | 'activity__timestamp'
+  | 'activity__txHash'
+  | 'activity__type'
   | 'id'
   | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
   | 'timestamp'
   | 'weight_goal'
+  | 'weight_goal__end_timestamp'
+  | 'weight_goal__id'
+  | 'weight_goal__start_timestamp'
+  | 'weight_goal__txHash'
+  | 'weight_goal__type'
 
 /**
  * Investors in a pool
@@ -1521,6 +2058,7 @@ export type Investor_Filter = {
   amount_lte?: InputMaybe<Scalars['BigDecimal']['input']>
   amount_not?: InputMaybe<Scalars['BigDecimal']['input']>
   amount_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  and?: InputMaybe<Array<InputMaybe<Investor_Filter>>>
   broker?: InputMaybe<Scalars['String']['input']>
   broker_?: InputMaybe<Broker_Filter>
   broker_contains?: InputMaybe<Scalars['String']['input']>
@@ -1566,6 +2104,7 @@ export type Investor_Filter = {
   last_deposit_timestamp_lte?: InputMaybe<Scalars['Int']['input']>
   last_deposit_timestamp_not?: InputMaybe<Scalars['Int']['input']>
   last_deposit_timestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Investor_Filter>>>
   pool?: InputMaybe<Scalars['String']['input']>
   pool_?: InputMaybe<Pool_Filter>
   pool_contains?: InputMaybe<Scalars['String']['input']>
@@ -1614,10 +2153,88 @@ export type Investor_OrderBy =
   | 'amount_alltime'
   | 'amount_largest'
   | 'broker'
+  | 'broker__deposits_btc'
+  | 'broker__deposits_usd'
+  | 'broker__fees'
+  | 'broker__fees_btc'
+  | 'broker__fees_usd'
+  | 'broker__id'
+  | 'broker__num_deposits'
+  | 'broker__unique_investors'
+  | 'broker__wallet'
   | 'first_deposit_timestamp'
   | 'id'
   | 'last_deposit_timestamp'
   | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
   | 'wallet'
 
 /**
@@ -1682,6 +2299,7 @@ export type KassandraVolumesArgs = {
 export type Kassandra_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Kassandra_Filter>>>
   deposits_btc?: InputMaybe<Scalars['BigDecimal']['input']>
   deposits_btc_gt?: InputMaybe<Scalars['BigDecimal']['input']>
   deposits_btc_gte?: InputMaybe<Scalars['BigDecimal']['input']>
@@ -1739,6 +2357,7 @@ export type Kassandra_Filter = {
   num_tx_lte?: InputMaybe<Scalars['BigInt']['input']>
   num_tx_not?: InputMaybe<Scalars['BigInt']['input']>
   num_tx_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Kassandra_Filter>>>
   pool_count?: InputMaybe<Scalars['Int']['input']>
   pool_count_gt?: InputMaybe<Scalars['Int']['input']>
   pool_count_gte?: InputMaybe<Scalars['Int']['input']>
@@ -2029,6 +2648,7 @@ export type ManagerVolumesArgs = {
 export type Manager_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Manager_Filter>>>
   created_at?: InputMaybe<Scalars['String']['input']>
   created_at_contains?: InputMaybe<Scalars['String']['input']>
   created_at_contains_nocase?: InputMaybe<Scalars['String']['input']>
@@ -2319,6 +2939,7 @@ export type Manager_Filter = {
   nickname_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   nickname_starts_with?: InputMaybe<Scalars['String']['input']>
   nickname_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  or?: InputMaybe<Array<InputMaybe<Manager_Filter>>>
   pool_count?: InputMaybe<Scalars['Int']['input']>
   pool_count_gt?: InputMaybe<Scalars['Int']['input']>
   pool_count_gte?: InputMaybe<Scalars['Int']['input']>
@@ -2487,6 +3108,26 @@ export type Manager_OrderBy =
   | 'unique_investors'
   | 'updated_at'
   | 'user'
+  | 'user__created_at'
+  | 'user__description'
+  | 'user__discord'
+  | 'user__id'
+  | 'user__image'
+  | 'user__is_nft'
+  | 'user__nft_chain'
+  | 'user__nft_collection_name'
+  | 'user__nft_contract_type'
+  | 'user__nft_description'
+  | 'user__nft_name'
+  | 'user__nft_symbol'
+  | 'user__nft_token_address'
+  | 'user__nft_token_num'
+  | 'user__nickname'
+  | 'user__telegram'
+  | 'user__twitter'
+  | 'user__updated_at'
+  | 'user__votingPower'
+  | 'user__website'
   | 'volumes'
   | 'website'
 
@@ -2524,7 +3165,7 @@ export type Pool = {
    *
    */
   factory: Scalars['String']['output']
-  featured?: Maybe<Scalars['Boolean']['output']>
+  featured: Scalars['Boolean']['output']
   fee_aum: Scalars['BigDecimal']['output']
   fee_aum_kassandra: Scalars['BigDecimal']['output']
   fee_exit: Scalars['BigDecimal']['output']
@@ -2795,12 +3436,17 @@ export type PoolSupply = {
 export type PoolSupply_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<PoolSupply_Filter>>>
   block?: InputMaybe<Scalars['BigInt']['input']>
   block_gt?: InputMaybe<Scalars['BigInt']['input']>
   block_gte?: InputMaybe<Scalars['BigInt']['input']>
   block_hash?: InputMaybe<Scalars['Bytes']['input']>
   block_hash_contains?: InputMaybe<Scalars['Bytes']['input']>
+  block_hash_gt?: InputMaybe<Scalars['Bytes']['input']>
+  block_hash_gte?: InputMaybe<Scalars['Bytes']['input']>
   block_hash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>
+  block_hash_lt?: InputMaybe<Scalars['Bytes']['input']>
+  block_hash_lte?: InputMaybe<Scalars['Bytes']['input']>
   block_hash_not?: InputMaybe<Scalars['Bytes']['input']>
   block_hash_not_contains?: InputMaybe<Scalars['Bytes']['input']>
   block_hash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>
@@ -2817,6 +3463,7 @@ export type PoolSupply_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  or?: InputMaybe<Array<InputMaybe<PoolSupply_Filter>>>
   pool?: InputMaybe<Scalars['String']['input']>
   pool_?: InputMaybe<Pool_Filter>
   pool_contains?: InputMaybe<Scalars['String']['input']>
@@ -2861,6 +3508,75 @@ export type PoolSupply_OrderBy =
   | 'block_hash'
   | 'id'
   | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
   | 'timestamp'
   | 'value'
 
@@ -2894,6 +3610,7 @@ export type Pool_Filter = {
   address_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   address_starts_with?: InputMaybe<Scalars['String']['input']>
   address_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  and?: InputMaybe<Array<InputMaybe<Pool_Filter>>>
   brokers_?: InputMaybe<Broker_Filter>
   chain?: InputMaybe<Scalars['String']['input']>
   chain_?: InputMaybe<Chain_Filter>
@@ -3248,6 +3965,7 @@ export type Pool_Filter = {
   num_weight_goals_lte?: InputMaybe<Scalars['Int']['input']>
   num_weight_goals_not?: InputMaybe<Scalars['Int']['input']>
   num_weight_goals_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Pool_Filter>>>
   pool_id?: InputMaybe<Scalars['Int']['input']>
   pool_id_gt?: InputMaybe<Scalars['Int']['input']>
   pool_id_gte?: InputMaybe<Scalars['Int']['input']>
@@ -3709,6 +4427,16 @@ export type Pool_OrderBy =
   | 'address'
   | 'brokers'
   | 'chain'
+  | 'chain__address_wrapped'
+  | 'chain__block_explorer_url'
+  | 'chain__icon'
+  | 'chain__id'
+  | 'chain__name'
+  | 'chain__pool_count'
+  | 'chain__seconds_per_block'
+  | 'chain__token_decimals'
+  | 'chain__token_name'
+  | 'chain__token_symbol'
   | 'chain_id'
   | 'controller'
   | 'decimals'
@@ -3733,6 +4461,29 @@ export type Pool_OrderBy =
   | 'last_harvest'
   | 'logo'
   | 'manager'
+  | 'manager__created_at'
+  | 'manager__description'
+  | 'manager__discord'
+  | 'manager__id'
+  | 'manager__image'
+  | 'manager__is_nft'
+  | 'manager__nft_chain'
+  | 'manager__nft_collection_name'
+  | 'manager__nft_contract_type'
+  | 'manager__nft_description'
+  | 'manager__nft_name'
+  | 'manager__nft_symbol'
+  | 'manager__nft_token_address'
+  | 'manager__nft_token_num'
+  | 'manager__nickname'
+  | 'manager__pool_count'
+  | 'manager__telegram'
+  | 'manager__total_value_locked_btc'
+  | 'manager__total_value_locked_usd'
+  | 'manager__twitter'
+  | 'manager__unique_investors'
+  | 'manager__updated_at'
+  | 'manager__website'
   | 'name'
   | 'num_activities'
   | 'num_brokers'
@@ -3849,6 +4600,7 @@ export type Proposal_Filter = {
   againstVotes_lte?: InputMaybe<Scalars['BigDecimal']['input']>
   againstVotes_not?: InputMaybe<Scalars['BigDecimal']['input']>
   againstVotes_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  and?: InputMaybe<Array<InputMaybe<Proposal_Filter>>>
   calldatas?: InputMaybe<Array<Scalars['Bytes']['input']>>
   calldatas_contains?: InputMaybe<Array<Scalars['Bytes']['input']>>
   calldatas_contains_nocase?: InputMaybe<Array<Scalars['Bytes']['input']>>
@@ -3960,6 +4712,7 @@ export type Proposal_Filter = {
   number_lte?: InputMaybe<Scalars['Int']['input']>
   number_not?: InputMaybe<Scalars['Int']['input']>
   number_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Proposal_Filter>>>
   proposer?: InputMaybe<Scalars['String']['input']>
   proposer_?: InputMaybe<User_Filter>
   proposer_contains?: InputMaybe<Scalars['String']['input']>
@@ -4037,9 +4790,36 @@ export type Proposal_OrderBy =
   | 'executed'
   | 'forVotes'
   | 'governance'
+  | 'governance__id'
+  | 'governance__internal_delegatee_address'
+  | 'governance__internal_delegation_amount'
+  | 'governance__internal_delegation_tx_id'
+  | 'governance__stakingPools'
+  | 'governance__totalVotingPower'
+  | 'governance__votingAddresses'
   | 'id'
   | 'number'
   | 'proposer'
+  | 'proposer__created_at'
+  | 'proposer__description'
+  | 'proposer__discord'
+  | 'proposer__id'
+  | 'proposer__image'
+  | 'proposer__is_nft'
+  | 'proposer__nft_chain'
+  | 'proposer__nft_collection_name'
+  | 'proposer__nft_contract_type'
+  | 'proposer__nft_description'
+  | 'proposer__nft_name'
+  | 'proposer__nft_symbol'
+  | 'proposer__nft_token_address'
+  | 'proposer__nft_token_num'
+  | 'proposer__nickname'
+  | 'proposer__telegram'
+  | 'proposer__twitter'
+  | 'proposer__updated_at'
+  | 'proposer__votingPower'
+  | 'proposer__website'
   | 'queued'
   | 'quorum'
   | 'signatures'
@@ -5006,6 +5786,7 @@ export type TokenPoolsArgs = {
 export type Token_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Token_Filter>>>
   chain_ids?: InputMaybe<Array<Scalars['Int']['input']>>
   chain_ids_contains?: InputMaybe<Array<Scalars['Int']['input']>>
   chain_ids_contains_nocase?: InputMaybe<Array<Scalars['Int']['input']>>
@@ -5100,6 +5881,7 @@ export type Token_Filter = {
   name_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   name_starts_with?: InputMaybe<Scalars['String']['input']>
   name_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  or?: InputMaybe<Array<InputMaybe<Token_Filter>>>
   pools_?: InputMaybe<Asset_Filter>
   symbol?: InputMaybe<Scalars['String']['input']>
   symbol_contains?: InputMaybe<Scalars['String']['input']>
@@ -5156,6 +5938,14 @@ export type Token_OrderBy =
   | 'pools'
   | 'symbol'
   | 'wraps'
+  | 'wraps__coingecko_id'
+  | 'wraps__decimals'
+  | 'wraps__id'
+  | 'wraps__in_pool'
+  | 'wraps__is_wrap_token'
+  | 'wraps__logo'
+  | 'wraps__name'
+  | 'wraps__symbol'
 
 /**
  * Total Value Locked OHLC hourly candle graph
@@ -5201,6 +5991,7 @@ export type TotalValueLocked = {
 export type TotalValueLocked_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<TotalValueLocked_Filter>>>
   base?: InputMaybe<Scalars['String']['input']>
   base_contains?: InputMaybe<Scalars['String']['input']>
   base_contains_nocase?: InputMaybe<Scalars['String']['input']>
@@ -5282,6 +6073,7 @@ export type TotalValueLocked_Filter = {
   open_lte?: InputMaybe<Scalars['BigDecimal']['input']>
   open_not?: InputMaybe<Scalars['BigDecimal']['input']>
   open_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  or?: InputMaybe<Array<InputMaybe<TotalValueLocked_Filter>>>
   pool?: InputMaybe<Scalars['String']['input']>
   pool_?: InputMaybe<Pool_Filter>
   pool_contains?: InputMaybe<Scalars['String']['input']>
@@ -5320,8 +6112,100 @@ export type TotalValueLocked_OrderBy =
   | 'id'
   | 'low'
   | 'manager'
+  | 'manager__created_at'
+  | 'manager__description'
+  | 'manager__discord'
+  | 'manager__id'
+  | 'manager__image'
+  | 'manager__is_nft'
+  | 'manager__nft_chain'
+  | 'manager__nft_collection_name'
+  | 'manager__nft_contract_type'
+  | 'manager__nft_description'
+  | 'manager__nft_name'
+  | 'manager__nft_symbol'
+  | 'manager__nft_token_address'
+  | 'manager__nft_token_num'
+  | 'manager__nickname'
+  | 'manager__pool_count'
+  | 'manager__telegram'
+  | 'manager__total_value_locked_btc'
+  | 'manager__total_value_locked_usd'
+  | 'manager__twitter'
+  | 'manager__unique_investors'
+  | 'manager__updated_at'
+  | 'manager__website'
   | 'open'
   | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
   | 'timestamp'
 
 /**
@@ -5400,6 +6284,7 @@ export type UserVotesArgs = {
 export type User_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<User_Filter>>>
   created_at?: InputMaybe<Scalars['String']['input']>
   created_at_contains?: InputMaybe<Scalars['String']['input']>
   created_at_contains_nocase?: InputMaybe<Scalars['String']['input']>
@@ -5712,6 +6597,7 @@ export type User_Filter = {
   nickname_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   nickname_starts_with?: InputMaybe<Scalars['String']['input']>
   nickname_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  or?: InputMaybe<Array<InputMaybe<User_Filter>>>
   proposals_?: InputMaybe<Proposal_Filter>
   telegram?: InputMaybe<Scalars['String']['input']>
   telegram_contains?: InputMaybe<Scalars['String']['input']>
@@ -5821,6 +6707,29 @@ export type User_OrderBy =
   | 'image'
   | 'is_nft'
   | 'manager'
+  | 'manager__created_at'
+  | 'manager__description'
+  | 'manager__discord'
+  | 'manager__id'
+  | 'manager__image'
+  | 'manager__is_nft'
+  | 'manager__nft_chain'
+  | 'manager__nft_collection_name'
+  | 'manager__nft_contract_type'
+  | 'manager__nft_description'
+  | 'manager__nft_name'
+  | 'manager__nft_symbol'
+  | 'manager__nft_token_address'
+  | 'manager__nft_token_num'
+  | 'manager__nickname'
+  | 'manager__pool_count'
+  | 'manager__telegram'
+  | 'manager__total_value_locked_btc'
+  | 'manager__total_value_locked_usd'
+  | 'manager__twitter'
+  | 'manager__unique_investors'
+  | 'manager__updated_at'
+  | 'manager__website'
   | 'nft_chain'
   | 'nft_collection_name'
   | 'nft_contract_type'
@@ -5882,6 +6791,7 @@ export type Volume = {
 export type Volume_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Volume_Filter>>>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -5940,6 +6850,7 @@ export type Volume_Filter = {
   num_tx_lte?: InputMaybe<Scalars['Int']['input']>
   num_tx_not?: InputMaybe<Scalars['Int']['input']>
   num_tx_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Volume_Filter>>>
   period?: InputMaybe<Scalars['Int']['input']>
   period_gt?: InputMaybe<Scalars['Int']['input']>
   period_gte?: InputMaybe<Scalars['Int']['input']>
@@ -6038,10 +6949,127 @@ export type Volume_Filter = {
 export type Volume_OrderBy =
   | 'id'
   | 'kassandra'
+  | 'kassandra__deposits_btc'
+  | 'kassandra__deposits_usd'
+  | 'kassandra__fee_aum_kassandra'
+  | 'kassandra__id'
+  | 'kassandra__num_deposits'
+  | 'kassandra__num_managers'
+  | 'kassandra__num_tx'
+  | 'kassandra__pool_count'
+  | 'kassandra__pool_featured_count'
+  | 'kassandra__total_fees_aum_kassandra_btc'
+  | 'kassandra__total_fees_aum_kassandra_usd'
+  | 'kassandra__total_fees_aum_manager_btc'
+  | 'kassandra__total_fees_aum_manager_usd'
+  | 'kassandra__total_fees_exit_btc'
+  | 'kassandra__total_fees_exit_usd'
+  | 'kassandra__total_fees_join_broker_btc'
+  | 'kassandra__total_fees_join_broker_usd'
+  | 'kassandra__total_fees_join_manager_btc'
+  | 'kassandra__total_fees_join_manager_usd'
+  | 'kassandra__total_fees_swap_btc'
+  | 'kassandra__total_fees_swap_usd'
+  | 'kassandra__total_value_locked_btc'
+  | 'kassandra__total_value_locked_usd'
+  | 'kassandra__total_volume_btc'
+  | 'kassandra__total_volume_usd'
   | 'manager'
+  | 'manager__created_at'
+  | 'manager__description'
+  | 'manager__discord'
+  | 'manager__id'
+  | 'manager__image'
+  | 'manager__is_nft'
+  | 'manager__nft_chain'
+  | 'manager__nft_collection_name'
+  | 'manager__nft_contract_type'
+  | 'manager__nft_description'
+  | 'manager__nft_name'
+  | 'manager__nft_symbol'
+  | 'manager__nft_token_address'
+  | 'manager__nft_token_num'
+  | 'manager__nickname'
+  | 'manager__pool_count'
+  | 'manager__telegram'
+  | 'manager__total_value_locked_btc'
+  | 'manager__total_value_locked_usd'
+  | 'manager__twitter'
+  | 'manager__unique_investors'
+  | 'manager__updated_at'
+  | 'manager__website'
   | 'num_tx'
   | 'period'
   | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
   | 'swap_pair'
   | 'timestamp'
   | 'type'
@@ -6068,6 +7096,7 @@ export type Vote = {
 export type Vote_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Vote_Filter>>>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -6076,6 +7105,7 @@ export type Vote_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Vote_Filter>>>
   proposal?: InputMaybe<Scalars['String']['input']>
   proposal_?: InputMaybe<Proposal_Filter>
   proposal_contains?: InputMaybe<Scalars['String']['input']>
@@ -6135,8 +7165,41 @@ export type Vote_Filter = {
 export type Vote_OrderBy =
   | 'id'
   | 'proposal'
+  | 'proposal__againstVotes'
+  | 'proposal__canceled'
+  | 'proposal__created'
+  | 'proposal__description'
+  | 'proposal__endBlock'
+  | 'proposal__eta'
+  | 'proposal__executed'
+  | 'proposal__forVotes'
+  | 'proposal__id'
+  | 'proposal__number'
+  | 'proposal__queued'
+  | 'proposal__quorum'
+  | 'proposal__startBlock'
   | 'support'
   | 'voter'
+  | 'voter__created_at'
+  | 'voter__description'
+  | 'voter__discord'
+  | 'voter__id'
+  | 'voter__image'
+  | 'voter__is_nft'
+  | 'voter__nft_chain'
+  | 'voter__nft_collection_name'
+  | 'voter__nft_contract_type'
+  | 'voter__nft_description'
+  | 'voter__nft_name'
+  | 'voter__nft_symbol'
+  | 'voter__nft_token_address'
+  | 'voter__nft_token_num'
+  | 'voter__nickname'
+  | 'voter__telegram'
+  | 'voter__twitter'
+  | 'voter__updated_at'
+  | 'voter__votingPower'
+  | 'voter__website'
   | 'votingPower'
 
 /**
@@ -6213,6 +7276,7 @@ export type WeightGoalPointWeightsArgs = {
 export type WeightGoalPoint_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<WeightGoalPoint_Filter>>>
   end_timestamp?: InputMaybe<Scalars['Int']['input']>
   end_timestamp_gt?: InputMaybe<Scalars['Int']['input']>
   end_timestamp_gte?: InputMaybe<Scalars['Int']['input']>
@@ -6229,6 +7293,7 @@ export type WeightGoalPoint_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  or?: InputMaybe<Array<InputMaybe<WeightGoalPoint_Filter>>>
   pool?: InputMaybe<Scalars['String']['input']>
   pool_?: InputMaybe<Pool_Filter>
   pool_contains?: InputMaybe<Scalars['String']['input']>
@@ -6347,9 +7412,91 @@ export type WeightGoalPoint_OrderBy =
   | 'end_timestamp'
   | 'id'
   | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
   | 'previous'
+  | 'previous__end_timestamp'
+  | 'previous__id'
+  | 'previous__start_timestamp'
+  | 'previous__txHash'
+  | 'previous__type'
   | 'start_timestamp'
   | 'token'
+  | 'token__coingecko_id'
+  | 'token__decimals'
+  | 'token__id'
+  | 'token__in_pool'
+  | 'token__is_wrap_token'
+  | 'token__logo'
+  | 'token__name'
+  | 'token__symbol'
   | 'txHash'
   | 'type'
   | 'weights'
@@ -6357,6 +7504,7 @@ export type WeightGoalPoint_OrderBy =
 export type WeightGoal_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<WeightGoal_Filter>>>
   asset?: InputMaybe<Scalars['String']['input']>
   asset_?: InputMaybe<Asset_Filter>
   asset_contains?: InputMaybe<Scalars['String']['input']>
@@ -6386,6 +7534,7 @@ export type WeightGoal_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  or?: InputMaybe<Array<InputMaybe<WeightGoal_Filter>>>
   point?: InputMaybe<Scalars['String']['input']>
   point_?: InputMaybe<WeightGoalPoint_Filter>
   point_contains?: InputMaybe<Scalars['String']['input']>
@@ -6427,8 +7576,19 @@ export type WeightGoal_Filter = {
 
 export type WeightGoal_OrderBy =
   | 'asset'
+  | 'asset__balance'
+  | 'asset__id'
+  | 'asset__weight'
+  | 'asset__weight_goal'
+  | 'asset__weight_goal_normalized'
+  | 'asset__weight_normalized'
   | 'id'
   | 'point'
+  | 'point__end_timestamp'
+  | 'point__id'
+  | 'point__start_timestamp'
+  | 'point__txHash'
+  | 'point__type'
   | 'weight'
   | 'weight_normalized'
 
@@ -6463,6 +7623,7 @@ export type WeightPointWeightsArgs = {
 export type WeightPoint_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<WeightPoint_Filter>>>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -6471,6 +7632,7 @@ export type WeightPoint_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  or?: InputMaybe<Array<InputMaybe<WeightPoint_Filter>>>
   pool?: InputMaybe<Scalars['String']['input']>
   pool_?: InputMaybe<Pool_Filter>
   pool_contains?: InputMaybe<Scalars['String']['input']>
@@ -6503,11 +7665,85 @@ export type WeightPoint_Filter = {
   weights_?: InputMaybe<Weight_Filter>
 }
 
-export type WeightPoint_OrderBy = 'id' | 'pool' | 'timestamp' | 'weights'
+export type WeightPoint_OrderBy =
+  | 'id'
+  | 'pool'
+  | 'pool__address'
+  | 'pool__chain_id'
+  | 'pool__controller'
+  | 'pool__decimals'
+  | 'pool__deposits_broker_btc'
+  | 'pool__deposits_broker_usd'
+  | 'pool__deposits_btc'
+  | 'pool__deposits_usd'
+  | 'pool__factory'
+  | 'pool__featured'
+  | 'pool__fee_aum'
+  | 'pool__fee_aum_kassandra'
+  | 'pool__fee_exit'
+  | 'pool__fee_join_broker'
+  | 'pool__fee_join_manager'
+  | 'pool__fee_swap'
+  | 'pool__founded_by'
+  | 'pool__id'
+  | 'pool__is_private_pool'
+  | 'pool__last_harvest'
+  | 'pool__logo'
+  | 'pool__name'
+  | 'pool__num_activities'
+  | 'pool__num_brokers'
+  | 'pool__num_deposits'
+  | 'pool__num_deposits_broker'
+  | 'pool__num_exit'
+  | 'pool__num_join'
+  | 'pool__num_swap'
+  | 'pool__num_token_add'
+  | 'pool__num_token_remove'
+  | 'pool__num_tx'
+  | 'pool__num_weight_goals'
+  | 'pool__pool_id'
+  | 'pool__pool_version'
+  | 'pool__price_btc'
+  | 'pool__price_usd'
+  | 'pool__short_summary'
+  | 'pool__strategy'
+  | 'pool__summary'
+  | 'pool__supply'
+  | 'pool__symbol'
+  | 'pool__total_fees_aum_kassandra'
+  | 'pool__total_fees_aum_kassandra_btc'
+  | 'pool__total_fees_aum_kassandra_usd'
+  | 'pool__total_fees_aum_manager'
+  | 'pool__total_fees_aum_manager_btc'
+  | 'pool__total_fees_aum_manager_usd'
+  | 'pool__total_fees_exit'
+  | 'pool__total_fees_exit_btc'
+  | 'pool__total_fees_exit_usd'
+  | 'pool__total_fees_join_broker'
+  | 'pool__total_fees_join_broker_btc'
+  | 'pool__total_fees_join_broker_usd'
+  | 'pool__total_fees_join_manager'
+  | 'pool__total_fees_join_manager_btc'
+  | 'pool__total_fees_join_manager_usd'
+  | 'pool__total_fees_swap_btc'
+  | 'pool__total_fees_swap_usd'
+  | 'pool__total_value_locked_btc'
+  | 'pool__total_value_locked_usd'
+  | 'pool__total_volume_btc'
+  | 'pool__total_volume_usd'
+  | 'pool__unique_investors'
+  | 'pool__unique_investors_broker'
+  | 'pool__url'
+  | 'pool__vault'
+  | 'pool__vault_id'
+  | 'pool__whitelist'
+  | 'timestamp'
+  | 'weights'
 
 export type Weight_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>
+  and?: InputMaybe<Array<InputMaybe<Weight_Filter>>>
   id?: InputMaybe<Scalars['ID']['input']>
   id_gt?: InputMaybe<Scalars['ID']['input']>
   id_gte?: InputMaybe<Scalars['ID']['input']>
@@ -6516,6 +7752,7 @@ export type Weight_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>
   id_not?: InputMaybe<Scalars['ID']['input']>
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>
+  or?: InputMaybe<Array<InputMaybe<Weight_Filter>>>
   point?: InputMaybe<Scalars['String']['input']>
   point_?: InputMaybe<WeightPoint_Filter>
   point_contains?: InputMaybe<Scalars['String']['input']>
@@ -6579,7 +7816,17 @@ export type Weight_Filter = {
 export type Weight_OrderBy =
   | 'id'
   | 'point'
+  | 'point__id'
+  | 'point__timestamp'
   | 'token'
+  | 'token__coingecko_id'
+  | 'token__decimals'
+  | 'token__id'
+  | 'token__in_pool'
+  | 'token__is_wrap_token'
+  | 'token__logo'
+  | 'token__name'
+  | 'token__symbol'
   | 'weight'
   | 'weight_normalized'
 
@@ -6815,7 +8062,7 @@ export type FundCardQuery = {
     founded_by?: string | null
     price_usd: string
     pool_version: number
-    featured?: boolean | null
+    featured: boolean
     total_value_locked_usd: string
     strategy: string
     chain: { __typename?: 'Chain'; logo?: string | null }
@@ -9066,7 +10313,15 @@ export const PoolInvestorsTableDocument = gql`
 export const PoolJoinsDocument = gql`
   query PoolJoins($id: ID!, $timestamp: Int!) {
     pool(id: $id) {
-      volumes(where: { period: 3600, type: "join", timestamp_gt: $timestamp }) {
+      volumes(
+        first: 1000
+        where: {
+          period: 3600
+          swap_pair_in: ["broker", "manager"]
+          type: "join"
+          timestamp_gt: $timestamp
+        }
+      ) {
         volume_usd
       }
     }
@@ -9185,7 +10440,7 @@ export const PoolTvmChartDocument = gql`
 export const PoolVolumeDataDocument = gql`
   query PoolVolumeData($id: ID!, $timestamp: Int!) {
     pool(id: $id) {
-      volumes(where: { period: 3600, timestamp_gt: $timestamp }) {
+      volumes(first: 1000, where: { period: 3600, timestamp_gt: $timestamp }) {
         volume_usd
       }
     }

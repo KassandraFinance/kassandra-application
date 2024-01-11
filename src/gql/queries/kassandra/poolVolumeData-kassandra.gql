@@ -1,6 +1,6 @@
 query PoolVolumeData($id: ID!, $timestamp: Int!) {
   pool(id: $id) {
-    volumes(where: { period: 3600, timestamp_gt: $timestamp }) {
+    volumes(first: 1000, where: { period: 3600, timestamp_gt: $timestamp }) {
       volume_usd
     }
   }

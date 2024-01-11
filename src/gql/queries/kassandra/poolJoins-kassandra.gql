@@ -1,7 +1,7 @@
 query PoolJoins($id: ID!, $timestamp: Int!) {
     pool(id: $id) {
-      volumes(where: { period: 3600, type: "join", timestamp_gt: $timestamp }) {
-        volume_usd
+      volumes(first: 1000, where: { period: 3600, swap_pair_in: ["broker", "manager"], type: "join", timestamp_gt: $timestamp }) {
+        volume_usd,
       }
     }
   }
