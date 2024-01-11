@@ -10316,7 +10316,7 @@ export const PoolJoinsDocument = gql`
       volumes(
         first: 1000
         where: {
-          period: 3600
+          period: 86400
           swap_pair_in: ["broker", "manager"]
           type: "join"
           timestamp_gt: $timestamp
@@ -10440,7 +10440,7 @@ export const PoolTvmChartDocument = gql`
 export const PoolVolumeDataDocument = gql`
   query PoolVolumeData($id: ID!, $timestamp: Int!) {
     pool(id: $id) {
-      volumes(first: 1000, where: { period: 3600, timestamp_gt: $timestamp }) {
+      volumes(first: 1000, where: { period: 86400, timestamp_gt: $timestamp }) {
         volume_usd
       }
     }
