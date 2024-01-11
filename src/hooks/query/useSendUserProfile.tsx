@@ -82,9 +82,6 @@ export const useSendUserProfile = () => {
         method: 'PUT',
         body: formData
       })
-    },
-    onError: error => {
-      console.log(error)
     }
   })
 

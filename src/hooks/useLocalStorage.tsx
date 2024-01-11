@@ -7,31 +7,27 @@ interface IUseLocalStorageProps {
 }
 
 const useLocalStorage = (): IUseLocalStorageProps => {
-  return React.useMemo(() => {
-    const getLocalStorage = (key: string) => {
-      const data = window.localStorage.getItem(key)
+  const getLocalStorage = React.useCallback((key: string) => {
+    const data = window.localStorage.getItem(key)
 
-      if (!data) return
-
-      return JSON.parse(data)
-    }
-
-    const setLocalStorage = (key: string, value: unknown) => {
-      const data = JSON.stringify(value)
-
-      return window.localStorage.setItem(key, data)
-    }
-
-    const removeLocalStorage = (key: string) => {
-      return window.localStorage.removeItem(key)
-    }
-
-    return {
-      getLocalStorage,
-      setLocalStorage,
-      removeLocalStorage
-    }
+    return data ? JSON.parse(data) : undefined
   }, [])
+
+  const setLocalStorage = React.useCallback((key: string, value: unknown) => {
+    const data = JSON.stringify(value)
+
+    return window.localStorage.setItem(key, data)
+  }, [])
+
+  const removeLocalStorage = React.useCallback((key: string) => {
+    return window.localStorage.removeItem(key)
+  }, [])
+
+  return {
+    getLocalStorage,
+    setLocalStorage,
+    removeLocalStorage
+  }
 }
 
 export default useLocalStorage
