@@ -32,9 +32,11 @@ import Button from '@/components/Button'
 
 import PoolOperationContext from '../PoolOperationContext'
 
-import InputAndOutputValueToken from '../InputAndOutputValueToken'
 import TokenAssetOut from '../TokenAssetOut'
+import WarningCard from '@/components/WarningCard'
 import TransactionSettings from '../TransactionSettings'
+import SkeletonLoading from '@/components/SkeletonLoading'
+import InputAndOutputValueToken from '../InputAndOutputValueToken'
 
 import * as S from './styles'
 
@@ -50,6 +52,12 @@ enum Approval {
   Approved,
   WaitingTransaction,
   Syncing
+}
+
+type SwapProvider = {
+  amountsTokenIn: string[]
+  transactionsDataTx: string[]
+  transactionError?: string
 }
 
 type Approvals = { [key in Titles]: Approval[] }
@@ -112,6 +120,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   const [selectedTokenInBalance, setSelectedTokenInBalance] = React.useState(
     Big(-1)
   )
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const [{ wallet, connecting }, connect] = useConnectWallet()
   const { tokenSelect } = useAppSelector(state => state)
@@ -141,10 +150,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
   const inputAmountTokenRef = React.useRef<HTMLInputElement>(null)
 
-  async function handleSwapProviderV2(): Promise<{
-    amountsTokenIn: string[]
-    transactionsDataTx: string[]
-  }> {
+  async function handleSwapProviderV2(): Promise<SwapProvider> {
     const { fromAddress, fromDecimals } =
       tokenSelect.address === NATIVE_ADDRESS && pool
         ? {
@@ -177,29 +183,27 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           .toFixed(0)
       }
     })
-    const { tokenAmounts, transactionsDataTx } = await operation.getAmountsOut({
-      chainId: pool?.chain_id?.toString() || '',
-      destToken: destTokens,
-      srcToken: [
-        {
-          id: fromAddress || '',
-          decimals: fromDecimals || 18
-        }
-      ]
-    })
+    const { tokenAmounts, transactionError, transactionsDataTx } =
+      await operation.getAmountsOut({
+        chainId: pool?.chain_id?.toString() || '',
+        destToken: destTokens,
+        srcToken: [
+          {
+            id: fromAddress || '',
+            decimals: fromDecimals || 18
+          }
+        ]
+      })
 
     setTrasactionData(transactionsDataTx)
-
     return {
       amountsTokenIn: tokenAmounts,
-      transactionsDataTx
+      transactionsDataTx,
+      transactionError
     }
   }
 
-  async function handleSwapProviderV1(): Promise<{
-    amountsTokenIn: string[]
-    transactionsDataTx: string[]
-  }> {
+  async function handleSwapProviderV1(): Promise<SwapProvider> {
     const tokenWithHigherLiquidityPool = checkTokenWithHigherLiquidityPool(
       pool?.underlying_assets || []
     )
@@ -260,7 +264,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         ? tokenAddressOrYRT
         : tokenWithHigherLiquidityPool?.address
 
-    let data1Inch = {
+    let data1Inch: SwapProvider = {
       amountsTokenIn: [Big(amountTokenIn).toFixed()],
       transactionsDataTx: ['']
     }
@@ -274,6 +278,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       tokenInAddress,
       newAmountsTokenIn: data1Inch.amountsTokenIn,
       transactionsDataTx: data1Inch.transactionsDataTx,
+      transactionError: data1Inch?.transactionError,
       isWrap: tokensChecked
         ? tokensChecked.is_wraps
         : tokenWithHigherLiquidityPool.isWrap
@@ -538,10 +543,12 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
       setAmountTokenOut(Big(0))
       setAmountTokenOuttWithoutFees(Big(0))
       setErrorMsg('')
+      setIsLoading(false)
       return
     }
 
     if (!(inputAmountTokenRef && inputAmountTokenRef.current !== null)) return
+    setIsLoading(true)
 
     const valueFormatted = decimalToBN(
       inputAmountTokenRef.current.value,
@@ -615,12 +622,17 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         if (transactionError) {
           setErrorMsg(transactionError)
         }
+        if (tokenSelected.transactionError) {
+          setErrorMsg(tokenSelected.transactionError)
+        }
 
         if (tokenSelect.address === NATIVE_ADDRESS) {
           await generateEstimatedGas(tokenSelected.transactionsDataTx[0])
         }
+        setIsLoading(false)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
+        setIsLoading(false)
         const errorStr = error.toString()
         if (wallet?.provider) {
           if (errorStr.search('ERR_BPOW_BASE_TOO_HIGH') > -1) {
@@ -629,9 +641,9 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
             )
             return
           }
-          ToastWarning(
-            'Could not connect with the blockchain to calculate prices.'
-          )
+          // ToastWarning(
+          //   'Could not connect with the blockchain to calculate prices.'
+          // )
         }
       }
     }
@@ -725,8 +737,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         maxActive={maxActive}
         setMaxActive={setMaxActive}
         inputAmountTokenRef={inputAmountTokenRef}
-        errorMsg={errorMsg}
         gasFee={gasFee}
+        setIsLoading={setIsLoading}
       />
       <img
         src="/assets/icons/arrow-down.svg"
@@ -738,15 +750,26 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         amountTokenOut={amountTokenOut}
         outAssetBalance={outAssetBalance}
         setOutAssetBalance={setOutAssetBalance}
+        isLoading={isLoading}
       />
 
       <S.TransactionSettingsContainer>
+        <S.WarningCardContainer>
+          <WarningCard showCard={!!errorMsg}>
+            <p>{errorMsg}</p>
+          </WarningCard>
+        </S.WarningCardContainer>
+
         <S.ExchangeRate>
           <S.SpanLight>Price Impact:</S.SpanLight>
           <S.PriceImpactWrapper
             price={Number(BNtoDecimal(priceImpact, 18, 2, 2)) ?? 0}
           >
-            {BNtoDecimal(priceImpact, 18, 2, 2)}%
+            {isLoading ? (
+              <SkeletonLoading height={1.8} width={5} />
+            ) : (
+              BNtoDecimal(priceImpact, 18, 2, 2)
+            )}
           </S.PriceImpactWrapper>
         </S.ExchangeRate>
         <S.ExchangeRate>
@@ -812,12 +835,17 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
               (approvals[typeAction][0] === Approval.Approved &&
                 (amountTokenIn.toString() === '0' ||
                   amountTokenOut.toString() === '0' ||
-                  errorMsg?.length > 0))
+                  errorMsg?.length > 0)) ||
+              isLoading ||
+              Big(amountTokenIn).gt(selectedTokenInBalance) ||
+              errorMsg.length > 0
             }
             fullWidth
             type="submit"
             text={
-              approvals[typeAction][0] === Approval.Approved
+              isLoading
+                ? 'Looking for best route'
+                : approvals[typeAction][0] === Approval.Approved
                 ? amountTokenIn.toString() !== '0' ||
                   inputAmountTokenRef?.current?.value !== null
                   ? `${typeAction} ${

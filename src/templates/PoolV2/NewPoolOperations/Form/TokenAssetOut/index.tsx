@@ -10,6 +10,7 @@ import { usePoolData } from '@/hooks/query/usePoolData'
 import { BNtoDecimal } from '../../../../../utils/numerals'
 import { getBalanceToken, getPoolPrice } from '../../../../../utils/poolUtils'
 import PoolOperationContext from '../PoolOperationContext'
+import SkeletonLoading from '@/components/SkeletonLoading'
 
 import * as S from './styles'
 
@@ -18,13 +19,15 @@ interface ITokenAssetOutProps {
   amountTokenOut?: Big
   outAssetBalance: Big
   setOutAssetBalance: React.Dispatch<React.SetStateAction<Big>>
+  isLoading: boolean
 }
 
 const TokenAssetOut = ({
   typeAction,
   amountTokenOut,
   outAssetBalance,
-  setOutAssetBalance
+  setOutAssetBalance,
+  isLoading
 }: ITokenAssetOutProps) => {
   const [{ wallet }] = useConnectWallet()
   const { priceToken } = React.useContext(PoolOperationContext)
@@ -104,19 +107,30 @@ const TokenAssetOut = ({
         </S.TokenContainer>
         <S.InputContainer>
           {/* <Tippy content={disabled} disabled={true}> */}
-          <S.Input
-            readOnly={true}
-            type="number"
-            placeholder="0"
-            value={BNtoDecimal(
-              amountTokenOut?.div(Big(10).pow(18)) || Big(0),
-              18,
-              6
-            ).replace(/\s/g, '')}
-          />
+          <S.InputContent>
+            {isLoading ? (
+              <SkeletonLoading height={2.4} width={12} />
+            ) : (
+              <S.Input
+                readOnly={true}
+                type="number"
+                placeholder="0"
+                value={BNtoDecimal(
+                  amountTokenOut?.div(Big(10).pow(18)) || Big(0),
+                  18,
+                  6
+                ).replace(/\s/g, '')}
+              />
+            )}
+          </S.InputContent>
           {/* </Tippy> */}
+
           <S.PriceDolar>
-            USD: {priceUSDLength > 6 ? '0.00' : priceUSD}
+            {isLoading ? (
+              <SkeletonLoading height={1.8} width={8} />
+            ) : (
+              <>USD: {priceUSDLength > 6 ? '0.00' : priceUSD}</>
+            )}
           </S.PriceDolar>
         </S.InputContainer>
       </S.FlexContainer>

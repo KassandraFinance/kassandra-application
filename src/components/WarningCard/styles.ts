@@ -4,13 +4,12 @@ interface IWarningCardProps {
   showCard: boolean
 }
 
-// eslint-disable-next-line prettier/prettier
 export const WarningCard = styled.div<IWarningCardProps>`
   ${({ theme }) => css`
     display: flex;
     align-items: start;
     min-height: 0;
-    padding: 1.6rem 2.4rem;
+    padding: 0;
     gap: 1rem;
     width: 100%;
 
@@ -29,14 +28,20 @@ export const WarningCard = styled.div<IWarningCardProps>`
     transition-property: opacity;
 
     img {
-      margin-top: 0.1rem;
+      display: none;
     }
   `}
 
   ${({ showCard }) =>
     showCard &&
     css`
-      min-height: 8.4rem;
+      min-height: 6rem;
+      padding: 0.8rem 1.6rem;
       opacity: 1;
+
+      img {
+        display: flex;
+        margin-top: 0.1rem;
+      }
     `}
 `

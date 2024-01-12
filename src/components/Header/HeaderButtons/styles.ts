@@ -20,6 +20,7 @@ export const HeaderButtons = styled.div<IHeaderButtonsProps>`
 
       font-weight: ${theme.font.weight.normal};
       font-size: ${theme.font.sizes.font14};
+      background-color: transparent;
 
       transition: 300ms;
 

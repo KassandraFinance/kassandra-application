@@ -62,10 +62,12 @@ export const tokenLogo = styled.span`
   }
 `
 
-export const Input = styled.input`
+export const Value = styled.p`
   ${({ theme }) => css`
     width: 100%;
     margin: 0.8rem 0;
+    display: flex;
+    justify-content: flex-end;
 
     color: #fff;
     font-family: ${theme.font.family};
@@ -73,24 +75,6 @@ export const Input = styled.input`
     font-weight: ${theme.font.weight.normal};
     line-height: ${theme.font.sizes.font14};
     text-align: right;
-
-    background-color: transparent;
-    border: none;
-
-    outline: none;
-
-    &::placeholder {
-      color: #fff;
-    }
-
-    &[type='number']::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-    }
-
-    &[type='number'] {
-      -moz-appearance: textfield;
-      appearance: textfield;
-    }
   `}
 `
 
@@ -156,5 +140,6 @@ export const BestValueItem = styled.div`
   ${() => css`
     width: 100%;
     height: 7.4rem;
+    padding-right: 1rem;
   `}
 `

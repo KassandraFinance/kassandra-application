@@ -23,11 +23,13 @@ import { getBalanceToken, decimalToBN } from '../../../../../utils/poolUtils'
 
 import PoolOperationContext from '../PoolOperationContext'
 
+import TokenAssetIn from '../TokenAssetIn'
+import WarningCard from '@/components/WarningCard'
 import Button from '../../../../../components/Button'
 import InputAndOutputValueToken from '../InputAndOutputValueToken'
 import ListOfAllAsset from '../ListOfAllAsset'
-import TokenAssetIn from '../TokenAssetIn'
 import TransactionSettings from '../TransactionSettings'
+import SkeletonLoading from '@/components/SkeletonLoading'
 
 import * as S from './styles'
 
@@ -85,6 +87,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   })
   const [trasactionData, setTrasactionData] = React.useState<any>()
   const [amountOutList, setAmountOutList] = React.useState<string[]>([])
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const inputAmountInTokenRef = React.useRef<HTMLInputElement>(null)
   const inputAmountOutTokenRef = React.useRef<HTMLInputElement>(null)
@@ -380,6 +383,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       }
       return
     }
+    setIsLoading(true)
 
     const calc = async () => {
       if (!(inputAmountInTokenRef && inputAmountInTokenRef.current !== null)) {
@@ -393,6 +397,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           asset =>
             (asset.token.wraps?.id ?? asset.token.id) === tokenSelect.address
         )
+        setIsLoading(false)
         if (!assetIn) return
         tokenAddress = assetIn.token.id
         isWrap = !!assetIn.token.wraps
@@ -416,6 +421,8 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
           setamountAllTokenOut(withdrawAllAmoutOut ?? {})
           transactionError && setErrorMsg(transactionError)
+
+          setIsLoading(false)
 
           return
         }
@@ -455,7 +462,11 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           setAmountOutList(amountOutList)
         }
         transactionError && setErrorMsg(transactionError)
+
+        setIsLoading(false)
       } catch (error) {
+        setIsLoading(false)
+        console.log(error)
         return error
       }
     }
@@ -576,7 +587,6 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         setamountTokenIn={setamountTokenIn}
         selectedTokenInBalance={selectedTokenInBalance}
         inputAmountTokenRef={inputAmountInTokenRef}
-        errorMsg={errorMsg}
         maxActive={maxActive}
         setMaxActive={setMaxActive}
         disabled={
@@ -593,6 +603,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
         <ListOfAllAsset
           amountAllTokenOut={amountAllTokenOut}
           balanceAllTokenOut={balanceAllTokenOut}
+          isLoading={isLoading}
         />
       ) : (
         <InputAndOutputValueToken
@@ -602,18 +613,28 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           selectedTokenInBalance={selectedTokenOutBalance}
           setSelectedTokenInBalance={setSelectedTokenOutBalance}
           inputAmountTokenRef={inputAmountOutTokenRef}
-          errorMsg=""
+          isLoading={isLoading}
         />
       )}
 
       <S.TransactionSettingsContainer>
+        <S.WarningCardContainer>
+          <WarningCard showCard={!!errorMsg}>
+            <p>{errorMsg}</p>
+          </WarningCard>
+        </S.WarningCardContainer>
+
         {typeWithdraw === 'Single_asset' && (
           <S.ExchangeRate>
             <S.SpanLight>Price Impact:</S.SpanLight>
             <S.PriceImpactWrapper
               price={Number(BNtoDecimal(priceImpact, 18, 2, 2))}
             >
-              {BNtoDecimal(priceImpact, 18, 2, 2)}%
+              {isLoading ? (
+                <SkeletonLoading height={2} width={6} />
+              ) : (
+                <>{BNtoDecimal(priceImpact, 18, 2, 2)}%</>
+              )}
             </S.PriceImpactWrapper>
           </S.ExchangeRate>
         )}
@@ -656,12 +677,17 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
                   amountTokenOut.toString() === '0') ||
                 (typeWithdraw === 'Best_value' &&
                   Object.values(amountAllTokenOut).length === 0) ||
-                errorMsg.length > 0))
+                errorMsg.length > 0)) ||
+            Big(amountTokenIn).gt(selectedTokenInBalance) ||
+            errorMsg.length > 0 ||
+            isLoading
           }
           fullWidth
           type="submit"
           text={
-            approvals[typeAction][0] === Approval.Approved
+            isLoading
+              ? 'Looking for best route'
+              : approvals[typeAction][0] === Approval.Approved
               ? amountTokenIn.toString() !== '0' ||
                 inputAmountInTokenRef?.current?.value !== null
                 ? typeWithdraw === 'Best_value'

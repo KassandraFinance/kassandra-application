@@ -1,3 +1,4 @@
+import { WarningCard } from '@/components/WarningCard/styles'
 import styled, { css } from 'styled-components'
 
 export const Invest = styled.form`
@@ -160,6 +161,15 @@ export const PriceImpactWrapper = styled.span<IPriceImpactWrapperProps>`
 
     @media (max-width: 360px) {
       font-size: 1.07rem;
+    }
+  `}
+`
+
+export const WarningCardContainer = styled.div`
+  ${({ theme }) => css`
+    ${WarningCard} {
+      color: ${theme.colors.gray};
+      font-size: ${theme.font.sizes.font14};
     }
   `}
 `

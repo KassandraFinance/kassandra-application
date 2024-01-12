@@ -83,3 +83,25 @@ export const ManagedPoolsContainer = styled.div`
     width: 100%;
   `}
 `
+
+export const WarningCardContainer = styled.div`
+  ${() => css`
+    margin-bottom: 1.8rem;
+  `}
+`
+
+export const text = styled.p`
+  ${({ theme }) => css`
+    font-size: ${theme.font.sizes.font16};
+    font-weight: ${theme.font.weight.light};
+    line-height: 130%;
+
+    margin-bottom: 1.4rem;
+  `}
+`
+
+export const ExternalLinkContainer = styled.div`
+  ${() => css`
+    margin-bottom: 2rem;
+  `}
+`

@@ -84,18 +84,24 @@ export class ParaSwap implements ISwapProvider {
 
         const resJson = await fetch(`${this.baseUrl}/prices?${query}`)
         const response = resJson.json()
+
         return response
       })
     })
 
     const amounts = await Promise.all(requests)
 
+    let transactionError: string | undefined
     const _size = amounts.length
     for (let index = 0; index < _size; index++) {
       const data = amounts[index]
 
-      tokenAmounts.push(data?.priceRoute?.destAmount ?? data)
+      tokenAmounts.push(data?.priceRoute?.destAmount ?? '0')
 
+      if (data.error) {
+        transactionError =
+          'Your investment amount is below the minimum required. Please adjust before proceeding.'
+      }
       if (transactionType === 'withdraw') {
         transactionsDataTx.push(data)
       }
@@ -106,6 +112,7 @@ export class ParaSwap implements ISwapProvider {
 
     return {
       tokenAmounts,
+      transactionError,
       transactionsDataTx
     }
   }
