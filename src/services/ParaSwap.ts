@@ -97,11 +97,11 @@ export class ParaSwap implements ISwapProvider {
       const data = amounts[index]
 
       if (data.error) {
-        tokenAmounts.push(data?.priceRoute?.destAmount ?? '0')
+        tokenAmounts.push(data.priceRoute?.destAmount ?? '0')
         transactionError =
           'Your investment amount is below the minimum required. Please adjust before proceeding.'
       } else {
-        tokenAmounts.push(data?.priceRoute?.destAmount ?? data)
+        tokenAmounts.push(data.priceRoute?.destAmount ?? data)
       }
 
       if (transactionType === 'withdraw') {
