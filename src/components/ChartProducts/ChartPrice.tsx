@@ -35,6 +35,15 @@ const tooltipPosition = {
 const ChartPrice = ({ data, color }: IChartPriceProps) => {
   const [position, setPosition] = React.useState(tooltipPosition.desktop)
 
+  const domain = React.useMemo(() => {
+    const closes = data.map(item => parseFloat(item.close))
+
+    return {
+      max: Math.max.apply(null, closes),
+      min: Math.min.apply(null, closes)
+    }
+  }, [data])
+
   React.useEffect(() => {
     const widthDevice = window.screen.width
 
@@ -77,7 +86,7 @@ const ChartPrice = ({ data, color }: IChartPriceProps) => {
         />
         <YAxis
           mirror
-          domain={['auto', 'auto']}
+          domain={[domain.min, domain.max]}
           tickLine={false}
           axisLine={false}
           tickFormatter={item => {
