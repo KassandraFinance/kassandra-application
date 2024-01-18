@@ -288,13 +288,17 @@ export const LockButton = styled.button<ILockButtonProps>`
       background-color: rgb(255 255 255 / 0.08);
     }
   `}
-  ${({ active }) => active && css`
-    border: 1px solid rgb(255 255 255 / 0.1) ;
-
-    background-color: rgb(255 255 255 / 0.08);
+  ${({ theme, active }) => active && css`
+    border: 1px solid ${theme.colors.blue};
+    background-color: ${theme.colors.blue};
 
     #lock-up-closed {
       stroke-dashoffset: 0%;
+    }
+
+    &:hover {
+      background-color: ${theme.colors.blue};
+      filter: brightness(0.9);
     }
   `}
 `
