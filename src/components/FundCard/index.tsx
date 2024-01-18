@@ -169,7 +169,9 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
               <S.CardBody>
                 <S.FundName>
                   <h3>{data.name}</h3>
-                  <span>by {data.manager.nickname ?? substr(data.manager.id)}</span>
+                  <span>
+                    by {data.manager.nickname ?? substr(data.manager.id)}
+                  </span>
                 </S.FundName>
 
                 <S.FundStatusContainer>
