@@ -18,6 +18,7 @@ import arrowAscend from '@assets/notificationStatus/arrow-ascend.svg'
 import arrowDescend from '@assets/notificationStatus/arrow-descend.svg'
 
 import { UnderlyingAssetsInfoType } from '@/utils/updateAssetsToV2'
+import substr from '@/utils/substr'
 
 import * as S from './styles'
 
@@ -167,8 +168,10 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
 
               <S.CardBody>
                 <S.FundName>
-                  <h3>{data?.name}</h3>
-                  <span>by {data?.founded_by ?? 'Community'}</span>
+                  <h3>{data.name}</h3>
+                  <span>
+                    by {data.manager.nickname ?? substr(data.manager.id)}
+                  </span>
                 </S.FundName>
 
                 <S.FundStatusContainer>
