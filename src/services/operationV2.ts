@@ -198,7 +198,11 @@ export default class operationV2 implements IOperations {
         ? networks[Number(this.poolInfo.chainId)].nativeCurrency.address
         : tokenInAddress
 
-    const datas = await this.getDatasTx(slippage, data)
+    if (!Big(tokenAmountIn).eq(Big(data.amountTokenIn))) {
+      throw { code: 'KASS#02', message: 'please recalculate' }
+    }
+
+    const datas = await this.getDatasTx(slippage, data.transactionsDataTx)
 
     if (datas.length < 1) {
       throw { code: 'KASS#02', message: 'please recalculate' }

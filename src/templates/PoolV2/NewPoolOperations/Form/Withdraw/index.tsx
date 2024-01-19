@@ -367,6 +367,8 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   }
 
   React.useEffect(() => {
+    let isCurrent = true
+
     if (typeAction !== 'Withdraw' || tokenSelect.address === pool?.id) {
       return
     }
@@ -431,6 +433,8 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       try {
         if (!tokenAddress || !wallet) return
 
+        if (!isCurrent) return
+
         const {
           withdrawAmoutOut,
           transactionError,
@@ -489,6 +493,10 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     calc()
     setErrorMsg('')
     setAmountTokenOut(new Big(0))
+
+    return () => {
+      isCurrent = false
+    }
   }, [typeAction, typeWithdraw, chainId, amountTokenIn, tokenSelect])
 
   React.useEffect(() => {
