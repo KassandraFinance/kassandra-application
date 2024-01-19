@@ -15,14 +15,18 @@ query FundCard(
       price_usd # pool asset price
       pool_version
       featured
+      manager {
+        id
+        nickname
+      }
+      chain {
+        logo: icon
+      }
       # price candlestick
       # just taking the close value can make a line graph
       # base can be usd or btc
       # period is in seconds, 5m, 15m, 1h, 4h, 1d, 7d
       # timestamp_gt it's since when to catch
-      chain {
-        logo: icon
-      }
       price_candles(
         where: {
           base: "usd"

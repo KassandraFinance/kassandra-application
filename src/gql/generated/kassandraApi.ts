@@ -8065,6 +8065,7 @@ export type FundCardQuery = {
     featured: boolean
     total_value_locked_usd: string
     strategy: string
+    manager: { __typename?: 'Manager'; id: string; nickname?: string | null }
     chain: { __typename?: 'Chain'; logo?: string | null }
     price_candles: Array<{
       __typename?: 'Candle'
@@ -9503,6 +9504,10 @@ export const FundCardDocument = gql`
       price_usd
       pool_version
       featured
+      manager {
+        id
+        nickname
+      }
       chain {
         logo: icon
       }

@@ -195,7 +195,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         ]
       })
 
-    setTrasactionData(transactionsDataTx)
+    setTrasactionData({ amountTokenIn, transactionsDataTx })
+
     return {
       amountsTokenIn: tokenAmounts,
       transactionsDataTx,
@@ -532,6 +533,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
 
   // calculate investment
   React.useEffect(() => {
+    let isCurrent = true
+
     if (
       typeAction !== 'Invest' ||
       tokenSelect.address.length === 0 ||
@@ -611,6 +614,8 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           amountTokenIn: Big(amountTokenIn)
         })
 
+        if (!isCurrent) return
+
         setAmountTokenOut(Big(investAmountOut.toString()))
         setAmountTokenOuttWithoutFees(
           Big(
@@ -670,6 +675,10 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     setErrorMsg('')
     setAmountTokenOut(Big(0))
     setAmountTokenOuttWithoutFees(Big(0))
+
+    return () => {
+      isCurrent = false
+    }
   }, [pool, tokenSelect, amountTokenIn])
 
   React.useEffect(() => {

@@ -134,7 +134,7 @@ const ShareImageModal = ({
               />
             </S.ModalHeader>
             <S.ModalBody>
-              <S.ImageContainer className="image-container" ref={printRef}>
+              <S.ImageWrapper>
                 {!wallet && (
                   <WarningCard>
                     <p>
@@ -143,8 +143,11 @@ const ShareImageModal = ({
                     </p>
                   </WarningCard>
                 )}
-                <div className="scroll">{children}</div>
-              </S.ImageContainer>
+
+                <S.ImageContainer className="image-container" ref={printRef}>
+                  <div className="scroll">{children}</div>
+                </S.ImageContainer>
+              </S.ImageWrapper>
 
               <S.SocialMediaContainer>
                 <TwitterShareButton
