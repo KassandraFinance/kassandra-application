@@ -5,13 +5,6 @@ export const VoteContent = styled.div`
   max-width: 114rem;
   margin: 0 auto;
 
-  a {
-    display: flex;
-    justify-content: center;
-
-    margin: 3.2rem auto 10rem;
-  }
-
   @media (max-width: 1200px) {
     padding: 0 3rem;
   }
@@ -48,6 +41,19 @@ export const TitleAndLinkContent = styled.div`
     flex-direction: column;
     align-items: flex-start;
   }
+`
+
+export const ExternalLinkWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+
+  margin: 3.2rem auto 10rem;
+`
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2.4rem;
 `
 
 export const LinkForum = styled.a`
