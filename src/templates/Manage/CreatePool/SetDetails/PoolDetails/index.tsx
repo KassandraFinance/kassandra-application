@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
 import { setPoolData } from '../../../../../store/reducers/poolCreationSlice'
 
 import PoolText from './PoolText'
-import MarkdownEditor from './MarkdownEditor'
+import MarkdownEditor from '../../../../../components/MarkdownEditor'
 import InputText from '@/components/Inputs/InputText'
 import TextareaWithValueCounter from '@/components/TextareaWithValueCounter'
 
@@ -86,7 +86,10 @@ const PoolDetails = () => {
           text="Let your investors know what you are planning. Write the strategy you will follow managing the pool."
         />
 
-        <MarkdownEditor handleEditorChange={handleEditorChange} />
+        <MarkdownEditor
+          value={details.strategy}
+          handleEditorChange={handleEditorChange}
+        />
       </S.Strategy>
     </S.PoolDetails>
   )
