@@ -97,13 +97,38 @@ const useGov = (address: string) => {
       }
     }
 
+    const propose = async (
+      targets: string[],
+      values: string[],
+      signatures: string[],
+      callDatas: string[],
+      description: string
+    ) => {
+      try {
+        const tx = await contract.send.propose(
+          targets,
+          values,
+          signatures,
+          callDatas,
+          description
+        )
+
+        const status = await txNotification(tx)
+        return status
+      } catch (error) {
+        console.log('error', error)
+        transactionErrors(error)
+      }
+    }
+
     return {
       proposalCount,
       proposals,
       stateProposals,
       pastEvents,
 
-      castVote
+      castVote,
+      propose
     }
   }, [contract])
 }
