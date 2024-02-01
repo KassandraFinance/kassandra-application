@@ -1,9 +1,11 @@
 import React from 'react'
+import Big from 'big.js'
+import Link from 'next/link'
 import Image from 'next/image'
-import { getAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { useProposals } from '@/hooks/query/useProposals'
+import { useVotingPower } from '@/hooks/query/useVotingPower'
 
 import TitleSection from '@/components/TitleSection'
 import Breadcrumb from '@/components/Breadcrumb'
@@ -23,14 +25,16 @@ const Proposals = () => {
   const [skip, setSkip] = React.useState<number>(0)
 
   const [{ wallet }] = useConnectWallet()
+  const { data } = useProposals({ skip: 0, take: 1 })
+  const { data: votingPowerData } = useVotingPower({
+    id: wallet?.accounts[0].address ?? ''
+  })
 
   const take = 10
 
   function handlePageClick(data: { selected: number }, take: number) {
     setSkip(data.selected * take)
   }
-
-  const { data } = useProposals({ skip: 0, take: 1 })
 
   return (
     <>
@@ -47,10 +51,12 @@ const Proposals = () => {
             <TitleSection image={proposals} title="Governance Proposals" />
             <S.VotingPowerContent>
               <VotingPower
-                userWalletAddress={
-                  wallet ? getAddress(wallet.accounts[0].address) : ''
-                }
-                isMobile={true}
+                currentVotingPower={Big(
+                  votingPowerData?.user?.votingPower ?? '0'
+                )}
+                totalVotingPower={Big(
+                  votingPowerData?.governances[0]?.totalVotingPower ?? '0'
+                )}
               />
             </S.VotingPowerContent>
             {wallet ? (
