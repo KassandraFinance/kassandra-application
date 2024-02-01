@@ -7,6 +7,7 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { useProposals } from '@/hooks/query/useProposals'
 import { useVotingPower } from '@/hooks/query/useVotingPower'
 
+import Button from '@/components/Button'
 import TitleSection from '@/components/TitleSection'
 import Breadcrumb from '@/components/Breadcrumb'
 import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
@@ -71,14 +72,25 @@ const Proposals = () => {
         <S.AllProposalsContent>
           <S.TitleAndLinkContent>
             <TitleSection image={proposals} title="All Proposals" />
-            <S.LinkForum
-              href="https://gov.kassandra.finance/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span>Discuss the proposals at the Forum</span>
-              <Image src={externalLink} alt="" />
-            </S.LinkForum>
+
+            <S.ButtonWrapper>
+              <S.LinkForum
+                href="https://gov.kassandra.finance/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>Discuss the proposals at the Forum</span>
+                <Image src={externalLink} alt="" />
+              </S.LinkForum>
+
+              <Link href="/gov/create-proposal" passHref>
+                <Button
+                  as="a"
+                  text="Create Your Proposals"
+                  background="primary"
+                />
+              </Link>
+            </S.ButtonWrapper>
           </S.TitleAndLinkContent>
           <ProposalTable skip={skip} take={take} />
         </S.AllProposalsContent>

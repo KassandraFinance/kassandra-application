@@ -37,9 +37,14 @@ export const TitleAndLinkContent = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  @media (max-width: 560px) {
+  @media (max-width: 992px) {
     flex-direction: column;
     align-items: flex-start;
+    gap: 2.4rem;
+  }
+
+  @media (max-width: 576px) {
+    gap: 0;
   }
 `
 
@@ -54,6 +59,18 @@ export const ButtonWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 2.4rem;
+
+  @media (max-width: 992px) {
+    width: 100%;
+
+    > a {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+  }
 `
 
 export const LinkForum = styled.a`

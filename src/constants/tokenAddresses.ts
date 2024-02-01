@@ -42,7 +42,7 @@ export const PROXY_CONTRACT_V1 =
 
 export const VERSION_POOL_CREATE = '1.1'
 
-export const MIN_DOLLAR_TO_CREATE_POOL = 100
+export const MIN_DOLLAR_TO_CREATE_POOL = 10
 
 export const NATIVE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
@@ -74,6 +74,8 @@ export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
 export const COINS_METADATA =
   process.env.NEXT_PUBLIC_COINS_METADATA ?? 'http://localhost:3001'
+export const URL_PROPOSE_FUNCTION_SNOWTRACE =
+  'https://snowtrace.io/address/0x87E60617738F4F9Fb3Db3B61C7A34b9fF82412a4/contract/43114/writeContract?chainId=43114'
 
 type CurrencyDetails = {
   name: string

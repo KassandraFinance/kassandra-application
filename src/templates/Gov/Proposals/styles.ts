@@ -5,15 +5,6 @@ export const VoteContent = styled.div`
   max-width: 114rem;
   margin: 0 auto;
 
-  a {
-    display: flex;
-    justify-content: center;
-    margin-top: 3.2rem;
-    margin-right: auto;
-    margin-left: auto;
-    margin-bottom: 10rem;
-  }
-
   @media (max-width: 1200px) {
     padding: 0 3rem;
   }
@@ -38,7 +29,6 @@ export const Title = styled.div`
   flex-direction: column;
   justify-content: flex-start;
 
-  max-width: 100%;
   a {
     max-width: 17.2rem;
 
@@ -47,6 +37,7 @@ export const Title = styled.div`
 
   @media (max-width: 710px) {
     margin-bottom: ${theme.spacings.space24};
+    width: 100%;
   }
 `
 export const VotingPowerContent = styled.div`
@@ -54,6 +45,7 @@ export const VotingPowerContent = styled.div`
   margin-bottom: 1.6rem;
 
   @media (max-width: 960px) {
+    max-width: 30rem;
     margin-top: 0;
   }
 
@@ -73,9 +65,32 @@ export const TitleAndLinkContent = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  @media (max-width: 560px) {
+  @media (max-width: 992px) {
     flex-direction: column;
     align-items: flex-start;
+    gap: 2.4rem;
+  }
+
+  @media (max-width: 576px) {
+    gap: 0;
+  }
+`
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2.4rem;
+
+  @media (max-width: 992px) {
+    width: 100%;
+
+    > a {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 576px) {
+    flex-direction: column;
   }
 `
 
