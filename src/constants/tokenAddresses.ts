@@ -42,7 +42,7 @@ export const PROXY_CONTRACT_V1 =
 
 export const VERSION_POOL_CREATE = '1.1'
 
-export const MIN_DOLLAR_TO_CREATE_POOL = 10
+export const MIN_DOLLAR_TO_CREATE_POOL = 100
 
 export const NATIVE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
