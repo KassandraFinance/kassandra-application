@@ -74,7 +74,7 @@ const DepositFee = ({
               }
               minLength={0}
               maxLength={94}
-              lable="Deposit fee rate (%)"
+              label="Deposit fee rate (%)"
               error={
                 feesData.depositFee.feeRate &&
                 Number(feesData.depositFee.feeRate) > 50 &&
@@ -93,7 +93,7 @@ const DepositFee = ({
                 value={wallet?.accounts[0].address}
                 minLength={0}
                 maxLength={42}
-                lable="recipient address"
+                label="recipient address"
                 error="Invalid address"
                 readonly
                 onChange={() => {

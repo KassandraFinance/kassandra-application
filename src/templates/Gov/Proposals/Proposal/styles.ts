@@ -32,11 +32,11 @@ export const IntroMobileScreen = styled.div`
   }
 `
 export const TitleWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  justify-content: space-between;
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 `
 export const TitleAndAuthor = styled.div`
@@ -111,21 +111,17 @@ export const VotingPower = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
+  width: 32rem;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 32rem;
+    margin-top: 2rem;
+  }
 
   @media (max-width: 670px) {
     max-width: 100%;
     align-items: flex-start;
-  }
-
-  ${VotingPowerStyles.VotingPower} {
-    @media (max-width: 768px) {
-      width: 34.8rem;
-      max-width: 100%;
-    }
-
-    @media (max-width: 670px) {
-      width: 100%;
-    }
   }
 `
 export const VoteCardWrapper = styled.div`

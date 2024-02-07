@@ -5,13 +5,6 @@ export const VoteContent = styled.div`
   max-width: 114rem;
   margin: 0 auto;
 
-  a {
-    display: flex;
-    justify-content: center;
-
-    margin: 3.2rem auto 10rem;
-  }
-
   @media (max-width: 1200px) {
     padding: 0 3rem;
   }
@@ -44,9 +37,39 @@ export const TitleAndLinkContent = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  @media (max-width: 560px) {
+  @media (max-width: 992px) {
     flex-direction: column;
     align-items: flex-start;
+    gap: 2.4rem;
+  }
+
+  @media (max-width: 576px) {
+    gap: 0;
+  }
+`
+
+export const ExternalLinkWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+
+  margin: 3.2rem auto 10rem;
+`
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2.4rem;
+
+  @media (max-width: 992px) {
+    width: 100%;
+
+    > a {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 576px) {
+    flex-direction: column;
   }
 `
 

@@ -9,7 +9,7 @@ interface IInputTextProps {
   placeholder: string
   minLength: number
   maxLength: number
-  lable: string
+  label?: string
   error: string
   readonly?: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -24,14 +24,14 @@ const InputText = ({
   placeholder,
   minLength,
   maxLength,
-  lable,
+  label,
   error,
   readonly = false,
   onChange
 }: IInputTextProps) => {
   return (
     <S.InputText>
-      <S.Label htmlFor={name}>{lable}</S.Label>
+      <S.Label htmlFor={name}>{label}</S.Label>
 
       <S.InputContainer>
         <S.Input

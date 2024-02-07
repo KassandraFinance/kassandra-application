@@ -2,6 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { getAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
+import Big from 'big.js'
 
 import VotingPower from '@/components/VotingPower'
 import Breadcrumb from '@/components/Breadcrumb'
@@ -10,6 +11,7 @@ import SelectTabs from '@/components/SelectTabs'
 import TitleSection from '@/components/TitleSection'
 import Farm from './Farm'
 import Stake from './Stake'
+import { useVotingPower } from '@/hooks/query/useVotingPower'
 
 import productBarIcon from '@assets/iconGradient/product-bar.svg'
 import stakingPoolsIcon from '@assets/iconGradient/staking-pools.svg'
@@ -38,6 +40,7 @@ const StakeFarm = () => {
   const [{ wallet }] = useConnectWallet()
 
   const walletAddress = wallet ? getAddress(wallet.accounts[0].address) : ''
+  const { data } = useVotingPower({ id: walletAddress })
 
   const router = useRouter()
 
@@ -65,7 +68,15 @@ const StakeFarm = () => {
               title="Stake and Farm KACY"
               text="Earn rewards and voting power by staking KACY and other assets"
             />
-            <VotingPower userWalletAddress={walletAddress} />
+
+            <S.VotingPowerContainer>
+              <VotingPower
+                currentVotingPower={Big(data?.user?.votingPower ?? '0')}
+                totalVotingPower={Big(
+                  data?.governances[0]?.totalVotingPower ?? '0'
+                )}
+              />
+            </S.VotingPowerContainer>
           </S.StakeWithPowerVote>
 
           <SelectTabs

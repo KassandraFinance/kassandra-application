@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from '../../../../../store/hooks'
 import { setPoolData } from '../../../../../store/reducers/poolCreationSlice'
 
 import PoolText from './PoolText'
-import MarkdownEditor from './MarkdownEditor'
+import MarkdownEditor from '../../../../../components/MarkdownEditor'
 import InputText from '@/components/Inputs/InputText'
 import TextareaWithValueCounter from '@/components/TextareaWithValueCounter'
 
@@ -48,7 +48,7 @@ const PoolDetails = () => {
           value={details.poolName ?? ''}
           minLength={3}
           maxLength={20}
-          lable="managed pool name"
+          label="managed pool name"
           error="Invalid fund name. Fund names must be 32 characters or less"
           onChange={handleInput}
         />
@@ -62,7 +62,7 @@ const PoolDetails = () => {
           value={details.poolSymbol ?? ''}
           minLength={3}
           maxLength={5}
-          lable="managed pool symbol"
+          label="managed pool symbol"
           error="Invalid symbol. Symbols should have 3 to 5 characters."
           onChange={handleInput}
         />
@@ -86,7 +86,10 @@ const PoolDetails = () => {
           text="Let your investors know what you are planning. Write the strategy you will follow managing the pool."
         />
 
-        <MarkdownEditor handleEditorChange={handleEditorChange} />
+        <MarkdownEditor
+          value={details.strategy}
+          handleEditorChange={handleEditorChange}
+        />
       </S.Strategy>
     </S.PoolDetails>
   )
