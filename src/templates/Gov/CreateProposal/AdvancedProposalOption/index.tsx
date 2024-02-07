@@ -10,7 +10,7 @@ import substr from '@/utils/substr'
 
 import * as S from './styles'
 
-interface IAdvancedProps {
+interface IAdvancedProposalOptionProps {
   isOpenAdvancedOptions: boolean
   handleToggleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   proposalFunction: string
@@ -18,9 +18,7 @@ interface IAdvancedProps {
   proposalAddress: string
   handleProposalAddress: (event: React.ChangeEvent<HTMLInputElement>) => void
   proposalParamanters: string
-  handleProposalParamanters: (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => void
+  handleProposalParameters: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 const AdvancedProposalOption = ({
   isOpenAdvancedOptions,
@@ -30,8 +28,8 @@ const AdvancedProposalOption = ({
   proposalFunction,
   handleProposalFunctions,
   proposalParamanters,
-  handleProposalParamanters
-}: IAdvancedProps) => {
+  handleProposalParameters
+}: IAdvancedProposalOptionProps) => {
   return (
     <S.AdvancedProposalOption isOpen={isOpenAdvancedOptions}>
       <S.TitleContainer>
@@ -101,7 +99,7 @@ const AdvancedProposalOption = ({
             maxLength={10000}
             error=""
             value={proposalParamanters}
-            onChange={event => handleProposalParamanters(event)}
+            onChange={event => handleProposalParameters(event)}
             required={isOpenAdvancedOptions}
           />
           <S.Example>

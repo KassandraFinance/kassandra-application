@@ -17,7 +17,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
 import InputText from '@/components/Inputs/InputText'
 import MarkdownEditor from '@/components/MarkdownEditor'
-import TitleWithContador from './TitleWithContador'
+import TitleWithContador from './TitleWithCounter'
 import ExternalLink from '@/components/ExternalLink'
 import AdvancedProposalOption from './AdvancedProposalOption'
 
@@ -63,7 +63,7 @@ const CreateProposal = () => {
     setProposalAddress(event.target.value)
   }
 
-  function handleProposalParamanters(
+  function handleProposalParameters(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
     setProposalParamanters(event.target.value)
@@ -75,12 +75,12 @@ const CreateProposal = () => {
     return value.replace(/\s/g, '').match(regex) ?? []
   }
 
-  function extractParamentersTypeList(value: string) {
+  function extractParametersTypeList(value: string) {
     const regex = /\(([^)]*)\)/g
 
-    const paramentersList = [...value.matchAll(regex)]
+    const parametersList = [...value.matchAll(regex)]
 
-    return paramentersList.flatMap(item => item[1].split(','))
+    return parametersList.flatMap(item => item[1].split(','))
   }
 
   function checkForumLink(link: string) {
@@ -89,16 +89,16 @@ const CreateProposal = () => {
     return link.startsWith(forumLink)
   }
 
-  function extractParamantersValueList(value: string) {
+  function extractParametersValueList(value: string) {
     const regex = /\[.*?\]/g
 
     const match = value.match(regex)
-    const paramantersValue = match && match.map(item => item.slice(1, -1))
+    const parametersValue = match && match.map(item => item.slice(1, -1))
 
-    return paramantersValue
+    return parametersValue
   }
 
-  async function handleOnSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     const descriptionWithTitle =
@@ -138,7 +138,7 @@ const CreateProposal = () => {
     }
 
     const functionsList = extractFunctionsList(proposalFunction)
-    const parametersValueList = extractParamantersValueList(
+    const parametersValueList = extractParametersValueList(
       proposalParamanters.replace(/\s/g, '')
     )
 
@@ -166,15 +166,15 @@ const CreateProposal = () => {
     }
 
     const dataHexstring = functionsList.map((item, index) => {
-      const paramentersTypeList = extractParamentersTypeList(item)
-      const paramantersValue = parametersValueList
+      const parametersTypeList = extractParametersTypeList(item)
+      const parametersValue = parametersValueList
         ? parametersValueList[index].split(',')
         : []
 
       try {
         const data = new ethers.AbiCoder().encode(
-          paramentersTypeList,
-          paramantersValue
+          parametersTypeList,
+          parametersValue
         )
 
         return data
@@ -234,7 +234,7 @@ const CreateProposal = () => {
         </BreadcrumbItem>
       </Breadcrumb>
 
-      <S.CreateProposal onSubmit={handleOnSubmit}>
+      <S.CreateProposal onSubmit={handleSubmit}>
         <S.InputsContainer>
           <InputText
             lable="Title"
@@ -285,7 +285,7 @@ const CreateProposal = () => {
             handleToggleChange={handleToggleChange}
             handleProposalAddress={handleProposalAddress}
             handleProposalFunctions={handleProposalFunctions}
-            handleProposalParamanters={handleProposalParamanters}
+            handleProposalParameters={handleProposalParameters}
           />
 
           <S.ButtonContainer>
@@ -301,9 +301,9 @@ const CreateProposal = () => {
               <Tippy
                 allowHTML={true}
                 content={[
-                  <S.ErrorMensage key="message-error">
+                  <S.ErrorMessage key="message-error">
                     you dont have the minimum voting power to create a proposal
-                  </S.ErrorMensage>
+                  </S.ErrorMessage>
                 ]}
               >
                 <div>

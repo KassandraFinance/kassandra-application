@@ -61,6 +61,6 @@ export const ExternalLinkWrapper = styled.div`
   `}
 `
 
-export const ErrorMensage = styled.p`
+export const ErrorMessage = styled.p`
   text-align: center;
 `

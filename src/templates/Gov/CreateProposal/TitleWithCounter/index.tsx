@@ -1,20 +1,20 @@
 import * as S from './styles'
 
-interface ITitleWithContadorProps {
+interface ITitleWithCounterProps {
   title: string
   optional?: boolean
   maxValue?: number
   currentvalue?: number
 }
 
-const TitleWithContador = ({
+const TitleWithCounter = ({
   title,
   optional,
   maxValue,
   currentvalue
-}: ITitleWithContadorProps) => {
+}: ITitleWithCounterProps) => {
   return (
-    <S.TitleWithContador>
+    <S.TitleWithCounter>
       <S.TitleWrapper>
         <S.Title>{title}</S.Title>
         {optional && <S.Optional>(optional)</S.Optional>}
@@ -25,8 +25,8 @@ const TitleWithContador = ({
           {currentvalue}/{maxValue}
         </S.Values>
       )}
-    </S.TitleWithContador>
+    </S.TitleWithCounter>
   )
 }
 
-export default TitleWithContador
+export default TitleWithCounter

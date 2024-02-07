@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const TitleWithContador = styled.div`
+export const TitleWithCounter = styled.div`
   ${() => css`
     display: flex;
     align-items: center;
