@@ -80,7 +80,7 @@ const Proposals = () => {
                 rel="noopener noreferrer"
               >
                 <span>Discuss the proposals at the Forum</span>
-                <Image src={externalLink} alt="" />
+                <Image src={externalLink} alt="" aria-hidden="true" />
               </S.LinkForum>
 
               <Link href="/gov/create-proposal" passHref>
