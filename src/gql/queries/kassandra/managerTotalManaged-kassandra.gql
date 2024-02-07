@@ -1,0 +1,5 @@
+ query managerTotalManaged($manager: ID!) {
+    manager(id: $manager) {
+      total_value_locked_usd
+     }
+  }

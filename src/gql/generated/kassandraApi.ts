@@ -8395,6 +8395,15 @@ export type ManagerTvmChartQuery = {
   } | null
 }
 
+export type ManagerTotalManagedQueryVariables = Exact<{
+  manager: Scalars['ID']['input']
+}>
+
+export type ManagerTotalManagedQuery = {
+  __typename?: 'Query'
+  manager?: { __typename?: 'Manager'; total_value_locked_usd: string } | null
+}
+
 export type ManagerUniqueInvestorsQueryVariables = Exact<{
   manager: Scalars['ID']['input']
 }>
@@ -9869,6 +9878,13 @@ export const ManagerTvmChartDocument = gql`
     }
   }
 `
+export const ManagerTotalManagedDocument = gql`
+  query managerTotalManaged($manager: ID!) {
+    manager(id: $manager) {
+      total_value_locked_usd
+    }
+  }
+`
 export const ManagerUniqueInvestorsDocument = gql`
   query ManagerUniqueInvestors($manager: ID!) {
     manager(id: $manager) {
@@ -11036,6 +11052,21 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'ManagerTVMChart',
+        'query'
+      )
+    },
+    managerTotalManaged(
+      variables: ManagerTotalManagedQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ManagerTotalManagedQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ManagerTotalManagedQuery>(
+            ManagerTotalManagedDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'managerTotalManaged',
         'query'
       )
     },
