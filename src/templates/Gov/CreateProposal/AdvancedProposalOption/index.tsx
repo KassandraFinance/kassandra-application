@@ -80,7 +80,7 @@ const AdvancedProposalOption = ({
         <S.InputTextContainer>
           <InputText
             name="Function"
-            lable="Function"
+            label="Function"
             type="text"
             placeholder="Enter the Functions"
             minLength={0}
@@ -97,7 +97,7 @@ const AdvancedProposalOption = ({
 
         <S.InputTextContainer>
           <InputText
-            lable="Parameters"
+            label="Parameters"
             name="Parameters"
             type="text"
             placeholder="Enter the Parameters"
@@ -116,7 +116,7 @@ const AdvancedProposalOption = ({
 
         <S.InputTextContainer>
           <InputText
-            lable="Address"
+            label="Address"
             name="Address"
             type="text"
             placeholder="Enter the Address"

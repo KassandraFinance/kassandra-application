@@ -241,7 +241,7 @@ const CreateProposal = () => {
       <S.CreateProposal onSubmit={handleSubmit}>
         <S.InputsContainer>
           <InputText
-            lable="Title"
+            label="Title"
             required={true}
             name="Title"
             type="text"

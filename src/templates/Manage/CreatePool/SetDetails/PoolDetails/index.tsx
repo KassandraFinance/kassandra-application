@@ -48,7 +48,7 @@ const PoolDetails = () => {
           value={details.poolName ?? ''}
           minLength={3}
           maxLength={20}
-          lable="managed pool name"
+          label="managed pool name"
           error="Invalid fund name. Fund names must be 32 characters or less"
           onChange={handleInput}
         />
@@ -62,7 +62,7 @@ const PoolDetails = () => {
           value={details.poolSymbol ?? ''}
           minLength={3}
           maxLength={5}
-          lable="managed pool symbol"
+          label="managed pool symbol"
           error="Invalid symbol. Symbols should have 3 to 5 characters."
           onChange={handleInput}
         />
