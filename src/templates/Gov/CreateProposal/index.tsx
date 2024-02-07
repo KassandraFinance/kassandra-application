@@ -28,7 +28,7 @@ const CreateProposal = () => {
   const [proposalDescription, setProposalDescription] = React.useState('')
   const [proposalForumLink, setProposalForumLink] = React.useState('')
   const [proposalFunction, setProposalFunction] = React.useState('')
-  const [proposalParamanters, setProposalParamanters] = React.useState('')
+  const [proposalParameters, setProposalParameters] = React.useState('')
   const [proposalAddress, setProposalAddress] = React.useState('')
   const [isOpenAdvancedOptions, setIsOpenAdvancedOptions] =
     React.useState(false)
@@ -70,7 +70,7 @@ const CreateProposal = () => {
   function handleProposalParametersChange(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
-    setProposalParamanters(event.target.value)
+    setProposalParameters(event.target.value)
   }
 
   function extractFunctionsList(value: string) {
@@ -143,7 +143,7 @@ const CreateProposal = () => {
 
     const functionsList = extractFunctionsList(proposalFunction)
     const parametersValueList = extractParametersValueList(
-      proposalParamanters.replace(/\s/g, '')
+      proposalParameters.replace(/\s/g, '')
     )
 
     const values = new Array(functionsList.length).fill('0')
@@ -284,7 +284,7 @@ const CreateProposal = () => {
           <AdvancedProposalOption
             proposalAddress={proposalAddress}
             proposalFunction={proposalFunction}
-            proposalParamanters={proposalParamanters}
+            proposalParameters={proposalParameters}
             isOpenAdvancedOptions={isOpenAdvancedOptions}
             handleToggleChange={handleToggleChange}
             handleProposalAddressChange={handleProposalAddressChange}
