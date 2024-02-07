@@ -51,7 +51,9 @@ const CreateProposal = () => {
     setProposalDescription(text)
   }
 
-  function handleProposalFunctions(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleProposalFunctionsChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
     setProposalFunction(event.target.value)
   }
 
@@ -59,11 +61,13 @@ const CreateProposal = () => {
     setIsOpenAdvancedOptions(prevState => !prevState)
   }
 
-  function handleProposalAddress(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleProposalAddressChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
     setProposalAddress(event.target.value)
   }
 
-  function handleProposalParameters(
+  function handleProposalParametersChange(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
     setProposalParamanters(event.target.value)
@@ -283,9 +287,9 @@ const CreateProposal = () => {
             proposalParamanters={proposalParamanters}
             isOpenAdvancedOptions={isOpenAdvancedOptions}
             handleToggleChange={handleToggleChange}
-            handleProposalAddress={handleProposalAddress}
-            handleProposalFunctions={handleProposalFunctions}
-            handleProposalParameters={handleProposalParameters}
+            handleProposalAddressChange={handleProposalAddressChange}
+            handleProposalFunctionsChange={handleProposalFunctionsChange}
+            handleProposalParametersChange={handleProposalParametersChange}
           />
 
           <S.ButtonContainer>

@@ -14,21 +14,27 @@ interface IAdvancedProposalOptionProps {
   isOpenAdvancedOptions: boolean
   handleToggleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   proposalFunction: string
-  handleProposalFunctions: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleProposalFunctionsChange: (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => void
   proposalAddress: string
-  handleProposalAddress: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleProposalAddressChange: (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => void
   proposalParamanters: string
-  handleProposalParameters: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleProposalParametersChange: (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => void
 }
 const AdvancedProposalOption = ({
   isOpenAdvancedOptions,
   handleToggleChange,
   proposalAddress,
-  handleProposalAddress,
+  handleProposalAddressChange,
   proposalFunction,
-  handleProposalFunctions,
+  handleProposalFunctionsChange,
   proposalParamanters,
-  handleProposalParameters
+  handleProposalParametersChange
 }: IAdvancedProposalOptionProps) => {
   return (
     <S.AdvancedProposalOption isOpen={isOpenAdvancedOptions}>
@@ -81,7 +87,7 @@ const AdvancedProposalOption = ({
             maxLength={10000}
             error=""
             value={proposalFunction}
-            onChange={event => handleProposalFunctions(event)}
+            onChange={event => handleProposalFunctionsChange(event)}
             required={isOpenAdvancedOptions}
           />
           <S.Example>
@@ -99,7 +105,7 @@ const AdvancedProposalOption = ({
             maxLength={10000}
             error=""
             value={proposalParamanters}
-            onChange={event => handleProposalParameters(event)}
+            onChange={event => handleProposalParametersChange(event)}
             required={isOpenAdvancedOptions}
           />
           <S.Example>
@@ -118,7 +124,7 @@ const AdvancedProposalOption = ({
             maxLength={10000}
             error=""
             value={proposalAddress}
-            onChange={event => handleProposalAddress(event)}
+            onChange={event => handleProposalAddressChange(event)}
             required={isOpenAdvancedOptions}
           />
           <S.Example>
