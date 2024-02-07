@@ -29,10 +29,11 @@ const VotingPower = ({
           <span>
             your voting power
             <Tippy content="Voting power allows you to create and vote on proposals. To obtain voting power you need to stake your $KACY tokens.">
-              <S.Tooltip tabIndex={0}>
+              <S.Tooltip tabIndex={0} aria-label="tooltip for voting power">
                 <Image
                   src={tooltip}
-                  alt="tooltip for voting power"
+                  alt=""
+                  aria-hidden="true"
                   width={14}
                   height={14}
                 />
@@ -48,10 +49,14 @@ const VotingPower = ({
           <span>
             Snapshot voting power
             <Tippy content="Amount of voting power snapshoted from your address to vote on this proposal. This voting power is relative to the block in which the proposal was published.">
-              <S.Tooltip tabIndex={0}>
+              <S.Tooltip
+                tabIndex={0}
+                aria-label="tooltip about your voting power at the moment this proposal was created"
+              >
                 <Image
                   src={tooltip}
-                  alt="tooltip about your voting power at the moment this proposal was created"
+                  alt=""
+                  aria-hidden="true"
                   width={14}
                   height={14}
                 />
@@ -69,10 +74,14 @@ const VotingPower = ({
           <span>
             total voting power
             <Tippy content="This is the total voting power across all participants of the Kassandra Decentralized Autonomous Organization in this blockchain.">
-              <S.Tooltip tabIndex={0}>
+              <S.Tooltip
+                tabIndex={0}
+                aria-label="Tooltip about voting power of all participants of Kassandra"
+              >
                 <Image
                   src={tooltip}
-                  alt="Tooltip about voting power of all participants of Kassandra"
+                  alt=""
+                  aria-hidden="true"
                   width={14}
                   height={14}
                 />
@@ -88,10 +97,14 @@ const VotingPower = ({
           <span>
             actual voting power
             <Tippy content="This is your actual voting power, it may differ from the snapshot voting power if you earned or lost voting power since the proposal was created.">
-              <S.Tooltip tabIndex={0}>
+              <S.Tooltip
+                tabIndex={0}
+                aria-label="tooltip about your current voting power"
+              >
                 <Image
                   src={tooltip}
-                  alt="tooltip about your current voting power"
+                  alt=""
+                  aria-hidden="true"
                   width={14}
                   height={14}
                 />

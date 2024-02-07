@@ -21,7 +21,7 @@ interface IAdvancedProposalOptionProps {
   handleProposalAddressChange: (
     event: React.ChangeEvent<HTMLInputElement>
   ) => void
-  proposalParamanters: string
+  proposalParameters: string
   handleProposalParametersChange: (
     event: React.ChangeEvent<HTMLInputElement>
   ) => void
@@ -33,7 +33,7 @@ const AdvancedProposalOption = ({
   handleProposalAddressChange,
   proposalFunction,
   handleProposalFunctionsChange,
-  proposalParamanters,
+  proposalParameters,
   handleProposalParametersChange
 }: IAdvancedProposalOptionProps) => {
   return (
@@ -104,7 +104,7 @@ const AdvancedProposalOption = ({
             minLength={0}
             maxLength={10000}
             error=""
-            value={proposalParamanters}
+            value={proposalParameters}
             onChange={event => handleProposalParametersChange(event)}
             required={isOpenAdvancedOptions}
           />
