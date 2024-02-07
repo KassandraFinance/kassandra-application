@@ -30,7 +30,12 @@ const VotingPower = ({
             your voting power
             <Tippy content="Voting power allows you to create and vote on proposals. To obtain voting power you need to stake your $KACY tokens.">
               <S.Tooltip tabIndex={0}>
-                <Image src={tooltip} alt="Explanation" width={14} height={14} />
+                <Image
+                  src={tooltip}
+                  alt="tooltip for voting power"
+                  width={14}
+                  height={14}
+                />
               </S.Tooltip>
             </Tippy>
           </span>
@@ -44,7 +49,12 @@ const VotingPower = ({
             Snapshot voting power
             <Tippy content="Amount of voting power snapshoted from your address to vote on this proposal. This voting power is relative to the block in which the proposal was published.">
               <S.Tooltip tabIndex={0}>
-                <Image src={tooltip} alt="Explanation" width={14} height={14} />
+                <Image
+                  src={tooltip}
+                  alt="tooltip about your voting power at the moment this proposal was created"
+                  width={14}
+                  height={14}
+                />
               </S.Tooltip>
             </Tippy>
           </span>
@@ -60,7 +70,12 @@ const VotingPower = ({
             total voting power
             <Tippy content="This is the total voting power across all participants of the Kassandra Decentralized Autonomous Organization in this blockchain.">
               <S.Tooltip tabIndex={0}>
-                <Image src={tooltip} alt="Explanation" width={14} height={14} />
+                <Image
+                  src={tooltip}
+                  alt="Tooltip about voting power of all participants of Kassandra"
+                  width={14}
+                  height={14}
+                />
               </S.Tooltip>
             </Tippy>
           </span>
@@ -74,7 +89,12 @@ const VotingPower = ({
             actual voting power
             <Tippy content="This is your actual voting power, it may differ from the snapshot voting power if you earned or lost voting power since the proposal was created.">
               <S.Tooltip tabIndex={0}>
-                <Image src={tooltip} alt="Explanation" width={14} height={14} />
+                <Image
+                  src={tooltip}
+                  alt="tooltip about your current voting power"
+                  width={14}
+                  height={14}
+                />
               </S.Tooltip>
             </Tippy>
           </span>
