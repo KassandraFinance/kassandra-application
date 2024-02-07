@@ -32,7 +32,8 @@ const VotingPower = ({
               <S.Tooltip tabIndex={0}>
                 <Image
                   src={tooltip}
-                  alt="tooltip for voting power"
+                  alt=""
+                  aria-hidden="true"
                   width={14}
                   height={14}
                 />
@@ -51,7 +52,8 @@ const VotingPower = ({
               <S.Tooltip tabIndex={0}>
                 <Image
                   src={tooltip}
-                  alt="tooltip about your voting power at the moment this proposal was created"
+                  alt=""
+                  aria-hidden="true"
                   width={14}
                   height={14}
                 />
@@ -72,7 +74,8 @@ const VotingPower = ({
               <S.Tooltip tabIndex={0}>
                 <Image
                   src={tooltip}
-                  alt="Tooltip about voting power of all participants of Kassandra"
+                  alt=""
+                  aria-hidden="true"
                   width={14}
                   height={14}
                 />
@@ -91,7 +94,8 @@ const VotingPower = ({
               <S.Tooltip tabIndex={0}>
                 <Image
                   src={tooltip}
-                  alt="tooltip about your current voting power"
+                  alt=""
+                  aria-hidden="true"
                   width={14}
                   height={14}
                 />
