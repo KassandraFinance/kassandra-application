@@ -116,7 +116,6 @@ const useGov = (address: string) => {
         const status = await txNotification(tx)
         return status
       } catch (error) {
-        console.log('error', error)
         transactionErrors(error)
       }
     }
