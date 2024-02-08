@@ -19,8 +19,8 @@ export const disconnectedIcon = (
 
 export const avalancheIcon = (
   <svg
-    width="1503"
-    height="1504"
+    width="18"
+    height="18"
     viewBox="0 0 1503 1504"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
