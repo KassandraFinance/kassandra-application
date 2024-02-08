@@ -1,3 +1,4 @@
+import React from 'react'
 import Big from 'big.js'
 import {
   Bar,
@@ -46,6 +47,15 @@ const monthShort = [
 ]
 
 const FeesChart = ({ fees, title, legend }: Props) => {
+  const maxDomain = React.useMemo(() => {
+    const tenPercentOfValue = 1.1
+    const maxFeesJoinManager = fees.map(
+      item => parseFloat(item.feesJoinManager) * tenPercentOfValue
+    )
+
+    return Math.max.apply(null, maxFeesJoinManager)
+  }, [fees])
+
   return (
     <S.FeesGraph>
       <ResponsiveContainer width="99%" height={322} minWidth={768}>
@@ -83,7 +93,7 @@ const FeesChart = ({ fees, title, legend }: Props) => {
           />
           <YAxis
             type="number"
-            domain={[0, 'auto']}
+            domain={[0, maxDomain]}
             stroke="#c4c4c4"
             tickLine={false}
             axisLine={false}

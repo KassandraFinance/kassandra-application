@@ -154,7 +154,7 @@ const Nav = ({
             },
             {
               name: 'Blog',
-              href: `https://kassandrafoundation.medium.com/`,
+              href: `https://kassandra.finance/blog`,
               newTab: true
             }
           ]}
