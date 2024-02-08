@@ -48,8 +48,9 @@ const monthShort = [
 
 const FeesChart = ({ fees, title, legend }: Props) => {
   const maxDomain = React.useMemo(() => {
+    const tenPercentOfValue = 1.1
     const maxFeesJoinManager = fees.map(
-      item => parseFloat(item.feesJoinManager) * 1.1
+      item => parseFloat(item.feesJoinManager) * tenPercentOfValue
     )
 
     return Math.max.apply(null, maxFeesJoinManager)
