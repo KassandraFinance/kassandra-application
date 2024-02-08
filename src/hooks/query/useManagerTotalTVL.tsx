@@ -3,13 +3,13 @@ import { getAddress } from 'ethers'
 
 import { kassandraClient } from '@/graphQLClients'
 
-type fetchManagerTotalTVL = {
+type FetchManagerTotalTVL = {
   manager: string
 }
 
 export const fetchManagerTotalTVL = async ({
   manager
-}: fetchManagerTotalTVL) => {
+}: FetchManagerTotalTVL) => {
   return kassandraClient.managerTotalManaged({ manager }).then(res => res)
 }
 
