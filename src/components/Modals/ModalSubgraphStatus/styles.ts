@@ -8,12 +8,12 @@ export const ModalSubgraphStatus = styled.div`
 
     display: flex;
     flex-direction: column;
-    padding: 1.6rem 2.4rem;
-    width: 30rem;
+    padding: 1.6rem;
+    width: 32rem;
 
     border-radius: 16px;
     border: 1px solid rgba(252, 252, 252, 0.08);
-    background: #1b1d22;
+    background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
 
     z-index: 1057;
 
@@ -48,7 +48,7 @@ export const ModalHeader = styled.div`
     gap: 1.6rem;
     padding-bottom: 1.6rem;
 
-    border-bottom: 1px solid #cccc;
+    border-bottom: 1px solid rgba(252, 252, 252, 0.15);
 
     > p {
       color: ${theme.colors.snow};
@@ -61,7 +61,7 @@ export const ModalHeader = styled.div`
 
 export const ModalBodyContainer = styled.div`
   ${({ theme }) => css`
-    padding-block: 1.6rem;
+    padding-top: 1.6rem;
 
     > p {
       color: ${theme.colors.snow};
