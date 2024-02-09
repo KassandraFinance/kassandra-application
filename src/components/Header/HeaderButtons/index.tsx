@@ -53,12 +53,13 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       diffTime: '0'
     })
 
+  const avalancheChainId = 43114
   const { trackEventFunction } = useMatomoEcommerce()
   const [{ wallet, connecting }, connect] = useConnectWallet()
   const { data: latestBlockData } = useLatestBlock({
     id:
       networks[Number(wallet?.chains[0].id ?? '')]?.chainId.toString() ??
-      '43114'
+      avalancheChainId
   })
 
   const [network, setNetwork] = React.useState<styles>({
@@ -146,7 +147,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       })
     }
 
-    const dataDiff = getDateDiff(
+    const dateDiff = getDateDiff(
       subgraphTimestamp.timestamp * 1000,
       currentTimestamp.timestamp * 1000
     )
@@ -162,7 +163,8 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
         network: chainInfo.network,
         status: SubgraphStatus.Updated,
         chainIcon: chainInfo.icon,
-        diffTime: `${dataDiff?.value.toString().concat(' ', dataDiff?.string)}`
+        diffTime:
+          dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
       })
     }
 
@@ -171,7 +173,8 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
         network: chainInfo.network,
         status: SubgraphStatus.PracticallyUpdated,
         chainIcon: chainInfo.icon,
-        diffTime: `${dataDiff?.value.toString().concat(' ', dataDiff?.string)}`
+        diffTime:
+          dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
       })
     }
 
@@ -179,7 +182,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       network: chainInfo.network,
       status: SubgraphStatus.Outdated,
       chainIcon: chainInfo.icon,
-      diffTime: `${dataDiff?.value.toString().concat(' ', dataDiff?.string)}`
+      diffTime: dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
     })
   }
 
