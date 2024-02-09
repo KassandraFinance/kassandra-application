@@ -45,7 +45,7 @@ export const ModalBody = styled.div`
 
     border-radius: 16px;
     border: 1px solid rgba(252, 252, 252, 0.08);
-    background: #1b1d22;
+    background: linear-gradient(164.99deg, #1b1d22 19.85%, #333437 116.33%);
 
     z-index: 1057;
 

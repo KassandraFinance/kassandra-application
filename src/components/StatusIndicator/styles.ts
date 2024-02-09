@@ -9,8 +9,8 @@ export const StatusIndicator = styled.div<StatusIndicator>`
   ${({ color }) => css`
     position: relative;
 
-    height: 1.4rem;
-    width: 1.4rem;
+    min-height: 1.4rem;
+    min-width: 1.4rem;
 
     border-radius: 50%;
     background-color: ${color};

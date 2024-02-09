@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { StatusIndicator } from '@/components/StatusIndicator/styles'
+import StatusIndicator from '@/components/StatusIndicator'
 
 import * as S from './styles'
 
@@ -23,22 +23,24 @@ export const StatusColor: Record<SubgraphStatus, string> = {
   [SubgraphStatus.FetchingData]: '#A9A9A9FF'
 }
 
-const SubgraphStatusMessages: Record<SubgraphStatus, string> = {
-  [SubgraphStatus.Updated]: 'All data successfully loaded',
-  [SubgraphStatus.PracticallyUpdated]: 'Most data is up to date',
-  [SubgraphStatus.Outdated]: 'Data is outdated',
-  [SubgraphStatus.FetchingData]: 'Fetching the latest data'
-}
-
 interface IModalSubgraphStatusProps {
   chainInfo: ChainInfo
   status: SubgraphStatus
+  diffTime: string
 }
 
 const ModalSubgraphStatus = ({
   chainInfo,
-  status
+  status,
+  diffTime
 }: IModalSubgraphStatusProps) => {
+  const SubgraphStatusMessages: Record<SubgraphStatus, string> = {
+    [SubgraphStatus.Updated]: `A difference between the platform and the blockchain is: ${diffTime}`,
+    [SubgraphStatus.PracticallyUpdated]: `A difference between the platform and the blockchain is: ${diffTime}`,
+    [SubgraphStatus.Outdated]: `A difference between the platform and the blockchain is: ${diffTime}`,
+    [SubgraphStatus.FetchingData]: 'Fetching the latest data'
+  }
+
   return (
     <S.ModalSubgraphStatus>
       <S.ModalHeader>

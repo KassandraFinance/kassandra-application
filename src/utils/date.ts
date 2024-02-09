@@ -101,7 +101,7 @@ export function getDateDiff(
       value: hours,
       string: `${hours > 1 ? 'hours' : 'hour'}`
     }
-  } else if (minutes > 0) {
+  } else if (minutes >= 0) {
     return {
       value: minutes,
       string: 'min'

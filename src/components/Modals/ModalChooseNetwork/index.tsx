@@ -15,16 +15,16 @@ const ModalChooseNetwork = ({
   isOpen,
   setIsChooseNetwork
 }: IChooseNetworkProps) => {
-  const [
-    {
-      chains, // the list of chains that web3-onboard was initialized with
-      settingChain // boolean indicating if the chain is in the process of being set
-    },
-    setChain // function to call to initiate user to switch chains in their wallet
-  ] = useSetChain()
+  const [{ chains, settingChain }, setChain] = useSetChain()
 
   function handleCloseModal() {
     setIsChooseNetwork(false)
+  }
+
+  async function handleChangeChain(chainId: string, chainNamespace?: string) {
+    const response = await setChain({ chainId, chainNamespace })
+
+    if (response) return handleCloseModal()
   }
 
   return (
@@ -42,12 +42,7 @@ const ModalChooseNetwork = ({
               <S.WrapperIconsBackGround
                 key={chain.id}
                 disabled={settingChain}
-                onClick={() =>
-                  setChain({
-                    chainId: chain.id,
-                    chainNamespace: chain.namespace
-                  })
-                }
+                onClick={() => handleChangeChain(chain?.id, chain?.namespace)}
               >
                 <S.WrapperIcons>
                   <Image src={url} width={24} height={24} />

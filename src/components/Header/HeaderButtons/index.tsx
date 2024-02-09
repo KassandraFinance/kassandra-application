@@ -3,6 +3,7 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { JsonRpcProvider, getAddress } from 'ethers'
 
 import { networks } from '@/constants/tokenAddresses'
+import { getDateDiff } from '@/utils/date'
 import substr from '@/utils/substr'
 
 import { useLatestBlock } from '@/hooks/query/useLatestBlock'
@@ -32,6 +33,7 @@ type SubgraphInfo = {
   chainIcon: JSX.Element
   network: string
   status: SubgraphStatus
+  diffTime: string
 }
 
 type styles = {
@@ -47,15 +49,17 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
     React.useState<SubgraphInfo>({
       chainIcon: avalancheIcon,
       network: 'Avalanche',
-      status: SubgraphStatus.FetchingData
+      status: SubgraphStatus.FetchingData,
+      diffTime: '0'
     })
 
+  const avalancheChainId = 43114
   const { trackEventFunction } = useMatomoEcommerce()
   const [{ wallet, connecting }, connect] = useConnectWallet()
   const { data: latestBlockData } = useLatestBlock({
     id:
       networks[Number(wallet?.chains[0].id ?? '')]?.chainId.toString() ??
-      '43114'
+      avalancheChainId
   })
 
   const [network, setNetwork] = React.useState<styles>({
@@ -116,82 +120,69 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       setCurrentSubgraphInfo({
         network: chainInfo.network,
         status: SubgraphStatus.FetchingData,
-        chainIcon: chainInfo.icon
+        chainIcon: chainInfo.icon,
+        diffTime: '0'
       })
 
       return
     }
 
-    const chaindId = Number(wallet?.chains[0].id ?? 0)
-    const arbitrumChainId = 42161
-    if (chaindId === arbitrumChainId) {
-      const provider = new JsonRpcProvider(networks[chaindId].rpc)
+    const chaindId =
+      networks[Number(wallet?.chains[0].id ?? '')]?.chainId ?? 43114
 
-      const subgraphTimestamp = await provider.getBlock(
-        BigInt(latestBlockData?.subgraphBlock)
-      )
-      const currentTimestamp = await provider.getBlock(
-        BigInt(latestBlockData?.currentBlock)
-      )
+    const provider = new JsonRpcProvider(networks[chaindId].rpc)
+    const subgraphTimestamp = await provider.getBlock(
+      BigInt(latestBlockData?.subgraphBlock)
+    )
+    const currentTimestamp = await provider.getBlock(
+      BigInt(latestBlockData?.currentBlock)
+    )
 
-      if (!(currentTimestamp?.timestamp && subgraphTimestamp?.timestamp)) {
-        return setCurrentSubgraphInfo({
-          network: chainInfo.network,
-          status: SubgraphStatus.FetchingData,
-          chainIcon: chainInfo.icon
-        })
-      }
-
-      //The return of getBlock from ethers is with timestamps in seconds.
-      const timestampDiffInSeconds = Math.abs(
-        currentTimestamp.timestamp - subgraphTimestamp.timestamp
-      )
-      const diffInMinutes = Math.floor(timestampDiffInSeconds / 60)
-
-      const fiveMinutes = 5
-      const sixHoursInMinutes = 360
-      if (diffInMinutes <= fiveMinutes) {
-        return setCurrentSubgraphInfo({
-          network: chainInfo.network,
-          status: SubgraphStatus.Updated,
-          chainIcon: chainInfo.icon
-        })
-      }
-      if (diffInMinutes <= sixHoursInMinutes) {
-        return setCurrentSubgraphInfo({
-          network: chainInfo.network,
-          status: SubgraphStatus.PracticallyUpdated,
-          chainIcon: chainInfo.icon
-        })
-      }
-
-      setCurrentSubgraphInfo({
+    if (!(currentTimestamp?.timestamp && subgraphTimestamp?.timestamp)) {
+      return setCurrentSubgraphInfo({
         network: chainInfo.network,
-        status: SubgraphStatus.Outdated,
-        chainIcon: chainInfo.icon
+        status: SubgraphStatus.FetchingData,
+        chainIcon: chainInfo.icon,
+        diffTime: '0'
       })
     }
 
-    const blocksInFiveMinutes = 150
-    const blocksInSixHours = 10800
-    if (latestBlockData.diff <= blocksInFiveMinutes) {
+    const dateDiff = getDateDiff(
+      subgraphTimestamp.timestamp * 1000,
+      currentTimestamp.timestamp * 1000
+    )
+    const timestampDiffInSeconds = Math.abs(
+      currentTimestamp.timestamp - subgraphTimestamp.timestamp
+    )
+    const diffInMinutes = Math.floor(timestampDiffInSeconds / 60)
+
+    const fiveMinutes = 5
+    const sixHoursInMinutes = 360
+    if (diffInMinutes <= fiveMinutes) {
       return setCurrentSubgraphInfo({
         network: chainInfo.network,
         status: SubgraphStatus.Updated,
-        chainIcon: chainInfo.icon
+        chainIcon: chainInfo.icon,
+        diffTime:
+          dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
       })
     }
-    if (latestBlockData.diff <= blocksInSixHours) {
+
+    if (diffInMinutes <= sixHoursInMinutes) {
       return setCurrentSubgraphInfo({
         network: chainInfo.network,
         status: SubgraphStatus.PracticallyUpdated,
-        chainIcon: chainInfo.icon
+        chainIcon: chainInfo.icon,
+        diffTime:
+          dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
       })
     }
+
     setCurrentSubgraphInfo({
       network: chainInfo.network,
       status: SubgraphStatus.Outdated,
-      chainIcon: chainInfo.icon
+      chainIcon: chainInfo.icon,
+      diffTime: dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
     })
   }
 
@@ -231,6 +222,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
                 network: currentSubgraphInfo.network
               }}
               status={currentSubgraphInfo.status}
+              diffTime={currentSubgraphInfo.diffTime}
             />
           </S.ModalSubgraphStatusWrapper>
         </S.StatusWrapper>
