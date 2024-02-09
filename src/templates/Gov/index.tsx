@@ -1,6 +1,8 @@
+import Link from 'next/link'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
 
+import Button from '@/components/Button'
 import TitleSection from '@/components/TitleSection'
 import Overview from '@/components/Governance/Overview'
 import ProposalTable from '@/components/Governance/ProposalTable'
@@ -28,6 +30,7 @@ const Gov = () => {
           Governance
         </BreadcrumbItem>
       </Breadcrumb>
+
       <S.VoteContent>
         <TitleSection image={overview} title="Overview" />
         <Overview />
@@ -40,25 +43,41 @@ const Gov = () => {
             />
           ) : null}
         </S.OverViewLinks>
+
         <S.TitleAndLinkContent>
           <TitleSection image={proposals} title="Recent Proposals" />
-          <S.LinkForum
-            href="https://gov.kassandra.finance/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>Discuss the proposals at the Forum</span>
-            <Image src={externalLink} alt="" />
-          </S.LinkForum>
+          <S.ButtonWrapper>
+            <S.LinkForum
+              href="https://gov.kassandra.finance/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>Discuss the proposals at the Forum</span>
+              <Image src={externalLink} alt="" aria-hidden="true" />
+            </S.LinkForum>
+
+            <Link href="/gov/create-proposal" passHref>
+              <Button
+                as="a"
+                text="Create Your Proposals"
+                background="primary"
+              />
+            </Link>
+          </S.ButtonWrapper>
         </S.TitleAndLinkContent>
         <ProposalTable take={take} />
-        <ExternalLink hrefNext="/gov/proposals" text="Check more proposals" />
+        <S.ExternalLinkWrapper>
+          <ExternalLink hrefNext="/gov/proposals" text="Check more proposals" />
+        </S.ExternalLinkWrapper>
+
         <TitleSection image={votingPower} title="Voting Power Leaderboard" />
         <VotingPowerTable take={take} />
-        <ExternalLink
-          hrefNext="/gov/leaderboard?page=1"
-          text="Check leaderboard"
-        />
+        <S.ExternalLinkWrapper>
+          <ExternalLink
+            hrefNext="/gov/leaderboard?page=1"
+            text="Check leaderboard"
+          />
+        </S.ExternalLinkWrapper>
       </S.VoteContent>
     </>
   )

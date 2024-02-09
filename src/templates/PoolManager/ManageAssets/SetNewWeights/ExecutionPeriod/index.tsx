@@ -121,7 +121,7 @@ const ExecutionPeriod = () => {
               <p>24 hours</p>
             </S.SelectPeriodContent>
           </S.SelectPeriod>
-          <S.SelectPeriod>
+          {/* <S.SelectPeriod>
             <InputRadio
               text="Fast"
               inputId="fast"
@@ -134,7 +134,7 @@ const ExecutionPeriod = () => {
             <S.SelectPeriodContent>
               <p>1 hours</p>
             </S.SelectPeriodContent>
-          </S.SelectPeriod>
+          </S.SelectPeriod> */}
         </S.SelectPeriodCotainer>
 
         <S.PersonalizePeriodContainer>

@@ -111,7 +111,7 @@ const ModalKacy = () => {
     }
 
     if (wallet?.provider) {
-      getKacyBalanceInWallet(wallet.accounts[0].address)
+      getKacyBalanceInWallet(wallet.accounts[0]?.address)
       kacyTotalInPool(wallet.accounts[0].address)
       kacyEarned(wallet.accounts[0].address)
     }

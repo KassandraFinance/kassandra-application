@@ -83,8 +83,9 @@ const Manage = () => {
 
     if (!newPoolCreated) return
 
-    const checkPool = managerPools.some(pool => pool.id === newPoolCreated.id)
-
+    const checkPool = managerPools.some(
+      pool => pool.id.toLowerCase() === newPoolCreated.id.toLowerCase()
+    )
     if (checkPool) {
       return removeLocalStorage(CREATED_POOL_LOCALSTORAGE_KEY)
     }

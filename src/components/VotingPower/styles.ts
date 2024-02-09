@@ -1,46 +1,25 @@
 import styled from 'styled-components'
 import theme from '../../styles/theme'
 
-interface IVotingPowerProps {
-  isMobile?: boolean
-}
-
-// eslint-disable-next-line prettier/prettier
-export const VotingPower = styled.div<IVotingPowerProps>`
+export const VotingPower = styled.div`
   padding: 1.6rem 2.4rem;
-  width: 29rem;
+  width: 100%;
 
   background: rgba(255, 255, 255, 0.04);
   border-radius: ${theme.border.radius};
   border: 0.1rem solid #fcfcfc26;
-
-  @media (max-width: 960px) {
-    margin-top: 2rem;
-  }
-
-  @media (max-width: 420px) {
-    width: ${props => (props.isMobile ? 'calc(100vw - 3.2rem)' : '29rem')};
-  }
-
-  @media (max-width: 380px) {
-    max-width: 29.5rem;
-    width: 100%;
-    min-width: 25rem;
-  }
 `
 
 export const YourVotingPower = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.6rem;
 
   span {
     display: flex;
     align-items: center;
 
     color: #fcfcfc;
-    /* font-size: ${theme.font.sizes.font14}; */
     font-size: 1.3rem;
     line-height: 1.6rem;
     font-weight: ${theme.font.weight.medium};
@@ -66,6 +45,7 @@ export const TotalVotingPower = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: 1.6rem;
 
   span {
     display: flex;

@@ -15,6 +15,7 @@ import { BNtoDecimal } from '@/utils/numerals'
 
 import useGov from '@/hooks/useGov'
 import useVotingPower from '@/hooks/useVotings'
+import { useVotingPower as useVotingPowerQuery } from '@/hooks/query/useVotingPower'
 
 import ModalVotes from '@/components/Governance/ModalVotes'
 import TitleSection from '@/components/TitleSection'
@@ -138,6 +139,7 @@ const Proposal = () => {
 
   const walletAddress = wallet ? getAddress(wallet.accounts[0].address) : ''
   const { data } = useProposal({ number: idProposal, voter: walletAddress })
+  const { data: votingPowerData } = useVotingPowerQuery({ id: walletAddress })
 
   async function getProposalState(number: number) {
     governance.stateProposals(number).then(res => setProposalState(res[0]))
@@ -585,9 +587,9 @@ const Proposal = () => {
               </S.TitleAndAuthor>
               <S.VotingPower>
                 <VotingPower
-                  userWalletAddress={
-                    wallet ? getAddress(wallet.accounts[0].address) : ''
-                  }
+                  currentVotingPower={Big(
+                    votingPowerData?.user?.votingPower ?? '0'
+                  )}
                   yourVotingPowerInProposal={yourVotingPowerInProposal}
                 />
               </S.VotingPower>
@@ -603,9 +605,9 @@ const Proposal = () => {
               <S.CardTitleWrapper>
                 <S.VotingPower>
                   <VotingPower
-                    userWalletAddress={
-                      wallet ? getAddress(wallet.accounts[0].address) : ''
-                    }
+                    currentVotingPower={Big(
+                      votingPowerData?.user?.votingPower ?? '0'
+                    )}
                     yourVotingPowerInProposal={yourVotingPowerInProposal}
                   />
                 </S.VotingPower>
@@ -773,6 +775,7 @@ const Proposal = () => {
               </S.LinkForum>
             </S.InfoTable>
           </S.CardWrapper>
+
           <S.ProposalDetails>
             <TitleSection image={proposalDetailsIcon} title="Details" />
             <S.DescriptionTable>

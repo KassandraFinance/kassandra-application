@@ -1,3 +1,4 @@
+import { StatusIndicator } from '@/components/StatusIndicator/styles'
 import styled, { css } from 'styled-components'
 
 interface IHeaderButtonsProps {
@@ -5,7 +6,35 @@ interface IHeaderButtonsProps {
   fillColor: string
 }
 
-// prettier-ignore
+export const NetworkWrapper = styled.div`
+  ${() => css`
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+  `}
+`
+
+export const StatusWrapper = styled.div`
+  ${() => css`
+    position: relative;
+
+    ${StatusIndicator}:hover + ${ModalSubgraphStatusWrapper} {
+      opacity: 1;
+    }
+  `}
+`
+
+export const ModalSubgraphStatusWrapper = styled.div`
+  ${() => css`
+    opacity: 0;
+    position: relative;
+
+    transition-timing-function: ease;
+    transition-duration: 400ms;
+    transition-property: opacity;
+  `}
+`
+
 export const HeaderButtons = styled.div<IHeaderButtonsProps>`
   ${({ theme, networkColor, fillColor }) => css`
     display: flex;
@@ -62,7 +91,8 @@ export const HeaderButtons = styled.div<IHeaderButtonsProps>`
         pointer-events: none;
       }
 
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         background-color: ${networkColor};
 
         svg {
@@ -76,7 +106,6 @@ export const HeaderButtons = styled.div<IHeaderButtonsProps>`
         outline: 0.2rem solid ${networkColor};
         outline-offset: 0.2rem;
       }
-
 
       @media (max-width: 840px) {
         gap: 0.8rem;

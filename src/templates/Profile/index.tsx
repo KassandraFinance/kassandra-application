@@ -14,6 +14,7 @@ import usePriceLP from '@/hooks/usePriceLPEthers'
 import { ERC20 } from '@/hooks/useERC20'
 import { useTokensData } from '@/hooks/query/useTokensData'
 import useGetToken from '@/hooks/useGetToken'
+import { useManagerTotalTVL } from '@/hooks/query/useManagerTotalTVL'
 
 import {
   Staking,
@@ -133,6 +134,9 @@ const Profile = () => {
     : ''
 
   const { data: votingPowerData } = useVotingPowerApi({ id: walletUserString })
+  const { data: totalManaged } = useManagerTotalTVL({
+    manager: walletUserString
+  })
   const { data } = usePools()
 
   const { data: tokensList } = useTokensData({
@@ -403,7 +407,11 @@ const Profile = () => {
               isDolar={true}
             />
             <AnyCardTotal
-              text={`$ ${0}`}
+              text={`$ ${BNtoDecimal(
+                Big(totalManaged?.manager?.total_value_locked_usd ?? '0'),
+                18,
+                2
+              )}`}
               TooltipText="The amount in US Dollars that this address manages in tokenized funds with Kassandra."
               textTitle="TOTAL MANAGED"
             />

@@ -51,6 +51,12 @@ export const WETH_POLYGON = '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
 export const DEFAULT_ADDRESS_JAZZICON =
   '0x1111111111111111111111111111111111111111'
 
+export const subgraphNames = {
+  avalanche: 'KassandraAvalancheV2',
+  polygon: 'KassandraPolygon',
+  arbitrum: 'KassandraArbitrum'
+}
+
 export const platform: Record<number, string> = {
   [43114]: 'avalanche',
   [137]: 'polygon-pos'
@@ -64,7 +70,7 @@ export const COINGECKO_API = 'https://pro-api.coingecko.com/api/v3/'
 
 export const SUBGRAPH_URL =
   'https://graph.kassandra.finance/subgraphs/name/Kassandra'
-
+export const SUBGRAPH_GRAPHQL_URL = 'https://graph.kassandra.finance/graphql'
 export const BACKEND_KASSANDRA =
   process.env.NEXT_PUBLIC_BACKEND_KASSANDRA ?? 'http://localhost:3001'
 
@@ -72,9 +78,11 @@ export const URL_1INCH = 'https://api.1inch.io/v5.0/'
 export const URL_PARASWAP = 'https://apiv5.paraswap.io'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
+export const URL_KASSANDRA_API = 'https://app.kassandra.finance/api'
 export const COINS_METADATA =
   process.env.NEXT_PUBLIC_COINS_METADATA ?? 'http://localhost:3001'
-
+export const URL_PROPOSE_FUNCTION_SNOWTRACE =
+  'https://snowtrace.io/address/0x87E60617738F4F9Fb3Db3B61C7A34b9fF82412a4/contract/43114/writeContract?chainId=43114'
 type CurrencyDetails = {
   name: string
   symbol: string
@@ -99,6 +107,7 @@ type NetworkInfo = {
   balancerHelper: string
   proxyInvest: string
   chosenTokenList: string[]
+  subgraphName?: string
 }
 type NetworkType = Record<number, NetworkInfo>
 
@@ -139,6 +148,7 @@ export const networks: NetworkType = {
     vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
     balancerHelper: '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5',
     proxyInvest: '0x77F18A3963796Dd252EbEF15C9eadfE229c7c89a',
+    subgraphName: subgraphNames.polygon,
     nativeCurrency: {
       address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
       name: 'Matic Token',
@@ -168,6 +178,7 @@ export const networks: NetworkType = {
     vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
     balancerHelper: '0xC128468b7Ce63eA702C1f104D55A2566b13D3ABD',
     proxyInvest: '0xaE107b47f1565b8EF0c537E4322866d42095051a',
+    subgraphName: subgraphNames.avalanche,
     nativeCurrency: {
       address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Avalanche',
@@ -219,6 +230,7 @@ export const networks: NetworkType = {
     vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
     balancerHelper: '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5',
     proxyInvest: '0x77F18A3963796Dd252EbEF15C9eadfE229c7c89a',
+    subgraphName: subgraphNames.arbitrum,
     nativeCurrency: {
       address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
       name: 'Wrapped Ether',

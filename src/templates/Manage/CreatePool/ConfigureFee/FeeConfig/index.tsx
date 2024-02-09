@@ -133,7 +133,7 @@ const FeeConfig = () => {
                     value={kassandraManagementFee}
                     minLength={42}
                     maxLength={42}
-                    lable=""
+                    label=""
                     error="Invalid address"
                     readonly
                     onChange={() => {
@@ -170,7 +170,7 @@ const FeeConfig = () => {
                   value={wallet?.accounts[0].address}
                   minLength={42}
                   maxLength={42}
-                  lable="recipient address"
+                  label="recipient address"
                   error="Invalid address"
                   readonly
                   onChange={() => {

@@ -21,6 +21,7 @@ type Props = {
 
 const AvailableRewards = ({ pool }: Props) => {
   const [feesAum, setFeesAum] = React.useState({ kassandra: '0', manager: '0' })
+
   const dateDiff = pool?.lasCollectedAum[0]?.timestamp
     ? getDateDiff(pool?.lasCollectedAum[0]?.timestamp * 1000)
     : { string: 'days', value: 0 }
@@ -49,6 +50,7 @@ const AvailableRewards = ({ pool }: Props) => {
 
   React.useEffect(() => {
     if (!pool || !wallet) return
+
     const getAvailableAumFee = async () => {
       try {
         const { feesToManager, feesToKassandra } =
@@ -59,8 +61,9 @@ const AvailableRewards = ({ pool }: Props) => {
         console.log(error)
       }
     }
+
     getAvailableAumFee()
-  }, [wallet])
+  }, [wallet, getAumFeesToManagerAndKassandra])
 
   return (
     <S.AvailableRewards>

@@ -1,14 +1,22 @@
 import React from 'react'
-import Link from 'next/link'
 import { useConnectWallet } from '@web3-onboard/react'
-import { getAddress } from 'ethers'
+import { JsonRpcProvider, getAddress } from 'ethers'
 
+import { networks } from '@/constants/tokenAddresses'
+import { getDateDiff } from '@/utils/date'
+import substr from '@/utils/substr'
+
+import { useLatestBlock } from '@/hooks/query/useLatestBlock'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
-import substr from '@/utils/substr'
 
 import ModalKacy from '@/components/Modals/ModalKacy'
 import Button from '@/components/Button'
+import ModalSubgraphStatus, {
+  StatusColor,
+  SubgraphStatus
+} from '@/components/Modals/ModalSubgraphStatus'
+import StatusIndicator from '@/components/StatusIndicator'
 
 import { disconnectedIcon, avalancheIcon } from './SvgButtons'
 import polygon from '@assets/logos/polygon.svg'
@@ -21,6 +29,13 @@ interface IHeaderButtonsProps {
   setIsChooseNetwork: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+type SubgraphInfo = {
+  chainIcon: JSX.Element
+  network: string
+  status: SubgraphStatus
+  diffTime: string
+}
+
 type styles = {
   icon: JSX.Element
   network: string
@@ -30,9 +45,22 @@ type styles = {
 
 const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
   const [isOpenModal, setIsOpenModal] = React.useState(false)
+  const [currentSubgraphInfo, setCurrentSubgraphInfo] =
+    React.useState<SubgraphInfo>({
+      chainIcon: avalancheIcon,
+      network: 'Avalanche',
+      status: SubgraphStatus.FetchingData,
+      diffTime: '0'
+    })
 
+  const avalancheChainId = 43114
   const { trackEventFunction } = useMatomoEcommerce()
   const [{ wallet, connecting }, connect] = useConnectWallet()
+  const { data: latestBlockData } = useLatestBlock({
+    id:
+      networks[Number(wallet?.chains[0].id ?? '')]?.chainId.toString() ??
+      avalancheChainId
+  })
 
   const [network, setNetwork] = React.useState<styles>({
     icon: disconnectedIcon,
@@ -83,6 +111,85 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
     setIsOpenModal(true)
   }
 
+  async function checkSubgraphStatus() {
+    const avalancheChainId = '0xa86a'
+    const chainInfo =
+      chainStyle[wallet?.chains[0].id ?? ''] ?? chainStyle[avalancheChainId]
+
+    if (!latestBlockData) {
+      setCurrentSubgraphInfo({
+        network: chainInfo.network,
+        status: SubgraphStatus.FetchingData,
+        chainIcon: chainInfo.icon,
+        diffTime: '0'
+      })
+
+      return
+    }
+
+    const chaindId =
+      networks[Number(wallet?.chains[0].id ?? '')]?.chainId ?? 43114
+
+    const provider = new JsonRpcProvider(networks[chaindId].rpc)
+    const subgraphTimestamp = await provider.getBlock(
+      BigInt(latestBlockData?.subgraphBlock)
+    )
+    const currentTimestamp = await provider.getBlock(
+      BigInt(latestBlockData?.currentBlock)
+    )
+
+    if (!(currentTimestamp?.timestamp && subgraphTimestamp?.timestamp)) {
+      return setCurrentSubgraphInfo({
+        network: chainInfo.network,
+        status: SubgraphStatus.FetchingData,
+        chainIcon: chainInfo.icon,
+        diffTime: '0'
+      })
+    }
+
+    const dateDiff = getDateDiff(
+      subgraphTimestamp.timestamp * 1000,
+      currentTimestamp.timestamp * 1000
+    )
+    const timestampDiffInSeconds = Math.abs(
+      currentTimestamp.timestamp - subgraphTimestamp.timestamp
+    )
+    const diffInMinutes = Math.floor(timestampDiffInSeconds / 60)
+
+    const fiveMinutes = 5
+    const sixHoursInMinutes = 360
+    if (diffInMinutes <= fiveMinutes) {
+      return setCurrentSubgraphInfo({
+        network: chainInfo.network,
+        status: SubgraphStatus.Updated,
+        chainIcon: chainInfo.icon,
+        diffTime:
+          dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
+      })
+    }
+
+    if (diffInMinutes <= sixHoursInMinutes) {
+      return setCurrentSubgraphInfo({
+        network: chainInfo.network,
+        status: SubgraphStatus.PracticallyUpdated,
+        chainIcon: chainInfo.icon,
+        diffTime:
+          dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
+      })
+    }
+
+    setCurrentSubgraphInfo({
+      network: chainInfo.network,
+      status: SubgraphStatus.Outdated,
+      chainIcon: chainInfo.icon,
+      diffTime: dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
+    })
+  }
+
+  React.useEffect(() => {
+    checkSubgraphStatus()
+  }, [latestBlockData])
+
   React.useEffect(() => {
     if (wallet?.provider) {
       const chainId = wallet.chains[0].id
@@ -99,14 +206,36 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       networkColor={network?.color}
       fillColor={network.fillColor}
     >
-      <Button
-        className="button-network"
-        text={network.network}
-        background="black"
-        icon={network.icon}
-        onClick={() => setIsChooseNetwork(true)}
-        disabledNoEvent={network.network === 'Disconnected'}
-      />
+      <S.NetworkWrapper>
+        <S.StatusWrapper>
+          <StatusIndicator
+            color={StatusColor[currentSubgraphInfo.status]}
+            isLoading={
+              currentSubgraphInfo.status === SubgraphStatus.FetchingData
+            }
+          />
+
+          <S.ModalSubgraphStatusWrapper>
+            <ModalSubgraphStatus
+              chainInfo={{
+                icon: currentSubgraphInfo.chainIcon,
+                network: currentSubgraphInfo.network
+              }}
+              status={currentSubgraphInfo.status}
+              diffTime={currentSubgraphInfo.diffTime}
+            />
+          </S.ModalSubgraphStatusWrapper>
+        </S.StatusWrapper>
+
+        <Button
+          className="button-network"
+          text={network.network}
+          background="black"
+          icon={network.icon}
+          onClick={() => setIsChooseNetwork(true)}
+          disabledNoEvent={network.network === 'Disconnected'}
+        />
+      </S.NetworkWrapper>
 
       <ModalKacy />
 

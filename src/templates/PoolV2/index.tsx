@@ -260,10 +260,7 @@ const Pool = () => {
       <S.Hero>
         <Breadcrumb>
           <BreadcrumbItem href="/">Invest</BreadcrumbItem>
-          <BreadcrumbItem
-            href={`/pool/${pool?.symbol?.toLowerCase()}`}
-            isLastPage
-          >
+          <BreadcrumbItem href="/" isLastPage>
             ${pool?.symbol}
           </BreadcrumbItem>
         </Breadcrumb>

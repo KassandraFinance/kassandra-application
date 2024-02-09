@@ -18,7 +18,16 @@ export const StakeWithPowerVote = styled.div`
   align-items: flex-start;
   justify-content: space-between;
 
-  @media (max-width: 960px) {
+  @media (max-width: 976px) {
     flex-wrap: wrap;
+  }
+`
+
+export const VotingPowerContainer = styled.div`
+  width: 100%;
+  max-width: 32rem;
+
+  @media (max-width: 976px) {
+    margin-top: 2rem;
   }
 `

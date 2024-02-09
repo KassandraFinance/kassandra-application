@@ -26,6 +26,7 @@ export const BreadcrumbItem = styled.li`
       display: block;
       color: #ffffff;
       position: relative;
+      pointer-events: none;
 
       &::before {
         content: '';
