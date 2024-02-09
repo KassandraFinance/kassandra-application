@@ -48,12 +48,23 @@ const monthShort = [
 
 const FeesChart = ({ fees, title, legend }: Props) => {
   const maxDomain = React.useMemo(() => {
+    let highestValue = 0
     const tenPercentOfValue = 1.1
-    const maxFeesJoinManager = fees.map(
-      item => parseFloat(item.feesJoinManager) * tenPercentOfValue
-    )
 
-    return Math.max.apply(null, maxFeesJoinManager)
+    for (let i = 0; i < fees.length; i++) {
+      const fee = fees[i]
+      const totalFeesToManager = parseFloat(fee.totalFeesToManager)
+      const feesAumManager = parseFloat(fee.feesAumManager)
+
+      if (totalFeesToManager > highestValue) {
+        highestValue = totalFeesToManager
+      }
+      if (feesAumManager > highestValue) {
+        highestValue = feesAumManager
+      }
+    }
+
+    return Math.ceil(highestValue * tenPercentOfValue)
   }, [fees])
 
   return (
