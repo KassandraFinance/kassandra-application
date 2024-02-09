@@ -105,6 +105,15 @@ const CreateProposal = () => {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
+    if (!proposalDescription) {
+      dispatch(
+        setModalAlertText({
+          errorText: 'Please add a description.'
+        })
+      )
+      return
+    }
+
     const descriptionWithTitle =
       '# ' + proposalTitle + '\n' + proposalDescription
 
