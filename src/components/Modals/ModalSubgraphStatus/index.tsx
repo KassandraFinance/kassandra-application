@@ -35,9 +35,9 @@ const ModalSubgraphStatus = ({
   diffTime
 }: IModalSubgraphStatusProps) => {
   const SubgraphStatusMessages: Record<SubgraphStatus, string> = {
-    [SubgraphStatus.Updated]: `A difference between the platform and the blockchain is: ${diffTime}`,
-    [SubgraphStatus.PracticallyUpdated]: `A difference between the platform and the blockchain is: ${diffTime}`,
-    [SubgraphStatus.Outdated]: `A difference between the platform and the blockchain is: ${diffTime}`,
+    [SubgraphStatus.Updated]: `Kassandra is up to date with the ${chainInfo.network} blockchain. All blockchain data is current, with no significant delays.`,
+    [SubgraphStatus.PracticallyUpdated]: `Data updates are currently experiencing slower processing times than usual, attributed to network congestion and data verification processes. The estimated delay is approximately ${diffTime}.`,
+    [SubgraphStatus.Outdated]: `Unable to sync with ${chainInfo.network} Blockchain.`,
     [SubgraphStatus.FetchingData]: 'Fetching the latest data'
   }
 
