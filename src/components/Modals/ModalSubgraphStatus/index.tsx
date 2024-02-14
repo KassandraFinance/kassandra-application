@@ -46,12 +46,10 @@ const ModalSubgraphStatus = ({
       <S.ModalHeader>
         <S.IconWrapper>{chainInfo.icon}</S.IconWrapper>
 
-        <p>{chainInfo.network} UPDATES</p>
+        <p>{chainInfo.network} Status</p>
       </S.ModalHeader>
 
       <S.ModalBodyContainer>
-        <p>CONNECTION STATUS</p>
-
         <S.TextWrapper>
           <StatusIndicator
             color={StatusColor[status]}

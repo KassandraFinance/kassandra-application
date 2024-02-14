@@ -54,20 +54,13 @@ export const ModalHeader = styled.div`
       color: ${theme.colors.snow};
       font-size: ${theme.font.sizes.font14};
       font-weight: ${theme.font.weight.medium};
-      text-transform: uppercase;
     }
   `}
 `
 
 export const ModalBodyContainer = styled.div`
-  ${({ theme }) => css`
+  ${() => css`
     padding-top: 1.6rem;
-
-    > p {
-      color: ${theme.colors.snow};
-      font-size: ${theme.font.sizes.font14};
-      font-weight: ${theme.font.weight.medium};
-    }
   `}
 `
 
@@ -76,7 +69,6 @@ export const TextWrapper = styled.div`
     display: flex;
     align-items: flex-start;
     gap: 0.8rem;
-    margin-top: 1rem;
 
     > p {
       color: ${theme.colors.grayDisabled};
