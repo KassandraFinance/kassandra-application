@@ -117,7 +117,7 @@ const VotingPower = ({
 
       {minimalVotingPower && (
         <S.TotalVotingPower>
-          <span>minimum for proposal</span>
+          <span>minimum to propose</span>
           <span>{BNtoDecimal(minimalVotingPower, 0, 2)}</span>
         </S.TotalVotingPower>
       )}
