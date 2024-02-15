@@ -1,8 +1,6 @@
 import React from 'react'
 import { ethers } from 'ethers'
 
-import { URL_PROPOSE_FUNCTION_SNOWTRACE } from '@/constants/tokenAddresses'
-
 import InputToggle from '@/components/Inputs/InputToggle'
 import InputText from '@/components/Inputs/InputText'
 
@@ -50,21 +48,10 @@ const AdvancedProposalOption = ({
         </S.TitleContent>
 
         <p>
-          Here, you will be able to input the parameters that will interact with
-          the smart contract team. You can interact with the{' '}
-          <a
-            href={URL_PROPOSE_FUNCTION_SNOWTRACE}
-            target="_blank"
-            rel="noreferrer"
-          >
-            contract{' '}
-          </a>
-          using the &rsquo;propose&rsquo; function and assigning these
-          parameters. You can test it using{' '}
-          <a href="https://tenderly.co/" target="_blank" rel="noreferrer">
-            Tenderly
-          </a>{' '}
-          or reach out to us on{' '}
+          Activate if your proposal involves actions on the blockchain, such as
+          transferring DAO tokens or updating Kassandra&apos;s on-chain
+          parameters. If you need assistance, feel free to reach out to our
+          development team via{' '}
           <a
             href="https://discord.gg/dBkTCZctKt"
             target="_blank"
