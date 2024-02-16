@@ -249,18 +249,21 @@ const CreateProposal = () => {
 
       <S.CreateProposal onSubmit={handleSubmit}>
         <S.InputsContainer>
-          <InputText
-            label="Title"
-            required={true}
-            name="Title"
-            type="text"
-            placeholder="Enter your title"
-            value={proposalTitle}
-            minLength={0}
-            maxLength={300}
-            error=""
-            onChange={handleProposalTitle}
-          />
+          <div>
+            <TitleWithContador title="Title" />
+            <InputText
+              label=""
+              required={true}
+              name="Title"
+              type="text"
+              placeholder="Enter a concise title for your proposal"
+              value={proposalTitle}
+              minLength={0}
+              maxLength={300}
+              error=""
+              onChange={handleProposalTitle}
+            />
+          </div>
 
           <S.MarkdownEditorContainer>
             <TitleWithContador
@@ -271,17 +274,18 @@ const CreateProposal = () => {
 
             <MarkdownEditor
               value={proposalDescription}
+              placeholder="Provide a detailed description of your proposal, including its objectives and potential impact on the platform."
               handleEditorChange={handleProposalDescription}
             />
           </S.MarkdownEditorContainer>
 
           <div>
-            <TitleWithContador title="Forum Link" optional />
+            <TitleWithContador title="Discussion Link" optional />
 
             <InputText
               name="Title"
               type="text"
-              placeholder="Forum link"
+              placeholder="Paste the URL to the forum discussion related to your proposal (optional)"
               value={proposalForumLink}
               minLength={0}
               maxLength={500}
@@ -346,9 +350,6 @@ const CreateProposal = () => {
         <S.ReviewContainer>
           <VotingPower
             currentVotingPower={Big(data?.user?.votingPower ?? '0')}
-            totalVotingPower={Big(
-              data?.governances[0]?.totalVotingPower ?? '0'
-            )}
             minimalVotingPower={minimalVotingPower}
           />
 

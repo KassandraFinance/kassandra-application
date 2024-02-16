@@ -306,19 +306,6 @@ const Proposal = () => {
           ]
         }
 
-        if (defeated) {
-          return [
-            ...baseArray,
-            {
-              title: 'Defeated',
-              completed: true,
-              date: new Date(votingClosed * 1000)
-                .toLocaleString()
-                .split(', ')[0]
-            }
-          ]
-        }
-
         if (votingClosed > today) {
           return [
             ...baseArray,
@@ -336,6 +323,19 @@ const Proposal = () => {
             {
               title: 'Executed',
               completed: false
+            }
+          ]
+        }
+
+        if (defeated) {
+          return [
+            ...baseArray,
+            {
+              title: 'Defeated',
+              completed: true,
+              date: new Date(votingClosed * 1000)
+                .toLocaleString()
+                .split(', ')[0]
             }
           ]
         }
