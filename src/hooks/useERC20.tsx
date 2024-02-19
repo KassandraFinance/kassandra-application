@@ -13,7 +13,8 @@ import { WalletState } from '@web3-onboard/core'
 
 import useTransaction, {
   MessageType,
-  CallbacksType
+  CallbacksType,
+  ContractInfo
 } from '@/hooks/useTransaction'
 import ERC20ABI from '@/constants/abi/ERC20.json'
 import { networks } from '@/constants/tokenAddresses'
@@ -32,6 +33,7 @@ function ERC20Contract(
   ) => Promise<ContractTransactionReceipt | null>,
   transactionErrors?: (
     error: unknown,
+    contractInfo: ContractInfo,
     onFail?: (() => void | Promise<void>) | undefined
   ) => Promise<ErrorCode | undefined>
 ) {
@@ -85,7 +87,11 @@ function ERC20Contract(
       const receipt = await txNotification(tx, message, callbacks)
       return receipt
     } catch (error) {
-      transactionErrors(error, callbacks?.onFail)
+      const contractInfo = {
+        contractName: 'kacyOFT',
+        functionName: 'sendFrom'
+      }
+      transactionErrors(error, contractInfo, callbacks?.onFail)
       return null
     }
   }
@@ -144,6 +150,7 @@ type ParamsType = {
   ) => Promise<ContractTransactionReceipt | null>
   transactionErrors: (
     error: unknown,
+    contractInfo: ContractInfo,
     onFail?: (() => void | Promise<void>) | undefined
   ) => Promise<ErrorCode | undefined>
 }

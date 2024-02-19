@@ -1,4 +1,8 @@
-import { ContractTransactionResponse, isError } from 'ethers'
+import * as Sentry from '@sentry/nextjs'
+import { useConnectWallet } from '@web3-onboard/react'
+import { ContractTransactionResponse, JsonRpcProvider, isError } from 'ethers'
+
+import { networks } from '@/constants/tokenAddresses'
 
 import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
@@ -11,6 +15,11 @@ export type MessageType = {
   sucess?: string
 }
 
+export type ContractInfo = {
+  contractName: string
+  functionName: string
+}
+
 export type CallbacksType = {
   onSuccess?: () => Promise<void> | void
   onFail?: () => Promise<void> | void
@@ -20,6 +29,7 @@ export type CallbacksType = {
 
 const useTransaction = () => {
   const dispatch = useAppDispatch()
+  const [{ wallet }] = useConnectWallet()
 
   async function txNotification(
     tx: ContractTransactionResponse,
@@ -59,10 +69,55 @@ const useTransaction = () => {
 
   async function transactionErrors(
     error: any,
+    contractInfo: ContractInfo,
     onFail?: () => Promise<void> | void
   ) {
     if (onFail) {
       await onFail()
+    }
+
+    if (error?.transaction) {
+      const chainId = Number(wallet?.chains[0].id ?? '0')
+      const readProvider = new JsonRpcProvider(networks[chainId].rpc)
+
+      const transactionData: string = error.transaction.data.toString()
+      const currentBlock = await readProvider.getBlockNumber()
+
+      const MAX_SIZE_ALLOWED_SENTRY = 8000
+      if (transactionData.length >= MAX_SIZE_ALLOWED_SENTRY) {
+        Sentry.getCurrentScope().addAttachment({
+          filename: 'transactionData.txt',
+          data: transactionData.slice(
+            MAX_SIZE_ALLOWED_SENTRY,
+            transactionData.length
+          ),
+          contentType: 'text/plain'
+        })
+
+        Sentry.setContext('transaction', {
+          firstTransactionData: transactionData.slice(
+            0,
+            MAX_SIZE_ALLOWED_SENTRY
+          ),
+          blockNumber: currentBlock
+        })
+
+        Sentry.getCurrentScope().clearAttachments()
+      } else {
+        Sentry.setContext('transaction', {
+          data: transactionData,
+          blockNumber: currentBlock
+        })
+      }
+
+      Sentry.captureException(error, {
+        tags: {
+          contractName: contractInfo.contractName,
+          functionName: contractInfo.functionName,
+          userAddress: error.transaction.from,
+          chainId: chainId
+        }
+      })
     }
 
     if (error?.code === 'KASS#01') {

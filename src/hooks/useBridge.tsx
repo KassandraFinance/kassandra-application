@@ -54,7 +54,6 @@ const useBridge = () => {
           throw new Error('insufficient gas fee')
         }
 
-        console.log(fee)
         const tx = await contract.sendFrom(
           wallet.accounts[0].address,
           lzChainIds[Number(id)],
@@ -71,7 +70,12 @@ const useBridge = () => {
         const status = await txNotification(tx)
         return status
       } catch (error) {
-        transactionErrors(error)
+        const contractInfo = {
+          contractName: 'kacyOFT',
+          functionName: 'sendFrom'
+        }
+
+        transactionErrors(error, contractInfo)
       }
     }
   }
