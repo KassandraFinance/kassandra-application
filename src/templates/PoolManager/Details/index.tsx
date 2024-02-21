@@ -3,16 +3,19 @@ import { useRouter } from 'next/router'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
+import { ZeroAddress } from 'ethers'
 
+import useManagePoolController from '@/hooks/useManagePoolController'
 import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
 
 import substr from '@/utils/substr'
 import { registerToken } from '../../../utils/registerToken'
 
-import TitleSection from '@/components/TitleSection'
 import Strategy from './Strategy'
 import PoolImage from './PoolImage'
 import PrivacySettings from './PrivacySettings'
+import TitleSection from '@/components/TitleSection'
+import PoolStrategyControl from './PoolStrategyControl'
 
 import privacyIcon from '@assets/iconGradient/product-bar.svg'
 import notFound from '@assets/icons/coming-soon.svg'
@@ -31,6 +34,18 @@ const Details = () => {
     manager: wallet?.accounts[0].address,
     id: poolId
   })
+
+  const { setStrategist } = useManagePoolController(
+    poolInfo ? poolInfo[0]?.controller : ZeroAddress
+  )
+
+  async function handleChangeStrategy(address: string) {
+    const text = {
+      success: 'New strategist added!'
+    }
+
+    await setStrategist(address, text)
+  }
 
   return (
     <S.Details>
@@ -105,6 +120,11 @@ const Details = () => {
             <PrivacySettings />
           </>
         )}
+
+        <PoolStrategyControl
+          currentStrategy={poolInfo ? poolInfo[0].strategy : ''}
+          handleChangeStrategy={handleChangeStrategy}
+        />
       </S.Wrapper2>
     </S.Details>
   )

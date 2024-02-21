@@ -5,6 +5,7 @@ query ManagerPoolInfo($manager: String, $id: ID) {
         vault
         chain_id
         logo
+        strategy
         pool_version
         is_private_pool
         decimals

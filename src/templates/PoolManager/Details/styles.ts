@@ -33,6 +33,9 @@ export const Wrapper2 = styled.div`
     grid-area: right;
 
     @media (max-width: 992px) {
+      display: flex;
+      flex-direction: column;
+      gap: 2.4rem;
       grid-area: top;
     }
   `}
