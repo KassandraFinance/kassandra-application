@@ -163,6 +163,29 @@ function managePoolFunctions(
       transactionErrors(error, contractInfo, onFail)
     }
   }
+  const setStrategist = async (
+    address: string,
+    transactionText: {
+      success?: string
+    },
+    onSuccess?: () => void,
+    onFail?: () => void
+  ) => {
+    try {
+      const tx = await controller.send.setStrategist(address)
+      await txNotification(
+        tx,
+        { sucess: transactionText.success },
+        { onSuccess, onFail }
+      )
+    } catch (error) {
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'setStrategist'
+      }
+      transactionErrors(error, contractInfo, onFail)
+    }
+  }
 
   const rebalancePool = async (
     currentDateAdded: number,
@@ -257,6 +280,7 @@ function managePoolFunctions(
     removeToken,
     addToken,
     setJoinFees,
+    setStrategist,
     getJoinFees
   }
 }
