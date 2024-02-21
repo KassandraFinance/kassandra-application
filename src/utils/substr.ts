@@ -1,8 +1,8 @@
-function substr(address: string) {
+function substr(address: string, value = 4) {
   return (
-    address.substring(0, 4) +
+    address.substring(0, value) +
     '....' +
-    address.substring(address.length - 4, address.length)
+    address.substring(address.length - value, address.length)
   )
 }
 
