@@ -69,7 +69,7 @@ const useTransaction = () => {
 
   async function transactionErrors(
     error: any,
-    contractInfo: ContractInfo,
+    contractInfo?: ContractInfo,
     onFail?: () => Promise<void> | void
   ) {
     if (onFail) {
@@ -112,8 +112,8 @@ const useTransaction = () => {
 
       Sentry.captureException(error, {
         tags: {
-          contractName: contractInfo.contractName,
-          functionName: contractInfo.functionName,
+          contractName: contractInfo?.contractName,
+          functionName: contractInfo?.functionName,
           userAddress: error.transaction.from,
           chainId: chainId
         }
@@ -150,21 +150,16 @@ const useTransaction = () => {
         : error?.message ?? 'Transaction reverted'
 
       dispatch(setModalAlertText({ errorText: err }))
-      console.log(error)
       return error.code
     }
 
-    if (isError(error, 'INSUFFICIENT_FUNDS')) {
-      dispatch(setModalAlertText({ errorText: '' }))
-      return error.code
-    }
-
-    if (isError(error, 'NONCE_EXPIRED')) {
-      dispatch(setModalAlertText({ errorText: '' }))
-      return error.code
-    }
-
-    dispatch(setModalAlertText({ errorText: error.toString() }))
+    dispatch(
+      setModalAlertText({
+        errorText:
+          'Sorry, something went wrong with your transaction. Please copy the transaction data below and send it to us on Discord so we can assist you',
+        transactionData: error?.transaction?.data.toString()
+      })
+    )
     return
   }
 
