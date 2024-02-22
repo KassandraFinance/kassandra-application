@@ -150,7 +150,11 @@ const useStaking = (address: string, chainId = 43114) => {
         )
         await txNotification(tx, message, callbacks)
       } catch (error) {
-        transactionErrors(error, callbacks?.onFail)
+        const contractInfo = {
+          contractName: 'StakingContract',
+          functionName: 'stake'
+        }
+        transactionErrors(error, contractInfo, callbacks?.onFail)
       }
     }
 
@@ -163,7 +167,11 @@ const useStaking = (address: string, chainId = 43114) => {
         const tx = await contract.send.unstake(pid)
         await txNotification(tx, message, callbacks)
       } catch (error) {
-        transactionErrors(error, callbacks?.onFail)
+        const contractInfo = {
+          contractName: 'StakingContract',
+          functionName: 'unstake'
+        }
+        transactionErrors(error, contractInfo, callbacks?.onFail)
       }
     }
 
@@ -176,7 +184,11 @@ const useStaking = (address: string, chainId = 43114) => {
         const tx = await contract.send.cancelUnstake(pid)
         await txNotification(tx, message, callbacks)
       } catch (error) {
-        transactionErrors(error, callbacks?.onFail)
+        const contractInfo = {
+          contractName: 'StakingContract',
+          functionName: 'cancelUnstake'
+        }
+        transactionErrors(error, contractInfo, callbacks?.onFail)
       }
     }
 
@@ -189,7 +201,11 @@ const useStaking = (address: string, chainId = 43114) => {
         const tx = await contract.send.getReward(pid)
         await txNotification(tx, message, callbacks)
       } catch (error) {
-        transactionErrors(error, callbacks?.onFail)
+        const contractInfo = {
+          contractName: 'StakingContract',
+          functionName: 'getReward'
+        }
+        transactionErrors(error, contractInfo, callbacks?.onFail)
       }
     }
 
@@ -203,7 +219,11 @@ const useStaking = (address: string, chainId = 43114) => {
         const tx = await contract.send.withdraw(pid, amount)
         await txNotification(tx, message, callbacks)
       } catch (error) {
-        transactionErrors(error, callbacks?.onFail)
+        const contractInfo = {
+          contractName: 'StakingContract',
+          functionName: 'withdraw'
+        }
+        transactionErrors(error, contractInfo, callbacks?.onFail)
       }
     }
 

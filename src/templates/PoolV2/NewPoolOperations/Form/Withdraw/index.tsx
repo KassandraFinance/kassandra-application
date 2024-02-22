@@ -287,7 +287,11 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
             }
           )
         } catch (error) {
-          transactionErrors(error)
+          const contractInfo = {
+            contractName: 'balancerHelpersContract',
+            functionName: 'exitswapPoolAmountIn'
+          }
+          transactionErrors(error, contractInfo)
         }
         return
       }
@@ -314,7 +318,11 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
           }
         )
       } catch (error) {
-        transactionErrors(error)
+        const contractInfo = {
+          contractName: 'balancerHelpersContract',
+          functionName: 'exitswapPoolAllTokenAmountIn'
+        }
+        transactionErrors(error, contractInfo)
       }
       return
     } catch (error) {

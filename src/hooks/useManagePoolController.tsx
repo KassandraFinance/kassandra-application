@@ -13,7 +13,11 @@ import { WalletState } from '@web3-onboard/core'
 import { networks } from '@/constants/tokenAddresses'
 import KassandraController from '@/constants/abi/KassandraController.json'
 
-import useTransaction, { CallbacksType, MessageType } from './useTransaction'
+import useTransaction, {
+  CallbacksType,
+  ContractInfo,
+  MessageType
+} from './useTransaction'
 
 type ContractType = {
   read: Contract
@@ -34,6 +38,7 @@ function managePoolFunctions(
   ) => Promise<ContractTransactionReceipt | null>,
   transactionErrors: (
     error: unknown,
+    contractInfo: ContractInfo,
     onFail?: (() => void | Promise<void>) | undefined
   ) => Promise<ErrorCode | undefined>
 ) {
@@ -64,7 +69,11 @@ function managePoolFunctions(
       await txNotification(tx, {}, { onSuccess: onSuccess })
     } catch (error) {
       // check error and send error modal
-      transactionErrors(error)
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'getJoinFees'
+      }
+      transactionErrors(error, contractInfo)
     }
   }
 
@@ -79,7 +88,11 @@ function managePoolFunctions(
 
       await txNotification(tx, transactionText, { onSuccess, onFail })
     } catch (error) {
-      transactionErrors(error, onFail)
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'setJoinFees'
+      }
+      transactionErrors(error, contractInfo, onFail)
     }
   }
 
@@ -96,7 +109,11 @@ function managePoolFunctions(
     } catch (error) {
       console.log(error)
       // check error and send error modal
-      transactionErrors(error, onFail)
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'addAllowedAddresses'
+      }
+      transactionErrors(error, contractInfo, onFail)
     }
   }
 
@@ -113,7 +130,11 @@ function managePoolFunctions(
     } catch (error) {
       console.log(error)
       // check error and send error modal
-      transactionErrors(error, onFail)
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'removeAllowedAddresses'
+      }
+      transactionErrors(error, contractInfo, onFail)
     }
   }
 
@@ -135,7 +156,11 @@ function managePoolFunctions(
     } catch (error) {
       console.log(error)
       // check error and send error modal
-      transactionErrors(error, onFail)
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'setPublicPool'
+      }
+      transactionErrors(error, contractInfo, onFail)
     }
   }
 
@@ -160,7 +185,11 @@ function managePoolFunctions(
     } catch (error) {
       console.log(error)
       // check error and send error modal
-      transactionErrors(error, onFail)
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'rebalancePool'
+      }
+      transactionErrors(error, contractInfo, onFail)
     }
   }
 
@@ -181,7 +210,11 @@ function managePoolFunctions(
     } catch (error) {
       console.log(error)
       // check error and send error modal
-      transactionErrors(error, onFail)
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'removeToken'
+      }
+      transactionErrors(error, contractInfo, onFail)
     }
   }
 
@@ -206,7 +239,11 @@ function managePoolFunctions(
     } catch (error) {
       console.log(error)
       // check error and send error modal
-      transactionErrors(error, onFail)
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'addToken'
+      }
+      transactionErrors(error, contractInfo, onFail)
     }
   }
 
@@ -270,6 +307,7 @@ type ParamsType = {
   ) => Promise<ContractTransactionReceipt | null>
   transactionErrors: (
     error: unknown,
+    contractInfo: ContractInfo,
     onFail?: (() => void | Promise<void>) | undefined
   ) => Promise<ErrorCode | undefined>
 }

@@ -93,7 +93,11 @@ const useGov = (address: string) => {
         const status = await txNotification(tx)
         return status
       } catch (error) {
-        transactionErrors(error)
+        const contractInfo = {
+          contractName: 'stakingContract',
+          functionName: 'castVote'
+        }
+        transactionErrors(error, contractInfo)
       }
     }
 
@@ -116,7 +120,11 @@ const useGov = (address: string) => {
         const status = await txNotification(tx)
         return status
       } catch (error) {
-        transactionErrors(error)
+        const contractInfo = {
+          contractName: 'stakingContract',
+          functionName: 'propose'
+        }
+        transactionErrors(error, contractInfo)
       }
     }
 

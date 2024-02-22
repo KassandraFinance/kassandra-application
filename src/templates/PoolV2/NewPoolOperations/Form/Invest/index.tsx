@@ -511,7 +511,11 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
           { onFail: handleTransactionFail, onSuccess: handleTransactionSuccess }
         )
       } catch (error) {
-        transactionErrors(error)
+        const contractInfo = {
+          contractName: 'ProxyInvest',
+          functionName: 'joinswapExternAmountIn'
+        }
+        transactionErrors(error, contractInfo)
       }
       return
     } catch (error) {

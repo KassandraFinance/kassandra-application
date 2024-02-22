@@ -43,3 +43,6 @@ ngrok.exe
 *.Identifier
 
 graphql.config.json
+
+# Sentry Config File
+.sentryclirc

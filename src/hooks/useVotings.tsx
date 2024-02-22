@@ -73,7 +73,11 @@ const useVotingPower = (address: string) => {
         await txNotification(tx)
       } catch (error) {
         // check error and send error modal
-        transactionErrors(error)
+        const contractInfo = {
+          contractName: 'StakingContract',
+          functionName: 'delegateVote'
+        }
+        transactionErrors(error, contractInfo)
       }
     }
 
@@ -82,7 +86,11 @@ const useVotingPower = (address: string) => {
         const tx = await contract.send.delegateAll(address)
         await txNotification(tx)
       } catch (error) {
-        transactionErrors(error)
+        const contractInfo = {
+          contractName: 'StakingContract',
+          functionName: 'delegateAllVotes'
+        }
+        transactionErrors(error, contractInfo)
       }
     }
 
