@@ -88,7 +88,6 @@ const useCreatePool = (chainId: number) => {
     message?: MessageType,
     callbacks?: CallbacksType
   ) {
-    console.log(wallet?.accounts[0].address)
     try {
       const response = await contract.send.create.staticCall(
         pool.poolParams,
@@ -116,7 +115,11 @@ const useCreatePool = (chainId: number) => {
         receipt
       }
     } catch (error) {
-      transactionErrors(error, callbacks?.onFail)
+      const contractInfo = {
+        contractName: 'KassandraManagedControllerFactory',
+        functionName: 'create'
+      }
+      transactionErrors(error, contractInfo, callbacks?.onFail)
 
       return { res: 0 }
     }
