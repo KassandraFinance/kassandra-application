@@ -16,13 +16,13 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
         .json({ message: `Method ${request.method} Not Allowed` })
     }
 
-    const subgraphHealth = await fetch(`${URL_KASSANDRA_API}/subgraph/status`)
-
-    const backendHealth = await fetch(`${BACKEND_KASSANDRA}/health`)
-
-    const coingeckoHealth = await fetch(
-      `${COINGECKO_API}ping?x_cg_pro_api_key=${process.env.NEXT_PUBLIC_COINGECKO}`
-    )
+    const [subgraphHealth, backendHealth, coingeckoHealth] = await Promise.all([
+      fetch(`${URL_KASSANDRA_API}/subgraph/status`),
+      fetch(`${BACKEND_KASSANDRA}/health`),
+      fetch(
+        `${COINGECKO_API}ping?x_cg_pro_api_key=${process.env.NEXT_PUBLIC_COINGECKO}`
+      )
+    ])
 
     if (
       backendHealth.status !== OK ||
@@ -36,6 +36,6 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
 
     return response.status(200).json({ message: 'OK' })
   } catch (error) {
-    return response.status(500).json({ message: 'Internal server error' })
+    return response.status(503).json({ message: 'Services are not available' })
   }
 }
