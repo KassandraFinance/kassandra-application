@@ -143,16 +143,6 @@ const useTransaction = () => {
       return error.code
     }
 
-    if (isError(error, 'CALL_EXCEPTION')) {
-      const errorStr = error.toString().match(/(BAL#\d{0,3})/)
-      const err = errorStr
-        ? errorStr[0]
-        : error?.message ?? 'Transaction reverted'
-
-      dispatch(setModalAlertText({ errorText: err }))
-      return error.code
-    }
-
     dispatch(
       setModalAlertText({
         errorText:
