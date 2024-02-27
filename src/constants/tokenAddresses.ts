@@ -62,6 +62,9 @@ export const platform: Record<number, string> = {
   [137]: 'polygon-pos'
 }
 
+export const URL_KASSANDRA_CANDIDATE =
+  'https://www.kassandra.finance/ownership-claim'
+
 export const linkSnowtrace = 'https://snowtrace.io'
 export const URL_COINGECKO_CURRENCIES = 'https://www.coingecko.com/pt/moedas/'
 
