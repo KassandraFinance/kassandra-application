@@ -58,8 +58,9 @@ const PoolStrategyControl = ({
       <S.PoolStrategyContainer>
         <S.PoolStrategyTitle>Strategy Setting</S.PoolStrategyTitle>
         <S.PoolSettingParagraph>
-          Choose who will be the strategist for the pool, either you or another
-          wallet or contract.
+          Choose who will be the strategist of the pool. The strategist will
+          have the ability to add, remove, and rebalance tokens in the pool. It
+          can be you or another wallet.
         </S.PoolSettingParagraph>
 
         <S.InputsRadioContainer>
@@ -71,7 +72,7 @@ const PoolStrategyControl = ({
               inputChecked={selected === poolStrategyType.YOURSELF}
               handleClickInput={handleChangeInputValue}
             />
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
+            <p>You&apos;ll be the owner and strategist of the pool.</p>
           </S.InputsRadioContent>
           <S.InputsRadioContent>
             <InputRadio
@@ -81,7 +82,10 @@ const PoolStrategyControl = ({
               inputChecked={selected === poolStrategyType.OTHER}
               handleClickInput={handleChangeInputValue}
             />
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
+            <p>
+              You&apos;ll be the owner of the pool, and whoever you add as an
+              address will act as the strategist.
+            </p>
           </S.InputsRadioContent>
         </S.InputsRadioContainer>
       </S.PoolStrategyContainer>
@@ -92,7 +96,8 @@ const PoolStrategyControl = ({
         <S.InputAddressContainer
           isValid={isAddress(newAddress)}
           hasValue={
-            newAddress.length > 0 && newAddress !== wallet?.accounts[0].address
+            newAddress.length > 0 &&
+            newAddress.toLowerCase() !== currentStrategy.toLowerCase()
           }
         >
           <input
@@ -105,7 +110,7 @@ const PoolStrategyControl = ({
           />
         </S.InputAddressContainer>
         <S.Error isValid={newAddress.length > 0 ? isAddress(newAddress) : true}>
-          is Invalid address
+          Invalid wallet address
         </S.Error>
       </S.StrategyAddressContainer>
 
@@ -116,8 +121,8 @@ const PoolStrategyControl = ({
         className="updateButton"
         onClick={() => handleChangeStrategy(newAddress)}
         disabledNoEvent={
-          newAddress.toLowerCase() ===
-            wallet?.accounts[0].address.toLowerCase() || !isAddress(newAddress)
+          newAddress.toLowerCase() === currentStrategy.toLowerCase() ||
+          !isAddress(newAddress)
         }
       />
     </S.PoolStrategy>
