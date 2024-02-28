@@ -81,6 +81,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
 
                 <Component {...pageProps} />
                 {router.pathname === '/404' ||
+                router.pathname === '/ownership-claim' ||
                 pathClearHashtag[0] === 'manage' ? null : (
                   <Footer />
                 )}

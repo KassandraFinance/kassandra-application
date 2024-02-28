@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import Tippy from '@tippyjs/react'
+import 'tippy.js/dist/tippy.css'
 import { BNtoDecimal, calcChange } from '../../utils/numerals'
 import Big from 'big.js'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
@@ -78,23 +79,24 @@ const tabs = [
     asPathText: 'investors',
     text: 'Investors',
     svg: investorsIcon
-  },
-  {
-    asPathText: 'fee-rewards',
-    text: 'Fee Rewards',
-    svg: rewardsIcon
-  },
-  {
-    asPathText: 'brokers',
-    text: 'Brokers',
-    svg: brokersIcon
-  },
-  {
-    asPathText: 'details',
-    text: 'Details',
-    svg: detailsIcon
   }
 ]
+
+const detailsTab = {
+  asPathText: 'details',
+  text: 'Details',
+  svg: detailsIcon
+}
+const brokersTab = {
+  asPathText: 'brokers',
+  text: 'Brokers',
+  svg: brokersIcon
+}
+const feeRewardTab = {
+  asPathText: 'fee-rewards',
+  text: 'Fee Rewards',
+  svg: rewardsIcon
+}
 
 const PoolManager = () => {
   const [isOpenManageAssets, setIsOpenManageAssets] = React.useState(false)
@@ -130,6 +132,20 @@ const PoolManager = () => {
   const endRebalanceTime = data ? data * 1000 : 0
 
   const { dateFormated } = useCountdown(endRebalanceTime)
+
+  const updatedTabs = handleCheckTabs(tabs)
+
+  function handleCheckTabs(tabsList: typeof tabs) {
+    const newTabsList = tabsList.slice()
+    if (
+      poolInfo &&
+      poolInfo[0].strategy.toLowerCase() ===
+        wallet?.accounts[0].address.toLowerCase()
+    ) {
+      newTabsList.splice(4, 0, feeRewardTab, brokersTab, detailsTab)
+    }
+    return newTabsList
+  }
 
   const PoolManagerComponents: { [key: string]: ReactElement } = {
     analytics: <Analytics poolId={poolId} />,
@@ -347,7 +363,7 @@ const PoolManager = () => {
                         })
                       }
                     />
-                  ) : (
+                  ) : poolInfo[0].strategy === wallet?.accounts[0].address ? (
                     <Tippy
                       allowHTML={true}
                       content={[
@@ -373,10 +389,24 @@ const PoolManager = () => {
                         />
                       </span>
                     </Tippy>
+                  ) : (
+                    <Tippy content="I wanted to remind you that you're not the designated pool strategist.">
+                      <span>
+                        <Button
+                          className="btn-manage-assets"
+                          background="secondary"
+                          size="large"
+                          text="Manage Assets"
+                          fullWidth
+                          image={gear.src}
+                          disabledNoEvent={true}
+                        />
+                      </span>
+                    </Tippy>
                   )}
                 </S.Intro>
                 <SelectTabs
-                  tabs={tabs}
+                  tabs={updatedTabs}
                   isSelect={isSelectTab}
                   setIsSelect={setIsSelectTab}
                 />

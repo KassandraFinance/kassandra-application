@@ -61,6 +61,10 @@ function managePoolFunctions(
     return await controller.read.getJoinFees.staticCall()
   }
 
+  const getManagerCandidate = async (): Promise<string> => {
+    return await controller.read.getManagerCandidate.staticCall()
+  }
+
   // Write functions
   const withdrawAumFees = async (onSuccess: () => void): Promise<void> => {
     try {
@@ -164,6 +168,77 @@ function managePoolFunctions(
     }
   }
 
+  const setStrategist = async (
+    address: string,
+    transactionText: {
+      success?: string
+    },
+    onSuccess?: () => void,
+    onFail?: () => void
+  ) => {
+    try {
+      const tx = await controller.send.setStrategist(address)
+      await txNotification(
+        tx,
+        { sucess: transactionText.success },
+        { onSuccess, onFail }
+      )
+    } catch (error) {
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'setStrategist'
+      }
+      transactionErrors(error, contractInfo, onFail)
+    }
+  }
+
+  const claimOwnership = async (
+    transactionText?: {
+      success: string
+    },
+    onSuccess?: () => void,
+    onFail?: () => void
+  ) => {
+    try {
+      const tx = await controller.send.claimOwnership()
+      await txNotification(
+        tx,
+        { sucess: transactionText?.success },
+        { onSuccess, onFail }
+      )
+    } catch (error) {
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'claimOwnership'
+      }
+      transactionErrors(error, contractInfo, onFail)
+    }
+  }
+
+  const transferOwnership = async (
+    address: string,
+    transactionText: {
+      success?: string
+    },
+    onSuccess?: () => void,
+    onFail?: () => void
+  ) => {
+    try {
+      const tx = await controller.send.transferOwnership(address)
+      await txNotification(
+        tx,
+        { sucess: transactionText.success },
+        { onSuccess, onFail }
+      )
+    } catch (error) {
+      const contractInfo = {
+        contractName: 'KassandraController',
+        functionName: 'transferOwnership'
+      }
+      transactionErrors(error, contractInfo, onFail)
+    }
+  }
+
   const rebalancePool = async (
     currentDateAdded: number,
     periodSelected: number,
@@ -256,7 +331,11 @@ function managePoolFunctions(
     rebalancePool,
     removeToken,
     addToken,
+    getManagerCandidate,
+    transferOwnership,
     setJoinFees,
+    setStrategist,
+    claimOwnership,
     getJoinFees
   }
 }
