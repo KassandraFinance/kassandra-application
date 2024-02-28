@@ -64,7 +64,7 @@ const OwnershipClaim = () => {
   return (
     <S.OwnershipClaim>
       <S.Card>
-        <h1>TRANSFER ONERSHIP</h1>
+        <h1>TRANSFER OWNERSHIP</h1>
 
         <p>
           You&apos;ve been chosen to become the new owner of the{' '}
