@@ -2,6 +2,8 @@ import React from 'react'
 import { ZeroAddress } from 'ethers'
 import { useRouter } from 'next/router'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
+import Tippy from '@tippyjs/react'
+import 'tippy.js/dist/tippy.css'
 
 import { URL_DISCORD_DEV_CHAT, networks } from '@/constants/tokenAddresses'
 
@@ -25,13 +27,15 @@ const OwnershipClaim = () => {
     ? router.query.id[0]
     : router.query.id ?? ''
 
-  const [{ wallet }] = useConnectWallet()
+  const [{ wallet, connecting }, connect] = useConnectWallet()
   const [{ settingChain }, setChain] = useSetChain()
   const { data } = usePoolData({ id: poolId })
 
   const poolChainId = data?.chain_id ?? 0
   const userChainId = Number(wallet?.chains[0].id ?? 0)
   const poolControllerAddress = data ? data.controller : ZeroAddress
+  const isCandidate =
+    currentCandidate.toLowerCase() !== wallet?.accounts[0].address.toLowerCase()
 
   const { txNotification, transactionErrors } = useTransaction()
   const { claimOwnership } = useManagePoolController(
@@ -91,7 +95,16 @@ const OwnershipClaim = () => {
         </p>
 
         <S.ButtonWrapper>
-          {userChainId !== poolChainId ? (
+          {!wallet ? (
+            <Button
+              background="primary"
+              size="huge"
+              fullWidth
+              disabledNoEvent={connecting}
+              onClick={() => connect()}
+              text="Connect Wallet"
+            />
+          ) : userChainId !== poolChainId ? (
             <Button
               background="primary"
               size="huge"
@@ -105,18 +118,21 @@ const OwnershipClaim = () => {
               }
             />
           ) : (
-            <Button
-              background="primary"
-              size="huge"
-              text="Claim"
-              fullWidth
-              disabledNoEvent={
-                poolChainId !== userChainId ||
-                currentCandidate.toLowerCase() !==
-                  wallet?.accounts[0].address.toLowerCase()
-              }
-              onClick={() => handleClaimOwnership()}
-            />
+            <Tippy
+              content="You are not the candidate for this pool"
+              disabled={!isCandidate}
+            >
+              <div>
+                <Button
+                  background="primary"
+                  size="huge"
+                  text="Claim"
+                  fullWidth
+                  disabledNoEvent={poolChainId !== userChainId || isCandidate}
+                  onClick={() => handleClaimOwnership()}
+                />
+              </div>
+            </Tippy>
           )}
         </S.ButtonWrapper>
       </S.Card>
