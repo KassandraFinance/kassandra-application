@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 export interface IModalAlerText {
   errorText: string | null
   solutionText?: string | null
+  transactionData?: string | null
 }
 
 const initialState: IModalAlerText = {
@@ -17,6 +18,7 @@ export const modalAlertTextSlice = createSlice({
     setModalAlertText: (state, action: PayloadAction<IModalAlerText>) => {
       state.errorText = action.payload.errorText
       state.solutionText = action.payload.solutionText || null
+      state.transactionData = action.payload.transactionData || null
     },
     removeModalAlertText: state => {
       state.errorText = null

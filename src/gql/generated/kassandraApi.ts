@@ -8344,6 +8344,7 @@ export type ManagerPoolInfoQuery = {
     symbol: string
     pool_id?: number | null
     total_value_locked_usd: string
+    strategy: string
     underlying_assets_addresses: Array<string>
     controller: string
     price_usd: string
@@ -9828,6 +9829,7 @@ export const ManagerPoolInfoDocument = gql`
       logo
       pool_version
       is_private_pool
+      strategy
       decimals
       chain {
         id

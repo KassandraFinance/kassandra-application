@@ -33,7 +33,7 @@ function ERC20Contract(
   ) => Promise<ContractTransactionReceipt | null>,
   transactionErrors?: (
     error: unknown,
-    contractInfo: ContractInfo,
+    contractInfo?: ContractInfo,
     onFail?: (() => void | Promise<void>) | undefined
   ) => Promise<ErrorCode | undefined>
 ) {
@@ -150,7 +150,7 @@ type ParamsType = {
   ) => Promise<ContractTransactionReceipt | null>
   transactionErrors: (
     error: unknown,
-    contractInfo: ContractInfo,
+    contractInfo?: ContractInfo,
     onFail?: (() => void | Promise<void>) | undefined
   ) => Promise<ErrorCode | undefined>
 }

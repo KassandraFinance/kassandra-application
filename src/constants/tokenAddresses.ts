@@ -74,15 +74,18 @@ export const SUBGRAPH_GRAPHQL_URL = 'https://graph.kassandra.finance/graphql'
 export const BACKEND_KASSANDRA =
   process.env.NEXT_PUBLIC_BACKEND_KASSANDRA ?? 'http://localhost:3001'
 
+export const URL_APP_KASSANDRA = 'https://app.kassandra.finance'
+
 export const URL_1INCH = 'https://api.1inch.io/v5.0/'
 export const URL_PARASWAP = 'https://apiv5.paraswap.io'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
-export const URL_KASSANDRA_API = 'https://app.kassandra.finance/api'
+export const URL_DISCORD_DEV_CHAT = 'https://discord.gg/XJ2QksXt'
 export const COINS_METADATA =
   process.env.NEXT_PUBLIC_COINS_METADATA ?? 'http://localhost:3001'
 export const URL_PROPOSE_FUNCTION_SNOWTRACE =
   'https://snowtrace.io/address/0x87E60617738F4F9Fb3Db3B61C7A34b9fF82412a4/contract/43114/writeContract?chainId=43114'
+
 type CurrencyDetails = {
   name: string
   symbol: string
