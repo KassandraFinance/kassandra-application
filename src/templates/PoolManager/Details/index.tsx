@@ -53,15 +53,15 @@ const Details = () => {
   )
 
   async function handleChangeStrategy(address: string) {
-    const text = {
+    const transactionText = {
       success: 'New strategist added!'
     }
 
-    await setStrategist(address, text)
+    await setStrategist(address, transactionText)
   }
 
   async function handleTransferOwnership(address: string) {
-    const text = {
+    const transactionText = {
       success: 'New manager added!'
     }
 
@@ -69,7 +69,7 @@ const Details = () => {
       setcurrentCandidate(address)
     }
 
-    await transferOwnership(address, text, handleSuccess)
+    await transferOwnership(address, transactionText, handleSuccess)
   }
 
   async function getCurrentManagerCandidate() {
