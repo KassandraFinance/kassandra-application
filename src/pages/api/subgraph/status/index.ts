@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { JsonRpcProvider } from 'ethers'
 
-import { URL_KASSANDRA_API, networks } from '@/constants/tokenAddresses'
+import { URL_APP_KASSANDRA, networks } from '@/constants/tokenAddresses'
 
 type subgraphData = {
   subgraphBlock: string
@@ -21,7 +21,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
 
   try {
     const subgraphResponse: SubgraphsData = await fetch(
-      `${URL_KASSANDRA_API}/subgraph`
+      `${URL_APP_KASSANDRA}/api/subgraph`
     ).then(res => res.json())
 
     const blocksInTenMinutes = 300

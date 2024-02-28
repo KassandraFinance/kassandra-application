@@ -62,9 +62,6 @@ export const platform: Record<number, string> = {
   [137]: 'polygon-pos'
 }
 
-export const URL_KASSANDRA_CANDIDATE =
-  'https://www.kassandra.finance/ownership-claim'
-
 export const linkSnowtrace = 'https://snowtrace.io'
 export const URL_COINGECKO_CURRENCIES = 'https://www.coingecko.com/pt/moedas/'
 
@@ -77,11 +74,12 @@ export const SUBGRAPH_GRAPHQL_URL = 'https://graph.kassandra.finance/graphql'
 export const BACKEND_KASSANDRA =
   process.env.NEXT_PUBLIC_BACKEND_KASSANDRA ?? 'http://localhost:3001'
 
+export const URL_APP_KASSANDRA = 'https://app.kassandra.finance'
+
 export const URL_1INCH = 'https://api.1inch.io/v5.0/'
 export const URL_PARASWAP = 'https://apiv5.paraswap.io'
 export const URL_COINGECKO = 'https://api.coingecko.com/api/v3'
 export const URL_1INCH_BALANCE = 'https://balances.1inch.io/v1.1'
-export const URL_KASSANDRA_API = 'https://app.kassandra.finance/api'
 export const URL_DISCORD_DEV_CHAT = 'https://discord.gg/XJ2QksXt'
 export const COINS_METADATA =
   process.env.NEXT_PUBLIC_COINS_METADATA ?? 'http://localhost:3001'

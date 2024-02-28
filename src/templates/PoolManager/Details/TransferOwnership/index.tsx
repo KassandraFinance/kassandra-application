@@ -3,7 +3,7 @@ import { ZeroAddress, isAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import CopyToClipboard from 'react-copy-to-clipboard'
 
-import { URL_KASSANDRA_CANDIDATE } from '@/constants/tokenAddresses'
+import { URL_APP_KASSANDRA } from '@/constants/tokenAddresses'
 
 import Button from '@/components/Button'
 import { ToastInfo } from '@/components/Toastify/toast'
@@ -58,8 +58,8 @@ const TransferOwnership = ({
 
         {hasManagerCandidate && (
           <S.CopyLink>
-            <span>{`${URL_KASSANDRA_CANDIDATE}?id=${poolId}`}</span>
-            <CopyToClipboard text={`${URL_KASSANDRA_CANDIDATE}?id=${poolId}`}>
+            <span>{`${URL_APP_KASSANDRA}?id=${poolId}`}</span>
+            <CopyToClipboard text={`${URL_APP_KASSANDRA}?id=${poolId}`}>
               <button type="button" onClick={() => ToastInfo('Link copied!')}>
                 <svg
                   width="14"
