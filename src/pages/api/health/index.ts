@@ -1,7 +1,7 @@
 import {
   BACKEND_KASSANDRA,
   COINGECKO_API,
-  URL_KASSANDRA_API
+  URL_APP_KASSANDRA
 } from '@/constants/tokenAddresses'
 import { NextApiRequest, NextApiResponse } from 'next'
 
@@ -23,7 +23,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     }
 
     await Promise.all([
-      fetch(`${URL_KASSANDRA_API}/subgraph/status`).then(res => {
+      fetch(`${URL_APP_KASSANDRA}/api/subgraph/status`).then(res => {
         if (res.status !== OK)
           throw new ServiceUnavailableError('Subgraph is offline')
       }),
