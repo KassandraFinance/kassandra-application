@@ -7,6 +7,12 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 const OK = 200
 
+class ServiceUnavailableError extends Error {
+  constructor(errorMessage: string) {
+    super(errorMessage)
+  }
+}
+
 export default async (request: NextApiRequest, response: NextApiResponse) => {
   try {
     if (request.method !== 'GET') {
@@ -16,26 +22,29 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
         .json({ message: `Method ${request.method} Not Allowed` })
     }
 
-    const [subgraphHealth, backendHealth, coingeckoHealth] = await Promise.all([
-      fetch(`${URL_KASSANDRA_API}/subgraph/status`),
-      fetch(`${BACKEND_KASSANDRA}/health`),
+    await Promise.all([
+      fetch(`${URL_KASSANDRA_API}/subgraph/status`).then(res => {
+        if (res.status !== OK)
+          throw new ServiceUnavailableError('Subgraph is offline')
+      }),
+      fetch(`${BACKEND_KASSANDRA}/health`).then(res => {
+        if (res.status !== OK)
+          throw new ServiceUnavailableError('Backend is offline')
+      }),
       fetch(
         `${COINGECKO_API}ping?x_cg_pro_api_key=${process.env.NEXT_PUBLIC_COINGECKO}`
-      )
+      ).then(res => {
+        if (res.status !== OK)
+          throw new ServiceUnavailableError('Coingecko is offline')
+      })
     ])
 
-    if (
-      backendHealth.status !== OK ||
-      subgraphHealth.status !== OK ||
-      coingeckoHealth.status !== OK
-    ) {
-      return response
-        .status(503)
-        .json({ message: 'Services are not available' })
-    }
-
     return response.status(200).json({ message: 'OK' })
-  } catch (error) {
-    return response.status(503).json({ message: 'Services are not available' })
+  } catch (err) {
+    const message =
+      err instanceof ServiceUnavailableError
+        ? err.message
+        : 'Services are not available'
+    return response.status(503).json({ message })
   }
 }
