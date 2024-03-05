@@ -636,7 +636,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         }
 
         if (tokenSelect.address === NATIVE_ADDRESS) {
-          await generateEstimatedGas(tokenSelected.transactionsDataTx[0])
+          await generateEstimatedGas(tokenSelected.transactionsDataTx)
         }
         setIsLoading(false)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
