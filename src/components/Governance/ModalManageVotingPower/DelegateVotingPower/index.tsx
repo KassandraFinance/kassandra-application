@@ -18,7 +18,7 @@ import ExternalLink from '@/components/ExternalLink'
 import Options from '../Options'
 
 import arrowSelect from '@assets/utilities/arrow-select-down.svg'
-import logo from '@assets/logos/kacy-64.svg'
+import logo from '@assets/logos/kacy-stake.svg'
 
 import * as S from '../styles'
 
@@ -196,7 +196,7 @@ const DelegateVotingPower = ({
           <S.Selected onClick={() => setOptionsOpen(!optionsOpen)}>
             <S.Option>
               <S.Name>
-                <Image width={24} height={24} src={logo} alt="" />
+                <Image width={28} height={28} src={logo} alt="" />
                 <S.WithdrawDelay>
                   <p>{delegateSelected.nameToken}</p>
                   <span>

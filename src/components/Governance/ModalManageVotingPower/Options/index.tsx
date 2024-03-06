@@ -6,7 +6,7 @@ import { IDateProps } from '../DelegateVotingPower'
 
 import ImageProfileWithQuery from '@/components/Governance/ImageProfileWithQuery'
 
-import logo from '@assets/logos/kacy-64.svg'
+import logo from '@assets/logos/kacy-stake.svg'
 
 import * as S from '../styles'
 
@@ -69,7 +69,7 @@ const Options = ({
                     isLink={false}
                   />
                 ) : (
-                  <Image src={logo} width={24} height={24} alt="" />
+                  <Image src={logo} width={28} height={28} alt="kacy logo" />
                 )}
                 <S.WithdrawDelay>
                   {undelegate ? (
