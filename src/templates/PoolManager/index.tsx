@@ -137,13 +137,14 @@ const PoolManager = () => {
 
   function handleCheckTabs(tabsList: typeof tabs) {
     const newTabsList = tabsList.slice()
+    if (!poolInfo) return newTabsList
+
     if (
-      poolInfo &&
-      poolInfo[0].strategy.toLowerCase() ===
-        wallet?.accounts[0].address.toLowerCase()
+      poolInfo[0]?.strategy.toLowerCase() !== wallet?.accounts[0].address
     ) {
       newTabsList.splice(4, 0, feeRewardTab, brokersTab, detailsTab)
     }
+
     return newTabsList
   }
 
@@ -363,7 +364,8 @@ const PoolManager = () => {
                         })
                       }
                     />
-                  ) : poolInfo[0].strategy === wallet?.accounts[0].address ? (
+                  ) : poolInfo[0].strategy.toLowerCase() ===
+                    wallet?.accounts[0].address ? (
                     <Tippy
                       allowHTML={true}
                       content={[
