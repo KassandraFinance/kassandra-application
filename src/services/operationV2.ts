@@ -113,8 +113,8 @@ export default class operationV2 implements IOperations {
 
   gasMargin(estimateGas: string) {
     const twentyPercentOfValue = 1.2
-    const calculateGas = Big(estimateGas).mul(twentyPercentOfValue).toFixed()
-    return BigInt(Math.round(parseFloat(calculateGas)))
+    const calculateGas = Big(estimateGas).mul(twentyPercentOfValue).toNumber()
+    return BigInt(Math.round(calculateGas))
   }
 
   async calcInvestAmountOut({
@@ -237,7 +237,7 @@ export default class operationV2 implements IOperations {
 
     let gasLimit: BigNumberish | undefined
     const polygonChainId = 137
-    if (parseFloat(this.poolInfo.chainId) === polygonChainId) {
+    if (parseInt(this.poolInfo.chainId) === polygonChainId) {
       const estimateGas =
         await this.contract.joinPoolExactTokenInWithSwap.estimateGas(
           params,
@@ -298,7 +298,7 @@ export default class operationV2 implements IOperations {
       )
 
     const jsonProvider = new JsonRpcProvider(
-      networks[parseFloat(this.poolInfo.chainId)].rpc
+      networks[parseInt(this.poolInfo.chainId)].rpc
     )
 
     const thirtyPercentOfValue = 1.3
@@ -511,7 +511,7 @@ export default class operationV2 implements IOperations {
 
     let gasLimit: BigNumberish | undefined
     const polygonChainId = 137
-    if (parseFloat(this.poolInfo.chainId) === polygonChainId) {
+    if (parseInt(this.poolInfo.chainId) === polygonChainId) {
       const estimateGas =
         await this.contract.exitPoolExactTokenInWithSwap.estimateGas(
           userWalletAddress,
