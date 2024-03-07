@@ -58,8 +58,10 @@ const TransferOwnership = ({
 
         {hasManagerCandidate && (
           <S.CopyLink>
-            <span>{`${URL_APP_KASSANDRA}?id=${poolId}`}</span>
-            <CopyToClipboard text={`${URL_APP_KASSANDRA}?id=${poolId}`}>
+            <span>{`${URL_APP_KASSANDRA}/ownership-claim?id=${poolId}`}</span>
+            <CopyToClipboard
+              text={`${URL_APP_KASSANDRA}/ownership-claim?id=${poolId}`}
+            >
               <button type="button" onClick={() => ToastInfo('Link copied!')}>
                 <svg
                   width="14"
