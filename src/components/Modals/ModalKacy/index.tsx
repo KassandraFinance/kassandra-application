@@ -16,7 +16,7 @@ import ModalBuyKacyOnPangolin from '../ModalBuyKacyOnPangolin'
 import Button from '../../Button'
 import ModalBridge from '../ModalBridge'
 
-import kacyIcon from '@assets/logos/kacy-96.svg'
+import kacyIcon from '@assets/logos/kacy-token.svg'
 
 import * as S from './styles'
 

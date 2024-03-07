@@ -10,7 +10,7 @@ import Overlay from '../../../Overlay'
 import Modal from '../../Modal'
 import Button from '../../../Button'
 
-import kacyIcon from '../../../../../public/assets/logos/kacy-96.svg'
+import kacyIcon from '../../../../../public/assets/logos/kacy-token.svg'
 import avalancheIcon from '../../../../../public/assets/logos/avalanche.svg'
 import polygonIcon from '../../../../../public/assets/logos/polygon.svg'
 
