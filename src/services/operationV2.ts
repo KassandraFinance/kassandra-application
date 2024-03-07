@@ -22,6 +22,7 @@ import {
   JoinSwapAmountInParams
 } from './IOperation'
 import { GetAmountsOutParams, ISwapProvider } from './ISwapProvider'
+import { KassandraError } from '@/utils/KassandraError'
 
 export interface ItokenSelectedProps {
   tokenInAddress: string
@@ -199,13 +200,17 @@ export default class operationV2 implements IOperations {
         : tokenInAddress
 
     if (!Big(tokenAmountIn).eq(Big(data.amountTokenIn))) {
-      throw { code: 'KASS#02', message: 'please recalculate' }
+      throw new KassandraError(
+        'There was an error in the transaction, please recalculate'
+      )
     }
 
     const datas = await this.getDatasTx(slippage, data.transactionsDataTx)
 
     if (datas.length < 1) {
-      throw { code: 'KASS#02', message: 'please recalculate' }
+      throw new KassandraError(
+        'There was an error in the transaction, please recalculate'
+      )
     }
 
     const res = await this.contract.joinPoolExactTokenInWithSwap(
