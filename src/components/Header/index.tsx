@@ -60,7 +60,12 @@ const Header = () => {
         <S.LogoWrapper dashBoard={pathClearHashtag[0] === 'manage'}>
           <Link href="/" passHref>
             <a className="logo-desktop">
-              <Image src={logoKassandra} alt="Kassandra" />
+              <Image
+                src={logoKassandra}
+                alt="Kassandra"
+                width={216}
+                height={34}
+              />
             </a>
           </Link>
 

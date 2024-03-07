@@ -129,5 +129,6 @@ export const LoadingContainer = styled.div`
 `
 
 export const ImageLoadingPulse = styled.div`
+  margin-top: 0.8rem;
   animation: ${pulse} 900ms linear infinite;
 `
