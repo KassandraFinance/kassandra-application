@@ -1,27 +1,29 @@
 import { useConnectWallet } from '@web3-onboard/react'
 import { BrowserProvider, Contract, ZeroAddress } from 'ethers'
-import { setModalAlertText } from '@/store/reducers/modalAlertText'
+import Big from 'big.js'
 
 import useTransaction from '@/hooks/useTransaction'
 import OFT from '@/constants/abi/OFT.json'
 import { networks } from '@/constants/tokenAddresses'
-import Big from 'big.js'
+import { KassandraError } from '@/utils/KassandraError'
 
 const lzChainIds: Record<number, number> = {
   137: 109,
-  43114: 106
+  43114: 106,
+  42161: 110
 }
 
 const nativeToken: Record<string, string> = {
   '0xa86a': 'AVAX',
-  '0x89': 'MATIC'
+  '0x89': 'MATIC',
+  '0xa4b1': 'ETH'
 }
 
 const useBridge = () => {
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
 
-  const bridge = async (id: string, amount: string) => {
+  const bridge = async (id: string, amount: string, onSuccess: () => void) => {
     if (wallet?.provider) {
       const provider = new BrowserProvider(wallet.provider)
       const signer = await provider.getSigner()
@@ -45,13 +47,13 @@ const useBridge = () => {
         if (
           feeNative.gte(
             Big(
-              balances !== null
+              balances
                 ? balances[nativeToken[wallet.chains[0].id.toLowerCase()]]
                 : 0
             )
           )
         ) {
-          throw new Error('insufficient gas fee')
+          throw new KassandraError('Insufficient gas fee')
         }
 
         const tx = await contract.sendFrom(
@@ -67,7 +69,7 @@ const useBridge = () => {
           }
         )
 
-        const status = await txNotification(tx)
+        const status = await txNotification(tx, {}, { onSuccess })
         return status
       } catch (error) {
         const contractInfo = {
