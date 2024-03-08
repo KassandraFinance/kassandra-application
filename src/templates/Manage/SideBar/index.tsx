@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 
+import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
+
 import { useManagerPools } from '@/hooks/query/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
@@ -13,6 +15,7 @@ import {
   setClear
 } from '@/store/reducers/poolCreationSlice'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
+import { useStrategyPools } from '@/hooks/query/useStrategyPools'
 
 import substr from '@/utils/substr'
 
@@ -36,7 +39,6 @@ import {
 } from './icons'
 
 import * as S from './styles'
-import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
 
 interface ISideBarProps {
   isOpen: boolean
@@ -84,6 +86,9 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
 
   const { data: managerPools } = useManagerPools({
     manager: wallet?.accounts[0].address
+  })
+  const { data: strategyPool } = useStrategyPools({
+    strategy: wallet?.accounts[0].address
   })
 
   function handleCreatePool() {
@@ -371,7 +376,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
       <S.Line isOpen={isOpen} />
 
       <S.SideBarBody>
-        {wallet?.provider && managerPools && managerPools.length > 0 ? (
+        {wallet?.provider && (managerPools || strategyPool) ? (
           <>
             <SideBarLink
               name="Overview"
@@ -386,6 +391,15 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
               icon={poolIcon}
               isSideBarOpen={isOpen}
               isActive={path.length === 75}
+              poolList={managerPools}
+            />
+
+            <SideBarMenu
+              title="My Strategy pool"
+              icon={poolIcon}
+              isSideBarOpen={isOpen}
+              isActive={path.length === 75}
+              poolList={strategyPool}
             />
 
             <S.LinksContainer>

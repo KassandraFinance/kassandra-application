@@ -8337,6 +8337,7 @@ export type ManagerPoolInfoQuery = {
     vault: string
     chain_id: number
     logo?: string | null
+    strategy: string
     pool_version: number
     is_private_pool: boolean
     decimals: number
@@ -8344,7 +8345,6 @@ export type ManagerPoolInfoQuery = {
     symbol: string
     pool_id?: number | null
     total_value_locked_usd: string
-    strategy: string
     underlying_assets_addresses: Array<string>
     controller: string
     price_usd: string
@@ -9035,6 +9035,21 @@ export type ProposalsQuery = {
     endBlock: string
     description: string
     created: string
+  }>
+}
+
+export type StrategyPoolQueryVariables = Exact<{
+  strategy?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type StrategyPoolQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    name: string
+    logo?: string | null
+    chain: { __typename?: 'Chain'; logo?: string | null }
   }>
 }
 
@@ -9821,15 +9836,22 @@ export const ManagerPoolActivitiesDocument = gql`
 `
 export const ManagerPoolInfoDocument = gql`
   query ManagerPoolInfo($manager: String, $id: ID) {
-    pools(where: { manager: $manager, id: $id }) {
+    pools(
+      where: {
+        and: [
+          { id: $id }
+          { or: [{ manager: $manager }, { strategy: $manager }] }
+        ]
+      }
+    ) {
       id
       address
       vault
       chain_id
       logo
+      strategy
       pool_version
       is_private_pool
-      strategy
       decimals
       chain {
         id
@@ -10547,6 +10569,18 @@ export const ProposalsDocument = gql`
       endBlock
       description
       created
+    }
+  }
+`
+export const StrategyPoolDocument = gql`
+  query StrategyPool($strategy: String) {
+    pools(where: { strategy: $strategy, manager_not: $strategy }) {
+      id
+      name
+      logo
+      chain {
+        logo: icon
+      }
     }
   }
 `
@@ -11414,6 +11448,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'Proposals',
+        'query'
+      )
+    },
+    StrategyPool(
+      variables?: StrategyPoolQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<StrategyPoolQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<StrategyPoolQuery>(StrategyPoolDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'StrategyPool',
         'query'
       )
     },

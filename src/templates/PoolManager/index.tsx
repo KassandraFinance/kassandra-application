@@ -123,6 +123,7 @@ const PoolManager = () => {
     manager: wallet?.accounts[0].address,
     id: poolId
   })
+
   const { data: poolAssets } = usePoolAssets({ id: poolId })
   const { data } = usePoolRebalanceTime({ id: poolId })
 
@@ -139,9 +140,7 @@ const PoolManager = () => {
     const newTabsList = tabsList.slice()
     if (!poolInfo) return newTabsList
 
-    if (
-      poolInfo[0]?.strategy.toLowerCase() !== wallet?.accounts[0].address
-    ) {
+    if (poolInfo[0]?.strategy.toLowerCase() !== wallet?.accounts[0].address) {
       newTabsList.splice(4, 0, feeRewardTab, brokersTab, detailsTab)
     }
 
