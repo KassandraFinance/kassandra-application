@@ -10,6 +10,7 @@ import useGetToken from '@/hooks/useGetToken'
 
 import PoolStakingCard from './PoolStakingCard'
 import QuestionsAndAnswers from '@/components/QuestionsAndAnswers'
+import Loading from '@/components/Loading'
 
 import * as S from './styles'
 
@@ -43,11 +44,15 @@ const Staking = () => {
   return (
     <S.Staking>
       <S.PoolStakingCardContainer>
-        <PoolStakingCard
-          pool={poolData}
-          kacyPrice={Big(kacyPrice)}
-          poolPrice={Big(poolInfo?.price_usd ?? 0)}
-        />
+        {poolInfo ? (
+          <PoolStakingCard
+            pool={poolData}
+            kacyPrice={Big(kacyPrice)}
+            poolPrice={Big(poolInfo?.price_usd ?? 0)}
+          />
+        ) : (
+          <Loading marginTop={10} />
+        )}
       </S.PoolStakingCardContainer>
 
       <S.QuestionsAndAnswersWrapper>
