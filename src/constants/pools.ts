@@ -369,10 +369,10 @@ export const poolsInvestor = [kacyInvestor1, kacyInvestor2]
 export const poolsFunds = [
   lpPNG,
   lpJoe,
+  keirkrew,
+  phype,
   ahype,
   tricrypto,
-  phype,
-  keirkrew,
   lpBalancer
 ]
 export const poolsKacyFuji = [kacy1x, kacy2x, kacy3x]
