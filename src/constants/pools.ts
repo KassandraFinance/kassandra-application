@@ -65,6 +65,11 @@ export const PHYPE = {
   id: '1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52'
 }
 
+export const KKF = {
+  address: '0xC22bb237A5B8b7260190cb9e4998A9901a68af6f',
+  id: '1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d'
+}
+
 export const KACY_WETH = '0xfaf3bc722d34146be83a2aac40b43148a51a9126'
 export const WAVAX_POLYGON = '0x2c89bbc92bd86f8075d1decc58c7f4e0107f286b'
 
@@ -298,6 +303,29 @@ const phype: PoolDetails = {
   address: PHYPE.address
 }
 
+const keirkrew: PoolDetails = {
+  pid: 2,
+  type: PoolType.FARM,
+  symbol: '$KKF',
+  stakingContract: '0xd530f3ce79c9eb03e59dce89a7504dd41d4899bb',
+  poolTokenAddress: KKF.address,
+  chain: {
+    id: 137,
+    logo: '/assets/logos/polygon.svg'
+  },
+  properties: {
+    logo: {
+      src: '/assets/logos/kkf.png',
+      style: { width: '5.8rem' }
+    },
+    title: '$KKF',
+    link: `/pool/${KKF.id}`
+  },
+  stakeWithVotingPower: false,
+  stakeWithLockPeriod: false,
+  address: KKF.address
+}
+
 const lpBalancer: PoolDetails = {
   pid: 0,
   type: PoolType.LP,
@@ -331,13 +359,22 @@ export const addressesForReqStakePool = [KacyPoligon]
 export const addressesForReqLpPool = [WETH_POLYGON, KacyPoligon, WAVAX_POLYGON]
 export const addressesForReqFarmPool = [
   PHYPE.id,
+  KKF.id,
   TRICRYPTO_ADDRESS,
   AHYPE_ADDRESS
 ]
 
 export const poolsKacy = [kacy1x, kacy2x, kacy3x]
 export const poolsInvestor = [kacyInvestor1, kacyInvestor2]
-export const poolsFunds = [lpPNG, lpJoe, ahype, tricrypto, phype, lpBalancer]
+export const poolsFunds = [
+  lpPNG,
+  lpJoe,
+  ahype,
+  tricrypto,
+  phype,
+  keirkrew,
+  lpBalancer
+]
 export const poolsKacyFuji = [kacy1x, kacy2x, kacy3x]
 export const poolsFundsFuji = [lpPNG, ahype]
 export const allPools = [
@@ -351,5 +388,6 @@ export const allPools = [
   kacyInvestor1,
   kacyInvestor2,
   phype,
-  lpBalancer
+  lpBalancer,
+  keirkrew
 ]
