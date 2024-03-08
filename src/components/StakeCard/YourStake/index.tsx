@@ -55,7 +55,7 @@ const YourStake = ({
   const addressZero = '0x0000000000000000000000000000000000000000'
   const yourDailyKacyReward = poolInfo.kacyRewards
     .mul(userAboutPool?.yourStake ?? Big(0))
-    .div(poolInfo?.totalStaked ?? Big(0))
+    .div(poolInfo?.totalStaked.eq(0) ? 1 : poolInfo?.totalStaked)
 
   return wallet?.accounts[0].address ? (
     <>

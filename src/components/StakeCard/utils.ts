@@ -27,7 +27,7 @@ export function handleCalcAPR({
     .mul('365')
     .mul('100')
     .mul(kacyPrice)
-    .div(poolPrice.mul(totalDeposit))
+    .div(poolPrice.mul(totalDeposit.eq(0) ? 1 : totalDeposit))
     .toFixed(0)
 
   return Big(result)
