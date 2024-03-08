@@ -211,7 +211,7 @@ const lpPNG: PoolDetails = {
 const lpJoe: PoolDetails = {
   pid: 7,
   type: PoolType.LP,
-  symbol: 'LP-JOE',
+  symbol: 'JLP',
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
   poolTokenAddress: WAVAX_POLYGON,
   chain: {
@@ -224,7 +224,7 @@ const lpJoe: PoolDetails = {
       style: { width: '14.4rem' }
     },
     title: '$KACY-AVAX JOE LP',
-    link: `https://traderjoexyz.com/pool/AVAX/${KACY_ADDRESS}`
+    link: `https://traderjoexyz.com/avalanche/pool/v1/AVAX/${KACY_ADDRESS}`
   },
   stakeWithVotingPower: false,
   stakeWithLockPeriod: false,
