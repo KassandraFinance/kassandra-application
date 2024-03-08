@@ -315,7 +315,7 @@ const keirkrew: PoolDetails = {
   },
   properties: {
     logo: {
-      src: '/assets/logos/kkf.png',
+      src: 'https://storage.googleapis.com/logos-kassandra/1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d',
       style: { width: '5.8rem' }
     },
     title: '$KKF',
