@@ -211,7 +211,7 @@ const lpPNG: PoolDetails = {
 const lpJoe: PoolDetails = {
   pid: 7,
   type: PoolType.LP,
-  symbol: 'LP-JOE',
+  symbol: 'JLP',
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
   poolTokenAddress: WAVAX_POLYGON,
   chain: {
@@ -224,7 +224,7 @@ const lpJoe: PoolDetails = {
       style: { width: '14.4rem' }
     },
     title: '$KACY-AVAX JOE LP',
-    link: `https://traderjoexyz.com/pool/AVAX/${KACY_ADDRESS}`
+    link: `https://traderjoexyz.com/avalanche/pool/v1/AVAX/${KACY_ADDRESS}`
   },
   stakeWithVotingPower: false,
   stakeWithLockPeriod: false,
@@ -315,7 +315,7 @@ const keirkrew: PoolDetails = {
   },
   properties: {
     logo: {
-      src: '/assets/logos/kkf.png',
+      src: 'https://storage.googleapis.com/logos-kassandra/1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d',
       style: { width: '5.8rem' }
     },
     title: '$KKF',
@@ -369,10 +369,10 @@ export const poolsInvestor = [kacyInvestor1, kacyInvestor2]
 export const poolsFunds = [
   lpPNG,
   lpJoe,
+  keirkrew,
+  phype,
   ahype,
   tricrypto,
-  phype,
-  keirkrew,
   lpBalancer
 ]
 export const poolsKacyFuji = [kacy1x, kacy2x, kacy3x]
