@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const PoolsListSection = styled.div`
+export const CardPoolSection = styled.div`
   ${() => css`
     margin-bottom: 6.4rem;
   `}

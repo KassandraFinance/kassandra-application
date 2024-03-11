@@ -5,7 +5,7 @@ import InputFilter from '@ui/Inputs/InputFilter'
 
 import * as S from './styles'
 
-type ManagerPoolsType = {
+type PoolData = {
   id: string
   name: string
   logo?: string | null
@@ -14,11 +14,11 @@ type ManagerPoolsType = {
   } | null
 }
 
-interface IManagedPoolsProps {
-  data?: ManagerPoolsType[]
+interface ICardPoolSectionProps {
+  data?: PoolData[]
 }
 
-const PoolsListSection = ({ data }: IManagedPoolsProps) => {
+const CardPoolSection = ({ data }: ICardPoolSectionProps) => {
   const [filter, setFilter] = React.useState('')
 
   function handleFilter(e: React.ChangeEvent<HTMLInputElement>) {
@@ -29,14 +29,14 @@ const PoolsListSection = ({ data }: IManagedPoolsProps) => {
     setFilter('')
   }
 
-  function searchPool(search: string, pools: ManagerPoolsType[]) {
+  function searchPool(search: string, pools: PoolData[]) {
     const expressao = new RegExp(search, 'i')
     const arr = pools.filter(pool => expressao.test(pool.name))
     return arr
   }
 
   return (
-    <S.PoolsListSection>
+    <S.CardPoolSection>
       <S.FilterContainer>
         <S.FilterWrapper>
           <InputFilter
@@ -61,8 +61,8 @@ const PoolsListSection = ({ data }: IManagedPoolsProps) => {
             ))}
         </S.PoolsListContainer>
       </S.PoolsListWrapper>
-    </S.PoolsListSection>
+    </S.CardPoolSection>
   )
 }
 
-export default PoolsListSection
+export default CardPoolSection

@@ -18,8 +18,8 @@ import { calcChange } from '@/utils/numerals'
 import TitleSection from '@/components/TitleSection'
 import StatusCard from '@/components/Manage/StatusCard'
 import TVMChart from '@/components/Manage/TVMChart'
-import PoolsListSection from './PoolsListSection'
 
+import CardPoolSection from './CardPoolSection'
 import Loading from '@/components/Loading'
 import WarningCard from '@/components/WarningCard'
 import ExternalLink from '@/components/ExternalLink'
@@ -101,10 +101,11 @@ const Overview = ({ newPoolCreated }: IOverviewProps) => {
     timestamp: Math.trunc(new Date().getTime() / 1000 - periods[tvlPeriod])
   })
   const { data: managerPools } = useManagerPools({
-    manager: wallet?.accounts[0].address
+    manager: walletAddress
   })
+
   const { data: strategyPool } = useStrategyPools({
-    strategy: wallet?.accounts[0].address
+    strategy: walletAddress
   })
 
   const totalValueLockedChart = React.useMemo(() => {
@@ -241,7 +242,7 @@ const Overview = ({ newPoolCreated }: IOverviewProps) => {
           </S.WarningCardContainer>
         )}
 
-        <PoolsListSection data={managerPools} />
+        <CardPoolSection data={managerPools} />
       </S.ManagedPoolsContainer>
 
       {strategyPool && (
@@ -250,7 +251,7 @@ const Overview = ({ newPoolCreated }: IOverviewProps) => {
             <TitleSection title="Strategy Pools" image={managedPoolsIcon} />
           </S.TitleWrapper>
 
-          <PoolsListSection data={strategyPool} />
+          <CardPoolSection data={strategyPool} />
         </S.ManagedPoolsContainer>
       )}
     </S.Overview>
