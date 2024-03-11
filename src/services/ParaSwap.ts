@@ -2,6 +2,7 @@ import { URL_PARASWAP } from '@/constants/tokenAddresses'
 import { ISwapProvider, GetAmountsOutParams } from './ISwapProvider'
 import { ZeroHash } from 'ethers'
 import Big from 'big.js'
+import { KassandraError } from '@/utils/KassandraError'
 
 export class ParaSwap implements ISwapProvider {
   private readonly baseUrl = URL_PARASWAP
@@ -51,7 +52,9 @@ export class ParaSwap implements ISwapProvider {
       const resJSON = await response.json()
 
       if (resJSON?.error) {
-        throw { code: 'KASS#01', message: resJSON.error }
+        throw new KassandraError(
+          'Amount you put is low to complete the transaction'
+        )
       }
 
       return resJSON.data

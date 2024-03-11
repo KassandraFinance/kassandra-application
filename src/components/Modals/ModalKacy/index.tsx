@@ -26,6 +26,9 @@ const KACY_MULTICHAIN = [
   },
   {
     chain: 137
+  },
+  {
+    chain: 42161
   }
 ]
 
@@ -37,12 +40,18 @@ const ModalKacy = () => {
   const [kacyUnclaimed, setKacyUnclaimed] = React.useState<Record<number, Big>>(
     {
       [43114]: Big(0),
-      [137]: Big(0)
+      [137]: Big(0),
+      [42161]: Big(0)
     }
   )
-  const [kacyWallet, setKacyWallet] = React.useState<Record<number, Big>>({
-    [0]: Big(0)
+  const [totalKacyOnChain, setTotalKacyOnChain] = React.useState<
+    Record<number, Big>
+  >({
+    [43114]: Big(0),
+    [137]: Big(0),
+    [42161]: Big(0)
   })
+  const [kacyWallet, setKacyWallet] = React.useState<Record<number, Big>>({})
   const [kacyTotal, setKacyTotal] = React.useState<Big>(Big(0))
 
   const [{ wallet }] = useConnectWallet()
@@ -91,7 +100,8 @@ const ModalKacy = () => {
     const kacyEarned = async (wallet: string) => {
       const kacyCount: Record<number, Big> = {
         [43114]: Big(0),
-        [137]: Big(0)
+        [137]: Big(0),
+        [42161]: Big(0)
       }
 
       for (const kacy of allPools) {
@@ -120,18 +130,21 @@ const ModalKacy = () => {
   React.useEffect(() => {
     if (wallet?.provider) {
       let count = Big(0)
-      let countInWallet = Big(0)
+      const _totalKacyOnChain: Record<number, Big> = {}
 
       for (const kacy of KACY_MULTICHAIN) {
-        countInWallet = countInWallet.add(Big(kacyWallet[kacy.chain] ?? Big(0)))
+        const kacyInWallet = kacyWallet[kacy.chain] ?? Big(0)
+        const totalAmountKacyOnChain = kacyInWallet.add(
+          kacyUnclaimed[kacy.chain]
+        )
+
+        _totalKacyOnChain[kacy.chain] = totalAmountKacyOnChain
+        count = count.add(totalAmountKacyOnChain)
       }
 
-      count = count
-        .add(kacyStaked)
-        .add(kacyUnclaimed[43114])
-        .add(kacyUnclaimed[137])
-        .add(countInWallet)
+      count = count.add(kacyStaked)
       setKacyTotal(count)
+      setTotalKacyOnChain(_totalKacyOnChain)
     }
   }, [kacyStaked, kacyUnclaimed, kacyWallet])
 
@@ -163,6 +176,7 @@ const ModalKacy = () => {
           kacyUnclaimed={kacyUnclaimed}
           kacyWallet={kacyWallet}
           kacyTotal={kacyTotal}
+          totalKacyOnChain={totalKacyOnChain}
           setIsModalKacy={setIsModalKacy}
           setIsOpenModal={setIsOpenModal}
           setIsModalBridge={setIsModalBridge}

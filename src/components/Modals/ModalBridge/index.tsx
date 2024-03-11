@@ -13,7 +13,7 @@ import Modal from '../Modal'
 import InputNumberRight from '@/components/Inputs/InputNumberRight'
 import Button from '@/components/Button'
 
-import { avalancheIcon, polygonIcon } from './icons'
+import { avalancheIcon, arbitrumIcon, polygonIcon } from './icons'
 
 import * as S from './styles'
 
@@ -23,7 +23,8 @@ const networkList: DataListType[] = [
     icon: avalancheIcon,
     id: '43114'
   },
-  { name: 'Polygon', icon: polygonIcon, id: '137' }
+  { name: 'Polygon', icon: polygonIcon, id: '137' },
+  { name: 'Arbitrum', icon: arbitrumIcon, id: '42161' }
 ]
 
 interface IModalBridgeProps {
@@ -124,9 +125,12 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
   }
 
   async function handleBridge(id: string) {
+    if (!wallet?.chains[0]) return
     const valueMult = Big(value).mul(Big(10).pow(18)).toFixed(0)
 
-    await bridge(id, valueMult)
+    await bridge(id, valueMult, () =>
+      getBalance(Number(wallet.chains[0].id).toString())
+    )
   }
 
   function handleMaxClick() {
@@ -184,7 +188,7 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
                 Approved amount:{' '}
                 {inputFrom?.id === '43114'
                   ? Number(approvedAmount).toFixed(6)
-                  : 'Does not need approval from Polygon to Avalanche'}
+                  : 'Does not need approval from Polygon/Arbitrum to Avalanche'}
               </S.Text>
 
               <S.Text>This transaction can take up to 30 minutes</S.Text>

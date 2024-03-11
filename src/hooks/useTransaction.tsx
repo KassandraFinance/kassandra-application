@@ -8,6 +8,7 @@ import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
 import { ToastInfo, ToastSuccess } from '@/components/Toastify/toast'
+import { KassandraError } from '@/utils/KassandraError'
 
 export type MessageType = {
   pending?: string
@@ -120,22 +121,13 @@ const useTransaction = () => {
       })
     }
 
-    if (error?.code === 'KASS#01') {
+    if (error instanceof KassandraError) {
       dispatch(
         setModalAlertText({
-          errorText: 'Amount you put is low to complete the transaction'
+          errorText: error.message
         })
       )
-      return error?.code
-    }
-
-    if (error?.code === 'KASS#02') {
-      dispatch(
-        setModalAlertText({
-          errorText: 'There was an error in the transaction, please recalculate'
-        })
-      )
-      return error?.code
+      return
     }
 
     if (isError(error, 'ACTION_REJECTED')) {
