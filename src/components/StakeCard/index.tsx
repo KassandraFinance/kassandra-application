@@ -216,7 +216,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                   </Tippy>
                   <h4>APR</h4>
                 </S.APR>
-                {poolInfo.apr.lte(Big(0)) ? (
+                {poolInfo.apr.lt(Big(0)) ? (
                   <S.LoadingAnimation
                     width={5}
                     height={2.4}

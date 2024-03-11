@@ -52,6 +52,8 @@ export const LP_KACY_AVAX_PNG =
     : '0xbaa8b0d2AA6415d5b4077C1FA06b3507577FBCd7'
 
 export const LP_KACY_AVAX_JOE = '0xc45893e0ee426a643e54829ee8c697995e5980ed'
+export const LP_KACY_WETH_QUICKSWAP =
+  '0xA6D17eCf3f2ddA250BBC0dBcE99DC38E698e0b4D'
 
 export const AHYPE_ADDRESS =
   process.env.NEXT_PUBLIC_MASTER === '1'
@@ -63,6 +65,11 @@ export const TRICRYPTO_ADDRESS = '0xA6CAB4b1019ee22309dcA5ba62C3372a791dcB2E'
 export const PHYPE = {
   address: '0x83Db290AE85e02FEF7ccF45c1B551e75e7F8cC82',
   id: '1370x83db290ae85e02fef7ccf45c1b551e75e7f8cc82000100000000000000000b52'
+}
+
+export const KKF = {
+  address: '0xC22bb237A5B8b7260190cb9e4998A9901a68af6f',
+  id: '1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d'
 }
 
 export const KACY_WETH = '0xfaf3bc722d34146be83a2aac40b43148a51a9126'
@@ -206,7 +213,7 @@ const lpPNG: PoolDetails = {
 const lpJoe: PoolDetails = {
   pid: 7,
   type: PoolType.LP,
-  symbol: 'LP-JOE',
+  symbol: 'JLP',
   stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
   poolTokenAddress: WAVAX_POLYGON,
   chain: {
@@ -219,7 +226,7 @@ const lpJoe: PoolDetails = {
       style: { width: '14.4rem' }
     },
     title: '$KACY-AVAX JOE LP',
-    link: `https://traderjoexyz.com/pool/AVAX/${KACY_ADDRESS}`
+    link: `https://traderjoexyz.com/avalanche/pool/v1/AVAX/${KACY_ADDRESS}`
   },
   stakeWithVotingPower: false,
   stakeWithLockPeriod: false,
@@ -298,6 +305,29 @@ const phype: PoolDetails = {
   address: PHYPE.address
 }
 
+const keirkrew: PoolDetails = {
+  pid: 2,
+  type: PoolType.FARM,
+  symbol: '$KKF',
+  stakingContract: '0xd530f3ce79c9eb03e59dce89a7504dd41d4899bb',
+  poolTokenAddress: KKF.address,
+  chain: {
+    id: 137,
+    logo: '/assets/logos/polygon.svg'
+  },
+  properties: {
+    logo: {
+      src: 'https://storage.googleapis.com/logos-kassandra/1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d',
+      style: { width: '5.8rem' }
+    },
+    title: '$KKF',
+    link: `/pool/${KKF.id}`
+  },
+  stakeWithVotingPower: false,
+  stakeWithLockPeriod: false,
+  address: KKF.address
+}
+
 const lpBalancer: PoolDetails = {
   pid: 0,
   type: PoolType.LP,
@@ -326,18 +356,54 @@ const lpBalancer: PoolDetails = {
   }
 }
 
+const lpQuickSwap: PoolDetails = {
+  pid: 3,
+  type: PoolType.LP,
+  symbol: 'UNI-V2',
+  stakingContract: '0xd530f3ce79c9eb03e59dce89a7504dd41d4899bb',
+  poolTokenAddress: KacyPoligon,
+  chain: {
+    id: 137,
+    logo: '/assets/logos/polygon.svg'
+  },
+  properties: {
+    logo: {
+      src: '/assets/logos/lp-quickswap.svg',
+      style: { width: '14.4rem' }
+    },
+    title: '$KACY-WETH QUICKSWAP',
+    link: `https://quickswap.exchange/#/analytics/v2/pair/${LP_KACY_WETH_QUICKSWAP}`
+  },
+  stakeWithVotingPower: false,
+  stakeWithLockPeriod: false,
+  address: LP_KACY_WETH_QUICKSWAP,
+  lpPool: {
+    type: lpPoolType.AVAX
+  }
+}
+
 // addresses list to get price on the stake page
 export const addressesForReqStakePool = [KacyPoligon]
 export const addressesForReqLpPool = [WETH_POLYGON, KacyPoligon, WAVAX_POLYGON]
 export const addressesForReqFarmPool = [
   PHYPE.id,
+  KKF.id,
   TRICRYPTO_ADDRESS,
   AHYPE_ADDRESS
 ]
 
 export const poolsKacy = [kacy1x, kacy2x, kacy3x]
 export const poolsInvestor = [kacyInvestor1, kacyInvestor2]
-export const poolsFunds = [lpPNG, lpJoe, ahype, tricrypto, phype, lpBalancer]
+export const poolsFunds = [
+  lpJoe,
+  lpQuickSwap,
+  keirkrew,
+  phype,
+  ahype,
+  tricrypto,
+  lpPNG,
+  lpBalancer
+]
 export const poolsKacyFuji = [kacy1x, kacy2x, kacy3x]
 export const poolsFundsFuji = [lpPNG, ahype]
 export const allPools = [
@@ -351,5 +417,7 @@ export const allPools = [
   kacyInvestor1,
   kacyInvestor2,
   phype,
-  lpBalancer
+  lpBalancer,
+  lpQuickSwap,
+  keirkrew
 ]

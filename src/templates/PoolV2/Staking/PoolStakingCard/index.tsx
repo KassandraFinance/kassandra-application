@@ -238,10 +238,10 @@ const PoolStakingCard = ({
           </S.StakingUserData>
         </S.StakingUserDataListCard>
 
-        {networkChain.chainId !== Number(wallet?.chains[0].id) ? (
+        {networkChain?.chainId !== Number(wallet?.chains[0].id) ? (
           <Button
             type="button"
-            text={`Connect to ${networkChain.chainName}`}
+            text={`Connect to ${networkChain?.chainName}`}
             size="huge"
             background="secondary"
             fullWidth
@@ -249,7 +249,7 @@ const PoolStakingCard = ({
             disabledNoEvent={settingChain}
             onClick={() =>
               setChain({
-                chainId: `0x${networkChain.chainId.toString(16)}`
+                chainId: `0x${networkChain?.chainId.toString(16)}`
               })
             }
           />
