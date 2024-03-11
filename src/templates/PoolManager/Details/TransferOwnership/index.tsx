@@ -50,7 +50,7 @@ const TransferOwnership = ({
         ) : (
           <S.PoolSettingParagraph>
             Please provide the address of the individual who will receive
-            ownership of this pool. After the transfer, you will be sent a link
+            ownership of this pool. After the transfer, he will be sent a link
             provided by us. This link will allow the person to claim and become
             the new owner of the pool.
           </S.PoolSettingParagraph>
@@ -58,8 +58,10 @@ const TransferOwnership = ({
 
         {hasManagerCandidate && (
           <S.CopyLink>
-            <span>{`${URL_APP_KASSANDRA}?id=${poolId}`}</span>
-            <CopyToClipboard text={`${URL_APP_KASSANDRA}?id=${poolId}`}>
+            <span>{`${URL_APP_KASSANDRA}/ownership-claim?id=${poolId}`}</span>
+            <CopyToClipboard
+              text={`${URL_APP_KASSANDRA}/ownership-claim?id=${poolId}`}
+            >
               <button type="button" onClick={() => ToastInfo('Link copied!')}>
                 <svg
                   width="14"

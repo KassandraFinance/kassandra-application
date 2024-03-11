@@ -1,6 +1,8 @@
 import React from 'react'
 import { isAddress } from 'ethers'
-import { useConnectWallet } from '@web3-onboard/react'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
+
+import { networks } from '@/constants/tokenAddresses'
 
 import Button from '@/components/Button'
 import InputRadio from '@/components/Inputs/InputRadio'
@@ -13,11 +15,13 @@ export enum poolStrategyType {
 }
 
 interface IPoolStrategyControlProps {
+  chainId: number
   currentStrategy: string
   handleChangeStrategy: (address: string) => void
 }
 
 const PoolStrategyControl = ({
+  chainId,
   currentStrategy,
   handleChangeStrategy
 }: IPoolStrategyControlProps) => {
@@ -25,6 +29,7 @@ const PoolStrategyControl = ({
   const [newAddress, setNewAddress] = React.useState('')
 
   const [{ wallet }] = useConnectWallet()
+  const [{ settingChain }, setChain] = useSetChain()
 
   function handleChangeInputValue(event: React.ChangeEvent<HTMLInputElement>) {
     if (!wallet) return
@@ -114,17 +119,32 @@ const PoolStrategyControl = ({
         </S.Error>
       </S.StrategyAddressContainer>
 
-      <Button
-        text="Update"
-        background="secondary"
-        fullWidth
-        className="updateButton"
-        onClick={() => handleChangeStrategy(newAddress)}
-        disabledNoEvent={
-          newAddress.toLowerCase() === currentStrategy.toLowerCase() ||
-          !isAddress(newAddress)
-        }
-      />
+      {Number(wallet?.chains[0].id ?? 0) === chainId ? (
+        <Button
+          text="Update"
+          background="secondary"
+          fullWidth
+          className="updateButton"
+          onClick={() => handleChangeStrategy(newAddress)}
+          disabledNoEvent={
+            newAddress.toLowerCase() === currentStrategy.toLowerCase() ||
+            !isAddress(newAddress)
+          }
+        />
+      ) : (
+        <Button
+          background="secondary"
+          className="updateButton"
+          text={`Connect to ${networks[chainId]?.chainName}`}
+          fullWidth
+          disabledNoEvent={settingChain || !chainId}
+          onClick={() =>
+            setChain({
+              chainId: `0x${chainId.toString(16)}`
+            })
+          }
+        />
+      )}
     </S.PoolStrategy>
   )
 }

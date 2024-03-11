@@ -164,6 +164,7 @@ const Details = () => {
         )}
 
         <PoolStrategyControl
+          chainId={chainId}
           currentStrategy={poolInfo ? poolInfo[0].strategy : ''}
           handleChangeStrategy={handleChangeStrategy}
         />

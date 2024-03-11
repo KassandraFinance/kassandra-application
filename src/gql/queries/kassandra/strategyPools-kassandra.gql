@@ -1,0 +1,10 @@
+query StrategyPool($strategy: String) {
+    pools(where: { strategy: $strategy, manager_not: $strategy }) {
+        id
+        name
+        logo
+        chain {
+            logo: icon
+        }
+    }
+}

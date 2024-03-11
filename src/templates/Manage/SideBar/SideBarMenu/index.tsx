@@ -3,9 +3,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Blockies from 'react-blockies'
-import { useConnectWallet } from '@web3-onboard/react'
-
-import { useManagerPools } from '@/hooks/query/useManagerPools'
 
 import arrowIcon from '@assets/utilities/arrow-select-down.svg'
 
@@ -16,24 +13,29 @@ interface ISideBarMenuProps {
   icon: any
   isSideBarOpen: boolean
   isActive: boolean
+  poolList?: Poollist[]
+}
+
+type Poollist = {
+  id: string
+  name: string
+  logo?: string | null
+  chain: {
+    logo?: string | null
+  }
 }
 
 const SideBarMenu = ({
   title,
   icon,
   isSideBarOpen,
-  isActive
+  isActive,
+  poolList
 }: ISideBarMenuProps) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(true)
 
-  const [{ wallet }] = useConnectWallet()
-
   const router = useRouter()
   const poolQuery = router.query.pool
-
-  const { data: managerPools } = useManagerPools({
-    manager: wallet?.accounts[0].address
-  })
 
   function handleOpenMenu() {
     setIsOpen(prev => !prev)
@@ -56,9 +58,9 @@ const SideBarMenu = ({
       <S.PoolContainer
         isOpen={isOpen}
         isSideBarOpen={isSideBarOpen}
-        height={managerPools ? managerPools?.length : 0}
+        height={poolList ? poolList?.length : 0}
       >
-        {managerPools?.map(pool => {
+        {poolList?.map(pool => {
           const isPoolPage = pool.id === poolQuery
           return (
             <S.PoolWrapper key={pool.id}>

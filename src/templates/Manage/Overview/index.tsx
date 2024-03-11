@@ -10,13 +10,16 @@ import { useManagerDeposits } from '@/hooks/query/useManagerDeposits'
 import { useManagerTVMChart } from '@/hooks/query/useManagerTVMChart'
 import { useManagerUniqueInvestors } from '@/hooks/query/useManagerUniqueInvestors'
 import { useManagerWithdraws } from '@/hooks/query/useManagerWithdraws'
+import { useStrategyPools } from '@/hooks/query/useStrategyPools'
+import { useManagerPools } from '@/hooks/query/useManagerPools'
 
 import { calcChange } from '@/utils/numerals'
 
 import TitleSection from '@/components/TitleSection'
 import StatusCard from '@/components/Manage/StatusCard'
 import TVMChart from '@/components/Manage/TVMChart'
-import ManagedPools from './ManagedPools'
+
+import CardPoolSection from './CardPoolSection'
 import Loading from '@/components/Loading'
 import WarningCard from '@/components/WarningCard'
 import ExternalLink from '@/components/ExternalLink'
@@ -96,6 +99,13 @@ const Overview = ({ newPoolCreated }: IOverviewProps) => {
   const { data } = useManagerTVMChart({
     manager: walletAddress,
     timestamp: Math.trunc(new Date().getTime() / 1000 - periods[tvlPeriod])
+  })
+  const { data: managerPools } = useManagerPools({
+    manager: walletAddress
+  })
+
+  const { data: strategyPool } = useStrategyPools({
+    strategy: walletAddress
   })
 
   const totalValueLockedChart = React.useMemo(() => {
@@ -232,8 +242,18 @@ const Overview = ({ newPoolCreated }: IOverviewProps) => {
           </S.WarningCardContainer>
         )}
 
-        <ManagedPools />
+        <CardPoolSection data={managerPools} />
       </S.ManagedPoolsContainer>
+
+      {strategyPool && (
+        <S.ManagedPoolsContainer>
+          <S.TitleWrapper>
+            <TitleSection title="Strategy Pools" image={managedPoolsIcon} />
+          </S.TitleWrapper>
+
+          <CardPoolSection data={strategyPool} />
+        </S.ManagedPoolsContainer>
+      )}
     </S.Overview>
   )
 }
