@@ -8,6 +8,7 @@ import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
 import { ToastInfo, ToastSuccess } from '@/components/Toastify/toast'
+import { KassandraError } from '@/utils/KassandraError'
 
 export type MessageType = {
   pending?: string
@@ -69,7 +70,7 @@ const useTransaction = () => {
 
   async function transactionErrors(
     error: any,
-    contractInfo: ContractInfo,
+    contractInfo?: ContractInfo,
     onFail?: () => Promise<void> | void
   ) {
     if (onFail) {
@@ -112,30 +113,21 @@ const useTransaction = () => {
 
       Sentry.captureException(error, {
         tags: {
-          contractName: contractInfo.contractName,
-          functionName: contractInfo.functionName,
+          contractName: contractInfo?.contractName,
+          functionName: contractInfo?.functionName,
           userAddress: error.transaction.from,
           chainId: chainId
         }
       })
     }
 
-    if (error?.code === 'KASS#01') {
+    if (error instanceof KassandraError) {
       dispatch(
         setModalAlertText({
-          errorText: 'Amount you put is low to complete the transaction'
+          errorText: error.message
         })
       )
-      return error?.code
-    }
-
-    if (error?.code === 'KASS#02') {
-      dispatch(
-        setModalAlertText({
-          errorText: 'There was an error in the transaction, please recalculate'
-        })
-      )
-      return error?.code
+      return
     }
 
     if (isError(error, 'ACTION_REJECTED')) {
@@ -143,28 +135,13 @@ const useTransaction = () => {
       return error.code
     }
 
-    if (isError(error, 'CALL_EXCEPTION')) {
-      const errorStr = error.toString().match(/(BAL#\d{0,3})/)
-      const err = errorStr
-        ? errorStr[0]
-        : error?.message ?? 'Transaction reverted'
-
-      dispatch(setModalAlertText({ errorText: err }))
-      console.log(error)
-      return error.code
-    }
-
-    if (isError(error, 'INSUFFICIENT_FUNDS')) {
-      dispatch(setModalAlertText({ errorText: '' }))
-      return error.code
-    }
-
-    if (isError(error, 'NONCE_EXPIRED')) {
-      dispatch(setModalAlertText({ errorText: '' }))
-      return error.code
-    }
-
-    dispatch(setModalAlertText({ errorText: error.toString() }))
+    dispatch(
+      setModalAlertText({
+        errorText:
+          'Sorry, something went wrong with your transaction. Please copy the transaction data below and send it to us on Discord so we can assist you',
+        transactionData: error?.transaction?.data.toString()
+      })
+    )
     return
   }
 

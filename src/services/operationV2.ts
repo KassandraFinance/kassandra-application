@@ -1,5 +1,12 @@
 import Big from 'big.js'
-import { Contract, JsonRpcProvider, JsonRpcSigner, ethers } from 'ethers'
+import {
+  BigNumberish,
+  Contract,
+  JsonRpcProvider,
+  JsonRpcSigner,
+  ZeroAddress,
+  ethers
+} from 'ethers'
 
 import ProxyInvestV2 from '../constants/abi/ProxyInvestV2.json'
 import BalancerHelpers from '../constants/abi/BalancerHelpers.json'
@@ -22,6 +29,7 @@ import {
   JoinSwapAmountInParams
 } from './IOperation'
 import { GetAmountsOutParams, ISwapProvider } from './ISwapProvider'
+import { KassandraError } from '@/utils/KassandraError'
 
 export interface ItokenSelectedProps {
   tokenInAddress: string
@@ -38,7 +46,7 @@ export default class operationV2 implements IOperations {
   poolInfo: IPoolInfoProps
   managedPoolController: Contract
   vaultBalancer: Contract
-  referral = '0x0000000000000000000000000000000000000000'
+  referral = ZeroAddress
   swapProvider: ISwapProvider
   signerProvider: JsonRpcSigner | undefined
 
@@ -102,6 +110,12 @@ export default class operationV2 implements IOperations {
     }
 
     return request
+  }
+
+  gasMargin(estimateGas: string) {
+    const twentyPercentOfValue = 1.2
+    const calculateGas = Big(estimateGas).mul(twentyPercentOfValue).toNumber()
+    return BigInt(Math.round(calculateGas))
   }
 
   async calcInvestAmountOut({
@@ -199,29 +213,52 @@ export default class operationV2 implements IOperations {
         : tokenInAddress
 
     if (!Big(tokenAmountIn).eq(Big(data.amountTokenIn))) {
-      throw { code: 'KASS#02', message: 'please recalculate' }
+      throw new KassandraError(
+        'There was an error in the transaction, please recalculate'
+      )
     }
 
     const datas = await this.getDatasTx(slippage, data.transactionsDataTx)
 
     if (datas.length < 1) {
-      throw { code: 'KASS#02', message: 'please recalculate' }
+      throw new KassandraError(
+        'There was an error in the transaction, please recalculate'
+      )
+    }
+
+    const params = {
+      recipient: userWalletAddress,
+      referrer: referrerAddress,
+      controller: this.poolInfo.controller,
+      tokenIn,
+      tokenAmountIn: tokenAmountIn,
+      tokenExchange,
+      minTokenAmountOut: minPoolAmountOut
+    }
+    const options = {
+      from: userWalletAddress,
+      value: nativeValue
+    }
+
+    let gasLimit: BigNumberish | undefined
+    const polygonChainId = 137
+    if (parseInt(this.poolInfo.chainId) === polygonChainId) {
+      const estimateGas =
+        await this.contract.joinPoolExactTokenInWithSwap.estimateGas(
+          params,
+          datas,
+          options
+        )
+
+      gasLimit = this.gasMargin(estimateGas.toString())
     }
 
     const res = await this.contract.joinPoolExactTokenInWithSwap(
-      {
-        recipient: userWalletAddress,
-        referrer: referrerAddress,
-        controller: this.poolInfo.controller,
-        tokenIn,
-        tokenAmountIn: tokenAmountIn,
-        tokenExchange,
-        minTokenAmountOut: minPoolAmountOut
-      },
+      params,
       datas,
       {
-        from: userWalletAddress,
-        value: nativeValue
+        ...options,
+        gasLimit
       }
     )
 
@@ -241,7 +278,7 @@ export default class operationV2 implements IOperations {
 
     const tokenIn =
       tokenInAddress === NATIVE_ADDRESS
-        ? '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
+        ? networks[Number(this.poolInfo.chainId)].nativeCurrency.address
         : tokenInAddress
 
     const nativeValue = tokenInAddress === NATIVE_ADDRESS ? amountTokenIn : '0'
@@ -265,10 +302,14 @@ export default class operationV2 implements IOperations {
         }
       )
 
-    const jsonProvider = new JsonRpcProvider(networks[137].rpc)
+    const jsonProvider = new JsonRpcProvider(
+      networks[parseInt(this.poolInfo.chainId)].rpc
+    )
+
+    const thirtyPercentOfValue = 1.3
     const feeData = await jsonProvider.getFeeData()
     const fee = Big(feeData?.maxFeePerGas?.toString() ?? '0').mul(
-      Big(estimateGas.toString() ?? '0')
+      Big(estimateGas.toString() ?? '0').mul(thirtyPercentOfValue)
     )
 
     return {
@@ -473,6 +514,26 @@ export default class operationV2 implements IOperations {
       trasactionData
     )
 
+    let gasLimit: BigNumberish | undefined
+    const polygonChainId = 137
+    if (parseInt(this.poolInfo.chainId) === polygonChainId) {
+      const estimateGas =
+        await this.contract.exitPoolExactTokenInWithSwap.estimateGas(
+          userWalletAddress,
+          this.poolInfo.controller,
+          tokenAmountIn,
+          tokenOutAddress,
+          minPoolAmountOut,
+          request,
+          transactionsDataTx,
+          {
+            gasLimit
+          }
+        )
+
+      gasLimit = this.gasMargin(estimateGas.toString())
+    }
+
     const res = await this.contract.exitPoolExactTokenInWithSwap(
       userWalletAddress,
       this.poolInfo.controller,
@@ -480,16 +541,11 @@ export default class operationV2 implements IOperations {
       tokenOutAddress,
       minPoolAmountOut,
       request,
-      transactionsDataTx
+      transactionsDataTx,
+      {
+        gasLimit
+      }
     )
-
-    // const res = await this.vaultBalancer.exitPool(
-    //   this.poolInfo.id,
-    //   userWalletAddress,
-    //   userWalletAddress,
-    //   request,
-    //   { from: userWalletAddress }
-    // )
 
     return res
   }

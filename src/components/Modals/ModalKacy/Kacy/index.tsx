@@ -10,9 +10,10 @@ import Overlay from '../../../Overlay'
 import Modal from '../../Modal'
 import Button from '../../../Button'
 
-import kacyIcon from '../../../../../public/assets/logos/kacy-96.svg'
+import kacyIcon from '../../../../../public/assets/logos/kacy-token.svg'
 import avalancheIcon from '../../../../../public/assets/logos/avalanche.svg'
 import polygonIcon from '../../../../../public/assets/logos/polygon.svg'
+import arbitrumIcon from '../../../../../public/assets/logos/arbitrum.svg'
 
 import * as S from './styles'
 
@@ -23,6 +24,7 @@ interface IKacyProps {
   kacyUnclaimed: Record<number, Big>
   kacyWallet: Record<number, Big>
   kacyTotal: Big
+  totalKacyOnChain: Record<number, Big>
   setIsModalKacy: React.Dispatch<React.SetStateAction<boolean>>
   setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>
   setIsModalBridge: React.Dispatch<React.SetStateAction<boolean>>
@@ -35,19 +37,28 @@ const Kacy = ({
   kacyUnclaimed,
   kacyWallet,
   kacyTotal,
+  totalKacyOnChain,
   setIsModalKacy,
   setIsOpenModal,
   setIsModalBridge
 }: IKacyProps) => {
+  const [showMoreKacyDetails, setShowMoreKacyDetails] = React.useState('')
+
   const [{ wallet, connecting }, connect] = useConnectWallet()
 
   const avalancheNetwork = networks[43114]
   const polygonNetwork = networks[137]
+  const arbitrumNetwork = networks[42161]
 
   const totalSupply = 10000000
 
   function handleCloseModal() {
     setIsModalKacy(false)
+  }
+
+  function handleShowMore(chain: string) {
+    const chainShowMore = chain === showMoreKacyDetails ? '' : chain
+    setShowMoreKacyDetails(chainShowMore)
   }
 
   return (
@@ -84,22 +95,155 @@ const Kacy = ({
                   </S.KacyUSDTotal>
                 </S.TotalWrapper>
               </S.KacyTotalContainer>
+              <S.Line />
 
-              <S.ChainContainer>
-                <img src={avalancheIcon.src} alt="" width={20} height={20} />
-                <p>Avalanche</p>
-                <S.Line />
+              <S.ChainContainer
+                isShowMore={showMoreKacyDetails === 'avalanche'}
+              >
+                <S.ChainWrapper>
+                  <S.Chain>
+                    <img
+                      src={avalancheIcon.src}
+                      alt=""
+                      width={20}
+                      height={20}
+                    />
+                    <p>Avalanche</p>
+                  </S.Chain>
+                  <S.ChainTotalWrapper>
+                    <S.ChainKacyTotal>
+                      {BNtoDecimal(
+                        totalKacyOnChain[avalancheNetwork.chainId]?.div(
+                          Big(10).pow(18)
+                        ),
+                        18,
+                        2
+                      )}
+                    </S.ChainKacyTotal>
+                    <S.ChainKacyUSDTotal>
+                      ~
+                      {BNtoDecimal(
+                        Big(
+                          totalKacyOnChain[
+                            avalancheNetwork.chainId
+                          ]?.toString() ?? 0
+                        )
+                          .mul(price)
+                          .div(Big(10).pow(18)),
+                        6,
+                        2,
+                        2
+                      )}{' '}
+                      USD
+                    </S.ChainKacyUSDTotal>
+                  </S.ChainTotalWrapper>
+                </S.ChainWrapper>
+                <S.Ul>
+                  <S.Li>
+                    KACY Staked
+                    <S.Value>
+                      {BNtoDecimal(kacyStaked.div(Big(10).pow(18)), 18, 2)}
+                      <span>
+                        ~
+                        {BNtoDecimal(
+                          Big(kacyStaked.toString())
+                            .mul(price)
+                            .div(Big(10).pow(18)),
+                          6,
+                          2,
+                          2
+                        )}{' '}
+                        USD
+                      </span>
+                    </S.Value>
+                  </S.Li>
+                  <S.Li>
+                    Unclaimed
+                    <S.Value>
+                      {BNtoDecimal(
+                        kacyUnclaimed[avalancheNetwork.chainId].div(
+                          Big(10).pow(18)
+                        ),
+                        18,
+                        2
+                      )}
+                      <span>
+                        ~
+                        {BNtoDecimal(
+                          kacyUnclaimed[avalancheNetwork.chainId]
+                            .mul(price)
+                            .div(Big(10).pow(18)),
+                          6,
+                          2,
+                          2
+                        )}{' '}
+                        USD
+                      </span>
+                    </S.Value>
+                  </S.Li>
+                  <S.Li>
+                    Wallet
+                    <S.Value>
+                      {BNtoDecimal(
+                        kacyWallet[avalancheNetwork.chainId]?.div(
+                          Big(10).pow(18)
+                        ) ?? Big(0),
+                        18,
+                        2
+                      )}
+                      <span>
+                        ~
+                        {BNtoDecimal(
+                          kacyWallet[avalancheNetwork.chainId]
+                            ?.mul(price)
+                            .div(Big(10).pow(18)) ?? Big(0),
+                          6,
+                          2,
+                          2
+                        )}{' '}
+                        USD
+                      </span>
+                    </S.Value>
+                  </S.Li>
+                </S.Ul>
               </S.ChainContainer>
+              <S.WrapperToggle>
+                <S.ToggleList
+                  onClick={() => handleShowMore('avalanche')}
+                  isShowMore={showMoreKacyDetails === 'avalanche'}
+                >
+                  {showMoreKacyDetails !== 'avalanche'
+                    ? 'Show More'
+                    : 'Show Less'}
+                  <img src="/assets/utilities/arrow-select-down.svg" alt="" />
+                </S.ToggleList>
+              </S.WrapperToggle>
+              <S.Line />
 
-              <S.Ul>
-                <S.Li>
-                  KACY Staked
-                  <S.Value>
-                    {BNtoDecimal(kacyStaked.div(Big(10).pow(18)), 18, 2)}
-                    <span>
+              <S.ChainContainer isShowMore={showMoreKacyDetails === 'polygon'}>
+                <S.ChainWrapper>
+                  <S.Chain>
+                    <img src={polygonIcon.src} alt="" width={20} height={20} />
+                    <p>Polygon</p>
+                  </S.Chain>
+                  <S.ChainTotalWrapper>
+                    <S.ChainKacyTotal>
+                      {BNtoDecimal(
+                        totalKacyOnChain[polygonNetwork.chainId]?.div(
+                          Big(10).pow(18)
+                        ),
+                        18,
+                        2
+                      )}
+                    </S.ChainKacyTotal>
+                    <S.ChainKacyUSDTotal>
                       ~
                       {BNtoDecimal(
-                        Big(kacyStaked.toString())
+                        Big(
+                          totalKacyOnChain[
+                            polygonNetwork.chainId
+                          ]?.toString() ?? 0
+                        )
                           .mul(price)
                           .div(Big(10).pow(18)),
                         6,
@@ -107,79 +251,97 @@ const Kacy = ({
                         2
                       )}{' '}
                       USD
-                    </span>
-                  </S.Value>
-                </S.Li>
-                <S.Li>
-                  Unclaimed
-                  <S.Value>
-                    {BNtoDecimal(
-                      kacyUnclaimed[avalancheNetwork.chainId].div(
-                        Big(10).pow(18)
-                      ),
-                      18,
-                      2
-                    )}
-                    <span>
-                      ~
+                    </S.ChainKacyUSDTotal>
+                  </S.ChainTotalWrapper>
+                </S.ChainWrapper>
+                <S.Ul>
+                  <S.Li>
+                    Unclaimed
+                    <S.Value>
                       {BNtoDecimal(
-                        kacyUnclaimed[avalancheNetwork.chainId]
-                          .mul(price)
-                          .div(Big(10).pow(18)),
-                        6,
-                        2,
+                        kacyUnclaimed[polygonNetwork.chainId].div(
+                          Big(10).pow(18)
+                        ),
+                        18,
                         2
-                      )}{' '}
-                      USD
-                    </span>
-                  </S.Value>
-                </S.Li>
-                <S.Li>
-                  Wallet
-                  <S.Value>
-                    {BNtoDecimal(
-                      kacyWallet[avalancheNetwork.chainId]?.div(
-                        Big(10).pow(18)
-                      ) ?? Big(0),
-                      18,
-                      2
-                    )}
-                    <span>
-                      ~
+                      )}
+                      <span>
+                        ~
+                        {BNtoDecimal(
+                          Big(kacyUnclaimed[polygonNetwork.chainId].toString())
+                            .mul(price)
+                            .div(Big(10).pow(18)),
+                          6,
+                          2,
+                          2
+                        )}{' '}
+                        USD
+                      </span>
+                    </S.Value>
+                  </S.Li>
+                  <S.Li>
+                    Wallet
+                    <S.Value>
                       {BNtoDecimal(
-                        kacyWallet[avalancheNetwork.chainId]
-                          ?.mul(price)
-                          .div(Big(10).pow(18)) ?? Big(0),
-                        6,
-                        2,
+                        kacyWallet[polygonNetwork.chainId]?.div(
+                          Big(10).pow(18)
+                        ) ?? Big(0),
+                        18,
                         2
-                      )}{' '}
-                      USD
-                    </span>
-                  </S.Value>
-                </S.Li>
-              </S.Ul>
-
-              <S.ChainContainer>
-                <img src={polygonIcon.src} alt="" width={20} height={20} />
-                <p>Polygon</p>
-                <S.Line />
+                      )}
+                      <span>
+                        ~
+                        {BNtoDecimal(
+                          kacyWallet[polygonNetwork.chainId]
+                            ?.mul(price)
+                            .div(Big(10).pow(18)) ?? Big(0),
+                          6,
+                          2,
+                          2
+                        )}{' '}
+                        USD
+                      </span>
+                    </S.Value>
+                  </S.Li>
+                </S.Ul>
               </S.ChainContainer>
-              <S.Ul>
-                <S.Li>
-                  Unclaimed
-                  <S.Value>
-                    {BNtoDecimal(
-                      kacyUnclaimed[polygonNetwork.chainId].div(
-                        Big(10).pow(18)
-                      ),
-                      18,
-                      2
-                    )}
-                    <span>
+              <S.WrapperToggle>
+                <S.ToggleList
+                  onClick={() => handleShowMore('polygon')}
+                  isShowMore={showMoreKacyDetails === 'polygon'}
+                >
+                  {showMoreKacyDetails !== 'polygon'
+                    ? 'Show More'
+                    : 'Show Less'}
+                  <img src="/assets/utilities/arrow-select-down.svg" alt="" />
+                </S.ToggleList>
+              </S.WrapperToggle>
+              <S.Line />
+
+              <S.ChainContainer isShowMore={showMoreKacyDetails === 'arbitrum'}>
+                <S.ChainWrapper>
+                  <S.Chain>
+                    <img src={arbitrumIcon.src} alt="" width={20} height={20} />
+                    <p>Arbitrum</p>
+                  </S.Chain>
+                  <S.ChainTotalWrapper>
+                    <S.ChainKacyTotal>
+                      {BNtoDecimal(
+                        totalKacyOnChain[arbitrumNetwork.chainId]?.div(
+                          Big(10).pow(18)
+                        ),
+                        18,
+                        2
+                      )}
+                    </S.ChainKacyTotal>
+                    <S.ChainKacyUSDTotal>
                       ~
                       {BNtoDecimal(
-                        Big(kacyUnclaimed[polygonNetwork.chainId].toString())
+                        Big(
+                          totalKacyOnChain[
+                            arbitrumNetwork.chainId
+                          ]?.toString() ?? 0
+                        )
                           .mul(price)
                           .div(Big(10).pow(18)),
                         6,
@@ -187,35 +349,71 @@ const Kacy = ({
                         2
                       )}{' '}
                       USD
-                    </span>
-                  </S.Value>
-                </S.Li>
-                <S.Li>
-                  Wallet
-                  <S.Value>
-                    {BNtoDecimal(
-                      kacyWallet[polygonNetwork.chainId]?.div(
-                        Big(10).pow(18)
-                      ) ?? Big(0),
-                      18,
-                      2
-                    )}
-                    <span>
-                      ~
+                    </S.ChainKacyUSDTotal>
+                  </S.ChainTotalWrapper>
+                </S.ChainWrapper>
+                <S.Ul>
+                  <S.Li>
+                    Unclaimed
+                    <S.Value>
                       {BNtoDecimal(
-                        kacyWallet[polygonNetwork.chainId]
-                          ?.mul(price)
-                          .div(Big(10).pow(18)) ?? Big(0),
-                        6,
-                        2,
+                        kacyUnclaimed[arbitrumNetwork.chainId].div(
+                          Big(10).pow(18)
+                        ),
+                        18,
                         2
-                      )}{' '}
-                      USD
-                    </span>
-                  </S.Value>
-                </S.Li>
-              </S.Ul>
-
+                      )}
+                      <span>
+                        ~
+                        {BNtoDecimal(
+                          Big(kacyUnclaimed[arbitrumNetwork.chainId].toString())
+                            .mul(price)
+                            .div(Big(10).pow(18)),
+                          6,
+                          2,
+                          2
+                        )}{' '}
+                        USD
+                      </span>
+                    </S.Value>
+                  </S.Li>
+                  <S.Li>
+                    Wallet
+                    <S.Value>
+                      {BNtoDecimal(
+                        kacyWallet[arbitrumNetwork.chainId]?.div(
+                          Big(10).pow(18)
+                        ) ?? Big(0),
+                        18,
+                        2
+                      )}
+                      <span>
+                        ~
+                        {BNtoDecimal(
+                          kacyWallet[arbitrumNetwork.chainId]
+                            ?.mul(price)
+                            .div(Big(10).pow(18)) ?? Big(0),
+                          6,
+                          2,
+                          2
+                        )}{' '}
+                        USD
+                      </span>
+                    </S.Value>
+                  </S.Li>
+                </S.Ul>
+              </S.ChainContainer>
+              <S.WrapperToggle>
+                <S.ToggleList
+                  onClick={() => handleShowMore('arbitrum')}
+                  isShowMore={showMoreKacyDetails === 'arbitrum'}
+                >
+                  {showMoreKacyDetails !== 'arbitrum'
+                    ? 'Show More'
+                    : 'Show Less'}
+                  <img src="/assets/utilities/arrow-select-down.svg" alt="" />
+                </S.ToggleList>
+              </S.WrapperToggle>
               <S.Line />
             </>
           ) : null}

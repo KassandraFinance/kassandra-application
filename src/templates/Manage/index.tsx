@@ -6,6 +6,7 @@ import CreatePool, { CREATED_POOL_LOCALSTORAGE_KEY } from './CreatePool'
 
 import { useManagerPools } from '@/hooks/query/useManagerPools'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
+import { useStrategyPools } from '@/hooks/query/useStrategyPools'
 import useLocalStorage from '@/hooks/useLocalStorage'
 
 import Overlay from '@/components/Overlay'
@@ -48,6 +49,9 @@ const Manage = () => {
 
   const { data: managerPools } = useManagerPools({
     manager: wallet?.accounts[0]?.address
+  })
+  const { data: strategyPool } = useStrategyPools({
+    strategy: wallet?.accounts[0].address
   })
 
   function handleDashBoardButton() {
@@ -130,8 +134,7 @@ const Manage = () => {
 
         <S.Content>
           <Header />
-          {!!newPool ||
-          (wallet?.provider && managerPools && managerPools.length > 0) ? (
+          {!!newPool || (wallet?.provider && (managerPools || strategyPool)) ? (
             <Overview newPoolCreated={newPool} />
           ) : (
             <GetStarted setIsCreatePool={setIsCreatePool} />

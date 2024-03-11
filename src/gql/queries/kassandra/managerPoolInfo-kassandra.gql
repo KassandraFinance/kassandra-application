@@ -1,10 +1,17 @@
 query ManagerPoolInfo($manager: String, $id: ID) {
-      pools(where: { manager: $manager, id: $id }) {
+      pools(where: { and: [
+      { id: $id },
+      { or: [
+        { manager: $manager }, 
+        { strategy: $manager }
+      ]}
+    ] }) {
         id
         address
         vault
         chain_id
         logo
+        strategy
         pool_version
         is_private_pool
         decimals

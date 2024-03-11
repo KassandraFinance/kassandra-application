@@ -3,16 +3,25 @@ import { useRouter } from 'next/router'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import Image from 'next/image'
 import { useConnectWallet } from '@web3-onboard/react'
+import { ZeroAddress } from 'ethers'
 
+import { networks } from '@/constants/tokenAddresses'
+
+import useManagePoolController, {
+  managePoolController
+} from '@/hooks/useManagePoolController'
 import { useManagerPoolInfo } from '@/hooks/query/useManagerPoolInfo'
+import useTransaction from '@/hooks/useTransaction'
 
 import substr from '@/utils/substr'
 import { registerToken } from '../../../utils/registerToken'
 
-import TitleSection from '@/components/TitleSection'
 import Strategy from './Strategy'
 import PoolImage from './PoolImage'
 import PrivacySettings from './PrivacySettings'
+import TitleSection from '@/components/TitleSection'
+import PoolStrategyControl from './PoolStrategyControl'
+import TransferOwnership from './TransferOwnership'
 
 import privacyIcon from '@assets/iconGradient/product-bar.svg'
 import notFound from '@assets/icons/coming-soon.svg'
@@ -20,6 +29,8 @@ import notFound from '@assets/icons/coming-soon.svg'
 import * as S from './styles'
 
 const Details = () => {
+  const [currentCandidate, setcurrentCandidate] = React.useState('')
+
   const router = useRouter()
   const [{ wallet }] = useConnectWallet()
 
@@ -31,6 +42,52 @@ const Details = () => {
     manager: wallet?.accounts[0].address,
     id: poolId
   })
+
+  const poolControllerAddress = poolInfo ? poolInfo[0].controller : ZeroAddress
+  const chainId = poolInfo ? poolInfo[0].chain_id : 0
+
+  const { txNotification, transactionErrors } = useTransaction()
+  const { setStrategist, transferOwnership } = useManagePoolController(
+    poolControllerAddress,
+    networks[chainId]?.rpc
+  )
+
+  async function handleChangeStrategy(address: string) {
+    const transactionText = {
+      success: 'New strategist added!'
+    }
+
+    await setStrategist(address, transactionText)
+  }
+
+  async function handleTransferOwnership(address: string) {
+    const transactionText = {
+      success: 'New manager added!'
+    }
+
+    function handleSuccess() {
+      setcurrentCandidate(address)
+    }
+
+    await transferOwnership(address, transactionText, handleSuccess)
+  }
+
+  async function getCurrentManagerCandidate() {
+    const poolController = await managePoolController(
+      poolControllerAddress,
+      networks[chainId]?.rpc,
+      { wallet, txNotification, transactionErrors }
+    )
+
+    const currentCandidate = await poolController.getManagerCandidate()
+    setcurrentCandidate(currentCandidate)
+  }
+
+  React.useEffect(() => {
+    if (poolControllerAddress === ZeroAddress) return
+
+    getCurrentManagerCandidate()
+  }, [poolInfo])
 
   return (
     <S.Details>
@@ -105,6 +162,18 @@ const Details = () => {
             <PrivacySettings />
           </>
         )}
+
+        <PoolStrategyControl
+          chainId={chainId}
+          currentStrategy={poolInfo ? poolInfo[0].strategy : ''}
+          handleChangeStrategy={handleChangeStrategy}
+        />
+
+        <TransferOwnership
+          poolId={poolId}
+          currentCandidate={currentCandidate.toLowerCase()}
+          onTransferOwnership={handleTransferOwnership}
+        />
       </S.Wrapper2>
     </S.Details>
   )

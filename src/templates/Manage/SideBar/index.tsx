@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useConnectWallet } from '@web3-onboard/react'
 
+import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
+
 import { useManagerPools } from '@/hooks/query/useManagerPools'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import {
@@ -13,6 +15,7 @@ import {
   setClear
 } from '@/store/reducers/poolCreationSlice'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
+import { useStrategyPools } from '@/hooks/query/useStrategyPools'
 
 import substr from '@/utils/substr'
 
@@ -36,7 +39,6 @@ import {
 } from './icons'
 
 import * as S from './styles'
-import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
 
 interface ISideBarProps {
   isOpen: boolean
@@ -85,6 +87,9 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
   const { data: managerPools } = useManagerPools({
     manager: wallet?.accounts[0].address
   })
+  const { data: strategyPool } = useStrategyPools({
+    strategy: wallet?.accounts[0].address
+  })
 
   function handleCreatePool() {
     if (version !== VERSION_POOL_CREATE) {
@@ -118,20 +123,31 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <g filter="url(#filter0_f_4442_53300)">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 604 522"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
-                  d="M32 18.4858C32 22.2422 30.3045 25.6139 27.6213 27.922L21.3838 22.6193H27.4424C27.9324 22.6193 28.3368 22.2347 28.3368 21.7519C28.3368 21.2767 27.9402 20.8845 27.4424 20.8845H10.5576C10.0676 20.8845 9.66318 21.2692 9.66318 21.7519C9.66318 22.2271 10.0598 22.6193 10.5576 22.6193H17.3628L10.6276 28.1257C7.79659 25.81 6 22.3478 6 18.4783C6 11.5161 11.8175 5.87402 18.9961 5.87402C26.1747 5.88157 32 11.5237 32 18.4858Z"
-                  stroke="url(#paint0_linear_4442_53300)"
-                  strokeWidth="0.666667"
-                  strokeMiterlimit="10"
+                  d="M301.651 31.4728C338.118 31.4728 373.507 38.5345 406.845 52.4649C439.137 65.9611 468.132 85.2884 493.042 109.916C518.007 134.6 537.6 163.37 551.273 195.421C565.461 228.679 572.651 264.116 572.651 300.76C572.651 337.613 565.589 373.292 551.659 406.815C539.047 437.153 521.361 464.483 499.025 488.129L412.017 406.815H446.014C475.838 406.815 500.103 382.549 500.103 352.726C500.103 322.902 475.838 298.637 446.014 298.637H157.118C127.295 298.637 103.029 322.902 103.029 352.726C103.029 382.549 127.295 406.815 157.118 406.815H197.261L104.34 488.21C81.9808 464.539 64.2621 437.185 51.6346 406.815C37.7042 373.3 30.6344 337.613 30.6344 300.768C30.6344 263.923 37.8248 228.679 52.0126 195.429C65.6857 163.378 85.2784 134.608 110.244 109.924C135.153 85.2964 164.156 65.9691 196.44 52.473C229.779 38.5425 265.168 31.4808 301.635 31.4808M301.651 0.909424C136.054 0.909424 0.0791016 133.699 0.0791016 300.768C0.0791016 384.238 33.2242 460.099 87.3615 514.607C92.0104 519.288 98.0909 521.596 104.147 521.596C110.887 521.596 117.603 518.741 122.308 513.111L266.985 386.385C269.969 382.123 266.921 376.267 261.725 376.259H157.126C144.137 376.259 133.601 365.723 133.601 352.734C133.601 339.744 144.137 329.208 157.126 329.208H446.014C459.004 329.208 469.54 339.744 469.54 352.734C469.54 365.723 459.004 376.259 446.014 376.259H350.649C345.445 376.259 342.405 382.123 345.388 386.385L480.985 513.111C485.69 518.741 492.406 521.596 499.146 521.596C505.203 521.596 511.283 519.288 515.932 514.607C570.077 460.107 603.214 384.238 603.214 300.768C603.214 133.699 467.248 0.909424 301.659 0.909424L301.651 0.909424Z"
+                  fill="url(#paint0_linear_339_161)"
                 />
-              </g>
-              <path
-                d="M32 18.4829C32 22.2385 30.3045 25.6094 27.6213 27.917L21.3838 22.6155H27.4424C27.9324 22.6155 28.3368 22.2309 28.3368 21.7483C28.3368 21.2732 27.9402 20.8811 27.4424 20.8811H10.5576C10.0676 20.8811 9.66318 21.2657 9.66318 21.7483C9.66318 22.2234 10.0598 22.6155 10.5576 22.6155H17.3628L10.6276 28.1206C7.79659 25.8055 6 22.344 6 18.4754C6 11.5149 11.8175 5.87402 18.9961 5.87402C26.1747 5.88156 32 11.5224 32 18.4829Z"
-                stroke="url(#paint1_linear_4442_53300)"
-                strokeWidth="0.666667"
-                strokeMiterlimit="10"
-              />
+                <defs>
+                  <linearGradient
+                    id="paint0_linear_339_161"
+                    x1="301.643"
+                    y1="0.909424"
+                    x2="301.643"
+                    y2="521.596"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop offset="0.01" stopColor="#FFBF00" />
+                    <stop offset="1" stopColor="#E843C4" />
+                  </linearGradient>
+                </defs>
+              </svg>
               <g className="letters">
                 <path
                   d="M60.7061 12.4667H57.4034L49.0778 19.7444V9H46.9219V25.0707H49.0778V22.6371L53.9401 18.3899L59.7428 25.0707H62.5868L55.5685 16.9435L60.7061 12.4667Z"
@@ -371,7 +387,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
       <S.Line isOpen={isOpen} />
 
       <S.SideBarBody>
-        {wallet?.provider && managerPools && managerPools.length > 0 ? (
+        {wallet?.provider && (managerPools || strategyPool) ? (
           <>
             <SideBarLink
               name="Overview"
@@ -386,6 +402,15 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
               icon={poolIcon}
               isSideBarOpen={isOpen}
               isActive={path.length === 75}
+              poolList={managerPools}
+            />
+
+            <SideBarMenu
+              title="My Strategy pool"
+              icon={poolIcon}
+              isSideBarOpen={isOpen}
+              isActive={path.length === 75}
+              poolList={strategyPool}
             />
 
             <S.LinksContainer>
