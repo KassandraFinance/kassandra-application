@@ -19,7 +19,6 @@ export const Kacy =
     : '0x1d7C6846F033e593b4f3f21C39573bb1b41D43Cb'
 
 export const KacyPoligon = '0x366e293A5CF90A0458D9fF9f3f92234dA598F62e'
-export const KacyArbitrum = ''
 
 export const Staking =
   process.env.NEXT_PUBLIC_MASTER === '1'
