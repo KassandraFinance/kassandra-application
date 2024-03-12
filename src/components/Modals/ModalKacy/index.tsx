@@ -20,6 +20,8 @@ import kacyIcon from '@assets/logos/kacy-token.svg'
 
 import * as S from './styles'
 
+const AVALANCHE_CHAIN_ID = 43114
+
 const KACY_MULTICHAIN = [
   {
     chain: 43114
@@ -144,6 +146,9 @@ const ModalKacy = () => {
 
       count = count.add(kacyStaked)
       setKacyTotal(count)
+
+      _totalKacyOnChain[AVALANCHE_CHAIN_ID] =
+        _totalKacyOnChain[AVALANCHE_CHAIN_ID].add(kacyStaked)
       setTotalKacyOnChain(_totalKacyOnChain)
     }
   }, [kacyStaked, kacyUnclaimed, kacyWallet])
