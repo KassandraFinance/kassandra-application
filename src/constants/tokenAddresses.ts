@@ -19,6 +19,7 @@ export const Kacy =
     : '0x1d7C6846F033e593b4f3f21C39573bb1b41D43Cb'
 
 export const KacyPoligon = '0x366e293A5CF90A0458D9fF9f3f92234dA598F62e'
+export const KacyArbitrum = ''
 
 export const Staking =
   process.env.NEXT_PUBLIC_MASTER === '1'
@@ -224,6 +225,7 @@ export const networks: NetworkType = {
     chainId: 42161,
     rpc: 'https://arbitrum-one.publicnode.com',
     kacyAddress: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
+    stakingContract: '0xdcbdde53cfebae239b77b6ef896261da80531884',
     blockExplorer: 'https://arbiscan.io/',
     coingecko: 'arbitrum-one',
     whiteList: '0xfe7AeA0E15F34aCa30285E64C529b1B2a074F531',

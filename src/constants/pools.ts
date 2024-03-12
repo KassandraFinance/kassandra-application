@@ -54,6 +54,7 @@ export const LP_KACY_AVAX_PNG =
 export const LP_KACY_AVAX_JOE = '0xc45893e0ee426a643e54829ee8c697995e5980ed'
 export const LP_KACY_WETH_QUICKSWAP =
   '0xA6D17eCf3f2ddA250BBC0dBcE99DC38E698e0b4D'
+export const LP_KACY_ETH_CAMELOT = '0x314A441f77D9CB5B3a9bBc7037Bd1a9951cA8DdE'
 
 export const AHYPE_ADDRESS =
   process.env.NEXT_PUBLIC_MASTER === '1'
@@ -70,6 +71,10 @@ export const PHYPE = {
 export const KKF = {
   address: '0xC22bb237A5B8b7260190cb9e4998A9901a68af6f',
   id: '1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d'
+}
+export const KKF_ARB = {
+  address: '0x2Ae2BAeeC8Ccd16075d821832fFEe9172bAE3676',
+  id: '421610x2ae2baeec8ccd16075d821832ffee9172bae36760001000000000000000004f1'
 }
 
 export const KACY_WETH = '0xfaf3bc722d34146be83a2aac40b43148a51a9126'
@@ -328,6 +333,29 @@ const keirkrew: PoolDetails = {
   address: KKF.address
 }
 
+const keirkrewArb: PoolDetails = {
+  pid: 1,
+  type: PoolType.FARM,
+  symbol: '$aKKF',
+  stakingContract: '0xdcbdde53cfebae239b77b6ef896261da80531884',
+  poolTokenAddress: KKF_ARB.address,
+  chain: {
+    id: 42161,
+    logo: '/assets/logos/arbitrum.svg'
+  },
+  properties: {
+    logo: {
+      src: 'https://storage.googleapis.com/logos-kassandra/421610x2ae2baeec8ccd16075d821832ffee9172bae36760001000000000000000004f1',
+      style: { width: '5.8rem' }
+    },
+    title: '$aKKF',
+    link: `/pool/${KKF_ARB.id}`
+  },
+  stakeWithVotingPower: false,
+  stakeWithLockPeriod: false,
+  address: KKF_ARB.address
+}
+
 const lpBalancer: PoolDetails = {
   pid: 0,
   type: PoolType.LP,
@@ -381,6 +409,31 @@ const lpQuickSwap: PoolDetails = {
     type: lpPoolType.AVAX
   }
 }
+const lpCamelot: PoolDetails = {
+  pid: 0,
+  type: PoolType.LP,
+  symbol: 'CMLT-LP',
+  stakingContract: '0xdcbdde53cfebae239b77b6ef896261da80531884',
+  poolTokenAddress: KacyPoligon,
+  chain: {
+    id: 42161,
+    logo: '/assets/logos/arbitrum.svg'
+  },
+  properties: {
+    logo: {
+      src: '/assets/logos/lp-camelot.svg',
+      style: { width: '14.4rem' }
+    },
+    title: '$KACY-ETH CAMELOT',
+    link: `https://app.camelot.exchange/liquidity/?token1=0x366e293A5CF90A0458D9fF9f3f92234dA598F62e&token2=0x82aF49447D8a07e3bd95BD0d56f35241523fBab1&type=v2&position=lp`
+  },
+  stakeWithVotingPower: false,
+  stakeWithLockPeriod: false,
+  address: LP_KACY_ETH_CAMELOT,
+  lpPool: {
+    type: lpPoolType.AVAX
+  }
+}
 
 // addresses list to get price on the stake page
 export const addressesForReqStakePool = [KacyPoligon]
@@ -388,6 +441,7 @@ export const addressesForReqLpPool = [WETH_POLYGON, KacyPoligon, WAVAX_POLYGON]
 export const addressesForReqFarmPool = [
   PHYPE.id,
   KKF.id,
+  KKF_ARB.id,
   TRICRYPTO_ADDRESS,
   AHYPE_ADDRESS
 ]
@@ -397,7 +451,9 @@ export const poolsInvestor = [kacyInvestor1, kacyInvestor2]
 export const poolsFunds = [
   lpJoe,
   lpQuickSwap,
+  lpCamelot,
   keirkrew,
+  keirkrewArb,
   phype,
   ahype,
   tricrypto,
@@ -419,5 +475,7 @@ export const allPools = [
   phype,
   lpBalancer,
   lpQuickSwap,
-  keirkrew
+  keirkrew,
+  keirkrewArb,
+  lpCamelot
 ]
