@@ -43,11 +43,13 @@ const MyAsset = ({
   )
 
   async function getStakedToken() {
-    if (!pid || !wallet) return
+    if (!pid || !wallet || !chainInfo.stakingContract) return
 
-    const staked = await stakingContract.userInfo(
+    const staked = await stakingContract.getUserInfo(
       pid,
-      wallet.accounts[0].address
+      wallet.accounts[0].address,
+      chainInfo.stakingContract,
+      chainInfo.chainId
     )
 
     setStakedToken(Big(staked.amount))
@@ -72,7 +74,7 @@ const MyAsset = ({
 
   React.useEffect(() => {
     getStakedToken()
-  }, [wallet, pid])
+  }, [wallet, pid, chainId])
 
   React.useEffect(() => {
     if (poolAddress === ZeroAddress) return
