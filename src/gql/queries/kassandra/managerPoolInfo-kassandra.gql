@@ -12,6 +12,9 @@ query ManagerPoolInfo($manager: String, $id: ID) {
         chain_id
         logo
         strategy
+        manager {
+          id
+        }
         pool_version
         is_private_pool
         decimals
