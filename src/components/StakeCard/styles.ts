@@ -79,11 +79,12 @@ export const IntroStaking = styled.div`
   flex-direction: column;
   align-items: flex-end;
   flex: 1;
-
   max-height: 100%;
 
   font-size: ${theme.font.sizes.font18};
   text-align: right;
+
+  overflow: hidden;
 
   @media (max-width: 540px) {
     font-size: ${theme.font.sizes.font16};
