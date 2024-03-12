@@ -17,7 +17,9 @@ import * as S from './styles'
 const Staking = () => {
   const router = useRouter()
   const { data: poolInfo } = usePoolData({ id: router.query.address as string })
-  const networkChain = networks[poolInfo?.chain_id ?? 137]
+
+  const polygonChainId = 137
+  const networkChain = networks[polygonChainId]
 
   const { data } = useTokensData({
     chainId: networkChain.chainId,
