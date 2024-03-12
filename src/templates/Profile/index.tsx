@@ -99,15 +99,7 @@ const Profile = () => {
     React.useState<IAssetsValueWalletProps>({ '': Big(-1) })
   const [cardstakesPool, setCardStakesPool] = React.useState<IKacyLpPool[]>([])
   const [myFunds, setMyFunds] = React.useState<ImyFundsType>({})
-  const [priceToken, setPriceToken] = React.useState<IPriceToken>({
-    'LP-PNG': Big(0),
-    'LP-JOE': Big(0),
-    'KACY-WETH': Big(0),
-    KACY: Big(0),
-    aHYPE: Big(0),
-    pHYPE: Big(0),
-    K3C: Big(0)
-  })
+  const [priceToken, setPriceToken] = React.useState<IPriceToken>({})
 
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
@@ -356,7 +348,7 @@ const Profile = () => {
             : pool.amount
           ).toString()
         )
-          .mul(priceToken[pool.symbol])
+          .mul(priceToken[pool.symbol] ?? 0)
           .div(Big(10).pow(18))
 
         if (pool.address === myFunds[pool.address]) {
