@@ -387,7 +387,8 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
       <S.Line isOpen={isOpen} />
 
       <S.SideBarBody>
-        {wallet?.provider && (managerPools || strategyPool) ? (
+        {(strategyPool && strategyPool.length > 0) ||
+        (wallet?.provider && managerPools && managerPools.length > 0) ? (
           <>
             <SideBarLink
               name="Overview"
