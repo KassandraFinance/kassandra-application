@@ -134,7 +134,9 @@ const Manage = () => {
 
         <S.Content>
           <Header />
-          {!!newPool || (wallet?.provider && (managerPools || strategyPool)) ? (
+          {!!newPool ||
+          (strategyPool && strategyPool.length > 0) ||
+          (wallet?.provider && managerPools && managerPools.length > 0) ? (
             <Overview newPoolCreated={newPool} />
           ) : (
             <GetStarted setIsCreatePool={setIsCreatePool} />

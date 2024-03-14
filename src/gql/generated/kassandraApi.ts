@@ -8348,6 +8348,7 @@ export type ManagerPoolInfoQuery = {
     underlying_assets_addresses: Array<string>
     controller: string
     price_usd: string
+    manager: { __typename?: 'Manager'; id: string }
     chain: {
       __typename?: 'Chain'
       id: string
@@ -9850,6 +9851,9 @@ export const ManagerPoolInfoDocument = gql`
       chain_id
       logo
       strategy
+      manager {
+        id
+      }
       pool_version
       is_private_pool
       decimals

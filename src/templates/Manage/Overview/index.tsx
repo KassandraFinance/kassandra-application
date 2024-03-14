@@ -245,7 +245,7 @@ const Overview = ({ newPoolCreated }: IOverviewProps) => {
         <CardPoolSection data={managerPools} />
       </S.ManagedPoolsContainer>
 
-      {strategyPool && (
+      {strategyPool && strategyPool.length > 0 && (
         <S.ManagedPoolsContainer>
           <S.TitleWrapper>
             <TitleSection title="Strategy Pools" image={managedPoolsIcon} />

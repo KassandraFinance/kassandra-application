@@ -140,7 +140,10 @@ const PoolManager = () => {
     const newTabsList = tabsList.slice()
     if (!poolInfo) return newTabsList
 
-    if (poolInfo[0]?.strategy.toLowerCase() !== wallet?.accounts[0].address) {
+    if (
+      poolInfo[0]?.manager?.id.toLowerCase() ===
+      wallet?.accounts[0].address.toLowerCase()
+    ) {
       newTabsList.splice(4, 0, feeRewardTab, brokersTab, detailsTab)
     }
 
