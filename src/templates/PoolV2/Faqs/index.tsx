@@ -1,4 +1,5 @@
 import React from 'react'
+import Big from 'big.js'
 
 import QuestionsAndAnswers from '@/components/QuestionsAndAnswers'
 
@@ -50,7 +51,13 @@ const Faqs = ({
   const faqListRight = [
     {
       question: `What are the fees associated with this ${poolName} portfolio?`,
-      answers: `The fees include: \n\n${fee.depositFee}% deposit fee for the manager of which ${fee.managerShare}% can go to a person who shared the pool.\n${fee.managementFee}% annualized management fee set by the manager. \n0.5% annualized fee for Kassandra.`
+      answers: `The fees include: \n\n${Big(fee.depositFee)
+        .add(fee.managerShare)
+        .toFixed(2)}% deposit fee, of which ${
+        fee.managerShare
+      }% can go to a person who shared the pool.\n${
+        fee.managementFee
+      }% annualized management fee set by the manager, of which \n0.5% is allocated as an annualized fee for Kassandra.`
     },
     {
       question: 'Is this pool public or private?',
