@@ -178,11 +178,13 @@ function managePoolFunctions(
   ) => {
     try {
       const tx = await controller.send.setStrategist(address)
-      await txNotification(
+      const response = await txNotification(
         tx,
         { sucess: transactionText.success },
         { onSuccess, onFail }
       )
+
+      return response
     } catch (error) {
       const contractInfo = {
         contractName: 'KassandraController',
@@ -225,11 +227,13 @@ function managePoolFunctions(
   ) => {
     try {
       const tx = await controller.send.transferOwnership(address)
-      await txNotification(
+      const response = await txNotification(
         tx,
         { sucess: transactionText.success },
         { onSuccess, onFail }
       )
+
+      return response
     } catch (error) {
       const contractInfo = {
         contractName: 'KassandraController',
