@@ -57,19 +57,24 @@ const Details = () => {
       success: 'New strategist added!'
     }
 
-    await setStrategist(address, transactionText)
+    return await setStrategist(address, transactionText)
   }
 
   async function handleTransferOwnership(address: string) {
-    const transactionText = {
-      success: 'New manager added!'
-    }
+    const response = await handleChangeStrategy(address)
 
     function handleSuccess() {
       setcurrentCandidate(address)
     }
 
-    await transferOwnership(address, transactionText, handleSuccess)
+    const transactionSuccess = 1
+    if (response?.status === transactionSuccess) {
+      const transactionText = {
+        success: 'New manager added!'
+      }
+
+      await transferOwnership(address, transactionText, handleSuccess)
+    }
   }
 
   async function getCurrentManagerCandidate() {

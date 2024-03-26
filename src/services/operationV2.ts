@@ -364,21 +364,21 @@ export default class operationV2 implements IOperations {
       // )
 
       const amountsOutList = response.amountsOut.slice(1)
-      const poolTokenList = this.poolInfo.tokens.sort((a, b) =>
-        a.token.id.toLowerCase() > b.token.id.toLowerCase() ? 1 : -1
-      )
 
       const amountsOutListFormatted: string[] = []
-      const assets = poolTokenList.map((token, index) => {
+      const assets = this.poolInfo.tokensAddresses.map((token, index) => {
         const amount = Big(amountsOutList[index].toString())
           .mul(10000 - 1)
           .div(10000)
           .toFixed(0)
         amountsOutListFormatted.push(amount)
 
+        const tokenInfo = this.poolInfo.tokens.find(
+          item => item.token.id === token
+        )
         return {
-          id: token.token.wraps?.id ?? token.token.id,
-          decimals: token.token.decimals,
+          id: tokenInfo?.token.wraps?.id ?? tokenInfo?.token.id ?? '',
+          decimals: tokenInfo?.token.decimals ?? 18,
           amount
         }
       })
