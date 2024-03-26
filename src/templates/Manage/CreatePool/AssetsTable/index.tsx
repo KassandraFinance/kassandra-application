@@ -130,7 +130,12 @@ const AssetsTable = ({ tokensData, priceList, tokenBalance }: IAssetsTable) => {
                     />
                   </S.Td>
                   <S.Td className="price">
-                    ${priceList ? priceList[coin.id.toLowerCase()]?.usd : 0}
+                    $
+                    {priceList
+                      ? Big(
+                          priceList[coin.id.toLowerCase()]?.usd.toFixed(10) ?? 0
+                        ).toFixed()
+                      : 0}
                   </S.Td>
                   <S.Td className="marketCap">
                     $
