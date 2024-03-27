@@ -89,7 +89,7 @@ function ERC20Contract(
       return receipt
     } catch (error) {
       const contractInfo = {
-        contractName: 'ERC20  ',
+        contractName: 'ERC20',
         functionName: 'approve'
       }
       transactionErrors(error, contractInfo, callbacks?.onFail)
