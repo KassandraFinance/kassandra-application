@@ -111,7 +111,6 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
       })
     }
 
-    console.log(data)
     response.status(200).json(data)
   } catch (error) {
     console.error(error)
