@@ -52,9 +52,18 @@ export const DEFAULT_ADDRESS_JAZZICON =
   '0x1111111111111111111111111111111111111111'
 
 export const subgraphNames = {
-  avalanche: 'KassandraAvalancheV2',
-  polygon: 'KassandraPolygon',
-  arbitrum: 'KassandraArbitrum'
+  avalanche: {
+    name: 'KassandraAvalancheV2',
+    chainId: 43114
+  },
+  polygon: {
+    name: 'KassandraPolygon',
+    chainId: 137
+  },
+  arbitrum: {
+    name: 'KassandraArbitrum',
+    chainId: 42161
+  }
 }
 
 export const platform: Record<number, string> = {
@@ -151,7 +160,7 @@ export const networks: NetworkType = {
     vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
     balancerHelper: '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5',
     proxyInvest: '0x77F18A3963796Dd252EbEF15C9eadfE229c7c89a',
-    subgraphName: subgraphNames.polygon,
+    subgraphName: subgraphNames.polygon.name,
     nativeCurrency: {
       address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
       name: 'Matic Token',
@@ -181,7 +190,7 @@ export const networks: NetworkType = {
     vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
     balancerHelper: '0xC128468b7Ce63eA702C1f104D55A2566b13D3ABD',
     proxyInvest: '0xaE107b47f1565b8EF0c537E4322866d42095051a',
-    subgraphName: subgraphNames.avalanche,
+    subgraphName: subgraphNames.avalanche.name,
     nativeCurrency: {
       address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Avalanche',
@@ -234,7 +243,7 @@ export const networks: NetworkType = {
     vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
     balancerHelper: '0xE39B5e3B6D74016b2F6A9673D7d7493B6DF549d5',
     proxyInvest: '0x77F18A3963796Dd252EbEF15C9eadfE229c7c89a',
-    subgraphName: subgraphNames.arbitrum,
+    subgraphName: subgraphNames.arbitrum.name,
     nativeCurrency: {
       address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
       name: 'Wrapped Ether',

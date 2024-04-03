@@ -186,6 +186,8 @@ const InputAndOutputValueToken = ({
 
   // get balance of swap in token
   React.useEffect(() => {
+    let isCurrent = true
+
     if (
       !wallet ||
       chainId !== pool?.chain_id ||
@@ -204,9 +206,14 @@ const InputAndOutputValueToken = ({
           ? pool?.chain?.address_wrapped || undefined
           : undefined
       )
+      if (!isCurrent) return
 
       setSelectedTokenInBalance(userTokenBalance)
     })()
+
+    return () => {
+      isCurrent = false
+    }
   }, [tokenSelect, wallet])
 
   return (
