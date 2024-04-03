@@ -77,19 +77,20 @@ function ERC20Contract(
 
   const approve = async (
     spenderAddress: string,
+    value: bigint,
     message?: MessageType,
     callbacks?: CallbacksType
   ): Promise<ContractTransactionReceipt | null> => {
     if (!txNotification || !transactionErrors) return null
 
     try {
-      const tx = await contract.send.approve(spenderAddress, MaxUint256)
+      const tx = await contract.send.approve(spenderAddress, value)
       const receipt = await txNotification(tx, message, callbacks)
       return receipt
     } catch (error) {
       const contractInfo = {
-        contractName: 'kacyOFT',
-        functionName: 'sendFrom'
+        contractName: 'ERC20',
+        functionName: 'approve'
       }
       transactionErrors(error, contractInfo, callbacks?.onFail)
       return null

@@ -95,10 +95,11 @@ const PoolStakingCard = ({
     setAmountApproveStaking(Big(allowance))
   }
 
-  async function handleApproveStaking() {
+  async function handleApproveStaking(value: Big) {
     const allowance = await stakingInfo.handleApprove(
       poolInfo.stakingToken,
-      pool?.symbol ?? ''
+      pool?.symbol ?? '',
+      value
     )
 
     setAmountApproveStaking(Big(allowance))

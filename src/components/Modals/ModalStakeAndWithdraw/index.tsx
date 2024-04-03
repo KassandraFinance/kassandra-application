@@ -47,7 +47,7 @@ interface IModalStakeProps {
   setStakeTransaction: React.Dispatch<React.SetStateAction<typeTransaction>>
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   updateAllowance: () => Promise<void>
-  handleApprove: () => Promise<void>
+  handleApprove: (value: Big) => Promise<void>
   getUserInfoAboutPool: () => Promise<void>
 }
 
@@ -306,7 +306,7 @@ const ModalStakeAndWithdraw = ({
                   disabledNoEvent={amountStake.gt(balance)}
                   background="secondary"
                   fullWidth
-                  onClick={handleApprove}
+                  onClick={() => handleApprove(amountStake)}
                 />
               ) : (
                 <Button

@@ -298,6 +298,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
       const receipt = await approve(
         factory,
+        BigInt(token.amount),
         {},
         {
           onFail: handleFail
