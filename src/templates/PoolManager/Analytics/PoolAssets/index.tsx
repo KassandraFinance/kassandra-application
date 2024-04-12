@@ -21,7 +21,7 @@ const PoolAssets = (props: IPoolAssetsProps) => {
       mockTokens[asset.token.id].toLocaleLowerCase()
     )
   } else {
-    addresses = poolAssets?.map(asset => asset.token.id.toLowerCase())
+    addresses = poolAssets?.map(asset => asset.token.id)
   }
 
   const { data: data } = useTokensData({

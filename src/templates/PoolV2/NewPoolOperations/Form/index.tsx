@@ -4,7 +4,6 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { BrowserProvider, ethers, JsonRpcSigner } from 'ethers'
 
 import { OperationProvider } from './PoolOperationContext'
-import { useAppSelector } from '@/store/hooks'
 import usePrivateInvestors from '@/hooks/usePrivateInvestors'
 import { usePoolData } from '@/hooks/query/usePoolData'
 import useGetToken from '@/hooks/useGetToken'
@@ -47,17 +46,14 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
 
   const network = networks[pool?.chain_id || 137]
 
-  const { tokenListSwapProvider } = useAppSelector(state => state)
   const ERC20 = useERC20(pool?.address || ethers.ZeroAddress, network.rpc)
   const { privateAddresses } = usePrivateInvestors(
     network.privateInvestor,
     pool?.chain_id
   )
-
-  const tokenAddresses = tokenListSwapProvider.map(token => token.address)
   const { data } = useTokensData({
-    chainId: pool?.chain_id || 0,
-    tokenAddresses
+    chainId: pool?.chain_id || 137,
+    tokenAddresses: []
   })
 
   const { priceToken } = useGetToken({
