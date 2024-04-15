@@ -138,7 +138,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
   }
 
   async function updateAllowance() {
-    const erc20 = await ERC20(poolInfo.stakingToken, networkChain.rpc)
+    const erc20 = await ERC20(poolInfo.stakingToken, networkChain.chainId)
 
     const allowance = await erc20.allowance(
       stakingContract,

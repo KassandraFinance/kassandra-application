@@ -1,6 +1,6 @@
 import React from 'react'
 import { useConnectWallet } from '@web3-onboard/react'
-import { JsonRpcProvider, getAddress } from 'ethers'
+import { JsonRpcProvider, Network, getAddress } from 'ethers'
 
 import { networks } from '@/constants/tokenAddresses'
 import { getDateDiff } from '@/utils/date'
@@ -127,10 +127,14 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       return
     }
 
+    const networkInfo = networks[Number(wallet?.chains[0].id ?? '43114')]
+
     const chaindId =
       networks[Number(wallet?.chains[0].id ?? '')]?.chainId ?? 43114
-
-    const provider = new JsonRpcProvider(networks[chaindId].rpc)
+    const network = new Network(networkInfo.chainName, networkInfo.chainId)
+    const provider = new JsonRpcProvider(networks[chaindId].rpc, network, {
+      staticNetwork: network
+    })
     const subgraphTimestamp = await provider.getBlock(
       BigInt(latestBlockData?.subgraphBlock)
     )

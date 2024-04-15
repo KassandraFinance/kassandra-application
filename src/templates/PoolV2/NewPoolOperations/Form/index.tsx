@@ -4,7 +4,7 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { BrowserProvider, ethers, JsonRpcSigner } from 'ethers'
 
 import { OperationProvider } from './PoolOperationContext'
-import { useAppSelector } from '@/store/hooks'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import usePrivateInvestors from '@/hooks/usePrivateInvestors'
 import { usePoolData } from '@/hooks/query/usePoolData'
 import useGetToken from '@/hooks/useGetToken'
@@ -24,6 +24,7 @@ import useERC20 from '@/hooks/useERC20'
 import { useTokensData } from '@/hooks/query/useTokensData'
 
 import * as S from './styles'
+import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
 export type Titles = keyof typeof messages
 
@@ -40,6 +41,7 @@ interface IFormProps {
 const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   const [privateInvestors, setPrivateInvestors] = React.useState<string[]>([])
   const [signerProvider, setsignerProvider] = React.useState<JsonRpcSigner>()
+  const dispatch = useAppDispatch()
 
   const [{ wallet }] = useConnectWallet()
   const router = useRouter()
@@ -48,7 +50,7 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
   const network = networks[pool?.chain_id || 137]
 
   const { tokenListSwapProvider } = useAppSelector(state => state)
-  const ERC20 = useERC20(pool?.address || ethers.ZeroAddress, network.rpc)
+  const ERC20 = useERC20(pool?.address || ethers.ZeroAddress, network.chainId)
   const { privateAddresses } = usePrivateInvestors(
     network.privateInvestor,
     pool?.chain_id
@@ -81,7 +83,11 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
 
     const provider = new BrowserProvider(wallet?.provider)
     const signer = await provider.getSigner()
+    // const tt = await provider.getNetwork()
+    // const gg = await signer.provider.getRpcRequest()
 
+    // console.log('tt', tt)
+    // console.log('gg', gg)
     setsignerProvider(signer)
   }
 
@@ -127,6 +133,7 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
         {typeAction === 'Invest' && (
           <Invest typeAction="Invest" privateInvestors={privateInvestors} />
         )}
+
         {typeAction === 'Withdraw' && (
           <Withdraw typeWithdraw={typeWithdraw} typeAction="Withdraw" />
         )}

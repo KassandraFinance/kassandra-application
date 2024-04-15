@@ -1,6 +1,11 @@
 import * as Sentry from '@sentry/nextjs'
 import { useConnectWallet } from '@web3-onboard/react'
-import { ContractTransactionResponse, JsonRpcProvider, isError } from 'ethers'
+import {
+  ContractTransactionResponse,
+  JsonRpcProvider,
+  Network,
+  isError
+} from 'ethers'
 
 import { networks } from '@/constants/tokenAddresses'
 
@@ -79,8 +84,11 @@ const useTransaction = () => {
 
     if (error?.transaction) {
       const chainId = Number(wallet?.chains[0].id ?? '0')
-      const readProvider = new JsonRpcProvider(networks[chainId].rpc)
-
+      const networkInfo = networks[chainId]
+      const network = new Network(networkInfo.chainName, networkInfo.chainId)
+      const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+        staticNetwork: network
+      })
       const transactionData: string = error.transaction.data.toString()
       const currentBlock = await readProvider.getBlockNumber()
 
@@ -128,6 +136,15 @@ const useTransaction = () => {
         })
       )
       return
+    }
+
+    if (isError(error, 'NETWORK_ERROR')) {
+      setModalAlertText({
+        errorText:
+          'Weve identified that the RPC in your wallet is returning the error (429 Too Many Requests), indicating an excessive volume of requests',
+        solutionText:
+          'A possible solution to this error is to change the RPC on your provider.'
+      })
     }
 
     if (isError(error, 'ACTION_REJECTED')) {

@@ -1,12 +1,14 @@
-import { JsonRpcProvider, Contract } from 'ethers'
+import { JsonRpcProvider, Contract, Network } from 'ethers'
 
 import { networks } from '@/constants/tokenAddresses'
 import KassandraWhitelistAbi from '@/constants/abi/KassandraWhitelist.json'
 
 const useWhiteList = (networkId: number) => {
-  const rpcURL = networks[networkId].rpc
-  const readProvider = new JsonRpcProvider(rpcURL)
-
+  const networkInfo = networks[networkId]
+  const network = new Network(networkInfo.chainName, networkInfo.chainId)
+  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+    staticNetwork: network
+  })
   const read = new Contract(
     networks[networkId].whiteList,
     KassandraWhitelistAbi,

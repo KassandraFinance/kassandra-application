@@ -114,7 +114,7 @@ const AddLiquidityOperation = () => {
 
       const { balance } = await ERC20(
         token,
-        networks[(poolInfo && poolInfo[0]?.chain_id) ?? 137].rpc
+        (poolInfo && poolInfo[0]?.chain_id) ?? 137
       )
       const balanceValue = await balance(wallet.accounts[0].address)
       setUserBalance(Big(balanceValue))

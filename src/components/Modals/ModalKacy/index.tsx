@@ -71,7 +71,7 @@ const ModalKacy = () => {
         const chain = networks[kacy.chain]
 
         if (chain.kacyAddress) {
-          const contract = await ERC20(chain.kacyAddress, chain.rpc)
+          const contract = await ERC20(chain.kacyAddress, chain.chainId)
           const balance = await contract.balance(wallet)
 
           Object.assign(kacyAmountInWallet, {

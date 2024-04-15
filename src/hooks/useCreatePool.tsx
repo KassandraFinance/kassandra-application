@@ -1,5 +1,11 @@
 import React from 'react'
-import { JsonRpcProvider, BrowserProvider, Contract, ethers } from 'ethers'
+import {
+  JsonRpcProvider,
+  BrowserProvider,
+  Contract,
+  ethers,
+  Network
+} from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import KassandraManagedControllerFactoryAbi from '@/constants/abi/KassandraManagedControllerFactory.json'
 
@@ -44,7 +50,10 @@ const useCreatePool = (chainId: number) => {
   const network = networks[chainId]
   const rpcURL = network.rpc
   const factoryAddress = network.factory
-  const readProvider = new JsonRpcProvider(rpcURL)
+  const networkInfo = new Network(network.chainName, network.chainId)
+  const readProvider = new JsonRpcProvider(rpcURL, networkInfo, {
+    staticNetwork: networkInfo
+  })
 
   const [contract, setContract] = React.useState({
     send: new Contract(

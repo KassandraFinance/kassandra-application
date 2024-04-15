@@ -1,5 +1,5 @@
 import React from 'react'
-import { Contract, JsonRpcProvider } from 'ethers'
+import { Contract, JsonRpcProvider, Network } from 'ethers'
 import Big from 'big.js'
 
 import { lpPoolType } from '@/constants/pools'
@@ -23,7 +23,11 @@ const usePriceLP = () => {
     const getReservesAvax = async (address: string, chainId: number) => {
       let value
       try {
-        const provider = new JsonRpcProvider(networks[chainId].rpc)
+        const networkInfo = networks[chainId]
+        const network = new Network(networkInfo.chainName, networkInfo.chainId)
+        const provider = new JsonRpcProvider(networkInfo.rpc, network, {
+          staticNetwork: network
+        })
         const contract = new Contract(address, PriceLP.abi, provider)
         const response = await contract.getReserves()
 
@@ -44,9 +48,12 @@ const usePriceLP = () => {
 
       let value
       try {
-        const network = networks[chainId]
-        const provider = new JsonRpcProvider(network.rpc)
-        const vault = new Contract(network.vault, VAULT, provider)
+        const networkInfo = networks[chainId]
+        const network = new Network(networkInfo.chainName, networkInfo.chainId)
+        const provider = new JsonRpcProvider(networkInfo.rpc, network, {
+          staticNetwork: network
+        })
+        const vault = new Contract(networkInfo.vault, VAULT, provider)
         const res = await vault.getPoolTokenInfo(
           balancerPoolId,
           tokenPoolAddress
@@ -75,7 +82,7 @@ const usePriceLP = () => {
 
       const totalReserveValueInDollars = Big(reserveValue).mul(tokenPoolPrice)
 
-      const ERC20Contract = await ERC20(poolAddress, networks[chainId].rpc)
+      const ERC20Contract = await ERC20(poolAddress, chainId)
       const supplyLPToken = await ERC20Contract.totalSupply()
 
       return totalReserveValueInDollars
