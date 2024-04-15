@@ -148,10 +148,11 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
     setAmountApproveKacyStaking(Big(allowance))
   }
 
-  async function handleApproveKacy() {
+  async function handleApproveKacy(value: Big) {
     const allowance = await stakingInfo.handleApprove(
       poolInfo.stakingToken,
-      pool?.symbol ?? ''
+      pool?.symbol ?? '',
+      value
     )
 
     setAmountApproveKacyStaking(Big(allowance))

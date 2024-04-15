@@ -440,6 +440,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         })
         approve(
           operation.contractAddress,
+          BigInt(Big(amountTokenIn).toFixed(0)),
           {
             error: `Failed to approve ${tokenSelect.symbol}`,
             pending: `Waiting approval of ${tokenSelect.symbol}...`,

@@ -113,7 +113,8 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
         }
       )
 
-      await approve(networks[43114].kacyOFT)
+      const valueMult = Big(value).mul(Big(10).pow(18)).toFixed(0)
+      await approve(networks[43114].kacyOFT, BigInt(valueMult))
 
       const amount = await allowance(
         networks[43114].kacyOFT,

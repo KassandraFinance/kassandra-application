@@ -230,6 +230,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
 
         approve(
           proxyInvest,
+          BigInt(Big(amountTokenIn).toFixed(0)),
           {
             error: `Failed to approve ${pool?.symbol}`,
             pending: `Waiting approval of ${pool?.symbol}...`,

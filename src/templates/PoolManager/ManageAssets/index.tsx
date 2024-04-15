@@ -612,6 +612,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     )
     const receipt = await approve(
       poolInfo[0]?.controller,
+      BigInt(token.amount),
       {},
       {
         onFail: handleFail

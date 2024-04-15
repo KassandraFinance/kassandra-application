@@ -38,7 +38,11 @@ const useStakingInfo = (chaindId: number, pid?: number) => {
     )
   }
 
-  async function handleApprove(stakingToken: string, poolSymbol: string) {
+  async function handleApprove(
+    stakingToken: string,
+    poolSymbol: string,
+    value: Big
+  ) {
     const erc20 = await ERC20(stakingToken, chaindId, {
       transactionErrors: transaction.transactionErrors,
       txNotification: transaction.txNotification,
@@ -47,6 +51,7 @@ const useStakingInfo = (chaindId: number, pid?: number) => {
 
     await erc20.approve(
       networkChain.stakingContract ?? '',
+      BigInt(value.toFixed(0)),
       {
         pending: `Waiting approval of ${poolSymbol}...`,
         sucess: `Approval of ${poolSymbol} confirmed`
