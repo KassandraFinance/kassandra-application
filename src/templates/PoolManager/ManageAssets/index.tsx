@@ -300,7 +300,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
     const { allowance } = await ERC20(
       tokenId,
-      networks[(poolInfo && poolInfo[0]?.chain_id) ?? 137].rpc,
+      (poolInfo && poolInfo[0]?.chain_id) ?? 137,
       {
         wallet: null,
         txNotification: txNotification,
@@ -599,7 +599,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
 
     const { approve, allowance } = await ERC20(
       token.address,
-      networks[poolInfo[0]?.chain_id ?? 137].rpc,
+      poolInfo[0]?.chain_id ?? 137,
       {
         wallet: wallet,
         txNotification: txNotification,

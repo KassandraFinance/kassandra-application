@@ -1,6 +1,6 @@
 import React from 'react'
 import { useConnectWallet } from '@web3-onboard/react'
-import { BrowserProvider, JsonRpcProvider, Contract } from 'ethers'
+import { BrowserProvider, JsonRpcProvider, Contract, Network } from 'ethers'
 
 import Governance from '@/constants/abi/Governance.json'
 import { networks } from '@/constants/tokenAddresses'
@@ -32,12 +32,15 @@ const valuesStateProposal: Array<StateProposal> = [
   ['Succeeded', 'Executed', executed, '7']
 ]
 
-const useGov = (address: string) => {
+const useGov = (address: string, chainId = 43114) => {
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
 
-  const rpcURL = networks[43114].rpc
-  const readProvider = new JsonRpcProvider(rpcURL)
+  const networkInfo = networks[chainId]
+  const network = new Network(networkInfo.chainName, networkInfo.chainId)
+  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+    staticNetwork: network
+  })
 
   const [contract, setContract] = React.useState({
     send: new Contract(address, Governance, readProvider),

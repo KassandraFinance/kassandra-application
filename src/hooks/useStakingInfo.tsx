@@ -43,7 +43,7 @@ const useStakingInfo = (chaindId: number, pid?: number) => {
     poolSymbol: string,
     value: Big
   ) {
-    const erc20 = await ERC20(stakingToken, networkChain.rpc, {
+    const erc20 = await ERC20(stakingToken, chaindId, {
       transactionErrors: transaction.transactionErrors,
       txNotification: transaction.txNotification,
       wallet: wallet
@@ -72,7 +72,7 @@ const useStakingInfo = (chaindId: number, pid?: number) => {
 
   async function getPoolInfo(pid: number, kacyPrice: Big, poolPrice: Big) {
     const poolInfoRes = await staking.poolInfo(pid)
-    const erc20 = await ERC20(poolInfoRes.stakingToken, networkChain.rpc)
+    const erc20 = await ERC20(poolInfoRes.stakingToken, chaindId)
     const decimals = await erc20.decimals()
 
     const totalStaked = Big(poolInfoRes.depositedAmount.toString())

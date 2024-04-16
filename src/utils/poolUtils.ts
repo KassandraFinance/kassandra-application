@@ -126,7 +126,7 @@ export const getBalanceToken = async (
     return Big(balanceToken.toString())
   }
 
-  const { balance } = await ERC20(address, networks[chainId].rpc)
+  const { balance } = await ERC20(address, chainId)
   const balanceToken = await balance(userWalletAddress).then(newBalance =>
     Big(newBalance.toString())
   )

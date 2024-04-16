@@ -74,7 +74,7 @@ const MyAsset = ({
     chainInfo.stakingContract ?? ethers.ZeroAddress,
     chainInfo.chainId
   )
-  const ERC20 = useERC20(poolToken, networks[chainInfo.chainId].rpc)
+  const ERC20 = useERC20(poolToken, chainInfo.chainId)
   const { trackEventFunction } = useMatomoEcommerce()
   const { data } = useTokensData({
     chainId: networks[137].chainId,

@@ -195,7 +195,7 @@ const ModalStakeAndWithdraw = ({
 
   async function getBalance() {
     if (wallet?.provider && stakeTransaction === typeTransaction.STAKING) {
-      const erc20 = await ERC20(stakingToken, networkChain.rpc)
+      const erc20 = await ERC20(stakingToken, networkChain.chainId)
 
       const balanceKacy = await erc20.balance(wallet?.accounts[0].address)
       setBalance(Big(balanceKacy))

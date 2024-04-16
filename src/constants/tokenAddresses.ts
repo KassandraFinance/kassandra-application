@@ -178,7 +178,7 @@ export const networks: NetworkType = {
   '43114': {
     chainId: 43114,
     chainName: 'Avalanche',
-    rpc: 'https://rpc.ankr.com/avalanche',
+    rpc: 'https://avalanche.public-rpc.com',
     kacyAddress: Kacy,
     blockExplorer: 'https://snowtrace.io',
     coingecko: 'avalanche',

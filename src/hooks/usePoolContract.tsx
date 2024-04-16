@@ -1,5 +1,5 @@
 import React from 'react'
-import { Contract, JsonRpcProvider } from 'ethers'
+import { Contract, JsonRpcProvider, Network } from 'ethers'
 
 import Pool from '../constants/abi/Pool.json'
 
@@ -165,8 +165,11 @@ function PoolContract(contract: Contract) {
 }
 
 const usePoolContract = (address: string, chainId = 43114) => {
-  const rpcURL = networks[chainId].rpc
-  const readProvider = new JsonRpcProvider(rpcURL)
+  const networkInfo = networks[chainId]
+  const network = new Network(networkInfo.chainName, networkInfo.chainId)
+  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+    staticNetwork: network
+  })
 
   const [contract, setContract] = React.useState(
     new Contract(address, Pool, readProvider)
@@ -182,8 +185,11 @@ const usePoolContract = (address: string, chainId = 43114) => {
 }
 
 export const corePoolContract = (address: string, chainId = 43114) => {
-  const rpcURL = networks[chainId].rpc
-  const readProvider = new JsonRpcProvider(rpcURL)
+  const networkInfo = networks[chainId]
+  const network = new Network(networkInfo.chainName, networkInfo.chainId)
+  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+    staticNetwork: network
+  })
   const contract = new Contract(address, Pool, readProvider)
 
   return PoolContract(contract)

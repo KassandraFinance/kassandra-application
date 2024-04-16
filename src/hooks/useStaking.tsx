@@ -1,7 +1,13 @@
 import React from 'react'
 import Big from 'big.js'
 
-import { BrowserProvider, JsonRpcProvider, Contract, ZeroAddress } from 'ethers'
+import {
+  BrowserProvider,
+  JsonRpcProvider,
+  Contract,
+  ZeroAddress,
+  Network
+} from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 
 import { networks } from '@/constants/tokenAddresses'
@@ -29,8 +35,11 @@ const useStaking = (address: string, chainId = 43114) => {
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
 
-  const rpcURL = networks[chainId].rpc
-  const readProvider = new JsonRpcProvider(rpcURL)
+  const networkInfo = networks[chainId]
+  const network = new Network(networkInfo.chainName, networkInfo.chainId)
+  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+    staticNetwork: network
+  })
 
   const [contract, setContractEthers] = React.useState({
     send: new Contract(address, StakingContract, readProvider),
@@ -61,8 +70,12 @@ const useStaking = (address: string, chainId = 43114) => {
       address: string,
       chainId: number
     ) => {
-      const provider = new JsonRpcProvider(networks[chainId].rpc)
-      const infoContract = new Contract(address, StakingContract, provider)
+      const networkInfo = networks[chainId]
+      const network = new Network(networkInfo.chainName, networkInfo.chainId)
+      const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+        staticNetwork: network
+      })
+      const infoContract = new Contract(address, StakingContract, readProvider)
       const value = await infoContract.userInfo(pid, walletAddress)
       return value
     }
@@ -128,8 +141,12 @@ const useStaking = (address: string, chainId = 43114) => {
       address: string,
       chainId: number
     ) => {
-      const provider = new JsonRpcProvider(networks[chainId].rpc)
-      const infoContract = new Contract(address, StakingContract, provider)
+      const networkInfo = networks[chainId]
+      const network = new Network(networkInfo.chainName, networkInfo.chainId)
+      const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+        staticNetwork: network
+      })
+      const infoContract = new Contract(address, StakingContract, readProvider)
       const value: bigint = await infoContract.earned(pid, walletAddress)
       return value
     }

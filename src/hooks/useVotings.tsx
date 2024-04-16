@@ -1,20 +1,23 @@
 import React from 'react'
 import { useConnectWallet } from '@web3-onboard/react'
-import { BrowserProvider, JsonRpcProvider, Contract } from 'ethers'
+import { BrowserProvider, JsonRpcProvider, Contract, Network } from 'ethers'
 
 import useTransaction from './useTransaction'
 
 import StakingContract from '../constants/abi/Staking.json'
 import { networks } from '@/constants/tokenAddresses'
 
-const useVotingPower = (address: string) => {
+const useVotingPower = (address: string, chainId = 43114) => {
   // Get user wallet
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
 
   // Set read rpc
-  const rpcURL = networks[43114].rpc
-  const readProvider = new JsonRpcProvider(rpcURL)
+  const networkInfo = networks[chainId]
+  const network = new Network(networkInfo.chainName, networkInfo.chainId)
+  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+    staticNetwork: network
+  })
 
   const [contract, setContract] = React.useState({
     send: new Contract(address, StakingContract, readProvider),

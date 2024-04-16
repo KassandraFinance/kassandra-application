@@ -6,7 +6,8 @@ import {
   MaxUint256,
   ContractTransactionResponse,
   ErrorCode,
-  ContractTransactionReceipt
+  ContractTransactionReceipt,
+  Network
 } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import { WalletState } from '@web3-onboard/core'
@@ -109,11 +110,15 @@ function ERC20Contract(
   }
 }
 
-const useERC20 = (address: string, rpcURL = networks[137].rpc) => {
+const useERC20 = (address: string, chainId = 137) => {
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
 
-  const readProvider = new JsonRpcProvider(rpcURL)
+  const networkInfo = networks[chainId]
+  const network = new Network(networkInfo.chainName, networkInfo.chainId)
+  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+    staticNetwork: network
+  })
 
   const [contract, setContract] = React.useState({
     send: new Contract(address, ERC20ABI, readProvider),
@@ -136,12 +141,13 @@ const useERC20 = (address: string, rpcURL = networks[137].rpc) => {
     }
 
     signContranct()
-  }, [address, rpcURL, wallet])
+  }, [address, chainId, wallet])
 
   return React.useMemo(() => {
     return ERC20Contract(contract, txNotification, transactionErrors)
   }, [contract])
 }
+
 type ParamsType = {
   wallet: WalletState | null
   txNotification: (
@@ -158,10 +164,15 @@ type ParamsType = {
 
 export const ERC20 = async (
   address: string,
-  rpcUrl = networks[137].rpc,
+  chainId = 137,
   params?: ParamsType
 ) => {
-  const readProvider = new JsonRpcProvider(rpcUrl)
+  const networkInfo = networks[chainId]
+  const network = new Network(networkInfo.chainName, networkInfo.chainId)
+  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+    staticNetwork: network
+  })
+
   const contract: ContractType = {
     read: new Contract(address, ERC20ABI, readProvider),
     send: new Contract(address, ERC20ABI, readProvider)

@@ -46,7 +46,7 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
 
   const network = networks[pool?.chain_id || 137]
 
-  const ERC20 = useERC20(pool?.address || ethers.ZeroAddress, network.rpc)
+  const ERC20 = useERC20(pool?.address || ethers.ZeroAddress, network.chainId)
   const { privateAddresses } = usePrivateInvestors(
     network.privateInvestor,
     pool?.chain_id
@@ -77,7 +77,6 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
 
     const provider = new BrowserProvider(wallet?.provider)
     const signer = await provider.getSigner()
-
     setsignerProvider(signer)
   }
 
@@ -123,6 +122,7 @@ const Form = ({ typeAction, typeWithdraw }: IFormProps) => {
         {typeAction === 'Invest' && (
           <Invest typeAction="Invest" privateInvestors={privateInvestors} />
         )}
+
         {typeAction === 'Withdraw' && (
           <Withdraw typeWithdraw={typeWithdraw} typeAction="Withdraw" />
         )}
