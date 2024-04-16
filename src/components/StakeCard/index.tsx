@@ -119,7 +119,15 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
     0,
     stakeLogoString
   )
+  const stakeLogoHeightString = properties.logo.style?.height
+    ? properties.logo.style.height.substring(0, stakeLogoString)
+    : undefined
+
   const stakeLogoWidth = Number(stakeLogoWidthString) * 10
+  const stakeLogoHeight = stakeLogoHeightString
+    ? Number(stakeLogoHeightString) * 10
+    : undefined
+
   const productCategories = [
     'Stake',
     process.env.NEXT_PUBLIC_MASTER === '1' ? 'Avalanche' : 'Fuji',
@@ -200,6 +208,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                 tokenImage={{
                   url: properties.logo.src,
                   width: stakeLogoWidth,
+                  height: stakeLogoHeight,
                   withoutBorder: true
                 }}
                 networkImage={{

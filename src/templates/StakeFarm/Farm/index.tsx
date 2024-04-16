@@ -89,7 +89,7 @@ const Farm = () => {
       {poolsFunds.map(pool => {
         return (
           <StakeCard
-            key={pool.pid}
+            key={pool.address}
             pool={pool}
             kacyPrice={Big(kacyPrice)}
             poolPrice={Big(poolPrice[pool?.poolTokenAddress] ?? 0)}
