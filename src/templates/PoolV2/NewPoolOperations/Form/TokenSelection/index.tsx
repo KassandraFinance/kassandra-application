@@ -70,10 +70,9 @@ const TokenSelection = () => {
   const { balances } = useBatchRequests(pool?.chain_id || 0)
   const [{ wallet }] = useConnectWallet()
 
-  const tokenAddresses = tokenListSwapProvider.map(token => token.address)
   const { data } = useTokensData({
     chainId: pool?.chain_id || 0,
-    tokenAddresses
+    tokenAddresses: []
   })
   const { priceToken } = useGetToken({
     nativeTokenAddress: pool?.chain?.address_wrapped || '',
