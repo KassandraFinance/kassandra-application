@@ -121,7 +121,7 @@ const AddLiquidityTable = ({
                   coinName={coin.name}
                   coinSymbol={coin.symbol}
                   price={
-                    priceList ? priceList[coin.address].usd.toString() : '0'
+                    priceList ? priceList[coin.address]?.usd.toString() : '0'
                   }
                   url={coin.url}
                   balance={
