@@ -137,7 +137,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     for (const token of tokens) {
       const { allowance } = await ERC20(
         token.address,
-        networks[poolData.networkId ?? 137].rpc,
+        poolData.networkId ?? 137,
         {
           wallet: null,
           txNotification: txNotification,
@@ -285,7 +285,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
     for (const token of notAprovedTokens) {
       const { approve, allowance } = await ERC20(
         token.address,
-        networks[poolData.networkId ?? 137].rpc,
+        poolData.networkId ?? 137,
         {
           wallet: wallet,
           txNotification: txNotification,
@@ -298,6 +298,7 @@ const CreatePool = ({ setIsCreatePool }: ICreatePoolProps) => {
 
       const receipt = await approve(
         factory,
+        BigInt(token.amount),
         {},
         {
           onFail: handleFail

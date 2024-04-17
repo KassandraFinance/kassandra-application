@@ -6,7 +6,7 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import { ZeroAddress, isAddress } from 'ethers'
 
 import { usePoolInfo } from '@/hooks/query/usePoolInfo'
-import { NATIVE_ADDRESS, networks } from '@/constants/tokenAddresses'
+import { NATIVE_ADDRESS } from '@/constants/tokenAddresses'
 import { usePoolData } from '@/hooks/query/usePoolData'
 import { useReferralDecrypt } from '@/hooks/query/useReferralDecrypt'
 
@@ -290,10 +290,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
     if (!wallet?.provider || !tokenSelect.address) return
     let value: string
     try {
-      const { allowance } = await ERC20(
-        tokenSelect.address,
-        networks[chainId].rpc
-      )
+      const { allowance } = await ERC20(tokenSelect.address, chainId)
 
       const allowanceValue = await allowance(
         operation.contractAddress,
@@ -323,10 +320,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
   async function handleApproveSuccess() {
     if (!wallet) return
 
-    const { allowance } = await ERC20(
-      tokenSelect.address,
-      networks[chainId].rpc
-    )
+    const { allowance } = await ERC20(tokenSelect.address, chainId)
 
     let approved = false
     while (!approved) {
@@ -387,10 +381,7 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         : undefined
     )
 
-    const { allowance } = await ERC20(
-      tokenSelect.address,
-      networks[chainId].rpc
-    )
+    const { allowance } = await ERC20(tokenSelect.address, chainId)
     const allowanceValue = await allowance(
       operation.contractAddress,
       wallet.accounts[0].address
@@ -442,17 +433,14 @@ const Invest = ({ typeAction, privateInvestors }: IInvestProps) => {
         approvals[typeAction][0] === 0 &&
         tokenSelect.address !== NATIVE_ADDRESS
       ) {
-        const { approve } = await ERC20(
-          tokenSelect.address,
-          networks[chainId].rpc,
-          {
-            wallet: wallet,
-            txNotification: txNotification,
-            transactionErrors: transactionErrors
-          }
-        )
+        const { approve } = await ERC20(tokenSelect.address, chainId, {
+          wallet: wallet,
+          txNotification: txNotification,
+          transactionErrors: transactionErrors
+        })
         approve(
           operation.contractAddress,
+          BigInt(Big(amountTokenIn).toFixed(0)),
           {
             error: `Failed to approve ${tokenSelect.symbol}`,
             pending: `Waiting approval of ${tokenSelect.symbol}...`,

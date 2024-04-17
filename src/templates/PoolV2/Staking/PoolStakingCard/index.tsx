@@ -85,7 +85,7 @@ const PoolStakingCard = ({
   }
 
   async function updateAllowance() {
-    const erc20 = await ERC20(poolInfo.stakingToken, networkChain.rpc)
+    const erc20 = await ERC20(poolInfo.stakingToken, networkChain.chainId)
 
     const allowance = await erc20.allowance(
       networkChain.stakingContract ?? ethers.ZeroAddress,
@@ -95,10 +95,11 @@ const PoolStakingCard = ({
     setAmountApproveStaking(Big(allowance))
   }
 
-  async function handleApproveStaking() {
+  async function handleApproveStaking(value: Big) {
     const allowance = await stakingInfo.handleApprove(
       poolInfo.stakingToken,
-      pool?.symbol ?? ''
+      pool?.symbol ?? '',
+      value
     )
 
     setAmountApproveStaking(Big(allowance))

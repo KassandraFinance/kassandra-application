@@ -74,7 +74,7 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
         return
       }
 
-      const contract = await ERC20(chain.kacyAddress, chain.rpc, {
+      const contract = await ERC20(chain.kacyAddress, chain.chainId, {
         wallet: wallet,
         txNotification: txNotification,
         transactionErrors: transactionErrors
@@ -105,7 +105,7 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
 
       const { approve, allowance } = await ERC20(
         networks[43114].kacyAddress,
-        networks[43114].rpc,
+        networks[43114].chainId,
         {
           wallet: wallet,
           txNotification: txNotification,
@@ -113,7 +113,8 @@ const ModalBridge = ({ setIsModalOpen }: IModalBridgeProps) => {
         }
       )
 
-      await approve(networks[43114].kacyOFT)
+      const valueMult = Big(value).mul(Big(10).pow(18)).toFixed(0)
+      await approve(networks[43114].kacyOFT, BigInt(valueMult))
 
       const amount = await allowance(
         networks[43114].kacyOFT,

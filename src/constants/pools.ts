@@ -30,6 +30,7 @@ export interface PoolDetails {
       src: string
       style: {
         width: string
+        height?: string
       }
     }
     title?: string
@@ -76,9 +77,23 @@ export const KKF_ARB = {
   address: '0x2Ae2BAeeC8Ccd16075d821832fFEe9172bAE3676',
   id: '421610x2ae2baeec8ccd16075d821832ffee9172bae36760001000000000000000004f1'
 }
+export const LOW_RISK = {
+  address: '0x856561C3b21eFCa7e483b1aD197E4ab5Fb56CcDb',
+  id: '431140x856561c3b21efca7e483b1ad197e4ab5fb56ccdb000100000000000000000048'
+}
+
+export const MEDIUM_RISK = {
+  address: '0x416101D98dF2187DDc0fF29b787dEd19dD8C9740',
+  id: '1370x416101d98df2187ddc0ff29b787ded19dd8c9740000100000000000000000e57'
+}
+
+export const HIGH_RISK = {
+  address: '0xC3F47f3627305213ADaa021CcCCb61D5987EAa97',
+  id: '421610xc3f47f3627305213adaa021ccccb61d5987eaa97000100000000000000000532'
+}
 
 export const KACY_WETH = '0xfaf3bc722d34146be83a2aac40b43148a51a9126'
-export const WAVAX_POLYGON = '0x2c89bbc92bd86f8075d1decc58c7f4e0107f286b'
+export const WAVAX_POLYGON = '0x2C89bbc92BD86F8075d1DEcc58C7F4E0107f286b'
 
 const kacyInvestor1: PoolDetails = {
   pid: 0,
@@ -356,6 +371,75 @@ const keirkrewArb: PoolDetails = {
   address: KKF_ARB.address
 }
 
+const lowRisk: PoolDetails = {
+  pid: 9,
+  type: PoolType.FARM,
+  symbol: '$LRK',
+  stakingContract: '0xfddc1956d88a34fcB0671508Fa3d5aaC73b2a031',
+  poolTokenAddress: LOW_RISK.address,
+  chain: {
+    id: 43114,
+    logo: '/assets/logos/avax.png'
+  },
+  properties: {
+    logo: {
+      src: 'https://storage.googleapis.com/logos-kassandra/431140x856561c3b21efca7e483b1ad197e4ab5fb56ccdb000100000000000000000048',
+      style: { width: '5.8rem', height: '5.8rem' }
+    },
+    title: '$LRK',
+    link: `/pool/${LOW_RISK.id}`
+  },
+  stakeWithVotingPower: false,
+  stakeWithLockPeriod: false,
+  address: LOW_RISK.address
+}
+
+const mediumRisk: PoolDetails = {
+  pid: 4,
+  type: PoolType.FARM,
+  symbol: '$MRK',
+  stakingContract: '0xd530f3ce79c9eb03e59dce89a7504dd41d4899bb',
+  poolTokenAddress: MEDIUM_RISK.address,
+  chain: {
+    id: 137,
+    logo: '/assets/logos/polygon.svg'
+  },
+  properties: {
+    logo: {
+      src: 'https://storage.googleapis.com/logos-kassandra/1370x416101d98df2187ddc0ff29b787ded19dd8c9740000100000000000000000e57',
+      style: { width: '5.8rem', height: '5.8rem' }
+    },
+    title: '$MRK',
+    link: `/pool/${MEDIUM_RISK.id}`
+  },
+  stakeWithVotingPower: false,
+  stakeWithLockPeriod: false,
+  address: MEDIUM_RISK.address
+}
+
+const highRisk: PoolDetails = {
+  pid: 2,
+  type: PoolType.FARM,
+  symbol: '$HRK',
+  stakingContract: '0xdcbdde53cfebae239b77b6ef896261da80531884',
+  poolTokenAddress: HIGH_RISK.address,
+  chain: {
+    id: 42161,
+    logo: '/assets/logos/arbitrum.svg'
+  },
+  properties: {
+    logo: {
+      src: 'https://storage.googleapis.com/logos-kassandra/421610xc3f47f3627305213adaa021ccccb61d5987eaa97000100000000000000000532',
+      style: { width: '5.8rem', height: '5.8rem' }
+    },
+    title: '$HRK',
+    link: `/pool/${HIGH_RISK.id}`
+  },
+  stakeWithVotingPower: false,
+  stakeWithLockPeriod: false,
+  address: HIGH_RISK.address
+}
+
 const lpBalancer: PoolDetails = {
   pid: 0,
   type: PoolType.LP,
@@ -443,7 +527,10 @@ export const addressesForReqFarmPool = [
   KKF.id,
   KKF_ARB.id,
   TRICRYPTO_ADDRESS,
-  AHYPE_ADDRESS
+  AHYPE_ADDRESS,
+  LOW_RISK.id,
+  MEDIUM_RISK.id,
+  HIGH_RISK.id
 ]
 
 export const poolsKacy = [kacy1x, kacy2x, kacy3x]
@@ -452,6 +539,9 @@ export const poolsFunds = [
   lpJoe,
   lpQuickSwap,
   lpCamelot,
+  lowRisk,
+  mediumRisk,
+  highRisk,
   keirkrew,
   keirkrewArb,
   phype,
@@ -477,5 +567,8 @@ export const allPools = [
   lpQuickSwap,
   keirkrew,
   keirkrewArb,
-  lpCamelot
+  lpCamelot,
+  lowRisk,
+  mediumRisk,
+  highRisk
 ]

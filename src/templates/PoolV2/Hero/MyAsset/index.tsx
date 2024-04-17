@@ -58,10 +58,7 @@ const MyAsset = ({
   async function getBalance(decimals: number): Promise<void> {
     if (!wallet) return
 
-    const { balance } = await ERC20(
-      poolAddress,
-      networks[chainInfo.chainId].rpc
-    )
+    const { balance } = await ERC20(poolAddress, chainInfo.chainId)
 
     const balanceToken = Big(await balance(wallet.accounts[0].address))
 

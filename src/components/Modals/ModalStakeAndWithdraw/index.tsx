@@ -47,7 +47,7 @@ interface IModalStakeProps {
   setStakeTransaction: React.Dispatch<React.SetStateAction<typeTransaction>>
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   updateAllowance: () => Promise<void>
-  handleApprove: () => Promise<void>
+  handleApprove: (value: Big) => Promise<void>
   getUserInfoAboutPool: () => Promise<void>
 }
 
@@ -195,7 +195,7 @@ const ModalStakeAndWithdraw = ({
 
   async function getBalance() {
     if (wallet?.provider && stakeTransaction === typeTransaction.STAKING) {
-      const erc20 = await ERC20(stakingToken, networkChain.rpc)
+      const erc20 = await ERC20(stakingToken, networkChain.chainId)
 
       const balanceKacy = await erc20.balance(wallet?.accounts[0].address)
       setBalance(Big(balanceKacy))
@@ -306,7 +306,7 @@ const ModalStakeAndWithdraw = ({
                   disabledNoEvent={amountStake.gt(balance)}
                   background="secondary"
                   fullWidth
-                  onClick={handleApprove}
+                  onClick={() => handleApprove(amountStake)}
                 />
               ) : (
                 <Button

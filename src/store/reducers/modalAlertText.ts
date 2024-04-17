@@ -23,6 +23,7 @@ export const modalAlertTextSlice = createSlice({
     removeModalAlertText: state => {
       state.errorText = null
       state.solutionText = null
+      state.transactionData = null
     }
   }
 })

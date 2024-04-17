@@ -172,7 +172,7 @@ const Profile = () => {
     const valueInWallet: IAssetsValueWalletProps = {}
     for (const id of ids) {
       try {
-        const ERC20Contract = await ERC20(id, chain.rpc)
+        const ERC20Contract = await ERC20(id, chain.chainId)
         const balanceToken = await ERC20Contract.balance(walletUserString)
 
         Object.assign(valueInWallet, {

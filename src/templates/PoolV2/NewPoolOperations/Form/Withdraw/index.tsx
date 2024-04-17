@@ -132,10 +132,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
     let approved = false
     while (!approved) {
       await new Promise(r => setTimeout(r, 1000)) // sleep
-      const { allowance } = await ERC20(
-        pool?.address || '',
-        networks[chainId].rpc
-      )
+      const { allowance } = await ERC20(pool?.address || '', chainId)
       const allowanceValue = await allowance(
         proxyInvest,
         wallet.accounts[0].address
@@ -225,18 +222,15 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
       )
 
       if (approvals[typeAction][0] === 0) {
-        const { approve } = await ERC20(
-          pool?.address ?? '',
-          networks[chainId].rpc,
-          {
-            wallet: wallet,
-            txNotification: txNotification,
-            transactionErrors: transactionErrors
-          }
-        )
+        const { approve } = await ERC20(pool?.address ?? '', chainId, {
+          wallet: wallet,
+          txNotification: txNotification,
+          transactionErrors: transactionErrors
+        })
 
         approve(
           proxyInvest,
+          BigInt(Big(amountTokenIn).toFixed(0)),
           {
             error: `Failed to approve ${pool?.symbol}`,
             pending: `Waiting approval of ${pool?.symbol}...`,
@@ -356,10 +350,7 @@ const Withdraw = ({ typeWithdraw, typeAction }: IWithdrawProps) => {
   async function updateAllowance() {
     if (!wallet) return
 
-    const { allowance } = await ERC20(
-      pool?.address || '',
-      networks[pool?.chain_id || '0'].rpc
-    )
+    const { allowance } = await ERC20(pool?.address || '', pool?.chain_id || 0)
     const allowanceValue = await allowance(
       proxyInvest,
       wallet.accounts[0].address

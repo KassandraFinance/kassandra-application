@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { COINGECKO_API } from '@/constants/tokenAddresses'
+import { COINGECKO_API, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 
 type CoinsMetadataType = Record<
   string,
@@ -23,33 +23,33 @@ type CoinsMetadataResponse = {
   tokens: CoinsMetadataType
 }
 
-async function getTokens(params: { tokensId?: string[]; chainId?: number }) {
-  const resKassandra = await fetch(
-    process.env.NEXT_PUBLIC_BACKEND_KASSANDRA ?? '',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        query: `
-        query($ids: [ID!] $chainId: Int) {
-          tokensByIds(ids: $ids chainId: $chainId) {
+async function getTokens(params: { tokensId?: string[]; chainId?: number[] }) {
+  const tokensId = params?.tokensId ? 'id_in: $ids,' : ''
+
+  const subgraphResponse = await fetch(SUBGRAPH_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      query: `
+        query($ids: [ID!], $chainId: [Int!]) {
+          tokens(first: 1000, where: {${tokensId}chain_ids_contains: $chainId }) {
             id
             decimals
             coingecko_id
           }
         }
       `,
-        variables: {
-          ids: params.tokensId,
-          chainId: params.chainId
-        }
-      })
-    }
-  )
+      variables: {
+        ids: params.tokensId,
+        chainId: params.chainId
+      }
+    })
+  })
 
-  return (await resKassandra.json()).data?.tokensByIds
+  const response = await subgraphResponse.json()
+  return response.data.tokens
 }
 
 async function getInfoTokens(coingeckoIds: string[]) {
@@ -91,7 +91,7 @@ export default async (
     const coingeckoIds = []
     const kassandraTokens = await getTokens({
       tokensId: tokensId.length > 0 && tokensId[0] ? tokensId : undefined,
-      chainId
+      chainId: [chainId]
     })
     for (const token of kassandraTokens) {
       if (token?.coingecko_id) {

@@ -1,19 +1,22 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { SUBGRAPH_GRAPHQL_URL, subgraphNames } from '@/constants/tokenAddresses'
+import {
+  SUBGRAPH_GRAPHQL_URL,
+  networks,
+  subgraphNames
+} from '@/constants/tokenAddresses'
+import { JsonRpcProvider } from 'ethers'
+import { getDateDiff } from '@/utils/date'
 
 async function getSubgraphsData() {
   let query = ''
   for (const [key, value] of Object.entries(subgraphNames)) {
     query += `
-      ${key}: indexingStatusesForSubgraphName(subgraphName: "${value}") {
+      ${key}: indexingStatusesForSubgraphName(subgraphName: "${value.name}") {
         fatalError {
           message
         }
         chains {
           latestBlock {
-            number
-          }
-          chainHeadBlock {
             number
           }
         }
@@ -38,6 +41,38 @@ async function getSubgraphsData() {
   return data.data
 }
 
+export async function getSubgraphDateDiff(
+  rpcUrl: string,
+  subgraphBlock: number
+) {
+  const readProvider = new JsonRpcProvider(rpcUrl)
+  const currentBlock = await readProvider.getBlockNumber()
+
+  const subgraphTimestamp = await readProvider.getBlock(
+    BigInt(subgraphBlock ?? 0)
+  )
+  const currentTimestamp = await readProvider.getBlock(
+    BigInt(currentBlock ?? 0)
+  )
+
+  if (!(currentTimestamp?.timestamp && subgraphTimestamp?.timestamp)) {
+    return {
+      currentBlock,
+      dateDiff: null
+    }
+  }
+
+  const dateDiff = getDateDiff(
+    subgraphTimestamp.timestamp * 1000,
+    currentTimestamp.timestamp * 1000
+  )
+
+  return {
+    currentBlock,
+    dateDiff: dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
+  }
+}
+
 export default async (request: NextApiRequest, response: NextApiResponse) => {
   if (request.method !== 'GET') {
     return response
@@ -50,9 +85,14 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     const subgraphsData = await getSubgraphsData()
 
     const data = {}
-    for (const [key, _] of Object.entries(subgraphNames)) {
+    for (const [key, value] of Object.entries(subgraphNames)) {
       const subgraphData = subgraphsData[key][0]
-      const chainData = subgraphData.chains[0]
+      const subgraphBlock = subgraphData.chains[0]?.latestBlock?.number
+
+      const { currentBlock, dateDiff } = await getSubgraphDateDiff(
+        networks[value.chainId].rpc,
+        subgraphBlock
+      )
 
       if (subgraphData.fatalError) {
         return response.status(500).json({
@@ -63,9 +103,10 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
 
       Object.assign(data, {
         [key]: {
-          subgraphBlock: chainData.latestBlock.number,
-          currentBlock: chainData.chainHeadBlock.number,
-          diff: chainData.chainHeadBlock.number - chainData.latestBlock.number
+          subgraphBlock,
+          currentBlock: currentBlock,
+          blockDiff: currentBlock - subgraphBlock,
+          dateDiff
         }
       })
     }

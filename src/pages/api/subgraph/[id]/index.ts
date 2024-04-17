@@ -81,12 +81,12 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
       })
     }
     const currentBlock = await getCurrentBlock(networks[chainId].rpc)
-    const diff = currentBlock - subgraphBlock
+    const blockDiff = currentBlock - subgraphBlock
 
     const data = {
       subgraphBlock,
       currentBlock,
-      diff
+      blockDiff
     }
 
     response.status(200).json(data)

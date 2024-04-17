@@ -119,7 +119,15 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
     0,
     stakeLogoString
   )
+  const stakeLogoHeightString = properties.logo.style?.height
+    ? properties.logo.style.height.substring(0, stakeLogoString)
+    : undefined
+
   const stakeLogoWidth = Number(stakeLogoWidthString) * 10
+  const stakeLogoHeight = stakeLogoHeightString
+    ? Number(stakeLogoHeightString) * 10
+    : undefined
+
   const productCategories = [
     'Stake',
     process.env.NEXT_PUBLIC_MASTER === '1' ? 'Avalanche' : 'Fuji',
@@ -138,7 +146,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
   }
 
   async function updateAllowance() {
-    const erc20 = await ERC20(poolInfo.stakingToken, networkChain.rpc)
+    const erc20 = await ERC20(poolInfo.stakingToken, networkChain.chainId)
 
     const allowance = await erc20.allowance(
       stakingContract,
@@ -148,17 +156,18 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
     setAmountApproveKacyStaking(Big(allowance))
   }
 
-  async function handleApproveKacy() {
+  async function handleApproveKacy(value: Big) {
     const allowance = await stakingInfo.handleApprove(
       poolInfo.stakingToken,
-      pool?.symbol ?? ''
+      pool?.symbol ?? '',
+      value
     )
 
     setAmountApproveKacyStaking(Big(allowance))
   }
 
   const getInfoPool = React.useCallback(async () => {
-    if (poolPrice.lte(0) && poolPrice.lte(0)) return
+    if (poolPrice.lte(0)) return
 
     const poolInfo = await stakingInfo.getPoolInfo(
       pid,
@@ -199,6 +208,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                 tokenImage={{
                   url: properties.logo.src,
                   width: stakeLogoWidth,
+                  height: stakeLogoHeight,
                   withoutBorder: true
                 }}
                 networkImage={{
