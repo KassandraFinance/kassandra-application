@@ -34,6 +34,18 @@ const tabs = [
   }
 ]
 
+const addressOrderList = [
+  '431140x856561c3b21efca7e483b1ad197e4ab5fb56ccdb000100000000000000000048',
+  '1370x416101d98df2187ddc0ff29b787ded19dd8c9740000100000000000000000e57',
+  '421610xc3f47f3627305213adaa021ccccb61d5987eaa97000100000000000000000532',
+  '1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d',
+  '421610x2ae2baeec8ccd16075d821832ffee9172bae36760001000000000000000004f1',
+  '421610x69a670bcbf82e8099bbd70bb2cdb16e05a928f6c0001000000000000000004ae',
+  '1370x107cb7c6d67ad745c50d7d4627335c1c6a684003000100000000000000000c37',
+  '1370xa1ecb0981d74bd9e31fcd7a38fa3fdebcc7ccff4000100000000000000000c39',
+  '421610xf69d5e7c0eb43127d5874121867fb763f2967dbb0001000000000000000004b0'
+]
+
 export default function Explore() {
   const [loading, setLoading] = React.useState(true)
   const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
@@ -69,6 +81,7 @@ export default function Explore() {
     setTotalPoolsTable(data?.kassandras[0].pool_count - 3)
   }, [data])
 
+  console.log('poolsKassandra', poolsKassandra)
   return (
     <>
       <S.Explore>
@@ -101,13 +114,20 @@ export default function Explore() {
             )}
 
             <S.CardContainer isLoading={loading}>
-              {poolsKassandra?.poolsKassandra.map(pool => (
-                <FundCard
-                  key={pool.id}
-                  poolAddress={pool.id}
-                  link={`/pool/${pool.id}`}
-                />
-              ))}
+              {poolsKassandra?.poolsKassandra
+                .sort(function (a, b) {
+                  return (
+                    addressOrderList.indexOf(a.id) -
+                    addressOrderList.indexOf(b.id)
+                  )
+                })
+                .map(pool => (
+                  <FundCard
+                    key={pool.id}
+                    poolAddress={pool.id}
+                    link={`/pool/${pool.id}`}
+                  />
+                ))}
             </S.CardContainer>
 
             <S.ComunitFundsContainer>
