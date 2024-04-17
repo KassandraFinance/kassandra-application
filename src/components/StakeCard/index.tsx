@@ -167,7 +167,7 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
   }
 
   const getInfoPool = React.useCallback(async () => {
-    if (poolPrice.lte(0) && poolPrice.lte(0)) return
+    if (poolPrice.lte(0)) return
 
     const poolInfo = await stakingInfo.getPoolInfo(
       pid,
