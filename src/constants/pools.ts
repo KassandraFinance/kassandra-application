@@ -88,12 +88,12 @@ export const MEDIUM_RISK = {
 }
 
 export const HIGH_RISK = {
-  address: '0x163f33420526a721aF09c0302dd8Dd61F239ee89',
+  address: '0xC3F47f3627305213ADaa021CcCCb61D5987EAa97',
   id: '421610xc3f47f3627305213adaa021ccccb61d5987eaa97000100000000000000000532'
 }
 
 export const KACY_WETH = '0xfaf3bc722d34146be83a2aac40b43148a51a9126'
-export const WAVAX_POLYGON = '0x2c89bbc92bd86f8075d1decc58c7f4e0107f286b'
+export const WAVAX_POLYGON = '0x2C89bbc92BD86F8075d1DEcc58C7F4E0107f286b'
 
 const kacyInvestor1: PoolDetails = {
   pid: 0,
@@ -432,7 +432,7 @@ const highRisk: PoolDetails = {
       src: 'https://storage.googleapis.com/logos-kassandra/421610xc3f47f3627305213adaa021ccccb61d5987eaa97000100000000000000000532',
       style: { width: '5.8rem', height: '5.8rem' }
     },
-    title: '$aKKF',
+    title: '$HRK',
     link: `/pool/${HIGH_RISK.id}`
   },
   stakeWithVotingPower: false,
