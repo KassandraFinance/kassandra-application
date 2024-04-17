@@ -6,6 +6,7 @@ import {
   ethers,
   Network
 } from 'ethers'
+import Big from 'big.js'
 import { useConnectWallet } from '@web3-onboard/react'
 import KassandraManagedControllerFactoryAbi from '@/constants/abi/KassandraManagedControllerFactory.json'
 
@@ -92,6 +93,12 @@ const useCreatePool = (chainId: number) => {
     signContranct()
   }, [wallet, chainId])
 
+  function gasMargin(estimateGas: string) {
+    const twentyPercentOfValue = 1.2
+    const calculateGas = Big(estimateGas).mul(twentyPercentOfValue).toNumber()
+    return BigInt(Math.round(calculateGas))
+  }
+
   async function create(
     pool: PoolCreationType,
     message?: MessageType,
@@ -109,12 +116,25 @@ const useCreatePool = (chainId: number) => {
         }
       )
 
-      const tx = await contract.send.create(
+      const estimateGas = await contract.send.create.estimateGas(
         pool.poolParams,
         pool.settingsParams,
         pool.feesSettings,
         pool.joinParams,
         ethers.ZeroHash
+      )
+
+      const gasLimit = gasMargin(estimateGas.toString())
+
+      const tx = await contract.send.create(
+        pool.poolParams,
+        pool.settingsParams,
+        pool.feesSettings,
+        pool.joinParams,
+        ethers.ZeroHash,
+        {
+          gasLimit
+        }
       )
 
       const receipt = await txNotification(tx, message, callbacks)
