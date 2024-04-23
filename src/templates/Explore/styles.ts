@@ -17,8 +17,20 @@ export const Explore = styled.section`
   }
 `
 
+export const SliderWrapper = styled.div``
+
 export const ExploreContainer = styled.div`
-  padding-top: 3.2rem;
+  position: relative;
+
+  padding: 2.4rem;
+  width: 100%;
+  background-color: rgba(252, 252, 252, 0.05);
+  border-radius: 16px;
+  margin-top: 10rem;
+
+  @media (max-width: 576px) {
+    padding: 1.6rem;
+  }
 `
 
 export const TitleContainer = styled.div`
@@ -61,5 +73,24 @@ export const TitleWrapper = styled.div`
 export const PaginationWrapper = styled.div`
   ${() => css`
     margin-top: 6rem;
+  `}
+`
+
+export const ImageWrapper = styled.div`
+  ${() => css`
+    position: relative;
+
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    width: 6rem;
+    height: 6rem;
+    background-color: rgba(252, 252, 252, 0.05);
+    border-radius: 50%;
   `}
 `
