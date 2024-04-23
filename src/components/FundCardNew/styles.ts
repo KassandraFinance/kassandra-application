@@ -11,7 +11,6 @@ export const CardContainer = styled.div<ICardContainerProps>`
     height: 41rem;
 
     background: rgba(31, 31, 31, 0.72);
-    /* box-shadow: 0rem 0.4rem 6.9rem -1.7rem rgba(0, 0, 0, 0.51); */
     border-radius: 1.2rem;
 
     transition: transform 0.3s ease-in-out;

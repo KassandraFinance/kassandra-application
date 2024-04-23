@@ -213,12 +213,7 @@ const FundCard = ({ poolData, link }: IFundCardProps) => {
 
               {poolData?.pool_id && (
                 <div>
-                  <img
-                    src="/assets/icons/fire.svg"
-                    alt="fire icon"
-                    // width={8}
-                    // height={8}
-                  />
+                  <img src="/assets/icons/fire.svg" alt="fire icon" />
                 </div>
               )}
             </S.ImageContainer>

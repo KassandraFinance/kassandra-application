@@ -35,7 +35,6 @@ const FundStatus = ({ day, monthly, tvl }: IFundStatusProps) => {
               {tvl.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'USD'
-                // minimumFractionDigits: 0
               })}
             </S.Value>
           </S.ValueContainer>
@@ -44,26 +43,24 @@ const FundStatus = ({ day, monthly, tvl }: IFundStatusProps) => {
         )}
         <h4>TVL</h4>
       </S.FundStatus>
-      {FundStatusList.map(item => {
-        return (
-          <S.FundStatus key={item.name}>
-            {item?.value ? (
-              <S.ValueContainer>
-                <S.Value value={item.value}>{item.value}%</S.Value>
-                <Image
-                  src={item.value >= 0 ? arrowAscend : arrowDescend}
-                  width={16}
-                  height={16}
-                />
-              </S.ValueContainer>
-            ) : (
-              <SkeletonLoading height={2} width={6} />
-            )}
+      {FundStatusList.map(item => (
+        <S.FundStatus key={item.name}>
+          {item?.value ? (
+            <S.ValueContainer>
+              <S.Value value={item.value}>{item.value}%</S.Value>
+              <Image
+                src={item.value >= 0 ? arrowAscend : arrowDescend}
+                width={16}
+                height={16}
+              />
+            </S.ValueContainer>
+          ) : (
+            <SkeletonLoading height={2} width={6} />
+          )}
 
-            <h4>{item.name}</h4>
-          </S.FundStatus>
-        )
-      })}
+          <h4>{item.name}</h4>
+        </S.FundStatus>
+      ))}
     </S.FundStatusWrapper>
   )
 }
