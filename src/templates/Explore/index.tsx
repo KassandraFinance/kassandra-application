@@ -13,13 +13,16 @@ import ManagersPoolTable from './ManagersPoolTable'
 import SelectTabs from '@/components/SelectTabs'
 import Pagination from '@/components/Pagination'
 
-import sectionTitleEye from '../../../public/assets/iconGradient/section-title-eye.svg'
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
 import communityFunds from '../../../public/assets/iconGradient/community.svg'
 import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
 import managerIcon from '../../../public/assets/iconGradient/manager.svg'
 
 import * as S from './styles'
+import { ExplorePoolsData } from './PoolsData'
+import { useExploreOverviewPools } from '@/hooks/query/useExploreOverviewPools'
+import { ExploreAllPools } from './AllPools'
+import { ExploreSelectTabs } from './NewSelectTabs'
 
 const tabs = [
   {
@@ -81,19 +84,36 @@ export default function Explore() {
     setTotalPoolsTable(data?.kassandras[0].pool_count - 3)
   }, [data])
 
+  const { data: poolsData } = useExploreOverviewPools()
+
   return (
     <>
       <S.Explore>
         <S.TitleContainer>
-          <TitleSection
-            image={sectionTitleEye}
-            title="Explore Pools"
-            text="Find a strategy that fits your needs"
-          />
+          <S.MainTitle>Explore All Pools</S.MainTitle>
+          <S.SubTitle>Find a strategy that fits your needs</S.SubTitle>
         </S.TitleContainer>
+
+        <S.ExplorePoolsWrapper>
+          <ExplorePoolsData
+            numDeposits={poolsData ? poolsData[0].num_deposits : '0'}
+            numManagers={poolsData ? poolsData[0].num_managers.toString() : '0'}
+            poolCount={poolsData ? poolsData[0].pool_count.toString() : '0'}
+            whiteListNumber="30"
+          />
+
+          <ExploreAllPools
+            numberOfPools={poolsData ? poolsData[0].pool_count.toString() : '0'}
+          />
+        </S.ExplorePoolsWrapper>
 
         <SelectTabs
           tabs={tabs}
+          isSelect={isSelectTab}
+          setIsSelect={setIsSelectTab}
+        />
+
+        <ExploreSelectTabs
           isSelect={isSelectTab}
           setIsSelect={setIsSelectTab}
         />
