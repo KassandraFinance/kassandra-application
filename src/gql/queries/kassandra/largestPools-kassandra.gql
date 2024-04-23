@@ -1,0 +1,116 @@
+query LargestPools (
+  $price_period: Int!
+  $period_selected: Int!
+  $day: Int!
+  $month: Int!
+  $chainIn: [String!]
+) {
+  pools (orderBy: total_value_locked_usd, orderDirection: desc, first: 9, where: { chain_in: $chainIn }) {
+    id
+    name
+    symbol
+    name
+    logo
+    address
+    pool_id
+    founded_by
+    price_usd 
+    pool_version
+    featured
+    manager {
+      id
+      nickname
+    }
+    chain {
+      logo: icon
+    }
+    price_candles(
+      where: {
+        base: "usd"
+        period: $price_period
+        timestamp_gt: $period_selected
+      }
+      orderBy: timestamp
+      first: 365
+    ) {
+      timestamp
+      close
+    }
+    total_value_locked(
+      where: { base: "usd", timestamp_gt: $period_selected }
+      orderBy: timestamp
+    ) {
+      close
+      timestamp
+    }
+    weights(where: { timestamp_gt: $period_selected }, orderBy: timestamp) {
+      timestamp
+      weights {
+        token {
+          id
+          symbol
+        }
+        weight_normalized
+      }
+    }
+    total_value_locked_usd
+    strategy
+    underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
+      balance 
+      weight_normalized 
+      weight_goal_normalized 
+        token {
+        id
+        name
+        logo
+        symbol
+        decimals
+        is_wrap_token
+        wraps {
+          id
+          decimals
+          symbol
+          name
+          logo
+        }
+      }
+    }
+    now: price_candles(
+      where: { base: "usd", period: 3600 }
+      orderBy: timestamp
+      orderDirection: desc
+      first: 1
+    ) {
+      timestamp
+      close
+    }
+    day: price_candles(
+      where: { base: "usd", period: 3600, timestamp_gt: $day }
+      orderBy: timestamp
+      first: 1
+    ) {
+      timestamp
+      close
+    }
+    month: price_candles(
+      where: { base: "usd", period: 3600, timestamp_gt: $month }
+      orderBy: timestamp
+      first: 1
+    ) {
+      timestamp
+      close
+    }
+    weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 2) {
+      start_timestamp
+      end_timestamp
+      weights(orderBy: weight_normalized, orderDirection: desc) {
+        weight_normalized
+        asset {
+          token {
+            id
+          }
+        }
+      }
+    }
+  }
+}
