@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { useLargestPools } from '@/hooks/query/useLargestPools'
 import { useFeaturedPools } from '@/hooks/query/useFeaturedPools'
@@ -29,7 +29,23 @@ const tabs = [
   }
 ]
 
-const chainList = ['137', '42161', '43114']
+const chainList = [
+  {
+    name: 'polygon',
+    icon: <img src="/assets/icons/polygon.svg" />,
+    chainId: '137'
+  },
+  {
+    name: 'avalanche',
+    icon: <img src="/assets/icons/avalanche.svg" />,
+    chainId: '43114'
+  },
+  {
+    name: 'arbitrum',
+    icon: <img src="/assets/icons/arbitrum.svg" />,
+    chainId: '42161'
+  }
+]
 
 const addressOrderList = [
   '1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d',
@@ -44,19 +60,25 @@ const addressOrderList = [
 ]
 
 export default function Explore() {
+  const [selectedChains, setSelectedChains] = useState(
+    chainList.map(item => item.chainId)
+  )
+  const [isSelectTab, setIsSelectTab] = useState<string | string[] | undefined>(
+    'pools'
+  )
+
   const dateNow = new Date()
   const params = {
     price_period: 86400,
     period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 30),
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-    chainIn: chainList
+    chainIn: selectedChains
   }
+
   const { data: poolsKassandra } = useFeaturedPools(params)
   const { data: largestPools } = useLargestPools(params)
-  const [isSelectTab, setIsSelectTab] = React.useState<
-    string | string[] | undefined
-  >('pools')
+  const { data: poolsData } = useExploreOverviewPools()
 
   // const { data } = useCommunityPools({
   //   day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
@@ -70,8 +92,6 @@ export default function Explore() {
   //   if (!data?.pools.length) return
   //   setTotalPoolsTable(data?.kassandras[0].pool_count - 3)
   // }, [data])
-
-  const { data: poolsData } = useExploreOverviewPools()
 
   return (
     <S.Explore>
@@ -93,7 +113,13 @@ export default function Explore() {
         />
       </S.ExplorePoolsWrapper>
 
-      <ExploreSelectTabs isSelect={isSelectTab} setIsSelect={setIsSelectTab} />
+      <ExploreSelectTabs
+        chainList={chainList}
+        selectedChains={selectedChains}
+        setSelectedChains={setSelectedChains}
+        isSelect={isSelectTab}
+        setIsSelect={setIsSelectTab}
+      />
 
       {isSelectTab === 'pools' && (
         <div>
