@@ -1,0 +1,7 @@
+query ExploreOverviewPools {
+ kassandras {
+  pool_count
+  num_managers
+  num_deposits
+}
+}

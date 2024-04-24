@@ -8011,6 +8011,17 @@ export type FeaturedPoolsQueryVariables = Exact<{
     Array<Scalars['String']['input']> | Scalars['String']['input']
   >
 }>
+export type ExploreOverviewPoolsQueryVariables = Exact<{ [key: string]: never }>
+
+export type ExploreOverviewPoolsQuery = {
+  __typename?: 'Query'
+  kassandras: Array<{
+    __typename?: 'Kassandra'
+    pool_count: number
+    num_managers: number
+    num_deposits: string
+  }>
+}
 
 export type FeaturedPoolsQuery = {
   __typename?: 'Query'
@@ -9631,6 +9642,15 @@ export const DelegationsDocument = gql`
       to {
         id
       }
+    }
+  }
+`
+export const ExploreOverviewPoolsDocument = gql`
+  query ExploreOverviewPools {
+    kassandras {
+      pool_count
+      num_managers
+      num_deposits
     }
   }
 `
@@ -11321,6 +11341,21 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'Delegations',
+        'query'
+      )
+    },
+    ExploreOverviewPools(
+      variables?: ExploreOverviewPoolsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ExploreOverviewPoolsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ExploreOverviewPoolsQuery>(
+            ExploreOverviewPoolsDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'ExploreOverviewPools',
         'query'
       )
     },
