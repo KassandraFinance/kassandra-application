@@ -368,7 +368,7 @@ export default class operationV2 implements IOperations {
       const amountsOutListFormatted: string[] = []
       const assets = this.poolInfo.tokensAddresses.map((token, index) => {
         const amount = Big(amountsOutList[index].toString())
-          .mul(10000 - 1)
+          .mul(10000 - 1.5)
           .div(10000)
           .toFixed(0)
         amountsOutListFormatted.push(amount)
