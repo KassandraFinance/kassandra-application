@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { useLargestPools } from '@/hooks/query/useLargestPools'
 import { useFeaturedPools } from '@/hooks/query/useFeaturedPools'
 import { useExploreOverviewPools } from '@/hooks/query/useExploreOverviewPools'
+import { whiteList } from '@/hooks/useWhiteList'
 
 import { ExploreAllPools } from './AllPools'
 import SliderPoolList from './SliderPoolList'
@@ -66,6 +67,7 @@ export default function Explore() {
   const [isSelectTab, setIsSelectTab] = useState<string | string[] | undefined>(
     'pools'
   )
+  const [whiteListTokenCount, setWhiteListTokenCount] = useState<number>(0)
 
   const dateNow = new Date()
   const params = {
@@ -79,6 +81,29 @@ export default function Explore() {
   const { data: poolsKassandra } = useFeaturedPools(params)
   const { data: largestPools } = useLargestPools(params)
   const { data: poolsData } = useExploreOverviewPools()
+
+  async function handleGetWhiteListNumber() {
+    const chainIdList = chainList.map(chain => chain.chainId)
+
+    let tokenCount = 0
+    for (let i = 0; i < chainIdList.length; i++) {
+      const chainId = parseInt(chainIdList[i])
+      const { countTokens } = whiteList(chainId)
+
+      try {
+        const value = await countTokens()
+        tokenCount += Number(value)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    setWhiteListTokenCount(tokenCount)
+  }
+
+  React.useEffect(() => {
+    handleGetWhiteListNumber()
+  }, [])
 
   // const { data } = useCommunityPools({
   //   day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
@@ -105,7 +130,7 @@ export default function Explore() {
           numDeposits={poolsData ? poolsData[0].num_deposits : '0'}
           numManagers={poolsData ? poolsData[0].num_managers.toString() : '0'}
           poolCount={poolsData ? poolsData[0].pool_count.toString() : '0'}
-          whiteListNumber="30"
+          whiteListNumber={whiteListTokenCount.toString()}
         />
 
         <ExploreAllPools
