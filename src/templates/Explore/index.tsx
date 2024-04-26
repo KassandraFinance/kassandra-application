@@ -1,28 +1,20 @@
 import React from 'react'
 
-import { useCommunityPools } from '@/hooks/query/useCommunityPools'
+import { useLargestPools } from '@/hooks/query/useLargestPools'
 import { useFeaturedPools } from '@/hooks/query/useFeaturedPools'
+import { useExploreOverviewPools } from '@/hooks/query/useExploreOverviewPools'
 
+import { ExploreAllPools } from './AllPools'
+import SliderPoolList from './SliderPoolList'
+import { ExplorePoolsData } from './PoolsData'
+import { ExploreSelectTabs } from './NewSelectTabs'
 import TitleSection from '../../components/TitleSection'
-import FundCard from '../../components/FundCard'
-import Loading from '../../components/Loading'
-import CommunityPoolsTable, {
-  communityPoolSorting
-} from './CommunityPoolsTable'
-import ManagersPoolTable from './ManagersPoolTable'
-import SelectTabs from '@/components/SelectTabs'
-import Pagination from '@/components/Pagination'
 
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
-import communityFunds from '../../../public/assets/iconGradient/community.svg'
-import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
 import managerIcon from '../../../public/assets/iconGradient/manager.svg'
+import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
 
 import * as S from './styles'
-import { ExplorePoolsData } from './PoolsData'
-import { useExploreOverviewPools } from '@/hooks/query/useExploreOverviewPools'
-import { ExploreAllPools } from './AllPools'
-import { ExploreSelectTabs } from './NewSelectTabs'
 
 const tabs = [
   {
@@ -37,6 +29,8 @@ const tabs = [
   }
 ]
 
+const chainList = ['137', '42161', '43114']
+
 const addressOrderList = [
   '1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d',
   '421610x2ae2baeec8ccd16075d821832ffee9172bae36760001000000000000000004f1',
@@ -50,139 +44,75 @@ const addressOrderList = [
 ]
 
 export default function Explore() {
-  const [loading, setLoading] = React.useState(true)
-  const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
-  const [skip, setSkip] = React.useState(0)
+  const dateNow = new Date()
+  const params = {
+    price_period: 86400,
+    period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 30),
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    chainIn: chainList
+  }
+  const { data: poolsKassandra } = useFeaturedPools(params)
+  const { data: largestPools } = useLargestPools(params)
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
   >('pools')
-  const [communityPoolSorted, setCommunityPoolSorted] =
-    React.useState<communityPoolSorting>(communityPoolSorting.DESC)
 
-  const take = 8
+  // const { data } = useCommunityPools({
+  //   day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+  //   month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+  //   orderDirection: communityPoolSorted,
+  //   first: take,
+  //   skip
+  // })
 
-  const { data: poolsKassandra } = useFeaturedPools()
-  const { data } = useCommunityPools({
-    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-    orderDirection: communityPoolSorted,
-    first: take,
-    skip
-  })
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 2700)
-
-    return () => clearTimeout(timer)
-  }, [])
-
-  React.useEffect(() => {
-    if (!data?.pools.length) return
-
-    setTotalPoolsTable(data?.kassandras[0].pool_count - 3)
-  }, [data])
+  // React.useEffect(() => {
+  //   if (!data?.pools.length) return
+  //   setTotalPoolsTable(data?.kassandras[0].pool_count - 3)
+  // }, [data])
 
   const { data: poolsData } = useExploreOverviewPools()
 
   return (
-    <>
-      <S.Explore>
-        <S.TitleContainer>
-          <S.MainTitle>Explore All Pools</S.MainTitle>
-          <S.SubTitle>Find a strategy that fits your needs</S.SubTitle>
-        </S.TitleContainer>
+    <S.Explore>
+      <S.TitleContainer>
+        <S.MainTitle>Explore All Pools</S.MainTitle>
+        <S.SubTitle>Find a strategy that fits your needs</S.SubTitle>
+      </S.TitleContainer>
 
-        <S.ExplorePoolsWrapper>
-          <ExplorePoolsData
-            numDeposits={poolsData ? poolsData[0].num_deposits : '0'}
-            numManagers={poolsData ? poolsData[0].num_managers.toString() : '0'}
-            poolCount={poolsData ? poolsData[0].pool_count.toString() : '0'}
-            whiteListNumber="30"
-          />
-
-          <ExploreAllPools
-            numberOfPools={poolsData ? poolsData[0].pool_count.toString() : '0'}
-          />
-        </S.ExplorePoolsWrapper>
-
-        <SelectTabs
-          tabs={tabs}
-          isSelect={isSelectTab}
-          setIsSelect={setIsSelectTab}
+      <S.ExplorePoolsWrapper>
+        <ExplorePoolsData
+          numDeposits={poolsData ? poolsData[0].num_deposits : '0'}
+          numManagers={poolsData ? poolsData[0].num_managers.toString() : '0'}
+          poolCount={poolsData ? poolsData[0].pool_count.toString() : '0'}
+          whiteListNumber="30"
         />
 
-        <ExploreSelectTabs
-          isSelect={isSelectTab}
-          setIsSelect={setIsSelectTab}
+        <ExploreAllPools
+          numberOfPools={poolsData ? poolsData[0].pool_count.toString() : '0'}
         />
+      </S.ExplorePoolsWrapper>
 
-        {isSelectTab === 'pools' && (
+      <ExploreSelectTabs isSelect={isSelectTab} setIsSelect={setIsSelectTab} />
+
+      {isSelectTab === 'pools' && (
+        <div>
           <S.ExploreContainer>
-            <TitleSection
-              image={featuredFunds}
-              title="Featured Pools"
-              text=""
+            <TitleSection image={featuredFunds} title="Popular Pools" text="" />
+
+            <SliderPoolList
+              poolData={poolsKassandra?.poolsKassandra ?? new Array(9).fill({})}
             />
-
-            {loading && (
-              <S.LoadingContainer>
-                <Loading marginTop={0} />
-              </S.LoadingContainer>
-            )}
-
-            <S.CardContainer isLoading={loading}>
-              {poolsKassandra?.poolsKassandra
-                .sort(function (a, b) {
-                  return (
-                    addressOrderList.indexOf(a.id) -
-                    addressOrderList.indexOf(b.id)
-                  )
-                })
-                .map(pool => (
-                  <FundCard
-                    key={pool.id}
-                    poolAddress={pool.id}
-                    link={`/pool/${pool.id}`}
-                  />
-                ))}
-            </S.CardContainer>
-
-            <S.ComunitFundsContainer>
-              <S.TitleWrapper>
-                <TitleSection
-                  image={communityFunds}
-                  title="Community Pools"
-                  text=""
-                />
-              </S.TitleWrapper>
-              <CommunityPoolsTable
-                pools={data?.pools}
-                communityPoolSorted={communityPoolSorted}
-                setCommunityPoolSorted={setCommunityPoolSorted}
-              />
-
-              <S.PaginationWrapper>
-                <Pagination
-                  skip={skip}
-                  take={take}
-                  totalItems={totalPoolsTable}
-                  handlePageClick={({ selected }) => {
-                    setSkip(selected * take)
-                  }}
-                />
-              </S.PaginationWrapper>
-            </S.ComunitFundsContainer>
           </S.ExploreContainer>
-        )}
-
-        {isSelectTab === 'managers' && (
           <S.ExploreContainer>
-            <ManagersPoolTable />
+            <TitleSection image={featuredFunds} title="Largest Pools" text="" />
+
+            <SliderPoolList
+              poolData={largestPools?.pools ?? new Array(9).fill({})}
+            />
           </S.ExploreContainer>
-        )}
-      </S.Explore>
-    </>
+        </div>
+      )}
+    </S.Explore>
   )
 }
