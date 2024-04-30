@@ -21,6 +21,7 @@ query FeaturedPools (
         id
         nickname
       }
+      chain_id
       chain {
         logo: icon
       }

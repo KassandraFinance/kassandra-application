@@ -21,6 +21,7 @@ query LargestPools (
       id
       nickname
     }
+    chain_id
     chain {
       logo: icon
     }

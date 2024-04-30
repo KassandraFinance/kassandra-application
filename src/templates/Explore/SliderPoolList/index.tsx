@@ -11,9 +11,10 @@ import * as S from './styles'
 
 interface ISliderPoolListProps {
   poolData: PoolData[]
+  kacyPrice?: string
 }
 
-function SliderPoolList({ poolData }: ISliderPoolListProps) {
+function SliderPoolList({ poolData, kacyPrice }: ISliderPoolListProps) {
   const settings: Settings = {
     dots: true,
     infinite: false,
@@ -50,6 +51,7 @@ function SliderPoolList({ poolData }: ISliderPoolListProps) {
             <FundCardNew
               key={pool.id}
               poolData={pool}
+              kacyPrice={kacyPrice}
               link={`/pool/${pool.address}`}
             />
           )

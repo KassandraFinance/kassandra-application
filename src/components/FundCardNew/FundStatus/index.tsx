@@ -45,7 +45,7 @@ const FundStatus = ({ day, monthly, tvl }: IFundStatusProps) => {
       </S.FundStatus>
       {FundStatusList.map(item => (
         <S.FundStatus key={item.name}>
-          {item?.value ? (
+          {item?.value || item?.value === 0 ? (
             <S.ValueContainer>
               <S.Value value={item.value}>{item.value}%</S.Value>
               <Image

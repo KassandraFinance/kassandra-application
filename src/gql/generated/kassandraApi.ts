@@ -8040,6 +8040,7 @@ export type FeaturedPoolsQuery = {
     price_usd: string
     pool_version: number
     featured: boolean
+    chain_id: number
     total_value_locked_usd: string
     strategy: string
     manager: { __typename?: 'Manager'; id: string; nickname?: string | null }
@@ -8260,6 +8261,7 @@ export type LargestPoolsQuery = {
     price_usd: string
     pool_version: number
     featured: boolean
+    chain_id: number
     total_value_locked_usd: string
     strategy: string
     manager: { __typename?: 'Manager'; id: string; nickname?: string | null }
@@ -8647,6 +8649,39 @@ export type ManagersPoolsQuery = {
       timestamp: number
       close: string
     }>
+  }>
+}
+
+export type MyPoolsQueryVariables = Exact<{
+  day: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  userWallet?: InputMaybe<Scalars['String']['input']>
+  chainIn?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >
+}>
+
+export type MyPoolsQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    name: string
+    symbol: string
+    price_usd: string
+    total_value_locked_usd: string
+    address: string
+    pool_id?: number | null
+    logo?: string | null
+    chain: { __typename?: 'Chain'; id: string; icon?: string | null }
+    investors: Array<{
+      __typename?: 'Investor'
+      wallet: string
+      amount: string
+    }>
+    now: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
+    day: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
   }>
 }
 
@@ -9683,6 +9718,7 @@ export const FeaturedPoolsDocument = gql`
         id
         nickname
       }
+      chain_id
       chain {
         logo: icon
       }
@@ -9972,6 +10008,7 @@ export const LargestPoolsDocument = gql`
         id
         nickname
       }
+      chain_id
       chain {
         logo: icon
       }
@@ -10395,6 +10432,63 @@ export const ManagersPoolsDocument = gql`
       }
       TVLMonthly: total_value_locked(
         where: { base: "usd", timestamp_gt: $month }
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+    }
+  }
+`
+export const MyPoolsDocument = gql`
+  query MyPools(
+    $day: Int!
+    $month: Int!
+    $userWallet: String
+    $chainIn: [String!]
+  ) {
+    pools(
+      where: {
+        investors_: { wallet: $userWallet, amount_gt: 0 }
+        chain_in: $chainIn
+      }
+    ) {
+      id
+      name
+      symbol
+      price_usd
+      total_value_locked_usd
+      address
+      pool_id
+      logo
+      chain {
+        id
+        icon
+      }
+      investors(where: { wallet: $userWallet }) {
+        wallet
+        amount
+      }
+      now: price_candles(
+        where: { base: "usd", period: 3600 }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      day: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $day }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
         first: 1
       ) {
         timestamp
@@ -11610,6 +11704,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'ManagersPools',
+        'query'
+      )
+    },
+    MyPools(
+      variables: MyPoolsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<MyPoolsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<MyPoolsQuery>(MyPoolsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'MyPools',
         'query'
       )
     },

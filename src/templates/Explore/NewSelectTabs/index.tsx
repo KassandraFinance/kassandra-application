@@ -1,9 +1,19 @@
-import { useState } from 'react'
 import { useRouter } from 'next/router'
-import * as S from './styles'
+
 import { gridviewIcon, listViewIcon } from './icons'
 
+import * as S from './styles'
+
+type ChainList = {
+  name: string
+  icon: JSX.Element
+  chainId: string
+}
+
 interface ExploreSelectTabsProps {
+  chainList: ChainList[]
+  selectedChains: string[]
+  setSelectedChains: React.Dispatch<React.SetStateAction<string[]>>
   isSelect: string | string[] | undefined
   setIsSelect: React.Dispatch<
     React.SetStateAction<string | string[] | undefined>
@@ -34,33 +44,40 @@ const viewList = [
   }
 ]
 
-const filterList = [
-  {
-    name: 'first',
-    icon: <img src="/assets/icons/chain-one.svg" />,
-    chainId: 1
-  },
-  {
-    name: 'avalanche',
-    icon: <img src="/assets/icons/chain-two.svg" />,
-    chainId: 2
-  },
-  {
-    name: 'arbitrum',
-    icon: <img src="/assets/icons/chain-three.svg" />,
-    chainId: 3
-  }
-]
-
 export function ExploreSelectTabs({
+  chainList,
   isSelect,
   setIsSelect,
+  selectedChains,
+  setSelectedChains,
   selectedView,
   setSelectedView
 }: ExploreSelectTabsProps) {
-  const [selectedChains, setSelectedChains] = useState<number[]>([1, 2, 3])
-
   const router = useRouter()
+
+  function handleClickChain(chain: ChainList) {
+    const allSelected = chainList.every(chain =>
+      selectedChains.includes(chain.chainId)
+    )
+
+    if (allSelected) {
+      setSelectedChains([chain.chainId])
+    } else {
+      const chainIndex = selectedChains.indexOf(chain.chainId)
+      if (chainIndex !== -1) {
+        const updatedSelectedChains = [...selectedChains]
+        updatedSelectedChains.splice(chainIndex, 1)
+
+        setSelectedChains(
+          updatedSelectedChains.length === 0
+            ? chainList.map(chain => chain.chainId)
+            : updatedSelectedChains
+        )
+      } else {
+        setSelectedChains([...selectedChains, chain.chainId])
+      }
+    }
+  }
 
   function handleClickTab(tabSelect: string) {
     setIsSelect(tabSelect)
@@ -116,21 +133,12 @@ export function ExploreSelectTabs({
           </S.DesktopTabs>
         </S.LeftContent>
         <S.FilterIcons>
-          {filterList.map(filter => (
+          {chainList.map(chain => (
             <S.FilterIcon
-              key={filter.chainId}
-              onClick={() => {
-                const index = selectedChains.indexOf(filter.chainId)
-                if (index === -1) {
-                  setSelectedChains([...selectedChains, filter.chainId])
-                } else {
-                  const updatedChains = [...selectedChains]
-                  updatedChains.splice(index, 1)
-                  setSelectedChains(updatedChains)
-                }
-              }}
-              selected={selectedChains.includes(filter.chainId)}
-              icon={filter.icon}
+              key={chain.chainId}
+              onClick={() => handleClickChain(chain)}
+              selected={selectedChains.includes(chain.chainId)}
+              icon={chain.icon}
             />
           ))}
         </S.FilterIcons>

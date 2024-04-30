@@ -1,3 +1,4 @@
+import { staking } from '@/hooks/useStaking'
 import Big from 'big.js'
 
 interface ICalcAPR {
@@ -31,4 +32,31 @@ export function handleCalcAPR({
     .toFixed(0)
 
   return Big(result)
+}
+
+export const handleGetAPR = async (
+  address: string,
+  chainId: number,
+  pid: number,
+  kacyPrice: Big,
+  poolPrice: Big
+) => {
+  try {
+    const { poolInfo } = await staking(address, chainId)
+    const poolData = await poolInfo(pid)
+
+    const totalStaked = Big(poolData.depositedAmount.toString())
+    const kacyRewards = Big(poolData.rewardRate.toString()).mul(Big(86400))
+
+    const apr = handleCalcAPR({
+      kacyPrice: kacyPrice,
+      poolPrice: poolPrice,
+      rewardRate: kacyRewards,
+      totalDeposit: totalStaked
+    })
+
+    return apr
+  } catch (error) {
+    return Big(0)
+  }
 }
