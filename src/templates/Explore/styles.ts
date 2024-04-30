@@ -153,3 +153,14 @@ export const ImageWrapper = styled.div`
     border-radius: 50%;
   `}
 `
+
+export const TabsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-block: 5.6rem;
+  gap: 2.4rem;
+
+  @media (max-width: 976px) {
+    padding-inline: 2.4rem;
+  }
+`

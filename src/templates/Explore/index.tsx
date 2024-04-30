@@ -85,17 +85,19 @@ export default function Explore() {
           poolCount={poolsData ? poolsData[0].pool_count.toString() : '0'}
           whiteListNumber="30"
         />
+      </S.ExplorePoolsWrapper>
 
+      <S.TabsContainer>
         <ExploreAllPools
           numberOfPools={poolsData ? poolsData[0].pool_count.toString() : '0'}
         />
-      </S.ExplorePoolsWrapper>
 
-      <NewSelectTabs
-        tabs={tabs}
-        isSelect={isSelectTab}
-        setIsSelect={setIsSelectTab}
-      />
+        <NewSelectTabs
+          tabs={tabs}
+          isSelect={isSelectTab}
+          setIsSelect={setIsSelectTab}
+        />
+      </S.TabsContainer>
 
       {isSelectTab === 'pools' && (
         <div>
