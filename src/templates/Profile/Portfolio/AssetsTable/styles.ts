@@ -204,6 +204,13 @@ export const Imagecontainer = styled.div`
   `}
 `
 
+export const SkeletonLoadingWrapper = styled.div`
+  ${() => css`
+    display: flex;
+    justify-content: center;
+  `}
+`
+
 export const ChainLogoWrapper = styled.div`
   ${({ theme }) => css`
     position: absolute;

@@ -6,6 +6,8 @@ import Blockies from 'react-blockies'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
+import SkeletonLoading from '@/components/SkeletonLoading'
+
 import comingSoonIcon from '@assets/icons/coming-soon.svg'
 
 import * as S from './styles'
@@ -32,7 +34,7 @@ interface IAssetsTableProps {
   pools: PoolProps[]
 }
 
-type PoolProps = {
+export type PoolProps = {
   id: string
   address: string
   name: string
@@ -40,8 +42,8 @@ type PoolProps = {
   logo: string | null | undefined
   changeDay: string
   changeMonth: string
-  price: any
-  tvl: any
+  price: string
+  tvl: Big
   balanceInUSD: Big
   balance: Big
   logoChain: string
@@ -61,53 +63,107 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
         <S.Td>
           <S.ProductWrapper>
             <S.Imagecontainer>
-              <S.ImageWrapper>
-                {pool.logo ? (
-                  <img src={pool.logo} />
-                ) : (
-                  <Blockies size={8} scale={9} seed={pool.name ?? ''} />
-                )}
-              </S.ImageWrapper>
+              {pool?.id ? (
+                <S.ImageWrapper>
+                  {pool.logo ? (
+                    <img src={pool.logo} />
+                  ) : (
+                    <Blockies size={8} scale={9} seed={pool.name ?? ''} />
+                  )}
+                </S.ImageWrapper>
+              ) : (
+                <S.SkeletonLoadingWrapper>
+                  <SkeletonLoading
+                    height={2.4}
+                    width={2.4}
+                    borderRadios={999}
+                  />
+                </S.SkeletonLoadingWrapper>
+              )}
 
               <S.ChainLogoWrapper>
                 <Image src={pool.logoChain || comingSoonIcon} layout="fill" />
               </S.ChainLogoWrapper>
             </S.Imagecontainer>
             <S.FundWrapper>
-              <span>{pool.name}</span>
-              <span>{pool.symbol}</span>
+              {pool?.name ? (
+                <span>{pool.name}</span>
+              ) : (
+                <S.SkeletonLoadingWrapper>
+                  <SkeletonLoading height={1.8} width={14} />
+                </S.SkeletonLoadingWrapper>
+              )}
+              {pool?.symbol ? (
+                <span>{pool.symbol}</span>
+              ) : (
+                <S.SkeletonLoadingWrapper>
+                  <SkeletonLoading height={1.8} width={14} />
+                </S.SkeletonLoadingWrapper>
+              )}
             </S.FundWrapper>
           </S.ProductWrapper>
         </S.Td>
-        <S.Td>${parseFloat(pool.price).toFixed(2)}</S.Td>
         <S.Td>
-          ${pool.tvl ? BNtoDecimal(Big(pool?.tvl ?? Big(0)), 2) : '0'}
+          {pool?.price ? (
+            <>${parseFloat(pool.price).toFixed(2)}</>
+          ) : (
+            <S.SkeletonLoadingWrapper>
+              <SkeletonLoading height={1.8} width={8} />
+            </S.SkeletonLoadingWrapper>
+          )}
         </S.Td>
         <S.Td>
-          <S.Change change={parseFloat(pool.changeMonth)}>
-            {pool.changeMonth}%
-          </S.Change>
+          {pool?.tvl ? (
+            <>${pool.tvl ? BNtoDecimal(Big(pool?.tvl ?? Big(0)), 2) : '0'}</>
+          ) : (
+            <S.SkeletonLoadingWrapper>
+              <SkeletonLoading height={1.8} width={8} />
+            </S.SkeletonLoadingWrapper>
+          )}
         </S.Td>
         <S.Td>
-          <S.Change change={parseFloat(pool.changeDay)}>
-            {pool.changeDay}%
-          </S.Change>
+          {pool?.changeMonth ? (
+            <S.Change change={parseFloat(pool.changeMonth)}>
+              {pool.changeMonth}%
+            </S.Change>
+          ) : (
+            <S.SkeletonLoadingWrapper>
+              <SkeletonLoading height={1.8} width={8} />
+            </S.SkeletonLoadingWrapper>
+          )}
         </S.Td>
         <S.Td>
-          <S.FlexWrapper>
-            <div>
-              {pool.balance
-                ? BNtoDecimal(Big(pool?.balance ?? Big(0)), 18, 2)
-                : 0}{' '}
-              <span>{pool.symbol}</span>
-            </div>
-            <span>
-              $
-              {pool.balance && pool.price
-                ? BNtoDecimal(Big(pool?.balanceInUSD ?? Big(0)), 18, 2)
-                : 0}
-            </span>
-          </S.FlexWrapper>
+          {pool?.changeDay ? (
+            <S.Change change={parseFloat(pool.changeDay)}>
+              {pool.changeDay}%
+            </S.Change>
+          ) : (
+            <S.SkeletonLoadingWrapper>
+              <SkeletonLoading height={1.8} width={8} />
+            </S.SkeletonLoadingWrapper>
+          )}
+        </S.Td>
+        <S.Td>
+          {pool?.balance ? (
+            <S.FlexWrapper>
+              <div>
+                {pool.balance
+                  ? BNtoDecimal(Big(pool?.balance ?? Big(0)), 18, 2)
+                  : 0}{' '}
+                <span>{pool.symbol}</span>
+              </div>
+              <span>
+                $
+                {pool.balance && pool.price
+                  ? BNtoDecimal(Big(pool?.balanceInUSD ?? Big(0)), 18, 2)
+                  : 0}
+              </span>
+            </S.FlexWrapper>
+          ) : (
+            <S.SkeletonLoadingWrapper>
+              <SkeletonLoading height={1.8} width={8} />
+            </S.SkeletonLoadingWrapper>
+          )}
         </S.Td>
       </S.Tr>
     )

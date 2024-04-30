@@ -9,6 +9,7 @@ import { whiteList } from '@/hooks/useWhiteList'
 import useGetToken from '@/hooks/useGetToken'
 import { useTokensData } from '@/hooks/query/useTokensData'
 
+import { MyPoolsTable } from './MyPoolsTable'
 import { ExploreAllPools } from './AllPools'
 import SliderPoolList from './SliderPoolList'
 import { ExplorePoolsData } from './PoolsData'
@@ -180,6 +181,10 @@ export default function Explore() {
             />
           </S.ExploreContainer>
         </div>
+      )}
+
+      {isSelectTab === 'managers' && (
+        <MyPoolsTable selectedChains={selectedChains} />
       )}
     </S.Explore>
   )
