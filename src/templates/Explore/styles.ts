@@ -76,7 +76,7 @@ export const ExplorePoolsWrapper = styled.div`
   gap: 5.6rem;
 `
 
-export const MainTitle = styled.div`
+export const MainTitle = styled.h1`
   font-size: 4.8rem;
   font-weight: 900;
   line-height: 5.28rem;
@@ -88,7 +88,7 @@ export const MainTitle = styled.div`
   -webkit-text-fill-color: transparent;
 `
 
-export const SubTitle = styled.div`
+export const SubTitle = styled.h2`
   font-size: 1.6rem;
   font-weight: 300;
   line-height: 3.2rem;

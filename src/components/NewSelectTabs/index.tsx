@@ -1,36 +1,18 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import * as S from './styles'
-import { gridviewIcon, listViewIcon } from './icons'
+import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
 
-interface ExploreSelectTabsProps {
+interface SelectTabsProps {
+  tabs: {
+    tabName: string
+    text: string
+  }[]
   isSelect: string | string[] | undefined
   setIsSelect: React.Dispatch<
     React.SetStateAction<string | string[] | undefined>
   >
 }
-
-const tabs = [
-  {
-    tabName: 'pools',
-    text: 'All Pools'
-  },
-  {
-    tabName: 'managers',
-    text: 'My Pools'
-  }
-]
-
-const viewList = [
-  {
-    name: 'grid',
-    icon: gridviewIcon
-  },
-  {
-    name: 'list',
-    icon: listViewIcon
-  }
-]
 
 const filterList = [
   {
@@ -50,11 +32,11 @@ const filterList = [
   }
 ]
 
-export function ExploreSelectTabs({
+export function NewSelectTabs({
+  tabs,
   isSelect,
   setIsSelect
-}: ExploreSelectTabsProps) {
-  const [selectedView, setSelectedView] = useState('grid')
+}: SelectTabsProps) {
   const [selectedChains, setSelectedChains] = useState<number[]>([1, 2, 3])
 
   const router = useRouter()
@@ -87,16 +69,7 @@ export function ExploreSelectTabs({
       </S.MobileTabs>
       <S.Content>
         <S.LeftContent>
-          <S.ViewIcons>
-            {viewList.map(view => (
-              <S.ViewButton
-                isActive={selectedView === view.name}
-                icon={view.icon}
-                onClick={() => setSelectedView(view.name)}
-              />
-            ))}
-          </S.ViewIcons>
-
+          <ViewOptions />
           <S.DesktopTabs>
             {tabs.map(tab => (
               <S.TabButton

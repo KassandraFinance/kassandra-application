@@ -7,7 +7,6 @@ import { useExploreOverviewPools } from '@/hooks/query/useExploreOverviewPools'
 import { ExploreAllPools } from './AllPools'
 import SliderPoolList from './SliderPoolList'
 import { ExplorePoolsData } from './PoolsData'
-import { ExploreSelectTabs } from './NewSelectTabs'
 import TitleSection from '../../components/TitleSection'
 
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
@@ -15,17 +14,16 @@ import managerIcon from '../../../public/assets/iconGradient/manager.svg'
 import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
 
 import * as S from './styles'
+import { NewSelectTabs } from '@/components/NewSelectTabs'
 
 const tabs = [
   {
-    asPathText: 'pools',
-    text: 'Managed Pools',
-    icon: inexpensiveIcon
+    tabName: 'pools',
+    text: 'All Pools'
   },
   {
-    asPathText: 'managers',
-    text: 'Pool Managers',
-    icon: managerIcon
+    tabName: 'managers',
+    text: 'My Pools'
   }
 ]
 
@@ -93,7 +91,11 @@ export default function Explore() {
         />
       </S.ExplorePoolsWrapper>
 
-      <ExploreSelectTabs isSelect={isSelectTab} setIsSelect={setIsSelectTab} />
+      <NewSelectTabs
+        tabs={tabs}
+        isSelect={isSelectTab}
+        setIsSelect={setIsSelectTab}
+      />
 
       {isSelectTab === 'pools' && (
         <div>
