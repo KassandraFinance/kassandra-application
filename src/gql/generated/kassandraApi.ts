@@ -8023,6 +8023,16 @@ export type ExploreOverviewPoolsQuery = {
   }>
 }
 
+export type FeaturedPoolsQueryVariables = Exact<{
+  price_period: Scalars['Int']['input']
+  period_selected: Scalars['Int']['input']
+  day: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  chainIn?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >
+}>
+
 export type FeaturedPoolsQuery = {
   __typename?: 'Query'
   poolsKassandra: Array<{
@@ -8037,6 +8047,7 @@ export type FeaturedPoolsQuery = {
     price_usd: string
     pool_version: number
     featured: boolean
+    chain_id: number
     total_value_locked_usd: string
     strategy: string
     manager: { __typename?: 'Manager'; id: string; nickname?: string | null }
@@ -8257,6 +8268,7 @@ export type LargestPoolsQuery = {
     price_usd: string
     pool_version: number
     featured: boolean
+    chain_id: number
     total_value_locked_usd: string
     strategy: string
     manager: { __typename?: 'Manager'; id: string; nickname?: string | null }
@@ -9678,6 +9690,7 @@ export const FeaturedPoolsDocument = gql`
         id
         nickname
       }
+      chain_id
       chain {
         logo: icon
       }
@@ -9949,7 +9962,7 @@ export const LargestPoolsDocument = gql`
     pools(
       orderBy: total_value_locked_usd
       orderDirection: desc
-      first: 10
+      first: 9
       where: { chain_in: $chainIn }
     ) {
       id
@@ -9967,6 +9980,7 @@ export const LargestPoolsDocument = gql`
         id
         nickname
       }
+      chain_id
       chain {
         logo: icon
       }

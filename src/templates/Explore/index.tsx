@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
 
+import { KacyPoligon, networks } from '@/constants/tokenAddresses'
+
 import { useLargestPools } from '@/hooks/query/useLargestPools'
 import { useFeaturedPools } from '@/hooks/query/useFeaturedPools'
 import { useExploreOverviewPools } from '@/hooks/query/useExploreOverviewPools'
 import { whiteList } from '@/hooks/useWhiteList'
+import useGetToken from '@/hooks/useGetToken'
+import { useTokensData } from '@/hooks/query/useTokensData'
 
 import { ExploreAllPools } from './AllPools'
 import SliderPoolList from './SliderPoolList'
@@ -68,6 +72,17 @@ export default function Explore() {
     'pools'
   )
   const [whiteListTokenCount, setWhiteListTokenCount] = useState<number>(0)
+
+  const networkChain = networks[137]
+  const { data } = useTokensData({
+    chainId: networkChain.chainId,
+    tokenAddresses: [KacyPoligon]
+  })
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: networkChain.nativeCurrency.address,
+    tokens: data || {}
+  })
+  const kacyPrice = priceToken(KacyPoligon.toLowerCase())
 
   const dateNow = new Date()
   const params = {
@@ -153,6 +168,7 @@ export default function Explore() {
 
             <SliderPoolList
               poolData={poolsKassandra?.poolsKassandra ?? new Array(9).fill({})}
+              kacyPrice={kacyPrice}
             />
           </S.ExploreContainer>
           <S.ExploreContainer>
@@ -160,6 +176,7 @@ export default function Explore() {
 
             <SliderPoolList
               poolData={largestPools?.pools ?? new Array(9).fill({})}
+              kacyPrice={kacyPrice}
             />
           </S.ExploreContainer>
         </div>
