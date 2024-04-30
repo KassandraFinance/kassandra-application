@@ -53,7 +53,7 @@ const useWhiteList = (networkId: number) => {
     )
 
     return whiteListContract(contract)
-  }, [])
+  }, [networkId])
 }
 
 export default useWhiteList

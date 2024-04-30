@@ -63,7 +63,7 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
         <S.Td>
           <S.ProductWrapper>
             <S.Imagecontainer>
-              {pool?.id ? (
+              {pool?.id != null ? (
                 <S.ImageWrapper>
                   {pool.logo ? (
                     <img src={pool.logo} />
@@ -86,14 +86,14 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
               </S.ChainLogoWrapper>
             </S.Imagecontainer>
             <S.FundWrapper>
-              {pool?.name ? (
+              {pool?.name != null ? (
                 <span>{pool.name}</span>
               ) : (
                 <S.SkeletonLoadingWrapper>
                   <SkeletonLoading height={1.8} width={14} />
                 </S.SkeletonLoadingWrapper>
               )}
-              {pool?.symbol ? (
+              {pool?.symbol != null ? (
                 <span>{pool.symbol}</span>
               ) : (
                 <S.SkeletonLoadingWrapper>
@@ -104,7 +104,7 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
           </S.ProductWrapper>
         </S.Td>
         <S.Td>
-          {pool?.price ? (
+          {pool?.price != null ? (
             <>${parseFloat(pool.price).toFixed(2)}</>
           ) : (
             <S.SkeletonLoadingWrapper>
@@ -113,7 +113,7 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
           )}
         </S.Td>
         <S.Td>
-          {pool?.tvl ? (
+          {pool?.tvl != null ? (
             <>${pool.tvl ? BNtoDecimal(Big(pool?.tvl ?? Big(0)), 2) : '0'}</>
           ) : (
             <S.SkeletonLoadingWrapper>
@@ -122,7 +122,7 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
           )}
         </S.Td>
         <S.Td>
-          {pool?.changeMonth ? (
+          {pool?.changeMonth != null ? (
             <S.Change change={parseFloat(pool.changeMonth)}>
               {pool.changeMonth}%
             </S.Change>
@@ -133,7 +133,7 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
           )}
         </S.Td>
         <S.Td>
-          {pool?.changeDay ? (
+          {pool?.changeDay != null ? (
             <S.Change change={parseFloat(pool.changeDay)}>
               {pool.changeDay}%
             </S.Change>
@@ -144,7 +144,7 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
           )}
         </S.Td>
         <S.Td>
-          {pool?.balance ? (
+          {pool?.balance != null ? (
             <S.FlexWrapper>
               <div>
                 {pool.balance
