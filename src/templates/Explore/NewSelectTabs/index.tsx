@@ -8,6 +8,8 @@ interface ExploreSelectTabsProps {
   setIsSelect: React.Dispatch<
     React.SetStateAction<string | string[] | undefined>
   >
+  selectedView: string
+  setSelectedView: React.Dispatch<React.SetStateAction<string>>
 }
 
 const tabs = [
@@ -52,9 +54,10 @@ const filterList = [
 
 export function ExploreSelectTabs({
   isSelect,
-  setIsSelect
+  setIsSelect,
+  selectedView,
+  setSelectedView
 }: ExploreSelectTabsProps) {
-  const [selectedView, setSelectedView] = useState('grid')
   const [selectedChains, setSelectedChains] = useState<number[]>([1, 2, 3])
 
   const router = useRouter()
@@ -77,6 +80,7 @@ export function ExploreSelectTabs({
       <S.MobileTabs>
         {tabs.map(tab => (
           <S.TabButton
+            key={tab.tabName}
             background="transparent"
             text={tab.text}
             className="button"
@@ -90,6 +94,7 @@ export function ExploreSelectTabs({
           <S.ViewIcons>
             {viewList.map(view => (
               <S.ViewButton
+                key={view.name}
                 isActive={selectedView === view.name}
                 icon={view.icon}
                 onClick={() => setSelectedView(view.name)}
@@ -100,6 +105,7 @@ export function ExploreSelectTabs({
           <S.DesktopTabs>
             {tabs.map(tab => (
               <S.TabButton
+                key={tab.tabName}
                 background="transparent"
                 text={tab.text}
                 className="button"

@@ -7946,6 +7946,7 @@ export type BrokersFeesQuery = {
 export type CommunityPoolsQueryVariables = Exact<{
   day?: InputMaybe<Scalars['Int']['input']>
   month?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Pool_OrderBy>
   orderDirection?: InputMaybe<OrderDirection>
   first?: InputMaybe<Scalars['Int']['input']>
   skip?: InputMaybe<Scalars['Int']['input']>
@@ -7961,6 +7962,7 @@ export type CommunityPoolsQuery = {
     symbol: string
     logo?: string | null
     address: string
+    unique_investors: number
     price_usd: string
     total_value_locked_usd: string
     is_private_pool: boolean
@@ -8002,15 +8004,6 @@ export type DelegationsQuery = {
   }>
 }
 
-export type FeaturedPoolsQueryVariables = Exact<{
-  price_period: Scalars['Int']['input']
-  period_selected: Scalars['Int']['input']
-  day: Scalars['Int']['input']
-  month: Scalars['Int']['input']
-  chainIn?: InputMaybe<
-    Array<Scalars['String']['input']> | Scalars['String']['input']
-  >
-}>
 export type ExploreOverviewPoolsQueryVariables = Exact<{ [key: string]: never }>
 
 export type ExploreOverviewPoolsQuery = {
@@ -8022,6 +8015,16 @@ export type ExploreOverviewPoolsQuery = {
     num_deposits: string
   }>
 }
+
+export type FeaturedPoolsQueryVariables = Exact<{
+  price_period: Scalars['Int']['input']
+  period_selected: Scalars['Int']['input']
+  day: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  chainIn?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >
+}>
 
 export type FeaturedPoolsQuery = {
   __typename?: 'Query'
@@ -9554,6 +9557,7 @@ export const CommunityPoolsDocument = gql`
   query CommunityPools(
     $day: Int
     $month: Int
+    $orderBy: Pool_orderBy
     $orderDirection: OrderDirection
     $first: Int
     $skip: Int
@@ -9563,7 +9567,7 @@ export const CommunityPoolsDocument = gql`
     }
     pools(
       where: { featured: false }
-      orderBy: total_value_locked_usd
+      orderBy: $orderBy
       orderDirection: $orderDirection
       first: $first
       skip: $skip
@@ -9573,6 +9577,7 @@ export const CommunityPoolsDocument = gql`
       symbol
       logo
       address
+      unique_investors
       chain {
         logo: icon
       }
@@ -9949,7 +9954,7 @@ export const LargestPoolsDocument = gql`
     pools(
       orderBy: total_value_locked_usd
       orderDirection: desc
-      first: 10
+      first: 9
       where: { chain_in: $chainIn }
     ) {
       id
