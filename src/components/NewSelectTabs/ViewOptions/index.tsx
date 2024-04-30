@@ -3,7 +3,7 @@ import {
   listViewIcon
 } from '@/templates/Explore/SelectTabs/icons'
 import * as S from './styles'
-import { useState } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 
 const viewList = [
   {
@@ -16,8 +16,15 @@ const viewList = [
   }
 ]
 
-export function ViewOptions() {
-  const [selectedView, setSelectedView] = useState('grid')
+interface ViewOptionsProps {
+  selectedView: string
+  setSelectedView: Dispatch<SetStateAction<string>>
+}
+
+export function ViewOptions({
+  selectedView,
+  setSelectedView
+}: ViewOptionsProps) {
   return (
     <S.ViewIcons>
       {viewList.map(view => (

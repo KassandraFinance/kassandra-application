@@ -24,6 +24,7 @@ export const BackgroundCard = styled.div`
     display: block;
 
     margin: 0 auto;
+    margin-bottom: 1rem;
 
     color: #fff;
     font-weight: ${theme.font.weight.normal};

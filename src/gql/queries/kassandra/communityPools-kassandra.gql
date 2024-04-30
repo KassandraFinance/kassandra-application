@@ -1,6 +1,7 @@
 query CommunityPools(
     $day: Int
     $month: Int
+    $orderBy: Pool_orderBy
     $orderDirection: OrderDirection
     $first: Int
     $skip: Int
@@ -12,7 +13,7 @@ query CommunityPools(
       where: {
          featured: false
       }
-      orderBy: total_value_locked_usd
+      orderBy: $orderBy
       orderDirection: $orderDirection
       first: $first
       skip: $skip
@@ -22,6 +23,7 @@ query CommunityPools(
       symbol
       logo
       address
+      unique_investors
       chain {
         logo: icon
       }

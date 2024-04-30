@@ -1,11 +1,15 @@
 import React from 'react'
 import Link from 'next/link'
 import Big from 'big.js'
+import { ZeroAddress } from 'ethers'
+
+import { networks } from '@/constants/tokenAddresses'
 
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
 import { BNtoDecimal, calcChange } from '@/utils/numerals'
 import { getWeightsNormalizedV2 } from '@/utils/updateAssetsToV2'
+import { handleGetAPR } from '../StakeCard/utils'
 
 import Label from '../Labels/Label'
 import FundStatus from './FundStatus'
@@ -78,6 +82,7 @@ export type PoolData = {
   pool_id?: number | null
   price_usd: string
   pool_version: number
+  chain_id: number
   featured: boolean
   strategy: string
   total_value_locked_usd: string
@@ -102,10 +107,12 @@ export type PoolData = {
 interface IFundCardProps {
   link?: string
   poolData: PoolData
+  kacyPrice?: string
 }
 
-const FundCard = ({ poolData, link }: IFundCardProps) => {
+const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
   const [poolObject, setPoolObject] = React.useState<Record<string, number>>({})
+  const [poolAPR, setPoolAPR] = React.useState<Big>()
 
   const { trackEventFunction } = useMatomoEcommerce()
 
@@ -139,6 +146,24 @@ const FundCard = ({ poolData, link }: IFundCardProps) => {
     return underlyingAssets
   }
 
+  async function handlePoolAPR(
+    chainId: number,
+    pid: number,
+    kacyPrice: Big,
+    poolPrice: Big
+  ) {
+    const network = networks[chainId]
+    const apr = await handleGetAPR(
+      network?.stakingContract ?? ZeroAddress,
+      chainId,
+      pid,
+      kacyPrice,
+      poolPrice
+    )
+
+    setPoolAPR(apr)
+  }
+
   const poolDataMetrics = React.useMemo(() => {
     if (!poolData?.id) return
 
@@ -149,6 +174,7 @@ const FundCard = ({ poolData, link }: IFundCardProps) => {
       poolData?.now[0]?.close,
       poolData?.day[0]?.close
     )
+
     const changeMonth = calcChange(
       poolData.now[0]?.close,
       poolData.month[0]?.close
@@ -180,6 +206,17 @@ const FundCard = ({ poolData, link }: IFundCardProps) => {
       setPoolObject(poolData)
     }
   }, [poolDataMetrics])
+
+  React.useEffect(() => {
+    if (!poolData?.pool_id && !poolData.pool_id) return
+
+    handlePoolAPR(
+      poolData.chain_id,
+      poolData.pool_id,
+      Big(kacyPrice ?? 0),
+      Big(poolData.price_usd ?? 0)
+    )
+  }, [kacyPrice])
 
   return (
     <S.CardContainer isLink={!!link}>
@@ -239,9 +276,9 @@ const FundCard = ({ poolData, link }: IFundCardProps) => {
                 by {poolData?.manager.nickname ?? substr(poolData?.manager?.id ?? '')}
               </span> */}
 
-              {poolData?.pool_id && (
+              {poolData?.pool_id && poolAPR && (
                 <S.LabelContent>
-                  <Label text="+5%" />
+                  <Label text={BNtoDecimal(poolAPR, 0) + '%'} />
                   <GradientLabel
                     text="$KACY"
                     img={{

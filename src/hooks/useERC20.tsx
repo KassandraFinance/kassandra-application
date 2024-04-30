@@ -3,7 +3,6 @@ import {
   BrowserProvider,
   JsonRpcProvider,
   Contract,
-  MaxUint256,
   ContractTransactionResponse,
   ErrorCode,
   ContractTransactionReceipt,
