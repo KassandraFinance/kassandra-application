@@ -12,6 +12,8 @@ interface SelectTabsProps {
   setIsSelect: React.Dispatch<
     React.SetStateAction<string | string[] | undefined>
   >
+  selectedView: string
+  setSelectedView: React.Dispatch<React.SetStateAction<string>>
 }
 
 const filterList = [
@@ -35,7 +37,9 @@ const filterList = [
 export function NewSelectTabs({
   tabs,
   isSelect,
-  setIsSelect
+  setIsSelect,
+  selectedView,
+  setSelectedView
 }: SelectTabsProps) {
   const [selectedChains, setSelectedChains] = useState<number[]>([1, 2, 3])
 
@@ -69,7 +73,10 @@ export function NewSelectTabs({
       </S.MobileTabs>
       <S.Content>
         <S.LeftContent>
-          <ViewOptions />
+          <ViewOptions
+            selectedView={selectedView}
+            setSelectedView={setSelectedView}
+          />
           <S.DesktopTabs>
             {tabs.map(tab => (
               <S.TabButton
@@ -82,25 +89,6 @@ export function NewSelectTabs({
             ))}
           </S.DesktopTabs>
         </S.LeftContent>
-        <S.FilterIcons>
-          {filterList.map(filter => (
-            <S.FilterIcon
-              key={filter.chainId}
-              onClick={() => {
-                const index = selectedChains.indexOf(filter.chainId)
-                if (index === -1) {
-                  setSelectedChains([...selectedChains, filter.chainId])
-                } else {
-                  const updatedChains = [...selectedChains]
-                  updatedChains.splice(index, 1)
-                  setSelectedChains(updatedChains)
-                }
-              }}
-              selected={selectedChains.includes(filter.chainId)}
-              icon={filter.icon}
-            />
-          ))}
-        </S.FilterIcons>
       </S.Content>
     </S.Wrapper>
   )

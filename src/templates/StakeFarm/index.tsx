@@ -11,12 +11,8 @@ import Farm from './Farm'
 import Stake from './Stake'
 import { useVotingPower } from '@/hooks/query/useVotingPower'
 
-import productBarIcon from '@assets/iconGradient/product-bar.svg'
-import stakingPoolsIcon from '@assets/iconGradient/staking-pools.svg'
-
 import * as S from './styles'
 import { StakeFarmPools } from './AllPools'
-import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
 import { allPools } from '@/constants/pools'
 import { NewSelectTabs } from '@/components/NewSelectTabs'
 
@@ -35,6 +31,7 @@ const StakeFarm = () => {
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
   >('stake')
+  const [selectedView, setSelectedView] = React.useState('grid')
 
   const numPoolsInvestors = 2
   const allPoolsNumber = (allPools.length - numPoolsInvestors).toString()
@@ -86,11 +83,16 @@ const StakeFarm = () => {
           tabs={tabs}
           isSelect={isSelectTab}
           setIsSelect={setIsSelectTab}
+          selectedView={selectedView}
+          setSelectedView={setSelectedView}
         />
       </S.TabsContainer>
+
+      {isSelectTab === 'stake' && selectedView === 'list' && 'Table here'}
+
       <S.StakeFarm>
-        {isSelectTab === 'stake' && <Stake />}
-        {isSelectTab === 'farm' && <Farm />}
+        {isSelectTab === 'stake' && selectedView === 'card' && <Stake />}
+        {isSelectTab === 'farm' && selectedView === 'card' && <Farm />}
       </S.StakeFarm>
     </>
   )
