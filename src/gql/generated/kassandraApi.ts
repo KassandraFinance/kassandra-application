@@ -7946,6 +7946,7 @@ export type BrokersFeesQuery = {
 export type CommunityPoolsQueryVariables = Exact<{
   day?: InputMaybe<Scalars['Int']['input']>
   month?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Pool_OrderBy>
   orderDirection?: InputMaybe<OrderDirection>
   first?: InputMaybe<Scalars['Int']['input']>
   skip?: InputMaybe<Scalars['Int']['input']>
@@ -7961,6 +7962,7 @@ export type CommunityPoolsQuery = {
     symbol: string
     logo?: string | null
     address: string
+    unique_investors: number
     price_usd: string
     total_value_locked_usd: string
     is_private_pool: boolean
@@ -9590,6 +9592,7 @@ export const CommunityPoolsDocument = gql`
   query CommunityPools(
     $day: Int
     $month: Int
+    $orderBy: Pool_orderBy
     $orderDirection: OrderDirection
     $first: Int
     $skip: Int
@@ -9599,7 +9602,7 @@ export const CommunityPoolsDocument = gql`
     }
     pools(
       where: { featured: false }
-      orderBy: total_value_locked_usd
+      orderBy: $orderBy
       orderDirection: $orderDirection
       first: $first
       skip: $skip
@@ -9609,6 +9612,7 @@ export const CommunityPoolsDocument = gql`
       symbol
       logo
       address
+      unique_investors
       chain {
         logo: icon
       }

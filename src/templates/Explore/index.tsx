@@ -21,19 +21,12 @@ import managerIcon from '../../../public/assets/iconGradient/manager.svg'
 import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
 
 import * as S from './styles'
-
-const tabs = [
-  {
-    asPathText: 'pools',
-    text: 'Managed Pools',
-    icon: inexpensiveIcon
-  },
-  {
-    asPathText: 'managers',
-    text: 'Pool Managers',
-    icon: managerIcon
-  }
-]
+import NewCommunityPoolsTable, {
+  communityPoolSorting
+} from './NewCommunityPoolsTable'
+import { useCommunityPools } from '@/hooks/query/useCommunityPools'
+import Pagination from '@/components/Pagination'
+import { Pool_OrderBy } from '@/gql/generated/kassandraApi'
 
 const chainList = [
   {
@@ -100,18 +93,30 @@ export default function Explore() {
     chainIdList: chainList.map(item => item.chainId)
   })
 
-  // const { data } = useCommunityPools({
-  //   day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-  //   month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-  //   orderDirection: communityPoolSorted,
-  //   first: take,
-  //   skip
-  // })
+  const [selectedView, setSelectedView] = React.useState('grid')
+  const [orderedBy, setOrderedBy] = React.useState<Pool_OrderBy>(
+    'total_value_locked_usd'
+  )
+  const [communityPoolSorted, setCommunityPoolSorted] =
+    React.useState<communityPoolSorting>(communityPoolSorting.DESC)
+  const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
+  const [skip, setSkip] = React.useState(0)
 
-  // React.useEffect(() => {
-  //   if (!data?.pools.length) return
-  //   setTotalPoolsTable(data?.kassandras[0].pool_count - 3)
-  // }, [data])
+  const take = 8
+
+  const { data: communityPools } = useCommunityPools({
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    orderBy: orderedBy,
+    orderDirection: communityPoolSorted,
+    first: take,
+    skip
+  })
+
+  React.useEffect(() => {
+    if (!communityPools?.pools.length) return
+    setTotalPoolsTable(communityPools?.kassandras[0].pool_count)
+  }, [communityPools])
 
   return (
     <S.Explore>
@@ -141,9 +146,13 @@ export default function Explore() {
         setSelectedChains={setSelectedChains}
         isSelect={isSelectTab}
         setIsSelect={setIsSelectTab}
+        setSelectedView={(view: string | ((prevState: string) => string)) =>
+          setSelectedView(view)
+        }
+        selectedView={selectedView}
       />
 
-      {isSelectTab === 'pools' && (
+      {isSelectTab === 'pools' && selectedView === 'grid' && (
         <div>
           <S.ExploreContainer>
             <TitleSection image={featuredFunds} title="Popular Pools" text="" />
@@ -153,6 +162,7 @@ export default function Explore() {
               kacyPrice={kacyPrice}
             />
           </S.ExploreContainer>
+
           <S.ExploreContainer>
             <TitleSection image={featuredFunds} title="Largest Pools" text="" />
 
@@ -166,6 +176,28 @@ export default function Explore() {
 
       {isSelectTab === 'managers' && (
         <MyPoolsTable selectedChains={selectedChains} />
+      )}
+
+      {isSelectTab === 'pools' && selectedView === 'list' && (
+        <>
+          <NewCommunityPoolsTable
+            pools={communityPools?.pools}
+            communityPoolSorted={communityPoolSorted}
+            setCommunityPoolSorted={setCommunityPoolSorted}
+            orderedBy={orderedBy}
+            setOrderedBy={setOrderedBy}
+          />
+          <S.PaginationWrapper>
+            <Pagination
+              skip={skip}
+              take={take}
+              totalItems={totalPoolsTable}
+              handlePageClick={({ selected }) => {
+                setSkip(selected * take)
+              }}
+            />
+          </S.PaginationWrapper>
+        </>
       )}
     </S.Explore>
   )

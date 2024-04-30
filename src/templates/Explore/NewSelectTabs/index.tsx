@@ -1,7 +1,8 @@
-import { useState } from 'react'
 import { useRouter } from 'next/router'
-import * as S from './styles'
+
 import { gridviewIcon, listViewIcon } from './icons'
+
+import * as S from './styles'
 
 type ChainList = {
   name: string
@@ -17,6 +18,8 @@ interface ExploreSelectTabsProps {
   setIsSelect: React.Dispatch<
     React.SetStateAction<string | string[] | undefined>
   >
+  selectedView: string
+  setSelectedView: React.Dispatch<React.SetStateAction<string>>
 }
 
 const tabs = [
@@ -46,10 +49,10 @@ export function ExploreSelectTabs({
   isSelect,
   setIsSelect,
   selectedChains,
-  setSelectedChains
+  setSelectedChains,
+  selectedView,
+  setSelectedView
 }: ExploreSelectTabsProps) {
-  const [selectedView, setSelectedView] = useState('grid')
-
   const router = useRouter()
 
   function handleClickChain(chain: ChainList) {

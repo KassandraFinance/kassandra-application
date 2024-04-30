@@ -21,7 +21,7 @@ const Pagination = ({
   handlePageClick,
   page = -1
 }: IPaginationProp) => {
-  const pageCount = Math.ceil(totalItems / take)
+  const pageCount = Math.floor(totalItems / take)
 
   function handleClick(data: { selected: number }) {
     handlePageClick(data, take)
