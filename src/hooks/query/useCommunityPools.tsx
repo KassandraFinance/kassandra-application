@@ -21,7 +21,14 @@ export const fetchCommunityPools = async ({
   orderBy
 }: UseCommunityPoolsProps) => {
   return kassandraClient
-    .CommunityPools({ day, first, month, orderDirection, skip, orderBy })
+    .CommunityPools({
+      day,
+      first,
+      month,
+      orderDirection,
+      skip,
+      orderBy
+    })
     .then(res => res)
 }
 

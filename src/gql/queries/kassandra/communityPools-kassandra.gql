@@ -24,6 +24,7 @@ query CommunityPools(
       logo
       address
       unique_investors
+      chain_id
       chain {
         logo: icon
       }

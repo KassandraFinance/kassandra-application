@@ -132,6 +132,25 @@ export const TRLink = styled.a`
   `}
 `
 
+export const SkeletonTR = styled.div`
+  ${() => css`
+    display: grid;
+    grid-template-columns: minmax(10rem, 1.5fr) 1fr 8rem;
+    gap: 1rem;
+
+    text-decoration: none;
+
+    @media (min-width: 768px) {
+      grid-template-columns:
+        minmax(13.9rem, 1.5fr) repeat(2, 1fr) minmax(9rem, 1fr) minmax(
+          6.3rem,
+          1fr
+        )
+        minmax(6.3rem, 1fr);
+    }
+  `}
+`
+
 export const PoolInfoContainer = styled.div`
   ${({ theme }) => css`
     margin-inline: 1.6rem;
@@ -349,6 +368,7 @@ interface ISecondaryTextValueProps {
 export const SecondaryTextValue = styled.span<ISecondaryTextValueProps>`
   ${({ theme }) => css`
     color: #c4c4c4;
+    width: fit-content;
     font-weight: ${theme.font.weight.light};
     font-size: ${theme.font.sizes.font12};
     line-height: 135%;

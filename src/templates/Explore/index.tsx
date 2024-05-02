@@ -130,6 +130,13 @@ export default function Explore() {
     setTotalPoolsTable(communityPools?.kassandras[0].pool_count)
   }, [communityPools])
 
+  const filterdCommunityPool =
+    selectedChains.length > 0
+      ? communityPools?.pools.filter(pool =>
+          selectedChains.includes(pool.chain_id.toString())
+        )
+      : communityPools?.pools
+
   return (
     <S.Explore>
       <S.TitleContainer>
@@ -193,7 +200,7 @@ export default function Explore() {
       {isSelectTab === 'pools' && selectedView === 'list' && (
         <>
           <NewCommunityPoolsTable
-            pools={communityPools?.pools}
+            pools={filterdCommunityPool}
             communityPoolSorted={communityPoolSorted}
             setCommunityPoolSorted={setCommunityPoolSorted}
             orderedBy={orderedBy}

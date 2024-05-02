@@ -7963,6 +7963,7 @@ export type CommunityPoolsQuery = {
     logo?: string | null
     address: string
     unique_investors: number
+    chain_id: number
     price_usd: string
     total_value_locked_usd: string
     is_private_pool: boolean
@@ -9613,6 +9614,7 @@ export const CommunityPoolsDocument = gql`
       logo
       address
       unique_investors
+      chain_id
       chain {
         logo: icon
       }
