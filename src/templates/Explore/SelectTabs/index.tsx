@@ -1,20 +1,11 @@
-import { useRouter } from 'next/router'
 import * as S from './styles'
+import { useRouter } from 'next/router'
 import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
-
-import { gridviewIcon, listViewIcon } from './icons'
 
 type ChainList = {
   name: string
   icon: JSX.Element
   chainId: string
-}
-
-interface SelectTabsProps {
-  tabs: {
-    tabName: string
-    text: string
-  }[]
 }
 
 interface ExploreSelectTabsProps {
@@ -27,33 +18,16 @@ interface ExploreSelectTabsProps {
   >
   selectedView: string
   setSelectedView: React.Dispatch<React.SetStateAction<string>>
+  onFilterClick: () => void
 }
-
-const filterList = [
-  {
-    name: 'first',
-    icon: <img src="/assets/icons/chain-one.svg" />,
-    chainId: 1
-  },
-  {
-    name: 'avalanche',
-    icon: <img src="/assets/icons/chain-two.svg" />,
-    chainId: 2
-  },
-  {
-    name: 'arbitrum',
-    icon: <img src="/assets/icons/chain-three.svg" />,
-    chainId: 3
-  }
-]
 
 const tabs = [
   {
-    tabName: 'pools',
+    tabName: 'allPools',
     text: 'All Pools'
   },
   {
-    tabName: 'managers',
+    tabName: 'myPools',
     text: 'My Pools'
   }
 ]
@@ -65,11 +39,11 @@ export function ExploreSelectTabs({
   selectedChains,
   setSelectedChains,
   selectedView,
-  setSelectedView
+  setSelectedView,
+  onFilterClick
 }: ExploreSelectTabsProps) {
-  const router = useRouter()
-
   function handleClickChain(chain: ChainList) {
+    onFilterClick()
     const allSelected = chainList.every(chain =>
       selectedChains.includes(chain.chainId)
     )
@@ -95,15 +69,7 @@ export function ExploreSelectTabs({
 
   function handleClickTab(tabSelect: string) {
     setIsSelect(tabSelect)
-
-    router.push(
-      {
-        pathname: `${router.pathname}`,
-        query: { ...router.query, tab: `${tabSelect}` }
-      },
-      undefined,
-      { scroll: false }
-    )
+    setSelectedView('list')
   }
 
   return (
@@ -123,6 +89,7 @@ export function ExploreSelectTabs({
       <S.Content>
         <S.LeftContent>
           <ViewOptions
+            isSelect={isSelect}
             selectedView={selectedView}
             setSelectedView={setSelectedView}
           />

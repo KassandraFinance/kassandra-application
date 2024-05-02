@@ -15,6 +15,8 @@ import * as S from './styles'
 import { StakeFarmPools } from './AllPools'
 import { allPools } from '@/constants/pools'
 import { NewSelectTabs } from '@/components/NewSelectTabs'
+import { StakeListView } from './ListView'
+import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
 
 const tabs = [
   {
@@ -79,20 +81,17 @@ const StakeFarm = () => {
 
       <S.TabsContainer>
         <StakeFarmPools numberOfPools={allPoolsNumber} />
-        <NewSelectTabs
-          tabs={tabs}
-          isSelect={isSelectTab}
-          setIsSelect={setIsSelectTab}
+        <ViewOptions
           selectedView={selectedView}
           setSelectedView={setSelectedView}
         />
       </S.TabsContainer>
 
-      {isSelectTab === 'stake' && selectedView === 'list' && 'Table here'}
+      {selectedView === 'list' && <StakeListView />}
 
       <S.StakeFarm>
-        {isSelectTab === 'stake' && selectedView === 'card' && <Stake />}
-        {isSelectTab === 'farm' && selectedView === 'card' && <Farm />}
+        {selectedView === 'grid' && <Stake />}
+        {selectedView === 'grid' && <Farm />}
       </S.StakeFarm>
     </>
   )

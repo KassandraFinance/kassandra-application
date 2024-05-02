@@ -1,4 +1,3 @@
-import { Pool_OrderBy } from '@/gql/generated/kassandraApi'
 import styled, { css, keyframes } from 'styled-components'
 
 export const CommunityPoolsTable = styled.div`
@@ -17,7 +16,7 @@ export const CommunityPoolsTable = styled.div`
   `}
 `
 
-export const PrivatePoolTooltip = styled.p`
+export const Tooltip = styled.p`
   ${() => css`
     padding: 0.4rem;
   `}
@@ -39,12 +38,7 @@ export const TRHead = styled.div`
   margin-inline: 1.6rem;
 
   @media (min-width: 768px) {
-    grid-template-columns:
-      minmax(13.9rem, 1.5fr) repeat(2, 1fr) minmax(9rem, 1fr) minmax(
-        6.3rem,
-        1fr
-      )
-      minmax(6.3rem, 1fr);
+    grid-template-columns: minmax(15rem, 2.5fr) repeat(5, 1fr);
 
     margin-inline: 3.2rem;
   }
@@ -122,12 +116,7 @@ export const TRLink = styled.a`
     cursor: pointer;
 
     @media (min-width: 768px) {
-      grid-template-columns:
-        minmax(13.9rem, 1.5fr) repeat(2, 1fr) minmax(9rem, 1fr) minmax(
-          6.3rem,
-          1fr
-        )
-        minmax(6.3rem, 1fr);
+      grid-template-columns: minmax(15rem, 2.5fr) repeat(5, 1fr);
     }
   `}
 `
@@ -141,12 +130,7 @@ export const SkeletonTR = styled.div`
     text-decoration: none;
 
     @media (min-width: 768px) {
-      grid-template-columns:
-        minmax(13.9rem, 1.5fr) repeat(2, 1fr) minmax(9rem, 1fr) minmax(
-          6.3rem,
-          1fr
-        )
-        minmax(6.3rem, 1fr);
+      grid-template-columns: minmax(15rem, 2.5fr) repeat(5, 1fr);
     }
   `}
 `
@@ -349,6 +333,10 @@ export const TextValue = styled.span`
   ${({ theme }) => css`
     overflow: hidden;
 
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+
     color: ${theme.colors.snow};
     font-weight: ${theme.font.weight.medium};
     font-size: ${theme.font.sizes.font16};
@@ -367,12 +355,10 @@ interface ISecondaryTextValueProps {
 
 export const SecondaryTextValue = styled.span<ISecondaryTextValueProps>`
   ${({ theme }) => css`
+    display: flex;
+    gap: 0.8rem;
     color: #c4c4c4;
     width: fit-content;
-    font-weight: ${theme.font.weight.light};
-    font-size: ${theme.font.sizes.font12};
-    line-height: 135%;
-    letter-spacing: 0.05em;
   `}
   ${({ align }) =>
     align &&
@@ -399,6 +385,11 @@ export const ValueWrapper = styled.div`
     grid-template-columns: 1fr;
     gap: 0.2rem;
   `}
+`
+
+export const FireImage = styled.div`
+  height: 1.6rem;
+  width: 1.6rem;
 `
 
 export const ValueContainer = styled.div`

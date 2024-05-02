@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useRouter } from 'next/router'
 import * as S from './styles'
 import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
@@ -16,24 +15,6 @@ interface SelectTabsProps {
   setSelectedView: React.Dispatch<React.SetStateAction<string>>
 }
 
-const filterList = [
-  {
-    name: 'first',
-    icon: <img src="/assets/icons/chain-one.svg" />,
-    chainId: 1
-  },
-  {
-    name: 'avalanche',
-    icon: <img src="/assets/icons/chain-two.svg" />,
-    chainId: 2
-  },
-  {
-    name: 'arbitrum',
-    icon: <img src="/assets/icons/chain-three.svg" />,
-    chainId: 3
-  }
-]
-
 export function NewSelectTabs({
   tabs,
   isSelect,
@@ -41,8 +22,6 @@ export function NewSelectTabs({
   selectedView,
   setSelectedView
 }: SelectTabsProps) {
-  const [selectedChains, setSelectedChains] = useState<number[]>([1, 2, 3])
-
   const router = useRouter()
 
   function handleClickTab(tabSelect: string) {
@@ -63,6 +42,7 @@ export function NewSelectTabs({
       <S.MobileTabs>
         {tabs.map(tab => (
           <S.TabButton
+            key={`mobile_` + tab.tabName}
             background="transparent"
             text={tab.text}
             className="button"
@@ -74,12 +54,14 @@ export function NewSelectTabs({
       <S.Content>
         <S.LeftContent>
           <ViewOptions
+            isSelect={isSelect}
             selectedView={selectedView}
             setSelectedView={setSelectedView}
           />
           <S.DesktopTabs>
             {tabs.map(tab => (
               <S.TabButton
+                key={tab.tabName}
                 background="transparent"
                 text={tab.text}
                 className="button"

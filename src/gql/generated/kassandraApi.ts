@@ -7950,11 +7950,15 @@ export type CommunityPoolsQueryVariables = Exact<{
   orderDirection?: InputMaybe<OrderDirection>
   first?: InputMaybe<Scalars['Int']['input']>
   skip?: InputMaybe<Scalars['Int']['input']>
+  chainInId?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>
+  chainInString?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >
 }>
 
 export type CommunityPoolsQuery = {
   __typename?: 'Query'
-  kassandras: Array<{ __typename?: 'Kassandra'; pool_count: number }>
+  chains: Array<{ __typename?: 'Chain'; pool_count: number }>
   pools: Array<{
     __typename?: 'Pool'
     id: string
@@ -7963,7 +7967,9 @@ export type CommunityPoolsQuery = {
     logo?: string | null
     address: string
     unique_investors: number
+    fee_join_broker: string
     chain_id: number
+    pool_id?: number | null
     price_usd: string
     total_value_locked_usd: string
     is_private_pool: boolean
@@ -9597,12 +9603,14 @@ export const CommunityPoolsDocument = gql`
     $orderDirection: OrderDirection
     $first: Int
     $skip: Int
+    $chainInId: [ID!]
+    $chainInString: [String!]
   ) {
-    kassandras {
+    chains(where: { id_in: $chainInId }) {
       pool_count
     }
     pools(
-      where: { featured: false }
+      where: { chain_in: $chainInString }
       orderBy: $orderBy
       orderDirection: $orderDirection
       first: $first
@@ -9614,7 +9622,9 @@ export const CommunityPoolsDocument = gql`
       logo
       address
       unique_investors
+      fee_join_broker
       chain_id
+      pool_id
       chain {
         logo: icon
       }

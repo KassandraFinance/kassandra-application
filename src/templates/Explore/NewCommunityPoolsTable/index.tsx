@@ -4,8 +4,9 @@ import Link from 'next/link'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
 import Tippy from '@tippyjs/react'
+import 'tippy.js/dist/tippy.css'
 
-import { calcChange } from '@/utils/numerals'
+import { BNtoDecimal, calcChange } from '@/utils/numerals'
 
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 
@@ -23,6 +24,12 @@ import {
 } from '@ui/Modals/ModalViewCoin/styles'
 import { Pool_OrderBy } from '@/gql/generated/kassandraApi'
 import SkeletonLoading from '@/components/SkeletonLoading'
+import GradientLabel from '@/components/Labels/GradientLabel'
+import Label from '@/components/Labels/Label'
+import { handleGetAPR } from '@/components/StakeCard/utils'
+import { networks } from '@/constants/tokenAddresses'
+import { ZeroAddress } from 'ethers'
+import { useGetAprData } from '@/hooks/query/useGetAprData'
 
 type UnderlyingAssets = {
   token: {
@@ -42,6 +49,9 @@ interface IPoolsInfosProps {
   price_usd: string
   total_value_locked_usd: string
   is_private_pool: boolean
+  chain_id: number
+  pool_id?: number | null
+  fee_join_broker?: string | null
   chain?: {
     logo?: string | null
   } | null
@@ -77,6 +87,7 @@ interface ICommunityPoolsTableProps {
   >
   orderedBy: Pool_OrderBy
   setOrderedBy: React.Dispatch<React.SetStateAction<Pool_OrderBy>>
+  kacyPrice: Big
 }
 
 const NewCommunityPoolsTable = ({
@@ -84,7 +95,8 @@ const NewCommunityPoolsTable = ({
   communityPoolSorted,
   setCommunityPoolSorted,
   orderedBy,
-  setOrderedBy
+  setOrderedBy,
+  kacyPrice
 }: ICommunityPoolsTableProps) => {
   const [inViewCollum, setInViewCollum] = React.useState(1)
   const [isOpen, setIsOpen] = React.useState(false)
@@ -179,6 +191,8 @@ const NewCommunityPoolsTable = ({
         break
     }
   }
+
+  const { data } = useGetAprData({ pools, kacyPrice })
 
   return (
     <S.CommunityPoolsTable>
@@ -286,9 +300,9 @@ const NewCommunityPoolsTable = ({
                               {pool.is_private_pool && (
                                 <Tippy
                                   content={[
-                                    <S.PrivatePoolTooltip key="PrivatePool">
+                                    <S.Tooltip key="PrivatePool">
                                       Private Pool
-                                    </S.PrivatePoolTooltip>
+                                    </S.Tooltip>
                                   ]}
                                 >
                                   <img
@@ -298,11 +312,80 @@ const NewCommunityPoolsTable = ({
                                   />
                                 </Tippy>
                               )}
+
                               {pool.name}
+
+                              {data && data[pool.address]?.gt(0) && (
+                                <Tippy
+                                  content={[
+                                    <S.Tooltip key="Fire">
+                                      With this portfolio, you can Stake and
+                                      earn Kacy. Look at the 'Staking' section
+                                      in this portfolio.
+                                    </S.Tooltip>
+                                  ]}
+                                >
+                                  <S.FireImage>
+                                    <img
+                                      src="/assets/icons/fire.svg"
+                                      alt="fire icon"
+                                      width={16}
+                                      height={16}
+                                    />
+                                  </S.FireImage>
+                                </Tippy>
+                              )}
+
+                              <Tippy
+                                content={[
+                                  <S.Tooltip key="Handshake">
+                                    If you share this pool, you can earn a
+                                    percentage of the deposit fee. Look at the
+                                    'Share & Earn' section in this portfolio.
+                                  </S.Tooltip>
+                                ]}
+                              >
+                                <S.FireImage>
+                                  <img
+                                    src="/assets/icons/handshake.svg"
+                                    alt="handshake icon"
+                                    width={16}
+                                    height={16}
+                                  />
+                                </S.FireImage>
+                              </Tippy>
                             </S.TextValue>
 
                             <S.SecondaryTextValue>
-                              {pool.symbol}
+                              {data && data[pool.address]?.gt(0) && (
+                                <>
+                                  <Tippy
+                                    content={[
+                                      <S.Tooltip key="Apr">
+                                        This is the percentage you can earn if
+                                        you make a deposit in Stake.
+                                      </S.Tooltip>
+                                    ]}
+                                  >
+                                    <div>
+                                      <Label
+                                        text={
+                                          BNtoDecimal(data[pool.address], 0) +
+                                          '%'
+                                        }
+                                      />
+                                    </div>
+                                  </Tippy>
+                                  <GradientLabel
+                                    img={{
+                                      url: '/assets/iconGradient/lightning.svg',
+                                      width: 12,
+                                      height: 12
+                                    }}
+                                    text="$KACY"
+                                  />
+                                </>
+                              )}
                             </S.SecondaryTextValue>
                           </S.ValueWrapper>
                         </S.ValueContainer>
