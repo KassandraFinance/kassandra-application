@@ -130,11 +130,12 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
     const networkInfo = networks[Number(wallet?.chains[0].id ?? '43114')]
 
     const chaindId =
-      networks[Number(wallet?.chains[0].id ?? '')]?.chainId ?? 43114
+      networks[Number(wallet?.chains[0].id ?? 43114)]?.chainId ?? 43114
     const network = new Network(networkInfo.chainName, networkInfo.chainId)
     const provider = new JsonRpcProvider(networks[chaindId].rpc, network, {
       staticNetwork: network
     })
+
     const subgraphTimestamp = await provider.getBlock(
       BigInt(latestBlockData?.subgraphBlock)
     )

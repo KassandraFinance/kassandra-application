@@ -41,7 +41,7 @@ export const GradientLabel = styled.div`
   & > p {
     color: #ffffff;
     font-size: ${theme.font.sizes.font12};
-    font-weight: ${theme.font.weight.light};
+    font-weight: ${theme.font.weight.normal};
     line-height: 1.2rem;
     text-decoration: none;
 
