@@ -13,7 +13,6 @@ import { MyPoolsTable } from './MyPoolsTable'
 import { ExploreAllPools } from './AllPools'
 import SliderPoolList from './SliderPoolList'
 import { ExplorePoolsData } from './PoolsData'
-import { ExploreSelectTabs } from './NewSelectTabs'
 import TitleSection from '../../components/TitleSection'
 
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
@@ -29,6 +28,8 @@ import { useCommunityPools } from '@/hooks/query/useCommunityPools'
 import Pagination from '@/components/Pagination'
 import { Pool_OrderBy } from '@/gql/generated/kassandraApi'
 import { usePoolsWithFeeJoinBroker } from '@/hooks/query/usePoolsWithJoinBrokerFee'
+import { ExploreSelectTabs } from './SelectTabs'
+import Big from 'big.js'
 
 const chainList = [
   {
@@ -53,7 +54,7 @@ export default function Explore() {
     chainList.map(item => item.chainId)
   )
   const [isSelectTab, setIsSelectTab] = useState<string | string[] | undefined>(
-    'pools'
+    'allPools'
   )
 
   const networkChain = networks[137]
@@ -101,13 +102,22 @@ export default function Explore() {
     orderBy: orderedBy,
     orderDirection: communityPoolSorted,
     first: take,
-    skip
+    skip,
+    chainIn: selectedChains
   })
 
   React.useEffect(() => {
     if (!communityPools?.pools.length) return
-    setTotalPoolsTable(communityPools?.kassandras[0].pool_count)
+    setTotalPoolsTable(
+      communityPools?.chains
+        .flatMap(chain => chain.pool_count)
+        .reduce((acc, cv) => acc + cv, 0)
+    )
   }, [communityPools])
+
+  function onClickChainResetPagination() {
+    setSkip(0)
+  }
 
   return (
     <S.Explore>
@@ -141,9 +151,10 @@ export default function Explore() {
           setSelectedView(view)
         }
         selectedView={selectedView}
+        onFilterClick={onClickChainResetPagination}
       />
 
-      {isSelectTab === 'pools' && selectedView === 'grid' && (
+      {isSelectTab === 'allPools' && selectedView === 'grid' && (
         <div>
           <S.ExploreContainer>
             <TitleSection image={featuredFunds} title="Popular Pools" text="" />
@@ -174,11 +185,11 @@ export default function Explore() {
         </div>
       )}
 
-      {isSelectTab === 'managers' && (
+      {isSelectTab === 'myPools' && (
         <MyPoolsTable selectedChains={selectedChains} />
       )}
 
-      {isSelectTab === 'pools' && selectedView === 'list' && (
+      {isSelectTab === 'allPools' && selectedView === 'list' && (
         <>
           <NewCommunityPoolsTable
             pools={communityPools?.pools}
@@ -186,6 +197,7 @@ export default function Explore() {
             setCommunityPoolSorted={setCommunityPoolSorted}
             orderedBy={orderedBy}
             setOrderedBy={setOrderedBy}
+            kacyPrice={Big(kacyPrice)}
           />
           <S.PaginationWrapper>
             <Pagination

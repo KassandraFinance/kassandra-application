@@ -5,13 +5,19 @@ query CommunityPools(
     $orderDirection: OrderDirection
     $first: Int
     $skip: Int
+    $chainInId: [ID!]
+    $chainInString: [String!]
   ) {
-    kassandras {
+    chains (
+      where: {
+        id_in: $chainInId
+      }
+    ) {
       pool_count
     }
     pools(
       where: {
-         featured: false
+         chain_in: $chainInString
       }
       orderBy: $orderBy
       orderDirection: $orderDirection
@@ -24,6 +30,9 @@ query CommunityPools(
       logo
       address
       unique_investors
+      fee_join_broker
+      chain_id
+      pool_id
       chain {
         logo: icon
       }

@@ -10,6 +10,7 @@ type UseCommunityPoolsProps = {
   orderDirection: OrderDirection
   skip: number
   orderBy: Pool_OrderBy
+  chainIn: string[]
 }
 
 export const fetchCommunityPools = async ({
@@ -18,10 +19,20 @@ export const fetchCommunityPools = async ({
   month,
   orderDirection,
   skip,
-  orderBy
+  orderBy,
+  chainIn
 }: UseCommunityPoolsProps) => {
   return kassandraClient
-    .CommunityPools({ day, first, month, orderDirection, skip, orderBy })
+    .CommunityPools({
+      day,
+      first,
+      month,
+      orderDirection,
+      skip,
+      orderBy,
+      chainInId: chainIn,
+      chainInString: chainIn
+    })
     .then(res => res)
 }
 
@@ -31,17 +42,17 @@ export const useCommunityPools = ({
   month,
   orderDirection,
   skip,
-  orderBy
+  orderBy,
+  chainIn
 }: UseCommunityPoolsProps) => {
   return useQuery({
     queryKey: [
       'community-pools',
-      day,
       first,
-      month,
       orderDirection,
       skip,
-      orderBy
+      orderBy,
+      chainIn
     ],
     queryFn: async () =>
       fetchCommunityPools({
@@ -50,7 +61,8 @@ export const useCommunityPools = ({
         month,
         orderDirection,
         skip,
-        orderBy
+        orderBy,
+        chainIn
       }),
     staleTime: 1000 * 60,
     refetchInterval: 1000 * 60,
