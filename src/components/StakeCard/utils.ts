@@ -48,6 +48,14 @@ export const handleGetAPR = async (
     const totalStaked = Big(poolData.depositedAmount.toString())
     const kacyRewards = Big(poolData.rewardRate.toString()).mul(Big(86400))
 
+    const timestampNow = new Date().getTime()
+    const periodFinish = new Date(
+      Number(poolData.periodFinish) * 1000
+    ).getTime()
+    const hasExpired = periodFinish < timestampNow
+
+    if (hasExpired) return Big(0)
+
     const apr = handleCalcAPR({
       kacyPrice: kacyPrice,
       poolPrice: poolPrice,

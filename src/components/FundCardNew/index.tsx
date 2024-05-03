@@ -2,6 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import Big from 'big.js'
 import { ZeroAddress } from 'ethers'
+import Tippy from '@tippyjs/react'
+import 'tippy.js/dist/tippy.css'
 
 import { networks } from '@/constants/tokenAddresses'
 
@@ -85,6 +87,7 @@ export type PoolData = {
   chain_id: number
   featured: boolean
   strategy: string
+  fee_join_broker: string
   total_value_locked_usd: string
   now: Candlestick[]
   day: Candlestick[]
@@ -216,7 +219,7 @@ const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
       Big(kacyPrice ?? 0),
       Big(poolData.price_usd ?? 0)
     )
-  }, [kacyPrice])
+  }, [kacyPrice, poolData])
 
   return (
     <S.CardContainer isLink={!!link}>
@@ -248,10 +251,21 @@ const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
                 <SkeletonLoading height={5.6} width={5.6} borderRadios={50} />
               )}
 
-              {poolData?.pool_id && (
-                <div>
+              {poolData?.pool_id && poolAPR?.gt(0) && (
+                <Tippy content="With this portfolio, you can Stake and earn Kacy. Look at the 'Staking' section in this portfolio.">
                   <img src="/assets/icons/fire.svg" alt="fire icon" />
-                </div>
+                </Tippy>
+              )}
+
+              {Big(poolData?.fee_join_broker ?? 0).gt(0) && (
+                <Tippy content="If you share this pool, you can earn a percentage of the deposit fee. Look at the 'Share & Earn' section in this portfolio. ">
+                  <img
+                    src="/assets/icons/handshake.svg"
+                    alt="handshake icon"
+                    width={26}
+                    height={18}
+                  />
+                </Tippy>
               )}
             </S.ImageContainer>
 
@@ -276,18 +290,22 @@ const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
                 by {poolData?.manager.nickname ?? substr(poolData?.manager?.id ?? '')}
               </span> */}
 
-              {poolData?.pool_id && poolAPR && (
-                <S.LabelContent>
-                  <Label text={BNtoDecimal(poolAPR, 0) + '%'} />
-                  <GradientLabel
-                    text="$KACY"
-                    img={{
-                      url: '/assets/iconGradient/lightning.svg',
-                      width: 12,
-                      height: 12
-                    }}
-                  />
-                </S.LabelContent>
+              {poolData?.pool_id && poolAPR?.gt(0) && (
+                <S.LabelContainer>
+                  <Tippy content="This is the percentage you can earn if you make a deposit in staking.">
+                    <S.LabelContent>
+                      <Label text={BNtoDecimal(poolAPR, 0) + '%'} />
+                      <GradientLabel
+                        text="$KACY"
+                        img={{
+                          url: '/assets/iconGradient/lightning.svg',
+                          width: 12,
+                          height: 12
+                        }}
+                      />
+                    </S.LabelContent>
+                  </Tippy>
+                </S.LabelContainer>
               )}
             </S.FundName>
 

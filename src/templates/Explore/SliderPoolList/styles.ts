@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
+import { CardContainer } from '@/components/FundCardNew/styles'
 
 export const SliderPoolList = styled.div`
   ${() => css`
@@ -9,6 +10,13 @@ export const SliderPoolList = styled.div`
       padding: 1.6rem;
       height: 45rem !important;
     }
+
+    .slick-slide.slick-active.slick-current {
+      ${CardContainer} {
+        margin: 0 auto;
+      }
+    }
+
     .slick-arrow.slick-prev {
       &::before {
         content: '';
@@ -78,6 +86,10 @@ export const SliderPoolList = styled.div`
 
     .slick-dots {
       margin-top: 0.8rem;
+
+      @media (max-width: 800px) {
+        margin-top: -2rem;
+      }
 
       button {
         width: 1rem;
