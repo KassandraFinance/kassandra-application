@@ -14,35 +14,35 @@ interface ISliderPoolListProps {
   kacyPrice?: string
 }
 
-function SliderPoolList({ poolData, kacyPrice }: ISliderPoolListProps) {
-  const settings: Settings = {
-    dots: true,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 3,
-    initialSlide: 0,
-    responsive: [
-      {
-        breakpoint: 1200,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          infinite: true,
-          dots: true
-        }
-      },
-      {
-        breakpoint: 700,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          initialSlide: 1
-        }
+const settings: Settings = {
+  dots: true,
+  infinite: false,
+  speed: 500,
+  slidesToShow: 3,
+  slidesToScroll: 3,
+  initialSlide: 0,
+  responsive: [
+    {
+      breakpoint: 1200,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2,
+        infinite: true,
+        dots: true
       }
-    ]
-  }
+    },
+    {
+      breakpoint: 800,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        initialSlide: 1
+      }
+    }
+  ]
+}
 
+function SliderPoolList({ poolData, kacyPrice }: ISliderPoolListProps) {
   return (
     <S.SliderPoolList>
       <Slider {...settings}>
@@ -52,7 +52,7 @@ function SliderPoolList({ poolData, kacyPrice }: ISliderPoolListProps) {
               key={pool.id}
               poolData={pool}
               kacyPrice={kacyPrice}
-              link={`/pool/${pool.address}`}
+              link={`/pool/${pool.id}`}
             />
           )
         })}

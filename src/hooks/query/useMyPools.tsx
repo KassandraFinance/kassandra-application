@@ -60,7 +60,7 @@ export const fetchMyPools = async ({
     })
   }
 
-  return myPoolsList
+  return myPoolsList.sort((a, b) => Number(b.balance) - Number(a.balance))
 }
 
 export const useMyPools = ({ userWallet, chainIn, day, month }: UseMyPools) => {

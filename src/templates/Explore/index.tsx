@@ -17,8 +17,9 @@ import { ExploreSelectTabs } from './NewSelectTabs'
 import TitleSection from '../../components/TitleSection'
 
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
-import managerIcon from '../../../public/assets/iconGradient/manager.svg'
-import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
+import ShareEarnIcon from '@assets/icons/handshake.svg'
+// import managerIcon from '../../../public/assets/iconGradient/manager.svg'
+// import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
 
 import * as S from './styles'
 import NewCommunityPoolsTable, {
@@ -27,6 +28,7 @@ import NewCommunityPoolsTable, {
 import { useCommunityPools } from '@/hooks/query/useCommunityPools'
 import Pagination from '@/components/Pagination'
 import { Pool_OrderBy } from '@/gql/generated/kassandraApi'
+import { usePoolsWithFeeJoinBroker } from '@/hooks/query/usePoolsWithJoinBrokerFee'
 
 const chainList = [
   {
@@ -44,18 +46,6 @@ const chainList = [
     icon: <img src="/assets/icons/arbitrum.svg" />,
     chainId: '42161'
   }
-]
-
-const addressOrderList = [
-  '1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d',
-  '421610x2ae2baeec8ccd16075d821832ffee9172bae36760001000000000000000004f1',
-  '431140x856561c3b21efca7e483b1ad197e4ab5fb56ccdb000100000000000000000048',
-  '1370x416101d98df2187ddc0ff29b787ded19dd8c9740000100000000000000000e57',
-  '421610xc3f47f3627305213adaa021ccccb61d5987eaa97000100000000000000000532',
-  '1370x107cb7c6d67ad745c50d7d4627335c1c6a684003000100000000000000000c37',
-  '421610x69a670bcbf82e8099bbd70bb2cdb16e05a928f6c0001000000000000000004ae',
-  '1370xa1ecb0981d74bd9e31fcd7a38fa3fdebcc7ccff4000100000000000000000c39',
-  '421610xf69d5e7c0eb43127d5874121867fb763f2967dbb0001000000000000000004b0'
 ]
 
 export default function Explore() {
@@ -89,6 +79,7 @@ export default function Explore() {
   const { data: poolsKassandra } = useFeaturedPools(params)
   const { data: largestPools } = useLargestPools(params)
   const { data: poolsData } = useExploreOverviewPools()
+  const { data: poolWithFeeJoinBroker } = usePoolsWithFeeJoinBroker(params)
   const { data: whiteListTokenCount } = useWhiteListTokensCount({
     chainIdList: chainList.map(item => item.chainId)
   })
@@ -159,6 +150,15 @@ export default function Explore() {
 
             <SliderPoolList
               poolData={poolsKassandra?.poolsKassandra ?? new Array(9).fill({})}
+              kacyPrice={kacyPrice}
+            />
+          </S.ExploreContainer>
+
+          <S.ExploreContainer>
+            <TitleSection image={ShareEarnIcon} title="Share & Earn" text="" />
+
+            <SliderPoolList
+              poolData={poolWithFeeJoinBroker?.pools ?? new Array(9).fill({})}
               kacyPrice={kacyPrice}
             />
           </S.ExploreContainer>

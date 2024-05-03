@@ -5,7 +5,7 @@ query FeaturedPools (
   $month: Int!
   $chainIn: [String!]
 ) {
-  poolsKassandra: pools (where: { featured: true, chain_in: $chainIn }) {
+  poolsKassandra: pools (orderBy: unique_investors, orderDirection: desc, where: { featured: true, chain_in: $chainIn }) {
       id
       name
       symbol
@@ -17,6 +17,7 @@ query FeaturedPools (
       price_usd
       pool_version
       featured
+      fee_join_broker
       manager {
         id
         nickname
