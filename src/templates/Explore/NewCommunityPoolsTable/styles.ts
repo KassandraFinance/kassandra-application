@@ -32,10 +32,10 @@ export const THead = styled.div`
 
 export const TRHead = styled.div`
   display: grid;
-  grid-template-columns: minmax(10rem, 1.5fr) 1fr 8rem;
+  grid-template-columns: minmax(10rem, 2fr) 1fr 6rem;
   gap: 1rem;
 
-  margin-inline: 1.6rem;
+  margin-inline: 1.6rem 0.8rem;
 
   @media (min-width: 768px) {
     grid-template-columns: minmax(15rem, 2.5fr) repeat(5, 1fr);
@@ -71,7 +71,7 @@ export const TBodyWithHeight = styled(TBody)<ICommunityPoolsTBodyProps>`
 
 export const TR = styled.div`
   ${({ theme }) => css`
-    margin-inline: 1.6rem;
+    margin-inline: 0.8rem;
     border-top: 1px solid transparent;
 
     transition-timing-function: ease-in-out;
@@ -96,6 +96,7 @@ export const TR = styled.div`
 
       @media (min-width: 768px) {
         padding-inline: 2.4rem;
+        margin-inline: 1.6rem;
       }
     }
 
@@ -108,7 +109,7 @@ export const TR = styled.div`
 export const TRLink = styled.a`
   ${() => css`
     display: grid;
-    grid-template-columns: minmax(10rem, 1.5fr) 1fr 8rem;
+    grid-template-columns: minmax(10rem, 2fr) 1fr 6rem;
     gap: 1rem;
 
     text-decoration: none;
@@ -211,6 +212,7 @@ export const TD = styled.div<ITDProps>`
 
     width: 100%;
     height: 8.4rem;
+    overflow: hidden;
 
     animation: ${tableAnim} 0.4s ease;
 
@@ -619,5 +621,21 @@ export const SkeletonContainer = styled.div`
   }
   @media (max-width: 576px) {
     padding-left: 2rem;
+  }
+`
+
+export const MobileIcons = styled.div`
+  display: flex;
+  gap: 0.4rem;
+  @media (min-width: 768px) {
+    display: none;
+  }
+`
+
+export const DesktopIcons = styled.div`
+  display: none;
+  @media (min-width: 768px) {
+    display: flex;
+    gap: 0.8rem;
   }
 `

@@ -297,6 +297,51 @@ const NewCommunityPoolsTable = ({
 
                           <S.ValueWrapper>
                             <S.TextValue id="privatePool">
+                              <S.MobileIcons>
+                                {data && data[pool.address]?.gt(0) && (
+                                  <Tippy
+                                    content={[
+                                      <S.Tooltip key="Fire">
+                                        With this portfolio, you can Stake and
+                                        earn Kacy. Look at the 'Staking' section
+                                        in this portfolio.
+                                      </S.Tooltip>
+                                    ]}
+                                  >
+                                    <S.FireImage>
+                                      <img
+                                        src="/assets/icons/fire.svg"
+                                        alt="fire icon"
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </S.FireImage>
+                                  </Tippy>
+                                )}
+
+                                {Number(pool.fee_join_broker) > 0 && (
+                                  <Tippy
+                                    content={[
+                                      <S.Tooltip key="Handshake">
+                                        If you share this pool, you can earn a
+                                        percentage of the deposit fee. Look at
+                                        the 'Share & Earn' section in this
+                                        portfolio.
+                                      </S.Tooltip>
+                                    ]}
+                                  >
+                                    <S.FireImage>
+                                      <img
+                                        src="/assets/icons/handshake.svg"
+                                        alt="handshake icon"
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </S.FireImage>
+                                  </Tippy>
+                                )}
+                              </S.MobileIcons>
+
                               {pool.is_private_pool && (
                                 <Tippy
                                   content={[
@@ -315,45 +360,50 @@ const NewCommunityPoolsTable = ({
 
                               {pool.name}
 
-                              {data && data[pool.address]?.gt(0) && (
-                                <Tippy
-                                  content={[
-                                    <S.Tooltip key="Fire">
-                                      With this portfolio, you can Stake and
-                                      earn Kacy. Look at the 'Staking' section
-                                      in this portfolio.
-                                    </S.Tooltip>
-                                  ]}
-                                >
-                                  <S.FireImage>
-                                    <img
-                                      src="/assets/icons/fire.svg"
-                                      alt="fire icon"
-                                      width={16}
-                                      height={16}
-                                    />
-                                  </S.FireImage>
-                                </Tippy>
-                              )}
+                              <S.DesktopIcons>
+                                {data && data[pool.address]?.gt(0) && (
+                                  <Tippy
+                                    content={[
+                                      <S.Tooltip key="Fire">
+                                        With this portfolio, you can Stake and
+                                        earn Kacy. Look at the 'Staking' section
+                                        in this portfolio.
+                                      </S.Tooltip>
+                                    ]}
+                                  >
+                                    <S.FireImage>
+                                      <img
+                                        src="/assets/icons/fire.svg"
+                                        alt="fire icon"
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </S.FireImage>
+                                  </Tippy>
+                                )}
 
-                              <Tippy
-                                content={[
-                                  <S.Tooltip key="Handshake">
-                                    If you share this pool, you can earn a
-                                    percentage of the deposit fee. Look at the
-                                    'Share & Earn' section in this portfolio.
-                                  </S.Tooltip>
-                                ]}
-                              >
-                                <S.FireImage>
-                                  <img
-                                    src="/assets/icons/handshake.svg"
-                                    alt="handshake icon"
-                                    width={16}
-                                    height={16}
-                                  />
-                                </S.FireImage>
-                              </Tippy>
+                                {Number(pool.fee_join_broker) > 0 && (
+                                  <Tippy
+                                    content={[
+                                      <S.Tooltip key="Handshake">
+                                        If you share this pool, you can earn a
+                                        percentage of the deposit fee. Look at
+                                        the 'Share & Earn' section in this
+                                        portfolio.
+                                      </S.Tooltip>
+                                    ]}
+                                  >
+                                    <S.FireImage>
+                                      <img
+                                        src="/assets/icons/handshake.svg"
+                                        alt="handshake icon"
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </S.FireImage>
+                                  </Tippy>
+                                )}
+                              </S.DesktopIcons>
                             </S.TextValue>
 
                             <S.SecondaryTextValue>
