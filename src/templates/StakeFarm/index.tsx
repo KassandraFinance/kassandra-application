@@ -80,11 +80,11 @@ const StakeFarm = () => {
       </S.StakeFarmHeader>
 
       <S.TabsContainer>
-        <StakeFarmPools numberOfPools={allPoolsNumber} />
         <ViewOptions
           selectedView={selectedView}
           setSelectedView={setSelectedView}
         />
+        <StakeFarmPools numberOfPools={allPoolsNumber} />
       </S.TabsContainer>
 
       {selectedView === 'list' && <StakeListView />}

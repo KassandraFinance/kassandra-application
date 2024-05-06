@@ -88,31 +88,39 @@ export function StakeListView() {
         {poolMockData.map(mockData => (
           <S.Content>
             <S.TopContent>
-              <S.PoolNameAndImage>
-                <S.Imagecontainer>
-                  <S.ImageWrapper>
-                    <Image src={mockData.logoUrl} layout="fill" />
-                  </S.ImageWrapper>
+              <S.TopContentMobile>
+                <S.PoolNameAndImage>
+                  <S.Imagecontainer>
+                    <S.ImageWrapper>
+                      <Image src={mockData.logoUrl} layout="fill" />
+                    </S.ImageWrapper>
 
-                  <S.ChainLogoWrapper>
-                    <Image src={mockData.chainLogoUrl} layout="fill" />
-                  </S.ChainLogoWrapper>
-                </S.Imagecontainer>
-                <S.PoolText>
-                  <S.PoolTitle>{mockData.name}</S.PoolTitle>
-                  <S.LabelsContainer>
-                    <GradientLabel
-                      img={{
-                        url: '/assets/iconGradient/lightning.svg',
-                        width: 12,
-                        height: 12
-                      }}
-                      text="STAKE & EARN"
-                    />
-                    <Label text="0,25%" />
-                  </S.LabelsContainer>
-                </S.PoolText>
-              </S.PoolNameAndImage>
+                    <S.ChainLogoWrapper>
+                      <Image src={mockData.chainLogoUrl} layout="fill" />
+                    </S.ChainLogoWrapper>
+                  </S.Imagecontainer>
+                  <S.PoolText>
+                    <S.PoolTitle>{mockData.name}</S.PoolTitle>
+                    <S.LabelsContainer>
+                      <GradientLabel
+                        img={{
+                          url: '/assets/iconGradient/lightning.svg',
+                          width: 12,
+                          height: 12
+                        }}
+                        text="STAKE & EARN"
+                      />
+                      <Label text="0,25%" />
+                    </S.LabelsContainer>
+                  </S.PoolText>
+                </S.PoolNameAndImage>
+                <S.IconWrapperMobile
+                  isExpanded={isExpanded}
+                  onClick={handleExpandToggle}
+                >
+                  <Image src={arrowDownThin} width={24} height={14} />
+                </S.IconWrapperMobile>
+              </S.TopContentMobile>
               <S.RegularContent>
                 <S.RegularColumn>
                   <h3>Voting Power</h3>
@@ -143,12 +151,12 @@ export function StakeListView() {
                 size="large"
                 icon={rightArrowIcon}
               />
-              <S.IconWrapper
+              <S.IconWrapperDesktop
                 isExpanded={isExpanded}
                 onClick={handleExpandToggle}
               >
                 <Image src={arrowDownThin} width={24} height={14} />
-              </S.IconWrapper>
+              </S.IconWrapperDesktop>
             </S.TopContent>
 
             {isExpanded && (

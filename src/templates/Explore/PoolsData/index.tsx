@@ -41,7 +41,7 @@ export function ExplorePoolsData({
     },
     {
       icon: <img src="/assets/icons/wallet.svg" alt="an icon of a wallet" />,
-      name: 'Depositors',
+      name: 'Investors',
       amount: numDeposits
     }
   ]

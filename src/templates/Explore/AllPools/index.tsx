@@ -41,12 +41,14 @@ export function ExploreAllPools({ numberOfPools }: ExploreAllPools) {
     <S.AllPoolsWrapper>
       <S.Content>
         <S.TextContent>
-          All Pools <S.PoolsNumber>({numberOfPools})</S.PoolsNumber>
+          Din't find what you were looking for?
+          <span>Why not create your own?</span>
+          {/* <S.PoolsNumber>({numberOfPools})</S.PoolsNumber> */}
         </S.TextContent>
         <Button
-          background="secondary"
-          size="large"
-          text="Create Pool"
+          background="primary"
+          size="huge"
+          text="Create Your Pool"
           className="button"
           onClick={handleCreatePool}
         />

@@ -6,6 +6,14 @@ export const Wrapper = styled.div`
   gap: 3.2rem;
   background: rgba(252, 252, 252, 0.05);
   padding: 4rem;
+
+  @media (max-width: 960px) {
+    padding: 2.4rem;
+  }
+
+  @media (max-width: 560px) {
+    padding: 1.6rem;
+  }
 `
 
 export const ContentWrapper = styled.div`
@@ -30,10 +38,6 @@ export const TitleContent = styled.div`
 `
 
 export const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
   width: 100%;
   border-radius: 1.6rem;
   background: rgba(0, 0, 0, 0.25);
@@ -42,12 +46,35 @@ export const Content = styled.div`
 
 export const TopContent = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 11.6rem;
   padding-inline: 1.6rem;
+  padding-block: 3.2rem;
+  justify-content: space-between;
+
+  @media (max-width: 560px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2.4rem;
+    padding-block: 2.4rem;
+
+    button {
+      display: none;
+    }
+  }
 `
+
+export const TopContentMobile = styled.div`
+  display: hidden;
+
+  @media (max-width: 960px) {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+  }
+`
+
 export const PoolNameAndImage = styled.div`
   display: flex;
   gap: 2.4rem;
@@ -113,6 +140,10 @@ export const LabelsContainer = styled.div`
 export const RegularContent = styled.div`
   display: flex;
   gap: 4.8rem;
+
+  @media (max-width: 960px) {
+    gap: 1.6rem;
+  }
 `
 export const RegularColumn = styled.div`
   display: flex;
@@ -153,7 +184,7 @@ interface IconWrapperProps {
   isExpanded?: boolean
 }
 
-export const IconWrapper = styled.div<IconWrapperProps>`
+export const IconWrapperDesktop = styled.div<IconWrapperProps>`
   position: relative;
   display: flex;
   width: 2.4rem;
@@ -162,6 +193,17 @@ export const IconWrapper = styled.div<IconWrapperProps>`
   img {
     ${props => (props.isExpanded ? `transform: rotate(180deg)` : null)};
     transition: transform 300ms ease-in-out;
+  }
+
+  @media (max-width: 960px) {
+    display: none;
+  }
+`
+
+export const IconWrapperMobile = styled(IconWrapperDesktop)`
+  display: none;
+  @media (max-width: 960px) {
+    display: flex;
   }
 `
 
@@ -197,7 +239,6 @@ export const ExpandedContentBlock = styled.div`
   width: 100%;
   background: rgba(252, 252, 252, 0.05);
   border: 1px solid rgba(252, 252, 252, 0.15);
-  height: 9.2rem;
   border-radius: 0.8rem;
   font-size: 1.6rem;
   font-weight: 300;

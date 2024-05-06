@@ -54,7 +54,7 @@ export default function Explore() {
     chainList.map(item => item.chainId)
   )
   const [isSelectTab, setIsSelectTab] = useState<string | string[] | undefined>(
-    'allPools'
+    'discover'
   )
 
   const networkChain = networks[137]
@@ -94,7 +94,7 @@ export default function Explore() {
   const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
   const [skip, setSkip] = React.useState(0)
 
-  const take = 10
+  const take = 20
 
   const { data: communityPools } = useCommunityPools({
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
@@ -135,10 +135,6 @@ export default function Explore() {
             whiteListTokenCount ? whiteListTokenCount.toString() : '0'
           }
         />
-
-        <ExploreAllPools
-          numberOfPools={poolsData ? poolsData[0].pool_count.toString() : '0'}
-        />
       </S.ExplorePoolsWrapper>
 
       <ExploreSelectTabs
@@ -154,7 +150,7 @@ export default function Explore() {
         onFilterClick={onClickChainResetPagination}
       />
 
-      {isSelectTab === 'allPools' && selectedView === 'grid' && (
+      {isSelectTab === 'discover' && (
         <div>
           <S.ExploreContainer>
             <TitleSection image={featuredFunds} title="Popular Pools" text="" />
@@ -189,7 +185,7 @@ export default function Explore() {
         <MyPoolsTable selectedChains={selectedChains} />
       )}
 
-      {isSelectTab === 'allPools' && selectedView === 'list' && (
+      {isSelectTab === 'allPools' && (
         <>
           <NewCommunityPoolsTable
             pools={communityPools?.pools}
@@ -211,6 +207,10 @@ export default function Explore() {
           </S.PaginationWrapper>
         </>
       )}
+
+      <ExploreAllPools
+        numberOfPools={poolsData ? poolsData[0].pool_count.toString() : '0'}
+      />
     </S.Explore>
   )
 }

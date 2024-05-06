@@ -23,6 +23,10 @@ interface ExploreSelectTabsProps {
 
 const tabs = [
   {
+    tabName: 'discover',
+    text: 'Discover'
+  },
+  {
     tabName: 'allPools',
     text: 'All Pools'
   },
@@ -88,11 +92,11 @@ export function ExploreSelectTabs({
       </S.MobileTabs>
       <S.Content>
         <S.LeftContent>
-          <ViewOptions
+          {/* <ViewOptions
             isSelect={isSelect}
             selectedView={selectedView}
             setSelectedView={setSelectedView}
-          />
+          /> */}
 
           <S.DesktopTabs>
             {tabs.map(tab => (
