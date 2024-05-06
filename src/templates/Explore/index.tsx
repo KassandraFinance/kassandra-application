@@ -94,7 +94,7 @@ export default function Explore() {
   const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
   const [skip, setSkip] = React.useState(0)
 
-  const take = 8
+  const take = 10
 
   const { data: communityPools } = useCommunityPools({
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
