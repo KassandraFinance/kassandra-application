@@ -13,6 +13,7 @@ export type IbackgroundVoteProps = {
 }
 
 export type ButtonProps = {
+  rightIcon?: boolean
   text?: string
   as?: React.ElementType
   size?: ISizeProps
@@ -37,6 +38,7 @@ const ButtonBase: React.ForwardRefRenderFunction<
     fullWidth = false,
     disabledNoEvent = false,
     text,
+    rightIcon,
     image = '',
     ...props
   },
@@ -54,14 +56,29 @@ const ButtonBase: React.ForwardRefRenderFunction<
       ref={ref}
       {...props}
     >
-      {image.length > 0 ? (
-        <S.ImgWrapper>
-          <img src={image} alt="User image" width={18} height={18} />
-        </S.ImgWrapper>
+      {!rightIcon ? (
+        <>
+          {image.length > 0 ? (
+            <S.ImgWrapper>
+              <img src={image} alt="User image" width={18} height={18} />
+            </S.ImgWrapper>
+          ) : (
+            icon
+          )}
+          {text}
+        </>
       ) : (
-        icon
+        <>
+          {text}
+          {image.length > 0 ? (
+            <S.ImgWrapper>
+              <img src={image} alt="User image" width={18} height={18} />
+            </S.ImgWrapper>
+          ) : (
+            icon
+          )}
+        </>
       )}
-      {text}
     </S.Wrapper>
   )
 }

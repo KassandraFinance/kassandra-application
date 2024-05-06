@@ -19,6 +19,7 @@ export const ContentWrapper = styled.div`
 
 export const TitleContent = styled.div`
   display: flex;
+  align-items: center;
   gap: 1.6rem;
   height: 4rem;
   border-bottom: 1px solid rgba(252, 252, 252, 0.05);
@@ -30,13 +31,22 @@ export const TitleContent = styled.div`
 
 export const Content = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
-  padding-inline: 1.6rem;
-  padding-block: 3.2rem;
   border-radius: 1.6rem;
   background: rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(252, 252, 252, 0.08);
+`
+
+export const TopContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 11.6rem;
+  padding-inline: 1.6rem;
 `
 export const PoolNameAndImage = styled.div`
   display: flex;
@@ -108,6 +118,7 @@ export const RegularColumn = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 0.8rem;
 
   h3 {
     font-family: Rubik;
@@ -138,13 +149,91 @@ export const BoldColumn = styled(RegularColumn)`
   }
 `
 
-export const IconWrapper = styled.div`
-  width: 1.4rem;
-  height: 2.4rem;
+interface IconWrapperProps {
+  isExpanded?: boolean
+}
+
+export const IconWrapper = styled.div<IconWrapperProps>`
+  position: relative;
+  display: flex;
+  width: 2.4rem;
+  height: 1.4rem;
+
+  img {
+    ${props => (props.isExpanded ? `transform: rotate(180deg)` : null)};
+    transition: transform 300ms ease-in-out;
+  }
 `
 
-export const ExpandedContent = styled.div``
-export const ExpandedTextContent = styled.div``
-export const ExpandedContentBlock = styled.div``
-export const ExpandedFooter = styled.div``
-export const ExpandedContentButtons = styled.div``
+export const ExpandedWrapper = styled.div`
+  width: 100%;
+  border-top: 1px solid rgba(252, 252, 252, 0.08);
+`
+
+export const ExpandedContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding-inline: 1.6rem;
+  padding-block: 2.4rem;
+  gap: 3.2rem;
+`
+export const ExpandedTextContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+`
+
+export const BlocksWrapper = styled.div`
+  display: flex;
+  gap: 3.2rem;
+  width: 100%;
+`
+export const ExpandedContentBlock = styled.div`
+  padding: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  width: 100%;
+  background: rgba(252, 252, 252, 0.05);
+  border: 1px solid rgba(252, 252, 252, 0.15);
+  height: 9.2rem;
+  border-radius: 0.8rem;
+  font-size: 1.6rem;
+  font-weight: 300;
+  line-height: 1.8rem;
+
+  p {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  span {
+    font-weight: 500;
+    color: #fcfcfc;
+  }
+`
+export const ExpandedFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.6rem;
+  font-weight: 300;
+  line-height: 1.6rem;
+
+  a,
+  p {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+`
+export const ExpandedContentButtons = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3.2rem;
+
+  button {
+    max-width: 28.6rem;
+    min-width: 20rem;
+  }
+`
