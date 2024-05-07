@@ -53,8 +53,8 @@ const tabs = [
     icon: walletIcon
   },
   {
-    asPathText: 'managed-pools',
-    text: 'Managed Pools',
+    asPathText: 'managed-portfolios',
+    text: 'Managed Portfolios',
     icon: profileIcon
   },
   {

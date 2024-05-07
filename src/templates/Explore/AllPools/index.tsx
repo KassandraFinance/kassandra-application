@@ -10,11 +10,7 @@ import {
 import { VERSION_POOL_CREATE } from '@/constants/tokenAddresses'
 import CreatePool from '@/templates/Manage/CreatePool'
 
-interface ExploreAllPools {
-  numberOfPools: string
-}
-
-export function ExploreAllPools({ numberOfPools }: ExploreAllPools) {
+export function ExploreAllPools() {
   const [isCreatePool, setIsCreatePool] = React.useState(false)
   const dispatch = useAppDispatch()
 
@@ -43,12 +39,11 @@ export function ExploreAllPools({ numberOfPools }: ExploreAllPools) {
         <S.TextContent>
           Din't find what you were looking for?
           <span>Why not create your own?</span>
-          {/* <S.PoolsNumber>({numberOfPools})</S.PoolsNumber> */}
         </S.TextContent>
         <Button
           background="primary"
           size="huge"
-          text="Create Your Pool"
+          text="Create Your Portfolio"
           className="button"
           onClick={handleCreatePool}
         />

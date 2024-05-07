@@ -23,6 +23,10 @@ export const Content = styled.div`
     width: 25rem;
     white-space: nowrap;
   }
+
+  @media (max-width: 960px) {
+    flex-direction: column;
+  }
 `
 
 export const TextContent = styled.p`
@@ -36,6 +40,11 @@ export const TextContent = styled.p`
     display: block;
     opacity: 0.75;
     font-size: 1.4rem;
+  }
+
+  @media (max-width: 560px) {
+    font-size: 1.8rem;
+    line-height: 2.4rem;
   }
 `
 

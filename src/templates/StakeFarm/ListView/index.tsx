@@ -6,35 +6,29 @@ import Label from '@/components/Labels/Label'
 import GradientLabel from '@/components/Labels/GradientLabel'
 import arrowDownThin from '../../../../public/assets/utilities/arrow-down-thin.svg'
 import { useSetChain } from '@web3-onboard/react'
+import Link from 'next/link'
 
-const poolMockData = [
-  {
-    logoUrl: '/assets/logos/kacy-stake.svg',
-    chainLogoUrl: '/assets/logos/avalanche.svg',
-    name: '$KACY',
-    votingPower: '2/',
-    withdrawDelay: '15',
-    earned: 0,
-    apr: 132.94,
-    totalStaked: '702.5 LP-AVAX',
-    stakedInUsd: '43.321 USD',
-    startDate: '13 Nov, 2023',
-    rewardDate: '11 Feb, 2024'
-  },
-  {
-    logoUrl: '/assets/logos/kacy-stake.svg',
-    chainLogoUrl: '/assets/logos/avalanche.svg',
-    name: '$NOTKACY',
-    votingPower: '2/',
-    withdrawDelay: '23',
-    earned: 12,
-    apr: 72.94,
-    totalStaked: '329.13 LP-AVAX',
-    stakedInUsd: '11.891 USD',
-    startDate: '11 Dec, 2023',
-    rewardDate: '29 Mar, 2024'
-  }
-]
+type PoolData = {
+  logoUrl: string
+  chainLogoUrl: string
+  name: string
+  votingPower: string
+  withdrawDelay: string
+  earned: number
+  apr: number
+  totalStaked: string
+  stakedInUsd: string
+  startDate: string
+  rewardDate: string
+  poolReward?: number
+  poolRewardValue?: number
+  contract: string
+}
+
+interface StaleListViewSectionProps {
+  sectionName: string
+  data: PoolData[]
+}
 
 const rightArrowIcon = (
   <svg
@@ -65,16 +59,23 @@ const rightArrowIcon = (
   </svg>
 )
 
-export function StakeListView() {
-  const [isExpanded, setIsExpanded] = useState(false)
+export function StakeListViewSection({
+  sectionName,
+  data
+}: StaleListViewSectionProps) {
+  const [expandedSections, setExpandedSections] = useState<boolean[]>(
+    new Array(data.length).fill(false)
+  )
 
   const [{ settingChain }, setChain] = useSetChain()
 
-  function handleExpandToggle() {
-    setIsExpanded(!isExpanded)
+  function handleExpandToggle(index: number) {
+    const newExpandedSections = [...expandedSections]
+    newExpandedSections[index] = !newExpandedSections[index]
+    setExpandedSections(newExpandedSections)
   }
   return (
-    <S.Wrapper>
+    <S.Wrapper isPowerVotingSection={sectionName === 'Power Voting'}>
       <S.ContentWrapper>
         <S.TitleContent>
           <Image
@@ -83,24 +84,24 @@ export function StakeListView() {
             height={20}
             alt="an icon of a chart pie"
           />{' '}
-          Power Voting
+          {sectionName}
         </S.TitleContent>
-        {poolMockData.map(mockData => (
-          <S.Content>
+        {data.map((pool, index) => (
+          <S.Content key={pool.name}>
             <S.TopContent>
               <S.TopContentMobile>
                 <S.PoolNameAndImage>
                   <S.Imagecontainer>
                     <S.ImageWrapper>
-                      <Image src={mockData.logoUrl} layout="fill" />
+                      <Image src={pool.logoUrl} layout="fill" />
                     </S.ImageWrapper>
 
                     <S.ChainLogoWrapper>
-                      <Image src={mockData.chainLogoUrl} layout="fill" />
+                      <Image src={pool.chainLogoUrl} layout="fill" />
                     </S.ChainLogoWrapper>
                   </S.Imagecontainer>
                   <S.PoolText>
-                    <S.PoolTitle>{mockData.name}</S.PoolTitle>
+                    <S.PoolTitle>{pool.name}</S.PoolTitle>
                     <S.LabelsContainer>
                       <GradientLabel
                         img={{
@@ -115,8 +116,8 @@ export function StakeListView() {
                   </S.PoolText>
                 </S.PoolNameAndImage>
                 <S.IconWrapperMobile
-                  isExpanded={isExpanded}
-                  onClick={handleExpandToggle}
+                  isExpanded={expandedSections[index]}
+                  onClick={() => handleExpandToggle(index)}
                 >
                   <Image src={arrowDownThin} width={24} height={14} />
                 </S.IconWrapperMobile>
@@ -125,23 +126,23 @@ export function StakeListView() {
                 <S.RegularColumn>
                   <h3>Voting Power</h3>
                   <p>
-                    {mockData.votingPower}
-                    <span>{mockData.name}</span>
+                    {pool.votingPower}
+                    <span>{pool.name}</span>
                   </p>
                 </S.RegularColumn>
                 <S.RegularColumn>
                   <h3>Withdraw Delay</h3>
                   <p>
-                    {mockData.withdrawDelay} <span>days</span>
+                    {pool.withdrawDelay} <span>days</span>
                   </p>
                 </S.RegularColumn>
                 <S.RegularColumn>
                   <h3>Earned</h3>
-                  <p>{mockData.earned}</p>
+                  <p>{pool.earned}</p>
                 </S.RegularColumn>
                 <S.BoldColumn>
                   <h3>APR</h3>
-                  <p>{mockData.apr}%</p>
+                  <p>{pool.apr}%</p>
                 </S.BoldColumn>
               </S.RegularContent>
               <Button
@@ -152,52 +153,58 @@ export function StakeListView() {
                 icon={rightArrowIcon}
               />
               <S.IconWrapperDesktop
-                isExpanded={isExpanded}
-                onClick={handleExpandToggle}
+                isExpanded={expandedSections[index]}
+                onClick={() => handleExpandToggle(index)}
               >
                 <Image src={arrowDownThin} width={24} height={14} />
               </S.IconWrapperDesktop>
             </S.TopContent>
 
-            {isExpanded && (
+            {expandedSections[index] && (
               <S.ExpandedWrapper>
                 <S.ExpandedContent>
                   <S.ExpandedTextContent>
                     <S.BlocksWrapper>
                       <S.ExpandedContentBlock>
                         <p>
-                          <span>Total Staked:</span> {mockData.totalStaked}
+                          <span>Total Staked:</span> {pool.totalStaked ?? 0}
                         </p>
 
-                        <span>= {mockData.stakedInUsd} USD</span>
+                        <span>= {pool.stakedInUsd} USD</span>
                       </S.ExpandedContentBlock>
                       <S.ExpandedContentBlock>
                         <p>
-                          <span>Pool Reward:</span> 0/Day
+                          <span>Pool Reward:</span> {pool.poolReward ?? 0}/Day
                         </p>
 
-                        <span>0.00 USD</span>
+                        <span>{pool.poolRewardValue ?? 0} USD</span>
                       </S.ExpandedContentBlock>
                       <S.ExpandedContentBlock>
                         <p>
-                          <span>Start Date:</span> {mockData.startDate}
+                          <span>Start Date:</span> {pool.startDate}
                         </p>
                         <p>
-                          <span>Reward Update:</span> {mockData.rewardDate}
+                          <span>Reward Update:</span> {pool.rewardDate}
                         </p>
                       </S.ExpandedContentBlock>
                     </S.BlocksWrapper>
                     <S.ExpandedFooter>
                       <p>
-                        Buy {mockData.name}{' '}
+                        Buy {pool.name}{' '}
                         <Image
-                          src={mockData.logoUrl}
+                          src={pool.logoUrl}
                           layout="fixed"
                           width={16}
                           height={16}
                         />
                       </p>
-                      <a>See Contract {rightArrowIcon}</a>
+                      <a
+                        target="_blank"
+                        rel="nofollow"
+                        href={'add contract here'}
+                      >
+                        See Contract {rightArrowIcon}
+                      </a>
                     </S.ExpandedFooter>
                   </S.ExpandedTextContent>
                   <S.ExpandedContentButtons>

@@ -218,7 +218,7 @@ const Portfolio = ({
       <S.paddingWrapper>
         <PortfolioHeading
           image={AssetsIcon}
-          title="Indexes"
+          title="Portfolios"
           usd={BNtoDecimal(priceInDolar.tokenizedFunds, 6, 2, 2)}
           tippy="The amount in US Dollars that this address holds in tokenized funds."
         />

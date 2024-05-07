@@ -113,7 +113,7 @@ const AllocationHistory = ({ poolInfo }: IAllocationHistoryProps) => {
           ))
         ) : (
           <S.WasNoAllocationsChange>
-            no change has yet occurred in the allocations of pool assets
+            no change has yet occurred in the allocations of portfolio assets
           </S.WasNoAllocationsChange>
         )}
       </S.ActivityCardContainer>

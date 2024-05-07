@@ -1,10 +1,15 @@
 import styled, { css } from 'styled-components'
 
-export const Wrapper = styled.div`
+interface WrapperProps {
+  isPowerVotingSection?: boolean
+}
+
+export const Wrapper = styled.div<WrapperProps>`
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
-  background: rgba(252, 252, 252, 0.05);
+  background: ${props =>
+    props.isPowerVotingSection ? `rgba(252, 252, 252, 0.05)` : null};
   padding: 4rem;
 
   @media (max-width: 960px) {
@@ -52,7 +57,7 @@ export const TopContent = styled.div`
   padding-block: 3.2rem;
   justify-content: space-between;
 
-  @media (max-width: 560px) {
+  @media (max-width: 568px) {
     flex-direction: column;
     align-items: flex-start;
     gap: 2.4rem;
@@ -67,7 +72,7 @@ export const TopContent = styled.div`
 export const TopContentMobile = styled.div`
   display: hidden;
 
-  @media (max-width: 960px) {
+  @media (max-width: 768px) {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -141,7 +146,7 @@ export const RegularContent = styled.div`
   display: flex;
   gap: 4.8rem;
 
-  @media (max-width: 960px) {
+  @media (max-width: 768px) {
     gap: 1.6rem;
   }
 `
@@ -191,18 +196,19 @@ export const IconWrapperDesktop = styled.div<IconWrapperProps>`
   height: 1.4rem;
 
   img {
+    cursor: pointer;
     ${props => (props.isExpanded ? `transform: rotate(180deg)` : null)};
     transition: transform 300ms ease-in-out;
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 560px) {
     display: none;
   }
 `
 
 export const IconWrapperMobile = styled(IconWrapperDesktop)`
   display: none;
-  @media (max-width: 960px) {
+  @media (max-width: 560px) {
     display: flex;
   }
 `
@@ -218,6 +224,10 @@ export const ExpandedContent = styled.div`
   padding-inline: 1.6rem;
   padding-block: 2.4rem;
   gap: 3.2rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `
 export const ExpandedTextContent = styled.div`
   display: flex;
@@ -230,6 +240,10 @@ export const BlocksWrapper = styled.div`
   display: flex;
   gap: 3.2rem;
   width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `
 export const ExpandedContentBlock = styled.div`
   padding: 1.6rem;
@@ -267,6 +281,11 @@ export const ExpandedFooter = styled.div`
     align-items: center;
     gap: 1rem;
   }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 `
 export const ExpandedContentButtons = styled.div`
   display: flex;
@@ -276,5 +295,16 @@ export const ExpandedContentButtons = styled.div`
   button {
     max-width: 28.6rem;
     min-width: 20rem;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+
+    button {
+      min-width: 10rem;
+      max-width: none;
+      width: 100%;
+    }
   }
 `

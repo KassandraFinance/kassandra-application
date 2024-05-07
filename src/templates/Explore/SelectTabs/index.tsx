@@ -1,6 +1,4 @@
 import * as S from './styles'
-import { useRouter } from 'next/router'
-import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
 
 type ChainList = {
   name: string
@@ -28,11 +26,11 @@ const tabs = [
   },
   {
     tabName: 'allPools',
-    text: 'All Pools'
+    text: 'All Portfolios'
   },
   {
     tabName: 'myPools',
-    text: 'My Pools'
+    text: 'My Investments'
   }
 ]
 
