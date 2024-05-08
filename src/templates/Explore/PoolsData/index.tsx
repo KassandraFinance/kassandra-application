@@ -16,7 +16,7 @@ export function ExplorePoolsData({
   const poolsData = [
     {
       icon: <img src="/assets/icons/pie.svg" alt="an icon of a chart pie" />,
-      name: 'Number of Pools',
+      name: 'Portfolios',
       amount: poolCount
     },
     {
@@ -36,12 +36,12 @@ export function ExplorePoolsData({
           alt="an icon of person inside a circle"
         />
       ),
-      name: 'Number of Managers',
+      name: 'Managers',
       amount: numManagers
     },
     {
       icon: <img src="/assets/icons/wallet.svg" alt="an icon of a wallet" />,
-      name: 'Number of Depositors',
+      name: 'Investors',
       amount: numDeposits
     }
   ]

@@ -17,8 +17,6 @@ import TitleSection from '../../components/TitleSection'
 
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
 import ShareEarnIcon from '@assets/icons/handshake.svg'
-// import managerIcon from '../../../public/assets/iconGradient/manager.svg'
-// import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
 
 import * as S from './styles'
 import NewCommunityPoolsTable, {
@@ -54,7 +52,7 @@ export default function Explore() {
     chainList.map(item => item.chainId)
   )
   const [isSelectTab, setIsSelectTab] = useState<string | string[] | undefined>(
-    'allPools'
+    'discover'
   )
 
   const networkChain = networks[137]
@@ -94,7 +92,7 @@ export default function Explore() {
   const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
   const [skip, setSkip] = React.useState(0)
 
-  const take = 8
+  const take = 20
 
   const { data: communityPools } = useCommunityPools({
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
@@ -122,7 +120,7 @@ export default function Explore() {
   return (
     <S.Explore>
       <S.TitleContainer>
-        <S.MainTitle>Explore All Pools</S.MainTitle>
+        <S.MainTitle>Explore All Portfolios</S.MainTitle>
         <S.SubTitle>Find a strategy that fits your needs</S.SubTitle>
       </S.TitleContainer>
 
@@ -134,10 +132,6 @@ export default function Explore() {
           whiteListNumber={
             whiteListTokenCount ? whiteListTokenCount.toString() : '0'
           }
-        />
-
-        <ExploreAllPools
-          numberOfPools={poolsData ? poolsData[0].pool_count.toString() : '0'}
         />
       </S.ExplorePoolsWrapper>
 
@@ -154,10 +148,14 @@ export default function Explore() {
         onFilterClick={onClickChainResetPagination}
       />
 
-      {isSelectTab === 'allPools' && selectedView === 'grid' && (
+      {isSelectTab === 'discover' && (
         <div>
           <S.ExploreContainer>
-            <TitleSection image={featuredFunds} title="Popular Pools" text="" />
+            <TitleSection
+              image={featuredFunds}
+              title="Popular Portfolios"
+              text=""
+            />
 
             <SliderPoolList
               poolData={poolsKassandra?.poolsKassandra ?? new Array(9).fill({})}
@@ -174,8 +172,14 @@ export default function Explore() {
             />
           </S.ExploreContainer>
 
+          <ExploreAllPools />
+
           <S.ExploreContainer>
-            <TitleSection image={featuredFunds} title="Largest Pools" text="" />
+            <TitleSection
+              image={featuredFunds}
+              title="Largest Portfolios"
+              text=""
+            />
 
             <SliderPoolList
               poolData={largestPools?.pools ?? new Array(9).fill({})}
@@ -189,7 +193,7 @@ export default function Explore() {
         <MyPoolsTable selectedChains={selectedChains} />
       )}
 
-      {isSelectTab === 'allPools' && selectedView === 'list' && (
+      {isSelectTab === 'allPools' && (
         <>
           <NewCommunityPoolsTable
             pools={communityPools?.pools}

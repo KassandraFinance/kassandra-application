@@ -5,6 +5,8 @@ export const ViewIcons = styled.div`
   display: flex;
   align-items: center;
   gap: 1.6rem;
+
+  width: fit-content;
 `
 
 interface ViewButtonProps {
@@ -14,18 +16,19 @@ interface ViewButtonProps {
 
 export const ViewButton = styled(Button)<ViewButtonProps>`
   background-color: transparent;
-  padding: 0;
+  display: flex;
 
   cursor: ${props => (props.myPoolsSelected ? 'not-allowed' : 'pointer')};
+  padding: 0;
 
   svg {
-    height: 2rem;
-    width: 2rem;
+    height: 2.4rem;
+    width: 2.4rem;
     path {
       fill: ${props =>
         props.isActive && !props.myPoolsSelected ? '#26DBDB' : null};
       fill-opacity: ${props =>
-        props.isActive && !props.myPoolsSelected ? '1' : '0.08'};
+        props.isActive && !props.myPoolsSelected ? '1' : '0.25'};
     }
   }
 `

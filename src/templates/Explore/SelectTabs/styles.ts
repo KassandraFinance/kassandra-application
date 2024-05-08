@@ -87,6 +87,7 @@ export const TabButton = styled(Button)<TabButtonProps>`
     props.isActiveTab ? '#FCFCFC0D' : 'transparent'};
 
   @media (max-width: 768px) {
+    font-size: 1.4rem;
     width: 100%;
     border: ${props =>
       props.isActiveTab

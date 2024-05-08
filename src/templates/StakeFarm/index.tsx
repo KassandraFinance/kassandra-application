@@ -14,8 +14,7 @@ import { useVotingPower } from '@/hooks/query/useVotingPower'
 import * as S from './styles'
 import { StakeFarmPools } from './AllPools'
 import { allPools } from '@/constants/pools'
-import { NewSelectTabs } from '@/components/NewSelectTabs'
-import { StakeListView } from './ListView'
+import { StakeListViewSection } from './ListView'
 import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
 
 const tabs = [
@@ -52,6 +51,57 @@ const StakeFarm = () => {
     }
   }, [router])
 
+  const fakePoolsData = [
+    {
+      logoUrl: '/assets/logos/kacy-stake.svg',
+      chainLogoUrl: '/assets/logos/avalanche.svg',
+      name: '$KACY',
+      votingPower: '2/',
+      withdrawDelay: '15',
+      earned: 0,
+      apr: 132.94,
+      totalStaked: '702.5 LP-AVAX',
+      stakedInUsd: '43.321 USD',
+      startDate: '13 Nov, 2023',
+      rewardDate: '11 Feb, 2024',
+      poolReward: 0,
+      poolRewardValue: 0,
+      contract: '0x384572384203409123098123'
+    },
+    {
+      logoUrl: '/assets/logos/kacy-stake.svg',
+      chainLogoUrl: '/assets/logos/avalanche.svg',
+      name: '$NOTKACY',
+      votingPower: '3/',
+      withdrawDelay: '23',
+      earned: 12,
+      apr: 72.94,
+      totalStaked: '329.13 LP-AVAX',
+      stakedInUsd: '11.891 USD',
+      startDate: '11 Dec, 2023',
+      rewardDate: '29 Mar, 2024',
+      poolReward: 1,
+      poolRewardValue: 23,
+      contract: '0x23423438457238420098123'
+    },
+    {
+      logoUrl: '/assets/logos/kacy-stake.svg',
+      chainLogoUrl: '/assets/logos/avalanche.svg',
+      name: '$ANOTHAKCY',
+      votingPower: '4/',
+      withdrawDelay: '69',
+      earned: 3,
+      apr: 81.12,
+      totalStaked: '163 LP-AVAX',
+      stakedInUsd: '2.341 USD',
+      startDate: '11 Dec, 2023',
+      rewardDate: '29 Mar, 2024',
+      poolReward: 2,
+      poolRewardValue: 55,
+      contract: '0x546546456384572389123'
+    }
+  ]
+
   return (
     <>
       <Breadcrumb>
@@ -80,14 +130,29 @@ const StakeFarm = () => {
       </S.StakeFarmHeader>
 
       <S.TabsContainer>
-        <StakeFarmPools numberOfPools={allPoolsNumber} />
         <ViewOptions
           selectedView={selectedView}
           setSelectedView={setSelectedView}
         />
+        <StakeFarmPools numberOfPools={allPoolsNumber} />
       </S.TabsContainer>
 
-      {selectedView === 'list' && <StakeListView />}
+      {selectedView === 'list' && (
+        <>
+          <StakeListViewSection
+            data={fakePoolsData}
+            sectionName="Power Voting"
+          />
+          <StakeListViewSection
+            data={fakePoolsData}
+            sectionName="KACY Liquidity"
+          />
+          <StakeListViewSection
+            data={fakePoolsData}
+            sectionName="Investment Pool"
+          />
+        </>
+      )}
 
       <S.StakeFarm>
         {selectedView === 'grid' && <Stake />}

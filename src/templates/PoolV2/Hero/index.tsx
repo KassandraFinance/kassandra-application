@@ -127,7 +127,7 @@ const Hero = ({ handleClickStakeButton }: IHeroProps) => {
             </S.Chain>
             <S.SymbolAndMade>
               <Link
-                href={`/profile/${pool?.manager.id}?tab=managed-pools`}
+                href={`/profile/${pool?.manager.id}?tab=managed-portfolios`}
                 passHref
               >
                 <a>

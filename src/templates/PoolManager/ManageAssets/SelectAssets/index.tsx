@@ -138,7 +138,7 @@ const SelectAssets = () => {
 
   return (
     <S.SelectAssets>
-      <CreatePoolHeader title="Add new assets to the pool" />
+      <CreatePoolHeader title="Add new assets to the portfolio" />
 
       <Steps
         steps={[
@@ -149,7 +149,7 @@ const SelectAssets = () => {
           },
           {
             stepNumber: 2,
-            stepeTitle: 'Add liquidity to the pool',
+            stepeTitle: 'Add liquidity to the portfolio',
             state: 'NEXT'
           },
           {
@@ -163,7 +163,7 @@ const SelectAssets = () => {
       <S.TextContainer>
         <S.AddAssetsTitle>Token addition</S.AddAssetsTitle>
         <S.AddAssetsText>
-          Select from the list the asset that will be added to the pool
+          Select from the list the asset that will be added to the portfolio
         </S.AddAssetsText>
       </S.TextContainer>
 

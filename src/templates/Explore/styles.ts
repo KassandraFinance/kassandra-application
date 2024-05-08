@@ -26,7 +26,7 @@ export const ExploreContainer = styled.div`
   width: 100%;
   background-color: rgba(252, 252, 252, 0.05);
   border-radius: 16px;
-  margin-top: 10rem;
+  margin-top: 5.6rem;
 
   @media (max-width: 576px) {
     padding: 1.6rem;
@@ -43,7 +43,7 @@ export const TitleContainer = styled.div`
   gap: 2.4rem;
   border-radius: 1.6rem;
   border: 0.1rem;
-  margin-block: 5.6rem;
+  margin-block: 3.2rem;
   font-family: 'Rubik';
   border: 1px transparent;
   background: linear-gradient(

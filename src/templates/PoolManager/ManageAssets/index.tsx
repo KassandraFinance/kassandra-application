@@ -135,7 +135,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     <ReviewAddAsset key="reviewAddAsset" />,
     <ModalTransactions
       key="modalTransactions"
-      title="To finish the process of adding the asset to the pool do the following:"
+      title="To finish the process of adding the asset to the portfolio do the following:"
       transactionButtonStatus={transactionButtonStatus}
       buttonText={buttonTextActionAdd}
       isCompleted={isCompleted}
@@ -236,7 +236,7 @@ const ManageAssets = ({ setIsOpenManageAssets }: IManageAssetsProps) => {
     <RemoveReview key="RemoveReview" />,
     <ModalTransactions
       key="modalTransactions"
-      title="To finish the process of removing a token from the pool you must complete the following"
+      title="To finish the process of removing a token from the portfolio you must complete the following"
       transactionButtonStatus={transactionButtonStatus}
       buttonText={buttonTextActionRemove}
       isCompleted={isCompleted}

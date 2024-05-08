@@ -394,7 +394,7 @@ const PoolManager = () => {
                       </span>
                     </Tippy>
                   ) : (
-                    <Tippy content="I wanted to remind you that you're not the designated pool strategist.">
+                    <Tippy content="I wanted to remind you that you're not the designated portfolio strategist.">
                       <span>
                         <Button
                           className="btn-manage-assets"
