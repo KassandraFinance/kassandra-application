@@ -121,41 +121,43 @@ export default function Explore() {
 
   return (
     <S.Explore>
-      <S.TitleContainer>
-        <S.MainTitle>Explore All Pools</S.MainTitle>
-        <S.SubTitle>Find a strategy that fits your needs</S.SubTitle>
-      </S.TitleContainer>
+      <S.ExploreHeader>
+        <S.TitleContainer>
+          <S.MainTitle>Explore All Pools</S.MainTitle>
+          <S.SubTitle>Find a strategy that fits your needs</S.SubTitle>
+        </S.TitleContainer>
 
-      <S.ExplorePoolsWrapper>
-        <ExplorePoolsData
-          numDeposits={poolsData ? poolsData[0].num_deposits : '0'}
-          numManagers={poolsData ? poolsData[0].num_managers.toString() : '0'}
-          poolCount={poolsData ? poolsData[0].pool_count.toString() : '0'}
-          whiteListNumber={
-            whiteListTokenCount ? whiteListTokenCount.toString() : '0'
+        <S.ExplorePoolsWrapper>
+          <ExplorePoolsData
+            numDeposits={poolsData ? poolsData[0].num_deposits : '0'}
+            numManagers={poolsData ? poolsData[0].num_managers.toString() : '0'}
+            poolCount={poolsData ? poolsData[0].pool_count.toString() : '0'}
+            whiteListNumber={
+              whiteListTokenCount ? whiteListTokenCount.toString() : '0'
+            }
+          />
+
+          <ExploreAllPools
+            numberOfPools={poolsData ? poolsData[0].pool_count.toString() : '0'}
+          />
+        </S.ExplorePoolsWrapper>
+
+        <ExploreSelectTabs
+          chainList={chainList}
+          selectedChains={selectedChains}
+          setSelectedChains={setSelectedChains}
+          isSelect={isSelectTab}
+          setIsSelect={setIsSelectTab}
+          setSelectedView={(view: string | ((prevState: string) => string)) =>
+            setSelectedView(view)
           }
+          selectedView={selectedView}
+          onFilterClick={onClickChainResetPagination}
         />
-
-        <ExploreAllPools
-          numberOfPools={poolsData ? poolsData[0].pool_count.toString() : '0'}
-        />
-      </S.ExplorePoolsWrapper>
-
-      <ExploreSelectTabs
-        chainList={chainList}
-        selectedChains={selectedChains}
-        setSelectedChains={setSelectedChains}
-        isSelect={isSelectTab}
-        setIsSelect={setIsSelectTab}
-        setSelectedView={(view: string | ((prevState: string) => string)) =>
-          setSelectedView(view)
-        }
-        selectedView={selectedView}
-        onFilterClick={onClickChainResetPagination}
-      />
+      </S.ExploreHeader>
 
       {isSelectTab === 'allPools' && selectedView === 'grid' && (
-        <div>
+        <S.SliderWrapper>
           <S.ExploreContainer>
             <TitleSection image={featuredFunds} title="Popular Pools" text="" />
 
@@ -182,7 +184,7 @@ export default function Explore() {
               kacyPrice={kacyPrice}
             />
           </S.ExploreContainer>
-        </div>
+        </S.SliderWrapper>
       )}
 
       {isSelectTab === 'myPools' && (
