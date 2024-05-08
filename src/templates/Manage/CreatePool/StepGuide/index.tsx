@@ -30,12 +30,12 @@ const stepGuide = [
   {
     icon: assetsIcon,
     title: 'Step 2 - Select assets',
-    text: 'Choose the assets you want your managed pool to have from our whitelist.'
+    text: 'Choose the assets you want your managed portfolio to have from our whitelist.'
   },
   {
     icon: adjustIcon,
     title: 'Step 3 - Add initial liquidity',
-    text: 'Provide the initial liquidity for your managed pool to work with.'
+    text: 'Provide the initial liquidity for your managed portfolio to work with.'
   },
   {
     icon: feeConfigurationIcon,
@@ -44,7 +44,7 @@ const stepGuide = [
   },
   {
     icon: reviewIcon,
-    title: 'Step 5 - review and create pool',
+    title: 'Step 5 - review and create portfolio',
     text: 'Review and publish it to the network of your choice.'
   }
 ]
@@ -79,7 +79,7 @@ const StepGuide = () => {
   return (
     <S.StepGuide>
       {/* Network icon comes from api */}
-      <CreatePoolHeader title="pool creation step guide" />
+      <CreatePoolHeader title="portfolio creation step guide" />
 
       <S.ContainerCardAndNetwork>
         <S.SelectNetwork>
@@ -87,7 +87,7 @@ const StepGuide = () => {
             <S.Title>Network selection</S.Title>
 
             <S.Text>
-              Choose which network you would like to publish your pool:
+              Choose which network you would like to publish your portfolio:
             </S.Text>
           </S.TextContainer>
 

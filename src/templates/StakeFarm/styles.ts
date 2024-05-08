@@ -66,11 +66,16 @@ export const SubTitle = styled.h2`
 
 export const TabsContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   max-width: 114rem;
   margin-inline: auto;
   margin-block: 5.6rem;
   gap: 2.4rem;
+  border-radius: 0.8rem;
+  border: 0.1rem solid rgba(252, 252, 252, 0.08);
+  padding: 2.4rem;
+  background: rgba(252, 252, 252, 0.05);
 
   @media (max-width: 976px) {
     padding-inline: 2.4rem;

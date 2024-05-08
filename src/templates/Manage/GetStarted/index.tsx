@@ -51,18 +51,18 @@ const GetStarted = ({ setIsCreatePool }: IGetStartedProps) => {
       <Image src={kacyLogoShadow} width={435} height={400} />
 
       <S.Content>
-        <S.Title>Ready to create your first pool?</S.Title>
+        <S.Title>Ready to create your first portfolio?</S.Title>
 
         <S.Text>
-          It looks like you don't have any pools to manage. Click on the button
-          below to combine tokens to create your first pool to start the journey
-          as a manager.
+          It looks like you don't have any portfolios to manage. Click on the
+          button below to combine tokens to create your first portfolio to start
+          the journey as a manager.
         </S.Text>
 
         <S.ButtonWrapper>
           {wallet?.provider ? (
             <Button
-              text="Create New Pool"
+              text="Create New Portfolio"
               background="secondary"
               fullWidth
               type="button"

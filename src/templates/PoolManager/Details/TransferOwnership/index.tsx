@@ -43,16 +43,16 @@ const TransferOwnership = ({
         <S.PoolStrategyTitle>Transfer Ownership</S.PoolStrategyTitle>
         {hasManagerCandidate ? (
           <S.PoolSettingParagraph>
-            Below is the link for the pool candidate to make the claim and
+            Below is the link for the portfolio candidate to make the claim and
             become the new owner, and if you&apos;ve changed your mind, you can
             cancel, this applies until the candidate claims it.
           </S.PoolSettingParagraph>
         ) : (
           <S.PoolSettingParagraph>
             Please provide the address of the individual who will receive
-            ownership of this pool. After the transfer, he will be sent a link
-            provided by us. This link will allow the person to claim and become
-            the new owner of the pool.
+            ownership of this portfolio. After the transfer, he will be sent a
+            link provided by us. This link will allow the person to claim and
+            become the new owner of the portfolio.
           </S.PoolSettingParagraph>
         )}
 

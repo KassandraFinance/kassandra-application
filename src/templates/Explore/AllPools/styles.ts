@@ -12,14 +12,20 @@ export const Content = styled.div`
   padding: 2.4rem;
   background: rgba(252, 252, 252, 0.05);
 
+  margin-top: 3.2rem;
+
   .button {
     font-family: Rubik;
-    font-size: 1.4rem;
+    font-size: 1.8rem;
     font-weight: 500;
     line-height: 1.4rem;
     color: #fcfcfc;
-    width: 15.4rem;
+    width: 25rem;
     white-space: nowrap;
+  }
+
+  @media (max-width: 960px) {
+    flex-direction: column;
   }
 `
 
@@ -29,6 +35,17 @@ export const TextContent = styled.p`
   font-weight: 500;
   line-height: 3.2rem;
   white-space: nowrap;
+
+  span {
+    display: block;
+    opacity: 0.75;
+    font-size: 1.4rem;
+  }
+
+  @media (max-width: 560px) {
+    font-size: 1.8rem;
+    line-height: 2.4rem;
+  }
 `
 
 export const PoolsNumber = styled.span`

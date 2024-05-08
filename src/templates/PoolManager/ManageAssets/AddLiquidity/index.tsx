@@ -73,7 +73,7 @@ const AddLiquidity = () => {
 
   return (
     <S.AddLiquidity>
-      <CreatePoolHeader title="Add new assets to the pool" />
+      <CreatePoolHeader title="Add new assets to the portfolio" />
       <Steps
         steps={[
           {
@@ -83,7 +83,7 @@ const AddLiquidity = () => {
           },
           {
             stepNumber: 2,
-            stepeTitle: 'Add liquidity to the pool',
+            stepeTitle: 'Add liquidity to the portfolio',
             state: 'CURRENT'
           },
           {

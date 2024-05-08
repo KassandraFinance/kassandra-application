@@ -55,7 +55,7 @@ export const TitleContainer = styled.div`
   gap: 2.4rem;
   border-radius: 1.6rem;
   border: 0.1rem;
-  margin-block: 5.6rem;
+  margin-block: 3.2rem;
   font-family: 'Rubik';
   border: 1px transparent;
   background: linear-gradient(

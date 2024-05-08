@@ -147,7 +147,9 @@ const SetNewWeights = () => {
 
       <S.SetNewWeightsBody>
         <h2>Token Weights</h2>
-        <p>Define the new Allocations of the assets that make up the pool</p>
+        <p>
+          Define the new Allocations of the assets that make up the portfolio
+        </p>
 
         <S.AllocationsAndExecutionPeriod>
           <AllocationsTable
