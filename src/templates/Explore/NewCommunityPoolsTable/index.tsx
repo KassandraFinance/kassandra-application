@@ -52,23 +52,12 @@ interface IPoolsInfosProps {
   chain_id: number
   pool_id?: number | null
   fee_join_broker?: string | null
+  change: string
   chain?: {
     logo?: string | null
   } | null
   volumes: {
     volume_usd: string
-  }[]
-  now: {
-    timestamp: number
-    close: string
-  }[]
-  day: {
-    timestamp: number
-    close: string
-  }[]
-  month: {
-    timestamp: number
-    close: string
   }[]
   unique_investors: number
   underlying_assets: UnderlyingAssets[]
@@ -109,15 +98,13 @@ const NewCommunityPoolsTable = ({
     tvl: string
     underlying_assets: UnderlyingAssets[]
     volume: string
-    monthly: string
     '24h': string
   }>({
     price: '',
     tvl: '',
     underlying_assets: [],
     volume: '',
-    monthly: '',
-    '24h': ''
+    '24h': '0'
   })
 
   function handleCurrentInView(n: number) {
@@ -140,7 +127,6 @@ const NewCommunityPoolsTable = ({
     tvl: string,
     underlying_assets: UnderlyingAssets[],
     volume: string,
-    monthly: string,
     day: string
   ) {
     setPool({
@@ -152,7 +138,6 @@ const NewCommunityPoolsTable = ({
       tvl,
       underlying_assets,
       volume,
-      monthly,
       ['24h']: day
     })
     setIsOpen(true)
@@ -303,8 +288,9 @@ const NewCommunityPoolsTable = ({
                                     content={[
                                       <S.Tooltip key="Fire">
                                         With this portfolio, you can Stake and
-                                        earn Kacy. Look at the 'Staking' section
-                                        in this portfolio.
+                                        earn Kacy. Look at the
+                                        &apos;Staking&apos; section in this
+                                        portfolio.
                                       </S.Tooltip>
                                     ]}
                                   >
@@ -325,8 +311,8 @@ const NewCommunityPoolsTable = ({
                                       <S.Tooltip key="Handshake">
                                         If you share this pool, you can earn a
                                         percentage of the deposit fee. Look at
-                                        the 'Share & Earn' section in this
-                                        portfolio.
+                                        the &apos;Share & Earn&apos; section in
+                                        this portfolio.
                                       </S.Tooltip>
                                     ]}
                                   >
@@ -366,8 +352,9 @@ const NewCommunityPoolsTable = ({
                                     content={[
                                       <S.Tooltip key="Fire">
                                         With this portfolio, you can Stake and
-                                        earn Kacy. Look at the 'Staking' section
-                                        in this portfolio.
+                                        earn Kacy. Look at the
+                                        &apos;Staking&apos; section in this
+                                        portfolio.
                                       </S.Tooltip>
                                     ]}
                                   >
@@ -388,8 +375,8 @@ const NewCommunityPoolsTable = ({
                                       <S.Tooltip key="Handshake">
                                         If you share this pool, you can earn a
                                         percentage of the deposit fee. Look at
-                                        the 'Share & Earn' section in this
-                                        portfolio.
+                                        the &apos;Share & Earn&apos; section in
+                                        this portfolio.
                                       </S.Tooltip>
                                     ]}
                                   >
@@ -488,22 +475,10 @@ const NewCommunityPoolsTable = ({
 
                       <S.TD isView={inViewCollum === 5}>
                         <S.Value
-                          value={
-                            pool.day[0]?.close
-                              ? Number(
-                                  calcChange(
-                                    Number(pool.now[0]?.close || 0),
-                                    Number(pool.day[0]?.close)
-                                  )
-                                )
-                              : 0
-                          }
+                          value={pool.change ? Number(pool.change) * 100 : 0}
                         >
-                          {pool.day[0]?.close
-                            ? calcChange(
-                                Number(pool.now[0]?.close || 0),
-                                Number(pool.day[0]?.close)
-                              )
+                          {pool.change
+                            ? Big(pool.change).mul(100).toFixed(2)
                             : 0}
                           %
                         </S.Value>
@@ -519,18 +494,7 @@ const NewCommunityPoolsTable = ({
                             pool.total_value_locked_usd,
                             pool.underlying_assets,
                             pool.volumes[0]?.volume_usd,
-                            pool.month[0]?.close
-                              ? calcChange(
-                                  Number(pool.now[0].close || 0),
-                                  Number(pool.month[0].close)
-                                )
-                              : '0',
-                            pool.day[0]?.close
-                              ? calcChange(
-                                  Number(pool.now[0].close || 0),
-                                  Number(pool.day[0].close)
-                                )
-                              : '0'
+                            pool.change
                           )
                         }}
                       >
@@ -543,8 +507,8 @@ const NewCommunityPoolsTable = ({
                 </S.TR>
               )
             })
-          : Array.from({ length: 8 }, (_, index) => (
-              <S.TR id="skeleton">
+          : Array.from({ length: 10 }, (_, index) => (
+              <S.TR id="skeleton" key={index}>
                 <S.SkeletonTR>
                   <S.TD>
                     <S.ValueContainer>
@@ -660,7 +624,7 @@ const NewCommunityPoolsTable = ({
         <TableLine>
           <TableLineTitle>24h</TableLineTitle>
           <ValueContainerMobile>
-            <V>{viewPool['24h']}%</V>
+            <V>{Big(viewPool['24h']).mul(100).toFixed(2)}%</V>
           </ValueContainerMobile>
         </TableLine>
       </ModalViewCoin>

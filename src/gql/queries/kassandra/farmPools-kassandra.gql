@@ -1,10 +1,11 @@
-query PoolsWithFeeJoinBroker (
+query FarmPools (
   $price_period: Int!
   $period_selected: Int!
   $month: Int!
   $chainIn: [String!]
+  $poolIdList: [ID!]
 ) {
-  pools (orderBy: fee_join_broker, orderDirection: desc, first: 9, where: { chain_in: $chainIn, total_value_locked_usd_gt: 500 }) {
+  pools (first: 9, where: { chain_in: $chainIn, id_in: $poolIdList }) {
     id
     name
     symbol
