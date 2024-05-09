@@ -34,7 +34,6 @@ export const fetchExplorePools = async ({
   orderDirection,
   totalValueLockedUsdGt = '0'
 }: FetchExplorePools) => {
-  console.log('AQUIIIIIIIIIIII')
   return kassandraClient
     .ExplorePools({
       month,
