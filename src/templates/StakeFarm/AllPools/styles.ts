@@ -7,10 +7,6 @@ export const Content = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 3.2rem;
-  border-radius: 0.8rem;
-  border: 0.1rem solid rgba(252, 252, 252, 0.08);
-  padding: 2.4rem;
-  background: rgba(252, 252, 252, 0.05);
 
   .button {
     font-family: Rubik;

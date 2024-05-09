@@ -13,23 +13,35 @@ export const Explore = styled.section`
   }
 
   @media (max-width: 960px) {
-    padding: 0 1.6rem;
+    padding: 0;
   }
 `
 
-export const SliderWrapper = styled.div``
+export const ExploreHeader = styled.div`
+  padding-inline: 1.6rem;
+`
+
+export const SliderWrapper = styled.div`
+  padding-inline: 1.6rem;
+
+  @media (max-width: 576px) {
+    padding-inline: 0;
+  }
+`
 
 export const ExploreContainer = styled.div`
   position: relative;
 
   padding: 2.4rem;
+  padding-bottom: 3.2rem;
   width: 100%;
   background-color: rgba(252, 252, 252, 0.05);
   border-radius: 16px;
-  margin-top: 10rem;
+  margin-top: 5.6rem;
 
   @media (max-width: 576px) {
-    padding: 1.6rem;
+    padding-inline: 1.6rem;
+    padding-bottom: 3.2rem;
   }
 `
 
@@ -43,7 +55,7 @@ export const TitleContainer = styled.div`
   gap: 2.4rem;
   border-radius: 1.6rem;
   border: 0.1rem;
-  margin-block: 5.6rem;
+  margin-block: 3.2rem;
   font-family: 'Rubik';
   border: 1px transparent;
   background: linear-gradient(
@@ -86,6 +98,13 @@ export const MainTitle = styled.h1`
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+
+  @media (max-width: 768px) {
+    font-size: 3.2rem;
+    font-weight: 500;
+    line-height: 3.2rem;
+    letter-spacing: 0.05em;
+  }
 `
 
 export const SubTitle = styled.h2`

@@ -205,7 +205,7 @@ const Analytics = (props: IAnalyticsProps) => {
         </S.StatsContainer>
       </S.ManagerOverviewContainer>
       <S.TitleWrapper>
-        <TitleSection title="Pool Assets" image={poolsAssetsIcon} />
+        <TitleSection title="Portfolio Assets" image={poolsAssetsIcon} />
       </S.TitleWrapper>
       {dataChainId && (
         <PoolAssets poolId={props.poolId} chainId={dataChainId.chain_id} />

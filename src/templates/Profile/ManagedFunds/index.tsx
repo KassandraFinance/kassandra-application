@@ -73,13 +73,13 @@ const ManagedFunds = () => {
         <>
           {isPoolOwner ? (
             <AnyCard
-              text="Looks like you aren’t managing any Pool."
+              text="Looks like you aren’t managing any Portfolio."
               button2
-              buttonText="Create a Pool"
+              buttonText="Create a Portfolio"
               onClick={handleCreatePool}
             />
           ) : (
-            <AnyCard text="This address is not managing any Pool." />
+            <AnyCard text="This address is not managing any Portfolio." />
           )}
         </>
       )}

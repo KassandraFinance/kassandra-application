@@ -417,7 +417,7 @@ const FeeRewards = () => {
 
       <S.FeesChartContainer>
         <S.TitleWrapper>
-          <TitleSection title="Pool Assets" image={poolsAssetsIcon} />
+          <TitleSection title="Rewards History" image={poolsAssetsIcon} />
         </S.TitleWrapper>
 
         <FeesChart

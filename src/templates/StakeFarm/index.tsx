@@ -1,31 +1,33 @@
-import React from 'react'
-import { useRouter } from 'next/router'
-import { getAddress } from 'ethers'
-import { useConnectWallet } from '@web3-onboard/react'
-import Big from 'big.js'
-
 import VotingPower from '@/components/VotingPower'
 import Breadcrumb from '@/components/Breadcrumb'
 import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
+import SelectTabs from '@/components/SelectTabs'
+import TitleSection from '@/components/TitleSection'
 import Farm from './Farm'
 import Stake from './Stake'
 import { useVotingPower } from '@/hooks/query/useVotingPower'
 
+import productBarIcon from '@assets/iconGradient/product-bar.svg'
+import stakingPoolsIcon from '@assets/iconGradient/staking-pools.svg'
+import stakeMoneyWithdraw from '@assets/iconGradient/stake-money-withdraw.svg'
+
 import * as S from './styles'
-import { StakeFarmPools } from './AllPools'
-import { allPools } from '@/constants/pools'
-import { NewSelectTabs } from '@/components/NewSelectTabs'
-import { StakeListView } from './ListView'
-import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
+import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
+import { useRouter } from 'next/router'
+import React from 'react'
 
 const tabs = [
   {
-    tabName: 'stake',
-    text: 'Stake Pools'
+    asPathText: 'stake',
+    text: 'Stake Pools',
+    icon: stakingPoolsIcon
   },
   {
-    tabName: 'farm',
-    text: 'Farm Pools'
+    asPathText: 'farm',
+    text: 'Farm Pools',
+    icon: productBarIcon
   }
 ]
 
@@ -33,25 +35,20 @@ const StakeFarm = () => {
   const [isSelectTab, setIsSelectTab] = React.useState<
     string | string[] | undefined
   >('stake')
-  const [selectedView, setSelectedView] = React.useState('grid')
 
-  const numPoolsInvestors = 2
-  const allPoolsNumber = (allPools.length - numPoolsInvestors).toString()
   const [{ wallet }] = useConnectWallet()
 
   const walletAddress = wallet ? getAddress(wallet.accounts[0].address) : ''
-  const { data: votingData } = useVotingPower({ id: walletAddress })
+  const { data } = useVotingPower({ id: walletAddress })
 
   const router = useRouter()
 
   React.useEffect(() => {
     const isSelectQueryTab = router.query.tab
-
     if (isSelectQueryTab) {
       setIsSelectTab(isSelectQueryTab)
     }
   }, [router])
-
   return (
     <>
       <Breadcrumb>
@@ -60,38 +57,34 @@ const StakeFarm = () => {
           Stake/Farm
         </BreadcrumbItem>
       </Breadcrumb>
-
-      <S.StakeFarmHeader>
-        <S.TitleContainer>
-          <S.MainTitle>Stake and Farm KACY</S.MainTitle>
-          <S.SubTitle>
-            Earn rewards and voting power by staking KACY and other assets
-          </S.SubTitle>
-
-          <S.VotingPowerContainer>
-            <VotingPower
-              currentVotingPower={Big(votingData?.user?.votingPower ?? '0')}
-              totalVotingPower={Big(
-                votingData?.governances[0]?.totalVotingPower ?? '0'
-              )}
-            />
-          </S.VotingPowerContainer>
-        </S.TitleContainer>
-      </S.StakeFarmHeader>
-
-      <S.TabsContainer>
-        <StakeFarmPools numberOfPools={allPoolsNumber} />
-        <ViewOptions
-          selectedView={selectedView}
-          setSelectedView={setSelectedView}
-        />
-      </S.TabsContainer>
-
-      {selectedView === 'list' && <StakeListView />}
-
       <S.StakeFarm>
-        {selectedView === 'grid' && <Stake />}
-        {selectedView === 'grid' && <Farm />}
+        <S.StakeFarmHeader>
+          <S.StakeWithPowerVote>
+            <TitleSection
+              image={stakeMoneyWithdraw}
+              title="Stake and Farm KACY"
+              text="Earn rewards and voting power by staking KACY and other assets"
+            />
+
+            <S.VotingPowerContainer>
+              <VotingPower
+                currentVotingPower={Big(data?.user?.votingPower ?? '0')}
+                totalVotingPower={Big(
+                  data?.governances[0]?.totalVotingPower ?? '0'
+                )}
+              />
+            </S.VotingPowerContainer>
+          </S.StakeWithPowerVote>
+
+          <SelectTabs
+            tabs={tabs}
+            isSelect={isSelectTab}
+            setIsSelect={setIsSelectTab}
+          />
+        </S.StakeFarmHeader>
+
+        {isSelectTab === 'stake' && <Stake />}
+        {isSelectTab === 'farm' && <Farm />}
       </S.StakeFarm>
     </>
   )

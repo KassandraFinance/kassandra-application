@@ -63,9 +63,9 @@ const PoolStrategyControl = ({
       <S.PoolStrategyContainer>
         <S.PoolStrategyTitle>Strategy Setting</S.PoolStrategyTitle>
         <S.PoolSettingParagraph>
-          Choose who will be the strategist of the pool. The strategist will
-          have the ability to add, remove, and rebalance tokens in the pool. It
-          can be you or another wallet.
+          Choose who will be the strategist of the portfolio. The strategist
+          will have the ability to add, remove, and rebalance tokens in the
+          portfolio. It can be you or another wallet.
         </S.PoolSettingParagraph>
 
         <S.InputsRadioContainer>
@@ -77,7 +77,7 @@ const PoolStrategyControl = ({
               inputChecked={selected === poolStrategyType.YOURSELF}
               handleClickInput={handleChangeInputValue}
             />
-            <p>You&apos;ll be the owner and strategist of the pool.</p>
+            <p>You&apos;ll be the owner and strategist of the portfolio.</p>
           </S.InputsRadioContent>
           <S.InputsRadioContent>
             <InputRadio
@@ -88,8 +88,8 @@ const PoolStrategyControl = ({
               handleClickInput={handleChangeInputValue}
             />
             <p>
-              You&apos;ll be the owner of the pool, and whoever you add as an
-              address will act as the strategist.
+              You&apos;ll be the owner of the portfolio, and whoever you add as
+              an address will act as the strategist.
             </p>
           </S.InputsRadioContent>
         </S.InputsRadioContainer>

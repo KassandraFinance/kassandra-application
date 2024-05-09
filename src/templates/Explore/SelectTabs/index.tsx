@@ -1,6 +1,4 @@
 import * as S from './styles'
-import { useRouter } from 'next/router'
-import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
 
 type ChainList = {
   name: string
@@ -23,12 +21,16 @@ interface ExploreSelectTabsProps {
 
 const tabs = [
   {
+    tabName: 'discover',
+    text: 'Discover'
+  },
+  {
     tabName: 'allPools',
-    text: 'All Pools'
+    text: 'All Portfolios'
   },
   {
     tabName: 'myPools',
-    text: 'My Pools'
+    text: 'My Investments'
   }
 ]
 
@@ -88,11 +90,11 @@ export function ExploreSelectTabs({
       </S.MobileTabs>
       <S.Content>
         <S.LeftContent>
-          <ViewOptions
+          {/* <ViewOptions
             isSelect={isSelect}
             selectedView={selectedView}
             setSelectedView={setSelectedView}
-          />
+          /> */}
 
           <S.DesktopTabs>
             {tabs.map(tab => (
