@@ -22,6 +22,7 @@ type UseLargestPoolsProps = {
   orderBy: Pool_OrderBy
   queryKey: string
   totalValueLockedUsdGt?: string
+  enabled?: boolean
 }
 
 export const fetchExplorePools = async ({
@@ -54,11 +55,12 @@ export const useExplorePools = ({
   orderBy,
   orderDirection,
   queryKey,
-  totalValueLockedUsdGt
+  totalValueLockedUsdGt,
+  enabled = true
 }: UseLargestPoolsProps) => {
   return useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
-    queryKey: [`${queryKey}-pools`, chainIn],
+    queryKey: [`${queryKey}-pools`, chainIn, enabled],
     queryFn: async () =>
       fetchExplorePools({
         month,
@@ -70,6 +72,8 @@ export const useExplorePools = ({
         totalValueLockedUsdGt
       }),
     staleTime: 1000 * 60,
-    refetchInterval: 1000 * 60
+    refetchInterval: 1000 * 60,
+    keepPreviousData: true,
+    enabled
   })
 }
