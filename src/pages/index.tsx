@@ -64,9 +64,17 @@ export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient()
 
   try {
+    const dateNow = new Date()
+    const params = {
+      price_period: 86400,
+      period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 30),
+      day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+      month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+      chainIn: ['137', '42161', '43114']
+    }
     await queryClient.prefetchQuery({
       queryKey: ['featured-pools'],
-      queryFn: () => fetchFeaturedPools()
+      queryFn: () => fetchFeaturedPools(params)
     })
 
     return {

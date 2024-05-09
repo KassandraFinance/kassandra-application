@@ -47,8 +47,8 @@ const DepositFee = ({
         />
       </S.DepositFeeHeader>
       <S.CardWrapperParagraph>
-        Receive a percentage of each new deposit in the pool at the selected
-        address.
+        Receive a percentage of each new deposit in the portfolio at the
+        selected address.
       </S.CardWrapperParagraph>
       {feesData?.depositFee && (
         <S.FeeContainer isFeeChecked={feesData.depositFee.isChecked}>

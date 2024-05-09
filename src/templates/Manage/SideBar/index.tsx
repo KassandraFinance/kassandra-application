@@ -399,7 +399,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             />
 
             <SideBarMenu
-              title="My managed pool"
+              title="My managed portfolio"
               icon={poolIcon}
               isSideBarOpen={isOpen}
               isActive={path.length === 75}
@@ -407,7 +407,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
             />
 
             <SideBarMenu
-              title="My Strategy pool"
+              title="My Strategy portfolio"
               icon={poolIcon}
               isSideBarOpen={isOpen}
               isActive={path.length === 75}
@@ -431,13 +431,13 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
         ) : (
           <S.TextWrapper>
             <S.Text isOpen={isOpen}>
-              Start your journey as an asset pool manager in kassandra's
+              Start your journey as an asset portfolio manager in Kassandra's
               ecosystem.
               <br />
               <br />
               Bring your strategy or develop one as you begin a streamlined
-              process for creating managed pools that utilize digital assets
-              that you can choose from.
+              process for creating managed portfolios that utilize digital
+              assets that you can choose from.
             </S.Text>
           </S.TextWrapper>
         )}
@@ -445,7 +445,7 @@ const SideBar = ({ isOpen, setIsOpen }: ISideBarProps) => {
           <S.ButtonWrapper isOpen={isOpen}>
             {wallet?.provider && managerPools && managerPools.length > 0 && (
               <Button
-                text="Create New Pool"
+                text="Create New Portfolio"
                 background="secondary"
                 fullWidth
                 type="button"

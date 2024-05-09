@@ -14,15 +14,16 @@ export const SkeletonLoading = styled.div<SkeletonLoading>`
 
 type SkeletonLoadingContent = {
   height: number
-  width?: number
+  width?: number | string
+  borderRadios?: number
 }
 
 export const SkeletonLoadingContent = styled.div<SkeletonLoadingContent>`
-  ${({ height }) => css`
+  ${({ height, borderRadios }) => css`
     width: 100%;
     height: ${height}rem;
 
-    border-radius: 4px;
+    border-radius: ${borderRadios}px;
 
     background-color: #ffffff12;
     background: linear-gradient(

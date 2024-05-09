@@ -1,9 +1,3 @@
-import React from 'react'
-import { useRouter } from 'next/router'
-import { getAddress } from 'ethers'
-import { useConnectWallet } from '@web3-onboard/react'
-import Big from 'big.js'
-
 import VotingPower from '@/components/VotingPower'
 import Breadcrumb from '@/components/Breadcrumb'
 import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
@@ -18,6 +12,11 @@ import stakingPoolsIcon from '@assets/iconGradient/staking-pools.svg'
 import stakeMoneyWithdraw from '@assets/iconGradient/stake-money-withdraw.svg'
 
 import * as S from './styles'
+import Big from 'big.js'
+import { useConnectWallet } from '@web3-onboard/react'
+import { getAddress } from 'ethers'
+import { useRouter } from 'next/router'
+import React from 'react'
 
 const tabs = [
   {
@@ -46,12 +45,10 @@ const StakeFarm = () => {
 
   React.useEffect(() => {
     const isSelectQueryTab = router.query.tab
-
     if (isSelectQueryTab) {
       setIsSelectTab(isSelectQueryTab)
     }
   }, [router])
-
   return (
     <>
       <Breadcrumb>

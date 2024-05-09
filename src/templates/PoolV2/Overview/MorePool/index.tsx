@@ -7,7 +7,15 @@ import FundCard from '@/components/FundCard'
 import * as S from './styles'
 
 const MorePool = () => {
-  const { data: poolsKassandra } = useFeaturedPools()
+  const dateNow = new Date()
+  const params = {
+    price_period: 86400,
+    period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 30),
+    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
+    chainIn: ['137', '42161', '43114']
+  }
+  const { data: poolsKassandra } = useFeaturedPools(params)
 
   return (
     <S.MorePool>
@@ -18,7 +26,7 @@ const MorePool = () => {
       </S.MorePoolHeader>
 
       <S.FundCardContainer>
-        {poolsKassandra?.poolsKassandra.slice(0, 3).map(pool => {
+        {poolsKassandra?.pools.slice(0, 3).map(pool => {
           return (
             <FundCard
               key={pool.id}

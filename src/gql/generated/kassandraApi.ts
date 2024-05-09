@@ -203,7 +203,9 @@ export type Activity_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -417,7 +419,9 @@ export type Asset_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -737,7 +741,9 @@ export type Broker_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -977,7 +983,9 @@ export type Candle_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -1583,7 +1591,9 @@ export type Fee_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -1919,7 +1929,9 @@ export type History_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -2168,7 +2180,9 @@ export type Investor_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -3150,11 +3164,13 @@ export type Pool = {
   brokers: Array<Broker>
   chain: Chain
   chain_id: Scalars['Int']['output']
+  change: Scalars['BigDecimal']['output']
   /**
    * Controller contract that controls the vault
    *
    */
   controller: Scalars['String']['output']
+  created_at: Scalars['Int']['output']
   decimals: Scalars['Int']['output']
   deposits_broker_btc: Scalars['BigDecimal']['output']
   deposits_broker_usd: Scalars['BigDecimal']['output']
@@ -3510,7 +3526,9 @@ export type PoolSupply_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -3641,6 +3659,14 @@ export type Pool_Filter = {
   chain_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   chain_starts_with?: InputMaybe<Scalars['String']['input']>
   chain_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  change?: InputMaybe<Scalars['BigDecimal']['input']>
+  change_gt?: InputMaybe<Scalars['BigDecimal']['input']>
+  change_gte?: InputMaybe<Scalars['BigDecimal']['input']>
+  change_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
+  change_lt?: InputMaybe<Scalars['BigDecimal']['input']>
+  change_lte?: InputMaybe<Scalars['BigDecimal']['input']>
+  change_not?: InputMaybe<Scalars['BigDecimal']['input']>
+  change_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>
   controller?: InputMaybe<Scalars['String']['input']>
   controller_contains?: InputMaybe<Scalars['String']['input']>
   controller_contains_nocase?: InputMaybe<Scalars['String']['input']>
@@ -3661,6 +3687,14 @@ export type Pool_Filter = {
   controller_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
   controller_starts_with?: InputMaybe<Scalars['String']['input']>
   controller_starts_with_nocase?: InputMaybe<Scalars['String']['input']>
+  created_at?: InputMaybe<Scalars['Int']['input']>
+  created_at_gt?: InputMaybe<Scalars['Int']['input']>
+  created_at_gte?: InputMaybe<Scalars['Int']['input']>
+  created_at_in?: InputMaybe<Array<Scalars['Int']['input']>>
+  created_at_lt?: InputMaybe<Scalars['Int']['input']>
+  created_at_lte?: InputMaybe<Scalars['Int']['input']>
+  created_at_not?: InputMaybe<Scalars['Int']['input']>
+  created_at_not_in?: InputMaybe<Array<Scalars['Int']['input']>>
   decimals?: InputMaybe<Scalars['Int']['input']>
   decimals_gt?: InputMaybe<Scalars['Int']['input']>
   decimals_gte?: InputMaybe<Scalars['Int']['input']>
@@ -4438,7 +4472,9 @@ export type Pool_OrderBy =
   | 'chain__token_name'
   | 'chain__token_symbol'
   | 'chain_id'
+  | 'change'
   | 'controller'
+  | 'created_at'
   | 'decimals'
   | 'deposits_broker_btc'
   | 'deposits_broker_usd'
@@ -6139,7 +6175,9 @@ export type TotalValueLocked_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -7003,7 +7041,9 @@ export type Volume_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -7414,7 +7454,9 @@ export type WeightGoalPoint_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -7670,7 +7712,9 @@ export type WeightPoint_OrderBy =
   | 'pool'
   | 'pool__address'
   | 'pool__chain_id'
+  | 'pool__change'
   | 'pool__controller'
+  | 'pool__created_at'
   | 'pool__decimals'
   | 'pool__deposits_broker_btc'
   | 'pool__deposits_broker_usd'
@@ -7944,16 +7988,19 @@ export type BrokersFeesQuery = {
 }
 
 export type CommunityPoolsQueryVariables = Exact<{
-  day?: InputMaybe<Scalars['Int']['input']>
-  month?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Pool_OrderBy>
   orderDirection?: InputMaybe<OrderDirection>
   first?: InputMaybe<Scalars['Int']['input']>
   skip?: InputMaybe<Scalars['Int']['input']>
+  chainInId?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>
+  chainInString?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >
 }>
 
 export type CommunityPoolsQuery = {
   __typename?: 'Query'
-  kassandras: Array<{ __typename?: 'Kassandra'; pool_count: number }>
+  chains: Array<{ __typename?: 'Chain'; pool_count: number }>
   pools: Array<{
     __typename?: 'Pool'
     id: string
@@ -7961,14 +8008,16 @@ export type CommunityPoolsQuery = {
     symbol: string
     logo?: string | null
     address: string
+    unique_investors: number
+    fee_join_broker: string
+    chain_id: number
+    pool_id?: number | null
+    change: string
     price_usd: string
     total_value_locked_usd: string
     is_private_pool: boolean
     chain: { __typename?: 'Chain'; logo?: string | null }
     volumes: Array<{ __typename?: 'Volume'; volume_usd: string }>
-    now: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
-    day: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
-    month: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
     underlying_assets: Array<{
       __typename?: 'Asset'
       token: {
@@ -8002,11 +8051,286 @@ export type DelegationsQuery = {
   }>
 }
 
-export type FeaturedPoolsQueryVariables = Exact<{ [key: string]: never }>
+export type ExploreOverviewPoolsQueryVariables = Exact<{ [key: string]: never }>
+
+export type ExploreOverviewPoolsQuery = {
+  __typename?: 'Query'
+  kassandras: Array<{
+    __typename?: 'Kassandra'
+    pool_count: number
+    num_managers: number
+    num_deposits: string
+  }>
+}
+
+export type ExplorePoolsQueryVariables = Exact<{
+  price_period: Scalars['Int']['input']
+  period_selected: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  chainIn?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >
+  orderBy?: InputMaybe<Pool_OrderBy>
+  orderDirection?: InputMaybe<OrderDirection>
+  totalValueLockedUsdGt?: InputMaybe<Scalars['BigDecimal']['input']>
+}>
+
+export type ExplorePoolsQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    name: string
+    symbol: string
+    logo?: string | null
+    address: string
+    pool_id?: number | null
+    founded_by?: string | null
+    price_usd: string
+    pool_version: number
+    featured: boolean
+    fee_join_broker: string
+    chain_id: number
+    total_value_locked_usd: string
+    strategy: string
+    manager: { __typename?: 'Manager'; id: string; nickname?: string | null }
+    chain: { __typename?: 'Chain'; logo?: string | null }
+    price_candles: Array<{
+      __typename?: 'Candle'
+      timestamp: number
+      close: string
+    }>
+    total_value_locked: Array<{
+      __typename?: 'TotalValueLocked'
+      close: string
+      timestamp: number
+    }>
+    weights: Array<{
+      __typename?: 'WeightPoint'
+      timestamp: number
+      weights: Array<{
+        __typename?: 'Weight'
+        weight_normalized: string
+        token: { __typename?: 'Token'; id: string; symbol: string }
+      }>
+    }>
+    underlying_assets: Array<{
+      __typename?: 'Asset'
+      balance: string
+      weight_normalized: string
+      weight_goal_normalized: string
+      token: {
+        __typename?: 'Token'
+        id: string
+        name: string
+        logo?: string | null
+        symbol: string
+        decimals: number
+        is_wrap_token: number
+        wraps?: {
+          __typename?: 'Token'
+          id: string
+          decimals: number
+          symbol: string
+          name: string
+          logo?: string | null
+        } | null
+      }
+    }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      start_timestamp: number
+      end_timestamp: number
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        weight_normalized: string
+        asset: {
+          __typename?: 'Asset'
+          token: { __typename?: 'Token'; id: string }
+        }
+      }>
+    }>
+  }>
+}
+
+export type FarmPoolsQueryVariables = Exact<{
+  price_period: Scalars['Int']['input']
+  period_selected: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  chainIn?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >
+  poolIdList?: InputMaybe<
+    Array<Scalars['ID']['input']> | Scalars['ID']['input']
+  >
+}>
+
+export type FarmPoolsQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    name: string
+    symbol: string
+    logo?: string | null
+    address: string
+    pool_id?: number | null
+    founded_by?: string | null
+    price_usd: string
+    pool_version: number
+    featured: boolean
+    fee_join_broker: string
+    chain_id: number
+    total_value_locked_usd: string
+    strategy: string
+    manager: { __typename?: 'Manager'; id: string; nickname?: string | null }
+    chain: { __typename?: 'Chain'; logo?: string | null }
+    price_candles: Array<{
+      __typename?: 'Candle'
+      timestamp: number
+      close: string
+    }>
+    total_value_locked: Array<{
+      __typename?: 'TotalValueLocked'
+      close: string
+      timestamp: number
+    }>
+    weights: Array<{
+      __typename?: 'WeightPoint'
+      timestamp: number
+      weights: Array<{
+        __typename?: 'Weight'
+        weight_normalized: string
+        token: { __typename?: 'Token'; id: string; symbol: string }
+      }>
+    }>
+    underlying_assets: Array<{
+      __typename?: 'Asset'
+      balance: string
+      weight_normalized: string
+      weight_goal_normalized: string
+      token: {
+        __typename?: 'Token'
+        id: string
+        name: string
+        logo?: string | null
+        symbol: string
+        decimals: number
+        is_wrap_token: number
+        wraps?: {
+          __typename?: 'Token'
+          id: string
+          decimals: number
+          symbol: string
+          name: string
+          logo?: string | null
+        } | null
+      }
+    }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      start_timestamp: number
+      end_timestamp: number
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        weight_normalized: string
+        asset: {
+          __typename?: 'Asset'
+          token: { __typename?: 'Token'; id: string }
+        }
+      }>
+    }>
+  }>
+}
+
+export type FeaturedPoolsQueryVariables = Exact<{
+  price_period: Scalars['Int']['input']
+  period_selected: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  chainIn?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >
+}>
 
 export type FeaturedPoolsQuery = {
   __typename?: 'Query'
-  poolsKassandra: Array<{ __typename?: 'Pool'; id: string }>
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    name: string
+    symbol: string
+    logo?: string | null
+    address: string
+    pool_id?: number | null
+    founded_by?: string | null
+    price_usd: string
+    pool_version: number
+    featured: boolean
+    fee_join_broker: string
+    chain_id: number
+    total_value_locked_usd: string
+    strategy: string
+    manager: { __typename?: 'Manager'; id: string; nickname?: string | null }
+    chain: { __typename?: 'Chain'; logo?: string | null }
+    price_candles: Array<{
+      __typename?: 'Candle'
+      timestamp: number
+      close: string
+    }>
+    total_value_locked: Array<{
+      __typename?: 'TotalValueLocked'
+      close: string
+      timestamp: number
+    }>
+    weights: Array<{
+      __typename?: 'WeightPoint'
+      timestamp: number
+      weights: Array<{
+        __typename?: 'Weight'
+        weight_normalized: string
+        token: { __typename?: 'Token'; id: string; symbol: string }
+      }>
+    }>
+    underlying_assets: Array<{
+      __typename?: 'Asset'
+      balance: string
+      weight_normalized: string
+      weight_goal_normalized: string
+      token: {
+        __typename?: 'Token'
+        id: string
+        name: string
+        logo?: string | null
+        symbol: string
+        decimals: number
+        is_wrap_token: number
+        wraps?: {
+          __typename?: 'Token'
+          id: string
+          decimals: number
+          symbol: string
+          name: string
+          logo?: string | null
+        } | null
+      }
+    }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      start_timestamp: number
+      end_timestamp: number
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        weight_normalized: string
+        asset: {
+          __typename?: 'Asset'
+          token: { __typename?: 'Token'; id: string }
+        }
+      }>
+    }>
+  }>
 }
 
 export type FeesQueryVariables = Exact<{
@@ -8462,6 +8786,39 @@ export type ManagersPoolsQuery = {
       timestamp: number
       close: string
     }>
+  }>
+}
+
+export type MyPoolsQueryVariables = Exact<{
+  day: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  userWallet?: InputMaybe<Scalars['String']['input']>
+  chainIn?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >
+}>
+
+export type MyPoolsQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    name: string
+    symbol: string
+    price_usd: string
+    total_value_locked_usd: string
+    address: string
+    pool_id?: number | null
+    logo?: string | null
+    chain: { __typename?: 'Chain'; id: string; icon?: string | null }
+    investors: Array<{
+      __typename?: 'Investor'
+      wallet: string
+      amount: string
+    }>
+    now: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
+    day: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
   }>
 }
 
@@ -8978,6 +9335,94 @@ export type PoolsPriceListQuery = {
   pools: Array<{ __typename?: 'Pool'; price_usd: string; address: string }>
 }
 
+export type PoolsWithFeeJoinBrokerQueryVariables = Exact<{
+  price_period: Scalars['Int']['input']
+  period_selected: Scalars['Int']['input']
+  month: Scalars['Int']['input']
+  chainIn?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >
+}>
+
+export type PoolsWithFeeJoinBrokerQuery = {
+  __typename?: 'Query'
+  pools: Array<{
+    __typename?: 'Pool'
+    id: string
+    name: string
+    symbol: string
+    logo?: string | null
+    address: string
+    pool_id?: number | null
+    founded_by?: string | null
+    price_usd: string
+    pool_version: number
+    featured: boolean
+    fee_join_broker: string
+    chain_id: number
+    total_value_locked_usd: string
+    strategy: string
+    manager: { __typename?: 'Manager'; id: string; nickname?: string | null }
+    chain: { __typename?: 'Chain'; logo?: string | null }
+    price_candles: Array<{
+      __typename?: 'Candle'
+      timestamp: number
+      close: string
+    }>
+    total_value_locked: Array<{
+      __typename?: 'TotalValueLocked'
+      close: string
+      timestamp: number
+    }>
+    weights: Array<{
+      __typename?: 'WeightPoint'
+      timestamp: number
+      weights: Array<{
+        __typename?: 'Weight'
+        weight_normalized: string
+        token: { __typename?: 'Token'; id: string; symbol: string }
+      }>
+    }>
+    underlying_assets: Array<{
+      __typename?: 'Asset'
+      balance: string
+      weight_normalized: string
+      weight_goal_normalized: string
+      token: {
+        __typename?: 'Token'
+        id: string
+        name: string
+        logo?: string | null
+        symbol: string
+        decimals: number
+        is_wrap_token: number
+        wraps?: {
+          __typename?: 'Token'
+          id: string
+          decimals: number
+          symbol: string
+          name: string
+          logo?: string | null
+        } | null
+      }
+    }>
+    month: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
+    weight_goals: Array<{
+      __typename?: 'WeightGoalPoint'
+      start_timestamp: number
+      end_timestamp: number
+      weights: Array<{
+        __typename?: 'WeightGoal'
+        weight_normalized: string
+        asset: {
+          __typename?: 'Asset'
+          token: { __typename?: 'Token'; id: string }
+        }
+      }>
+    }>
+  }>
+}
+
 export type ProposalQueryVariables = Exact<{
   number: Scalars['Int']['input']
   voter?: InputMaybe<Scalars['String']['input']>
@@ -9370,18 +9815,19 @@ export const BrokersFeesDocument = gql`
 `
 export const CommunityPoolsDocument = gql`
   query CommunityPools(
-    $day: Int
-    $month: Int
+    $orderBy: Pool_orderBy
     $orderDirection: OrderDirection
     $first: Int
     $skip: Int
+    $chainInId: [ID!]
+    $chainInString: [String!]
   ) {
-    kassandras {
+    chains(where: { id_in: $chainInId }) {
       pool_count
     }
     pools(
-      where: { featured: false }
-      orderBy: total_value_locked_usd
+      where: { chain_in: $chainInString }
+      orderBy: $orderBy
       orderDirection: $orderDirection
       first: $first
       skip: $skip
@@ -9391,9 +9837,14 @@ export const CommunityPoolsDocument = gql`
       symbol
       logo
       address
+      unique_investors
+      fee_join_broker
+      chain_id
+      pool_id
       chain {
         logo: icon
       }
+      change
       price_usd
       total_value_locked_usd
       is_private_pool
@@ -9404,29 +9855,6 @@ export const CommunityPoolsDocument = gql`
         first: 1
       ) {
         volume_usd
-      }
-      now: price_candles(
-        where: { base: "usd", period: 3600 }
-        orderBy: timestamp
-        orderDirection: desc
-        first: 1
-      ) {
-        timestamp
-        close
-      }
-      day: price_candles(
-        where: { base: "usd", period: 3600, timestamp_gt: $day }
-      ) {
-        timestamp
-        close
-      }
-      month: price_candles(
-        where: { base: "usd", period: 3600, timestamp_gt: $month }
-        orderBy: timestamp
-        first: 1
-      ) {
-        timestamp
-        close
       }
       underlying_assets {
         token {
@@ -9463,10 +9891,334 @@ export const DelegationsDocument = gql`
     }
   }
 `
-export const FeaturedPoolsDocument = gql`
-  query FeaturedPools {
-    poolsKassandra: pools(where: { featured: true }) {
+export const ExploreOverviewPoolsDocument = gql`
+  query ExploreOverviewPools {
+    kassandras {
+      pool_count
+      num_managers
+      num_deposits
+    }
+  }
+`
+export const ExplorePoolsDocument = gql`
+  query ExplorePools(
+    $price_period: Int!
+    $period_selected: Int!
+    $month: Int!
+    $chainIn: [String!]
+    $orderBy: Pool_orderBy
+    $orderDirection: OrderDirection
+    $totalValueLockedUsdGt: BigDecimal
+  ) {
+    pools(
+      orderBy: $orderBy
+      orderDirection: $orderDirection
+      first: 9
+      where: {
+        chain_in: $chainIn
+        total_value_locked_usd_gt: $totalValueLockedUsdGt
+      }
+    ) {
       id
+      name
+      symbol
+      name
+      logo
+      address
+      pool_id
+      founded_by
+      price_usd
+      pool_version
+      featured
+      fee_join_broker
+      manager {
+        id
+        nickname
+      }
+      chain_id
+      chain {
+        logo: icon
+      }
+      price_candles(
+        where: {
+          base: "usd"
+          period: $price_period
+          timestamp_gt: $period_selected
+        }
+        orderBy: timestamp
+        first: 365
+      ) {
+        timestamp
+        close
+      }
+      total_value_locked(
+        where: { base: "usd", timestamp_gt: $period_selected }
+        orderBy: timestamp
+      ) {
+        close
+        timestamp
+      }
+      weights(where: { timestamp_gt: $period_selected }, orderBy: timestamp) {
+        timestamp
+        weights {
+          token {
+            id
+            symbol
+          }
+          weight_normalized
+        }
+      }
+      total_value_locked_usd
+      strategy
+      underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
+        balance
+        weight_normalized
+        weight_goal_normalized
+        token {
+          id
+          name
+          logo
+          symbol
+          decimals
+          is_wrap_token
+          wraps {
+            id
+            decimals
+            symbol
+            name
+            logo
+          }
+        }
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 2) {
+        start_timestamp
+        end_timestamp
+        weights(orderBy: weight_normalized, orderDirection: desc) {
+          weight_normalized
+          asset {
+            token {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+`
+export const FarmPoolsDocument = gql`
+  query FarmPools(
+    $price_period: Int!
+    $period_selected: Int!
+    $month: Int!
+    $chainIn: [String!]
+    $poolIdList: [ID!]
+  ) {
+    pools(first: 9, where: { chain_in: $chainIn, id_in: $poolIdList }) {
+      id
+      name
+      symbol
+      name
+      logo
+      address
+      pool_id
+      founded_by
+      price_usd
+      pool_version
+      featured
+      fee_join_broker
+      manager {
+        id
+        nickname
+      }
+      chain_id
+      chain {
+        logo: icon
+      }
+      price_candles(
+        where: {
+          base: "usd"
+          period: $price_period
+          timestamp_gt: $period_selected
+        }
+        orderBy: timestamp
+        first: 365
+      ) {
+        timestamp
+        close
+      }
+      total_value_locked(
+        where: { base: "usd", timestamp_gt: $period_selected }
+        orderBy: timestamp
+      ) {
+        close
+        timestamp
+      }
+      weights(where: { timestamp_gt: $period_selected }, orderBy: timestamp) {
+        timestamp
+        weights {
+          token {
+            id
+            symbol
+          }
+          weight_normalized
+        }
+      }
+      total_value_locked_usd
+      strategy
+      underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
+        balance
+        weight_normalized
+        weight_goal_normalized
+        token {
+          id
+          name
+          logo
+          symbol
+          decimals
+          is_wrap_token
+          wraps {
+            id
+            decimals
+            symbol
+            name
+            logo
+          }
+        }
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 2) {
+        start_timestamp
+        end_timestamp
+        weights(orderBy: weight_normalized, orderDirection: desc) {
+          weight_normalized
+          asset {
+            token {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+`
+export const FeaturedPoolsDocument = gql`
+  query FeaturedPools(
+    $price_period: Int!
+    $period_selected: Int!
+    $month: Int!
+    $chainIn: [String!]
+  ) {
+    pools(
+      orderBy: unique_investors
+      orderDirection: desc
+      where: { featured: true, chain_in: $chainIn }
+    ) {
+      id
+      name
+      symbol
+      name
+      logo
+      address
+      pool_id
+      founded_by
+      price_usd
+      pool_version
+      featured
+      fee_join_broker
+      manager {
+        id
+        nickname
+      }
+      chain_id
+      chain {
+        logo: icon
+      }
+      price_candles(
+        where: {
+          base: "usd"
+          period: $price_period
+          timestamp_gt: $period_selected
+        }
+        orderBy: timestamp
+        first: 365
+      ) {
+        timestamp
+        close
+      }
+      total_value_locked(
+        where: { base: "usd", timestamp_gt: $period_selected }
+        orderBy: timestamp
+      ) {
+        close
+        timestamp
+      }
+      weights(where: { timestamp_gt: $period_selected }, orderBy: timestamp) {
+        timestamp
+        weights {
+          token {
+            id
+            symbol
+          }
+          weight_normalized
+        }
+      }
+      total_value_locked_usd
+      strategy
+      underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
+        balance
+        weight_normalized
+        weight_goal_normalized
+        token {
+          id
+          name
+          logo
+          symbol
+          decimals
+          is_wrap_token
+          wraps {
+            id
+            decimals
+            symbol
+            name
+            logo
+          }
+        }
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 2) {
+        start_timestamp
+        end_timestamp
+        weights(orderBy: weight_normalized, orderDirection: desc) {
+          weight_normalized
+          asset {
+            token {
+              id
+            }
+          }
+        }
+      }
     }
   }
 `
@@ -9965,6 +10717,63 @@ export const ManagersPoolsDocument = gql`
       }
       TVLMonthly: total_value_locked(
         where: { base: "usd", timestamp_gt: $month }
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+    }
+  }
+`
+export const MyPoolsDocument = gql`
+  query MyPools(
+    $day: Int!
+    $month: Int!
+    $userWallet: String
+    $chainIn: [String!]
+  ) {
+    pools(
+      where: {
+        investors_: { wallet: $userWallet, amount_gt: 0 }
+        chain_in: $chainIn
+      }
+    ) {
+      id
+      name
+      symbol
+      price_usd
+      total_value_locked_usd
+      address
+      pool_id
+      logo
+      chain {
+        id
+        icon
+      }
+      investors(where: { wallet: $userWallet }) {
+        wallet
+        amount
+      }
+      now: price_candles(
+        where: { base: "usd", period: 3600 }
+        orderBy: timestamp
+        orderDirection: desc
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      day: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $day }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
         first: 1
       ) {
         timestamp
@@ -10522,6 +11331,113 @@ export const PoolsPriceListDocument = gql`
     }
   }
 `
+export const PoolsWithFeeJoinBrokerDocument = gql`
+  query PoolsWithFeeJoinBroker(
+    $price_period: Int!
+    $period_selected: Int!
+    $month: Int!
+    $chainIn: [String!]
+  ) {
+    pools(
+      orderBy: fee_join_broker
+      orderDirection: desc
+      first: 9
+      where: { chain_in: $chainIn, total_value_locked_usd_gt: 500 }
+    ) {
+      id
+      name
+      symbol
+      name
+      logo
+      address
+      pool_id
+      founded_by
+      price_usd
+      pool_version
+      featured
+      fee_join_broker
+      manager {
+        id
+        nickname
+      }
+      chain_id
+      chain {
+        logo: icon
+      }
+      price_candles(
+        where: {
+          base: "usd"
+          period: $price_period
+          timestamp_gt: $period_selected
+        }
+        orderBy: timestamp
+        first: 365
+      ) {
+        timestamp
+        close
+      }
+      total_value_locked(
+        where: { base: "usd", timestamp_gt: $period_selected }
+        orderBy: timestamp
+      ) {
+        close
+        timestamp
+      }
+      weights(where: { timestamp_gt: $period_selected }, orderBy: timestamp) {
+        timestamp
+        weights {
+          token {
+            id
+            symbol
+          }
+          weight_normalized
+        }
+      }
+      total_value_locked_usd
+      strategy
+      underlying_assets(orderBy: weight_normalized, orderDirection: desc) {
+        balance
+        weight_normalized
+        weight_goal_normalized
+        token {
+          id
+          name
+          logo
+          symbol
+          decimals
+          is_wrap_token
+          wraps {
+            id
+            decimals
+            symbol
+            name
+            logo
+          }
+        }
+      }
+      month: price_candles(
+        where: { base: "usd", period: 3600, timestamp_gt: $month }
+        orderBy: timestamp
+        first: 1
+      ) {
+        timestamp
+        close
+      }
+      weight_goals(orderBy: end_timestamp, orderDirection: desc, first: 2) {
+        start_timestamp
+        end_timestamp
+        weights(orderBy: weight_normalized, orderDirection: desc) {
+          weight_normalized
+          asset {
+            token {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+`
 export const ProposalDocument = gql`
   query Proposal($number: Int!, $voter: String) {
     proposal: proposals(where: { number: $number }) {
@@ -10919,8 +11835,51 @@ export function getSdk(
         'query'
       )
     },
+    ExploreOverviewPools(
+      variables?: ExploreOverviewPoolsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ExploreOverviewPoolsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ExploreOverviewPoolsQuery>(
+            ExploreOverviewPoolsDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'ExploreOverviewPools',
+        'query'
+      )
+    },
+    ExplorePools(
+      variables: ExplorePoolsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<ExplorePoolsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<ExplorePoolsQuery>(ExplorePoolsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'ExplorePools',
+        'query'
+      )
+    },
+    FarmPools(
+      variables: FarmPoolsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<FarmPoolsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<FarmPoolsQuery>(FarmPoolsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'FarmPools',
+        'query'
+      )
+    },
     FeaturedPools(
-      variables?: FeaturedPoolsQueryVariables,
+      variables: FeaturedPoolsQueryVariables,
       requestHeaders?: GraphQLClientRequestHeaders
     ): Promise<FeaturedPoolsQuery> {
       return withWrapper(
@@ -11151,6 +12110,20 @@ export function getSdk(
             ...wrappedRequestHeaders
           }),
         'ManagersPools',
+        'query'
+      )
+    },
+    MyPools(
+      variables: MyPoolsQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<MyPoolsQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<MyPoolsQuery>(MyPoolsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders
+          }),
+        'MyPools',
         'query'
       )
     },
@@ -11424,6 +12397,21 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'PoolsPriceList',
+        'query'
+      )
+    },
+    PoolsWithFeeJoinBroker(
+      variables: PoolsWithFeeJoinBrokerQueryVariables,
+      requestHeaders?: GraphQLClientRequestHeaders
+    ): Promise<PoolsWithFeeJoinBrokerQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<PoolsWithFeeJoinBrokerQuery>(
+            PoolsWithFeeJoinBrokerDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'PoolsWithFeeJoinBroker',
         'query'
       )
     },

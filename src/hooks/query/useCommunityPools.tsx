@@ -1,47 +1,66 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { kassandraClient } from '@/graphQLClients'
-import { OrderDirection } from '@/gql/generated/kassandraApi'
+import { OrderDirection, Pool_OrderBy } from '@/gql/generated/kassandraApi'
 
 type UseCommunityPoolsProps = {
-  day: number
   first: number
-  month: number
   orderDirection: OrderDirection
   skip: number
+  orderBy: Pool_OrderBy
+  chainIn: string[]
+  enabled: boolean
 }
 
 export const fetchCommunityPools = async ({
-  day,
   first,
-  month,
   orderDirection,
-  skip
-}: UseCommunityPoolsProps) => {
+  skip,
+  orderBy,
+  chainIn
+}: Omit<UseCommunityPoolsProps, 'enabled'>) => {
   return kassandraClient
-    .CommunityPools({ day, first, month, orderDirection, skip })
+    .CommunityPools({
+      first,
+      orderDirection,
+      skip,
+      orderBy,
+      chainInId: chainIn,
+      chainInString: chainIn
+    })
     .then(res => res)
 }
 
 export const useCommunityPools = ({
-  day,
   first,
-  month,
   orderDirection,
-  skip
+  skip,
+  orderBy,
+  chainIn,
+  enabled
 }: UseCommunityPoolsProps) => {
   return useQuery({
-    queryKey: ['community-pools', day, first, month, orderDirection, skip],
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: [
+      'community-pools',
+      first,
+      orderDirection,
+      skip,
+      orderBy,
+      chainIn,
+      enabled
+    ],
     queryFn: async () =>
       fetchCommunityPools({
-        day,
         first,
-        month,
         orderDirection,
-        skip
+        skip,
+        orderBy,
+        chainIn
       }),
     staleTime: 1000 * 60,
     refetchInterval: 1000 * 60,
-    keepPreviousData: true
+    keepPreviousData: true,
+    enabled
   })
 }

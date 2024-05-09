@@ -38,7 +38,7 @@ const ChooseAction = ({
           />
           <h1>Manage Assets</h1>
         </S.HeaderImageContent>
-        <p>Choose an action you would like to start on your pool</p>
+        <p>Choose an action you would like to start on your portfolio</p>
       </S.Header>
       <S.ChooseActionBody>
         <S.CardChooseActionContainer>
@@ -53,20 +53,20 @@ const ChooseAction = ({
           <CardChooseAction
             ImageUrl="/assets/iconGradient/add.svg"
             title="Add asset"
-            paragraph="Select one or more asset you would like to add in the pool to be part of your strategy."
+            paragraph="Select one or more asset you would like to add in the portfolio to be part of your strategy."
             NumberActive={chooseActionStep.Add}
             isActive={actionSelected}
             setChooseActionSelect={setActionSelected}
           />
           <Tippy
-            content="You cannot have less than 2 assets in a managed pool. Currently this pool has only 2 assets."
+            content="You cannot have less than 2 assets in a managed portfolio. Currently this portfolio has only 2 assets."
             disabled={!(amountTokenInPool <= 2)}
           >
             <span>
               <CardChooseAction
                 ImageUrl="/assets/iconGradient/remove.svg"
                 title="remove asset"
-                paragraph="Choose one or more assets you would like to remove from the pool. This is something that."
+                paragraph="Choose one or more assets you would like to remove from the portfolio. This is something that."
                 NumberActive={chooseActionStep.Remove}
                 isActive={actionSelected}
                 setChooseActionSelect={setActionSelected}
