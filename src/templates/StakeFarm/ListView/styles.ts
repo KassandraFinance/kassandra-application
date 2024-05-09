@@ -16,7 +16,7 @@ export const Wrapper = styled.div<WrapperProps>`
     padding: 2.4rem;
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 768px) {
     padding: 1.6rem;
   }
 `
@@ -57,14 +57,14 @@ export const TopContent = styled.div`
   padding-block: 3.2rem;
   justify-content: space-between;
 
-  @media (max-width: 568px) {
+  @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
     gap: 2.4rem;
     padding-block: 2.4rem;
 
     button {
-      display: none;
+      width: 100%;
     }
   }
 `
@@ -146,8 +146,17 @@ export const RegularContent = styled.div`
   display: flex;
   gap: 4.8rem;
 
+  @media (max-width: 1180px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.4rem;
+    column-gap: 4.8rem;
+  }
+
   @media (max-width: 768px) {
+    display: flex;
     gap: 1.6rem;
+    width: 100%;
   }
 `
 export const RegularColumn = styled.div`
@@ -155,6 +164,7 @@ export const RegularColumn = styled.div`
   flex-direction: column;
   justify-content: space-between;
   gap: 0.8rem;
+  width: fit-content;
 
   h3 {
     font-family: Rubik;
@@ -173,6 +183,10 @@ export const RegularColumn = styled.div`
     span {
       color: #bdbdbd;
     }
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `
 export const BoldColumn = styled(RegularColumn)`
@@ -201,14 +215,14 @@ export const IconWrapperDesktop = styled.div<IconWrapperProps>`
     transition: transform 300ms ease-in-out;
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 768px) {
     display: none;
   }
 `
 
 export const IconWrapperMobile = styled(IconWrapperDesktop)`
   display: none;
-  @media (max-width: 560px) {
+  @media (max-width: 768px) {
     display: flex;
   }
 `
@@ -225,6 +239,10 @@ export const ExpandedContent = styled.div`
   padding-block: 2.4rem;
   gap: 3.2rem;
 
+  @media (max-width: 900px) {
+    gap: 1.6rem;
+  }
+
   @media (max-width: 768px) {
     flex-direction: column;
   }
@@ -240,6 +258,10 @@ export const BlocksWrapper = styled.div`
   display: flex;
   gap: 3.2rem;
   width: 100%;
+
+  @media (max-width: 900px) {
+    gap: 1.6rem;
+  }
 
   @media (max-width: 768px) {
     flex-direction: column;

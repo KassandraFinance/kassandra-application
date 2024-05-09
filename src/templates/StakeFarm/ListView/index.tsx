@@ -41,20 +41,20 @@ const rightArrowIcon = (
     <path
       d="M8 15C11.866 15 15 11.866 15 8C15 4.13401 11.866 1 8 1C4.13401 1 1 4.13401 1 8C1 11.866 4.13401 15 8 15Z"
       stroke="#FCFCFC"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M8 10.8002L10.8 8.0002L8 5.2002"
       stroke="#FCFCFC"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M5.2002 8H10.8002"
       stroke="#FCFCFC"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 )
@@ -170,7 +170,7 @@ export function StakeListViewSection({
                           <span>Total Staked:</span> {pool.totalStaked ?? 0}
                         </p>
 
-                        <span>= {pool.stakedInUsd} USD</span>
+                        <span>= {pool.stakedInUsd}</span>
                       </S.ExpandedContentBlock>
                       <S.ExpandedContentBlock>
                         <p>
@@ -200,7 +200,7 @@ export function StakeListViewSection({
                       </p>
                       <a
                         target="_blank"
-                        rel="nofollow"
+                        rel="nofollow noreferrer"
                         href={'add contract here'}
                       >
                         See Contract {rightArrowIcon}
