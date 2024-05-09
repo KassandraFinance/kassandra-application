@@ -26,7 +26,7 @@ const RemoveReview = () => {
 
   return (
     <S.RemoveReview>
-      <CreatePoolHeader title="remove asset from the pool" />
+      <CreatePoolHeader title="remove asset from the portfolio" />
       <Steps
         steps={[
           {

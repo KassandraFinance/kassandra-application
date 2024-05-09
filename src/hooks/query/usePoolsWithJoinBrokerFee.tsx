@@ -1,40 +1,40 @@
 import { useQuery } from '@tanstack/react-query'
-
 import { kassandraClient } from '@/graphQLClients'
 
-type UseLargestPoolsProps = {
-  day: number
+type usePoolsWithFeeJoinBroker = {
   month: number
   period_selected: number
   price_period: number
   chainIn: string[]
 }
 
-export const fetchLargestPools = async ({
-  day,
+export const fetchPoolsWithFeeJoinBroker = async ({
   month,
   period_selected,
   price_period,
   chainIn
-}: UseLargestPoolsProps) => {
+}: usePoolsWithFeeJoinBroker) => {
   return kassandraClient
-    .LargestPools({ day, month, period_selected, price_period, chainIn })
+    .PoolsWithFeeJoinBroker({
+      month,
+      period_selected,
+      price_period,
+      chainIn
+    })
     .then(res => res)
 }
 
-export const useLargestPools = ({
-  day,
+export const usePoolsWithFeeJoinBroker = ({
   month,
   period_selected,
   price_period,
   chainIn
-}: UseLargestPoolsProps) => {
+}: usePoolsWithFeeJoinBroker) => {
   return useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
-    queryKey: ['Largest-pools', chainIn],
+    queryKey: ['pools-with-join-broker', chainIn],
     queryFn: async () =>
-      fetchLargestPools({
-        day,
+      fetchPoolsWithFeeJoinBroker({
         month,
         period_selected,
         price_period,

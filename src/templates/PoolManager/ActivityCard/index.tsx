@@ -196,7 +196,7 @@ const ActivityCard = ({
           </S.ActivityActionTitle>
 
           <PoolInfo
-            title="Pool"
+            title="Portfolio"
             name={pool.name}
             description={pool.symbol}
             logo={pool.logo}

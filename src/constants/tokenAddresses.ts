@@ -48,6 +48,9 @@ export const NATIVE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export const WETH_POLYGON = '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
 
+export const MANAGER_CYRIL_ADDRESS =
+  '0x43Ca5320BAbF6B2f2328a6dE5C1d97C794d41aBd'
+
 export const DEFAULT_ADDRESS_JAZZICON =
   '0x1111111111111111111111111111111111111111'
 

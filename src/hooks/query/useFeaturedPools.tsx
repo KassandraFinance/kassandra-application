@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query'
 import { kassandraClient } from '@/graphQLClients'
 
 type UseFeaturedPoolsProps = {
-  day: number
   month: number
   period_selected: number
   price_period: number
@@ -11,16 +10,15 @@ type UseFeaturedPoolsProps = {
 }
 
 export const fetchFeaturedPools = async ({
-  day,
   month,
   period_selected,
   price_period,
   chainIn
 }: UseFeaturedPoolsProps) => {
   return kassandraClient
-    .FeaturedPools({ day, month, period_selected, price_period, chainIn })
+    .FeaturedPools({ month, period_selected, price_period, chainIn })
     .then(res => {
-      if (!res?.poolsKassandra) {
+      if (!res.pools) {
         return null
       }
 
@@ -29,7 +27,6 @@ export const fetchFeaturedPools = async ({
 }
 
 export const useFeaturedPools = ({
-  day,
   month,
   period_selected,
   price_period,
@@ -40,7 +37,6 @@ export const useFeaturedPools = ({
     queryKey: ['featured-pools', chainIn],
     queryFn: async () =>
       fetchFeaturedPools({
-        day,
         month,
         period_selected,
         price_period,

@@ -1,17 +1,21 @@
 query CommunityPools(
-    $day: Int
-    $month: Int
     $orderBy: Pool_orderBy
     $orderDirection: OrderDirection
     $first: Int
     $skip: Int
+    $chainInId: [ID!]
+    $chainInString: [String!]
   ) {
-    kassandras {
+    chains (
+      where: {
+        id_in: $chainInId
+      }
+    ) {
       pool_count
     }
     pools(
       where: {
-         featured: false
+         chain_in: $chainInString
       }
       orderBy: $orderBy
       orderDirection: $orderDirection
@@ -24,9 +28,13 @@ query CommunityPools(
       logo
       address
       unique_investors
+      fee_join_broker
+      chain_id
+      pool_id
       chain {
         logo: icon
       }
+      change
       price_usd
       total_value_locked_usd
       is_private_pool
@@ -37,29 +45,6 @@ query CommunityPools(
         first: 1
       ) {
         volume_usd
-      }
-      now: price_candles(
-        where: { base: "usd", period: 3600 }
-        orderBy: timestamp
-        orderDirection: desc
-        first: 1
-      ) {
-        timestamp
-        close
-      }
-      day: price_candles(
-        where: { base: "usd", period: 3600, timestamp_gt: $day }
-      ) {
-        timestamp
-        close
-      }
-      month: price_candles(
-        where: { base: "usd", period: 3600, timestamp_gt: $month }
-        orderBy: timestamp
-        first: 1
-      ) {
-        timestamp
-        close
       }
       underlying_assets {
         token {

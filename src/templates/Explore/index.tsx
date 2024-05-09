@@ -1,32 +1,43 @@
 import React, { useState } from 'react'
+import Big from 'big.js'
 
-import { KacyPoligon, networks } from '@/constants/tokenAddresses'
+import { OrderDirection, Pool_OrderBy } from '@/gql/generated/kassandraApi'
 
-import { useLargestPools } from '@/hooks/query/useLargestPools'
+import { addressesForReqFarmPool } from '@/constants/pools'
+import {
+  KacyPoligon,
+  MANAGER_CYRIL_ADDRESS,
+  networks
+} from '@/constants/tokenAddresses'
+
+import { useExplorePools } from '@/hooks/query/useExplorePools'
 import { useFeaturedPools } from '@/hooks/query/useFeaturedPools'
 import { useExploreOverviewPools } from '@/hooks/query/useExploreOverviewPools'
 import useGetToken from '@/hooks/useGetToken'
 import { useTokensData } from '@/hooks/query/useTokensData'
 import { useWhiteListTokensCount } from '@/hooks/query/whiteListTokensCount'
+import { useFarmPools } from '@/hooks/query/useFarmPools'
+import { usePoolsWithFeeJoinBroker } from '@/hooks/query/usePoolsWithJoinBrokerFee'
+import { useCommunityPools } from '@/hooks/query/useCommunityPools'
 
+import Pagination from '@/components/Pagination'
+import { ExploreSelectTabs } from './SelectTabs'
 import { MyPoolsTable } from './MyPoolsTable'
 import { ExploreAllPools } from './AllPools'
 import SliderPoolList from './SliderPoolList'
 import { ExplorePoolsData } from './PoolsData'
-import { ExploreSelectTabs } from './NewSelectTabs'
 import TitleSection from '../../components/TitleSection'
-
-import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
-import managerIcon from '../../../public/assets/iconGradient/manager.svg'
-import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
-
-import * as S from './styles'
 import NewCommunityPoolsTable, {
   communityPoolSorting
 } from './NewCommunityPoolsTable'
-import { useCommunityPools } from '@/hooks/query/useCommunityPools'
-import Pagination from '@/components/Pagination'
-import { Pool_OrderBy } from '@/gql/generated/kassandraApi'
+
+import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
+import ShareEarnIcon from '@assets/icons/handshake.svg'
+import farmIcon from '@assets/icons/fire.svg'
+// import managerIcon from '../../../public/assets/iconGradient/manager.svg'
+// import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
+
+import * as S from './styles'
 
 const chainList = [
   {
@@ -46,31 +57,29 @@ const chainList = [
   }
 ]
 
-const addressOrderList = [
-  '1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d',
-  '421610x2ae2baeec8ccd16075d821832ffee9172bae36760001000000000000000004f1',
-  '431140x856561c3b21efca7e483b1ad197e4ab5fb56ccdb000100000000000000000048',
-  '1370x416101d98df2187ddc0ff29b787ded19dd8c9740000100000000000000000e57',
-  '421610xc3f47f3627305213adaa021ccccb61d5987eaa97000100000000000000000532',
-  '1370x107cb7c6d67ad745c50d7d4627335c1c6a684003000100000000000000000c37',
-  '421610x69a670bcbf82e8099bbd70bb2cdb16e05a928f6c0001000000000000000004ae',
-  '1370xa1ecb0981d74bd9e31fcd7a38fa3fdebcc7ccff4000100000000000000000c39',
-  '421610xf69d5e7c0eb43127d5874121867fb763f2967dbb0001000000000000000004b0'
-]
-
 export default function Explore() {
   const [selectedChains, setSelectedChains] = useState(
     chainList.map(item => item.chainId)
   )
   const [isSelectTab, setIsSelectTab] = useState<string | string[] | undefined>(
-    'pools'
+    'discover'
   )
+  const [orderedBy, setOrderedBy] = React.useState<Pool_OrderBy>(
+    'total_value_locked_usd'
+  )
+  const [communityPoolSorted, setCommunityPoolSorted] =
+    React.useState<communityPoolSorting>(communityPoolSorting.DESC)
+  const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
+  const [skip, setSkip] = React.useState(0)
+
+  const take = 10
 
   const networkChain = networks[137]
   const { data } = useTokensData({
     chainId: networkChain.chainId,
     tokenAddresses: [KacyPoligon]
   })
+
   const { priceToken } = useGetToken({
     nativeTokenAddress: networkChain.nativeCurrency.address,
     tokens: data || {}
@@ -81,84 +90,111 @@ export default function Explore() {
   const params = {
     price_period: 86400,
     period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 30),
-    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-    chainIn: selectedChains
+    chainIn: selectedChains,
+    orderDirection: 'desc' as OrderDirection
+  }
+
+  function onClickChainResetPagination() {
+    setSkip(0)
   }
 
   const { data: poolsKassandra } = useFeaturedPools(params)
-  const { data: largestPools } = useLargestPools(params)
   const { data: poolsData } = useExploreOverviewPools()
+  const { data: poolWithFeeJoinBroker } = usePoolsWithFeeJoinBroker(params)
   const { data: whiteListTokenCount } = useWhiteListTokensCount({
     chainIdList: chainList.map(item => item.chainId)
   })
 
-  const [selectedView, setSelectedView] = React.useState('grid')
-  const [orderedBy, setOrderedBy] = React.useState<Pool_OrderBy>(
-    'total_value_locked_usd'
-  )
-  const [communityPoolSorted, setCommunityPoolSorted] =
-    React.useState<communityPoolSorting>(communityPoolSorting.DESC)
-  const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
-  const [skip, setSkip] = React.useState(0)
-
-  const take = 8
+  const { data: largestPools } = useExplorePools({
+    ...params,
+    orderBy: 'total_value_locked_usd',
+    queryKey: 'largest'
+  })
+  const { data: changePools } = useExplorePools({
+    ...params,
+    orderBy: 'change',
+    queryKey: 'change',
+    totalValueLockedUsdGt: '150'
+  })
+  const { data: createdAtPools } = useExplorePools({
+    ...params,
+    orderBy: 'created_at',
+    queryKey: 'createdAt'
+  })
+  const { data: farmPools } = useFarmPools({
+    ...params,
+    kacyPrice,
+    poolIdList: addressesForReqFarmPool
+  })
 
   const { data: communityPools } = useCommunityPools({
-    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
     orderBy: orderedBy,
     orderDirection: communityPoolSorted,
     first: take,
-    skip
+    skip,
+    chainIn: selectedChains,
+    enabled: isSelectTab === 'allPools'
   })
 
   React.useEffect(() => {
     if (!communityPools?.pools.length) return
-    setTotalPoolsTable(communityPools?.kassandras[0].pool_count)
+    setTotalPoolsTable(
+      communityPools?.chains
+        .flatMap(chain => chain.pool_count)
+        .reduce((acc, cv) => acc + cv, 0)
+    )
   }, [communityPools])
 
   return (
     <S.Explore>
-      <S.TitleContainer>
-        <S.MainTitle>Explore All Pools</S.MainTitle>
-        <S.SubTitle>Find a strategy that fits your needs</S.SubTitle>
-      </S.TitleContainer>
+      <S.ExploreHeader>
+        <S.TitleContainer>
+          <S.MainTitle>Explore All Portfolios</S.MainTitle>
+          <S.SubTitle>Find a strategy that fits your needs</S.SubTitle>
+        </S.TitleContainer>
 
-      <S.ExplorePoolsWrapper>
-        <ExplorePoolsData
-          numDeposits={poolsData ? poolsData[0].num_deposits : '0'}
-          numManagers={poolsData ? poolsData[0].num_managers.toString() : '0'}
-          poolCount={poolsData ? poolsData[0].pool_count.toString() : '0'}
-          whiteListNumber={
-            whiteListTokenCount ? whiteListTokenCount.toString() : '0'
-          }
+        <S.ExplorePoolsWrapper>
+          <ExplorePoolsData
+            numDeposits={poolsData ? poolsData[0].num_deposits : '0'}
+            numManagers={poolsData ? poolsData[0].num_managers.toString() : '0'}
+            poolCount={poolsData ? poolsData[0].pool_count.toString() : '0'}
+            whiteListNumber={
+              whiteListTokenCount ? whiteListTokenCount.toString() : '0'
+            }
+          />
+        </S.ExplorePoolsWrapper>
+
+        <ExploreSelectTabs
+          chainList={chainList}
+          selectedChains={selectedChains}
+          setSelectedChains={setSelectedChains}
+          isSelect={isSelectTab}
+          setIsSelect={setIsSelectTab}
+          onFilterClick={onClickChainResetPagination}
         />
+      </S.ExploreHeader>
 
-        <ExploreAllPools
-          numberOfPools={poolsData ? poolsData[0].pool_count.toString() : '0'}
-        />
-      </S.ExplorePoolsWrapper>
-
-      <ExploreSelectTabs
-        chainList={chainList}
-        selectedChains={selectedChains}
-        setSelectedChains={setSelectedChains}
-        isSelect={isSelectTab}
-        setIsSelect={setIsSelectTab}
-        setSelectedView={(view: string | ((prevState: string) => string)) =>
-          setSelectedView(view)
-        }
-        selectedView={selectedView}
-      />
-
-      {isSelectTab === 'pools' && selectedView === 'grid' && (
-        <div>
+      {isSelectTab === 'discover' && (
+        <S.SliderWrapper>
           <S.ExploreContainer>
-            <TitleSection image={featuredFunds} title="Popular Pools" text="" />
+            <TitleSection
+              image={featuredFunds}
+              title="Popular Portfolios"
+              text=""
+            />
 
             <SliderPoolList
-              poolData={poolsKassandra?.poolsKassandra ?? new Array(9).fill({})}
+              poolData={poolsKassandra?.pools ?? new Array(9).fill({})}
+              kacyPrice={kacyPrice}
+            />
+          </S.ExploreContainer>
+
+          <S.ExploreContainer>
+            <TitleSection image={farmIcon} title="Boosted Portfolio" text="" />
+
+            <SliderPoolList
+              poolData={farmPools ?? new Array(9).fill({})}
               kacyPrice={kacyPrice}
             />
           </S.ExploreContainer>
@@ -171,14 +207,68 @@ export default function Explore() {
               kacyPrice={kacyPrice}
             />
           </S.ExploreContainer>
-        </div>
+
+          <S.ExploreContainer>
+            <TitleSection
+              image={featuredFunds}
+              title="Portfolios by Cyril"
+              text=""
+            />
+
+            <SliderPoolList
+              poolData={
+                poolWithFeeJoinBroker?.pools.filter(
+                  item => item.manager.id === MANAGER_CYRIL_ADDRESS
+                ) ?? new Array(3).fill({})
+              }
+              kacyPrice={kacyPrice}
+            />
+          </S.ExploreContainer>
+
+          <S.ExploreContainer>
+            <TitleSection
+              image={featuredFunds}
+              title="Today’s Top Gainers"
+              text=""
+            />
+
+            <SliderPoolList
+              poolData={changePools?.pools ?? new Array(9).fill({})}
+              kacyPrice={kacyPrice}
+            />
+          </S.ExploreContainer>
+
+          <S.ExploreContainer>
+            <TitleSection image={ShareEarnIcon} title="Share & Earn" text="" />
+
+            <SliderPoolList
+              poolData={poolWithFeeJoinBroker?.pools ?? new Array(9).fill({})}
+              kacyPrice={kacyPrice}
+            />
+          </S.ExploreContainer>
+
+          <ExploreAllPools />
+
+          <S.ExploreContainer>
+            <TitleSection
+              image={featuredFunds}
+              title="New Portfolios"
+              text=""
+            />
+
+            <SliderPoolList
+              poolData={createdAtPools?.pools ?? new Array(9).fill({})}
+              kacyPrice={kacyPrice}
+            />
+          </S.ExploreContainer>
+        </S.SliderWrapper>
       )}
 
-      {isSelectTab === 'managers' && (
+      {isSelectTab === 'myPools' && (
         <MyPoolsTable selectedChains={selectedChains} />
       )}
 
-      {isSelectTab === 'pools' && selectedView === 'list' && (
+      {isSelectTab === 'allPools' && (
         <>
           <NewCommunityPoolsTable
             pools={communityPools?.pools}
@@ -186,6 +276,7 @@ export default function Explore() {
             setCommunityPoolSorted={setCommunityPoolSorted}
             orderedBy={orderedBy}
             setOrderedBy={setOrderedBy}
+            kacyPrice={Big(kacyPrice)}
           />
           <S.PaginationWrapper>
             <Pagination

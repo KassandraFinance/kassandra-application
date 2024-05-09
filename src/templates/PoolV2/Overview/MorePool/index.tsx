@@ -26,7 +26,7 @@ const MorePool = () => {
       </S.MorePoolHeader>
 
       <S.FundCardContainer>
-        {poolsKassandra?.poolsKassandra.slice(0, 3).map(pool => {
+        {poolsKassandra?.pools.slice(0, 3).map(pool => {
           return (
             <FundCard
               key={pool.id}

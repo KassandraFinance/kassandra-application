@@ -1,7 +1,3 @@
-import { useRouter } from 'next/router'
-
-import { gridviewIcon, listViewIcon } from './icons'
-
 import * as S from './styles'
 
 type ChainList = {
@@ -18,29 +14,21 @@ interface ExploreSelectTabsProps {
   setIsSelect: React.Dispatch<
     React.SetStateAction<string | string[] | undefined>
   >
-  selectedView: string
-  setSelectedView: React.Dispatch<React.SetStateAction<string>>
+  onFilterClick: () => void
 }
 
 const tabs = [
   {
-    tabName: 'pools',
-    text: 'All Pools'
+    tabName: 'discover',
+    text: 'Discover'
   },
   {
-    tabName: 'managers',
-    text: 'My Pools'
-  }
-]
-
-const viewList = [
-  {
-    name: 'grid',
-    icon: gridviewIcon
+    tabName: 'allPools',
+    text: 'All Portfolios'
   },
   {
-    name: 'list',
-    icon: listViewIcon
+    tabName: 'myPools',
+    text: 'My Investments'
   }
 ]
 
@@ -50,12 +38,10 @@ export function ExploreSelectTabs({
   setIsSelect,
   selectedChains,
   setSelectedChains,
-  selectedView,
-  setSelectedView
+  onFilterClick
 }: ExploreSelectTabsProps) {
-  const router = useRouter()
-
   function handleClickChain(chain: ChainList) {
+    onFilterClick()
     const allSelected = chainList.every(chain =>
       selectedChains.includes(chain.chainId)
     )
@@ -81,15 +67,6 @@ export function ExploreSelectTabs({
 
   function handleClickTab(tabSelect: string) {
     setIsSelect(tabSelect)
-
-    router.push(
-      {
-        pathname: `${router.pathname}`,
-        query: { ...router.query, tab: `${tabSelect}` }
-      },
-      undefined,
-      { scroll: false }
-    )
   }
 
   return (
@@ -108,16 +85,11 @@ export function ExploreSelectTabs({
       </S.MobileTabs>
       <S.Content>
         <S.LeftContent>
-          <S.ViewIcons>
-            {viewList.map(view => (
-              <S.ViewButton
-                key={view.name}
-                isActive={selectedView === view.name}
-                icon={view.icon}
-                onClick={() => setSelectedView(view.name)}
-              />
-            ))}
-          </S.ViewIcons>
+          {/* <ViewOptions
+            isSelect={isSelect}
+            selectedView={selectedView}
+            setSelectedView={setSelectedView}
+          /> */}
 
           <S.DesktopTabs>
             {tabs.map(tab => (

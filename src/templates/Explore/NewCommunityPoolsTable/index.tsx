@@ -4,8 +4,9 @@ import Link from 'next/link'
 import Big from 'big.js'
 import Blockies from 'react-blockies'
 import Tippy from '@tippyjs/react'
+import 'tippy.js/dist/tippy.css'
 
-import { calcChange } from '@/utils/numerals'
+import { BNtoDecimal, calcChange } from '@/utils/numerals'
 
 import ModalViewCoin from '@/components/Modals/ModalViewCoin'
 
@@ -13,7 +14,6 @@ import notFoundIcon from '@assets/icons/coming-soon.svg'
 import arrowIcon from '@assets/utilities/arrow-left.svg'
 import eyeShowIcon from '@assets/utilities/eye-show.svg'
 import comingSoonIcon from '@assets/icons/coming-soon.svg'
-import Loading from '@/components/Loading'
 
 import * as S from './styles'
 import {
@@ -24,6 +24,12 @@ import {
 } from '@ui/Modals/ModalViewCoin/styles'
 import { Pool_OrderBy } from '@/gql/generated/kassandraApi'
 import SkeletonLoading from '@/components/SkeletonLoading'
+import GradientLabel from '@/components/Labels/GradientLabel'
+import Label from '@/components/Labels/Label'
+import { handleGetAPR } from '@/components/StakeCard/utils'
+import { networks } from '@/constants/tokenAddresses'
+import { ZeroAddress } from 'ethers'
+import { useGetAprData } from '@/hooks/query/useGetAprData'
 
 type UnderlyingAssets = {
   token: {
@@ -43,23 +49,15 @@ interface IPoolsInfosProps {
   price_usd: string
   total_value_locked_usd: string
   is_private_pool: boolean
+  chain_id: number
+  pool_id?: number | null
+  fee_join_broker?: string | null
+  change: string
   chain?: {
     logo?: string | null
   } | null
   volumes: {
     volume_usd: string
-  }[]
-  now: {
-    timestamp: number
-    close: string
-  }[]
-  day: {
-    timestamp: number
-    close: string
-  }[]
-  month: {
-    timestamp: number
-    close: string
   }[]
   unique_investors: number
   underlying_assets: UnderlyingAssets[]
@@ -78,6 +76,7 @@ interface ICommunityPoolsTableProps {
   >
   orderedBy: Pool_OrderBy
   setOrderedBy: React.Dispatch<React.SetStateAction<Pool_OrderBy>>
+  kacyPrice: Big
 }
 
 const NewCommunityPoolsTable = ({
@@ -85,7 +84,8 @@ const NewCommunityPoolsTable = ({
   communityPoolSorted,
   setCommunityPoolSorted,
   orderedBy,
-  setOrderedBy
+  setOrderedBy,
+  kacyPrice
 }: ICommunityPoolsTableProps) => {
   const [inViewCollum, setInViewCollum] = React.useState(1)
   const [isOpen, setIsOpen] = React.useState(false)
@@ -98,15 +98,13 @@ const NewCommunityPoolsTable = ({
     tvl: string
     underlying_assets: UnderlyingAssets[]
     volume: string
-    monthly: string
     '24h': string
   }>({
     price: '',
     tvl: '',
     underlying_assets: [],
     volume: '',
-    monthly: '',
-    '24h': ''
+    '24h': '0'
   })
 
   function handleCurrentInView(n: number) {
@@ -129,7 +127,6 @@ const NewCommunityPoolsTable = ({
     tvl: string,
     underlying_assets: UnderlyingAssets[],
     volume: string,
-    monthly: string,
     day: string
   ) {
     setPool({
@@ -141,7 +138,6 @@ const NewCommunityPoolsTable = ({
       tvl,
       underlying_assets,
       volume,
-      monthly,
       ['24h']: day
     })
     setIsOpen(true)
@@ -180,6 +176,8 @@ const NewCommunityPoolsTable = ({
         break
     }
   }
+
+  const { data } = useGetAprData({ pools, kacyPrice })
 
   return (
     <S.CommunityPoolsTable>
@@ -253,189 +251,319 @@ const NewCommunityPoolsTable = ({
       </S.THead>
 
       <S.TBodyWithHeight tableRowsNumber={pools?.length ?? 8} lineHeight={8.6}>
-        {pools ? (
-          pools.map(pool => {
-            return (
-              <S.TR key={pool.address}>
-                <Link href={`/pool/${pool.id}`} passHref>
-                  <S.TRLink>
-                    <S.TD>
-                      <S.ValueContainer>
-                        <S.Imagecontainer>
-                          <S.ImageWrapper>
-                            {pool.logo ? (
-                              <Image src={pool.logo} layout="fill" />
-                            ) : (
-                              <Blockies
-                                seed={pool.name}
-                                size={10.95}
-                                scale={3}
-                              />
-                            )}
-                          </S.ImageWrapper>
-
-                          <S.ChainLogoWrapper>
-                            <Image
-                              src={pool.chain?.logo || comingSoonIcon}
-                              layout="fill"
-                            />
-                          </S.ChainLogoWrapper>
-                        </S.Imagecontainer>
-                        {/* <SkeletonLoading
-                          borderRadios={5000}
-                          width={4}
-                          height={4}
-                        /> */}
-
-                        <S.ValueWrapper>
-                          <S.TextValue id="privatePool">
-                            {pool.is_private_pool && (
-                              <Tippy
-                                content={[
-                                  <S.PrivatePoolTooltip key="PrivatePool">
-                                    Private Pool
-                                  </S.PrivatePoolTooltip>
-                                ]}
-                              >
-                                <img
-                                  src="/assets/utilities/lock.svg"
-                                  width={14}
-                                  height={13}
+        {pools
+          ? pools.map(pool => {
+              return (
+                <S.TR key={pool.address}>
+                  <Link href={`/pool/${pool.id}`} passHref>
+                    <S.TRLink>
+                      <S.TD>
+                        <S.ValueContainer>
+                          <S.Imagecontainer>
+                            <S.ImageWrapper>
+                              {pool.logo ? (
+                                <Image src={pool.logo} layout="fill" />
+                              ) : (
+                                <Blockies
+                                  seed={pool.name}
+                                  size={10.95}
+                                  scale={3}
                                 />
-                              </Tippy>
-                            )}
-                            {pool.name}
-                            {/* <SkeletonLoading /> */}
-                          </S.TextValue>
+                              )}
+                            </S.ImageWrapper>
 
-                          <S.SecondaryTextValue>
-                            {pool.symbol}
-                            {/* <SkeletonLoading width={4} /> */}
-                          </S.SecondaryTextValue>
-                        </S.ValueWrapper>
-                      </S.ValueContainer>
-                    </S.TD>
-                    <S.TD isView={inViewCollum === 1}>
-                      <S.Container>
-                        <S.CoinImageContainer>
-                          {pool.underlying_assets
-                            .slice(0, 3)
-                            .map((coin, index) => {
-                              return (
-                                <S.CoinImageWrapper
-                                  key={
-                                    coin?.token?.wraps?.logo ??
-                                    coin?.token?.logo
-                                  }
-                                  position={index}
+                            <S.ChainLogoWrapper>
+                              <Image
+                                src={pool.chain?.logo || comingSoonIcon}
+                                layout="fill"
+                              />
+                            </S.ChainLogoWrapper>
+                          </S.Imagecontainer>
+
+                          <S.ValueWrapper>
+                            <S.TextValue id="privatePool">
+                              <S.MobileIcons>
+                                {data && data[pool.address]?.gt(0) && (
+                                  <Tippy
+                                    content={[
+                                      <S.Tooltip key="Fire">
+                                        With this portfolio, you can Stake and
+                                        earn Kacy. Look at the
+                                        &apos;Staking&apos; section in this
+                                        portfolio.
+                                      </S.Tooltip>
+                                    ]}
+                                  >
+                                    <S.FireImage>
+                                      <img
+                                        src="/assets/icons/fire.svg"
+                                        alt="fire icon"
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </S.FireImage>
+                                  </Tippy>
+                                )}
+
+                                {Number(pool.fee_join_broker) > 0 && (
+                                  <Tippy
+                                    content={[
+                                      <S.Tooltip key="Handshake">
+                                        If you share this pool, you can earn a
+                                        percentage of the deposit fee. Look at
+                                        the &apos;Share & Earn&apos; section in
+                                        this portfolio.
+                                      </S.Tooltip>
+                                    ]}
+                                  >
+                                    <S.FireImage>
+                                      <img
+                                        src="/assets/icons/handshake.svg"
+                                        alt="handshake icon"
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </S.FireImage>
+                                  </Tippy>
+                                )}
+                              </S.MobileIcons>
+
+                              {pool.is_private_pool && (
+                                <Tippy
+                                  content={[
+                                    <S.Tooltip key="PrivatePool">
+                                      Private Pool
+                                    </S.Tooltip>
+                                  ]}
                                 >
-                                  <Image
-                                    src={
-                                      coin?.token?.logo ??
-                                      coin?.token?.wraps?.logo ??
-                                      notFoundIcon
-                                    }
-                                    layout="fill"
+                                  <img
+                                    src="/assets/utilities/lock.svg"
+                                    width={14}
+                                    height={13}
                                   />
-                                </S.CoinImageWrapper>
-                              )
-                            })}
-                        </S.CoinImageContainer>
-                        <S.MoreTokenText>
-                          {pool.underlying_assets.length > 3 &&
-                            '+' + (pool.underlying_assets.length - 3)}
-                        </S.MoreTokenText>
-                      </S.Container>
-                      {/* <S.SkeletonContainer>
-                        <SkeletonLoading />
-                      </S.SkeletonContainer> */}
-                    </S.TD>
-                    <S.TD isView={inViewCollum === 2}>
-                      <S.Value>${Big(pool?.price_usd || 0).toFixed(2)}</S.Value>
-                      {/* <S.SkeletonContainer>
-                        <SkeletonLoading />
-                      </S.SkeletonContainer> */}
-                    </S.TD>
-                    <S.TD isView={inViewCollum === 3}>
-                      <S.Value>{pool.unique_investors}</S.Value>
-                      {/* <S.SkeletonContainer>
-                        <SkeletonLoading />
-                      </S.SkeletonContainer> */}
-                    </S.TD>
-                    <S.TD isView={inViewCollum === 4}>
-                      <S.Value>
-                        ${Big(pool?.total_value_locked_usd || 0).toFixed(2)}
-                      </S.Value>
-                      {/* <S.SkeletonContainer>
-                        <SkeletonLoading />
-                      </S.SkeletonContainer> */}
-                    </S.TD>
+                                </Tippy>
+                              )}
 
-                    <S.TD isView={inViewCollum === 5}>
-                      <S.Value
-                        value={
-                          pool.day[0]?.close
-                            ? Number(
-                                calcChange(
-                                  Number(pool.now[0]?.close || 0),
-                                  Number(pool.day[0]?.close)
+                              {pool.name}
+
+                              <S.DesktopIcons>
+                                {data && data[pool.address]?.gt(0) && (
+                                  <Tippy
+                                    content={[
+                                      <S.Tooltip key="Fire">
+                                        With this portfolio, you can Stake and
+                                        earn Kacy. Look at the
+                                        &apos;Staking&apos; section in this
+                                        portfolio.
+                                      </S.Tooltip>
+                                    ]}
+                                  >
+                                    <S.FireImage>
+                                      <img
+                                        src="/assets/icons/fire.svg"
+                                        alt="fire icon"
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </S.FireImage>
+                                  </Tippy>
+                                )}
+
+                                {Number(pool.fee_join_broker) > 0 && (
+                                  <Tippy
+                                    content={[
+                                      <S.Tooltip key="Handshake">
+                                        If you share this pool, you can earn a
+                                        percentage of the deposit fee. Look at
+                                        the &apos;Share & Earn&apos; section in
+                                        this portfolio.
+                                      </S.Tooltip>
+                                    ]}
+                                  >
+                                    <S.FireImage>
+                                      <img
+                                        src="/assets/icons/handshake.svg"
+                                        alt="handshake icon"
+                                        width={16}
+                                        height={16}
+                                      />
+                                    </S.FireImage>
+                                  </Tippy>
+                                )}
+                              </S.DesktopIcons>
+                            </S.TextValue>
+
+                            <S.SecondaryTextValue>
+                              {data && data[pool.address]?.gt(0) && (
+                                <>
+                                  <Tippy
+                                    content={[
+                                      <S.Tooltip key="Apr">
+                                        This is the percentage you can earn if
+                                        you make a deposit in Stake.
+                                      </S.Tooltip>
+                                    ]}
+                                  >
+                                    <div>
+                                      <Label
+                                        text={
+                                          BNtoDecimal(data[pool.address], 0) +
+                                          '%'
+                                        }
+                                      />
+                                    </div>
+                                  </Tippy>
+                                  <GradientLabel
+                                    img={{
+                                      url: '/assets/iconGradient/lightning.svg',
+                                      width: 12,
+                                      height: 12
+                                    }}
+                                    text="$KACY"
+                                  />
+                                </>
+                              )}
+                            </S.SecondaryTextValue>
+                          </S.ValueWrapper>
+                        </S.ValueContainer>
+                      </S.TD>
+                      <S.TD isView={inViewCollum === 1}>
+                        <S.Container>
+                          <S.CoinImageContainer>
+                            {pool.underlying_assets
+                              .slice(0, 3)
+                              .map((coin, index) => {
+                                return (
+                                  <S.CoinImageWrapper
+                                    key={
+                                      coin?.token?.wraps?.logo ??
+                                      coin?.token?.logo
+                                    }
+                                    position={index}
+                                  >
+                                    <Image
+                                      src={
+                                        coin?.token?.logo ??
+                                        coin?.token?.wraps?.logo ??
+                                        notFoundIcon
+                                      }
+                                      layout="fill"
+                                    />
+                                  </S.CoinImageWrapper>
                                 )
-                              )
-                            : 0
-                        }
-                      >
-                        {pool.day[0]?.close
-                          ? calcChange(
-                              Number(pool.now[0]?.close || 0),
-                              Number(pool.day[0]?.close)
-                            )
-                          : 0}
-                        %
-                      </S.Value>
-                      {/* <S.SkeletonContainer>
-                        <SkeletonLoading />
-                      </S.SkeletonContainer> */}
-                    </S.TD>
+                              })}
+                          </S.CoinImageContainer>
+                          <S.MoreTokenText>
+                            {pool.underlying_assets.length > 3 &&
+                              '+' + (pool.underlying_assets.length - 3)}
+                          </S.MoreTokenText>
+                        </S.Container>
+                      </S.TD>
+                      <S.TD isView={inViewCollum === 2}>
+                        <S.Value>
+                          ${Big(pool?.price_usd || 0).toFixed(2)}
+                        </S.Value>
+                      </S.TD>
+                      <S.TD isView={inViewCollum === 3}>
+                        <S.Value>{pool.unique_investors}</S.Value>
+                      </S.TD>
+                      <S.TD isView={inViewCollum === 4}>
+                        <S.Value>
+                          ${Big(pool?.total_value_locked_usd || 0).toFixed(2)}
+                        </S.Value>
+                      </S.TD>
 
-                    <S.TD
-                      onClick={event => {
-                        event.preventDefault()
-                        handleViewMobile(
-                          pool.name,
-                          pool?.logo || '',
-                          pool.price_usd,
-                          pool.total_value_locked_usd,
-                          pool.underlying_assets,
-                          pool.volumes[0]?.volume_usd,
-                          pool.month[0]?.close
-                            ? calcChange(
-                                Number(pool.now[0].close || 0),
-                                Number(pool.month[0].close)
-                              )
-                            : '0',
-                          pool.day[0]?.close
-                            ? calcChange(
-                                Number(pool.now[0].close || 0),
-                                Number(pool.day[0].close)
-                              )
-                            : '0'
-                        )
-                      }}
-                    >
-                      <S.ViewButton type="button">
-                        <Image src={eyeShowIcon} />
-                      </S.ViewButton>
-                    </S.TD>
-                  </S.TRLink>
-                </Link>
+                      <S.TD isView={inViewCollum === 5}>
+                        <S.Value
+                          value={pool.change ? Number(pool.change) * 100 : 0}
+                        >
+                          {pool.change
+                            ? Big(pool.change).mul(100).toFixed(2)
+                            : 0}
+                          %
+                        </S.Value>
+                      </S.TD>
+
+                      <S.TD
+                        onClick={event => {
+                          event.preventDefault()
+                          handleViewMobile(
+                            pool.name,
+                            pool?.logo || '',
+                            pool.price_usd,
+                            pool.total_value_locked_usd,
+                            pool.underlying_assets,
+                            pool.volumes[0]?.volume_usd,
+                            pool.change
+                          )
+                        }}
+                      >
+                        <S.ViewButton type="button">
+                          <Image src={eyeShowIcon} />
+                        </S.ViewButton>
+                      </S.TD>
+                    </S.TRLink>
+                  </Link>
+                </S.TR>
+              )
+            })
+          : Array.from({ length: 10 }, (_, index) => (
+              <S.TR id="skeleton" key={index}>
+                <S.SkeletonTR>
+                  <S.TD>
+                    <S.ValueContainer>
+                      <SkeletonLoading
+                        borderRadios={5000}
+                        width={4}
+                        height={4}
+                      />
+
+                      <S.ValueWrapper>
+                        <S.TextValue id="privatePool">
+                          <SkeletonLoading />
+                        </S.TextValue>
+
+                        <S.SecondaryTextValue>
+                          <SkeletonLoading width={4} />
+                        </S.SecondaryTextValue>
+                      </S.ValueWrapper>
+                    </S.ValueContainer>
+                  </S.TD>
+                  <S.TD isView={inViewCollum === 1}>
+                    <S.SkeletonContainer>
+                      <SkeletonLoading />
+                    </S.SkeletonContainer>
+                  </S.TD>
+                  <S.TD isView={inViewCollum === 2}>
+                    <S.SkeletonContainer>
+                      <SkeletonLoading />
+                    </S.SkeletonContainer>
+                  </S.TD>
+                  <S.TD isView={inViewCollum === 3}>
+                    <S.SkeletonContainer>
+                      <SkeletonLoading />
+                    </S.SkeletonContainer>
+                  </S.TD>
+                  <S.TD isView={inViewCollum === 4}>
+                    <S.SkeletonContainer>
+                      <SkeletonLoading />
+                    </S.SkeletonContainer>
+                  </S.TD>
+
+                  <S.TD isView={inViewCollum === 5}>
+                    <S.SkeletonContainer>
+                      <SkeletonLoading />
+                    </S.SkeletonContainer>
+                  </S.TD>
+
+                  <S.TD isView={inViewCollum === 6}>
+                    <S.SkeletonContainer>
+                      <SkeletonLoading />
+                    </S.SkeletonContainer>
+                  </S.TD>
+                </S.SkeletonTR>
               </S.TR>
-            )
-          })
-        ) : (
-          <S.LoadingContainer>
-            <Loading marginTop={0} />
-          </S.LoadingContainer>
-        )}
+            ))}
       </S.TBodyWithHeight>
 
       <ModalViewCoin
@@ -496,7 +624,7 @@ const NewCommunityPoolsTable = ({
         <TableLine>
           <TableLineTitle>24h</TableLineTitle>
           <ValueContainerMobile>
-            <V>{viewPool['24h']}%</V>
+            <V>{Big(viewPool['24h']).mul(100).toFixed(2)}%</V>
           </ValueContainerMobile>
         </TableLine>
       </ModalViewCoin>

@@ -162,7 +162,7 @@ const TokenRemoval = () => {
 
   return (
     <S.TokenRemoval>
-      <CreatePoolHeader title="remove asset from the pool" />
+      <CreatePoolHeader title="remove asset from the portfolio" />
       <Steps
         steps={[
           {
@@ -179,7 +179,7 @@ const TokenRemoval = () => {
       />
       <S.TokenRemovalsBody>
         <h2>asset removal</h2>
-        <p>Select the token you wish to be removed from the pool</p>
+        <p>Select the token you wish to be removed from the portfolio</p>
 
         <S.SelectTokenAndTableAllocation>
           {poolInfo && (

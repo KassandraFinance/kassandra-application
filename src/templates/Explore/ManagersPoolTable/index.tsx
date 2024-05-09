@@ -265,7 +265,7 @@ const ManagersPoolTable = () => {
             return (
               <TR key={manager.address}>
                 <Link
-                  href={`/profile/${manager.address}?tab=managed-pools`}
+                  href={`/profile/${manager.address}?tab=managed-portfolios`}
                   passHref
                 >
                   <TRLink>
@@ -281,7 +281,7 @@ const ManagersPoolTable = () => {
                         image={manager.image}
                         hasAddress={true}
                         isLink={false}
-                        tab="?tab=managed-pools"
+                        tab="?tab=managed-portfolios"
                       />
                     </TD>
                     <TD isView={inViewCollum === 1}>

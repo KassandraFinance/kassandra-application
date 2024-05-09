@@ -7,6 +7,7 @@ interface ICardContainerProps {
 
 export const CardContainer = styled.div<ICardContainerProps>`
   ${({ isLink }) => css`
+    min-width: 33rem;
     max-width: 33rem;
     height: 41rem;
 
@@ -21,6 +22,10 @@ export const CardContainer = styled.div<ICardContainerProps>`
       transform: scale(1.05);
 
       z-index: 1;
+    }
+
+    @media (max-width: 786px) {
+      min-width: 33rem;
     }
   `}
 `
@@ -105,12 +110,16 @@ export const FundName = styled.div`
   } */
 `
 
-export const LabelContent = styled.div`
+export const LabelContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: start;
-  gap: 0.8rem;
   margin-top: -2.2rem;
+`
+
+export const LabelContent = styled.div`
+  display: flex;
+  gap: 0.8rem;
 `
 
 export const FundStatusContainer = styled.div`
