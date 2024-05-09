@@ -137,8 +137,6 @@ export default function Explore() {
     enabled: isSelectTab === 'allPools'
   })
 
-  console.log(communityPools)
-
   React.useEffect(() => {
     if (!communityPools?.pools.length) return
     setTotalPoolsTable(
