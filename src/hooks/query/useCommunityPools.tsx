@@ -21,7 +21,7 @@ export const fetchCommunityPools = async ({
   skip,
   orderBy,
   chainIn
-}: UseCommunityPoolsProps) => {
+}: Omit<UseCommunityPoolsProps, 'enabled'>) => {
   return kassandraClient
     .CommunityPools({
       day,
@@ -46,6 +46,7 @@ export const useCommunityPools = ({
   chainIn
 }: UseCommunityPoolsProps) => {
   return useQuery({
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: [
       'community-pools',
       first,

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { KacyPoligon, networks } from '@/constants/tokenAddresses'
 
-import { useLargestPools } from '@/hooks/query/useLargestPools'
+import { useExplorePools } from '@/hooks/query/useExplorePools'
 import { useFeaturedPools } from '@/hooks/query/useFeaturedPools'
 import { useExploreOverviewPools } from '@/hooks/query/useExploreOverviewPools'
 import useGetToken from '@/hooks/useGetToken'
@@ -17,6 +17,7 @@ import TitleSection from '../../components/TitleSection'
 
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
 import ShareEarnIcon from '@assets/icons/handshake.svg'
+import farmIcon from '@assets/icons/fire.svg'
 // import managerIcon from '../../../public/assets/iconGradient/manager.svg'
 // import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
 
@@ -26,10 +27,12 @@ import NewCommunityPoolsTable, {
 } from './NewCommunityPoolsTable'
 import { useCommunityPools } from '@/hooks/query/useCommunityPools'
 import Pagination from '@/components/Pagination'
-import { Pool_OrderBy } from '@/gql/generated/kassandraApi'
+import { OrderDirection, Pool_OrderBy } from '@/gql/generated/kassandraApi'
 import { usePoolsWithFeeJoinBroker } from '@/hooks/query/usePoolsWithJoinBrokerFee'
 import { ExploreSelectTabs } from './SelectTabs'
 import Big from 'big.js'
+import { useFarmPools } from '@/hooks/query/useFarmPools'
+import { addressesForReqFarmPool } from '@/constants/pools'
 
 const chainList = [
   {
@@ -72,17 +75,39 @@ export default function Explore() {
   const params = {
     price_period: 86400,
     period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 30),
-    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
+    // day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
-    chainIn: selectedChains
+    chainIn: selectedChains,
+    orderDirection: 'desc' as OrderDirection
   }
 
   const { data: poolsKassandra } = useFeaturedPools(params)
-  const { data: largestPools } = useLargestPools(params)
   const { data: poolsData } = useExploreOverviewPools()
   const { data: poolWithFeeJoinBroker } = usePoolsWithFeeJoinBroker(params)
   const { data: whiteListTokenCount } = useWhiteListTokensCount({
     chainIdList: chainList.map(item => item.chainId)
+  })
+
+  const { data: largestPools } = useExplorePools({
+    ...params,
+    orderBy: 'total_value_locked_usd',
+    queryKey: 'largest'
+  })
+  const { data: changePools } = useExplorePools({
+    ...params,
+    orderBy: 'change',
+    queryKey: 'change',
+    totalValueLockedUsdGt: '150'
+  })
+  const { data: createdAtPools } = useExplorePools({
+    ...params,
+    orderBy: 'created_at',
+    queryKey: 'createdAt'
+  })
+  const { data: farmPools } = useFarmPools({
+    ...params,
+    kacyPrice,
+    poolIdList: addressesForReqFarmPool
   })
 
   const [selectedView, setSelectedView] = React.useState('grid')
@@ -160,7 +185,38 @@ export default function Explore() {
             <TitleSection image={featuredFunds} title="Popular Pools" text="" />
 
             <SliderPoolList
-              poolData={poolsKassandra?.poolsKassandra ?? new Array(9).fill({})}
+              poolData={poolsKassandra?.pools ?? new Array(9).fill({})}
+              kacyPrice={kacyPrice}
+            />
+          </S.ExploreContainer>
+
+          <S.ExploreContainer>
+            <TitleSection image={farmIcon} title="Boosted Portfolio" text="" />
+
+            <SliderPoolList
+              poolData={farmPools ?? new Array(9).fill({})}
+              kacyPrice={kacyPrice}
+            />
+          </S.ExploreContainer>
+
+          <S.ExploreContainer>
+            <TitleSection image={featuredFunds} title="Largest Pools" text="" />
+
+            <SliderPoolList
+              poolData={largestPools?.pools ?? new Array(9).fill({})}
+              kacyPrice={kacyPrice}
+            />
+          </S.ExploreContainer>
+
+          <S.ExploreContainer>
+            <TitleSection
+              image={featuredFunds}
+              title="Today’s Top Gainers"
+              text=""
+            />
+
+            <SliderPoolList
+              poolData={changePools?.pools ?? new Array(9).fill({})}
               kacyPrice={kacyPrice}
             />
           </S.ExploreContainer>
@@ -175,10 +231,14 @@ export default function Explore() {
           </S.ExploreContainer>
 
           <S.ExploreContainer>
-            <TitleSection image={featuredFunds} title="Largest Pools" text="" />
+            <TitleSection
+              image={featuredFunds}
+              title="New Portfolios"
+              text=""
+            />
 
             <SliderPoolList
-              poolData={largestPools?.pools ?? new Array(9).fill({})}
+              poolData={createdAtPools?.pools ?? new Array(9).fill({})}
               kacyPrice={kacyPrice}
             />
           </S.ExploreContainer>
