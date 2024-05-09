@@ -4,7 +4,11 @@ import Big from 'big.js'
 import { OrderDirection, Pool_OrderBy } from '@/gql/generated/kassandraApi'
 
 import { addressesForReqFarmPool } from '@/constants/pools'
-import { KacyPoligon, networks } from '@/constants/tokenAddresses'
+import {
+  KacyPoligon,
+  MANAGER_CYRIL_ADDRESS,
+  networks
+} from '@/constants/tokenAddresses'
 
 import { useExplorePools } from '@/hooks/query/useExplorePools'
 import { useFeaturedPools } from '@/hooks/query/useFeaturedPools'
@@ -68,7 +72,7 @@ export default function Explore() {
   const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
   const [skip, setSkip] = React.useState(0)
 
-  const take = 20
+  const take = 10
 
   const networkChain = networks[137]
   const { data } = useTokensData({
@@ -125,14 +129,15 @@ export default function Explore() {
   })
 
   const { data: communityPools } = useCommunityPools({
-    day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
-    month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
     orderBy: orderedBy,
     orderDirection: communityPoolSorted,
     first: take,
     skip,
-    chainIn: selectedChains
+    chainIn: selectedChains,
+    enabled: isSelectTab === 'allPools'
   })
+
+  console.log(communityPools)
 
   React.useEffect(() => {
     if (!communityPools?.pools.length) return
@@ -201,6 +206,23 @@ export default function Explore() {
 
             <SliderPoolList
               poolData={largestPools?.pools ?? new Array(9).fill({})}
+              kacyPrice={kacyPrice}
+            />
+          </S.ExploreContainer>
+
+          <S.ExploreContainer>
+            <TitleSection
+              image={featuredFunds}
+              title="Portfolios by Cyril"
+              text=""
+            />
+
+            <SliderPoolList
+              poolData={
+                poolWithFeeJoinBroker?.pools.filter(
+                  item => item.manager.id === MANAGER_CYRIL_ADDRESS
+                ) ?? new Array(3).fill({})
+              }
               kacyPrice={kacyPrice}
             />
           </S.ExploreContainer>

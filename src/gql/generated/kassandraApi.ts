@@ -7988,8 +7988,6 @@ export type BrokersFeesQuery = {
 }
 
 export type CommunityPoolsQueryVariables = Exact<{
-  day?: InputMaybe<Scalars['Int']['input']>
-  month?: InputMaybe<Scalars['Int']['input']>
   orderBy?: InputMaybe<Pool_OrderBy>
   orderDirection?: InputMaybe<OrderDirection>
   first?: InputMaybe<Scalars['Int']['input']>
@@ -8014,14 +8012,12 @@ export type CommunityPoolsQuery = {
     fee_join_broker: string
     chain_id: number
     pool_id?: number | null
+    change: string
     price_usd: string
     total_value_locked_usd: string
     is_private_pool: boolean
     chain: { __typename?: 'Chain'; logo?: string | null }
     volumes: Array<{ __typename?: 'Volume'; volume_usd: string }>
-    now: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
-    day: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
-    month: Array<{ __typename?: 'Candle'; timestamp: number; close: string }>
     underlying_assets: Array<{
       __typename?: 'Asset'
       token: {
@@ -9819,8 +9815,6 @@ export const BrokersFeesDocument = gql`
 `
 export const CommunityPoolsDocument = gql`
   query CommunityPools(
-    $day: Int
-    $month: Int
     $orderBy: Pool_orderBy
     $orderDirection: OrderDirection
     $first: Int
@@ -9850,6 +9844,7 @@ export const CommunityPoolsDocument = gql`
       chain {
         logo: icon
       }
+      change
       price_usd
       total_value_locked_usd
       is_private_pool
@@ -9860,29 +9855,6 @@ export const CommunityPoolsDocument = gql`
         first: 1
       ) {
         volume_usd
-      }
-      now: price_candles(
-        where: { base: "usd", period: 3600 }
-        orderBy: timestamp
-        orderDirection: desc
-        first: 1
-      ) {
-        timestamp
-        close
-      }
-      day: price_candles(
-        where: { base: "usd", period: 3600, timestamp_gt: $day }
-      ) {
-        timestamp
-        close
-      }
-      month: price_candles(
-        where: { base: "usd", period: 3600, timestamp_gt: $month }
-        orderBy: timestamp
-        first: 1
-      ) {
-        timestamp
-        close
       }
       underlying_assets {
         token {

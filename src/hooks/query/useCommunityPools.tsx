@@ -4,19 +4,16 @@ import { kassandraClient } from '@/graphQLClients'
 import { OrderDirection, Pool_OrderBy } from '@/gql/generated/kassandraApi'
 
 type UseCommunityPoolsProps = {
-  day: number
   first: number
-  month: number
   orderDirection: OrderDirection
   skip: number
   orderBy: Pool_OrderBy
   chainIn: string[]
+  enabled: boolean
 }
 
 export const fetchCommunityPools = async ({
-  day,
   first,
-  month,
   orderDirection,
   skip,
   orderBy,
@@ -24,9 +21,7 @@ export const fetchCommunityPools = async ({
 }: Omit<UseCommunityPoolsProps, 'enabled'>) => {
   return kassandraClient
     .CommunityPools({
-      day,
       first,
-      month,
       orderDirection,
       skip,
       orderBy,
@@ -37,13 +32,12 @@ export const fetchCommunityPools = async ({
 }
 
 export const useCommunityPools = ({
-  day,
   first,
-  month,
   orderDirection,
   skip,
   orderBy,
-  chainIn
+  chainIn,
+  enabled
 }: UseCommunityPoolsProps) => {
   return useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
@@ -53,13 +47,12 @@ export const useCommunityPools = ({
       orderDirection,
       skip,
       orderBy,
-      chainIn
+      chainIn,
+      enabled
     ],
     queryFn: async () =>
       fetchCommunityPools({
-        day,
         first,
-        month,
         orderDirection,
         skip,
         orderBy,
@@ -67,6 +60,7 @@ export const useCommunityPools = ({
       }),
     staleTime: 1000 * 60,
     refetchInterval: 1000 * 60,
-    keepPreviousData: true
+    keepPreviousData: true,
+    enabled
   })
 }
