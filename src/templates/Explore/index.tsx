@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
+import Big from 'big.js'
 
+import { OrderDirection, Pool_OrderBy } from '@/gql/generated/kassandraApi'
+
+import { addressesForReqFarmPool } from '@/constants/pools'
 import { KacyPoligon, networks } from '@/constants/tokenAddresses'
 
 import { useExplorePools } from '@/hooks/query/useExplorePools'
@@ -8,12 +12,20 @@ import { useExploreOverviewPools } from '@/hooks/query/useExploreOverviewPools'
 import useGetToken from '@/hooks/useGetToken'
 import { useTokensData } from '@/hooks/query/useTokensData'
 import { useWhiteListTokensCount } from '@/hooks/query/whiteListTokensCount'
+import { useFarmPools } from '@/hooks/query/useFarmPools'
+import { usePoolsWithFeeJoinBroker } from '@/hooks/query/usePoolsWithJoinBrokerFee'
+import { useCommunityPools } from '@/hooks/query/useCommunityPools'
 
+import Pagination from '@/components/Pagination'
+import { ExploreSelectTabs } from './SelectTabs'
 import { MyPoolsTable } from './MyPoolsTable'
 import { ExploreAllPools } from './AllPools'
 import SliderPoolList from './SliderPoolList'
 import { ExplorePoolsData } from './PoolsData'
 import TitleSection from '../../components/TitleSection'
+import NewCommunityPoolsTable, {
+  communityPoolSorting
+} from './NewCommunityPoolsTable'
 
 import featuredFunds from '../../../public/assets/iconGradient/featured.svg'
 import ShareEarnIcon from '@assets/icons/handshake.svg'
@@ -22,17 +34,6 @@ import farmIcon from '@assets/icons/fire.svg'
 // import inexpensiveIcon from '../../../public/assets/iconGradient/inexpensive.svg'
 
 import * as S from './styles'
-import NewCommunityPoolsTable, {
-  communityPoolSorting
-} from './NewCommunityPoolsTable'
-import { useCommunityPools } from '@/hooks/query/useCommunityPools'
-import Pagination from '@/components/Pagination'
-import { OrderDirection, Pool_OrderBy } from '@/gql/generated/kassandraApi'
-import { usePoolsWithFeeJoinBroker } from '@/hooks/query/usePoolsWithJoinBrokerFee'
-import { ExploreSelectTabs } from './SelectTabs'
-import Big from 'big.js'
-import { useFarmPools } from '@/hooks/query/useFarmPools'
-import { addressesForReqFarmPool } from '@/constants/pools'
 
 const chainList = [
   {
@@ -59,12 +60,22 @@ export default function Explore() {
   const [isSelectTab, setIsSelectTab] = useState<string | string[] | undefined>(
     'discover'
   )
+  const [orderedBy, setOrderedBy] = React.useState<Pool_OrderBy>(
+    'total_value_locked_usd'
+  )
+  const [communityPoolSorted, setCommunityPoolSorted] =
+    React.useState<communityPoolSorting>(communityPoolSorting.DESC)
+  const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
+  const [skip, setSkip] = React.useState(0)
+
+  const take = 20
 
   const networkChain = networks[137]
   const { data } = useTokensData({
     chainId: networkChain.chainId,
     tokenAddresses: [KacyPoligon]
   })
+
   const { priceToken } = useGetToken({
     nativeTokenAddress: networkChain.nativeCurrency.address,
     tokens: data || {}
@@ -75,10 +86,13 @@ export default function Explore() {
   const params = {
     price_period: 86400,
     period_selected: Math.trunc(dateNow.getTime() / 1000 - 60 * 60 * 24 * 30),
-    // day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
     chainIn: selectedChains,
     orderDirection: 'desc' as OrderDirection
+  }
+
+  function onClickChainResetPagination() {
+    setSkip(0)
   }
 
   const { data: poolsKassandra } = useFeaturedPools(params)
@@ -110,17 +124,6 @@ export default function Explore() {
     poolIdList: addressesForReqFarmPool
   })
 
-  const [selectedView, setSelectedView] = React.useState('grid')
-  const [orderedBy, setOrderedBy] = React.useState<Pool_OrderBy>(
-    'total_value_locked_usd'
-  )
-  const [communityPoolSorted, setCommunityPoolSorted] =
-    React.useState<communityPoolSorting>(communityPoolSorting.DESC)
-  const [totalPoolsTable, setTotalPoolsTable] = React.useState(0)
-  const [skip, setSkip] = React.useState(0)
-
-  const take = 20
-
   const { data: communityPools } = useCommunityPools({
     day: Math.trunc(Date.now() / 1000 - 60 * 60 * 24),
     month: Math.trunc(Date.now() / 1000 - 60 * 60 * 24 * 30),
@@ -139,10 +142,6 @@ export default function Explore() {
         .reduce((acc, cv) => acc + cv, 0)
     )
   }, [communityPools])
-
-  function onClickChainResetPagination() {
-    setSkip(0)
-  }
 
   return (
     <S.Explore>
@@ -169,10 +168,6 @@ export default function Explore() {
           setSelectedChains={setSelectedChains}
           isSelect={isSelectTab}
           setIsSelect={setIsSelectTab}
-          setSelectedView={(view: string | ((prevState: string) => string)) =>
-            setSelectedView(view)
-          }
-          selectedView={selectedView}
           onFilterClick={onClickChainResetPagination}
         />
       </S.ExploreHeader>
