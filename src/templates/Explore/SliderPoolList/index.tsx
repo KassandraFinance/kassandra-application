@@ -49,7 +49,7 @@ function SliderPoolList({ poolData, kacyPrice }: ISliderPoolListProps) {
         {poolData.map(pool => {
           return (
             <FundCardNew
-              key={pool.id}
+              key={pool.id + pool.symbol}
               poolData={pool}
               kacyPrice={kacyPrice}
               link={`/pool/${pool.id}`}

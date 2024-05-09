@@ -173,15 +173,8 @@ const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
     const price = poolData.price_usd
     const tvl = BNtoDecimal(Big(poolData.total_value_locked_usd ?? 0), 2, 2, 2)
     const chartData = handleChartDataFormatted(poolData?.price_candles)
-    const changeDay = calcChange(
-      poolData?.now[0]?.close,
-      poolData?.day[0]?.close
-    )
 
-    const changeMonth = calcChange(
-      poolData.now[0]?.close,
-      poolData.month[0]?.close
-    )
+    const changeMonth = calcChange(poolData.price_usd, poolData.month[0]?.close)
     const underlying_assets = handleWeightNormalized(
       poolData.pool_version,
       poolData.underlying_assets,
@@ -192,7 +185,6 @@ const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
       price,
       tvl,
       chartData,
-      changeDay,
       changeMonth,
       underlying_assets
     }
@@ -229,7 +221,7 @@ const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
         >
           <S.CardHeader>
             <S.ImageContainer>
-              {poolData?.logo ? (
+              {poolData?.id ? (
                 <TokenWithNetworkImage
                   tokenImage={{
                     url: poolData?.logo || '',
@@ -311,11 +303,6 @@ const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
 
             <S.FundStatusContainer>
               <FundStatus
-                day={
-                  poolDataMetrics?.changeDay
-                    ? parseFloat(poolDataMetrics.changeDay)
-                    : undefined
-                }
                 monthly={
                   poolDataMetrics?.changeMonth
                     ? parseFloat(poolDataMetrics.changeMonth)

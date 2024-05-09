@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import { kassandraClient } from '@/graphQLClients'
 
 type usePoolsWithFeeJoinBroker = {
-  day: number
   month: number
   period_selected: number
   price_period: number
@@ -10,7 +9,6 @@ type usePoolsWithFeeJoinBroker = {
 }
 
 export const fetchPoolsWithFeeJoinBroker = async ({
-  day,
   month,
   period_selected,
   price_period,
@@ -18,7 +16,6 @@ export const fetchPoolsWithFeeJoinBroker = async ({
 }: usePoolsWithFeeJoinBroker) => {
   return kassandraClient
     .PoolsWithFeeJoinBroker({
-      day,
       month,
       period_selected,
       price_period,
@@ -28,7 +25,6 @@ export const fetchPoolsWithFeeJoinBroker = async ({
 }
 
 export const usePoolsWithFeeJoinBroker = ({
-  day,
   month,
   period_selected,
   price_period,
@@ -39,7 +35,6 @@ export const usePoolsWithFeeJoinBroker = ({
     queryKey: ['pools-with-join-broker', chainIn],
     queryFn: async () =>
       fetchPoolsWithFeeJoinBroker({
-        day,
         month,
         period_selected,
         price_period,

@@ -1,12 +1,13 @@
-query LargestPools (
+query ExplorePools (
   $price_period: Int!
   $period_selected: Int!
-  $day: Int!
   $month: Int!
-
   $chainIn: [String!]
+  $orderBy: Pool_orderBy
+  $orderDirection: OrderDirection
+  $totalValueLockedUsdGt: BigDecimal
 ) {
-  pools (orderBy: total_value_locked_usd, orderDirection: desc, first: 9, where: { chain_in: $chainIn }) {
+  pools (orderBy: $orderBy, orderDirection: $orderDirection, first: 9, where: { chain_in: $chainIn, total_value_locked_usd_gt: $totalValueLockedUsdGt }) {
     id
     name
     symbol
@@ -77,23 +78,6 @@ query LargestPools (
           logo
         }
       }
-    }
-    now: price_candles(
-      where: { base: "usd", period: 3600 }
-      orderBy: timestamp
-      orderDirection: desc
-      first: 1
-    ) {
-      timestamp
-      close
-    }
-    day: price_candles(
-      where: { base: "usd", period: 3600, timestamp_gt: $day }
-      orderBy: timestamp
-      first: 1
-    ) {
-      timestamp
-      close
     }
     month: price_candles(
       where: { base: "usd", period: 3600, timestamp_gt: $month }

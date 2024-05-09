@@ -11,25 +11,13 @@ import * as S from './styles'
 interface IFundStatusProps {
   tvl?: number
   monthly?: number
-  day?: number
 }
 
-const FundStatus = ({ day, monthly, tvl }: IFundStatusProps) => {
-  const FundStatusList = [
-    {
-      name: 'MONTHLY',
-      value: monthly
-    },
-    {
-      name: '24H',
-      value: day
-    }
-  ]
-
+const FundStatus = ({ monthly, tvl }: IFundStatusProps) => {
   return (
     <S.FundStatusWrapper>
       <S.FundStatus>
-        {tvl ? (
+        {tvl || tvl === 0 ? (
           <S.ValueContainer>
             <S.Value value={0}>
               {tvl.toLocaleString('en-US', {
@@ -43,24 +31,23 @@ const FundStatus = ({ day, monthly, tvl }: IFundStatusProps) => {
         )}
         <h4>TVL</h4>
       </S.FundStatus>
-      {FundStatusList.map(item => (
-        <S.FundStatus key={item.name}>
-          {item?.value || item?.value === 0 ? (
-            <S.ValueContainer>
-              <S.Value value={item.value}>{item.value}%</S.Value>
-              <Image
-                src={item.value >= 0 ? arrowAscend : arrowDescend}
-                width={16}
-                height={16}
-              />
-            </S.ValueContainer>
-          ) : (
-            <SkeletonLoading height={2} width={6} />
-          )}
 
-          <h4>{item.name}</h4>
-        </S.FundStatus>
-      ))}
+      <S.FundStatus>
+        {monthly || monthly === 0 ? (
+          <S.ValueContainer>
+            <S.Value value={monthly}>{monthly}%</S.Value>
+            <Image
+              src={monthly >= 0 ? arrowAscend : arrowDescend}
+              width={16}
+              height={16}
+            />
+          </S.ValueContainer>
+        ) : (
+          <SkeletonLoading height={2} width={6} />
+        )}
+
+        <h4>MONTHLY</h4>
+      </S.FundStatus>
     </S.FundStatusWrapper>
   )
 }

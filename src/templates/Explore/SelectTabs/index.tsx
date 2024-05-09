@@ -14,8 +14,6 @@ interface ExploreSelectTabsProps {
   setIsSelect: React.Dispatch<
     React.SetStateAction<string | string[] | undefined>
   >
-  selectedView: string
-  setSelectedView: React.Dispatch<React.SetStateAction<string>>
   onFilterClick: () => void
 }
 
@@ -40,8 +38,6 @@ export function ExploreSelectTabs({
   setIsSelect,
   selectedChains,
   setSelectedChains,
-  selectedView,
-  setSelectedView,
   onFilterClick
 }: ExploreSelectTabsProps) {
   function handleClickChain(chain: ChainList) {
@@ -71,7 +67,6 @@ export function ExploreSelectTabs({
 
   function handleClickTab(tabSelect: string) {
     setIsSelect(tabSelect)
-    setSelectedView('list')
   }
 
   return (
