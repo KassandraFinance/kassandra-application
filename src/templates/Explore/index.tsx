@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Big from 'big.js'
+import { useInView } from 'react-intersection-observer'
 
 import { OrderDirection, Pool_OrderBy } from '@/gql/generated/kassandraApi'
 
@@ -80,6 +81,10 @@ export default function Explore() {
     tokenAddresses: [KacyPoligon]
   })
 
+  const { ref, inView } = useInView({
+    threshold: 0
+  })
+
   const { priceToken } = useGetToken({
     nativeTokenAddress: networkChain.nativeCurrency.address,
     tokens: data || {}
@@ -101,11 +106,13 @@ export default function Explore() {
 
   const { data: poolsKassandra } = useFeaturedPools(params)
   const { data: poolsData } = useExploreOverviewPools()
-  const { data: poolWithFeeJoinBroker } = usePoolsWithFeeJoinBroker(params)
+  const { data: poolWithFeeJoinBroker } = usePoolsWithFeeJoinBroker({
+    ...params,
+    enabled: inView
+  })
   const { data: whiteListTokenCount } = useWhiteListTokensCount({
     chainIdList: chainList.map(item => item.chainId)
   })
-
   const { data: largestPools } = useExplorePools({
     ...params,
     orderBy: 'total_value_locked_usd',
@@ -115,12 +122,14 @@ export default function Explore() {
     ...params,
     orderBy: 'change',
     queryKey: 'change',
-    totalValueLockedUsdGt: '150'
+    totalValueLockedUsdGt: '150',
+    enabled: inView
   })
   const { data: createdAtPools } = useExplorePools({
     ...params,
     orderBy: 'created_at',
-    queryKey: 'createdAt'
+    queryKey: 'createdAt',
+    enabled: inView
   })
   const { data: farmPools } = useFarmPools({
     ...params,
@@ -191,7 +200,7 @@ export default function Explore() {
           </S.ExploreContainer>
 
           <S.ExploreContainer>
-            <TitleSection image={farmIcon} title="Boosted Portfolio" text="" />
+            <TitleSection image={farmIcon} title="Boosted Portfolios" text="" />
 
             <SliderPoolList
               poolData={farmPools ?? new Array(9).fill({})}
@@ -200,7 +209,11 @@ export default function Explore() {
           </S.ExploreContainer>
 
           <S.ExploreContainer>
-            <TitleSection image={featuredFunds} title="Largest Pools" text="" />
+            <TitleSection
+              image={featuredFunds}
+              title="Largest Portfolios"
+              text=""
+            />
 
             <SliderPoolList
               poolData={largestPools?.pools ?? new Array(9).fill({})}
@@ -208,7 +221,9 @@ export default function Explore() {
             />
           </S.ExploreContainer>
 
-          <S.ExploreContainer>
+          <ExploreAllPools />
+
+          <S.ExploreContainer ref={ref}>
             <TitleSection
               image={featuredFunds}
               title="Portfolios by Cyril"
@@ -246,8 +261,6 @@ export default function Explore() {
               kacyPrice={kacyPrice}
             />
           </S.ExploreContainer>
-
-          <ExploreAllPools />
 
           <S.ExploreContainer>
             <TitleSection

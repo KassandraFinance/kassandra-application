@@ -6,6 +6,7 @@ type usePoolsWithFeeJoinBroker = {
   period_selected: number
   price_period: number
   chainIn: string[]
+  enabled?: boolean
 }
 
 export const fetchPoolsWithFeeJoinBroker = async ({
@@ -13,7 +14,7 @@ export const fetchPoolsWithFeeJoinBroker = async ({
   period_selected,
   price_period,
   chainIn
-}: usePoolsWithFeeJoinBroker) => {
+}: Omit<usePoolsWithFeeJoinBroker, 'enabled'>) => {
   return kassandraClient
     .PoolsWithFeeJoinBroker({
       month,
@@ -28,11 +29,12 @@ export const usePoolsWithFeeJoinBroker = ({
   month,
   period_selected,
   price_period,
-  chainIn
+  chainIn,
+  enabled
 }: usePoolsWithFeeJoinBroker) => {
   return useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
-    queryKey: ['pools-with-join-broker', chainIn],
+    queryKey: ['pools-with-join-broker', chainIn, enabled],
     queryFn: async () =>
       fetchPoolsWithFeeJoinBroker({
         month,
@@ -41,6 +43,8 @@ export const usePoolsWithFeeJoinBroker = ({
         chainIn
       }),
     staleTime: 1000 * 60,
-    refetchInterval: 1000 * 60
+    refetchInterval: 1000 * 60,
+    keepPreviousData: true,
+    enabled
   })
 }
