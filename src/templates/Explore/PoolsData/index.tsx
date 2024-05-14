@@ -49,9 +49,9 @@ export function ExplorePoolsData({
   return (
     <S.PoolsDataWrapper>
       <S.Content>
-        {poolsData.map(poolData => {
+        {poolsData.map((poolData, index) => {
           return (
-            <S.DataGroup>
+            <S.DataGroup key={`${poolData.name}_${index}`}>
               <S.Circle>{poolData.icon}</S.Circle>
               <S.DataText>
                 <S.MainText>{poolData.amount}</S.MainText>
