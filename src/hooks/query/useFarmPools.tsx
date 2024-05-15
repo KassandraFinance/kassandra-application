@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { kassandraClient } from '@/graphQLClients'
-import { handleGetAPR } from '@/components/StakeCard/utils'
+import { handleGetAPR } from '@/templates/StakeFarm/utils'
 import { networks } from '@/constants/tokenAddresses'
 import { ZeroAddress } from 'ethers'
 import Big from 'big.js'
