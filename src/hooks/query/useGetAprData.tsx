@@ -1,4 +1,4 @@
-import { handleGetAPR } from '@/components/StakeCard/utils'
+import { handleGetAPR } from '@/templates/StakeFarm/utils'
 import { networks } from '@/constants/tokenAddresses'
 import { useQuery } from '@tanstack/react-query'
 import Big from 'big.js'

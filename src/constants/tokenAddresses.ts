@@ -110,6 +110,7 @@ type NetworkInfo = {
   chainId: number
   kacyAddress?: string
   rpc: string
+  rpcs: string[]
   coingecko: string
   whiteList: string
   factory: string
@@ -131,6 +132,7 @@ export const networks: NetworkType = {
     chainName: 'Goerli Test Network',
     chainId: 5,
     rpc: 'https://rpc.ankr.com/eth_goerli',
+    rpcs: [],
     blockExplorer: 'https://goerli.etherscan.io',
     coingecko: 'polygon-pos',
     whiteList: '0xe119DE3b0FDab34e9CE490FDAa562e6457126A57',
@@ -152,6 +154,12 @@ export const networks: NetworkType = {
     chainName: 'Polygon',
     chainId: 137,
     rpc: 'https://polygon-rpc.com',
+    rpcs: [
+      'https://polygon.llamarpc.com',
+      'https://rpc.ankr.com/polygon',
+      'https://polygon-pokt.nodies.app',
+      'https://polygon.drpc.org'
+    ],
     kacyAddress: KacyPoligon,
     blockExplorer: 'https://polygonscan.com',
     coingecko: 'polygon-pos',
@@ -182,6 +190,12 @@ export const networks: NetworkType = {
     chainId: 43114,
     chainName: 'Avalanche',
     rpc: 'https://avalanche.public-rpc.com',
+    rpcs: [
+      'https://avalanche.public-rpc.com',
+      'https://rpc.ankr.com/avalanche',
+      'https://avax.meowrpc.com',
+      'https://avalanche.drpc.org'
+    ],
     kacyAddress: Kacy,
     blockExplorer: 'https://snowtrace.io',
     coingecko: 'avalanche',
@@ -213,6 +227,7 @@ export const networks: NetworkType = {
     chainId: 43113,
     chainName: 'Avalanche',
     rpc: 'https://api.avax-test.network/ext/C/rpc',
+    rpcs: [],
     kacyAddress: Kacy,
     blockExplorer: 'https://testnet.snowtrace.io',
     coingecko: 'avalanche',
@@ -235,6 +250,12 @@ export const networks: NetworkType = {
     chainName: 'Arbitrum',
     chainId: 42161,
     rpc: 'https://arbitrum-one.publicnode.com',
+    rpcs: [
+      'https://1rpc.io/arb',
+      'https://rpc.ankr.com/arbitrum',
+      'https://arbitrum.llamarpc.com',
+      'https://arb-pokt.nodies.app'
+    ],
     kacyAddress: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     stakingContract: '0xdcbdde53cfebae239b77b6ef896261da80531884',
     blockExplorer: 'https://arbiscan.io/',

@@ -11,7 +11,7 @@ import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
 
 import { BNtoDecimal, calcChange } from '@/utils/numerals'
 import { getWeightsNormalizedV2 } from '@/utils/updateAssetsToV2'
-import { handleGetAPR } from '../StakeCard/utils'
+import { handleGetAPR } from '../../templates/StakeFarm/utils'
 
 import Label from '../Labels/Label'
 import FundStatus from './FundStatus'

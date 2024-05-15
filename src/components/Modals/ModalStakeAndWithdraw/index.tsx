@@ -3,6 +3,7 @@ import Big from 'big.js'
 import Link from 'next/link'
 import { PoolType } from '@/constants/pools'
 import { useConnectWallet } from '@web3-onboard/react'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { BNtoDecimal } from '@/utils/numerals'
 
@@ -48,7 +49,6 @@ interface IModalStakeProps {
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   updateAllowance: () => Promise<void>
   handleApprove: (value: Big) => Promise<void>
-  getUserInfoAboutPool: () => Promise<void>
 }
 
 export enum typeTransaction {
@@ -56,6 +56,8 @@ export enum typeTransaction {
   STAKING,
   UNSTAKING
 }
+
+const queryNames = ['stake-pool', 'investment-pool', 'liquidity-pool']
 
 const porcentageButtonArray = [25, 50, 75, 100]
 
@@ -69,8 +71,7 @@ const ModalStakeAndWithdraw = ({
   setStakeTransaction,
   amountApproved,
   updateAllowance,
-  handleApprove,
-  getUserInfoAboutPool
+  handleApprove
 }: IModalStakeProps) => {
   const [isAmount, setIsAmount] = React.useState<boolean>(false)
   const [balance, setBalance] = React.useState<Big>(Big(0))
@@ -81,6 +82,8 @@ const ModalStakeAndWithdraw = ({
   const [{ wallet }] = useConnectWallet()
 
   const inputRef = React.useRef<HTMLInputElement>(null)
+
+  const queryClient = useQueryClient()
 
   const {
     trackEventFunction,
@@ -151,7 +154,7 @@ const ModalStakeAndWithdraw = ({
       },
       {
         onSuccess: () => {
-          getUserInfoAboutPool()
+          queryClient.invalidateQueries({ queryKey: [queryNames[pool.type]] })
           trackBought(productSKU, 0, 0)
         },
         onFail: () => trackCancelBuying()

@@ -4,7 +4,7 @@ import * as web3Onboard from '@web3-onboard/react'
 
 import { poolsFunds } from '@/constants/pools'
 
-import { handleCalcAPR } from './utils'
+import { handleCalcAPR } from '../../templates/StakeFarm/utils'
 import { render, screen, waitFor } from '@/utils/test-utils'
 
 import StakeCard from '.'
