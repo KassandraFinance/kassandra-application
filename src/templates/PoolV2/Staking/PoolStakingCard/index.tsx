@@ -312,7 +312,6 @@ const PoolStakingCard = ({
           amountApproved={amountApproveStaking}
           handleApprove={handleApproveStaking}
           updateAllowance={updateAllowance}
-          getUserInfoAboutPool={userInfoAboutPool}
         />
       )}
     </S.PoolStakingCard>

@@ -6,33 +6,23 @@ type ChainList = {
   chainId: string
 }
 
+type Tabs = {
+  tabName: string
+  text: string
+}
+
 interface ExploreSelectTabsProps {
+  tabsList: Tabs[]
   chainList: ChainList[]
   selectedChains: string[]
   setSelectedChains: React.Dispatch<React.SetStateAction<string[]>>
-  isSelect: string | string[] | undefined
-  setIsSelect: React.Dispatch<
-    React.SetStateAction<string | string[] | undefined>
-  >
-  onFilterClick: () => void
+  isSelect: string
+  setIsSelect: React.Dispatch<React.SetStateAction<string>>
+  onFilterClick?: () => void
 }
 
-const tabs = [
-  {
-    tabName: 'discover',
-    text: 'Discover'
-  },
-  {
-    tabName: 'allPools',
-    text: 'All Portfolios'
-  },
-  {
-    tabName: 'myPools',
-    text: 'My Investments'
-  }
-]
-
 export function ExploreSelectTabs({
+  tabsList,
   chainList,
   isSelect,
   setIsSelect,
@@ -41,7 +31,7 @@ export function ExploreSelectTabs({
   onFilterClick
 }: ExploreSelectTabsProps) {
   function handleClickChain(chain: ChainList) {
-    onFilterClick()
+    onFilterClick && onFilterClick()
     const allSelected = chainList.every(chain =>
       selectedChains.includes(chain.chainId)
     )
@@ -72,7 +62,7 @@ export function ExploreSelectTabs({
   return (
     <S.Wrapper>
       <S.MobileTabs>
-        {tabs.map(tab => (
+        {tabsList.map(tab => (
           <S.TabButton
             key={tab.tabName}
             background="transparent"
@@ -92,7 +82,7 @@ export function ExploreSelectTabs({
           /> */}
 
           <S.DesktopTabs>
-            {tabs.map(tab => (
+            {tabsList.map(tab => (
               <S.TabButton
                 key={tab.tabName}
                 background="transparent"
