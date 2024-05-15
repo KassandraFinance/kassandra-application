@@ -9,37 +9,41 @@ import { handleInstaceFallbackProvider } from '@/utils/provider'
 import { lpPoolPriceFunctions } from '../usePriceLPEthers'
 import { CoinsMetadataType } from './useTokensData'
 
-import { handleGetUserAndPoolInfo } from '@/components/StakeCard/utils'
+import {
+  PoolMetrics,
+  UserInfo,
+  handleGetUserAndPoolInfo
+} from '@/templates/StakeFarm/utils'
+
+const userInfo: UserInfo = {
+  currentAvailableWithdraw: Big(-1),
+  delegateTo: '',
+  lockPeriod: -1,
+  yourStake: Big(-1),
+  unstake: false,
+  withdrawable: false,
+  kacyEarned: Big(-1)
+}
+
+const poolDataMetrics: PoolMetrics = {
+  votingMultiplier: '-1',
+  startDate: '',
+  endDate: '',
+  kacyRewards: Big(-1),
+  withdrawDelay: -1,
+  totalStaked: Big(-1),
+  hasExpired: false,
+  apr: Big(-1),
+  stakingToken: '',
+  vestingPeriod: '',
+  lockPeriod: '',
+  tokenDecimals: '18'
+}
 
 type useInvestmentPools = {
   kacyPrice: Big
   coinsData?: CoinsMetadataType
   walletAddress: string
-}
-
-type UserInfo = {
-  currentAvailableWithdraw: string
-  lockPeriod: string
-  delegateTo: string
-  yourStake: Big
-  withdrawable: string
-  unstake: string
-  kacyEarned: Big
-}
-
-type PoolMetrics = {
-  apr: Big
-  endDate: string
-  startDate: string
-  kacyRewards: Big
-  totalStaked: Big
-  tokenDecimals: string
-  lockPeriod: string
-  stakingToken: string
-  hasExpired: boolean
-  vestingPeriod: string
-  votingMultiplier: string
-  withdrawDelay: number
 }
 
 type PoolInfo = {
@@ -107,15 +111,23 @@ export const useLiquidityPool = ({
 }: UseSkatePoolPowerVoting) => {
   return useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
-    queryKey: ['liquidity-pool', kacyPrice, coinsData],
+    queryKey: ['liquidity-pool', kacyPrice, coinsData, walletAddress],
     queryFn: async () =>
       liquidityPool({
         kacyPrice: kacyPrice ?? Big(0),
         coinsData: coinsData,
         walletAddress: walletAddress ?? ''
       }),
-    staleTime: 1000 * 60,
-    refetchInterval: 1000 * 60,
-    enabled: !!kacyPrice || !!coinsData || !!walletAddress
+    staleTime: 1000 * 60 * 3,
+    refetchInterval: 1000 * 60 * 3,
+    keepPreviousData: true,
+    placeholderData: liquidityPools.map(item => {
+      return {
+        pool: item,
+        userInfo,
+        poolDataMetrics
+      }
+    }),
+    enabled: !!kacyPrice || !!coinsData
   })
 }

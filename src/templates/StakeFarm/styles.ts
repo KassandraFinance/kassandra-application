@@ -1,13 +1,7 @@
+import theme from '@/styles/theme'
 import styled from 'styled-components'
 
-export const StakeFarm = styled.section`
-  margin: 0 auto;
-  max-width: 114rem;
-
-  @media (max-width: 1200px) {
-    padding: 0 3rem;
-  }
-`
+export const StakeFarm = styled.section``
 
 export const StakeFarmHeader = styled.div`
   background: linear-gradient(
@@ -64,6 +58,14 @@ export const SubTitle = styled.h2`
   color: #fcfcfc;
 `
 
+export const TabsWrapper = styled.div`
+  max-width: 114rem;
+  width: 100%;
+  margin: 0 auto;
+
+  margin-bottom: 2.4rem;
+`
+
 export const TabsContainer = styled.div`
   display: flex;
   align-items: center;
@@ -88,5 +90,38 @@ export const VotingPowerContainer = styled.div`
 
   @media (max-width: 976px) {
     margin-top: 2rem;
+  }
+`
+
+export const StakeFarmContent = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: flex-start;
+  gap: 2.4rem;
+
+  @media (max-width: 976px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+    max-width: 36rem;
+  }
+`
+
+export const textContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  grid-column: 2;
+  padding: 2.4rem;
+
+  p {
+    max-width: 30rem;
+    font-size: ${theme.font.sizes.font18};
+    font-weight: ${theme.font.weight.normal};
+    letter-spacing: 0.22em;
+    line-height: 2.4rem;
+    text-align: center;
   }
 `

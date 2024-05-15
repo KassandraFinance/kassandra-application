@@ -1,27 +1,79 @@
-import React from 'react'
-import { useRouter } from 'next/router'
+import React, { useState } from 'react'
 import { getAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import Big from 'big.js'
 
+import { KacyPoligon, networks } from '@/constants/tokenAddresses'
+import {
+  PoolDetails,
+  addressesForReqFarmPool,
+  addressesForReqStakePool
+} from '@/constants/pools'
+import { allPools } from '@/constants/pools'
+
+import useGetToken from '@/hooks/useGetToken'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import { useVotingPower } from '@/hooks/query/useVotingPower'
+import { useLiquidityPool } from '@/hooks/query/useLiquidityPool'
+import { usePoolsPriceList } from '@/hooks/query/usePoolsPriceList'
+import { useInvestmentPools } from '@/hooks/query/useInvestmentPools'
+import { useStakePoolPowerVoting } from '@/hooks/query/useSkatePoolPowerVoting'
+
+import { StakeListCard } from './StakeListCard'
+import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
+import { PoolMetrics, UserInfo } from '@/templates/StakeFarm/utils'
+import { ExploreSelectTabs } from '../Explore/SelectTabs'
+import { StakeFarmPools } from './AllPools'
+import { StakeSectionView } from './StakeSectionView'
+
 import VotingPower from '@/components/VotingPower'
 import Breadcrumb from '@/components/Breadcrumb'
 import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
-import Farm from './Farm'
-import Stake from './Stake'
-import { useVotingPower } from '@/hooks/query/useVotingPower'
+import StakeCard from '@/components/StakeCard'
 
 import * as S from './styles'
-import { StakeFarmPools } from './AllPools'
-import { allPools } from '@/constants/pools'
-import { StakeListViewSection } from './ListView'
-import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
+
+type PoolInfo = {
+  pool: PoolDetails
+  userInfo: UserInfo
+  poolDataMetrics: PoolMetrics
+}
+
+const chainList = [
+  {
+    name: 'polygon',
+    icon: <img src="/assets/icons/polygon.svg" />,
+    chainId: '137'
+  },
+  {
+    name: 'avalanche',
+    icon: <img src="/assets/icons/avalanche.svg" />,
+    chainId: '43114'
+  },
+  {
+    name: 'arbitrum',
+    icon: <img src="/assets/icons/arbitrum.svg" />,
+    chainId: '42161'
+  }
+]
+
+const tabs = [
+  {
+    tabName: 'active-rewards',
+    text: 'Active Rewards'
+  },
+  {
+    tabName: 'allPools',
+    text: 'All Pools'
+  }
+]
 
 const StakeFarm = () => {
-  const [isSelectTab, setIsSelectTab] = React.useState<
-    string | string[] | undefined
-  >('stake')
   const [selectedView, setSelectedView] = React.useState('grid')
+  const [selectedChains, setSelectedChains] = useState(
+    chainList.map(item => item.chainId)
+  )
+  const [isSelectTab, setIsSelectTab] = useState<string>(tabs[0].tabName)
 
   const numPoolsInvestors = 2
   const allPoolsNumber = (allPools.length - numPoolsInvestors).toString()
@@ -30,66 +82,51 @@ const StakeFarm = () => {
   const walletAddress = wallet ? getAddress(wallet.accounts[0].address) : ''
   const { data: votingData } = useVotingPower({ id: walletAddress })
 
-  const router = useRouter()
+  const polygonChainId = 137 // choose chain to get token price
+  const networkChain = networks[polygonChainId]
+  const { data: farmPoolPriceList } = usePoolsPriceList({
+    addresses: addressesForReqFarmPool
+  })
 
-  React.useEffect(() => {
-    const isSelectQueryTab = router.query.tab
+  const { data: tokensData } = useTokensData({
+    chainId: networkChain.chainId,
+    tokenAddresses: addressesForReqStakePool
+  })
 
-    if (isSelectQueryTab) {
-      setIsSelectTab(isSelectQueryTab)
-    }
-  }, [router])
+  const { priceToken } = useGetToken({
+    nativeTokenAddress: networkChain.nativeCurrency.address,
+    tokens: tokensData || {}
+  })
 
-  const fakePoolsData = [
-    {
-      logoUrl: '/assets/logos/kacy-stake.svg',
-      chainLogoUrl: '/assets/logos/avalanche.svg',
-      name: '$KACY',
-      votingPower: '2/',
-      withdrawDelay: '15',
-      earned: 0,
-      apr: 132.94,
-      totalStaked: '702.5 LP-AVAX',
-      stakedInUsd: '43.321 USD',
-      startDate: '13 Nov, 2023',
-      rewardDate: '11 Feb, 2024',
-      poolReward: 0,
-      poolRewardValue: 0,
-      contract: '0x384572384203409123098123'
-    },
-    {
-      logoUrl: '/assets/logos/kacy-stake.svg',
-      chainLogoUrl: '/assets/logos/avalanche.svg',
-      name: '$NOTKACY',
-      votingPower: '3/',
-      withdrawDelay: '23',
-      earned: 12,
-      apr: 72.94,
-      totalStaked: '329.13 LP-AVAX',
-      stakedInUsd: '11.891 USD',
-      startDate: '11 Dec, 2023',
-      rewardDate: '29 Mar, 2024',
-      poolReward: 1,
-      poolRewardValue: 23,
-      contract: '0x23423438457238420098123'
-    },
-    {
-      logoUrl: '/assets/logos/kacy-stake.svg',
-      chainLogoUrl: '/assets/logos/avalanche.svg',
-      name: '$ANOTHAKCY',
-      votingPower: '4/',
-      withdrawDelay: '69',
-      earned: 3,
-      apr: 81.12,
-      totalStaked: '163 LP-AVAX',
-      stakedInUsd: '2.341 USD',
-      startDate: '11 Dec, 2023',
-      rewardDate: '29 Mar, 2024',
-      poolReward: 2,
-      poolRewardValue: 55,
-      contract: '0x546546456384572389123'
-    }
-  ]
+  const kacyPrice = priceToken(KacyPoligon.toLowerCase())
+
+  const { data: StakePoolPowerVoting } = useStakePoolPowerVoting({
+    kacyPrice: Big(kacyPrice),
+    poolPrice: Big(kacyPrice),
+    walletAddress: wallet?.accounts[0].address
+  })
+
+  const { data: investmentPools } = useInvestmentPools({
+    kacyPrice: Big(kacyPrice),
+    poolsPrice: farmPoolPriceList,
+    walletAddress: wallet?.accounts[0].address
+  })
+
+  const { data: LiquidityPool } = useLiquidityPool({
+    kacyPrice: Big(kacyPrice),
+    coinsData: tokensData,
+    walletAddress: wallet?.accounts[0].address
+  })
+
+  function handleFilteredPools(poolList: PoolInfo[]) {
+    const isALLPools = isSelectTab === 'allPools'
+
+    return poolList.filter(
+      item =>
+        selectedChains.includes(item.pool.chain.id.toString()) &&
+        (isALLPools || !item.poolDataMetrics.hasExpired)
+    )
+  }
 
   return (
     <>
@@ -126,27 +163,166 @@ const StakeFarm = () => {
         <StakeFarmPools numberOfPools={allPoolsNumber} />
       </S.TabsContainer>
 
+      <S.TabsWrapper>
+        <ExploreSelectTabs
+          tabsList={tabs}
+          chainList={chainList}
+          selectedChains={selectedChains}
+          setSelectedChains={setSelectedChains}
+          isSelect={isSelectTab}
+          setIsSelect={setIsSelectTab}
+        />
+      </S.TabsWrapper>
+
       {selectedView === 'list' && (
         <>
-          <StakeListViewSection
-            data={fakePoolsData}
-            sectionName="Power Voting"
-          />
-          <StakeListViewSection
-            data={fakePoolsData}
-            sectionName="KACY Liquidity"
-          />
-          <StakeListViewSection
-            data={fakePoolsData}
-            sectionName="Investment Pool"
-          />
+          <StakeSectionView sectionName="Power Voting">
+            <>
+              {StakePoolPowerVoting &&
+              handleFilteredPools(StakePoolPowerVoting).length > 0 ? (
+                handleFilteredPools(StakePoolPowerVoting).map(item => {
+                  return (
+                    <StakeListCard
+                      key={item?.pool?.pid + item?.pool?.symbol}
+                      pool={item?.pool}
+                      poolDataMetrics={item?.poolDataMetrics}
+                      userInfo={item?.userInfo}
+                      kacyPrice={Big(kacyPrice)}
+                      poolPrice={Big(kacyPrice)}
+                    />
+                  )
+                })
+              ) : (
+                <S.textContainer>
+                  <p>The selected chains have no pools yet.</p>
+                </S.textContainer>
+              )}
+            </>
+          </StakeSectionView>
+          <StakeSectionView sectionName="KACY Liquidity">
+            <>
+              {LiquidityPool &&
+              handleFilteredPools(LiquidityPool).length > 0 ? (
+                handleFilteredPools(LiquidityPool).map(item => {
+                  return (
+                    <StakeListCard
+                      key={item?.pool?.pid + item?.pool?.symbol}
+                      pool={item?.pool}
+                      poolDataMetrics={item?.poolDataMetrics}
+                      userInfo={item?.userInfo}
+                      kacyPrice={Big(kacyPrice)}
+                      poolPrice={Big(kacyPrice)}
+                    />
+                  )
+                })
+              ) : (
+                <S.textContainer>
+                  <p>The selected chains have no pools yet.</p>
+                </S.textContainer>
+              )}
+            </>
+          </StakeSectionView>
+          <StakeSectionView sectionName="Investment Pool">
+            <>
+              {investmentPools &&
+              handleFilteredPools(investmentPools).length > 0 ? (
+                handleFilteredPools(investmentPools).map(item => {
+                  return (
+                    <StakeListCard
+                      key={item?.pool?.pid + item?.pool?.symbol}
+                      pool={item?.pool}
+                      poolDataMetrics={item?.poolDataMetrics}
+                      userInfo={item?.userInfo}
+                      kacyPrice={Big(kacyPrice)}
+                      poolPrice={Big(kacyPrice)}
+                    />
+                  )
+                })
+              ) : (
+                <S.textContainer>
+                  <p>The selected chains have no pools yet.</p>
+                </S.textContainer>
+              )}
+            </>
+          </StakeSectionView>
         </>
       )}
 
-      <S.StakeFarm>
-        {selectedView === 'grid' && <Stake />}
-        {selectedView === 'grid' && <Farm />}
-      </S.StakeFarm>
+      {selectedView === 'grid' && (
+        <S.StakeFarm>
+          <StakeSectionView sectionName="Power Voting">
+            <S.StakeFarmContent>
+              {StakePoolPowerVoting &&
+              handleFilteredPools(StakePoolPowerVoting).length > 0 ? (
+                handleFilteredPools(StakePoolPowerVoting).map(item => {
+                  return (
+                    <StakeCard
+                      key={item?.pool.symbol + item?.pool.pid}
+                      kacyPrice={Big(kacyPrice)}
+                      poolPrice={Big(kacyPrice)}
+                      pool={item.pool}
+                      poolInfo={item.poolDataMetrics}
+                      userAboutPool={item.userInfo}
+                    />
+                  )
+                })
+              ) : (
+                <S.textContainer>
+                  <p>The selected chains have no pools yet.</p>
+                </S.textContainer>
+              )}
+            </S.StakeFarmContent>
+          </StakeSectionView>
+
+          <StakeSectionView sectionName="KACY Liquidity">
+            <S.StakeFarmContent>
+              {LiquidityPool &&
+              handleFilteredPools(LiquidityPool).length > 0 ? (
+                handleFilteredPools(LiquidityPool).map(item => {
+                  return (
+                    <StakeCard
+                      key={item.pool.symbol + item.pool.pid}
+                      kacyPrice={Big(kacyPrice)}
+                      poolPrice={Big(kacyPrice)}
+                      pool={item.pool}
+                      poolInfo={item.poolDataMetrics}
+                      userAboutPool={item.userInfo}
+                    />
+                  )
+                })
+              ) : (
+                <S.textContainer>
+                  <p>The selected chains have no pools yet.</p>
+                </S.textContainer>
+              )}
+            </S.StakeFarmContent>
+          </StakeSectionView>
+
+          <StakeSectionView sectionName="Investment Pool">
+            <S.StakeFarmContent>
+              {investmentPools &&
+              handleFilteredPools(investmentPools).length > 0 ? (
+                handleFilteredPools(investmentPools).map(item => {
+                  return (
+                    <StakeCard
+                      key={item.pool.symbol + item.pool.pid}
+                      kacyPrice={Big(kacyPrice)}
+                      poolPrice={Big(kacyPrice)}
+                      pool={item.pool}
+                      poolInfo={item.poolDataMetrics}
+                      userAboutPool={item.userInfo}
+                    />
+                  )
+                })
+              ) : (
+                <S.textContainer>
+                  <p>The selected chains have no pools yet.</p>
+                </S.textContainer>
+              )}
+            </S.StakeFarmContent>
+          </StakeSectionView>
+        </S.StakeFarm>
+      )}
     </>
   )
 }

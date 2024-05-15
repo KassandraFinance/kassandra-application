@@ -6,7 +6,36 @@ import { PoolDetails, investmentsPools } from '@/constants/pools'
 
 import { handleInstaceFallbackProvider } from '@/utils/provider'
 
-import { handleGetUserAndPoolInfo } from '@/components/StakeCard/utils'
+import {
+  PoolMetrics,
+  UserInfo,
+  handleGetUserAndPoolInfo
+} from '@/templates/StakeFarm/utils'
+
+const userInfo: UserInfo = {
+  currentAvailableWithdraw: Big(-1),
+  delegateTo: '',
+  lockPeriod: -1,
+  yourStake: Big(-1),
+  unstake: false,
+  withdrawable: false,
+  kacyEarned: Big(-1)
+}
+
+const poolDataMetrics: PoolMetrics = {
+  votingMultiplier: '-1',
+  startDate: '',
+  endDate: '',
+  kacyRewards: Big(-1),
+  withdrawDelay: -1,
+  totalStaked: Big(-1),
+  hasExpired: false,
+  apr: Big(-1),
+  stakingToken: '',
+  vestingPeriod: '',
+  lockPeriod: '',
+  tokenDecimals: '18'
+}
 
 type PoolsPrice = {
   price_usd?: string
@@ -16,31 +45,6 @@ type useInvestmentPools = {
   kacyPrice: Big
   poolsPrice?: PoolsPrice[]
   walletAddress: string
-}
-
-type UserInfo = {
-  currentAvailableWithdraw: string
-  lockPeriod: string
-  delegateTo: string
-  yourStake: Big
-  withdrawable: string
-  unstake: string
-  kacyEarned: Big
-}
-
-type PoolMetrics = {
-  apr: Big
-  endDate: string
-  startDate: string
-  kacyRewards: Big
-  totalStaked: Big
-  tokenDecimals: string
-  lockPeriod: string
-  stakingToken: string
-  hasExpired: boolean
-  vestingPeriod: string
-  votingMultiplier: string
-  withdrawDelay: number
 }
 
 type PoolInfo = {
@@ -61,7 +65,6 @@ export const investmentPools = async ({
   for (const pool of investmentsPools) {
     if (!providersForChain[pool.chain.id]) continue
 
-    console.log('LINHA 66', pool.chain.id)
     const provider = await handleInstaceFallbackProvider(pool.chain.id)
 
     providersForChain[pool.chain.id] = provider
@@ -101,15 +104,23 @@ export const useInvestmentPools = ({
 }: UseSkatePoolPowerVoting) => {
   return useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
-    queryKey: ['investment-pool', kacyPrice, poolsPrice],
+    queryKey: ['investment-pool', kacyPrice, poolsPrice, walletAddress],
     queryFn: async () =>
       investmentPools({
         kacyPrice: kacyPrice ?? Big(0),
         poolsPrice: poolsPrice,
         walletAddress: walletAddress ?? ''
       }),
-    staleTime: 1000 * 60,
-    refetchInterval: 1000 * 60,
-    enabled: !!kacyPrice || !!poolsPrice || !!walletAddress
+    staleTime: 1000 * 60 * 3,
+    refetchInterval: 1000 * 60 * 3,
+    keepPreviousData: true,
+    placeholderData: investmentsPools.map(item => {
+      return {
+        pool: item,
+        userInfo,
+        poolDataMetrics
+      }
+    }),
+    enabled: !!kacyPrice || !!poolsPrice
   })
 }
