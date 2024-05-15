@@ -130,8 +130,11 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
     const networkInfo = networks[Number(wallet?.chains[0].id ?? '43114')]
 
     const chaindId =
-      networks[Number(wallet?.chains[0].id ?? 43114)]?.chainId ?? 43114
-    const network = new Network(networkInfo.chainName, networkInfo.chainId)
+      networks[Number(wallet?.chains[0].id ?? '43114')]?.chainId ?? 43114
+    const network = new Network(
+      networkInfo?.chainName ?? 'Avalanche',
+      networkInfo?.chainId ?? '43114'
+    )
     const provider = new JsonRpcProvider(networks[chaindId].rpc, network, {
       staticNetwork: network
     })
