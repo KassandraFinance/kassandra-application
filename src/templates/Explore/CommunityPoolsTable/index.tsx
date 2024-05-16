@@ -171,7 +171,7 @@ const CommunityPoolsTable = ({
               onClick={() => handleClickChangeTvlSorting(communityPoolSorted)}
               isRotateArrow={communityPoolSorted === communityPoolSorting.ASC}
             >
-              TVL{' '}
+              AUM{' '}
               <img
                 src="/assets/utilities/arrow-select-down.svg"
                 alt=""

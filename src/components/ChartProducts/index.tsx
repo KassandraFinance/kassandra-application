@@ -209,7 +209,7 @@ const ChartProducts = ({ poolId }: IChartProductsProps) => {
             checked={inputChecked === 'TVL'}
           />
           <S.Label selected={inputChecked === 'TVL'} htmlFor="TVL-chart">
-            TVL
+            AUM
           </S.Label>
           <S.Input
             type="radio"
