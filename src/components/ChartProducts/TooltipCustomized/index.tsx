@@ -34,7 +34,12 @@ const TooltipCustomized = (props: ITooltipCustomizedPRops) => {
           <S.Price>
             {chart === 'price' && (
               <h1>
-                ${`${BNtoDecimal(Big(currentPrice?.close || 0), 2, 2, 2)}`}
+                $
+                {`${
+                  parseFloat(currentPrice?.close ?? '0') > 0.1
+                    ? parseFloat(currentPrice?.close ?? '0').toFixed(2)
+                    : parseFloat(currentPrice?.close ?? '0').toFixed(5)
+                }`}
               </h1>
             )}
             {chart === 'tvl' && (
