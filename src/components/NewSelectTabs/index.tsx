@@ -54,7 +54,6 @@ export function NewSelectTabs({
       <S.Content>
         <S.LeftContent>
           <ViewOptions
-            isSelect={isSelect}
             selectedView={selectedView}
             setSelectedView={setSelectedView}
           />
