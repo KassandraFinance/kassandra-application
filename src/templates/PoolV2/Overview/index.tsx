@@ -42,6 +42,7 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
 
   const dispatch = useAppDispatch()
 
+  const price = parseFloat(pool?.price_usd ?? '0')
   const dateNow = React.useMemo(() => {
     return Date.now()
   }, [])
@@ -118,10 +119,10 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
       <S.StatsContainer>
         <StatusCard
           title="Price"
-          value={'$' + BNtoDecimal(Big(pool?.price_usd ?? 0), 2, 2, 2)}
+          value={'$' + (price > 0.1 ? price.toFixed(2) : price.toFixed(5))}
         />
         <StatusCard
-          title="TVL"
+          title="AUM"
           value={
             '$' + BNtoDecimal(Big(pool?.total_value_locked_usd || 0), 2, 2, 2)
           }
