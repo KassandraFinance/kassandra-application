@@ -46,11 +46,6 @@ export const TokenInfoContainer = styled.div`
     align-items: center;
     width: 100%;
 
-    @media (max-width: 1400px) {
-      justify-content: space-between;
-      max-width: 32rem;
-    }
-
     @media (max-width: 576px) {
       flex-direction: column;
       gap: 1.6rem;

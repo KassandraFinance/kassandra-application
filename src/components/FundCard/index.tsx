@@ -177,7 +177,7 @@ const FundCard = ({ poolAddress, link }: IFundCardProps) => {
                 <S.FundStatusContainer>
                   <S.FundStatus>
                     <span>${infoPool.tvl}</span>
-                    <h4>Tvl</h4>
+                    <h4>AUM</h4>
                   </S.FundStatus>
 
                   <S.FundStatus>
