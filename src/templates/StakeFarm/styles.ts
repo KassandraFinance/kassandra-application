@@ -58,30 +58,35 @@ export const SubTitle = styled.h2`
   color: #fcfcfc;
 `
 
-export const TabsWrapper = styled.div`
-  max-width: 114rem;
-  width: 100%;
-  margin: 0 auto;
+export const FilterWrapper = styled.div`
+  position: relative;
 
-  margin-bottom: 2.4rem;
-`
-
-export const TabsContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  max-width: 114rem;
-  margin-inline: auto;
-  margin-block: 5.6rem;
-  gap: 2.4rem;
-  border-radius: 0.8rem;
-  border: 0.1rem solid rgba(252, 252, 252, 0.08);
-  padding: 2.4rem;
-  background: rgba(252, 252, 252, 0.05);
+  max-width: 122rem;
+  width: 100%;
+  margin: 0 auto;
+  gap: 4rem;
+  margin-block: 4.6rem;
 
-  @media (max-width: 976px) {
+  padding-inline: 4rem;
+
+  @media (max-width: 960px) {
     padding-inline: 2.4rem;
   }
+
+  @media (max-width: 768px) {
+    padding: 1.6rem;
+
+    > div:first-child {
+      position: absolute;
+      bottom: 0;
+    }
+  }
+`
+
+export const TabsWrapper = styled.div`
+  width: 100%;
 `
 
 export const VotingPowerContainer = styled.div`
@@ -105,7 +110,9 @@ export const StakeFarmContent = styled.div`
 
   @media (max-width: 576px) {
     grid-template-columns: 1fr;
+    width: 100%;
     max-width: 36rem;
+    margin: 0 auto;
   }
 `
 

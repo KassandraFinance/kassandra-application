@@ -4,7 +4,6 @@ import Button from '@/components/Button'
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 2.4rem;
   gap: 3.2rem;
 `
 export const Content = styled.div`

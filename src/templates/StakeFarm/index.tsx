@@ -9,7 +9,6 @@ import {
   addressesForReqFarmPool,
   addressesForReqStakePool
 } from '@/constants/pools'
-import { allPools } from '@/constants/pools'
 
 import useGetToken from '@/hooks/useGetToken'
 import { useTokensData } from '@/hooks/query/useTokensData'
@@ -23,7 +22,6 @@ import { StakeListCard } from './StakeListCard'
 import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
 import { PoolMetrics, UserInfo } from '@/templates/StakeFarm/utils'
 import { ExploreSelectTabs } from '../Explore/SelectTabs'
-import { StakeFarmPools } from './AllPools'
 import { StakeSectionView } from './StakeSectionView'
 
 import VotingPower from '@/components/VotingPower'
@@ -75,8 +73,6 @@ const StakeFarm = () => {
   )
   const [isSelectTab, setIsSelectTab] = useState<string>(tabs[0].tabName)
 
-  const numPoolsInvestors = 2
-  const allPoolsNumber = (allPools.length - numPoolsInvestors).toString()
   const [{ wallet }] = useConnectWallet()
 
   const walletAddress = wallet ? getAddress(wallet.accounts[0].address) : ''
@@ -155,24 +151,23 @@ const StakeFarm = () => {
         </S.TitleContainer>
       </S.StakeFarmHeader>
 
-      <S.TabsContainer>
+      <S.FilterWrapper>
         <ViewOptions
           selectedView={selectedView}
           setSelectedView={setSelectedView}
         />
-        <StakeFarmPools numberOfPools={allPoolsNumber} />
-      </S.TabsContainer>
 
-      <S.TabsWrapper>
-        <ExploreSelectTabs
-          tabsList={tabs}
-          chainList={chainList}
-          selectedChains={selectedChains}
-          setSelectedChains={setSelectedChains}
-          isSelect={isSelectTab}
-          setIsSelect={setIsSelectTab}
-        />
-      </S.TabsWrapper>
+        <S.TabsWrapper>
+          <ExploreSelectTabs
+            tabsList={tabs}
+            chainList={chainList}
+            selectedChains={selectedChains}
+            setSelectedChains={setSelectedChains}
+            isSelect={isSelectTab}
+            setIsSelect={setIsSelectTab}
+          />
+        </S.TabsWrapper>
+      </S.FilterWrapper>
 
       {selectedView === 'list' && (
         <>
