@@ -176,7 +176,7 @@ export const AssetsTable = ({ pools }: IAssetsTableProps) => {
           <S.Tr>
             <S.Th>Product Name</S.Th>
             <S.Th>Price</S.Th>
-            <S.Th>TVL</S.Th>
+            <S.Th>AUM</S.Th>
             <S.Th>This Month</S.Th>
             <S.Th>24h</S.Th>
             <S.Th>balance</S.Th>

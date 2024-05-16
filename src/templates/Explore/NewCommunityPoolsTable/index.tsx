@@ -220,7 +220,7 @@ const NewCommunityPoolsTable = ({
               }
               orderedBy={orderedBy === 'total_value_locked_usd'}
             >
-              TVL{' '}
+              AUM{' '}
               <img
                 src="/assets/utilities/arrow-select-down.svg"
                 alt=""
@@ -607,7 +607,7 @@ const NewCommunityPoolsTable = ({
           </ValueContainerMobile>
         </TableLine>
         <TableLine>
-          <TableLineTitle>TVL</TableLineTitle>
+          <TableLineTitle>AUM</TableLineTitle>
           <ValueContainerMobile>
             <V>{Big(viewPool?.tvl || 0).toFixed(2)}</V>
           </ValueContainerMobile>
