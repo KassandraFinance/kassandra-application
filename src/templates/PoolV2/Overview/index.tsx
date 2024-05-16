@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import Big from 'big.js'
 import { useRouter } from 'next/router'
 
@@ -19,11 +19,7 @@ import { BNtoDecimal, calcChange } from '@/utils/numerals'
 
 import * as S from './styles'
 import Chart from '@/templates/PoolManager/Allocations/IntroReview/PieChartAllocations'
-import {
-  IlistTokenWeightsProps,
-  IRebalanceWeightsProps,
-  IRebancingProgressProps
-} from '@/templates/PoolManager/Allocations/IntroReview'
+
 import useAllocationInfo from '@/hooks/useAllocationInfo'
 import { usePoolAssets } from '@/hooks/query/usePoolAssets'
 import { useTokensPool } from '@/hooks/query/useTokensPool'
@@ -49,6 +45,20 @@ interface IOverviewProps {
   handleClickStakeButton: () => void
 }
 
+type TokenInfo = {
+  token: {
+    address: string
+    logo: string
+    name: string
+    symbol: string
+    decimals: number
+  }
+  allocation: string
+  holding: {
+    value: Big
+  }
+}
+
 const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
   const [volumePeriodSelected, setVolumePeriodSelected] = React.useState('1D')
   const [returnPeriodSelected, setReturnPeriodSelected] = React.useState('1D')
@@ -56,20 +66,7 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
     Record<string, string>
   >({})
 
-  const [RebalancingProgress, setRebalancingProgress] =
-    React.useState<IRebancingProgressProps | null>(null)
-  const [rebalanceWeights, setRebalanceWeights] =
-    React.useState<IRebalanceWeightsProps>(null)
-  const [listTokenWeights, setlistTokenWeights] = React.useState<
-    IlistTokenWeightsProps[]
-  >([])
   const [activeIndex, setActiveIndex] = React.useState(0)
-  const tokenSeleted = listTokenWeights[activeIndex] ?? {}
-  const allocationsDataChart = listTokenWeights.map(item => ({
-    image: item.token.logo,
-    symbol: item.token?.symbol || '',
-    value: Number(item.allocation)
-  }))
   const router = useRouter()
   const poolId = Array.isArray(router.query.address)
     ? router.query.address[0]
@@ -98,19 +95,51 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
   })
 
   const { data: tokenPoolData } = useTokensPool({ id: poolId })
+  const chainId = tokenPoolData?.chain_id ?? 137
   const { data: tokensInfo } = useTokensData({
-    chainId: tokenPoolData?.chain_id || 137,
+    chainId,
     tokenAddresses: handleMockToken(poolAssets ?? [])
   })
 
-  const chainId = tokenPoolData?.chain_id ?? 137
   const coingeckoData = tokensInfo ?? {}
+
+  const rebalancingProgress = useMemo(() => {
+    if (!tokenPoolData) return null
+
+    return useAllocation.handleRebalancingTimeProgress(
+      tokenPoolData?.weight_goals
+    )
+  }, [tokenPoolData])
+
+  const listTokenWeights = useMemo(() => {
+    if (!tokenPoolData || !poolAssets) return
+
+    const tokenList = useAllocation.handleCurrentAllocationInfo(poolAssets)
+
+    if (tokenList.length <= 0) {
+      return
+    }
+
+    return tokenList
+  }, [tokenPoolData, poolAssets])
+
+  const tokenSelected =
+    listTokenWeights && listTokenWeights[activeIndex]
+      ? listTokenWeights[activeIndex]
+      : ({} as TokenInfo)
+  const allocationsDataChart = listTokenWeights
+    ? listTokenWeights.map(item => ({
+        image: item.token.logo,
+        symbol: item.token?.symbol || '',
+        value: Number(item.allocation)
+      }))
+    : []
 
   const coingeckoTokenInfo =
     coingeckoData[
       chainId === 5
-        ? mockTokens[tokenSeleted?.token?.address]?.toLowerCase()
-        : tokenSeleted?.token?.address.toLowerCase()
+        ? mockTokens[tokenSelected?.token?.address]?.toLowerCase()
+        : tokenSelected?.token?.address.toLowerCase()
     ]
 
   const volume = React.useMemo(() => {
@@ -177,45 +206,6 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
     handleCalcChangePrice()
   }, [data])
 
-  React.useEffect(() => {
-    if (!tokenPoolData || !poolAssets) return
-
-    const tokenList = useAllocation.handleCurrentAllocationInfo(poolAssets)
-
-    if (tokenList.length <= 0) {
-      return
-    }
-
-    setlistTokenWeights(tokenList)
-  }, [tokenPoolData, poolAssets])
-
-  React.useEffect(() => {
-    if (!tokenPoolData) return
-
-    const rebalancingTimeProgress = useAllocation.handleRebalancingTimeProgress(
-      tokenPoolData?.weight_goals
-    )
-
-    setRebalancingProgress(rebalancingTimeProgress)
-  }, [data])
-
-  React.useEffect(() => {
-    if (!tokenPoolData || !poolAssets) return
-
-    const rebalanceWeights = useAllocation.handleRebalanceWeights(
-      tokenPoolData.name,
-      Big(tokenPoolData.price_usd).toFixed(2, 2),
-      tokenPoolData.weight_goals,
-      poolAssets
-    )
-
-    if (!rebalanceWeights) {
-      return
-    }
-
-    setRebalanceWeights(rebalanceWeights)
-  }, [tokenPoolData, poolAssets])
-
   return (
     <S.Overview>
       <S.StatsContainer>
@@ -262,32 +252,32 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
               data={allocationsDataChart}
               activeIndex={activeIndex}
               setActiveIndex={setActiveIndex}
-              isRebalancing={!!RebalancingProgress}
+              isRebalancing={!!rebalancingProgress}
             />
           </div>
 
           <S.TokenInfoContent>
             <S.ImgAndSymbolWrapper>
               <img
-                src={tokenSeleted?.token?.logo ?? ''}
-                alt=""
+                src={tokenSelected?.token?.logo ?? ''}
+                alt="Token Logo"
                 width={16}
                 height={16}
               />
-              <p>{tokenSeleted?.token?.symbol}</p>
+              <p>{tokenSelected?.token?.symbol}</p>
             </S.ImgAndSymbolWrapper>
             <S.HoldingAndPriceContainer>
               <S.HoldingWrapper>
                 <S.TitleHoldingAndPrice>holding</S.TitleHoldingAndPrice>
                 <S.ValueHoldingAndPrice>
                   $
-                  {tokenSeleted?.holding?.value
+                  {tokenSelected?.holding?.value
                     .mul(Big(coingeckoTokenInfo?.usd ?? 0))
                     .toFixed(2) ?? 0}
                 </S.ValueHoldingAndPrice>
                 <p>
-                  {tokenSeleted?.holding?.value.toFixed(2, 2) ?? 0}{' '}
-                  {tokenSeleted?.token?.symbol}
+                  {tokenSelected?.holding?.value.toFixed(2, 2) ?? 0}{' '}
+                  {tokenSelected?.token?.symbol}
                 </p>
               </S.HoldingWrapper>
               <S.PriceDayWrapper>
@@ -314,7 +304,7 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
                           ? priceUp.src
                           : priceDown.src
                       }
-                      alt=""
+                      alt="an arrow indicating if the price is going"
                       width={12}
                       height={12}
                     />
