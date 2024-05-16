@@ -22,7 +22,6 @@ interface IModalRequestUnstakeProps {
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   votingMultiplier: string
   yourStake: Big
-  getUserInfoAboutPool: () => Promise<void>
 }
 
 const ModalRequestUnstake = ({
@@ -30,8 +29,7 @@ const ModalRequestUnstake = ({
   modalOpen,
   setModalOpen,
   votingMultiplier,
-  yourStake,
-  getUserInfoAboutPool
+  yourStake
 }: IModalRequestUnstakeProps) => {
   const [dateWithdraw, setDateWithdraw] = React.useState<number>(0)
   const [{ wallet }] = useConnectWallet()
@@ -59,7 +57,6 @@ const ModalRequestUnstake = ({
       `${pool.symbol}`,
       'modal-staking'
     )
-    getUserInfoAboutPool()
   }
 
   function handleUnstake() {

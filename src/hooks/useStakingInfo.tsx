@@ -4,7 +4,7 @@ import { useConnectWallet } from '@web3-onboard/react'
 
 import { networks } from '@/constants/tokenAddresses'
 import { getDate } from '@/utils/date'
-import { handleCalcAPR } from '@/components/StakeCard/utils'
+import { handleCalcAPR } from '@/templates/StakeFarm/utils'
 
 import { ERC20 } from './useERC20'
 import useStaking from './useStaking'

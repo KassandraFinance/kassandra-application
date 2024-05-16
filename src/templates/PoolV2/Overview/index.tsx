@@ -223,7 +223,7 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
           value={'$' + BNtoDecimal(Big(pool?.price_usd ?? 0), 2, 2, 2)}
         />
         <StatusCard
-          title="TVL"
+          title="AUM"
           value={
             '$' + BNtoDecimal(Big(pool?.total_value_locked_usd || 0), 2, 2, 2)
           }

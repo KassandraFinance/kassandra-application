@@ -17,16 +17,11 @@ interface IBorderGradientProps {
 export const BorderGradient = styled.div<IBorderGradientProps>`
   position: relative;
 
-  width: 29.5rem;
+  width: 100%;
   max-height: 100%;
 
   background: rgba(31, 31, 31, 0.72);
   border-radius: 1.2rem;
-
-  @media (max-width: 420px) {
-    max-width: 100%;
-    min-width: 27rem;
-  }
 
   &::after {
     content: '';

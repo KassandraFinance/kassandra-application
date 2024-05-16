@@ -37,7 +37,7 @@ export function ExploreAllPools() {
     <S.AllPoolsWrapper>
       <S.Content>
         <S.TextContent>
-          Din't find what you were looking for?
+          Didn&apos;t find what you were looking for?
           <span>Why not create your own?</span>
         </S.TextContent>
         <Button

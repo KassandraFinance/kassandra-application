@@ -10,7 +10,8 @@ import {
   Network,
   ContractTransactionResponse,
   ContractTransactionReceipt,
-  ErrorCode
+  ErrorCode,
+  FallbackProvider
 } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 
@@ -41,10 +42,10 @@ export interface PoolInfo {
 
 type ContractType = {
   read: Contract
-  send: Contract
+  send?: Contract
 }
 
-function stakingContract(
+export function stakingContract(
   contract: ContractType,
   txNotification?: (
     tx: ContractTransactionResponse,
@@ -148,7 +149,7 @@ function stakingContract(
     message?: MessageType,
     callbacks?: CallbacksType
   ) => {
-    if (!txNotification || !transactionErrors) return null
+    if (!txNotification || !transactionErrors || !contract?.send) return null
 
     try {
       const tx = await contract.send.stake(pid, amount, ZeroAddress, delegatee)
@@ -167,7 +168,7 @@ function stakingContract(
     message?: MessageType,
     callbacks?: CallbacksType
   ) => {
-    if (!txNotification || !transactionErrors) return null
+    if (!txNotification || !transactionErrors || !contract?.send) return null
 
     try {
       const tx = await contract.send.unstake(pid)
@@ -186,7 +187,7 @@ function stakingContract(
     message?: MessageType,
     callbacks?: CallbacksType
   ) => {
-    if (!txNotification || !transactionErrors) return null
+    if (!txNotification || !transactionErrors || !contract?.send) return null
 
     try {
       const tx = await contract.send.cancelUnstake(pid)
@@ -205,7 +206,8 @@ function stakingContract(
     message?: MessageType,
     callbacks?: CallbacksType
   ) => {
-    if (!txNotification || !transactionErrors) return null
+    if (!txNotification || !transactionErrors || !contract?.send) return null
+
     try {
       const tx = await contract.send.getReward(pid)
       await txNotification(tx, message, callbacks)
@@ -224,7 +226,8 @@ function stakingContract(
     message?: MessageType,
     callbacks?: CallbacksType
   ) => {
-    if (!txNotification || !transactionErrors) return null
+    if (!txNotification || !transactionErrors || !contract?.send) return null
+
     try {
       const tx = await contract.send.withdraw(pid, amount)
       await txNotification(tx, message, callbacks)
@@ -295,13 +298,13 @@ const useStaking = (address: string, chainId = 43114) => {
 }
 
 type ParamsType = {
-  wallet: WalletState | null
-  txNotification: (
+  wallet?: WalletState | null
+  txNotification?: (
     tx: ContractTransactionResponse,
     message?: MessageType | undefined,
     callbacks?: CallbacksType | undefined
   ) => Promise<ContractTransactionReceipt | null>
-  transactionErrors: (
+  transactionErrors?: (
     error: unknown,
     contractInfo?: ContractInfo,
     onFail?: (() => void | Promise<void>) | undefined
@@ -311,13 +314,18 @@ type ParamsType = {
 export const staking = async (
   address: string,
   chainId = 137,
-  params?: ParamsType
+  params?: ParamsType,
+  provider?: JsonRpcProvider | FallbackProvider
 ) => {
-  const networkInfo = networks[chainId]
-  const network = new Network(networkInfo.chainName, networkInfo.chainId)
-  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-    staticNetwork: network
-  })
+  let readProvider = provider
+
+  if (!readProvider) {
+    const networkInfo = networks[chainId]
+    const network = new Network(networkInfo.chainName, networkInfo.chainId)
+    readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+      staticNetwork: network
+    })
+  }
 
   const contract: ContractType = {
     read: new Contract(address, StakingContract, readProvider),

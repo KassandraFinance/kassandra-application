@@ -1,46 +1,5 @@
+import theme from '@/styles/theme'
 import styled, { css } from 'styled-components'
-
-interface WrapperProps {
-  isPowerVotingSection?: boolean
-}
-
-export const Wrapper = styled.div<WrapperProps>`
-  display: flex;
-  flex-direction: column;
-  gap: 3.2rem;
-  background: ${props =>
-    props.isPowerVotingSection ? `rgba(252, 252, 252, 0.05)` : null};
-  padding: 4rem;
-
-  @media (max-width: 960px) {
-    padding: 2.4rem;
-  }
-
-  @media (max-width: 560px) {
-    padding: 1.6rem;
-  }
-`
-
-export const ContentWrapper = styled.div`
-  max-width: 114rem;
-  margin-inline: auto;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 3.2rem;
-`
-
-export const TitleContent = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1.6rem;
-  height: 4rem;
-  border-bottom: 1px solid rgba(252, 252, 252, 0.05);
-  font-family: Rubik;
-  font-size: 1.8rem;
-  font-weight: 700;
-  line-height: 1.87rem;
-`
 
 export const Content = styled.div`
   width: 100%;
@@ -50,29 +9,45 @@ export const Content = styled.div`
 `
 
 export const TopContent = styled.div`
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-areas: 'TopContentMobile RegularContent WrapperButton';
+
   width: 100%;
   padding-inline: 1.6rem;
   padding-block: 3.2rem;
-  justify-content: space-between;
 
-  @media (max-width: 568px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2.4rem;
-    padding-block: 2.4rem;
+  @media (max-width: 1080px) {
+    grid-template-columns: 1fr 0.6fr;
+    grid-template-areas:
+      'TopContentMobile WrapperButton'
+      'RegularContent RegularContent';
+    gap: 3.2rem;
 
     button {
-      display: none;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'TopContentMobile'
+      'WrapperButton'
+      'RegularContent';
+    gap: 3.2rem;
+
+    button {
+      width: 100%;
     }
   }
 `
 
 export const TopContentMobile = styled.div`
   display: hidden;
+  grid-area: TopContentMobile;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -84,6 +59,17 @@ export const PoolNameAndImage = styled.div`
   display: flex;
   gap: 2.4rem;
   align-items: center;
+`
+
+export const PoolNameAndImageContent = styled.div`
+  display: flex;
+
+  @media (max-width: 600px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
 `
 
 export const Imagecontainer = styled.div`
@@ -142,12 +128,34 @@ export const LabelsContainer = styled.div`
   gap: 0.8rem;
 `
 
-export const RegularContent = styled.div`
+export const WrapperButton = styled.div`
   display: flex;
-  gap: 4.8rem;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.2rem;
+  width: 100%;
+  grid-area: WrapperButton;
+`
 
-  @media (max-width: 768px) {
+interface IRegularContentProps {
+  stakeGrid: boolean
+}
+
+export const RegularContent = styled.div<IRegularContentProps>`
+  display: grid;
+  grid-template-columns: repeat(${props => (props.stakeGrid ? 5 : 4)}, 1fr);
+  grid-area: RegularContent;
+
+  @media (max-width: 900px) {
+    display: flex;
+    justify-content: space-between;
     gap: 1.6rem;
+    width: 100%;
+  }
+
+  @media (max-width: 450px) {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
   }
 `
 export const RegularColumn = styled.div`
@@ -155,6 +163,7 @@ export const RegularColumn = styled.div`
   flex-direction: column;
   justify-content: space-between;
   gap: 0.8rem;
+  width: fit-content;
 
   h3 {
     font-family: Rubik;
@@ -162,17 +171,24 @@ export const RegularColumn = styled.div`
     font-weight: 300;
     line-height: 1.8rem;
     color: #bdbdbd;
-  }
 
+    @media (max-width: 768px) {
+      text-align: center;
+    }
+  }
+  span {
+    color: #bdbdbd;
+  }
   p {
     font-family: Rubik;
     font-size: 1.6rem;
     font-weight: 500;
     line-height: 2.4rem;
+  }
 
-    span {
-      color: #bdbdbd;
-    }
+  @media (max-width: 1180px) {
+    width: 100%;
+    align-items: center;
   }
 `
 export const BoldColumn = styled(RegularColumn)`
@@ -195,20 +211,21 @@ export const IconWrapperDesktop = styled.div<IconWrapperProps>`
   width: 2.4rem;
   height: 1.4rem;
 
+  @media (max-width: 600px) {
+    display: none;
+  }
+
   img {
     cursor: pointer;
     ${props => (props.isExpanded ? `transform: rotate(180deg)` : null)};
     transition: transform 300ms ease-in-out;
   }
-
-  @media (max-width: 560px) {
-    display: none;
-  }
 `
 
 export const IconWrapperMobile = styled(IconWrapperDesktop)`
   display: none;
-  @media (max-width: 560px) {
+
+  @media (max-width: 600px) {
     display: flex;
   }
 `
@@ -225,7 +242,11 @@ export const ExpandedContent = styled.div`
   padding-block: 2.4rem;
   gap: 3.2rem;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
+    gap: 1.6rem;
+  }
+
+  @media (max-width: 900px) {
     flex-direction: column;
   }
 `
@@ -241,7 +262,11 @@ export const BlocksWrapper = styled.div`
   gap: 3.2rem;
   width: 100%;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
+    gap: 1.6rem;
+  }
+
+  @media (max-width: 900px) {
     flex-direction: column;
   }
 `
@@ -274,19 +299,41 @@ export const ExpandedFooter = styled.div`
   font-size: 1.6rem;
   font-weight: 300;
   line-height: 1.6rem;
+`
 
-  a,
-  p {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+export const ExpandedFooterButton = styled.div`
+  display: flex;
+  gap: 1.2rem;
+`
+
+export const AddToken = styled.button`
+  background-color: transparent;
+  border: none;
+  color: ${theme.colors.snow};
+
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  font-family: ${theme.font.family};
+  font-size: ${theme.font.sizes.font14};
+  font-weight: ${theme.font.weight.light};
+
+  margin-top: 8px;
+
+  cursor: pointer;
+  outline: none;
+  transition: 0.15s;
+
+  &:hover {
+    color: ${theme.colors.cyan};
   }
-
-  a {
-    text-decoration: none;
-    color: inherit;
+  img {
+    max-width: 14px;
+    margin-left: 8px;
   }
 `
+
 export const ExpandedContentButtons = styled.div`
   display: flex;
   flex-direction: column;
@@ -297,7 +344,7 @@ export const ExpandedContentButtons = styled.div`
     min-width: 20rem;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     flex-direction: row;
     justify-content: space-between;
 
