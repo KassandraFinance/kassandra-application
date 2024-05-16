@@ -89,10 +89,10 @@ export const IntroStaking = styled.div`
 export const APR = styled.div`
   display: flex;
   align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
 
   h4 {
-    margin: 0 0 0.4rem 0.4rem;
-
     color: ${theme.colors.cyan};
     font-size: ${theme.font.sizes.font14} !important;
     line-height: 1.4rem !important;
@@ -101,9 +101,7 @@ export const APR = styled.div`
 `
 
 export const TooltipAPR = styled.div`
-  position: relative;
-
-  padding: 0.1rem;
+  display: flex;
 
   z-index: 99;
 `
@@ -186,7 +184,7 @@ export const Days = styled.div`
 
   p {
     margin-right: 0.4rem;
-    margin-bottom: 0.2rem;
+    /* margin-bottom: 0.2rem; */
   }
 `
 

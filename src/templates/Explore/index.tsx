@@ -187,15 +187,17 @@ export default function Explore() {
           />
         </S.ExplorePoolsWrapper>
 
-        <ExploreSelectTabs
-          tabsList={tabs}
-          chainList={chainList}
-          selectedChains={selectedChains}
-          setSelectedChains={setSelectedChains}
-          isSelect={isSelectTab}
-          setIsSelect={setIsSelectTab}
-          onFilterClick={onClickChainResetPagination}
-        />
+        <S.ExploreSelectTabsWrapper>
+          <ExploreSelectTabs
+            tabsList={tabs}
+            chainList={chainList}
+            selectedChains={selectedChains}
+            setSelectedChains={setSelectedChains}
+            isSelect={isSelectTab}
+            setIsSelect={setIsSelectTab}
+            onFilterClick={onClickChainResetPagination}
+          />
+        </S.ExploreSelectTabsWrapper>
       </S.ExploreHeader>
 
       {isSelectTab === 'discover' && (

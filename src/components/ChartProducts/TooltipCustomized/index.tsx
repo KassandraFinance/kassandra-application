@@ -16,10 +16,11 @@ const TooltipCustomized = (props: ITooltipCustomizedPRops) => {
   const { chart, payload, currentPrice } = props
 
   if (payload && payload.length) {
+    const price = parseFloat(payload[0].value)
     return (
       <S.Content>
         <S.Price>
-          <h1>{`$${BNtoDecimal(Big(payload[0].value || 0), 2, 2, 2)}`}</h1>
+          <h1>{`$${price > 0.1 ? price.toFixed(2) : price.toFixed(5)}`}</h1>
           {/* <span>0.11%</span> */}
         </S.Price>
         <p>{getDateInHours(payload[0].payload.timestamp)}</p>

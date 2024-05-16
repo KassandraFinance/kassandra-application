@@ -105,13 +105,13 @@ export const handleGetUserInfo = async (
     const stakingPoolInfo = await staking.poolInfo(pool.pid)
 
     return {
-      currentAvailableWithdraw: Big(-1),
+      currentAvailableWithdraw: Big(0),
       delegateTo: '',
-      lockPeriod: -1,
-      yourStake: Big(-1),
+      lockPeriod: 0,
+      yourStake: Big(0),
       unstake: false,
       withdrawable: false,
-      kacyEarned: Big(-1),
+      kacyEarned: Big(0),
       stakingPoolInfo
     }
   }

@@ -19,13 +19,11 @@ const viewList = [
 interface ViewOptionsProps {
   selectedView: string
   setSelectedView: Dispatch<SetStateAction<string>>
-  isSelect?: string | string[]
 }
 
 export function ViewOptions({
   selectedView,
-  setSelectedView,
-  isSelect
+  setSelectedView
 }: ViewOptionsProps) {
   return (
     <S.ViewIcons>
@@ -35,7 +33,6 @@ export function ViewOptions({
           isActive={selectedView === view.name}
           icon={view.icon}
           onClick={() => setSelectedView(view.name)}
-          myPoolsSelected={isSelect === 'myPools'}
         />
       ))}
     </S.ViewIcons>

@@ -75,12 +75,6 @@ export function ExploreSelectTabs({
       </S.MobileTabs>
       <S.Content>
         <S.LeftContent>
-          {/* <ViewOptions
-            isSelect={isSelect}
-            selectedView={selectedView}
-            setSelectedView={setSelectedView}
-          /> */}
-
           <S.DesktopTabs>
             {tabsList.map(tab => (
               <S.TabButton

@@ -94,7 +94,7 @@ const ChartPrice = ({ data, color }: IChartPriceProps) => {
               return ''
             }
 
-            return BNtoDecimal(Big(item), 18, 2, 2)
+            return parseFloat(item)
           }}
         />
         <Tooltip
