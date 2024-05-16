@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import Big from 'big.js'
+import { useRouter } from 'next/router'
 
 import { useAppDispatch } from '@/store/hooks'
 import { usePoolPrice } from '@/hooks/query/usePoolPrice'
@@ -17,6 +18,17 @@ import StatusCard from '@/components/Manage/StatusCard'
 import { BNtoDecimal, calcChange } from '@/utils/numerals'
 
 import * as S from './styles'
+import Chart from '@/templates/PoolManager/Allocations/IntroReview/PieChartAllocations'
+
+import useAllocationInfo from '@/hooks/useAllocationInfo'
+import { usePoolAssets } from '@/hooks/query/usePoolAssets'
+import { useTokensPool } from '@/hooks/query/useTokensPool'
+import { mockTokens } from '@/constants/tokenAddresses'
+import { UnderlyingAssetsInfoType } from '@/utils/updateAssetsToV2'
+import { useTokensData } from '@/hooks/query/useTokensData'
+
+import priceUp from '@assets/notificationStatus/arrow-ascend.svg'
+import priceDown from '@assets/notificationStatus/arrow-descend.svg'
 
 const dayList = ['1D', '1W', '1M', '3M', '1Y']
 
@@ -33,6 +45,20 @@ interface IOverviewProps {
   handleClickStakeButton: () => void
 }
 
+type TokenInfo = {
+  token: {
+    address: string
+    logo: string
+    name: string
+    symbol: string
+    decimals: number
+  }
+  allocation: string
+  holding: {
+    value: Big
+  }
+}
+
 const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
   const [volumePeriodSelected, setVolumePeriodSelected] = React.useState('1D')
   const [returnPeriodSelected, setReturnPeriodSelected] = React.useState('1D')
@@ -40,7 +66,15 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
     Record<string, string>
   >({})
 
+  const [activeIndex, setActiveIndex] = React.useState(0)
+  const router = useRouter()
+  const poolId = Array.isArray(router.query.address)
+    ? router.query.address[0]
+    : router.query.address ?? ''
+
   const dispatch = useAppDispatch()
+  const useAllocation = useAllocationInfo()
+  const { data: poolAssets } = usePoolAssets({ id: poolId })
 
   const price = parseFloat(pool?.price_usd ?? '0')
   const dateNow = React.useMemo(() => {
@@ -60,11 +94,69 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
     year: Math.trunc(dateNow / 1000 - 60 * 60 * 24 * 365)
   })
 
+  const { data: tokenPoolData } = useTokensPool({ id: poolId })
+  const chainId = tokenPoolData?.chain_id ?? 137
+  const { data: tokensInfo } = useTokensData({
+    chainId,
+    tokenAddresses: handleMockToken(poolAssets ?? [])
+  })
+
+  const coingeckoData = tokensInfo ?? {}
+
+  const rebalancingProgress = useMemo(() => {
+    if (!tokenPoolData) return null
+
+    return useAllocation.handleRebalancingTimeProgress(
+      tokenPoolData?.weight_goals
+    )
+  }, [tokenPoolData])
+
+  const listTokenWeights = useMemo(() => {
+    if (!tokenPoolData || !poolAssets) return
+
+    const tokenList = useAllocation.handleCurrentAllocationInfo(poolAssets)
+
+    if (tokenList.length <= 0) {
+      return
+    }
+
+    return tokenList
+  }, [tokenPoolData, poolAssets])
+
+  const tokenSelected =
+    listTokenWeights && listTokenWeights[activeIndex]
+      ? listTokenWeights[activeIndex]
+      : ({} as TokenInfo)
+  const allocationsDataChart = listTokenWeights
+    ? listTokenWeights.map(item => ({
+        image: item.token.logo,
+        symbol: item.token?.symbol || '',
+        value: Number(item.allocation)
+      }))
+    : []
+
+  const coingeckoTokenInfo =
+    coingeckoData[
+      chainId === 5
+        ? mockTokens[tokenSelected?.token?.address]?.toLowerCase()
+        : tokenSelected?.token?.address.toLowerCase()
+    ]
+
   const volume = React.useMemo(() => {
     return volumeData?.volumes.reduce((acc, current) => {
       return Big(current.volume_usd).add(acc)
     }, Big(0))
   }, [volumeData])
+
+  function handleMockToken(tokenList: UnderlyingAssetsInfoType[]) {
+    if (tokenPoolData?.chain_id === 5) {
+      return tokenList?.map(item => {
+        return mockTokens[item.token.id]
+      })
+    } else {
+      return tokenList?.map(asset => asset.token.id)
+    }
+  }
 
   function handleCalcChangePrice() {
     if (!data) return
@@ -154,18 +246,89 @@ const Overview = ({ pool, handleClickStakeButton }: IOverviewProps) => {
       <ChartProducts poolId={pool?.id ?? ''} />
 
       <S.ChangeAndStakeContainer>
-        <PriceChange changePriceList={Object.values(changePriceList)} />
+        <S.TokenInfoContainer>
+          <div>
+            <Chart
+              data={allocationsDataChart}
+              activeIndex={activeIndex}
+              setActiveIndex={setActiveIndex}
+              isRebalancing={!!rebalancingProgress}
+            />
+          </div>
 
-        {pool?.chain_id && pool?.pool_id && (
-          <StakeAndEarnCard
-            handleClickStakeButton={handleClickStakeButton}
-            poolName={pool.name}
-            poolIcon={pool.logo ?? ''}
-            poolId={pool?.pool_id ?? undefined}
-            chainId={pool?.chain_id ?? 0}
-            poolPrice={pool?.price_usd ?? '0'}
-          />
-        )}
+          <S.TokenInfoContent>
+            <S.ImgAndSymbolWrapper>
+              <img
+                src={tokenSelected?.token?.logo ?? ''}
+                alt="Token Logo"
+                width={16}
+                height={16}
+              />
+              <p>{tokenSelected?.token?.symbol}</p>
+            </S.ImgAndSymbolWrapper>
+            <S.HoldingAndPriceContainer>
+              <S.HoldingWrapper>
+                <S.TitleHoldingAndPrice>holding</S.TitleHoldingAndPrice>
+                <S.ValueHoldingAndPrice>
+                  $
+                  {tokenSelected?.holding?.value
+                    .mul(Big(coingeckoTokenInfo?.usd ?? 0))
+                    .toFixed(2) ?? 0}
+                </S.ValueHoldingAndPrice>
+                <p>
+                  {tokenSelected?.holding?.value.toFixed(2, 2) ?? 0}{' '}
+                  {tokenSelected?.token?.symbol}
+                </p>
+              </S.HoldingWrapper>
+              <S.PriceDayWrapper>
+                <S.TitleHoldingAndPrice>PRICE 24H</S.TitleHoldingAndPrice>
+                <S.PriceDayValue>
+                  <S.ValueHoldingAndPrice>
+                    ${Big(coingeckoTokenInfo?.usd ?? 0).toFixed(2)}
+                  </S.ValueHoldingAndPrice>
+                  <S.ChangeDayValue
+                    changePrice={
+                      coingeckoTokenInfo?.pricePercentageChangeIn24h ?? 0
+                    }
+                  >
+                    <p>
+                      {(
+                        coingeckoTokenInfo?.pricePercentageChangeIn24h ?? 0
+                      ).toFixed(2)}
+                      %
+                    </p>
+                    <img
+                      src={
+                        (coingeckoTokenInfo?.pricePercentageChangeIn24h ?? 0) >=
+                        0
+                          ? priceUp.src
+                          : priceDown.src
+                      }
+                      alt="an arrow indicating if the price is going"
+                      width={12}
+                      height={12}
+                    />
+                  </S.ChangeDayValue>
+                </S.PriceDayValue>
+              </S.PriceDayWrapper>
+            </S.HoldingAndPriceContainer>
+          </S.TokenInfoContent>
+        </S.TokenInfoContainer>
+
+        <S.ChangeAndStakeContent>
+          <PriceChange changePriceList={Object.values(changePriceList)} />
+
+          {pool?.chain_id && pool?.pool_id && (
+            <StakeAndEarnCard
+              handleClickStakeButton={handleClickStakeButton}
+              poolName={pool.name}
+              poolIcon={pool.logo ?? ''}
+              poolId={pool?.pool_id ?? undefined}
+              chainId={pool?.chain_id ?? 0}
+              poolPrice={pool?.price_usd ?? '0'}
+            />
+          )}
+        </S.ChangeAndStakeContent>
       </S.ChangeAndStakeContainer>
 
       {pool?.summary && <TokenDescription summary={pool.summary} />}

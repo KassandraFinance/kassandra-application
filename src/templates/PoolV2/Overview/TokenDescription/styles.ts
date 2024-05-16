@@ -33,6 +33,7 @@ export const Text = styled.section<ITextProps>`
   ${({ height }) => css`
     width: 100%;
     max-height: ${height}px;
+    overflow-y: hidden;
 
     transition-timing-function: ease-in-out;
     transition-duration: 300ms;

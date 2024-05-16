@@ -36,6 +36,8 @@ import {
 } from './icons'
 
 import * as S from './styles'
+import Investors from './Investors'
+import { investorsIcon } from '../PoolManager/icons'
 
 type TokenSwapItem = {
   id: string
@@ -81,6 +83,11 @@ const tabs = [
     asPathText: 'activity',
     text: 'Activity',
     svg: ActivityIcon
+  },
+  {
+    asPathText: 'investors',
+    text: 'Investors',
+    svg: investorsIcon
   },
   {
     asPathText: 'contracts',
@@ -187,7 +194,8 @@ const Pool = () => {
           ) ?? []
         }
       />
-    )
+    ),
+    investors: <Investors pool={pool} />
   }
 
   async function getTokensForOperations(tokensSwapProvider: TokenSwapItem[]) {

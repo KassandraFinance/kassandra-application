@@ -15,13 +15,15 @@ interface ITooltipCustomizedPRops {
 const TooltipCustomized = (props: ITooltipCustomizedPRops) => {
   const { chart, payload, currentPrice } = props
 
+  const price = parseFloat(currentPrice?.close ?? '0')
+  const formattedPrice = price > 0.1 ? price.toFixed(2) : price.toFixed(5)
+
   if (payload && payload.length) {
     const price = parseFloat(payload[0].value)
     return (
       <S.Content>
         <S.Price>
           <h1>{`$${price > 0.1 ? price.toFixed(2) : price.toFixed(5)}`}</h1>
-          {/* <span>0.11%</span> */}
         </S.Price>
         <p>{getDateInHours(payload[0].payload.timestamp)}</p>
       </S.Content>
@@ -32,17 +34,12 @@ const TooltipCustomized = (props: ITooltipCustomizedPRops) => {
       {currentPrice && (
         <>
           <S.Price>
-            {chart === 'price' && (
-              <h1>
-                ${`${BNtoDecimal(Big(currentPrice?.close || 0), 2, 2, 2)}`}
-              </h1>
-            )}
+            {chart === 'price' && <h1>${formattedPrice}</h1>}
             {chart === 'tvl' && (
               <h1>
                 ${`${BNtoDecimal(Big(currentPrice?.value || 0), 2, 2, 2)}`}
               </h1>
             )}
-            {/* <span>0.11%</span> */}
           </S.Price>
           <p>{getDateInHours(currentPrice?.timestamp)}</p>
         </>
