@@ -1,33 +1,33 @@
-import React, { useState } from 'react'
-import { getAddress } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import Big from 'big.js'
+import { getAddress } from 'ethers'
+import React, { useEffect, useState } from 'react'
 
-import { KacyPoligon, networks } from '@/constants/tokenAddresses'
 import {
   PoolDetails,
   addressesForReqFarmPool,
   addressesForReqStakePool
 } from '@/constants/pools'
+import { KacyPoligon, networks } from '@/constants/tokenAddresses'
 
-import useGetToken from '@/hooks/useGetToken'
-import { useTokensData } from '@/hooks/query/useTokensData'
-import { useVotingPower } from '@/hooks/query/useVotingPower'
+import { useInvestmentPools } from '@/hooks/query/useInvestmentPools'
 import { useLiquidityPool } from '@/hooks/query/useLiquidityPool'
 import { usePoolsPriceList } from '@/hooks/query/usePoolsPriceList'
-import { useInvestmentPools } from '@/hooks/query/useInvestmentPools'
 import { useStakePoolPowerVoting } from '@/hooks/query/useSkatePoolPowerVoting'
+import { useTokensData } from '@/hooks/query/useTokensData'
+import { useVotingPower } from '@/hooks/query/useVotingPower'
+import useGetToken from '@/hooks/useGetToken'
 
-import { StakeListCard } from './StakeListCard'
 import { ViewOptions } from '@/components/NewSelectTabs/ViewOptions'
 import { PoolMetrics, UserInfo } from '@/templates/StakeFarm/utils'
 import { ExploreSelectTabs } from '../Explore/SelectTabs'
+import { StakeListCard } from './StakeListCard'
 import { StakeSectionView } from './StakeSectionView'
 
-import VotingPower from '@/components/VotingPower'
 import Breadcrumb from '@/components/Breadcrumb'
 import BreadcrumbItem from '@/components/Breadcrumb/BreadcrumbItem'
 import StakeCard from '@/components/StakeCard'
+import VotingPower from '@/components/VotingPower'
 
 import * as S from './styles'
 
@@ -66,12 +66,38 @@ const tabs = [
   }
 ]
 
+const userInfoDefault = {
+  currentAvailableWithdraw: Big(-1),
+  delegateTo: '',
+  lockPeriod: -1,
+  yourStake: Big(-1),
+  unstake: false,
+  withdrawable: false,
+  kacyEarned: Big(-1)
+}
+
+const poolDataMetricsDefault = {
+  votingMultiplier: '-1',
+  startDate: '',
+  endDate: '',
+  kacyRewards: Big(-1),
+  withdrawDelay: -1,
+  totalStaked: Big(-1),
+  hasExpired: false,
+  apr: Big(-1),
+  stakingToken: '',
+  vestingPeriod: '',
+  lockPeriod: '',
+  tokenDecimals: '18'
+}
+
 const StakeFarm = () => {
   const [selectedView, setSelectedView] = React.useState('grid')
   const [selectedChains, setSelectedChains] = useState(
     chainList.map(item => item.chainId)
   )
   const [isSelectTab, setIsSelectTab] = useState<string>(tabs[0].tabName)
+  const [isLoading, setIsloading] = useState<boolean>(false)
 
   const [{ wallet }] = useConnectWallet()
 
@@ -117,12 +143,30 @@ const StakeFarm = () => {
   function handleFilteredPools(poolList: PoolInfo[]) {
     const isALLPools = isSelectTab === 'allPools'
 
-    return poolList.filter(
+    const poolListFiltered = poolList.filter(
       item =>
         selectedChains.includes(item.pool.chain.id.toString()) &&
         (isALLPools || !item.poolDataMetrics.hasExpired)
     )
+
+    if (isLoading) {
+      return poolListFiltered.map(item => ({
+        pool: item.pool,
+        userInfo: userInfoDefault,
+        poolDataMetrics: poolDataMetricsDefault
+      }))
+    }
+
+    return poolListFiltered
   }
+
+  useEffect(() => {
+    setIsloading(true)
+
+    setTimeout(() => {
+      setIsloading(false)
+    }, 1500)
+  }, [selectedChains, isSelectTab])
 
   return (
     <>
