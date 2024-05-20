@@ -1,7 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import Big from 'big.js'
 
-import { PoolDetails, poolsKacy } from '@/constants/pools'
+import {
+  PoolDetails,
+  poolsKacy,
+  poolsKacyAndInvestors
+} from '@/constants/pools'
 import {
   PoolMetrics,
   UserInfo,
@@ -55,7 +59,7 @@ export const skatePoolPowerVoting = async ({
   const poolInfo: PoolInfo[] = []
   const provider = await handleInstaceFallbackProvider(43114)
 
-  for (const pool of poolsKacy) {
+  for (const pool of poolsKacyAndInvestors) {
     const { poolDataMetrics, userInfo } = await handleGetUserAndPoolInfo(
       pool,
       walletAddress,
@@ -63,6 +67,9 @@ export const skatePoolPowerVoting = async ({
       poolPrice,
       provider
     )
+
+    if ((pool.pid === 0 || pool.pid === 1) && userInfo.yourStake.lte(0))
+      continue
 
     poolInfo.push({ pool, poolDataMetrics, userInfo })
   }

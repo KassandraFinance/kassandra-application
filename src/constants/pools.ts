@@ -570,6 +570,13 @@ export const investmentsPools = [
 
 export const liquidityPools = [lpJoe, lpQuickSwap, lpCamelot, lpPNG, lpBalancer]
 
+export const poolsKacyAndInvestors = [
+  kacy1x,
+  kacy2x,
+  kacy3x,
+  kacyInvestor1,
+  kacyInvestor2
+]
 export const poolsKacy = [kacy1x, kacy2x, kacy3x]
 export const poolsInvestor = [kacyInvestor1, kacyInvestor2]
 export const poolsFunds = [
