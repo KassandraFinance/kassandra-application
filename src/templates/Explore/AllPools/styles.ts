@@ -12,7 +12,7 @@ export const Content = styled.div`
   padding: 2.4rem;
   background: rgba(252, 252, 252, 0.05);
 
-  margin-top: 3.2rem;
+  margin-top: 5.6rem;
 
   .button {
     font-family: Rubik;

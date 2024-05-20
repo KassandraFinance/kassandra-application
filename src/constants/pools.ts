@@ -23,6 +23,7 @@ export interface PoolDetails {
   poolTokenAddress: string
   chain: {
     id: number
+    name: string
     logo: string
   }
   properties: {
@@ -103,6 +104,7 @@ const kacyInvestor1: PoolDetails = {
   poolTokenAddress: KACY_ADDRESS,
   chain: {
     id: 43114,
+    name: 'Avalanche',
     logo: '/assets/logos/avax.png'
   },
   properties: {
@@ -125,6 +127,7 @@ const kacyInvestor2: PoolDetails = {
   poolTokenAddress: KACY_ADDRESS,
   chain: {
     id: 43114,
+    name: 'Avalanche',
     logo: '/assets/logos/avax.png'
   },
   properties: {
@@ -146,6 +149,7 @@ const kacy1x: PoolDetails = {
   poolTokenAddress: KACY_ADDRESS,
   chain: {
     id: 43114,
+    name: 'Avalanche',
     logo: '/assets/logos/avax.png'
   },
   properties: {
@@ -168,6 +172,7 @@ const kacy2x: PoolDetails = {
   poolTokenAddress: KACY_ADDRESS,
   chain: {
     id: 43114,
+    name: 'Avalanche',
     logo: '/assets/logos/avax.png'
   },
   properties: {
@@ -190,6 +195,7 @@ const kacy3x: PoolDetails = {
   poolTokenAddress: KACY_ADDRESS,
   chain: {
     id: 43114,
+    name: 'Avalanche',
     logo: '/assets/logos/avax.png'
   },
   properties: {
@@ -212,6 +218,7 @@ const lpPNG: PoolDetails = {
   poolTokenAddress: WAVAX_POLYGON,
   chain: {
     id: 43114,
+    name: 'Avalanche',
     logo: '/assets/logos/avax.png'
   },
   properties: {
@@ -238,6 +245,7 @@ const lpJoe: PoolDetails = {
   poolTokenAddress: WAVAX_POLYGON,
   chain: {
     id: 43114,
+    name: 'Avalanche',
     logo: '/assets/logos/avax.png'
   },
   properties: {
@@ -264,6 +272,7 @@ const ahype: PoolDetails = {
   poolTokenAddress: AHYPE_ADDRESS,
   chain: {
     id: 43114,
+    name: 'Avalanche',
     logo: '/assets/logos/avax.png'
   },
   properties: {
@@ -287,6 +296,7 @@ const tricrypto: PoolDetails = {
   poolTokenAddress: TRICRYPTO_ADDRESS,
   chain: {
     id: 43114,
+    name: 'Avalanche',
     logo: '/assets/logos/avax.png'
   },
   properties: {
@@ -310,6 +320,7 @@ const phype: PoolDetails = {
   poolTokenAddress: PHYPE.address,
   chain: {
     id: 137,
+    name: 'Polygon',
     logo: '/assets/logos/polygon.svg'
   },
   properties: {
@@ -333,6 +344,7 @@ const keirkrew: PoolDetails = {
   poolTokenAddress: KKF.address,
   chain: {
     id: 137,
+    name: 'Polygon',
     logo: '/assets/logos/polygon.svg'
   },
   properties: {
@@ -356,6 +368,7 @@ const keirkrewArb: PoolDetails = {
   poolTokenAddress: KKF_ARB.address,
   chain: {
     id: 42161,
+    name: 'Arbitrum',
     logo: '/assets/logos/arbitrum.svg'
   },
   properties: {
@@ -379,6 +392,7 @@ const lowRisk: PoolDetails = {
   poolTokenAddress: LOW_RISK.address,
   chain: {
     id: 43114,
+    name: 'Avalanche',
     logo: '/assets/logos/avax.png'
   },
   properties: {
@@ -402,6 +416,7 @@ const mediumRisk: PoolDetails = {
   poolTokenAddress: MEDIUM_RISK.address,
   chain: {
     id: 137,
+    name: 'Polygon',
     logo: '/assets/logos/polygon.svg'
   },
   properties: {
@@ -425,6 +440,7 @@ const highRisk: PoolDetails = {
   poolTokenAddress: HIGH_RISK.address,
   chain: {
     id: 42161,
+    name: 'Arbitrum',
     logo: '/assets/logos/arbitrum.svg'
   },
   properties: {
@@ -448,6 +464,7 @@ const lpBalancer: PoolDetails = {
   poolTokenAddress: WETH_POLYGON,
   chain: {
     id: 137,
+    name: 'Polygon',
     logo: '/assets/logos/polygon.svg'
   },
   properties: {
@@ -476,6 +493,7 @@ const lpQuickSwap: PoolDetails = {
   poolTokenAddress: KacyPoligon,
   chain: {
     id: 137,
+    name: 'Polygon',
     logo: '/assets/logos/polygon.svg'
   },
   properties: {
@@ -501,6 +519,7 @@ const lpCamelot: PoolDetails = {
   poolTokenAddress: KacyPoligon,
   chain: {
     id: 42161,
+    name: 'Arbitrum',
     logo: '/assets/logos/arbitrum.svg'
   },
   properties: {
@@ -520,8 +539,13 @@ const lpCamelot: PoolDetails = {
 }
 
 // addresses list to get price on the stake page
-export const addressesForReqStakePool = [KacyPoligon]
-export const addressesForReqLpPool = [WETH_POLYGON, KacyPoligon, WAVAX_POLYGON]
+export const addressesForReqStakePool = [
+  KacyPoligon,
+  WETH_POLYGON,
+  KacyPoligon,
+  WAVAX_POLYGON
+]
+// export const addressesForReqLpPool = [WETH_POLYGON, KacyPoligon, WAVAX_POLYGON]
 export const addressesForReqFarmPool = [
   PHYPE.id,
   KKF.id,
@@ -533,6 +557,26 @@ export const addressesForReqFarmPool = [
   HIGH_RISK.id
 ]
 
+export const investmentsPools = [
+  lowRisk,
+  mediumRisk,
+  highRisk,
+  keirkrew,
+  keirkrewArb,
+  phype,
+  ahype,
+  tricrypto
+]
+
+export const liquidityPools = [lpJoe, lpQuickSwap, lpCamelot, lpPNG, lpBalancer]
+
+export const poolsKacyAndInvestors = [
+  kacy1x,
+  kacy2x,
+  kacy3x,
+  kacyInvestor1,
+  kacyInvestor2
+]
 export const poolsKacy = [kacy1x, kacy2x, kacy3x]
 export const poolsInvestor = [kacyInvestor1, kacyInvestor2]
 export const poolsFunds = [

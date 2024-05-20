@@ -26,9 +26,7 @@ import { Pool_OrderBy } from '@/gql/generated/kassandraApi'
 import SkeletonLoading from '@/components/SkeletonLoading'
 import GradientLabel from '@/components/Labels/GradientLabel'
 import Label from '@/components/Labels/Label'
-import { handleGetAPR } from '@/components/StakeCard/utils'
-import { networks } from '@/constants/tokenAddresses'
-import { ZeroAddress } from 'ethers'
+
 import { useGetAprData } from '@/hooks/query/useGetAprData'
 
 type UnderlyingAssets = {
@@ -222,7 +220,7 @@ const NewCommunityPoolsTable = ({
               }
               orderedBy={orderedBy === 'total_value_locked_usd'}
             >
-              TVL{' '}
+              AUM{' '}
               <img
                 src="/assets/utilities/arrow-select-down.svg"
                 alt=""
@@ -609,7 +607,7 @@ const NewCommunityPoolsTable = ({
           </ValueContainerMobile>
         </TableLine>
         <TableLine>
-          <TableLineTitle>TVL</TableLineTitle>
+          <TableLineTitle>AUM</TableLineTitle>
           <ValueContainerMobile>
             <V>{Big(viewPool?.tvl || 0).toFixed(2)}</V>
           </ValueContainerMobile>

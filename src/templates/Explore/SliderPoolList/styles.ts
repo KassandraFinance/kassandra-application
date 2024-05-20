@@ -97,6 +97,11 @@ export const SliderPoolList = styled.div`
       opacity: 0;
     }
 
+    .slick-disabled {
+      display: none;
+      visibility: hidden;
+    }
+
     .slick-dots {
       margin-top: -2rem;
 

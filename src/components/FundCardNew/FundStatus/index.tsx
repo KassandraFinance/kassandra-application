@@ -29,7 +29,7 @@ const FundStatus = ({ monthly, tvl }: IFundStatusProps) => {
         ) : (
           <SkeletonLoading height={2} width={6} />
         )}
-        <h4>TVL</h4>
+        <h4>AUM</h4>
       </S.FundStatus>
 
       <S.FundStatus>

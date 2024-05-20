@@ -33,6 +33,7 @@ export const useManagerPoolInfo = ({
         manager: user
       }),
     staleTime: 1000 * 60,
+    keepPreviousData: true,
     refetchInterval: 1000 * 60
   })
 }

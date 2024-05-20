@@ -28,6 +28,7 @@ export const usePoolInvestorsTable = ({
     queryFn: async () => fetchPoolInvestorsTable({ poolId, first, skip }),
     staleTime: 1000 * 60,
     refetchInterval: 1000 * 60,
-    keepPreviousData: true
+    keepPreviousData: true,
+    enabled: !!poolId
   })
 }

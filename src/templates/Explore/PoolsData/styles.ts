@@ -37,7 +37,10 @@ export const DataGroup = styled.div`
 export const DataText = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+
+  p {
+    line-height: 2.4rem;
+  }
 `
 
 export const Circle = styled.div`

@@ -6,7 +6,8 @@ import {
   ContractTransactionResponse,
   ErrorCode,
   ContractTransactionReceipt,
-  Network
+  Network,
+  FallbackProvider
 } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import { WalletState } from '@web3-onboard/core'
@@ -148,13 +149,13 @@ const useERC20 = (address: string, chainId = 137) => {
 }
 
 type ParamsType = {
-  wallet: WalletState | null
-  txNotification: (
+  wallet?: WalletState | null
+  txNotification?: (
     tx: ContractTransactionResponse,
     message?: MessageType | undefined,
     callbacks?: CallbacksType | undefined
   ) => Promise<ContractTransactionReceipt | null>
-  transactionErrors: (
+  transactionErrors?: (
     error: unknown,
     contractInfo?: ContractInfo,
     onFail?: (() => void | Promise<void>) | undefined
@@ -164,13 +165,18 @@ type ParamsType = {
 export const ERC20 = async (
   address: string,
   chainId = 137,
-  params?: ParamsType
+  params?: ParamsType,
+  provider?: JsonRpcProvider | FallbackProvider
 ) => {
-  const networkInfo = networks[chainId]
-  const network = new Network(networkInfo.chainName, networkInfo.chainId)
-  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-    staticNetwork: network
-  })
+  let readProvider = provider
+
+  if (!readProvider) {
+    const networkInfo = networks[chainId]
+    const network = new Network(networkInfo.chainName, networkInfo.chainId)
+    readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
+      staticNetwork: network
+    })
+  }
 
   const contract: ContractType = {
     read: new Contract(address, ERC20ABI, readProvider),

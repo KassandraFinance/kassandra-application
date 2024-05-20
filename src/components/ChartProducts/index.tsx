@@ -170,7 +170,10 @@ const ChartProducts = ({ poolId }: IChartProductsProps) => {
       const newPrice = data?.price_candles.map(item => {
         return {
           timestamp: item.timestamp,
-          close: parseFloat(item.close).toFixed(2)
+          close:
+            parseFloat(item.close) > 0.1
+              ? parseFloat(item.close).toFixed(2)
+              : parseFloat(item.close).toFixed(5)
         }
       })
 
@@ -209,7 +212,7 @@ const ChartProducts = ({ poolId }: IChartProductsProps) => {
             checked={inputChecked === 'TVL'}
           />
           <S.Label selected={inputChecked === 'TVL'} htmlFor="TVL-chart">
-            TVL
+            AUM
           </S.Label>
           <S.Input
             type="radio"

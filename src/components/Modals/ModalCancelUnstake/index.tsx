@@ -23,7 +23,6 @@ interface IModalRequestUnstakeProps {
   stakingContract: string
   openStakeAndWithdraw: (transaction: typeTransaction) => void
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  getUserInfoAboutPool: () => Promise<void>
 }
 
 const ModalCancelUnstake = ({
@@ -31,8 +30,7 @@ const ModalCancelUnstake = ({
   isStaking,
   stakingContract,
   setModalOpen,
-  openStakeAndWithdraw,
-  getUserInfoAboutPool
+  openStakeAndWithdraw
 }: IModalRequestUnstakeProps) => {
   const networkChain = networks[pool.chain.id]
 
@@ -46,7 +44,6 @@ const ModalCancelUnstake = ({
       `${pool.symbol}`,
       'modal-cancel-unstaking'
     )
-    getUserInfoAboutPool()
   }
   function handleCancelUnstake() {
     if (isStaking) {

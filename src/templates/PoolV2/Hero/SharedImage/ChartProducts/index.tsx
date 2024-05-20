@@ -165,7 +165,7 @@ const ChartProducts = ({ crpPoolAddress, height }: IChartProductsProps) => {
             checked={inputChecked === 'TVL'}
           />
           <S.Label selected={inputChecked === 'TVL'} htmlFor="TVL">
-            TVL
+            AUM
           </S.Label>
           <S.Input
             type="radio"

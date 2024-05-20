@@ -10,6 +10,7 @@ import { PoolDetails } from '@/constants/pools'
 import { networks } from '@/constants/tokenAddresses'
 
 import { BNtoDecimal } from '@/utils/numerals'
+import { PoolMetrics, UserInfo } from '../../templates/StakeFarm/utils'
 
 import { ERC20 } from '@/hooks/useERC20'
 import useMatomoEcommerce from '@/hooks/useMatomoEcommerce'
@@ -33,39 +34,21 @@ import tooltip from '@assets/utilities/tooltip.svg'
 import infoCyanIcon from '@assets/notificationStatus/info.svg'
 
 import * as S from './styles'
-
 interface IStakingProps {
   pool: PoolDetails
   poolPrice: Big
   kacyPrice: Big
+  userAboutPool: UserInfo
+  poolInfo: PoolMetrics
 }
 
-interface IPoolInfoProps {
-  votingMultiplier: string
-  startDate: string
-  endDate: string
-  kacyRewards: Big
-  withdrawDelay: number
-  totalStaked: Big
-  hasExpired: boolean
-  apr: Big
-  stakingToken: string
-  vestingPeriod: string
-  lockPeriod: string
-  tokenDecimals: string
-}
-
-interface IUserAboutPoolProps {
-  currentAvailableWithdraw: Big
-  lockPeriod: number
-  delegateTo: string
-  yourStake: Big
-  withdrawable: boolean
-  unstake: boolean
-  kacyEarned: Big
-}
-
-const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
+const StakeCard = ({
+  pool,
+  poolInfo,
+  userAboutPool,
+  kacyPrice,
+  poolPrice
+}: IStakingProps) => {
   const [isDetails, setIsDetails] = React.useState<boolean>(false)
   const [isModalStake, setIsModalStake] = React.useState<boolean>(false)
   const [isOpenModalPangolin, setIsOpenModalPangolin] =
@@ -78,31 +61,6 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
     React.useState<Big>(Big(0))
   const [stakeTransaction, setStakeTransaction] =
     React.useState<typeTransaction>(typeTransaction.NONE)
-  const [userAboutPool, setUserAboutPool] = React.useState<IUserAboutPoolProps>(
-    {
-      currentAvailableWithdraw: Big(-1),
-      delegateTo: '',
-      lockPeriod: 0,
-      yourStake: Big(-1),
-      unstake: false,
-      withdrawable: false,
-      kacyEarned: Big(-1)
-    }
-  )
-  const [poolInfo, setpoolInfo] = React.useState<IPoolInfoProps>({
-    votingMultiplier: '-1',
-    startDate: '',
-    endDate: '',
-    kacyRewards: Big(-1),
-    withdrawDelay: -1,
-    totalStaked: Big(-1),
-    hasExpired: false,
-    apr: Big(-1),
-    stakingToken: '',
-    vestingPeriod: '',
-    lockPeriod: '',
-    tokenDecimals: '18'
-  })
 
   const {
     chain,
@@ -165,38 +123,6 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
 
     setAmountApproveKacyStaking(Big(allowance))
   }
-
-  const getInfoPool = React.useCallback(async () => {
-    if (poolPrice.lte(0)) return
-
-    const poolInfo = await stakingInfo.getPoolInfo(
-      pid,
-      Big(kacyPrice),
-      poolPrice
-    )
-    setpoolInfo(poolInfo)
-  }, [wallet, poolPrice, kacyPrice])
-
-  const userInfoAboutPool = React.useCallback(async () => {
-    if (!wallet) return
-
-    const userInfo = await stakingInfo.getUserInfoAboutPool(
-      pid,
-      wallet.accounts[0].address
-    )
-    setUserAboutPool(userInfo)
-  }, [wallet])
-
-  React.useEffect(() => {
-    getInfoPool()
-    const interval = setInterval(getInfoPool, 30000)
-
-    return () => clearInterval(interval)
-  }, [getInfoPool])
-
-  React.useEffect(() => {
-    userInfoAboutPool()
-  }, [wallet])
 
   return (
     <>
@@ -413,9 +339,9 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
                               disabledNoEvent={
                                 userAboutPool.yourStake.lte(0) ||
                                 (stakeWithLockPeriod &&
-                                  userAboutPool.currentAvailableWithdraw.lte(
-                                    0
-                                  )) ||
+                                  Big(
+                                    userAboutPool.currentAvailableWithdraw
+                                  ).lte(0)) ||
                                 networkChain.chainId !==
                                   Number(wallet?.chains[0].id)
                               }
@@ -510,7 +436,6 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
           amountApproved={amountApproveKacyStaking}
           handleApprove={handleApproveKacy}
           updateAllowance={updateAllowance}
-          getUserInfoAboutPool={userInfoAboutPool}
         />
       )}
       {isModalCancelUnstake && (
@@ -519,9 +444,8 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
           setModalOpen={setIsModalCancelUnstake}
           stakingContract={stakingContract}
           openStakeAndWithdraw={openStakeAndWithdraw}
-          getUserInfoAboutPool={userInfoAboutPool}
           isStaking={
-            poolInfo.withdrawDelay === -1 && userAboutPool.withdrawable
+            poolInfo.withdrawDelay === -1 && !!userAboutPool.withdrawable
           }
         />
       )}
@@ -532,7 +456,6 @@ const StakeCard = ({ pool, kacyPrice, poolPrice }: IStakingProps) => {
           setModalOpen={setIsModalRequestUnstake}
           votingMultiplier={poolInfo.votingMultiplier}
           yourStake={userAboutPool.yourStake}
-          getUserInfoAboutPool={userInfoAboutPool}
         />
       )}
       {isOpenModalPangolin && (

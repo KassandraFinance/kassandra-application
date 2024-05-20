@@ -183,3 +183,7 @@ export const TabsContainer = styled.div`
     padding-inline: 2.4rem;
   }
 `
+
+export const ExploreSelectTabsWrapper = styled.div`
+  margin-top: 3.8rem;
+`

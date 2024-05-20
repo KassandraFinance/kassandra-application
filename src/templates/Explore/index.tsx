@@ -58,13 +58,26 @@ const chainList = [
   }
 ]
 
+const tabs = [
+  {
+    tabName: 'discover',
+    text: 'Discover'
+  },
+  {
+    tabName: 'allPools',
+    text: 'All Portfolios'
+  },
+  {
+    tabName: 'myPools',
+    text: 'My Investments'
+  }
+]
+
 export default function Explore() {
   const [selectedChains, setSelectedChains] = useState(
     chainList.map(item => item.chainId)
   )
-  const [isSelectTab, setIsSelectTab] = useState<string | string[] | undefined>(
-    'discover'
-  )
+  const [isSelectTab, setIsSelectTab] = useState<string>('discover')
   const [orderedBy, setOrderedBy] = React.useState<Pool_OrderBy>(
     'total_value_locked_usd'
   )
@@ -174,14 +187,17 @@ export default function Explore() {
           />
         </S.ExplorePoolsWrapper>
 
-        <ExploreSelectTabs
-          chainList={chainList}
-          selectedChains={selectedChains}
-          setSelectedChains={setSelectedChains}
-          isSelect={isSelectTab}
-          setIsSelect={setIsSelectTab}
-          onFilterClick={onClickChainResetPagination}
-        />
+        <S.ExploreSelectTabsWrapper>
+          <ExploreSelectTabs
+            tabsList={tabs}
+            chainList={chainList}
+            selectedChains={selectedChains}
+            setSelectedChains={setSelectedChains}
+            isSelect={isSelectTab}
+            setIsSelect={setIsSelectTab}
+            onFilterClick={onClickChainResetPagination}
+          />
+        </S.ExploreSelectTabsWrapper>
       </S.ExploreHeader>
 
       {isSelectTab === 'discover' && (

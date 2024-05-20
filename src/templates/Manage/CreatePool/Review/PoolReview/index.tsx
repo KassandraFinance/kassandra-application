@@ -131,7 +131,9 @@ const PoolReview = () => {
         return {
           id: token.address,
           decimals: token.decimals,
-          amount: Big(amount).mul(Number(token.allocation) / 100).toFixed(0)
+          amount: Big(amount)
+            .mul(Number(token.allocation) / 100)
+            .toFixed(0)
         }
       })
     })
@@ -281,7 +283,7 @@ const PoolReview = () => {
         <hr />
         <S.TvlContainer>
           <span>
-            TVL{' '}
+            AUM{' '}
             <img
               src="/assets/utilities/tooltip.svg"
               alt=""

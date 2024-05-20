@@ -17,16 +17,11 @@ interface IBorderGradientProps {
 export const BorderGradient = styled.div<IBorderGradientProps>`
   position: relative;
 
-  width: 29.5rem;
+  width: 100%;
   max-height: 100%;
 
   background: rgba(31, 31, 31, 0.72);
   border-radius: 1.2rem;
-
-  @media (max-width: 420px) {
-    max-width: 100%;
-    min-width: 27rem;
-  }
 
   &::after {
     content: '';
@@ -94,10 +89,10 @@ export const IntroStaking = styled.div`
 export const APR = styled.div`
   display: flex;
   align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
 
   h4 {
-    margin: 0 0 0.4rem 0.4rem;
-
     color: ${theme.colors.cyan};
     font-size: ${theme.font.sizes.font14} !important;
     line-height: 1.4rem !important;
@@ -106,9 +101,7 @@ export const APR = styled.div`
 `
 
 export const TooltipAPR = styled.div`
-  position: relative;
-
-  padding: 0.1rem;
+  display: flex;
 
   z-index: 99;
 `
@@ -191,7 +184,7 @@ export const Days = styled.div`
 
   p {
     margin-right: 0.4rem;
-    margin-bottom: 0.2rem;
+    /* margin-bottom: 0.2rem; */
   }
 `
 
