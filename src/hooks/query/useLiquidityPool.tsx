@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { FallbackProvider } from 'ethers'
 import Big from 'big.js'
+import { FallbackProvider } from 'ethers'
 
 import { PoolDetails, liquidityPools } from '@/constants/pools'
 
@@ -50,6 +50,7 @@ type PoolInfo = {
   pool: PoolDetails
   userInfo: UserInfo
   poolDataMetrics: PoolMetrics
+  poolPrice: Big
 }
 
 export const liquidityPool = async ({
@@ -92,7 +93,12 @@ export const liquidityPool = async ({
       providersForChain[pool.chain.id]
     )
 
-    poolInfo.push({ pool, poolDataMetrics, userInfo })
+    poolInfo.push({
+      pool,
+      poolDataMetrics,
+      userInfo,
+      poolPrice: Big(poolPrice)
+    })
   }
 
   return poolInfo

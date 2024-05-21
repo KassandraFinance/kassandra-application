@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { FallbackProvider } from 'ethers'
 import Big from 'big.js'
+import { FallbackProvider } from 'ethers'
 
 import { PoolDetails, investmentsPools } from '@/constants/pools'
 
@@ -37,13 +37,9 @@ const poolDataMetrics: PoolMetrics = {
   tokenDecimals: '18'
 }
 
-type PoolsPrice = {
-  price_usd?: string
-  address?: string
-}
 type useInvestmentPools = {
   kacyPrice: Big
-  poolsPrice?: PoolsPrice[]
+  poolsPrice?: Record<string, string>
   walletAddress: string
 }
 
@@ -71,17 +67,12 @@ export const investmentPools = async ({
   }
 
   for (const pool of investmentsPools) {
-    const poolPrice =
-      (poolsPrice &&
-        poolsPrice.find(token => token.address === pool.poolTokenAddress)
-          ?.price_usd) ??
-      '0'
-
+    const poolPrice = Big(poolsPrice ? poolsPrice[pool.poolTokenAddress] : '0')
     const { poolDataMetrics, userInfo } = await handleGetUserAndPoolInfo(
       pool,
       walletAddress,
       kacyPrice,
-      Big(poolPrice),
+      poolPrice,
       providersForChain[pool.chain.id]
     )
 
@@ -93,7 +84,7 @@ export const investmentPools = async ({
 
 type UseSkatePoolPowerVoting = {
   kacyPrice?: Big
-  poolsPrice?: PoolsPrice[]
+  poolsPrice?: Record<string, string>
   walletAddress?: string
 }
 
