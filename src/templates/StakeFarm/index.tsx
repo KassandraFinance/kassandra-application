@@ -35,6 +35,7 @@ type PoolInfo = {
   pool: PoolDetails
   userInfo: UserInfo
   poolDataMetrics: PoolMetrics
+  poolPrice?: Big
 }
 
 const chainList = [
@@ -153,7 +154,8 @@ const StakeFarm = () => {
       return poolListFiltered.map(item => ({
         pool: item.pool,
         userInfo: userInfoDefault,
-        poolDataMetrics: poolDataMetricsDefault
+        poolDataMetrics: poolDataMetricsDefault,
+        poolPrice: item.poolPrice
       }))
     }
 
@@ -250,7 +252,12 @@ const StakeFarm = () => {
                       poolDataMetrics={item?.poolDataMetrics}
                       userInfo={item?.userInfo}
                       kacyPrice={Big(kacyPrice)}
-                      poolPrice={Big(kacyPrice)}
+                      poolPrice={Big(
+                        tokensData
+                          ? tokensData[item.pool.poolTokenAddress.toLowerCase()]
+                              ?.usd
+                          : '0'
+                      )}
                     />
                   )
                 })
@@ -273,7 +280,11 @@ const StakeFarm = () => {
                       poolDataMetrics={item?.poolDataMetrics}
                       userInfo={item?.userInfo}
                       kacyPrice={Big(kacyPrice)}
-                      poolPrice={Big(kacyPrice)}
+                      poolPrice={Big(
+                        farmPoolPriceList
+                          ? farmPoolPriceList[item.pool.poolTokenAddress]
+                          : '0'
+                      )}
                     />
                   )
                 })
@@ -322,7 +333,7 @@ const StakeFarm = () => {
                     <StakeCard
                       key={item.pool.symbol + item.pool.pid}
                       kacyPrice={Big(kacyPrice)}
-                      poolPrice={Big(kacyPrice)}
+                      poolPrice={item?.poolPrice ?? Big(0)}
                       pool={item.pool}
                       poolInfo={item.poolDataMetrics}
                       userAboutPool={item.userInfo}
@@ -346,7 +357,11 @@ const StakeFarm = () => {
                     <StakeCard
                       key={item.pool.symbol + item.pool.pid}
                       kacyPrice={Big(kacyPrice)}
-                      poolPrice={Big(kacyPrice)}
+                      poolPrice={Big(
+                        farmPoolPriceList
+                          ? farmPoolPriceList[item.pool.poolTokenAddress]
+                          : '0'
+                      )}
                       pool={item.pool}
                       poolInfo={item.poolDataMetrics}
                       userAboutPool={item.userInfo}
