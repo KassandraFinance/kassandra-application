@@ -1,28 +1,28 @@
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
-import { useState } from 'react'
-import Image from 'next/image'
 import Big from 'big.js'
+import Image from 'next/image'
+import { useState } from 'react'
 
-import useStakingInfo from '@/hooks/useStakingInfo'
 import { ERC20 } from '@/hooks/useERC20'
+import useStakingInfo from '@/hooks/useStakingInfo'
 
 import { PoolDetails } from '@/constants/pools'
 import { networks } from '@/constants/tokenAddresses'
 
-import { registerToken } from '@/utils/registerToken'
 import { BNtoDecimal } from '@/utils/numerals'
+import { registerToken } from '@/utils/registerToken'
 
+import Button from '@/components/Button'
 import ExternalLink from '@/components/ExternalLink'
+import GradientLabel from '@/components/Labels/GradientLabel'
+import Label from '@/components/Labels/Label'
 import ModalBuyKacyOnPangolin from '@/components/Modals/ModalBuyKacyOnPangolin'
-import ModalStakeAndWithdraw from '@/components/Modals/ModalStakeAndWithdraw'
 import ModalCancelUnstake, {
   typeTransaction
 } from '@/components/Modals/ModalCancelUnstake'
 import ModalRequestUnstake from '@/components/Modals/ModalRequestUnstake'
-import Button from '@/components/Button'
-import Label from '@/components/Labels/Label'
+import ModalStakeAndWithdraw from '@/components/Modals/ModalStakeAndWithdraw'
 import SkeletonLoading from '@/components/SkeletonLoading'
-import GradientLabel from '@/components/Labels/GradientLabel'
 import { PoolMetrics, UserInfo } from '@/templates/StakeFarm/utils'
 
 import arrowDownThin from '@assets/utilities/arrow-down-thin.svg'
@@ -240,7 +240,8 @@ export function StakeListCard({
                               poolDataMetrics?.totalStaked.eq(0)
                                 ? 1
                                 : poolDataMetrics?.totalStaked
-                            ),
+                            )
+                            .div(Big(10).pow(18)),
                           18,
                           2
                         ) + '/day'}

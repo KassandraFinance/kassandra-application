@@ -542,7 +542,6 @@ const lpCamelot: PoolDetails = {
 export const addressesForReqStakePool = [
   KacyPoligon,
   WETH_POLYGON,
-  KacyPoligon,
   WAVAX_POLYGON
 ]
 // export const addressesForReqLpPool = [WETH_POLYGON, KacyPoligon, WAVAX_POLYGON]

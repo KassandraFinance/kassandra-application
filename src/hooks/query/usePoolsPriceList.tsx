@@ -7,7 +7,19 @@ type UsePoolPriceProps = {
 }
 
 export const fetchPoolsPriceList = async ({ addresses }: UsePoolPriceProps) => {
-  return kassandraClient.PoolsPriceList({ addresses }).then(res => res.pools)
+  const response = await kassandraClient
+    .PoolsPriceList({ addresses })
+    .then(res => res.pools)
+
+  const poolsPriceList = response.reduce<Record<string, string>>(
+    (acc, item) => {
+      acc[item.address] = item.price_usd
+      return acc
+    },
+    {}
+  )
+
+  return poolsPriceList
 }
 
 export const usePoolsPriceList = ({ addresses }: UsePoolPriceProps) => {
