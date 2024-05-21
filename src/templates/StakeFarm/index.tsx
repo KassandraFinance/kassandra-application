@@ -252,12 +252,7 @@ const StakeFarm = () => {
                       poolDataMetrics={item?.poolDataMetrics}
                       userInfo={item?.userInfo}
                       kacyPrice={Big(kacyPrice)}
-                      poolPrice={Big(
-                        tokensData
-                          ? tokensData[item.pool.poolTokenAddress.toLowerCase()]
-                              ?.usd
-                          : '0'
-                      )}
+                      poolPrice={item?.poolPrice ?? Big(0)}
                     />
                   )
                 })
