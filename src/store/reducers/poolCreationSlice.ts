@@ -158,7 +158,7 @@ export function handleLiquidity(
       .div(tokenInputAllocation)
 
     const liquidityInToken = tokenRealocatedLiquidity.div(
-      tokenPriceList[token.address].usd
+      tokenPriceList[token.address]?.usd ?? 1
     )
     return { ...token, amount: liquidityInToken.toFixed() }
   })

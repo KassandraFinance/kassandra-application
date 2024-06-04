@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { COINGECKO_API, SUBGRAPH_URL } from '@/constants/tokenAddresses'
+import { getAddress } from 'ethers'
 
 type CoinsMetadataType = Record<
   string,
@@ -42,7 +43,7 @@ async function getTokens(params: { tokensId?: string[]; chainId?: number[] }) {
         }
       `,
       variables: {
-        ids: params.tokensId,
+        ids: params.tokensId?.map(token => getAddress(token)),
         chainId: params.chainId
       }
     })
