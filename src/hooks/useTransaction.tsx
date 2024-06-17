@@ -1,19 +1,13 @@
 import * as Sentry from '@sentry/nextjs'
 import { useConnectWallet } from '@web3-onboard/react'
-import {
-  ContractTransactionResponse,
-  JsonRpcProvider,
-  Network,
-  isError
-} from 'ethers'
-
-import { networks } from '@/constants/tokenAddresses'
+import { ContractTransactionResponse, isError } from 'ethers'
 
 import { useAppDispatch } from '@/store/hooks'
 import { setModalAlertText } from '@/store/reducers/modalAlertText'
 
 import { ToastInfo, ToastSuccess } from '@/components/Toastify/toast'
 import { KassandraError } from '@/utils/KassandraError'
+import { handleInstanceFallbackProvider } from '@/utils/provider'
 
 export type MessageType = {
   pending?: string
@@ -84,11 +78,7 @@ const useTransaction = () => {
 
     if (error?.transaction) {
       const chainId = Number(wallet?.chains[0].id ?? '0')
-      const networkInfo = networks[chainId]
-      const network = new Network(networkInfo.chainName, networkInfo.chainId)
-      const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-        staticNetwork: network
-      })
+      const readProvider = handleInstanceFallbackProvider(chainId)
       const transactionData: string = error.transaction.data.toString()
       const currentBlock = await readProvider.getBlockNumber()
 

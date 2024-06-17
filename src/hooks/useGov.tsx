@@ -1,9 +1,8 @@
 import React from 'react'
 import { useConnectWallet } from '@web3-onboard/react'
-import { BrowserProvider, JsonRpcProvider, Contract, Network } from 'ethers'
+import { BrowserProvider, Contract } from 'ethers'
 
 import Governance from '@/constants/abi/Governance.json'
-import { networks } from '@/constants/tokenAddresses'
 
 import useTransaction from './useTransaction'
 
@@ -13,6 +12,7 @@ import executed from '@assets/notificationStatus/executed.svg'
 import failed from '@assets/notificationStatus/failed.svg'
 import queued from '@assets/notificationStatus/queued.svg'
 import votingOpen from '@assets/notificationStatus/voting-open.svg'
+import { handleInstanceFallbackProvider } from '@/utils/provider'
 
 export type StateProposal = [
   string,
@@ -36,11 +36,7 @@ const useGov = (address: string, chainId = 43114) => {
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
 
-  const networkInfo = networks[chainId]
-  const network = new Network(networkInfo.chainName, networkInfo.chainId)
-  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-    staticNetwork: network
-  })
+  const readProvider = handleInstanceFallbackProvider(chainId)
 
   const [contract, setContract] = React.useState({
     send: new Contract(address, Governance, readProvider),

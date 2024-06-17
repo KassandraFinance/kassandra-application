@@ -1,14 +1,11 @@
-import { JsonRpcProvider, Contract, Network } from 'ethers'
+import { Contract } from 'ethers'
 
-import { NATIVE_ADDRESS, networks } from '@/constants/tokenAddresses'
+import { NATIVE_ADDRESS } from '@/constants/tokenAddresses'
 import ERC20 from '@/constants/abi/ERC20.json'
+import { handleInstanceFallbackProvider } from '@/utils/provider'
 
 const useBatchRequests = (networkId: number) => {
-  const networkInfo = networks[networkId]
-  const network = new Network(networkInfo.chainName, networkInfo.chainId)
-  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-    staticNetwork: network
-  })
+  const readProvider = handleInstanceFallbackProvider(networkId)
 
   // Batch request to get user balance from an array of tokens
   const balances = async (userWalletAddress: string, addresses: string[]) => {

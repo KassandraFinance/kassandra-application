@@ -12,8 +12,6 @@ import {
   handleGetUserAndPoolInfo
 } from '@/templates/StakeFarm/utils'
 
-import { handleInstaceFallbackProvider } from '@/utils/provider'
-
 const userInfo: UserInfo = {
   currentAvailableWithdraw: Big(-1),
   delegateTo: '',
@@ -57,15 +55,13 @@ export const skatePoolPowerVoting = async ({
   walletAddress
 }: SkatePoolPowerVoting) => {
   const poolInfo: PoolInfo[] = []
-  const provider = await handleInstaceFallbackProvider(43114)
 
   for (const pool of poolsKacyAndInvestors) {
     const { poolDataMetrics, userInfo } = await handleGetUserAndPoolInfo(
       pool,
       walletAddress,
       kacyPrice,
-      poolPrice,
-      provider
+      poolPrice
     )
 
     if ((pool.pid === 0 || pool.pid === 1) && userInfo.yourStake.lte(0))

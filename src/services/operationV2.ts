@@ -16,6 +16,8 @@ import { NATIVE_ADDRESS, networks } from '../constants/tokenAddresses'
 
 import { BNtoDecimal } from '@/utils/numerals'
 import { checkTokenWithHigherLiquidityPool } from '../utils/poolUtils'
+import { KassandraError } from '@/utils/KassandraError'
+import { handleInstanceFallbackProvider } from '@/utils/provider'
 
 import {
   CalcAllOutGivenPoolInParams,
@@ -29,7 +31,6 @@ import {
   JoinSwapAmountInParams
 } from './IOperation'
 import { GetAmountsOutParams, ISwapProvider } from './ISwapProvider'
-import { KassandraError } from '@/utils/KassandraError'
 
 export interface ItokenSelectedProps {
   tokenInAddress: string
@@ -62,12 +63,12 @@ export default class operationV2 implements IOperations {
     this.balancerHelpersContract = new Contract(
       balancerHelpers,
       BalancerHelpers,
-      new JsonRpcProvider(networks[Number(_poolInfo.chainId)].rpc)
+      handleInstanceFallbackProvider(Number(_poolInfo.chainId))
     )
     this.managedPoolController = new Contract(
       _poolInfo.controller,
       KassandraController,
-      new JsonRpcProvider(networks[Number(_poolInfo.chainId)].rpc)
+      handleInstanceFallbackProvider(Number(_poolInfo.chainId))
     )
     this.vaultBalancer = new Contract(
       _poolInfo.vault,

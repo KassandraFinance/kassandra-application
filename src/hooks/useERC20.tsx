@@ -1,13 +1,10 @@
 import React from 'react'
 import {
   BrowserProvider,
-  JsonRpcProvider,
   Contract,
   ContractTransactionResponse,
   ErrorCode,
-  ContractTransactionReceipt,
-  Network,
-  FallbackProvider
+  ContractTransactionReceipt
 } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 import { WalletState } from '@web3-onboard/core'
@@ -18,7 +15,7 @@ import useTransaction, {
   ContractInfo
 } from '@/hooks/useTransaction'
 import ERC20ABI from '@/constants/abi/ERC20.json'
-import { networks } from '@/constants/tokenAddresses'
+import { handleInstanceFallbackProvider } from '@/utils/provider'
 
 type ContractType = {
   read: Contract
@@ -114,11 +111,7 @@ const useERC20 = (address: string, chainId = 137) => {
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
 
-  const networkInfo = networks[chainId]
-  const network = new Network(networkInfo.chainName, networkInfo.chainId)
-  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-    staticNetwork: network
-  })
+  const readProvider = handleInstanceFallbackProvider(chainId)
 
   const [contract, setContract] = React.useState({
     send: new Contract(address, ERC20ABI, readProvider),
@@ -165,18 +158,9 @@ type ParamsType = {
 export const ERC20 = async (
   address: string,
   chainId = 137,
-  params?: ParamsType,
-  provider?: JsonRpcProvider | FallbackProvider
+  params?: ParamsType
 ) => {
-  let readProvider = provider
-
-  if (!readProvider) {
-    const networkInfo = networks[chainId]
-    const network = new Network(networkInfo.chainName, networkInfo.chainId)
-    readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-      staticNetwork: network
-    })
-  }
+  const readProvider = handleInstanceFallbackProvider(chainId)
 
   const contract: ContractType = {
     read: new Contract(address, ERC20ABI, readProvider),

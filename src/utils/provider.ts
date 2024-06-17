@@ -11,7 +11,7 @@ export async function handleInstaceProvider(chainId: number) {
   return provider
 }
 
-export async function handleInstaceFallbackProvider(chainId: number) {
+export function handleInstanceFallbackProvider(chainId: number) {
   const networkInfo = networks[chainId]
   const network = new Network(networkInfo.chainName, networkInfo.chainId)
 

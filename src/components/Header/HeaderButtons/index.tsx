@@ -1,10 +1,11 @@
 import React from 'react'
 import { useConnectWallet } from '@web3-onboard/react'
-import { JsonRpcProvider, Network, getAddress } from 'ethers'
+import { getAddress } from 'ethers'
 
 import { networks } from '@/constants/tokenAddresses'
 import { getDateDiff } from '@/utils/date'
 import substr from '@/utils/substr'
+import { handleInstanceFallbackProvider } from '@/utils/provider'
 
 import { useLatestBlock } from '@/hooks/query/useLatestBlock'
 import { useUserProfile } from '@/hooks/query/useUserProfile'
@@ -127,17 +128,9 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       return
     }
 
-    const networkInfo = networks[Number(wallet?.chains[0].id ?? '43114')]
-
-    const chaindId =
-      networks[Number(wallet?.chains[0].id ?? '43114')]?.chainId ?? 43114
-    const network = new Network(
-      networkInfo?.chainName ?? 'Avalanche',
-      networkInfo?.chainId ?? '43114'
-    )
-    const provider = new JsonRpcProvider(networks[chaindId].rpc, network, {
-      staticNetwork: network
-    })
+    const userChainId = Number(wallet?.chains[0].id ?? '43114')
+    const supportedChainId = networks[userChainId]?.chainId ?? 43114
+    const provider = handleInstanceFallbackProvider(supportedChainId)
 
     const subgraphTimestamp = await provider.getBlock(
       BigInt(latestBlockData?.subgraphBlock)
