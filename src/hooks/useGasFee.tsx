@@ -1,14 +1,10 @@
-import { JsonRpcProvider, Network, formatUnits } from 'ethers'
-
-import { networks } from '@/constants/tokenAddresses'
 import Big from 'big.js'
+import { formatUnits } from 'ethers'
+
+import { handleInstanceFallbackProvider } from '@/utils/provider'
 
 const useGasFee = (networkId: number) => {
-  const networkInfo = networks[networkId || 137]
-  const network = new Network(networkInfo.chainName, networkInfo.chainId)
-  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-    staticNetwork: network
-  })
+  const readProvider = handleInstanceFallbackProvider(networkId)
 
   const gasFee = async (number: number) => {
     const estimateGasUsed = Big(number)

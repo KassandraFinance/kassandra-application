@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import Big from 'big.js'
-import { FallbackProvider } from 'ethers'
 
 import { PoolDetails, investmentsPools } from '@/constants/pools'
-
-import { handleInstaceFallbackProvider } from '@/utils/provider'
 
 import {
   PoolMetrics,
@@ -56,24 +53,13 @@ export const investmentPools = async ({
 }: useInvestmentPools) => {
   const poolInfo: PoolInfo[] = []
 
-  const providersForChain: Record<number, FallbackProvider> = {}
-
-  for (const pool of investmentsPools) {
-    if (!providersForChain[pool.chain.id]) continue
-
-    const provider = await handleInstaceFallbackProvider(pool.chain.id)
-
-    providersForChain[pool.chain.id] = provider
-  }
-
   for (const pool of investmentsPools) {
     const poolPrice = Big(poolsPrice ? poolsPrice[pool.poolTokenAddress] : '0')
     const { poolDataMetrics, userInfo } = await handleGetUserAndPoolInfo(
       pool,
       walletAddress,
       kacyPrice,
-      poolPrice,
-      providersForChain[pool.chain.id]
+      poolPrice
     )
 
     poolInfo.push({ pool, poolDataMetrics, userInfo })
