@@ -4,20 +4,16 @@ import { WalletState } from '@web3-onboard/core'
 
 import {
   BrowserProvider,
-  JsonRpcProvider,
   Contract,
   ZeroAddress,
-  Network,
   ContractTransactionResponse,
   ContractTransactionReceipt,
-  ErrorCode,
-  FallbackProvider
+  ErrorCode
 } from 'ethers'
 import { useConnectWallet } from '@web3-onboard/react'
 
-import { networks } from '@/constants/tokenAddresses'
-
 import StakingContract from '@/constants/abi/Staking.json'
+import { handleInstanceFallbackProvider } from '@/utils/provider'
 
 import useTransaction, {
   CallbacksType,
@@ -64,11 +60,8 @@ export function stakingContract(
     address: string,
     chainId: number
   ) => {
-    const networkInfo = networks[chainId]
-    const network = new Network(networkInfo.chainName, networkInfo.chainId)
-    const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-      staticNetwork: network
-    })
+    const readProvider = handleInstanceFallbackProvider(chainId)
+
     const infoContract = new Contract(address, StakingContract, readProvider)
     const value = await infoContract.userInfo(pid, walletAddress)
     return value
@@ -132,11 +125,8 @@ export function stakingContract(
     address: string,
     chainId: number
   ) => {
-    const networkInfo = networks[chainId]
-    const network = new Network(networkInfo.chainName, networkInfo.chainId)
-    const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-      staticNetwork: network
-    })
+    const readProvider = handleInstanceFallbackProvider(chainId)
+
     const infoContract = new Contract(address, StakingContract, readProvider)
     const value: bigint = await infoContract.earned(pid, walletAddress)
     return value
@@ -265,15 +255,11 @@ const useStaking = (address: string, chainId = 43114) => {
   const [{ wallet }] = useConnectWallet()
   const { txNotification, transactionErrors } = useTransaction()
 
-  const networkInfo = networks[chainId]
-  const network = new Network(networkInfo.chainName, networkInfo.chainId)
-  const readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-    staticNetwork: network
-  })
+  const provider = handleInstanceFallbackProvider(chainId)
 
   const [contract, setContractEthers] = React.useState({
-    send: new Contract(address, StakingContract, readProvider),
-    read: new Contract(address, StakingContract, readProvider)
+    send: new Contract(address, StakingContract, provider),
+    read: new Contract(address, StakingContract, provider)
   })
 
   React.useEffect(() => {
@@ -285,7 +271,7 @@ const useStaking = (address: string, chainId = 43114) => {
 
       setContractEthers({
         send: new Contract(address, StakingContract, signer),
-        read: new Contract(address, StakingContract, readProvider)
+        read: new Contract(address, StakingContract, provider)
       })
     }
 
@@ -314,18 +300,9 @@ type ParamsType = {
 export const staking = async (
   address: string,
   chainId = 137,
-  params?: ParamsType,
-  provider?: JsonRpcProvider | FallbackProvider
+  params?: ParamsType
 ) => {
-  let readProvider = provider
-
-  if (!readProvider) {
-    const networkInfo = networks[chainId]
-    const network = new Network(networkInfo.chainName, networkInfo.chainId)
-    readProvider = new JsonRpcProvider(networkInfo.rpc, network, {
-      staticNetwork: network
-    })
-  }
+  const readProvider = handleInstanceFallbackProvider(chainId)
 
   const contract: ContractType = {
     read: new Contract(address, StakingContract, readProvider),

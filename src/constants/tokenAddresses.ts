@@ -189,12 +189,13 @@ export const networks: NetworkType = {
   '43114': {
     chainId: 43114,
     chainName: 'Avalanche',
-    rpc: 'https://avalanche.public-rpc.com',
+    rpc: 'https://rpc.ankr.com/avalanche',
     rpcs: [
-      'https://avalanche.public-rpc.com',
       'https://rpc.ankr.com/avalanche',
       'https://avax.meowrpc.com',
-      'https://avalanche.drpc.org'
+      'https://avalanche.drpc.org',
+      // 'https://avalanche.public-rpc.com',
+      'https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc'
     ],
     kacyAddress: Kacy,
     blockExplorer: 'https://snowtrace.io',

@@ -4,7 +4,7 @@ import { FallbackProvider } from 'ethers'
 
 import { PoolDetails, liquidityPools } from '@/constants/pools'
 
-import { handleInstaceFallbackProvider } from '@/utils/provider'
+import { handleInstanceFallbackProvider } from '@/utils/provider'
 
 import { lpPoolPriceFunctions } from '../usePriceLPEthers'
 import { CoinsMetadataType } from './useTokensData'
@@ -66,7 +66,7 @@ export const liquidityPool = async ({
   for (const pool of liquidityPools) {
     if (!providersForChain[pool.chain.id]) continue
 
-    const provider = await handleInstaceFallbackProvider(pool.chain.id)
+    const provider = handleInstanceFallbackProvider(pool.chain.id)
 
     providersForChain[pool.chain.id] = provider
   }
@@ -89,8 +89,7 @@ export const liquidityPool = async ({
       pool,
       walletAddress,
       kacyPrice,
-      Big(poolPrice),
-      providersForChain[pool.chain.id]
+      Big(poolPrice)
     )
 
     poolInfo.push({

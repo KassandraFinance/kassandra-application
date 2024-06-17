@@ -1,5 +1,4 @@
 import Big from 'big.js'
-import { FallbackProvider } from 'ethers'
 
 import { getDate } from '@/utils/date'
 import { PoolDetails } from '@/constants/pools'
@@ -91,15 +90,9 @@ interface GetUserInfo extends UserInfo {
 
 export const handleGetUserInfo = async (
   pool: PoolDetails,
-  walletAddress: string,
-  provider: FallbackProvider
+  walletAddress: string
 ): Promise<GetUserInfo> => {
-  const staking = await stakingContract(
-    pool.stakingContract,
-    pool.chain.id,
-    {},
-    provider
-  )
+  const staking = await stakingContract(pool.stakingContract, pool.chain.id)
 
   if (!walletAddress) {
     const stakingPoolInfo = await staking.poolInfo(pool.pid)
@@ -167,19 +160,13 @@ export const handleGetUserAndPoolInfo = async (
   pool: PoolDetails,
   walletAddress: string,
   kacyPrice: Big,
-  poolPrice: Big,
-  provider: FallbackProvider
+  poolPrice: Big
 ): Promise<UserAndPoolInfo> => {
-  const userInfo = await handleGetUserInfo(pool, walletAddress, provider)
+  const userInfo = await handleGetUserInfo(pool, walletAddress)
 
   const stakingPoolInfo = userInfo.stakingPoolInfo
 
-  const erc20 = await ERC20(
-    stakingPoolInfo.stakingToken,
-    pool.chain.id,
-    {},
-    provider
-  )
+  const erc20 = await ERC20(stakingPoolInfo.stakingToken, pool.chain.id)
   const decimals = await erc20.decimals()
 
   const totalStaked = Big(stakingPoolInfo.depositedAmount.toString())
