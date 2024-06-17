@@ -155,9 +155,10 @@ export const networks: NetworkType = {
     chainId: 137,
     rpc: 'https://polygon-rpc.com',
     rpcs: [
-      'https://polygon.llamarpc.com',
+      // 'https://polygon.llamarpc.com',
+      'https://polygon-mainnet.public.blastapi.io',
       'https://rpc.ankr.com/polygon',
-      'https://polygon-pokt.nodies.app',
+      // 'https://polygon-pokt.nodies.app',
       'https://polygon.drpc.org'
     ],
     kacyAddress: KacyPoligon,
@@ -195,7 +196,7 @@ export const networks: NetworkType = {
       'https://avax.meowrpc.com',
       'https://avalanche.drpc.org',
       // 'https://avalanche.public-rpc.com',
-      'https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc'
+      'https://ava-mainnet.public.blastapi.io/ext/bc/C/avax'
     ],
     kacyAddress: Kacy,
     blockExplorer: 'https://snowtrace.io',
@@ -254,8 +255,10 @@ export const networks: NetworkType = {
     rpcs: [
       'https://1rpc.io/arb',
       'https://rpc.ankr.com/arbitrum',
-      'https://arbitrum.llamarpc.com',
-      'https://arb-pokt.nodies.app'
+      'https://arbitrum-one.public.blastapi.io',
+      'https://arbitrum.drpc.org'
+      // 'https://arbitrum.llamarpc.com',
+      // 'https://arb-pokt.nodies.app'
     ],
     kacyAddress: '0x366e293a5cf90a0458d9ff9f3f92234da598f62e',
     stakingContract: '0xdcbdde53cfebae239b77b6ef896261da80531884',
