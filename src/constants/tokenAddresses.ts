@@ -156,6 +156,7 @@ export const networks: NetworkType = {
     rpc: 'https://polygon-rpc.com',
     rpcs: [
       // 'https://polygon.llamarpc.com',
+      'https://polygon.rpc.subquery.network/public',
       'https://polygon-mainnet.public.blastapi.io',
       'https://rpc.ankr.com/polygon',
       // 'https://polygon-pokt.nodies.app',
@@ -190,13 +191,16 @@ export const networks: NetworkType = {
   '43114': {
     chainId: 43114,
     chainName: 'Avalanche',
-    rpc: 'https://rpc.ankr.com/avalanche',
+    rpc: 'https://avalanche.public-rpc.com',
     rpcs: [
-      'https://rpc.ankr.com/avalanche',
-      'https://avax.meowrpc.com',
-      'https://avalanche.drpc.org',
-      // 'https://avalanche.public-rpc.com',
-      'https://ava-mainnet.public.blastapi.io/ext/bc/C/avax'
+      'https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc',
+      'https://ava-mainnet.public.blastapi.io/ext/bc/C/avax',
+      'https://1rpc.io/avax/c',
+      'https://api.avax.network/ext/bc/C/rpc',
+      'https://avalanche-c-chain.publicnode.com/ext/bc/C/rpc',
+      'https://api.zan.top/node/v1/avax/mainnet/public/ext/bc/C/rpc',
+      'https://avalanche.public-rpc.com',
+      'https://rpc.ankr.com/avalanche'
     ],
     kacyAddress: Kacy,
     blockExplorer: 'https://snowtrace.io',
@@ -253,7 +257,7 @@ export const networks: NetworkType = {
     chainId: 42161,
     rpc: 'https://arbitrum-one.publicnode.com',
     rpcs: [
-      'https://1rpc.io/arb',
+      'https://arbitrum.rpc.subquery.network/public',
       'https://rpc.ankr.com/arbitrum',
       'https://arbitrum-one.public.blastapi.io',
       'https://arbitrum.drpc.org'
