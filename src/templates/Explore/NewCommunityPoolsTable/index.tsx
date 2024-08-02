@@ -175,7 +175,8 @@ const NewCommunityPoolsTable = ({
     }
   }
 
-  const { data } = useGetAprData({ pools, kacyPrice })
+  // const { data } = useGetAprData({ pools, kacyPrice })
+  // const data: Record<string, Big> | undefined = undefined
 
   return (
     <S.CommunityPoolsTable>
@@ -281,7 +282,7 @@ const NewCommunityPoolsTable = ({
                           <S.ValueWrapper>
                             <S.TextValue id="privatePool">
                               <S.MobileIcons>
-                                {data && data[pool.address]?.gt(0) && (
+                                {/* {data && data[pool.address]?.gt(0) && (
                                   <Tippy
                                     content={[
                                       <S.Tooltip key="Fire">
@@ -301,7 +302,7 @@ const NewCommunityPoolsTable = ({
                                       />
                                     </S.FireImage>
                                   </Tippy>
-                                )}
+                                )} */}
 
                                 {Number(pool.fee_join_broker) > 0 && (
                                   <Tippy
@@ -345,7 +346,7 @@ const NewCommunityPoolsTable = ({
                               {pool.name}
 
                               <S.DesktopIcons>
-                                {data && data[pool.address]?.gt(0) && (
+                                {/* {data && data[pool.address]?.gt(0) && (
                                   <Tippy
                                     content={[
                                       <S.Tooltip key="Fire">
@@ -365,7 +366,7 @@ const NewCommunityPoolsTable = ({
                                       />
                                     </S.FireImage>
                                   </Tippy>
-                                )}
+                                )} */}
 
                                 {Number(pool.fee_join_broker) > 0 && (
                                   <Tippy
@@ -392,7 +393,7 @@ const NewCommunityPoolsTable = ({
                             </S.TextValue>
 
                             <S.SecondaryTextValue>
-                              {data && data[pool.address]?.gt(0) && (
+                              {/* {data && data[pool.address]?.gt(0) && (
                                 <>
                                   <Tippy
                                     content={[
@@ -420,7 +421,7 @@ const NewCommunityPoolsTable = ({
                                     text="$KACY"
                                   />
                                 </>
-                              )}
+                              )} */}
                             </S.SecondaryTextValue>
                           </S.ValueWrapper>
                         </S.ValueContainer>

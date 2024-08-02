@@ -108,3 +108,13 @@ export function getDateDiff(
     }
   }
 }
+
+export function calcDifferenceInMinutes(
+  timestamp1: number,
+  timestamp2: number
+) {
+  const differenceInMilliseconds = Math.abs(timestamp2 - timestamp1)
+  const differenceInMinutes = Math.floor(differenceInMilliseconds / 1000 / 60)
+
+  return differenceInMinutes
+}

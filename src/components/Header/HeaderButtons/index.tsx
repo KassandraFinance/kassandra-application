@@ -128,54 +128,23 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       return
     }
 
-    const userChainId = Number(wallet?.chains[0].id ?? '43114')
-    const supportedChainId = networks[userChainId]?.chainId ?? 43114
-    const provider = handleInstanceFallbackProvider(supportedChainId)
-
-    const subgraphTimestamp = await provider.getBlock(
-      BigInt(latestBlockData?.subgraphBlock)
-    )
-    const currentTimestamp = await provider.getBlock(
-      BigInt(latestBlockData?.currentBlock)
-    )
-
-    if (!(currentTimestamp?.timestamp && subgraphTimestamp?.timestamp)) {
-      return setCurrentSubgraphInfo({
-        network: chainInfo.network,
-        status: SubgraphStatus.FetchingData,
-        chainIcon: chainInfo.icon,
-        diffTime: '0'
-      })
-    }
-
-    const dateDiff = getDateDiff(
-      subgraphTimestamp.timestamp * 1000,
-      currentTimestamp.timestamp * 1000
-    )
-    const timestampDiffInSeconds = Math.abs(
-      currentTimestamp.timestamp - subgraphTimestamp.timestamp
-    )
-    const diffInMinutes = Math.floor(timestampDiffInSeconds / 60)
-
     const fiveMinutes = 5
     const sixHoursInMinutes = 360
-    if (diffInMinutes <= fiveMinutes) {
+    if (latestBlockData.diffInMinutes <= fiveMinutes) {
       return setCurrentSubgraphInfo({
         network: chainInfo.network,
         status: SubgraphStatus.Updated,
         chainIcon: chainInfo.icon,
-        diffTime:
-          dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
+        diffTime: latestBlockData.dateDiffFormatted
       })
     }
 
-    if (diffInMinutes <= sixHoursInMinutes) {
+    if (latestBlockData.diffInMinutes <= sixHoursInMinutes) {
       return setCurrentSubgraphInfo({
         network: chainInfo.network,
         status: SubgraphStatus.PracticallyUpdated,
         chainIcon: chainInfo.icon,
-        diffTime:
-          dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
+        diffTime: latestBlockData.dateDiffFormatted
       })
     }
 
@@ -183,7 +152,7 @@ const HeaderButtons = ({ setIsChooseNetwork }: IHeaderButtonsProps) => {
       network: chainInfo.network,
       status: SubgraphStatus.Outdated,
       chainIcon: chainInfo.icon,
-      diffTime: dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
+      diffTime: latestBlockData.dateDiffFormatted
     })
   }
 

@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { SUBGRAPH_GRAPHQL_URL, networks } from '@/constants/tokenAddresses'
 import { JsonRpcProvider } from 'ethers'
+import { calcDifferenceInMinutes, getDateDiff } from '@/utils/date'
 
 async function getSubgraphData(subgraphName: string) {
   const response = await fetch(SUBGRAPH_GRAPHQL_URL, {
@@ -34,11 +35,43 @@ async function getSubgraphData(subgraphName: string) {
   return data.data
 }
 
-async function getCurrentBlock(rpcUrl: string) {
+export async function getSubgraphDateDiff(
+  rpcUrl: string,
+  subgraphBlock: number
+) {
   const readProvider = new JsonRpcProvider(rpcUrl)
-  const block = await readProvider.getBlockNumber()
+  const currentBlock = await readProvider.getBlockNumber()
 
-  return block
+  const subgraphTimestamp = await readProvider.getBlock(
+    BigInt(subgraphBlock ?? 0)
+  )
+  const currentTimestamp = await readProvider.getBlock(
+    BigInt(currentBlock ?? 0)
+  )
+
+  if (!(currentTimestamp?.timestamp && subgraphTimestamp?.timestamp)) {
+    return {
+      currentBlock,
+      dateDiff: null
+    }
+  }
+
+  const diffInMinutes = calcDifferenceInMinutes(
+    subgraphTimestamp.timestamp * 1000,
+    currentTimestamp.timestamp * 1000
+  )
+
+  const dateDiff = getDateDiff(
+    subgraphTimestamp.timestamp * 1000,
+    currentTimestamp.timestamp * 1000
+  )
+
+  return {
+    currentBlock,
+    diffInMinutes,
+    dateDiffFormatted:
+      dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
+  }
 }
 
 export default async (request: NextApiRequest, response: NextApiResponse) => {
@@ -80,13 +113,16 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
         data: {}
       })
     }
-    const currentBlock = await getCurrentBlock(networks[chainId].rpc)
+    const { currentBlock, diffInMinutes, dateDiffFormatted } =
+      await getSubgraphDateDiff(networks[chainId].rpc, subgraphBlock)
     const blockDiff = currentBlock - subgraphBlock
 
     const data = {
       subgraphBlock,
       currentBlock,
-      blockDiff
+      blockDiff,
+      diffInMinutes,
+      dateDiffFormatted
     }
 
     response.status(200).json(data)

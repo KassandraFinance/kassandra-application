@@ -144,11 +144,11 @@ export default function Explore() {
     queryKey: 'createdAt',
     enabled: inView
   })
-  const { data: farmPools } = useFarmPools({
-    ...params,
-    kacyPrice,
-    poolIdList: addressesForReqFarmPool
-  })
+  // const { data: farmPools } = useFarmPools({
+  //   ...params,
+  //   kacyPrice,
+  //   poolIdList: addressesForReqFarmPool
+  // })
 
   const { data: communityPools } = useCommunityPools({
     orderBy: orderedBy,
@@ -215,14 +215,14 @@ export default function Explore() {
             />
           </S.ExploreContainer>
 
-          <S.ExploreContainer>
+          {/* <S.ExploreContainer>
             <TitleSection image={farmIcon} title="Boosted Portfolios" text="" />
 
             <SliderPoolList
               poolData={farmPools ?? new Array(9).fill({})}
               kacyPrice={kacyPrice}
             />
-          </S.ExploreContainer>
+          </S.ExploreContainer> */}
 
           <S.ExploreContainer>
             <TitleSection
