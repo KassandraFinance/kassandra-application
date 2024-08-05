@@ -180,7 +180,7 @@ export const fetchPoolData = async ({
   let vault: getVaultReturnProps
   let managedPool: string[]
 
-  const thirtyMinutes = 30
+  const thirtyMinutes = 0
   if (
     poolId &&
     chainId &&
@@ -280,10 +280,9 @@ export const fetchPoolData = async ({
               }
             })
           }
-
-          underlying_assets = newUnderlying_assets
-          return
         }
+
+        return { ...pool, underlying_assets: newUnderlying_assets }
       }
 
       try {
@@ -312,7 +311,7 @@ export const usePoolData = ({ id }: UsePoolDataProps) => {
 
   return useQuery({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
-    queryKey: ['pool-data', id],
+    queryKey: ['pool-data', id, latestBlock],
     queryFn: async () =>
       fetchPoolData({
         id,
