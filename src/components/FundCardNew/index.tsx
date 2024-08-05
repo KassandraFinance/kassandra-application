@@ -243,7 +243,7 @@ const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
                 <SkeletonLoading height={5.6} width={5.6} borderRadios={50} />
               )}
 
-              {poolData?.pool_id && poolAPR?.gt(0) && (
+              {poolData?.pool_id && (
                 <Tippy content="With this portfolio, you can Stake and earn Kacy. Look at the 'Staking' section in this portfolio.">
                   <img src="/assets/icons/fire.svg" alt="fire icon" />
                 </Tippy>
