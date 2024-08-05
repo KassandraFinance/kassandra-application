@@ -64,8 +64,7 @@ export const skatePoolPowerVoting = async ({
       poolPrice
     )
 
-    if ((pool.pid === 0 || pool.pid === 1) && userInfo.yourStake.lte(0))
-      continue
+    if (pool.pid === 0 || pool.pid === 1) continue
 
     poolInfo.push({ pool, poolDataMetrics, userInfo })
   }

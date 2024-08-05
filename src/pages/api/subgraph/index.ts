@@ -69,7 +69,8 @@ export async function getSubgraphDateDiff(
 
   return {
     currentBlock,
-    dateDiff: dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0'
+    dateDiff: dateDiff?.value.toString().concat(' ', dateDiff?.string) ?? '0',
+    dateDiffInSeconds: dateDiff?.value
   }
 }
 
@@ -89,10 +90,8 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
       const subgraphData = subgraphsData[key][0]
       const subgraphBlock = subgraphData.chains[0]?.latestBlock?.number
 
-      const { currentBlock, dateDiff } = await getSubgraphDateDiff(
-        networks[value.chainId].rpc,
-        subgraphBlock
-      )
+      const { currentBlock, dateDiff, dateDiffInSeconds } =
+        await getSubgraphDateDiff(networks[value.chainId].rpc, subgraphBlock)
 
       if (subgraphData.fatalError) {
         return response.status(500).json({
@@ -106,7 +105,8 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
           subgraphBlock,
           currentBlock: currentBlock,
           blockDiff: currentBlock - subgraphBlock,
-          dateDiff
+          dateDiff,
+          dateDiffInSeconds
         }
       })
     }
