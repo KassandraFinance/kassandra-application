@@ -177,8 +177,6 @@ export const fetchPoolData = async ({
   chainId,
   latestBlock
 }: FetchPoolDataProps) => {
-  console.log('poolId', poolId)
-
   let vault: getVaultReturnProps
   let managedPool: string[]
 
