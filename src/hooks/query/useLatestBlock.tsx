@@ -4,7 +4,17 @@ type LatestBlock = {
   id: string
 }
 
-export const fetchLatestBlock = async ({ id }: LatestBlock) => {
+export type LatestBlockResponse = {
+  subgraphBlock: string
+  currentBlock: number
+  blockDiff: number
+  diffInMinutes: number
+  dateDiffFormatted: string
+}
+
+export const fetchLatestBlock = async ({
+  id
+}: LatestBlock): Promise<LatestBlockResponse> => {
   const response = await fetch(`/api/subgraph/${id}`).then(res => res.json())
   return response
 }

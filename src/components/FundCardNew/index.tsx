@@ -149,23 +149,23 @@ const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
     return underlyingAssets
   }
 
-  async function handlePoolAPR(
-    chainId: number,
-    pid: number,
-    kacyPrice: Big,
-    poolPrice: Big
-  ) {
-    const network = networks[chainId]
-    const apr = await handleGetAPR(
-      network?.stakingContract ?? ZeroAddress,
-      chainId,
-      pid,
-      kacyPrice,
-      poolPrice
-    )
+  // async function handlePoolAPR(
+  //   chainId: number,
+  //   pid: number,
+  //   kacyPrice: Big,
+  //   poolPrice: Big
+  // ) {
+  //   const network = networks[chainId]
+  //   const apr = await handleGetAPR(
+  //     network?.stakingContract ?? ZeroAddress,
+  //     chainId,
+  //     pid,
+  //     kacyPrice,
+  //     poolPrice
+  //   )
 
-    setPoolAPR(apr)
-  }
+  //   setPoolAPR(apr)
+  // }
 
   const poolDataMetrics = React.useMemo(() => {
     if (!poolData?.id) return
@@ -202,16 +202,16 @@ const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
     }
   }, [poolDataMetrics])
 
-  React.useEffect(() => {
-    if (!poolData?.pool_id && !poolData.pool_id) return
+  // React.useEffect(() => {
+  //   if (!poolData?.pool_id && !poolData.pool_id) return
 
-    handlePoolAPR(
-      poolData.chain_id,
-      poolData.pool_id,
-      Big(kacyPrice ?? 0),
-      Big(poolData.price_usd ?? 0)
-    )
-  }, [kacyPrice, poolData])
+  //   handlePoolAPR(
+  //     poolData.chain_id,
+  //     poolData.pool_id,
+  //     Big(kacyPrice ?? 0),
+  //     Big(poolData.price_usd ?? 0)
+  //   )
+  // }, [kacyPrice, poolData])
 
   return (
     <S.CardContainer isLink={!!link}>
@@ -243,7 +243,7 @@ const FundCard = ({ poolData, link, kacyPrice }: IFundCardProps) => {
                 <SkeletonLoading height={5.6} width={5.6} borderRadios={50} />
               )}
 
-              {poolData?.pool_id && poolAPR?.gt(0) && (
+              {poolData?.pool_id && (
                 <Tippy content="With this portfolio, you can Stake and earn Kacy. Look at the 'Staking' section in this portfolio.">
                   <img src="/assets/icons/fire.svg" alt="fire icon" />
                 </Tippy>

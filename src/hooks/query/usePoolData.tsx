@@ -2,9 +2,96 @@ import { useQuery } from '@tanstack/react-query'
 
 import { kassandraClient } from '@/graphQLClients'
 import { getWeightsNormalizedV2 } from '@/utils/updateAssetsToV2'
+import { networks } from '@/constants/tokenAddresses'
+import { handleInstanceFallbackProvider } from '@/utils/provider'
+import { Contract, FallbackProvider } from 'ethers'
+import VAULT from '@/constants/abi/VaultBalancer.json'
+import ManagedPool from '@/constants/abi/ManagedPool.json'
+import Big from 'big.js'
+import { LatestBlockResponse, useLatestBlock } from './useLatestBlock'
 
 type UsePoolDataProps = {
   id: string
+}
+
+type FetchPoolDataProps = UsePoolDataProps & {
+  poolId?: string
+  chainId?: string
+  latestBlock?: LatestBlockResponse
+}
+
+type getVaultProps = {
+  id: string
+  vaultId: string
+  readProvider: FallbackProvider
+}
+
+type getVaultReturnProps = {
+  tokensAddresses: string[]
+  poolAddress: string
+}
+
+type getManagedPoolProps = {
+  id: string
+  readProvider: FallbackProvider
+}
+
+function splitChainIdAndPoolId(id: string) {
+  const pos = id.indexOf('0x')
+
+  if (pos !== -1) {
+    const chainId = id.substring(0, pos)
+    const poolId = id.substring(pos)
+
+    return {
+      chainId,
+      poolId
+    }
+  }
+
+  return {
+    chainId: '',
+    poolId: ''
+  }
+}
+
+export const getManagedPool = async ({
+  id,
+  readProvider
+}: getManagedPoolProps): Promise<string[]> => {
+  try {
+    const contract = new Contract(id, ManagedPool, readProvider)
+    const weight = await contract.getNormalizedWeights()
+    const weightFormatted = weight.map((item: bigint) =>
+      Big(item.toString()).div(Big(10).pow(18)).toString()
+    )
+
+    return weightFormatted
+  } catch (error) {
+    return []
+  }
+}
+
+export const getVault = async ({
+  id,
+  vaultId,
+  readProvider
+}: getVaultProps): Promise<getVaultReturnProps> => {
+  try {
+    const contract = new Contract(vaultId, VAULT, readProvider)
+    const pooltokens = await contract.getPoolTokens(id)
+    const poolAddress = await contract.getPool(id)
+
+    return {
+      tokensAddresses: pooltokens[0].map((item: string) => item).slice(1),
+      poolAddress: poolAddress[0]
+    }
+  } catch (error) {
+    return {
+      tokensAddresses: [],
+      poolAddress: ''
+    }
+  }
 }
 
 export type IPoolDataProps =
@@ -84,8 +171,37 @@ export type IPoolDataProps =
   | null
   | undefined
 
-export const fetchPoolData = async ({ id }: UsePoolDataProps) => {
-  return kassandraClient.PoolData({ id }).then(res => {
+export const fetchPoolData = async ({
+  id,
+  poolId,
+  chainId,
+  latestBlock
+}: FetchPoolDataProps) => {
+  let vault: getVaultReturnProps
+  let managedPool: string[]
+
+  const thirtyMinutes = 30
+  if (
+    poolId &&
+    chainId &&
+    latestBlock &&
+    latestBlock.diffInMinutes >= thirtyMinutes
+  ) {
+    const networkInfo = networks[Number(chainId)]
+    const readProvider = handleInstanceFallbackProvider(networkInfo.chainId)
+
+    vault = await getVault({
+      id: poolId,
+      vaultId: networkInfo.vault,
+      readProvider
+    })
+    managedPool = await getManagedPool({
+      id: vault.poolAddress,
+      readProvider
+    })
+  }
+
+  const pool = await kassandraClient.PoolData({ id }).then(res => {
     const pool = res.pool
 
     if (!pool) {
@@ -101,6 +217,7 @@ export const fetchPoolData = async ({ id }: UsePoolDataProps) => {
         renameWavax.token.name = 'Avalanche'
       }
     }
+
     let underlying_assets: {
       __typename?: 'Asset' | undefined
       balance: string
@@ -134,6 +251,40 @@ export const fetchPoolData = async ({ id }: UsePoolDataProps) => {
     }
 
     if (pool?.pool_version === 2) {
+      if (vault && vault.tokensAddresses.length > 0 && managedPool.length > 0) {
+        const newUnderlying_assets = []
+        for (let i = 0; i < vault.tokensAddresses.length; i++) {
+          const tokenAddress = vault.tokensAddresses[i]
+          const tokenWeight = managedPool[i]
+          const tokenInfo = pool.underlying_assets.find(
+            asset => asset.token?.wraps?.id ?? asset.token.id === tokenAddress
+          )
+
+          if (tokenInfo) {
+            newUnderlying_assets.push({
+              ...tokenInfo,
+              weight_normalized: tokenWeight
+            })
+          } else {
+            newUnderlying_assets.push({
+              balance: '',
+              weight_normalized: tokenWeight,
+              weight_goal_normalized: '',
+              token: {
+                id: tokenAddress,
+                name: '',
+                logo: null,
+                symbol: '',
+                decimals: 18,
+                is_wrap_token: 0
+              }
+            })
+          }
+        }
+
+        return { ...pool, underlying_assets: newUnderlying_assets }
+      }
+
       try {
         const assetsV2 = getWeightsNormalizedV2(
           pool.weight_goals,
@@ -150,12 +301,24 @@ export const fetchPoolData = async ({ id }: UsePoolDataProps) => {
     const poolWithSortedTokens = { ...pool, underlying_assets }
     return poolWithSortedTokens
   })
+
+  return pool
 }
 
 export const usePoolData = ({ id }: UsePoolDataProps) => {
+  const { chainId, poolId } = splitChainIdAndPoolId(id)
+  const { data: latestBlock } = useLatestBlock({ id: chainId })
+
   return useQuery({
-    queryKey: ['pool-data', id],
-    queryFn: async () => fetchPoolData({ id }),
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: ['pool-data', id, latestBlock],
+    queryFn: async () =>
+      fetchPoolData({
+        id,
+        poolId,
+        chainId,
+        latestBlock
+      }),
     staleTime: 1000 * 60,
     refetchInterval: 1000 * 60,
     enabled: id?.length > 0
