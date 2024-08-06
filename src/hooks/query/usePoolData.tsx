@@ -180,7 +180,7 @@ export const fetchPoolData = async ({
   let vault: getVaultReturnProps
   let managedPool: string[]
 
-  const thirtyMinutes = 0
+  const thirtyMinutes = 30
   if (
     poolId &&
     chainId &&
