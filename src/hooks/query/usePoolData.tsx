@@ -37,21 +37,21 @@ type getManagedPoolProps = {
 }
 
 function splitChainIdAndPoolId(id: string) {
-  const pos = id.indexOf('0x')
+  const pos = id?.indexOf('0x')
 
-  if (pos !== -1) {
-    const chainId = id.substring(0, pos)
-    const poolId = id.substring(pos)
-
+  if (!pos || pos === -1) {
     return {
-      chainId,
-      poolId
+      chainId: '',
+      poolId: ''
     }
   }
 
+  const chainId = id.substring(0, pos)
+  const poolId = id.substring(pos)
+
   return {
-    chainId: '',
-    poolId: ''
+    chainId,
+    poolId
   }
 }
 
