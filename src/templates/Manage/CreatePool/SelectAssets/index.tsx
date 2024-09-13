@@ -135,7 +135,7 @@ const SelectAssets = () => {
         }
       } else {
         for (const [i, token] of whitelist.entries()) {
-          balancesArr[token.toLowerCase()] = Big(res[i].toString())
+          balancesArr[token.toLowerCase()] = Big(res[i]?.toString() ?? '0')
         }
       }
 

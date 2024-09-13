@@ -9,18 +9,22 @@ const useBatchRequests = (networkId: number) => {
 
   // Batch request to get user balance from an array of tokens
   const balances = async (userWalletAddress: string, addresses: string[]) => {
-    const promises = []
-    for (const address of addresses) {
-      if (address === NATIVE_ADDRESS) {
-        promises.push(readProvider.getBalance(userWalletAddress))
-      } else {
-        const contract = new Contract(address, ERC20, readProvider)
-        promises.push(contract.balanceOf(userWalletAddress))
+    try {
+      const promises = []
+      for (const address of addresses) {
+        if (address === NATIVE_ADDRESS) {
+          promises.push(readProvider.getBalance(userWalletAddress))
+        } else {
+          const contract = new Contract(address, ERC20, readProvider)
+          promises.push(contract.balanceOf(userWalletAddress))
+        }
       }
-    }
 
-    const results = await Promise.all(promises)
-    return results
+      const results = await Promise.all(promises)
+      return results
+    } catch {
+      return []
+    }
   }
 
   return {

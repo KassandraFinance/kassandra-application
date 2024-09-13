@@ -14,7 +14,9 @@ module.exports = {
       'storage.googleapis.com',
       'app.kassandra.finance',
       'cdn.paraswap.io',
-      'raw.githubusercontent.com'
+      'raw.githubusercontent.com',
+      'snowtrace.io',
+      'coin-images.coingecko.com'
     ]
   },
   async headers() {

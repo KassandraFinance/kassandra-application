@@ -143,7 +143,7 @@ const AddLiquidity = () => {
         }
       } else {
         for (const [i, token] of tokens.entries()) {
-          balancesArr[token] = Big(res[i].toString())
+          balancesArr[token] = Big(res[i]?.toString() ?? '0')
         }
       }
 
