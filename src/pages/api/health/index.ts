@@ -32,7 +32,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
         if (res.status !== OK) errors.push('Backend is offline')
       }),
       fetch(
-        `${COINGECKO_API}ping?x_cg_pro_api_key=${process.env.NEXT_PUBLIC_COINGECKO}`
+        `${COINGECKO_API}ping?x_cg_pro_api_key=${process.env.COINGECKO_PRO_API_KEY}`
       ).then(res => {
         if (res.status !== OK) errors.push('Coingecko is offline')
       })

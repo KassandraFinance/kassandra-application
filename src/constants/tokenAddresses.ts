@@ -78,7 +78,10 @@ export const linkSnowtrace = 'https://snowtrace.io'
 export const URL_COINGECKO_CURRENCIES = 'https://www.coingecko.com/pt/moedas/'
 
 export const YIELDYAK_API = 'https://staging-api.yieldyak.com'
-export const COINGECKO_API = 'https://pro-api.coingecko.com/api/v3/'
+
+export const COINGECKO_API = process.env.COINGECKO_PRO_API_KEY
+  ? 'https://pro-api.coingecko.com/api/v3/'
+  : 'https://api.coingecko.com/api/v3/'
 
 export const SUBGRAPH_URL =
   'https://graph.kassandra.finance/subgraphs/name/Kassandra'

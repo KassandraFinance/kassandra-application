@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { COINGECKO_API, SUBGRAPH_URL } from '@/constants/tokenAddresses'
 import { getAddress } from 'ethers'
 
+const coingeckoApiKey = process.env.COINGECKO_PRO_API_KEY
+  ? `x_cg_pro_api_key=${process.env.COINGECKO_PRO_API_KEY}`
+  : `x_cg_api_key=${process.env.COINGECKO_API_KEY}`
+
 type CoinsMetadataType = Record<
   string,
   {
@@ -55,9 +59,7 @@ async function getTokens(params: { tokensId?: string[]; chainId?: number[] }) {
 
 async function getInfoTokens(coingeckoIds: string[]) {
   const resInfoTokens = await fetch(
-    `${COINGECKO_API}coins/markets?vs_currency=usd&ids=${coingeckoIds.toString()}&order=market_cap_desc&per_page=250&page=1&sparkline=true&price_change_percentage=24h%2C7d&locale=en&x_cg_pro_api_key=${
-      process.env.NEXT_PUBLIC_COINGECKO
-    }`
+    `${COINGECKO_API}coins/markets?vs_currency=usd&ids=${coingeckoIds.toString()}&order=market_cap_desc&per_page=250&page=1&sparkline=true&price_change_percentage=24h%2C7d&locale=en&${coingeckoApiKey}`
   )
 
   const res = await resInfoTokens.json()

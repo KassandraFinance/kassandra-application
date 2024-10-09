@@ -35,11 +35,15 @@ const injected = injectedModule({
     )
   }
 })
-const walletConnect = walletConnectModule(wcV2InitOptions)
+const walletConnect = process.env.NEXT_PUBLIC_WALLETCONNECT
+  ? walletConnectModule(wcV2InitOptions)
+  : undefined
 const gnosis = gnosisModule()
 const trust = trustModule()
 
-const wallets = [walletConnect, gnosis, trust, injected]
+const wallets = walletConnect
+  ? [walletConnect, gnosis, trust, injected]
+  : [gnosis, trust, injected]
 
 const chains = [
   {
