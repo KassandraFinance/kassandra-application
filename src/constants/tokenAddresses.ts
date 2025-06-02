@@ -191,7 +191,7 @@ export const networks: NetworkType = {
   '43114': {
     chainId: 43114,
     chainName: 'Avalanche',
-    rpc: 'https://avalanche.public-rpc.com',
+    rpc: 'https://1rpc.io/avax/c',
     rpcs: [
       'https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc',
       'https://ava-mainnet.public.blastapi.io/ext/bc/C/avax',
@@ -199,8 +199,6 @@ export const networks: NetworkType = {
       'https://api.avax.network/ext/bc/C/rpc',
       'https://avalanche-c-chain.publicnode.com/ext/bc/C/rpc',
       'https://api.zan.top/node/v1/avax/mainnet/public/ext/bc/C/rpc',
-      'https://avalanche.public-rpc.com',
-      'https://rpc.ankr.com/avalanche'
     ],
     kacyAddress: Kacy,
     blockExplorer: 'https://snowtrace.io',
